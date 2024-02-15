@@ -292,15 +292,31 @@ To get BunyipsLib in your codebase, you'll need experience with `git` and the Gr
 
 ### Integrating BunyipsLib into your codebase
 1. **Getting the code**  
-From the `TeamCode/` directory in your own FtcRobotController fork, run `git submodule add https://github.com/Murray-Bridge-Bunyips/BunyipsLib`, which should clone and create a new BunyipsLib folder with the source code  
-2. **Gradle sync**  
-In Android Studio, run a Gradle Sync (Ctrl+Shift+O) to ensure your classpaths are updated with BunyipsLib.
-3. **You're done!**  
-You now have access to BunyipsLib. Ensure to read how to update BunyipsLib and how to ensure your future cloners can get BunyipsLib in their codebase.
+From the `TeamCode/` directory in your own FtcRobotController fork, run `git submodule add https://github.com/Murray-Bridge-Bunyips/BunyipsLib`, which should clone and create a new BunyipsLib folder with the source code.<br><br>
+2. **Adding dependencies**  
+BunyipsLib depends on RoadRunner, FtcDashboard, and Kotlin. These tools make development faster and are legal FTC tools.  
+You will first need to install Kotlin using the guide provided by FIRST: https://ftc-docs.firstinspires.org/en/latest/programming_resources/shared/installing_kotlin/Installing-Kotlin.html<br><br>
 
-### Starting a submodule in a clone of your fork
+After you've done this, go to your `build.dependencies.gradle` file located in your top-level directory and paste the following dependencies in the `dependencies {}` block:
+```gradle
+implementation 'com.acmerobotics.dashboard:dashboard:0.4.12'
+implementation 'org.apache.commons:commons-math3:3.6.1'
+implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
+implementation 'com.acmerobotics.roadrunner:core:0.5.6'
+```
+
+Finally, add this to the top `repositories {}` block in the same file:
+```gradle
+maven { url = 'https://maven.brott.dev/' }
+```
+4. **Gradle sync**  
+In Android Studio, run a Gradle Sync (Ctrl+Shift+O) to ensure your classpaths are updated with BunyipsLib.<br><br>
+5. **You're done!**  
+You now have access to BunyipsLib. Ensure to read how to update BunyipsLib and how to ensure your future cloners can get BunyipsLib in their local repositories.
+
+### Using the BunyipsLib submodule in a clone of your fork
 For new cloners of your fork with BunyipsLib, you can simply run `git clone --recurse-submodules <YOUR_REPO>`.  <br><br>
-For repositories that already exist, run `git submodule update --init --recursive`, to fetch the submodule that was placed in your `.gitmodules` TLD file.
+For repositories that already exist, run `git submodule update --init --recursive`, to fetch the submodule that was placed in your `.gitmodules` top-level directory file.
 
 ### Updating BunyipsLib
 BunyipsLib is continually getting updates to ensure the latest features have been rigorously debugged and tested. To ensure that you *aren't* using code that I've accidentally implemented a 30-gigabyte memory leak into, you'll need to know how to upadte it.
