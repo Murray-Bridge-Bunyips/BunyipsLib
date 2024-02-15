@@ -292,7 +292,7 @@ To get BunyipsLib in your codebase, you'll need experience with `git`, the Gradl
 
 ### Integrating BunyipsLib into your codebase
 1. **Getting the code**  
-From the `TeamCode/` directory in your own FtcRobotController fork, run `git submodule add https://github.com/Murray-Bridge-Bunyips/BunyipsLib`, which should clone and create a new BunyipsLib folder with the source code.<br><br>
+From the top-level directory in your own FtcRobotController fork, run `git submodule add https://github.com/Murray-Bridge-Bunyips/BunyipsLib`, which should clone and create a new BunyipsLib folder with the source code.<br><br>
 2. **Adding dependencies**  
 BunyipsLib depends on RoadRunner, FtcDashboard, and Kotlin. These tools make development faster and are legal FTC tools.  
 You will first need to install Kotlin using the guide provided by FIRST: https://ftc-docs.firstinspires.org/en/latest/programming_resources/shared/installing_kotlin/Installing-Kotlin.html<br><br>
@@ -310,9 +310,18 @@ Finally, add this to the top `repositories {}` block in the same file:
 maven { url = 'https://maven.brott.dev/' }
 ```
 Your dependencies file should look something like [this.](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/blob/stable/build.dependencies.gradle)<br><br>
-4. **Gradle sync**  
+5. **Telling Gradle BunyipsLib exists**  
+First, we need tell Gradle to build BunyipsLib as well. To do this, open `settings.gradle` in your top-level directory and append the following lines.
+```
+include ':BunyipsLib'
+```
+Finally, we need to tell Gradle that we want to integrate BunyipsLib with the TeamCode module. Open the `build.gradle` file associated with the TeamCode module, and append to the `dependencies {}` block:
+```
+implementation project(':BunyipsLib')
+```
+5. **Gradle sync**  
 In Android Studio, run a Gradle Sync (Ctrl+Shift+O) to ensure your classpaths are updated with BunyipsLib and your dependencies are downloaded.<br><br>
-5. **You're done!**  
+6. **You're done!**  
 You now have access to BunyipsLib. Ensure to read how to update BunyipsLib and how to ensure your future cloners can get BunyipsLib in their local repositories.
 
 ### Using the BunyipsLib submodule in a clone of your fork
