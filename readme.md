@@ -42,7 +42,7 @@ public class MyTeleOp extends BunyipsOpMode {
     private final MyBotConfig config = new MyBotConfig();
 
     private MecanumDrive drive;
-    private PersonalityCoreArm arm;
+    private MyArm arm;
     private Cannon cannon;
 
     @Override
@@ -55,7 +55,7 @@ public class MyTeleOp extends BunyipsOpMode {
                 config.parallelEncoder, config.perpendicularEncoder
         );
         cannon = new Cannon(...);
-        arm = new PersonalityCoreArm(...);
+        arm = new MyArm(...);
     }
 
     @Override
@@ -178,7 +178,7 @@ All with full RoadRunner utilities, runtime OpMode selectors, and much more.
 public class PlacePixel extends RoadRunnerAutonomousBunyipsOpMode<MecanumDrive> {
     private final MyBotConfig config = new MyBotConfig();
 
-    private Arm arm;
+    private MyArm arm;
     private Vision vision;
     private PurplePixel purplePixelProcessor;
     private WhitePixel whitePixelProcessor;
@@ -190,7 +190,7 @@ public class PlacePixel extends RoadRunnerAutonomousBunyipsOpMode<MecanumDrive> 
         config.init();
 
         vision = new Vision(...);
-        arm = new Arm(...);
+        arm = new MyArm(...);
 
         addTelemetry("Hello world!"); // Full telemetry utilities with FtcDashboard
         addRetainedTelemetry("Greetings, world.");
