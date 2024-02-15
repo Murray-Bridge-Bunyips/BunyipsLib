@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry.Item
 import org.murraybridgebunyips.bunyipslib.Text.formatString
 import org.murraybridgebunyips.bunyipslib.Text.round
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
+import java.util.Collections
 import kotlin.math.roundToInt
 
 /**
@@ -268,10 +269,13 @@ abstract class BunyipsOpMode : LinearOpMode() {
         // FtcDashboard
         val packet = TelemetryPacket()
         packet.put("BOM", overheadStatus + "\n")
-        telemetryObjects.forEachIndexed { index, item ->
+        // Copy to avoid ConcurrentModificationExceptions
+        val t = telemetryObjects.toList()
+        val l = logItems.toList()
+        t.forEachIndexed { index, item ->
             packet.put("DS$index", item.caption)
         }
-        logItems.forEachIndexed { index, item ->
+        l.forEachIndexed { index, item ->
             packet.put("LOG$index", item)
         }
         FtcDashboard.getInstance().sendTelemetryPacket(packet)
