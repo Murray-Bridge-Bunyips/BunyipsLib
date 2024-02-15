@@ -192,6 +192,12 @@ public class PlacePixel extends RoadRunnerAutonomousBunyipsOpMode<MecanumDrive> 
         vision = new Vision(...);
         arm = new MyArm(...);
 
+        vision.init(purplePixelProcessor, whitePixelProcessor);
+        vision.start(whitePixelProcessor);
+
+        // Optionally send all feeds to FtcDashboard, can switch between processor feeds for debugging
+        // vision.startDashboardSender();
+
         addTelemetry("Hello world!"); // Full telemetry utilities with FtcDashboard
         addRetainedTelemetry("Greetings, world.");
     }
@@ -219,17 +225,20 @@ public class PlacePixel extends RoadRunnerAutonomousBunyipsOpMode<MecanumDrive> 
 
     @Override
     protected void onInitDone() {
-        switch (initTask.getResult()) {
+        switch (initTask.getSpikeResult()) {
             case LEFT:
                 // RoadRunner trajectory to get to the Spike Mark
                 addNewTrajectory(...);
                 break;
             // ...
         }
+        vision.stop(whitePixelProcessor);
     }
 
     @Override
     protected void onQueueReady(@Nullable OpModeSelection selectedOpMode) {
+        addTask(new InstantTask(() -> vision.start(purplePixelProcessor));
+
         // Full RoadRunner support with utility methods such as addNewTrajectory()
         addNewTrajectory(new Pose2d(11.40, -62.00, Math.toRadians(180.00)))
                 .lineToLinearHeading(new Pose2d(16.40, -48.10, Math.toRadians(90.00)))
