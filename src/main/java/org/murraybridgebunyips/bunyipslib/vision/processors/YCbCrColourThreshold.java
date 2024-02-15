@@ -34,7 +34,6 @@ public abstract class YCbCrColourThreshold extends Processor<ContourData> {
     private final Mat maskedInputMat = new Mat();
     private final List<MatOfPoint> contours = new ArrayList<>();
     private final Mat hierarchy = new Mat();
-    private int frameCounter;
 
     public abstract Scalar getLower();
 
@@ -110,6 +109,10 @@ public abstract class YCbCrColourThreshold extends Processor<ContourData> {
         // Only show the detection matrix if we need to
         if (showMaskedInput())
             maskedInputMat.copyTo(frame);
+
+        binaryMat.release();
+        ycrcbMat.release();
+        hierarchy.release();
 
         return frame;
     }

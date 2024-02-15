@@ -11,7 +11,7 @@ public class WhitePixel extends YCbCrColourThreshold {
     public static double LOWER_CB = 123.3;
     public static double LOWER_CR = 106.3;
     public static double UPPER_Y = 255;
-    public static double UPPER_CB = 255;
+    public static double UPPER_CB = 150;
     public static double UPPER_CR = 255;
     public static boolean SHOW_MASKED_INPUT = true;
 
