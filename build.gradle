@@ -43,7 +43,7 @@ def getRandomID = { ->
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-apply from: "../../build.dependencies.gradle"
+apply from: "../build.dependencies.gradle"
 
 android {
     compileSdkVersion 29
