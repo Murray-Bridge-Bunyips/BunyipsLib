@@ -1,5 +1,5 @@
-# BunyipsLib
-![Murray Bridge Bunyips, Mulyawonks, Lizards Logos (15215 + 22407 + 24736)](https://github.com/Murray-Bridge-Bunyips/.github/blob/main/bunyipslogos.png)
+![BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/.github/blob/main/bunyipslib_banner.png)
+##### A powerful all-in-one library for FTC used by the Murray Bridge High School Student Robotics Club.
 
 BunyipsLib was originally a collection of common functions that our FTC teams used in competition.
 It has since evolved into a full-fledged library that is used by all of our teams. It is designed to
@@ -14,10 +14,10 @@ the latest and greatest features from the FTC SDK and other libraries.
 ## Features
 TODO
 
-## Integrating BunyipsLib
-TODO
-
 See the [examples](./src/main/java/org/murraybridgebunyips/bunyipslib/example) for getting
 familiar with BunyipsLib.
+
+## Using BunyipsLib for yourself
+TODO
 
 ###### BunyipsLib. Copyright (c) 2024 Lucas Bubner, MBHS Student Robotics Club, under the MIT License.
