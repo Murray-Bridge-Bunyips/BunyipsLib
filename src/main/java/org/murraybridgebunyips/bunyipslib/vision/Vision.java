@@ -388,6 +388,8 @@ public class Vision extends BunyipsComponent {
 
         @Override
         public Object onProcessFrame(Mat frame, long captureTimeNanos) {
+            // TODO: test if releasing the frame here will impact displaying the raw feed
+            frame.release();
             return frame;
         }
 

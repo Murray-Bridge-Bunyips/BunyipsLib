@@ -41,6 +41,7 @@ public class MultiYCbCrThreshold extends Processor<ContourData> {
             processor.first.clearData();
             processor.first.update();
             data.addAll(processor.first.getData());
+            processor.second.release();
         }
     }
 
