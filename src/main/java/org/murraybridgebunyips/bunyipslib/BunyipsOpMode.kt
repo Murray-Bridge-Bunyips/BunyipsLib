@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry.Item
 import org.murraybridgebunyips.bunyipslib.Text.formatString
 import org.murraybridgebunyips.bunyipslib.Text.round
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
-import java.util.Collections
 import kotlin.math.roundToInt
 
 /**

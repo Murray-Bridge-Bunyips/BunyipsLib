@@ -12,7 +12,6 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.MultiYCbCrThreshold;
-import org.murraybridgebunyips.bunyipslib.vision.processors.YCbCrColourThreshold;
 
 import java.util.List;
 

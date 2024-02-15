@@ -13,7 +13,6 @@ import org.murraybridgebunyips.bunyipslib.vision.Processor;
 import org.murraybridgebunyips.bunyipslib.vision.Vision;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
 import org.murraybridgebunyips.bunyipslib.vision.processors.TFOD;
-import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.TeamProp;
 import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.WhitePixel;
 
 import kotlin.Unit;
