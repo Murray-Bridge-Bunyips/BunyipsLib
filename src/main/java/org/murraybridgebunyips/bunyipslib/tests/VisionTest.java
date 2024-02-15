@@ -1,12 +1,5 @@
 package org.murraybridgebunyips.bunyipslib.tests;
 
-import static org.murraybridgebunyips.bunyipslib.bunyipsftc.personalitycore.CompanionCubeColours.BLUE_ELEMENT_B;
-import static org.murraybridgebunyips.bunyipslib.bunyipsftc.personalitycore.CompanionCubeColours.BLUE_ELEMENT_G;
-import static org.murraybridgebunyips.bunyipslib.bunyipsftc.personalitycore.CompanionCubeColours.BLUE_ELEMENT_R;
-import static org.murraybridgebunyips.bunyipslib.bunyipsftc.personalitycore.CompanionCubeColours.RED_ELEMENT_B;
-import static org.murraybridgebunyips.bunyipslib.bunyipsftc.personalitycore.CompanionCubeColours.RED_ELEMENT_G;
-import static org.murraybridgebunyips.bunyipslib.bunyipsftc.personalitycore.CompanionCubeColours.RED_ELEMENT_R;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -50,12 +43,6 @@ public class VisionTest extends BunyipsOpMode {
                 break;
             case APRILTAG:
                 chosenProcessor = new AprilTag();
-                break;
-            case TEAMPROP_RED:
-                chosenProcessor = new TeamProp(RED_ELEMENT_R, RED_ELEMENT_G, RED_ELEMENT_B);
-                break;
-            case TEAMPROP_BLUE:
-                chosenProcessor = new TeamProp(BLUE_ELEMENT_R, BLUE_ELEMENT_G, BLUE_ELEMENT_B);
                 break;
             case WHITE_PIXEL:
                 chosenProcessor = new WhitePixel();
@@ -109,8 +96,6 @@ public class VisionTest extends BunyipsOpMode {
     private enum Procs {
         TFOD,
         APRILTAG,
-        TEAMPROP_RED,
-        TEAMPROP_BLUE,
         WHITE_PIXEL
     }
 }

@@ -1,13 +1,18 @@
 ## BunyipsLib
 
-This is a library of useful functions and classes for use with the FIRST Tech Challenge SDK we use
-in competition.<br><br>
-Serving as a wrapper over the FIRST SDK, BunyipsLib offers efficient common modules and OpMode
-abstractions with error handling,
-dynamic device initialisation, native RoadRunner and Vision processing, and an extremely expansible
-ecosystem. This library was created to collect standard code between
-our teams, including certain robot configurations and components used in multiple of the Bunyips
-teams' robots. <br><br>
+BunyipsLib was originally a collection of common functions that our FTC teams used in competition.
+It has since evolved into a full-fledged library that is used by all of our teams. It is designed to
+provide useful development utilities in making robot code, offering efficient common modules and OpMode abstractions with
+error handling, dynamic device initialisation, native RoadRunner, FtcDashboard, and Vision processing, and an
+extremely expansible ecosystem.
+
+BunyipsLib takes inspiration from FTCLib, RoadRunner, and other libraries, and is designed to be
+the one-stop shop for all of our teams' needs. It is designed to be easy to use, and to integrate
+the latest and greatest features from the FTC SDK and other libraries.
+
+## Integrating BunyipsLib
+TODO
+
 See the [examples](./src/main/java/org/murraybridgebunyips/bunyipslib/example) for getting
 familiar with BunyipsLib.
 
