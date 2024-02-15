@@ -295,7 +295,7 @@ To get BunyipsLib in your codebase, you'll need experience with `git`, the Gradl
 From the top-level directory in your own FtcRobotController fork, run `git submodule add https://github.com/Murray-Bridge-Bunyips/BunyipsLib`, which should clone and create a new BunyipsLib folder with the source code.<br><br>
 2. **Adding dependencies**  
 BunyipsLib depends on RoadRunner, FtcDashboard, and Kotlin. These tools make development faster and are legal FTC tools.  
-You will first need to install Kotlin using the guide provided by FIRST: https://ftc-docs.firstinspires.org/en/latest/programming_resources/shared/installing_kotlin/Installing-Kotlin.html<br><br>
+You will first need to install *Kotlin v1.9.20* using the guide provided by FIRST: https://ftc-docs.firstinspires.org/en/latest/programming_resources/shared/installing_kotlin/Installing-Kotlin.html<br><br>
 
 After you've done this, go to your `build.dependencies.gradle` file located in your top-level directory and paste the following dependencies in the `dependencies {}` block:
 ```gradle
