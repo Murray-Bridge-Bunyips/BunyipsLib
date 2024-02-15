@@ -14,7 +14,7 @@ the latest and greatest features from the FTC SDK and other libraries.
 BunyipsLib is in active and continually experimental development, expect bugs and to keep up to date!
 
 ## Features
-BunyipsLib plans to make OpMode development simpler and easier. This includes integrated error catching with a similar ecosystem
+BunyipsLib plans to make OpMode development simpler and easier. This includes integrated exception catching with a similar ecosystem
 to the standard OpMode.
 
 All BunyipsLib OpModes are simple, declarative, and expansible.
@@ -288,7 +288,7 @@ robots, see [BunyipsFTC](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/) f
 ## Using BunyipsLib for yourself
 BunyipsLib is distributed via a `git submodule`. This allows for direct source code modification by you, as BunyipsLib should work harmoniously with your codebase.
 
-To get BunyipsLib in your codebase, you'll need experience with `git` and the Gradle build system.
+To get BunyipsLib in your codebase, you'll need experience with `git`, the Gradle build system, and the command line (used in this tutorial).
 
 ### Integrating BunyipsLib into your codebase
 1. **Getting the code**  
@@ -309,8 +309,9 @@ Finally, add this to the top `repositories {}` block in the same file:
 ```gradle
 maven { url = 'https://maven.brott.dev/' }
 ```
+Your dependencies file should look something like [this.](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/blob/stable/build.dependencies.gradle)<br><br>
 4. **Gradle sync**  
-In Android Studio, run a Gradle Sync (Ctrl+Shift+O) to ensure your classpaths are updated with BunyipsLib.<br><br>
+In Android Studio, run a Gradle Sync (Ctrl+Shift+O) to ensure your classpaths are updated with BunyipsLib and your dependencies are downloaded.<br><br>
 5. **You're done!**  
 You now have access to BunyipsLib. Ensure to read how to update BunyipsLib and how to ensure your future cloners can get BunyipsLib in their local repositories.
 
@@ -319,9 +320,9 @@ For new cloners of your fork with BunyipsLib, you can simply run `git clone --re
 For repositories that already exist, run `git submodule update --init --recursive`, to fetch the submodule that was placed in your `.gitmodules` top-level directory file.
 
 ### Updating BunyipsLib
-BunyipsLib is continually getting updates to ensure the latest features have been rigorously debugged and tested. To ensure that you *aren't* using code that I've accidentally implemented a 30-gigabyte memory leak into, you'll need to know how to upadte it.
+BunyipsLib is continually getting updates to ensure the latest features have been rigorously debugged and tested. To ensure that you *aren't* using code that I've accidentally implemented a 30-gigabyte memory leak into, you'll need to know how to update it.
 
 1. `git pull`  
 Navigate to the directory of your BunyipsLib submodule, and run `git pull` on the `master` branch. This should bring any changes into your repository.
 
-###### BunyipsLib. Copyright (c) 2024 Lucas Bubner, MBHS Student Robotics Club, under the MIT License. <br><br>I am not responsible for any failed autonomous, broken servos or nuclear warfare that results after the usage of BunyipsLib.<br>Test and understand your code thoroughly.
+###### BunyipsLib. Copyright (c) 2024 Lucas Bubner, MBHS Student Robotics Club, under the MIT License. <br><br>I am not responsible for any failed autonomous, broken servos or nuclear warfare that result after the usage of BunyipsLib.<br>Test and understand your code thoroughly.
