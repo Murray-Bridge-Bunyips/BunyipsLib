@@ -11,6 +11,8 @@ BunyipsLib takes inspiration from FTCLib, WPILib, RoadRunner, and other librarie
 the one-stop shop for all of our teams' needs. It is designed to be easy to use, and to integrate
 the latest and greatest features from the FTC SDK and other libraries.
 
+BunyipsLib is in active and continually experimental development, expect bugs and to keep up to date!
+
 ## Features
 BunyipsLib plans to make OpMode development simpler and easier. This includes integrated error catching with a similar ecosystem
 to the standard OpMode.
