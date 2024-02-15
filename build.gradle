@@ -40,9 +40,9 @@ def getRandomID = { ->
     return UUID.randomUUID().toString()
 }
 
-// Not using common module as it is an application not a library, will import deps manually
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+
 apply from: "../../build.dependencies.gradle"
 
 android {
