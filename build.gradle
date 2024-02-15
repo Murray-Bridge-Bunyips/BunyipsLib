@@ -1,0 +1,64 @@
+// BunyipsLib Gradle configuration
+
+plugins {
+    id 'com.android.library' apply false
+}
+
+def getCommit = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--always', '--dirty'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    }
+    catch (ignored) {
+        return null
+    }
+}
+
+def getBranch = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-parse', '--abbrev-ref', 'HEAD'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    }
+    catch (ignored) {
+        return null
+    }
+}
+
+def getBuildTime = { ->
+    return new Date().format("yyyy-MM-dd@HH:mm:ss", TimeZone.getDefault())
+}
+
+def getRandomID = { ->
+    return UUID.randomUUID().toString()
+}
+
+// Not using common module as it is an application not a library, will import deps manually
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply from: "../../build.dependencies.gradle"
+
+android {
+    compileSdkVersion 29
+    defaultConfig {
+        minSdkVersion 24
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 28
+        buildConfigField "String", "GIT_COMMIT", '"' + getCommit() + '"'
+        buildConfigField "String", "GIT_BRANCH", '"' + getBranch() + '"'
+        buildConfigField "String", "BUILD_TIME", '"' + getBuildTime() + '"'
+        buildConfigField "String", "ID", '"' + getRandomID() + '"'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    namespace = 'org.murraybridgebunyips.bunyipslib'
+}
