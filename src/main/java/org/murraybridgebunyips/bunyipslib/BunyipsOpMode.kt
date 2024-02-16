@@ -339,6 +339,15 @@ abstract class BunyipsOpMode : LinearOpMode() {
     }
 
     /**
+     * Add data to the telemetry object
+     * @param value An object to add to telemetry
+     * @return The telemetry item added to the Driver Station
+     */
+    fun addTelemetry(value: Any): Item? {
+        return addTelemetry(value.toString())
+    }
+
+    /**
      * Add data to the telemetry object using a custom format string
      * @param fstring A format string to add to telemetry
      * @param objs The objects to format into the string
