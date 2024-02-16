@@ -66,7 +66,7 @@ public class MyTeleOp extends BunyipsOpMode {
         double y = gamepad1.left_stick_y;
         double r = gamepad1.right_stick_x;
 
-        drive.setSpeedUsingController(x, y, r *);
+        drive.setSpeedUsingController(x, y, r);
         if (gamepad2.y) {
             arm.faceClawToBoard();
         } else if (gamepad2.a) {
