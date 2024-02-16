@@ -95,14 +95,12 @@ abstract class BunyipsOpMode : LinearOpMode() {
         // BunyipsOpMode
         instance = this
         try {
-            val bomInfo =
-                "${BuildConfig.GIT_COMMIT} ${BuildConfig.GIT_BRANCH} ${BuildConfig.BUILD_TIME}"
-            Dbg.log("=============== BunyipsOpMode $bomInfo id:${BuildConfig.ID} ===============")
+            Dbg.log("=============== BunyipsLib BunyipsOpMode ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME} uid:${BuildConfig.ID} ===============")
             LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap)
             // Separate log from telemetry on the DS with an empty line
             telemetry.log().add("")
-            telemetry.log().add("bunyipsopmode $bomInfo")
-            logItems.add("bunyipsopmode $bomInfo")
+            telemetry.log().add("bunyipslib ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME}")
+            logItems.add("bunyipslib ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME}")
 
             opModeStatus = "setup"
             Dbg.logd("BunyipsOpMode: setting up...")
