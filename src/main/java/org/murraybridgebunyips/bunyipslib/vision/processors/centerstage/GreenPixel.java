@@ -7,9 +7,10 @@ import org.opencv.core.Scalar;
 
 @Config
 public class GreenPixel extends YCbCrColourThreshold {
+    // TODO: Tune, consider making an auto-tuner OpMode?
     public static double LOWER_Y = 0.0;
-    public static double LOWER_CB = 0.0;
-    public static double LOWER_CR = 0.0;
+    public static double LOWER_CB = 120.0;
+    public static double LOWER_CR = 120.0;
     public static double UPPER_Y = 255.0;
     public static double UPPER_CB = 147.3;
     public static double UPPER_CR = 111.9;

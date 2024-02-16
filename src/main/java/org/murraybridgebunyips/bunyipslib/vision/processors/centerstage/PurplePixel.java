@@ -8,7 +8,7 @@ import org.opencv.core.Scalar;
 @Config
 public class PurplePixel extends YCbCrColourThreshold {
     public static double LOWER_Y = 89.3;
-    public static double LOWER_CB = 137.4;
+    public static double LOWER_CB = 0.0;
     public static double LOWER_CR = 131.8;
     public static double UPPER_Y = 255.0;
     public static double UPPER_CB = 255.0;
