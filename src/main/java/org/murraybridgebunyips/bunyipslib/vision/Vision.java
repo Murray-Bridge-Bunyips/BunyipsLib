@@ -34,18 +34,19 @@ import java.util.Objects;
  */
 @Config
 public class Vision extends BunyipsComponent {
+    public static int CAMERA_WIDTH = 640;
+    public static int CAMERA_HEIGHT = 480;
+    // Static: only one sender can be active at a time
+    private static SwitchableVisionSender visionSender;
+    @SuppressWarnings("rawtypes")
+    private final List<Processor> processors = new ArrayList<>();
+    private final CameraName camera;
     /**
      * A built-in raw feed Processor that will do nothing but provide the raw camera feed.
      * Useful for debugging and testing, pass this raw field (vision.raw) to init() and start() to use it.
      */
     public Raw raw = new Raw();
-    public static int CAMERA_WIDTH = 640;
-    public static int CAMERA_HEIGHT = 480;
-    @SuppressWarnings("rawtypes")
-    private final List<Processor> processors = new ArrayList<>();
-    private final CameraName camera;
     private VisionPortal visionPortal;
-    private SwitchableVisionSender visionSender;
 
     public Vision(CameraName camera, int cameraWidth, int cameraHeight) {
         this.camera = camera;
@@ -110,10 +111,13 @@ public class Vision extends BunyipsComponent {
         visionPortal = builder
                 .setCamera(camera)
                 .setCameraResolution(new Size(CAMERA_WIDTH, CAMERA_HEIGHT))
-                // Live view needs to be enabled to allow for drawFrame() to work for FtcDashboard
-                // for integrated processors such as TFOD and AprilTag as they don't like to work
-                // outside of the live view environment
-                .enableLiveView(true)
+                // "Live View" does not affect how the DS/Dashboard stream is handled, as these previews
+                // are not connected to the Live View. As such, to save resources, it is
+                // better we leave the live view off, as this will not reflect the DS/Dashboard stream.
+                // As for the DS Camera Stream feature and FtcDashboard, you will need to look at
+                // the startPreview() method to enable the VisionSender. By default, the DS Camera Stream
+                // will show a raw feed from the camera, and the FtcDashboard feed will be disabled.
+                .enableLiveView(false)
                 // Set any additional VisionPortal settings here
                 .build();
 
@@ -332,8 +336,13 @@ public class Vision extends BunyipsComponent {
 
     /**
      * Start the VisionSender thread to send all processor data to FtcDashboard.
+     * Without the preview active, the DS will display a raw unprocessed feed to save resources,
+     * but activating this sender will set both FtcDashboard and the DS streams to be of a processor
+     * of your choosing.
+     *
+     * @see SwitchableVisionSender
      */
-    public void startDashboardSender() {
+    public void startPreview() {
         visionSender = new SwitchableVisionSender(this);
         Threads.start(visionSender);
     }
@@ -342,8 +351,9 @@ public class Vision extends BunyipsComponent {
      * Set the processor to display on FtcDashboard.
      *
      * @param processorName the name of the processor to display on FtcDashboard
+     * @see SwitchableVisionSender
      */
-    public void setDashboardProcessor(String processorName) {
+    public void setPreview(String processorName) {
         if (visionSender != null) {
             visionSender.setStreamingProcessor(processorName);
         }
@@ -353,9 +363,10 @@ public class Vision extends BunyipsComponent {
      * Set the processor to display on FtcDashboard.
      *
      * @param processor the processor to display on FtcDashboard
+     * @see SwitchableVisionSender
      */
     @SuppressWarnings("rawtypes")
-    public void setDashboardProcessor(Processor processor) {
+    public void setPreview(Processor processor) {
         if (visionSender != null) {
             visionSender.setStreamingProcessor(processor.getName());
         }
@@ -364,10 +375,13 @@ public class Vision extends BunyipsComponent {
     /**
      * Stop the VisionSender thread to stop sending all processor data to FtcDashboard.
      * This method is effectively called automatically when the OpMode is no longer active.
+     *
+     * @see SwitchableVisionSender
      */
-    public void stopDashboardSender() {
+    public void stopPreview() {
         if (visionSender != null) {
             Threads.stop(visionSender);
+            visionSender = null;
         }
     }
 
@@ -392,7 +406,7 @@ public class Vision extends BunyipsComponent {
         }
 
         @Override
-        public void onFrameDraw(Canvas canvas) {
+        public void onFrameDraw(Canvas canvas, Object userContext) {
             // no-op
         }
     }

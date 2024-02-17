@@ -9,6 +9,9 @@ import java.util.HashMap;
  * @see While
  */
 public class Threads {
+    private Threads() {
+    }
+
     private static final HashMap<Integer, Thread> threads = new HashMap<>();
 
     /**

@@ -11,6 +11,9 @@ import java.util.List;
  * Utility functions for log files.
  */
 public class LoggingUtil {
+    private LoggingUtil() {
+    }
+
     public static final File ROAD_RUNNER_FOLDER =
             new File(AppUtil.ROOT_FOLDER + "/RoadRunner/");
 

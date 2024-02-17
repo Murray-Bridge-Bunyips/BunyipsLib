@@ -15,6 +15,9 @@ import java.util.List;
  * @see ErrorUtil
  */
 public class NullSafety {
+    private NullSafety() {
+    }
+
     public static final List<String> unusableComponents = new ArrayList<>();
 
     /**

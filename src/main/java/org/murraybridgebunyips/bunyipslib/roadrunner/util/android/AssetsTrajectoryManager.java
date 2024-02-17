@@ -18,6 +18,9 @@ import java.io.InputStream;
  */
 public class AssetsTrajectoryManager {
 
+    private AssetsTrajectoryManager() {
+    }
+
     /**
      * Loads the group config.
      */
