@@ -114,8 +114,8 @@ public class GLaDOSCommandBasedAlignToPixelTest extends CommandBasedBunyipsOpMod
         vision.init(pixels, vision.raw);
         vision.start(pixels, vision.raw);
 
-        // Full FtcDashboard integrations
-        vision.startDashboardSender();
+        // Full FtcDashboard integrations for individual processor stream previews
+        vision.startPreview();
     }
 
     @Override
@@ -198,7 +198,7 @@ public class PlacePixel extends RoadRunnerAutonomousBunyipsOpMode<MecanumDrive> 
         vision.start(whitePixelProcessor);
 
         // Optionally send all feeds to FtcDashboard, can switch between processor feeds for debugging
-        // vision.startDashboardSender();
+        // vision.startPreview();
 
         addTelemetry("Hello world!"); // Full telemetry utilities with FtcDashboard
         addRetainedTelemetry("Greetings, world.");
