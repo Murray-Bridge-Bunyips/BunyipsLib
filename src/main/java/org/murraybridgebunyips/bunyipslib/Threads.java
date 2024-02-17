@@ -9,10 +9,10 @@ import java.util.HashMap;
  * @see While
  */
 public class Threads {
+    private static final HashMap<Integer, Thread> threads = new HashMap<>();
+
     private Threads() {
     }
-
-    private static final HashMap<Integer, Thread> threads = new HashMap<>();
 
     /**
      * Start a new thread with the given task.

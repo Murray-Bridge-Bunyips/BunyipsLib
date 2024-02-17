@@ -89,5 +89,7 @@ public class SwitchableVisionSender implements Runnable {
             FtcDashboard.getInstance().startCameraStream(currentProcessor, MAX_FPS);
             CameraStreamServer.getInstance().setSource(currentProcessor);
         }
+        FtcDashboard.getInstance().stopCameraStream();
+        CameraStreamServer.getInstance().setSource(null);
     }
 }

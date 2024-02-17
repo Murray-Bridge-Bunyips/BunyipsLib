@@ -51,6 +51,9 @@ public class Text {
      * Round a number to a certain number of decimal points.
      */
     public static double round(double num, int toDecimalPlaces) {
+        if (toDecimalPlaces == 0) {
+            return Math.round(num);
+        }
         // noinspection MalformedFormatString
         return Double.parseDouble(String.format(Locale.getDefault(), "%." + toDecimalPlaces + "f", num));
     }
@@ -59,8 +62,7 @@ public class Text {
      * Round a number to a certain number of decimal points.
      */
     public static float round(float num, int toDecimalPlaces) {
-        // noinspection MalformedFormatString
-        return Float.parseFloat(String.format(Locale.getDefault(), "%." + toDecimalPlaces + "f", num));
+        return (float) round((double) num, toDecimalPlaces);
     }
 
     /**
@@ -70,7 +72,7 @@ public class Text {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         // Keep going down the stack trace until we leave the BunyipsLib package
         for (StackTraceElement stackTraceElement : stackTrace) {
-            if ("getStackTrace".equals(stackTraceElement.getMethodName())) continue;
+            if (stackTraceElement.getMethodName().equals("getStackTrace")) continue;
             // If porting, ensure the string below is set to the package name of BunyipsLib
             if (!stackTraceElement.getClassName().startsWith("org.murraybridgebunyips.bunyipslib")) {
                 return stackTraceElement;

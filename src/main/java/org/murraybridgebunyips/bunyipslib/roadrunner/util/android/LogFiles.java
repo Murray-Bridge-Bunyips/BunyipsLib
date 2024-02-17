@@ -30,12 +30,8 @@ import java.util.Objects;
 import fi.iki.elonen.NanoHTTPD;
 
 public final class LogFiles {
-    private LogFiles() {
-    }
-
     private static final File ROOT =
             new File(AppUtil.ROOT_FOLDER + "/RoadRunner/logs/");
-
     public static LogFile log = new LogFile("uninitialized");
     private static final OpModeManagerNotifier.Notifications notifHandler = new OpModeManagerNotifier.Notifications() {
         @SuppressLint("SimpleDateFormat")
@@ -90,6 +86,9 @@ public final class LogFiles {
             }
         }
     };
+
+    private LogFiles() {
+    }
 
     public static void record(
             Pose2d targetPose, Pose2d pose, double voltage,

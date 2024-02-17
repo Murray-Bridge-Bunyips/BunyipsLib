@@ -1,6 +1,8 @@
 package org.murraybridgebunyips.bunyipslib.vision;
 
 
+import static org.murraybridgebunyips.bunyipslib.Text.round;
+
 import android.graphics.Canvas;
 import android.util.Size;
 
@@ -8,7 +10,8 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.murraybridgebunyips.bunyipslib.BunyipsComponent;
+import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
+import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.Threads;
 import org.murraybridgebunyips.bunyipslib.vision.data.VisionData;
 import org.opencv.core.Mat;
@@ -18,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Component wrapper to support the v8.2+ SDK's included libraries for Camera operation.
@@ -25,15 +29,16 @@ import java.util.Objects;
  * <p>
  * You will pass your own processors that you manage, and Vision will handle the data collection.
  * <p>
- * Vision is not a traditional subsystem, as it runs on another thread and updates are
- * managed at the discretion of the VisionPortal. Once set up, Vision will automatically
- * manage the camera stream and defined processor updates. All you will need to do is collect
- * the data from the processors and use it in your OpMode.
+ * Vision is not a traditional subsystem where updates are propagated on the main thread,
+ * as processing is on another thread and updates are managed at the discretion of the VisionPortal.
+ * Once set up, Vision will automatically manage the camera stream and defined processor updates.
+ * All you will need to do is collect the data from the processors and use it in your OpMode. The
+ * update() method in this subsystem will simply add telemetry of the VisionPortal's status.
  *
  * @author Lucas Bubner, 2023
  */
 @Config
-public class Vision extends BunyipsComponent {
+public class Vision extends BunyipsSubsystem {
     public static int CAMERA_WIDTH = 640;
     public static int CAMERA_HEIGHT = 480;
     // Static: only one sender can be active at a time
@@ -53,10 +58,12 @@ public class Vision extends BunyipsComponent {
         // Allow the user to set the camera resolution if they want
         CAMERA_WIDTH = cameraWidth;
         CAMERA_HEIGHT = cameraHeight;
+        // Vision itself is generally never used with tasks, so we can mute the scheduler reports
+        muteTaskReports();
     }
 
     public Vision(CameraName camera) {
-        this.camera = camera;
+        this(camera, CAMERA_WIDTH, CAMERA_HEIGHT);
     }
 
     /**
@@ -78,7 +85,7 @@ public class Vision extends BunyipsComponent {
     @SuppressWarnings("rawtypes")
     public void init(Processor... processors) {
         if (visionPortal != null) {
-            opMode.log("WARNING: Vision already initialised! Tearing down...");
+            Dbg.logd(getClass(), "WARNING: Vision already initialised! Tearing down...");
             terminate();
         }
 
@@ -105,8 +112,14 @@ public class Vision extends BunyipsComponent {
             }
             builder.addProcessor(processor);
             processor.setAttached(true);
-            opMode.log("vision processor '%' initialised.", processor.getName());
+            Dbg.logd(getClass(), "vision processor '%' initialised.", processor.getName());
         }
+
+        // Since Vision is usually called from the init-cycle, we can try to fit in some telemetry
+        opMode.addTelemetry(
+                "Vision: % processor(s) initialised.",
+                Arrays.stream(processors).map(Processor::getName).collect(Collectors.toList())
+        );
 
         visionPortal = builder
                 .setCamera(camera)
@@ -126,7 +139,7 @@ public class Vision extends BunyipsComponent {
             visionPortal.setProcessorEnabled(processor, false);
         }
 
-        opMode.log("visionportal ready.");
+        Dbg.logd(getClass(), "visionportal ready.");
     }
 
     /**
@@ -146,7 +159,7 @@ public class Vision extends BunyipsComponent {
                 visionPortal.getCameraState() == VisionPortal.CameraState.STOPPING_STREAM) {
             // Note if the camera state is STOPPING_STREAM, it will block the thread until the
             // stream is resumed. This is a documented operation in the SDK.
-            opMode.log("visionportal restarting...");
+            Dbg.logd(getClass(), "visionportal restarting...");
             visionPortal.resumeStreaming();
         }
 
@@ -158,7 +171,7 @@ public class Vision extends BunyipsComponent {
                 throw new IllegalStateException("Vision: Tried to start a processor that was not initialised!");
             }
             visionPortal.setProcessorEnabled(processor, true);
-            opMode.log("vision processor '%' started.", processor.getName());
+            Dbg.logd(getClass(), "vision processor '%' started.", processor.getName());
         }
     }
 
@@ -194,7 +207,7 @@ public class Vision extends BunyipsComponent {
                 throw new IllegalStateException("Vision: Tried to stop a processor that was not initialised!");
             }
             visionPortal.setProcessorEnabled(processor, false);
-            opMode.log("vision processor '%' paused.", processor.getName());
+            Dbg.logd(getClass(), "vision processor '%' paused.", processor.getName());
         }
     }
 
@@ -207,7 +220,7 @@ public class Vision extends BunyipsComponent {
         }
         // Pause the processor, this will also auto-close any VisionProcessors
         visionPortal.stopStreaming();
-        opMode.log("visionportal stopped.");
+        Dbg.logd(getClass(), "visionportal stopped.");
     }
 
     /**
@@ -249,7 +262,7 @@ public class Vision extends BunyipsComponent {
         }
         visionPortal.close();
         visionPortal = null;
-        opMode.log("visionportal terminated.");
+        Dbg.logd(getClass(), "visionportal terminated.");
     }
 
     /**
@@ -271,7 +284,7 @@ public class Vision extends BunyipsComponent {
                 throw new IllegalStateException("Vision: Tried to flip a processor that was not initialised!");
             }
             processor.setFlipped(!processor.isFlipped());
-            opMode.log("vision processor '%' flipped %.", processor.getName(), processor.isFlipped() ? "upside-down" : "right-side up");
+            Dbg.logd(getClass(), "vision processor '%' flipped %.", processor.getName(), processor.isFlipped() ? "upside-down" : "right-side up");
         }
     }
 
@@ -286,7 +299,7 @@ public class Vision extends BunyipsComponent {
         }
         for (Processor processor : processors) {
             processor.setFlipped(!processor.isFlipped());
-            opMode.log("vision processor '%' flipped %.", processor.getName(), processor.isFlipped() ? "upside-down" : "right-side up");
+            Dbg.logd(getClass(), "vision processor '%' flipped %.", processor.getName(), processor.isFlipped() ? "upside-down" : "right-side up");
         }
     }
 
@@ -382,6 +395,19 @@ public class Vision extends BunyipsComponent {
         if (visionSender != null) {
             Threads.stop(visionSender);
             visionSender = null;
+        }
+    }
+
+    @Override
+    public void update() {
+        if (visionPortal != null) {
+            opMode.addTelemetry(
+                    "Vision: % | % fps | %/% processors",
+                    visionPortal.getCameraState(),
+                    (int) round(visionPortal.getFps(), 0),
+                    processors.stream().filter((p) -> visionPortal.getProcessorEnabled(p)).count(),
+                    processors.size()
+            );
         }
     }
 

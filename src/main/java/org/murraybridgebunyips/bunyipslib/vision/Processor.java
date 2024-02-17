@@ -41,7 +41,6 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
     private final AtomicReference<Bitmap> lastFrame =
             new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
 
-    protected volatile Object userContext;
     private volatile Mat frame = new Mat();
 
     /**

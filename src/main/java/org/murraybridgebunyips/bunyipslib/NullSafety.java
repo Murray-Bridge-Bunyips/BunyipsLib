@@ -15,10 +15,10 @@ import java.util.List;
  * @see ErrorUtil
  */
 public class NullSafety {
+    public static final List<String> unusableComponents = new ArrayList<>();
+
     private NullSafety() {
     }
-
-    public static final List<String> unusableComponents = new ArrayList<>();
 
     /**
      * Ensure that all objects are not null.
