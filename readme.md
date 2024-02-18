@@ -96,7 +96,7 @@ public class MyTeleOp extends BunyipsOpMode {
 Are you more of a fan of full-command-based systems? We've brewed our own command scheduler with full integrations with our ecosystem.
 ```java
 @TeleOp(name = "Align To Pixel (Command Based)")
-public class GLaDOSCommandBasedAlignToPixelTest extends CommandBasedBunyipsOpMode {
+public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
     private final MyBotConfig config = new MyBotConfig();
 
     private MecanumDrive drive;
@@ -177,7 +177,7 @@ public class RunArmFor extends Task {
 All with full RoadRunner utilities, runtime OpMode selectors, and much more.
 ```java
 @Autonomous(name = "Place a Pixel")
-public class PlacePixel extends RoadRunnerAutonomousBunyipsOpMode<MecanumDrive> {
+public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumDrive> {
     private final MyBotConfig config = new MyBotConfig();
 
     private MyArm arm;
