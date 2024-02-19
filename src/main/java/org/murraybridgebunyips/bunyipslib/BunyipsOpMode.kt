@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib
 
 import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.robotcore.external.Telemetry
@@ -30,6 +31,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
     private val telemetryObjects = mutableListOf<Item>()
     private val logItems = mutableListOf<String>()
     private val extraDashboardItems = mutableListOf<Pair<String, String>>()
+    private var packet: TelemetryPacket? = TelemetryPacket()
 
     companion object {
         /**
@@ -261,24 +263,33 @@ abstract class BunyipsOpMode : LinearOpMode() {
         overheadTelemetry.setValue("BOM: $overheadStatus")
 
         // FtcDashboard
-        val packet = TelemetryPacket(false)
-        packet.put("BOM", overheadStatus + "\n")
-        for ((key, value) in extraDashboardItems) {
-            packet.put(key, value)
+        if (packet == null) {
+            packet = TelemetryPacket()
         }
-        // Copy with toList() to avoid ConcurrentModificationExceptions
-        telemetryObjects.toList().forEachIndexed { index, item ->
-            packet.put("DS$index", item.caption)
-        }
-        logItems.toList().forEachIndexed { index, item ->
-            if (index == 0) {
-                // BunyipsLib info, this is an always log
-                packet.put("INFO", item)
-                return@forEachIndexed
+
+        packet?.let {
+            it.put("BOM", overheadStatus + "\n")
+            for ((key, value) in extraDashboardItems) {
+                it.put(key, value)
             }
-            packet.put("LOG$index", item)
+            // Copy with toList() to avoid ConcurrentModificationExceptions
+            telemetryObjects.toList().forEachIndexed { index, item ->
+                it.put("DS$index", item.caption)
+            }
+            logItems.toList().forEachIndexed { index, item ->
+                if (index == 0) {
+                    // BunyipsLib info, this is an always log
+                    it.put("INFO", item)
+                    return@forEachIndexed
+                }
+                it.put("LOG$index", item)
+            }
+
+            FtcDashboard.getInstance().sendTelemetryPacket(it)
+
+            // Invalidate this packet
+            packet = null
         }
-        FtcDashboard.getInstance().sendTelemetryPacket(packet)
 
         if (telemetry.isAutoClear) {
             telemetryQueue = 0
@@ -289,11 +300,23 @@ abstract class BunyipsOpMode : LinearOpMode() {
     /**
      * Add any additional telemetry to the FtcDashboard telemetry packet.
      */
-    fun addDashboardTelemetry(key: String, value: String) {
-        if (extraDashboardItems.contains(Pair(key, value))) {
-            extraDashboardItems.remove(Pair(key, value))
+    fun addDashboardTelemetry(key: String, value: Any) {
+        if (extraDashboardItems.contains(Pair(key, value.toString()))) {
+            extraDashboardItems.remove(Pair(key, value.toString()))
         }
-        extraDashboardItems.add(Pair(key, value))
+        extraDashboardItems.add(Pair(key, value.toString()))
+    }
+
+    /**
+     * Add any field overlay data to the FtcDashbaord telemetry packet.
+     */
+    fun fieldOverlay(): Canvas {
+        // This will allow us to attach any field overlay data to the packet
+        // as we will only reassign if the packet is null
+        if (packet == null) {
+            packet = TelemetryPacket()
+        }
+        return packet!!.fieldOverlay()
     }
 
     /**

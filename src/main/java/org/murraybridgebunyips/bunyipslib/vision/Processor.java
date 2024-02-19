@@ -150,7 +150,7 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
     /**
      * Called by the vision system to draw on the frame.
      *
-     * @param canvas      the canvas to draw on
+     * @param canvas the canvas to draw on
      */
     public abstract void onFrameDraw(Canvas canvas);
 
