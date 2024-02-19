@@ -193,12 +193,7 @@ public abstract class PathRecorder extends BunyipsOpMode {
         }
         sb.append("    .build();");
 
-        // FtcDashboard
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.put("Generated path:\n", sb.toString());
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
-        // DS
+        // DS + FtcDashboard
         resetTelemetry();
         addRetainedTelemetry("Generated path:\n" + sb);
         pushTelemetry();

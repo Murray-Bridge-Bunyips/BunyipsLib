@@ -261,7 +261,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
         overheadTelemetry.setValue("BOM: $overheadStatus")
 
         // FtcDashboard
-        val packet = TelemetryPacket()
+        val packet = TelemetryPacket(false)
         packet.put("BOM", overheadStatus + "\n")
         for ((key, value) in extraDashboardItems) {
             packet.put(key, value)
