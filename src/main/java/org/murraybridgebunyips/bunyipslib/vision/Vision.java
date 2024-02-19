@@ -131,8 +131,11 @@ public class Vision extends BunyipsSubsystem {
                 // the startPreview() method to enable the VisionSender. By default, the DS Camera Stream
                 // will show a raw feed from the camera, and the FtcDashboard feed will be disabled.
                 .enableLiveView(false)
+                .setShowStatsOverlay(false)
                 // Set any additional VisionPortal settings here
                 .build();
+
+        visionPortal.stopLiveView();
 
         // Disable the vision processors by default. The OpMode must call start() to enable them.
         for (Processor processor : this.processors) {
@@ -218,7 +221,7 @@ public class Vision extends BunyipsSubsystem {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
         }
-        // Pause the processor, this will also auto-close any VisionProcessors
+        // Pause the VisionPortal, this will stagnate any attached processors
         visionPortal.stopStreaming();
         Dbg.logd(getClass(), "visionportal stopped.");
     }
@@ -427,12 +430,12 @@ public class Vision extends BunyipsSubsystem {
         }
 
         @Override
-        public Object onProcessFrame(Mat frame, long captureTimeNanos) {
-            return frame;
+        public void onProcessFrame(Mat frame, long captureTimeNanos) {
+            // no-op
         }
 
         @Override
-        public void onFrameDraw(Canvas canvas, Object userContext) {
+        public void onFrameDraw(Canvas canvas) {
             // no-op
         }
     }

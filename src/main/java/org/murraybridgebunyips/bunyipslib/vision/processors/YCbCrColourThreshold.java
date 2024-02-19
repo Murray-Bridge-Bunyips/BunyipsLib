@@ -54,7 +54,7 @@ public abstract class YCbCrColourThreshold extends Processor<ContourData> {
     }
 
     @Override
-    public final Object onProcessFrame(Mat frame, long captureTimeNanos) {
+    public final void onProcessFrame(Mat frame, long captureTimeNanos) {
         /*
          * Converts our input mat from RGB to
          * specified color space by the enum.
@@ -113,28 +113,24 @@ public abstract class YCbCrColourThreshold extends Processor<ContourData> {
         binaryMat.release();
         ycrcbMat.release();
         hierarchy.release();
-
-        return frame;
     }
 
     @Override
-    public final void onFrameDraw(Canvas canvas, Object userContext) {
+    public final void onFrameDraw(Canvas canvas) {
         // Draw borders around the contours, with a thicker border for the largest contour
-        synchronized (data) {
-            ContourData biggest = ContourData.getLargest(data);
-            for (ContourData contour : data) {
-                canvas.drawRect(
-                        contour.getBoundingRect().x,
-                        contour.getBoundingRect().y,
-                        contour.getBoundingRect().x + contour.getBoundingRect().width,
-                        contour.getBoundingRect().y + contour.getBoundingRect().height,
-                        new Paint() {{
-                            setColor(getBoxColour());
-                            setStyle(Style.STROKE);
-                            setStrokeWidth(contour == biggest ? ACTIVE_THICKNESS : PASSIVE_THICKNESS);
-                        }}
-                );
-            }
+        ContourData biggest = ContourData.getLargest(data);
+        for (ContourData contour : data) {
+            canvas.drawRect(
+                    contour.getBoundingRect().x,
+                    contour.getBoundingRect().y,
+                    contour.getBoundingRect().x + contour.getBoundingRect().width,
+                    contour.getBoundingRect().y + contour.getBoundingRect().height,
+                    new Paint() {{
+                        setColor(getBoxColour());
+                        setStyle(Style.STROKE);
+                        setStrokeWidth(contour == biggest ? ACTIVE_THICKNESS : PASSIVE_THICKNESS);
+                    }}
+            );
         }
     }
 }

@@ -46,7 +46,7 @@ public class MultiYCbCrThreshold extends Processor<ContourData> {
     }
 
     @Override
-    public Object onProcessFrame(Mat frame, long captureTimeNanos) {
+    public void onProcessFrame(Mat frame, long captureTimeNanos) {
         for (Pair<YCbCrColourThreshold, Mat> processor : colourProcessors) {
             frame.copyTo(processor.second);
             processor.first.onProcessFrame(processor.second, captureTimeNanos);
@@ -54,13 +54,12 @@ public class MultiYCbCrThreshold extends Processor<ContourData> {
         if (!colourProcessors.isEmpty() && MASK >= 1 && MASK <= colourProcessors.size()) {
             colourProcessors.get(MASK - 1).second.copyTo(frame);
         }
-        return frame;
     }
 
     @Override
-    public void onFrameDraw(Canvas canvas, Object userContext) {
+    public void onFrameDraw(Canvas canvas) {
         for (Pair<YCbCrColourThreshold, Mat> processor : colourProcessors) {
-            processor.first.onFrameDraw(canvas, userContext);
+            processor.first.onFrameDraw(canvas);
         }
     }
 }

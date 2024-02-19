@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class AprilTag extends Processor<AprilTagData> {
     private final AprilTagProcessor instance;
+    private volatile Object atCtx;
 
     /**
      * Will use the provided camera calibration
@@ -98,12 +99,12 @@ public class AprilTag extends Processor<AprilTagData> {
     }
 
     @Override
-    public Object onProcessFrame(Mat frame, long captureTimeNanos) {
-        return instance.processFrame(frame, captureTimeNanos);
+    public void onProcessFrame(Mat frame, long captureTimeNanos) {
+        atCtx = instance.processFrame(frame, captureTimeNanos);
     }
 
     @Override
-    public void onFrameDraw(Canvas canvas, Object userContext) {
-        instance.onDrawFrame(canvas, Vision.CAMERA_WIDTH, Vision.CAMERA_HEIGHT, 1.0f, 1.0f, userContext);
+    public void onFrameDraw(Canvas canvas) {
+        instance.onDrawFrame(canvas, Vision.CAMERA_WIDTH, Vision.CAMERA_HEIGHT, 1.0f, 1.0f, atCtx);
     }
 }
