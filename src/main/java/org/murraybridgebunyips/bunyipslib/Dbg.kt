@@ -51,7 +51,7 @@ object Dbg {
      * @param message message to error
      */
     @JvmStatic
-    fun error(message: String) {
+    fun error(message: Any) {
         RobotLog.ee(TAG, "$ERR_PREPEND $message")
     }
 
@@ -63,7 +63,7 @@ object Dbg {
      * @param message message to error
      */
     @JvmStatic
-    fun error(obj: Class<*>, message: String) {
+    fun error(obj: Class<*>, message: Any) {
         RobotLog.ee(TAG, "$ERR_PREPEND [${obj.simpleName}] $message")
     }
 
@@ -75,7 +75,7 @@ object Dbg {
      * @param message message to error
      */
     @JvmStatic
-    fun error(stck: StackTraceElement, message: String) {
+    fun error(stck: StackTraceElement, message: Any) {
         RobotLog.ee(TAG, "$ERR_PREPEND [$stck] $message")
     }
 
@@ -108,7 +108,7 @@ object Dbg {
      * @param message message to warn
      */
     @JvmStatic
-    fun warn(message: String) {
+    fun warn(message: Any) {
         RobotLog.ww(TAG, "$WRN_PREPEND $message")
     }
 
@@ -120,7 +120,7 @@ object Dbg {
      * @param message message to warn
      */
     @JvmStatic
-    fun warn(obj: Class<*>, message: String) {
+    fun warn(obj: Class<*>, message: Any) {
         RobotLog.ww(TAG, "$WRN_PREPEND [${obj.simpleName}] $message")
     }
 
@@ -132,7 +132,7 @@ object Dbg {
      * @param message message to warn
      */
     @JvmStatic
-    fun warn(stck: StackTraceElement, message: String) {
+    fun warn(stck: StackTraceElement, message: Any) {
         RobotLog.ww(TAG, "$WRN_PREPEND [$stck] $message")
     }
 
@@ -152,8 +152,8 @@ object Dbg {
      * @param message message to log
      */
     @JvmStatic
-    fun logd(message: String) {
-        RobotLog.dd(TAG, message)
+    fun logd(message: Any) {
+        RobotLog.dd(TAG, message.toString())
     }
 
     /**
@@ -163,7 +163,7 @@ object Dbg {
      * @param message message to log
      */
     @JvmStatic
-    fun logd(obj: Class<*>, message: String) {
+    fun logd(obj: Class<*>, message: Any) {
         RobotLog.dd(TAG, "[${obj.simpleName}] $message")
     }
 
@@ -174,7 +174,7 @@ object Dbg {
      * @param message message to log
      */
     @JvmStatic
-    fun logd(stck: StackTraceElement, message: String) {
+    fun logd(stck: StackTraceElement, message: Any) {
         RobotLog.dd(TAG, "[$stck] $message")
     }
 
@@ -194,8 +194,8 @@ object Dbg {
      * @param message message to log
      */
     @JvmStatic
-    fun log(message: String) {
-        RobotLog.ii(TAG, message)
+    fun log(message: Any) {
+        RobotLog.ii(TAG, message.toString())
     }
 
     /**
@@ -205,7 +205,7 @@ object Dbg {
      * @param message message to log
      */
     @JvmStatic
-    fun log(obj: Class<*>, message: String) {
+    fun log(obj: Class<*>, message: Any) {
         RobotLog.ii(TAG, "[${obj.simpleName}] $message")
     }
 
@@ -216,7 +216,7 @@ object Dbg {
      * @param message message to log
      */
     @JvmStatic
-    fun log(stck: StackTraceElement, message: String) {
+    fun log(stck: StackTraceElement, message: Any) {
         RobotLog.ii(TAG, "[$stck] $message")
     }
 

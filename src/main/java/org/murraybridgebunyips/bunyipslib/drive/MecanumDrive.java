@@ -41,7 +41,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final IMU imu;
 
     public MecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, HardwareMap.DeviceMapping<VoltageSensor> voltageSensor, IMU imu, DcMotorEx fl, DcMotorEx fr, DcMotorEx bl, DcMotorEx br) {
-        drive = new MecanumRoadRunnerDrive(constants, mecanumCoefficients, voltageSensor, imu, fl, fr, bl, br);
+        drive = new MecanumRoadRunnerDrive(opMode, constants, mecanumCoefficients, voltageSensor, imu, fl, fr, bl, br);
         // If we have a last known position, set the pose estimate to it
         if (RobotConfig.getLastKnownPosition() != null) {
             drive.setPoseEstimate(RobotConfig.getLastKnownPosition());

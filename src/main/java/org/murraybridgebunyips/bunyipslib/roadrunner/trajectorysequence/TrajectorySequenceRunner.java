@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
@@ -62,7 +63,7 @@ public class TrajectorySequenceRunner {
     private Pose2d lastPoseError = new Pose2d();
 
     public TrajectorySequenceRunner(
-            BunyipsOpMode opMode, boolean driveConstantsRunUsingEncoder, TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients, VoltageSensor voltageSensor,
+            @Nullable BunyipsOpMode opMode, boolean driveConstantsRunUsingEncoder, TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients, VoltageSensor voltageSensor,
             List<Integer> lastDriveEncPositions, List<Integer> lastDriveEncVels, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels
     ) {
         this.opMode = opMode;
@@ -213,15 +214,31 @@ public class TrajectorySequenceRunner {
             );
         }
 
-        opMode.addDashboardTelemetry("x", poseEstimate.getX());
-        opMode.addDashboardTelemetry("y", poseEstimate.getY());
-        opMode.addDashboardTelemetry("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
+        if (opMode != null) {
+            opMode.addDashboardTelemetry("x", poseEstimate.getX());
+            opMode.addDashboardTelemetry("y", poseEstimate.getY());
+            opMode.addDashboardTelemetry("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
 
-        opMode.addDashboardTelemetry("xError", lastPoseError.getX());
-        opMode.addDashboardTelemetry("yError", lastPoseError.getY());
-        opMode.addDashboardTelemetry("headingError (deg)", Math.toDegrees(lastPoseError.getHeading()));
+            opMode.addDashboardTelemetry("xError", lastPoseError.getX());
+            opMode.addDashboardTelemetry("yError", lastPoseError.getY());
+            opMode.addDashboardTelemetry("headingError (deg)", Math.toDegrees(lastPoseError.getHeading()));
 
-        draw(opMode.fieldOverlay(), currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
+            draw(opMode.fieldOverlay(), currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
+        } else {
+            // Using normal OpMode, we can send packets directly
+            TelemetryPacket packet = new TelemetryPacket();
+            Canvas fieldOverlay = packet.fieldOverlay();
+
+            packet.put("x", poseEstimate.getX());
+            packet.put("y", poseEstimate.getY());
+            packet.put("heading (deg)", Math.toDegrees(poseEstimate.getHeading()));
+            packet.put("xError", lastPoseError.getX());
+            packet.put("yError", lastPoseError.getY());
+            packet.put("headingError (deg)", Math.toDegrees(lastPoseError.getHeading()));
+
+            draw(fieldOverlay, currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
+            dashboard.sendTelemetryPacket(packet);
+        }
 
         return driveSignal;
     }

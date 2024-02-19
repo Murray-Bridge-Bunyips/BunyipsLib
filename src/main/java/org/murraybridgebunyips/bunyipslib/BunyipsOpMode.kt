@@ -3,6 +3,7 @@ package org.murraybridgebunyips.bunyipslib
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.Telemetry.Item
@@ -28,10 +29,14 @@ abstract class BunyipsOpMode : LinearOpMode() {
     private var opModeStatus = "idle"
     private lateinit var overheadTelemetry: Item
     private var telemetryQueue = 0
-    private val telemetryObjects = mutableListOf<Item>()
-    private val logItems = mutableListOf<String>()
-    private val extraDashboardItems = mutableListOf<Pair<String, String>>()
+    private val telemetryItems = mutableSetOf<Pair<ItemType, String>>()
     private var packet: TelemetryPacket? = TelemetryPacket()
+
+    private enum class ItemType {
+        TELEMETRY,
+        RETAINED_TELEMETRY,
+        LOG
+    }
 
     companion object {
         /**
@@ -100,10 +105,18 @@ abstract class BunyipsOpMode : LinearOpMode() {
         try {
             Dbg.log("=============== BunyipsLib BunyipsOpMode ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME} uid:${BuildConfig.ID} ===============")
             LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap)
+            hardwareMap.getAll(LynxModule::class.java).forEach { module ->
+                module.bulkCachingMode = LynxModule.BulkCachingMode.AUTO
+            }
             // Separate log from telemetry on the DS with an empty line
             telemetry.log().add("")
             telemetry.log().add("bunyipslib ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME}")
-            logItems.add("bunyipslib ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME}")
+            telemetryItems.add(
+                Pair(
+                    ItemType.LOG,
+                    "bunyipslib ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME}"
+                )
+            )
 
             opModeStatus = "setup"
             Dbg.logd("BunyipsOpMode: setting up...")
@@ -269,20 +282,23 @@ abstract class BunyipsOpMode : LinearOpMode() {
 
         packet?.let {
             it.put("BOM", overheadStatus + "\n")
-            for ((key, value) in extraDashboardItems) {
-                it.put(key, value)
-            }
+
             // Copy with toList() to avoid ConcurrentModificationExceptions
-            telemetryObjects.toList().forEachIndexed { index, item ->
-                it.put("DS$index", item.caption)
-            }
-            logItems.toList().forEachIndexed { index, item ->
-                if (index == 0) {
-                    // BunyipsLib info, this is an always log
-                    it.put("INFO", item)
-                    return@forEachIndexed
+            telemetryItems.toList().forEachIndexed { index, pair ->
+                val (type, value) = pair
+                when (type) {
+                    ItemType.TELEMETRY, ItemType.RETAINED_TELEMETRY -> it.put("DS$index", value)
+                    ItemType.LOG -> {
+                        if (index == 0) {
+                            // BunyipsLib info, this is an always log and will always
+                            // be the first log in the list as it is added at the start
+                            // of the init cycle
+                            it.put("INFO", value)
+                            return@forEachIndexed
+                        }
+                        it.put("LOG$index", value)
+                    }
                 }
-                it.put("LOG$index", item)
             }
 
             FtcDashboard.getInstance().sendTelemetryPacket(it)
@@ -301,10 +317,10 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * Add any additional telemetry to the FtcDashboard telemetry packet.
      */
     fun addDashboardTelemetry(key: String, value: Any) {
-        if (extraDashboardItems.contains(Pair(key, value.toString()))) {
-            extraDashboardItems.remove(Pair(key, value.toString()))
+        if (packet == null) {
+            packet = TelemetryPacket()
         }
-        extraDashboardItems.add(Pair(key, value.toString()))
+        packet!!.put(key, value.toString())
     }
 
     /**
@@ -338,11 +354,14 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * Create a new telemetry object and add it to the management queue.
      */
     private fun createTelemetryItem(value: String, retained: Boolean): Item {
-        // Must store everything in the caption as the value cannot be accessed,
-        // and all formatting is already done via BunyipsLib
-        val item = telemetry.addData(value, "")
+        val item = telemetry.addData("", value)
             .setRetained(retained)
-        telemetryObjects.add(item)
+        telemetryItems.add(
+            Pair(
+                if (retained) ItemType.RETAINED_TELEMETRY else ItemType.TELEMETRY,
+                value
+            )
+        )
         return item
     }
 
@@ -350,11 +369,11 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * Clear all telemetry objects from the management queue just like a telemetry.clear() call.
      */
     private fun clearTelemetryObjects() {
-        val tmp = telemetryObjects.toTypedArray()
+        val tmp = telemetryItems.toTypedArray()
         for (item in tmp) {
-            if (item.isRetained)
+            if (item.first == ItemType.RETAINED_TELEMETRY)
                 continue
-            telemetryObjects.remove(item)
+            telemetryItems.remove(item)
         }
     }
 
@@ -398,10 +417,10 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * @param value A string to add to telemetry
      * @return The telemetry item added to the Driver Station
      */
-    fun addRetainedTelemetry(value: String): Item {
+    fun addRetainedTelemetry(value: Any): Item {
         flushTelemetryQueue()
         // Retained telemetry will never be auto-cleared so we'll just send the object now
-        return createTelemetryItem(value, true)
+        return createTelemetryItem(value.toString(), true)
     }
 
     /**
@@ -436,9 +455,9 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * Log a message to the telemetry log
      * @param message The message to log
      */
-    fun log(message: String) {
-        telemetry.log().add(message)
-        logItems.add(message)
+    fun log(message: Any) {
+        telemetry.log().add(message.toString())
+        telemetryItems.add(Pair(ItemType.LOG, message.toString()))
     }
 
     /**
@@ -455,10 +474,10 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * @param obj Class where this log was called (name will be prepended to message in lowercase)
      * @param message The message to log
      */
-    fun log(obj: Class<*>, message: String) {
+    fun log(obj: Class<*>, message: Any) {
         val msg = "[${obj.simpleName.lowercase()}] $message"
         telemetry.log().add(msg)
-        logItems.add(msg)
+        telemetryItems.add(Pair(ItemType.LOG, msg))
     }
 
     /**
@@ -466,10 +485,10 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
      * @param message The message to log
      */
-    fun log(stck: StackTraceElement, message: String) {
+    fun log(stck: StackTraceElement, message: Any) {
         val msg = "[${stck}] $message"
         telemetry.log().add(msg)
-        logItems.add(msg)
+        telemetryItems.add(Pair(ItemType.LOG, msg))
     }
 
     /**
@@ -498,7 +517,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
     fun resetTelemetry() {
         telemetryQueue = 0
         telemetry.clearAll()
-        telemetryObjects.clear()
+        telemetryItems.clear()
         FtcDashboard.getInstance().clearTelemetry()
         // Must reassign the overhead telemetry item
         overheadTelemetry =
