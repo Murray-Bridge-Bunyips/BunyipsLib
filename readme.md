@@ -299,7 +299,7 @@ You will first need to install *Kotlin v1.9.20* using the guide provided by FIRS
 
 After you've done this, go to your `build.dependencies.gradle` file located in your top-level directory and paste the following dependencies in the `dependencies {}` block:
 ```gradle
-implementation 'com.acmerobotics.dashboard:dashboard:0.4.12'
+implementation 'com.acmerobotics.dashboard:dashboard:0.4.15'
 implementation 'org.apache.commons:commons-math3:3.6.1'
 implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
 implementation 'com.acmerobotics.roadrunner:core:0.5.6'
