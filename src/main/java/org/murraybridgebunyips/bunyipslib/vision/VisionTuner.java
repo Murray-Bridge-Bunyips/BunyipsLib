@@ -1,4 +1,4 @@
-package org.murraybridgebunyips.bunyipslib.visiontuner;
+package org.murraybridgebunyips.bunyipslib.vision;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
