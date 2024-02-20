@@ -223,7 +223,7 @@ public class TrajectorySequenceRunner {
             opMode.addDashboardTelemetry("yError", lastPoseError.getY());
             opMode.addDashboardTelemetry("headingError (deg)", Math.toDegrees(lastPoseError.getHeading()));
 
-            draw(opMode.fieldOverlay(), currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
+            draw(opMode.dashboardFieldOverlay(), currentTrajectorySequence, currentSegment, targetPose, poseEstimate);
         } else {
             // Using normal OpMode, we can send packets directly
             TelemetryPacket packet = new TelemetryPacket();

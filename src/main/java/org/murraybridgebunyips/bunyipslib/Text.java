@@ -21,6 +21,8 @@ public class Text {
      * {@code formatString("Hello %!", "world")} -> {@code "Hello world!"}
      */
     public static String formatString(String fstring, List<Object> objs) {
+        if (objs.isEmpty())
+            return fstring;
         // Replace all % with the strings in order
         int occurrences = 0;
         StringBuilder newString = new StringBuilder();
