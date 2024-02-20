@@ -356,12 +356,14 @@ abstract class BunyipsOpMode : LinearOpMode() {
     private fun createTelemetryItem(value: String, retained: Boolean): Item {
         val item = telemetry.addData("", value)
             .setRetained(retained)
-        telemetryItems.add(
-            Pair(
-                if (retained) ItemType.RETAINED_TELEMETRY else ItemType.TELEMETRY,
-                value
+        if (value.isNotBlank()) {
+            telemetryItems.add(
+                Pair(
+                    if (retained) ItemType.RETAINED_TELEMETRY else ItemType.TELEMETRY,
+                    value
+                )
             )
-        )
+        }
         return item
     }
 

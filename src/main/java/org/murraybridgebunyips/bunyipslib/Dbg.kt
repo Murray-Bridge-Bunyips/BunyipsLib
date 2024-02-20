@@ -48,11 +48,13 @@ object Dbg {
      * Log an error message.
      * Messages will be prepended with the ERROR_PREPEND string
      * Best used in a scenario where the program cannot continue normally or at required functionality
-     * @param message message to error
+     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
+     * @param format message to log
+     * @param args arguments to format the message with
      */
     @JvmStatic
-    fun error(message: Any) {
-        RobotLog.ee(TAG, "$ERR_PREPEND $message")
+    fun error(stck: StackTraceElement, format: String, vararg args: Any?) {
+        RobotLog.ee(TAG, "$ERR_PREPEND [$stck] ${formatString(format, *args)}")
     }
 
     /**
@@ -60,33 +62,24 @@ object Dbg {
      * Messages will be prepended with the ERROR_PREPEND string
      * Best used in a scenario where the program cannot continue normally or at required functionality
      * @param obj Class where this log was called (name will be prepended to message)
-     * @param message message to error
+     * @param format message to log
+     * @param args arguments to format the message with
      */
     @JvmStatic
-    fun error(obj: Class<*>, message: Any) {
-        RobotLog.ee(TAG, "$ERR_PREPEND [${obj.simpleName}] $message")
+    fun error(obj: Class<*>, format: String, vararg args: Any?) {
+        RobotLog.ee(TAG, "$ERR_PREPEND [${obj.simpleName}] ${formatString(format, *args)}")
     }
 
     /**
      * Log an error message.
      * Messages will be prepended with the ERROR_PREPEND string
      * Best used in a scenario where the program cannot continue normally or at required functionality
-     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
-     * @param message message to error
+     * @param format message to log
+     * @param args arguments to format the message with
      */
     @JvmStatic
-    fun error(stck: StackTraceElement, message: Any) {
-        RobotLog.ee(TAG, "$ERR_PREPEND [$stck] $message")
-    }
-
-    @JvmStatic
     fun error(format: String, vararg args: Any?) {
-        error(formatString(format, *args))
-    }
-
-    @JvmStatic
-    fun error(obj: Class<*>, format: String, vararg args: Any?) {
-        error(obj, formatString(format, *args))
+        RobotLog.ee(TAG, "$ERR_PREPEND ${formatString(format, *args)}")
     }
 
     /**
@@ -105,11 +98,13 @@ object Dbg {
      * Log a warning message.
      * Messages will be prepended with the WRN_PREPEND string
      * Best used in a scenario where the program can continue, but the user should be warned
-     * @param message message to warn
+     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
+     * @param format message to log
+     * @param args arguments to format the message with
      */
     @JvmStatic
-    fun warn(message: Any) {
-        RobotLog.ww(TAG, "$WRN_PREPEND $message")
+    fun warn(stck: StackTraceElement, format: String, vararg args: Any?) {
+        RobotLog.ww(TAG, "$WRN_PREPEND [$stck] ${formatString(format, *args)}")
     }
 
     /**
@@ -117,121 +112,93 @@ object Dbg {
      * Messages will be prepended with the WRN_PREPEND string
      * Best used in a scenario where the program can continue, but the user should be warned
      * @param obj Class where this log was called (name will be prepended to message)
-     * @param message message to warn
+     * @param format message to log
+     * @param args arguments to format the message with
      */
-    @JvmStatic
-    fun warn(obj: Class<*>, message: Any) {
-        RobotLog.ww(TAG, "$WRN_PREPEND [${obj.simpleName}] $message")
-    }
-
-    /**
-     * Log a warning message.
-     * Messages will be prepended with the WRN_PREPEND string
-     * Best used in a scenario where the program can continue, but the user should be warned
-     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
-     * @param message message to warn
-     */
-    @JvmStatic
-    fun warn(stck: StackTraceElement, message: Any) {
-        RobotLog.ww(TAG, "$WRN_PREPEND [$stck] $message")
-    }
-
-    @JvmStatic
-    fun warn(format: String, vararg args: Any?) {
-        warn(formatString(format, *args))
-    }
-
     @JvmStatic
     fun warn(obj: Class<*>, format: String, vararg args: Any?) {
-        warn(obj, formatString(format, *args))
+        RobotLog.ww(TAG, "$WRN_PREPEND [${obj.simpleName}] ${formatString(format, *args)}")
     }
 
     /**
-     * Log an internal debug message.
-     * Best used from critical classes to log internal state
-     * @param message message to log
+     * Log a warning message.
+     * Messages will be prepended with the WRN_PREPEND string
+     * Best used in a scenario where the program can continue, but the user should be warned
+     * @param format message to log
+     * @param args arguments to format the message with
      */
     @JvmStatic
-    fun logd(message: Any) {
-        RobotLog.dd(TAG, message.toString())
-    }
-
-    /**
-     * Log an internal debug message.
-     * Best used from critical classes to log internal state
-     * @param obj Class where this log was called (name will be prepended to message)
-     * @param message message to log
-     */
-    @JvmStatic
-    fun logd(obj: Class<*>, message: Any) {
-        RobotLog.dd(TAG, "[${obj.simpleName}] $message")
+    fun warn(format: String, vararg args: Any?) {
+        RobotLog.ww(TAG, "$WRN_PREPEND ${formatString(format, *args)}")
     }
 
     /**
      * Log an internal debug message.
      * Best used from critical classes to log internal state
      * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
-     * @param message message to log
+     * @param format message to log
+     * @param args arguments to format the message with
      */
     @JvmStatic
-    fun logd(stck: StackTraceElement, message: Any) {
-        RobotLog.dd(TAG, "[$stck] $message")
+    fun logd(stck: StackTraceElement, format: String, vararg args: Any?) {
+        RobotLog.dd(TAG, "[$stck] ${formatString(format, *args)}")
     }
 
-    @JvmStatic
-    fun logd(format: String, vararg args: Any?) {
-        logd(formatString(format, *args))
-    }
-
+    /**
+     * Log an internal debug message.
+     * Best used from critical classes to log internal state
+     * @param obj Class where this log was called (name will be prepended to message)
+     * @param format message to log
+     * @param args arguments to format the message with
+     */
     @JvmStatic
     fun logd(obj: Class<*>, format: String, vararg args: Any?) {
-        logd(obj, formatString(format, *args))
+        RobotLog.dd(TAG, "[${obj.simpleName}] ${formatString(format, *args)}")
     }
 
     /**
-     * Log a user message.
-     * Best used to log a message or value to Logcat from user code
-     * @param message message to log
+     * Log an internal debug message.
+     * Best used from critical classes to log internal state
+     * @param format message to log
+     * @param args arguments to format the message with
      */
     @JvmStatic
-    fun log(message: Any) {
-        RobotLog.ii(TAG, message.toString())
-    }
-
-    /**
-     * Log a user message.
-     * Best used to log a message or value to Logcat from user code
-     * @param obj Class where this log was called (name will be prepended to message)
-     * @param message message to log
-     */
-    @JvmStatic
-    fun log(obj: Class<*>, message: Any) {
-        RobotLog.ii(TAG, "[${obj.simpleName}] $message")
+    fun logd(format: String, vararg args: Any?) {
+        RobotLog.dd(TAG, formatString(format, *args))
     }
 
     /**
      * Log a user message.
      * Best used to log a message or value to Logcat from user code
      * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
-     * @param message message to log
+     * @param format message to log
+     * @param args arguments to format the message with
      */
     @JvmStatic
-    fun log(stck: StackTraceElement, message: Any) {
-        RobotLog.ii(TAG, "[$stck] $message")
+    fun log(stck: StackTraceElement, format: String, vararg args: Any?) {
+        RobotLog.ii(TAG, "[$stck] ${formatString(format, *args)}")
     }
 
-    @JvmStatic
-    fun log(format: String, vararg args: Any?) {
-        log(formatString(format, *args))
-    }
-
+    /**
+     * Log a user message.
+     * Best used to log a message or value to Logcat from user code
+     * @param obj Class where this log was called (name will be prepended to message)
+     * @param format message to log
+     * @param args arguments to format the message with
+     */
     @JvmStatic
     fun log(obj: Class<*>, format: String, vararg args: Any?) {
-        log(obj, formatString(format, *args))
+        RobotLog.ii(TAG, "[${obj.simpleName}] ${formatString(format, *args)}")
     }
 
+    /**
+     * Log a user message.
+     * Best used to log a message or value to Logcat from user code
+     * @param format message to log
+     * @param args arguments to format the message with
+     */
     @JvmStatic
-    fun log(stck: StackTraceElement, format: String, vararg args: Any?) {
-        log(stck, formatString(format, *args))
+    fun log(format: String, vararg args: Any?) {
+        RobotLog.ii(TAG, formatString(format, *args));
     }
 }
