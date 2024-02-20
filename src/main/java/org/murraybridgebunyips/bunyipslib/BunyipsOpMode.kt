@@ -256,7 +256,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      */
     fun pushTelemetry() {
         // Update main DS telemetry
-        val ds = telemetry.update()
+        telemetry.update()
 
         // Requeue new overhead status message
         val loopTime = round(movingAverageTimer.movingAverage(), 2)
@@ -308,7 +308,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
             packet = null
         }
 
-        if (telemetry.isAutoClear && ds) {
+        if (telemetry.isAutoClear) {
             telemetryQueue = 0
             clearTelemetryObjects()
         }
