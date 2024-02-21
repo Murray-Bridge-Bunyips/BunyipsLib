@@ -7,6 +7,7 @@ import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.WhitePix
 
 public class VisionTuner extends BunyipsOpMode {
     int thresholdIndex = 1;
+    int theEquation = 0;
 
     @Override
     protected void onInit() {
@@ -25,10 +26,11 @@ public class VisionTuner extends BunyipsOpMode {
         //  It's hard to expand upon, and could be optimised
 
         // TODO:
-        //  Make it so it only changes when RB is held. If RB is released, it keeps the value as is.
         //  The value and the variable it was currently writing to should be shown in telemetry.
 
-        float theEquation = (gamepad1.left_stick_y + gamepad1.left_stick_x) * 2;
+        if (gamepad1.right_bumper) {
+            float theEquation = (gamepad1.left_stick_y + gamepad1.left_stick_x) * 2;
+        }
 
         if (gamepad1.dpad_right) {
             if (thresholdIndex > 6)
@@ -44,28 +46,27 @@ public class VisionTuner extends BunyipsOpMode {
             else {
                 thresholdIndex--;
             }
+        }
 
-            switch (thresholdIndex) {
-                case 1:
-                    WhitePixel.LOWER_Y = theEquation;
-                    break;
-                case 2:
-                    WhitePixel.LOWER_CB = theEquation;
-                    break;
-                case 3:
-                    WhitePixel.LOWER_CR = theEquation;
-                    break;
-                case 4:
-                    WhitePixel.UPPER_Y = theEquation;
-                    break;
-                case 5:
-                    WhitePixel.UPPER_CB = theEquation;
-                    break;
-                case 6:
-                    WhitePixel.UPPER_CR = theEquation;
-                    break;
-            }
-
+        switch (thresholdIndex) {
+            case 1:
+                WhitePixel.LOWER_Y = theEquation;
+                break;
+            case 2:
+                WhitePixel.LOWER_CB = theEquation;
+                break;
+            case 3:
+                WhitePixel.LOWER_CR = theEquation;
+                break;
+            case 4:
+                WhitePixel.UPPER_Y = theEquation;
+                break;
+            case 5:
+                WhitePixel.UPPER_CB = theEquation;
+                break;
+            case 6:
+                WhitePixel.UPPER_CR = theEquation;
+                break;
         }
     }
 }
