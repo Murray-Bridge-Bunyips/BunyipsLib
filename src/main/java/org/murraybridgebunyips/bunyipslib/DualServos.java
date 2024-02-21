@@ -3,9 +3,9 @@ package org.murraybridgebunyips.bunyipslib;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /**
- * Control a set of two servo claws together.
+ * Control a set of two servos together.
  */
-public class DualClaws extends BunyipsSubsystem {
+public class DualServos extends BunyipsSubsystem {
     private final Servo left;
     private final Servo right;
     private final double LEFT_SERVO_CLOSED_POSITION;
@@ -15,7 +15,7 @@ public class DualClaws extends BunyipsSubsystem {
     private double leftServoPosition;
     private double rightServoPosition;
 
-    public DualClaws(Servo left, Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
+    public DualServos(Servo left, Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
         this.left = left;
         this.right = right;
         LEFT_SERVO_CLOSED_POSITION = leftClosed;

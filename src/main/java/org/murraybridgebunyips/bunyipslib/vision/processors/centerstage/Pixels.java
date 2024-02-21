@@ -11,6 +11,7 @@ public class Pixels {
 
     /**
      * Create all the pixel processors.
+     *
      * @return An array of all the pixel processors - White Pixel, Purple Pixel, Yellow Pixel, and Green Pixel
      */
     public static YCbCrColourThreshold[] createProcessors() {
@@ -24,13 +25,14 @@ public class Pixels {
 
     /**
      * Set the thresholds for a given Pixel processor.
+     *
      * @param processor The processor to set the thresholds for
-     * @param yLower The lower Y threshold
-     * @param cbLower The lower Cb threshold
-     * @param crLower The lower Cr threshold
-     * @param yUpper The upper Y threshold
-     * @param cbUpper The upper Cb threshold
-     * @param crUpper The upper Cr threshold
+     * @param yLower    The lower Y threshold
+     * @param cbLower   The lower Cb threshold
+     * @param crLower   The lower Cr threshold
+     * @param yUpper    The upper Y threshold
+     * @param cbUpper   The upper Cb threshold
+     * @param crUpper   The upper Cr threshold
      */
     public static void setThresholds(YCbCrColourThreshold processor, double yLower, double cbLower, double crLower, double yUpper, double cbUpper, double crUpper) {
         // We sadly have to do it like this because we need static fields on every processor

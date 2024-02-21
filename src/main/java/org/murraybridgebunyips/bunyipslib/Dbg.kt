@@ -199,6 +199,6 @@ object Dbg {
      */
     @JvmStatic
     fun log(format: String, vararg args: Any?) {
-        RobotLog.ii(TAG, formatString(format, *args));
+        RobotLog.ii(TAG, formatString(format, *args))
     }
 }
