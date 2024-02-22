@@ -1,11 +1,13 @@
 package org.murraybridgebunyips.bunyipslib.vision.processors;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.util.Pair;
 
 import com.acmerobotics.dashboard.config.Config;
 
 import org.murraybridgebunyips.bunyipslib.vision.Processor;
+import org.murraybridgebunyips.bunyipslib.vision.Vision;
 import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
 import org.opencv.core.Mat;
 
@@ -61,5 +63,17 @@ public class MultiYCbCrThreshold extends Processor<ContourData> {
         for (Pair<YCbCrColourThreshold, Mat> processor : colourProcessors) {
             processor.first.onFrameDraw(canvas);
         }
+        // Display mask name on camera feed
+        canvas.drawText(
+                MASK >= 1 && MASK <= colourProcessors.size() ? colourProcessors.get(MASK - 1).first.getName() : "",
+                10,
+                Vision.CAMERA_HEIGHT - 10,
+                new Paint() {{
+                    setColor(0xFFFFFFFF);
+                    setStrokeWidth(30);
+                    setTextSize(20);
+                    setAntiAlias(true);
+                }}
+        );
     }
 }

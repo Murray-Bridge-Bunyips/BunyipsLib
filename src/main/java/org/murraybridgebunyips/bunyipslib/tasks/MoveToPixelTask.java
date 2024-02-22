@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controller;
+import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
@@ -35,9 +36,9 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
     private final Gamepad gamepad;
     private final PIDController translationController;
     private final PIDController rotationController;
-    private final TrackingParameters trackingParameters;
+    private final double pitchTarget;
 
-    public MoveToPixelTask(Gamepad gamepad, T drive, MultiYCbCrThreshold processors, PIDController translationController, PIDController rotationController, TrackingParameters trackingParameters) {
+    public MoveToPixelTask(Gamepad gamepad, T drive, MultiYCbCrThreshold processors, PIDController translationController, PIDController rotationController, double pitchTarget) {
         super(drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToPixelTask must be used with a drivetrain with X forward Pose/IMU info");
@@ -52,7 +53,7 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
         ROTATIONAL_kP = rotationController.getP();
         ROTATIONAL_kI = rotationController.getI();
         ROTATIONAL_kD = rotationController.getD();
-        this.trackingParameters = trackingParameters;
+        this.pitchTarget = pitchTarget;
     }
 
     @Override
@@ -73,10 +74,10 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
         ContourData biggestContour = ContourData.getLargest(data);
 
         if (biggestContour != null) {
-            double distance = getDistance(biggestContour.getPitch());
+            Dbg.log(String.valueOf(biggestContour.getPitch()));
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            translationController.calculate(distance, trackingParameters.GOAL_TARGET_METRES),
+                            translationController.calculate(biggestContour.getPitch(), pitchTarget),
                             pose.getY(),
                             rotationController.calculate(biggestContour.getYaw(), 0.0)
                     )
@@ -84,15 +85,6 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
         } else {
             drive.setWeightedDrivePower(pose);
         }
-    }
-
-    private double getDistance(double pitch) {
-        // https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
-        // tan(pitch) = (h2 - h1) / d
-        // d = (h2 - h1) / tan(pitch)
-        // pitch = target pitch * angle of view + camera pitch
-        return (trackingParameters.TARGET_HEIGHT_METRES - trackingParameters.CAMERA_HEIGHT_METRES)
-                / Math.tan(Math.toRadians((pitch * trackingParameters.CAMERA_VERTICAL_FOV_DEGREES) + trackingParameters.CAMERA_PITCH_DEGREES));
     }
 
     @Override

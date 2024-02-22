@@ -44,6 +44,8 @@ object Dbg {
     private const val ERR_PREPEND = "!!"
     private const val WRN_PREPEND = "!"
 
+    // TODO: fix string to use Any to toString()
+
     /**
      * Log an error message.
      * Messages will be prepended with the ERROR_PREPEND string
