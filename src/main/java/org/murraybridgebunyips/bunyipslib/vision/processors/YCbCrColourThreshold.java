@@ -26,6 +26,7 @@ import java.util.List;
 @Config
 public abstract class YCbCrColourThreshold extends Processor<ContourData> {
     public static double CONTOUR_AREA_THRESHOLD_PERCENT = 1.2;
+    public static double CONTOUR_AREA_MAX_PERCENT = 10;
     public static int ACTIVE_THICKNESS = 6;
     public static int PASSIVE_THICKNESS = 3;
 
@@ -47,7 +48,11 @@ public abstract class YCbCrColourThreshold extends Processor<ContourData> {
     public final void update() {
         for (MatOfPoint contour : contours) {
             Rect boundingRect = Imgproc.boundingRect(contour);
+            // Min bounding
             if (boundingRect.area() < (CONTOUR_AREA_THRESHOLD_PERCENT / 100) * (Vision.CAMERA_WIDTH * Vision.CAMERA_HEIGHT))
+                continue;
+            // Max bounding
+            if (boundingRect.area() > (CONTOUR_AREA_MAX_PERCENT / 100) * (Vision.CAMERA_WIDTH * Vision.CAMERA_HEIGHT))
                 continue;
             data.add(new ContourData(boundingRect));
         }

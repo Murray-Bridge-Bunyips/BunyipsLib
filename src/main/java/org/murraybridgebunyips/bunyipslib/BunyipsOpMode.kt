@@ -46,6 +46,9 @@ abstract class BunyipsOpMode : LinearOpMode() {
          * BunyipsComponent and Task internally use this to grant access to the current OpMode through
          * the `opMode` property. You must ensure all Tasks and BunyipsComponents are instantiated during runtime,
          * (such as during onInit()), otherwise this property will be null.
+         *
+         * If you choose to access the current OpMode through this property, you must ensure that the OpMode
+         * is actively running, otherwise this property will be null and you will raise a whole suite of exceptions.
          */
         @JvmStatic
         lateinit var instance: BunyipsOpMode
@@ -383,7 +386,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
     /**
      * Add data to the telemetry object, with integrated formatting.
      * @param format An object string to add to telemetry
-     * @param args The objects to format into the string
+     * @param args The objects to format into the object format string
      * @return The telemetry item added to the Driver Station, null if the send failed from overflow
      */
     fun addTelemetry(format: Any, vararg args: Any): Item? {
@@ -401,7 +404,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
     /**
      * Add a data to the telemetry object, with integrated formatting.
      * @param format An object string to add to telemetry
-     * @param args The objects to format into the string
+     * @param args The objects to format into the object format string
      * @return The telemetry item added to the Driver Station
      */
     fun addRetainedTelemetry(format: Any, vararg args: Any): Item {
@@ -437,7 +440,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
     /**
      * Log a message to the telemetry log, with integrated formatting.
      * @param format An object string to add to telemetry
-     * @param args The objects to format into the string
+     * @param args The objects to format into the object format string
      */
     fun log(format: Any, vararg args: Any) {
         val fstring = formatString(format.toString(), *args)
@@ -449,7 +452,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * Log a message to the telemetry log, with integrated formatting.
      * @param obj Class where this log was called (name will be prepended to message)
      * @param format An object string to add to telemetry
-     * @param args The objects to format into the string
+     * @param args The objects to format into the object format string
      */
     fun log(obj: Class<*>, format: Any, vararg args: Any) {
         val msg = "[${obj.simpleName}] ${formatString(format.toString(), *args)}"
@@ -461,7 +464,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * Log a message into the telemetry log
      * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
      * @param format An object string to add to telemetry
-     * @param args The objects to format into the string
+     * @param args The objects to format into the object format string
      */
     fun log(stck: StackTraceElement, format: Any, vararg args: Any) {
         val msg = "[${stck}] ${formatString(format.toString(), *args)}"

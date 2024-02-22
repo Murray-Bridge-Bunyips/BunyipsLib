@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controller;
 import org.murraybridgebunyips.bunyipslib.Dbg;
@@ -74,54 +75,23 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
         ContourData biggestContour = ContourData.getLargest(data);
 
         if (biggestContour != null) {
-            Dbg.log(String.valueOf(biggestContour.getPitch()));
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            translationController.calculate(biggestContour.getPitch(), pitchTarget),
-                            pose.getY(),
-                            rotationController.calculate(biggestContour.getYaw(), 0.0)
-                    )
-            );
+            // FIXME: debugging in progress
+            BunyipsOpMode.getInstance().addTelemetry("Biggest contour area: %", biggestContour.getArea());
+            BunyipsOpMode.getInstance().addTelemetry("Biggest contour pitch: %", biggestContour.getPitch());
+//            drive.setWeightedDrivePower(
+//                    new Pose2d(
+//                            translationController.calculate(biggestContour.getPitch(), pitchTarget),
+//                            pose.getY(),
+//                            rotationController.calculate(biggestContour.getYaw(), 0.0)
+//                    )
+//            );
         } else {
-            drive.setWeightedDrivePower(pose);
         }
+        drive.setWeightedDrivePower(pose);
     }
 
     @Override
     public void onFinish() {
 //        drive.setSpeedUsingController(0, 0, 0);
-    }
-
-    public static class TrackingParameters {
-        /**
-         * The height of the camera from the ground in metres
-         */
-        public final double CAMERA_HEIGHT_METRES;
-        /**
-         * The height of the target from the ground in metres
-         */
-        public final double TARGET_HEIGHT_METRES;
-        /**
-         * The angle of the camera from the ground in degrees
-         */
-        public final double CAMERA_PITCH_DEGREES;
-
-        /**
-         * The vertical field of view of the camera in degrees
-         */
-        public final double CAMERA_VERTICAL_FOV_DEGREES;
-
-        /**
-         * How far the robot should be from the target in metres
-         */
-        public final double GOAL_TARGET_METRES;
-
-        public TrackingParameters(double CAMERA_HEIGHT_METRES, double TARGET_HEIGHT_METRES, double CAMERA_PITCH_DEGREES, double CAMERA_VERTICAL_FOV_DEGREES, double GOAL_TARGET_METRES) {
-            this.CAMERA_HEIGHT_METRES = CAMERA_HEIGHT_METRES;
-            this.TARGET_HEIGHT_METRES = TARGET_HEIGHT_METRES;
-            this.CAMERA_PITCH_DEGREES = CAMERA_PITCH_DEGREES;
-            this.CAMERA_VERTICAL_FOV_DEGREES = CAMERA_VERTICAL_FOV_DEGREES;
-            this.GOAL_TARGET_METRES = GOAL_TARGET_METRES;
-        }
     }
 }
