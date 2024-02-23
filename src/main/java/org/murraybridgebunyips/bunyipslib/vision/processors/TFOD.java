@@ -57,7 +57,6 @@ public class TFOD extends Processor<TfodData> {
                     recognition.getHeight(),
                     recognition.getImageWidth(),
                     recognition.getImageHeight(),
-                    recognition.estimateAngleToObject(AngleUnit.DEGREES),
                     recognition.estimateAngleToObject(AngleUnit.RADIANS)
             ));
         }

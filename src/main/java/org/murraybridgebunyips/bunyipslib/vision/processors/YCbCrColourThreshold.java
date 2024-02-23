@@ -6,12 +6,10 @@ import android.graphics.Paint;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.murraybridgebunyips.bunyipslib.vision.Processor;
-import org.murraybridgebunyips.bunyipslib.vision.Vision;
 import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -25,7 +23,7 @@ import java.util.List;
  */
 @Config
 public abstract class YCbCrColourThreshold extends Processor<ContourData> {
-    public static double CONTOUR_AREA_THRESHOLD_PERCENT = 1.2;
+    public static double CONTOUR_AREA_MIN_PERCENT = 1.2;
     public static double CONTOUR_AREA_MAX_PERCENT = 10;
     public static int ACTIVE_THICKNESS = 6;
     public static int PASSIVE_THICKNESS = 3;
@@ -47,14 +45,11 @@ public abstract class YCbCrColourThreshold extends Processor<ContourData> {
     @Override
     public final void update() {
         for (MatOfPoint contour : contours) {
-            Rect boundingRect = Imgproc.boundingRect(contour);
-            // Min bounding
-            if (boundingRect.area() < (CONTOUR_AREA_THRESHOLD_PERCENT / 100) * (Vision.CAMERA_WIDTH * Vision.CAMERA_HEIGHT))
+            ContourData newData = new ContourData(Imgproc.boundingRect(contour));
+            // Min-max bounding
+            if (newData.getAreaPercent() < CONTOUR_AREA_MIN_PERCENT || newData.getAreaPercent() > CONTOUR_AREA_MAX_PERCENT)
                 continue;
-            // Max bounding
-            if (boundingRect.area() > (CONTOUR_AREA_MAX_PERCENT / 100) * (Vision.CAMERA_WIDTH * Vision.CAMERA_HEIGHT))
-                continue;
-            data.add(new ContourData(boundingRect));
+            data.add(newData);
         }
     }
 

@@ -5,16 +5,24 @@ import org.opencv.core.Rect
 
 data class ContourData(
     val boundingRect: Rect,
+    val area: Double,
+    val areaPercent: Double,
+    val aspectRatio: Double,
+    val centerX: Double,
+    val centerY: Double,
+    val yaw: Double,
+    val pitch: Double
 ) : VisionData() {
-    val area: Double = boundingRect.area()
-    val areaPercent: Double = boundingRect.area() / (Vision.CAMERA_WIDTH * Vision.CAMERA_HEIGHT) / 100
-    val aspectRatio: Double = boundingRect.width.toDouble() / boundingRect.height.toDouble()
-    val centerX: Double = boundingRect.x + boundingRect.width / 2.0
-    val centerY: Double = boundingRect.y + boundingRect.height / 2.0
-    val yaw: Double = (centerX - Vision.CAMERA_WIDTH / 2.0) / Vision.CAMERA_WIDTH
-    // -2.66 arbitrary modifier to scale from -1 to 1, bit sketchy; will scale so 1 is furthest away, -1
-    // is at the bottom of the camera, 0 is in the middle. Probably a good idea to make this more accurate.
-    val pitch: Double = (centerY - Vision.CAMERA_HEIGHT / 2.0) / Vision.CAMERA_HEIGHT * -2.66
+    constructor(boundingRect: Rect) : this(
+        boundingRect,
+        boundingRect.area(),
+        boundingRect.area() / (Vision.CAMERA_WIDTH * Vision.CAMERA_HEIGHT) * 100.0,
+        boundingRect.width.toDouble() / boundingRect.height.toDouble(),
+        boundingRect.x + boundingRect.width / 2.0,
+        boundingRect.y + boundingRect.height / 2.0,
+        (((boundingRect.x + boundingRect.width / 2.0) - Vision.CAMERA_WIDTH / 2.0) / (Vision.CAMERA_WIDTH / 2.0)),
+        -(((boundingRect.y + boundingRect.height / 2.0) - Vision.CAMERA_HEIGHT / 2.0) / (Vision.CAMERA_HEIGHT / 2.0))
+    )
 
     companion object {
         @JvmStatic
