@@ -4,10 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controller;
-import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
@@ -37,9 +35,8 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
     private final Gamepad gamepad;
     private final PIDController translationController;
     private final PIDController rotationController;
-    private final double pitchTarget;
 
-    public MoveToPixelTask(Gamepad gamepad, T drive, MultiYCbCrThreshold processors, PIDController translationController, PIDController rotationController, double pitchTarget) {
+    public MoveToPixelTask(Gamepad gamepad, T drive, MultiYCbCrThreshold processors, PIDController translationController, PIDController rotationController) {
         super(drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToPixelTask must be used with a drivetrain with X forward Pose/IMU info");
@@ -54,7 +51,6 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
         ROTATIONAL_kP = rotationController.getP();
         ROTATIONAL_kI = rotationController.getI();
         ROTATIONAL_kD = rotationController.getD();
-        this.pitchTarget = pitchTarget;
     }
 
     @Override
@@ -75,19 +71,16 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
         ContourData biggestContour = ContourData.getLargest(data);
 
         if (biggestContour != null) {
-            // FIXME: debugging in progress
-            BunyipsOpMode.getInstance().addTelemetry("Biggest contour area: %", biggestContour.getArea());
-            BunyipsOpMode.getInstance().addTelemetry("Biggest contour pitch: %", biggestContour.getPitch());
-//            drive.setWeightedDrivePower(
-//                    new Pose2d(
-//                            translationController.calculate(biggestContour.getPitch(), pitchTarget),
-//                            pose.getY(),
-//                            rotationController.calculate(biggestContour.getYaw(), 0.0)
-//                    )
-//            );
+            drive.setWeightedDrivePower(
+                    new Pose2d(
+                            translationController.calculate(biggestContour.getPitch(), 0.0),
+                            pose.getY(),
+                            rotationController.calculate(biggestContour.getYaw(), 0.0)
+                    )
+            );
         } else {
+            drive.setWeightedDrivePower(pose);
         }
-        drive.setWeightedDrivePower(pose);
     }
 
     @Override
