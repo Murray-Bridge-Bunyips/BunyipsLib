@@ -11,7 +11,7 @@ import org.murraybridgebunyips.bunyipslib.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
-import org.murraybridgebunyips.bunyipslib.vision.processors.MultiYCbCrThreshold;
+import org.murraybridgebunyips.bunyipslib.vision.processors.MultiColourThreshold;
 
 import java.util.List;
 
@@ -28,11 +28,11 @@ public class AlignToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
     public static double kD;
 
     private final RoadRunnerDrive drive;
-    private final MultiYCbCrThreshold processors;
+    private final MultiColourThreshold processors;
     private final Gamepad gamepad;
     private final PIDController controller;
 
-    public AlignToPixelTask(Gamepad gamepad, T drive, MultiYCbCrThreshold processors, PIDController controller) {
+    public AlignToPixelTask(Gamepad gamepad, T drive, MultiColourThreshold processors, PIDController controller) {
         super(drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToPixelTask must be used with a drivetrain with X forward Pose/IMU info");

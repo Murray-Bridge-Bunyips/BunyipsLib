@@ -351,10 +351,11 @@ public class Vision extends BunyipsSubsystem {
     }
 
     /**
-     * Start the VisionSender thread to send all processor data to FtcDashboard.
-     * Without the preview active, the DS will display a raw unprocessed feed to save resources,
-     * but activating this sender will set both FtcDashboard and the DS streams to be of a processor
-     * of your choosing.
+     * Start the VisionSender thread to send all processor data to FtcDashboard/DS with dynamic switching.
+     * Without the preview active, the DS will display a raw unprocessed feed to save resources in
+     * Camera Stream, and FtcDashboard will be disabled. This is the default state of Vision.
+     * Activating this sender will set both FtcDashboard and the DS streams to be of a processor
+     * of your choosing, by changing a processor's name with setPreview() or via FtcDashboard.
      *
      * @see SwitchableVisionSender
      */
@@ -364,7 +365,7 @@ public class Vision extends BunyipsSubsystem {
     }
 
     /**
-     * Set the processor to display on FtcDashboard.
+     * Set the processor to display on FtcDashboard/DS from startPreview().
      *
      * @param processorName the name of the processor to display on FtcDashboard
      * @see SwitchableVisionSender
@@ -376,7 +377,7 @@ public class Vision extends BunyipsSubsystem {
     }
 
     /**
-     * Set the processor to display on FtcDashboard.
+     * Set the processor to display on FtcDashboard/DS from startPreview().
      *
      * @param processor the processor to display on FtcDashboard
      * @see SwitchableVisionSender
@@ -389,7 +390,8 @@ public class Vision extends BunyipsSubsystem {
     }
 
     /**
-     * Stop the VisionSender thread to stop sending all processor data to FtcDashboard.
+     * Stop the VisionSender thread to stop sending all processor data to FtcDashboard/DS.
+     * The DS will return to a raw unprocessed feed, and FtcDashboard feed will be disabled.
      * This method is effectively called automatically when the OpMode is no longer active.
      *
      * @see SwitchableVisionSender
@@ -401,6 +403,9 @@ public class Vision extends BunyipsSubsystem {
         }
     }
 
+    /**
+     * Optional telemetry for subsystem attachment
+     */
     @Override
     public void update() {
         if (visionPortal != null) {

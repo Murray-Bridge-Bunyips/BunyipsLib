@@ -5,6 +5,7 @@ import android.graphics.Paint;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.vision.Processor;
 import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
 import org.opencv.core.Core;
@@ -17,37 +18,90 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Colour thresholding processor for YCbCr colour space, used to find colour contours in an image.
+ * Colour thresholding processor for a colour space, used to find colour contours in an image.
  *
  * @author Lucas Bubner, 2024
  */
 @Config
-public abstract class YCbCrColourThreshold extends Processor<ContourData> {
-    public static double CONTOUR_AREA_MIN_PERCENT = 1.2;
-    public static double CONTOUR_AREA_MAX_PERCENT = 10;
-    public static int ACTIVE_THICKNESS = 6;
-    public static int PASSIVE_THICKNESS = 3;
-
-    private final Mat ycrcbMat = new Mat();
+public abstract class ColourThreshold extends Processor<ContourData> {
+    public static int BIGGEST_CONTOUR_BORDER_THICKNESS = 6;
+    public static int CONTOUR_BORDER_THICKNESS = 3;
+    // Default fields for convenience when using a mass of ColourThresholds
+    // These cannot be tuned dynamically but can be overridden by subclasses
+    protected static double DEFAULT_MIN_AREA = 1.2;
+    protected static double DEFAULT_MAX_AREA = 10.0;
+    private final ColourSpace colourSpace;
+    private final Mat processingMat = new Mat();
     private final Mat binaryMat = new Mat();
     private final Mat maskedInputMat = new Mat();
     private final List<MatOfPoint> contours = new ArrayList<>();
     private final Mat hierarchy = new Mat();
+    private Scalar lowerOverride = null;
+    private Scalar upperOverride = null;
+
+    /**
+     * Defines a new colour thresholding processor for a specific colour space, which your
+     * lower and upper scalars will be based on.
+     *
+     * @param colourSpace the colour space to use
+     */
+    @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
+    public ColourThreshold(ColourSpace colourSpace) {
+        this.colourSpace = colourSpace;
+    }
+
+    public abstract double getContourAreaMinPercent();
+
+    public abstract double getContourAreaMaxPercent();
 
     public abstract Scalar getLower();
 
+    /**
+     * Forces this upper scalar to be used instead of the scalar supplied by the subclass.
+     *
+     * @param lower the lower scalar to use
+     */
+    public void setLower(Scalar lower) {
+        Dbg.logd(getClass(), "Overriding lower scalar to " + lower.toString() + " from " + getLower().toString());
+        lowerOverride = lower;
+    }
+
     public abstract Scalar getUpper();
+
+    /**
+     * Forces this lower scalar to be used instead of the scalar supplied by the subclass.
+     *
+     * @param upper the upper scalar to use
+     */
+    public void setUpper(Scalar upper) {
+        Dbg.logd(getClass(), "Overriding upper scalar to " + upper.toString() + " from " + getUpper().toString());
+        upperOverride = upper;
+    }
 
     public abstract int getBoxColour();
 
     public abstract boolean showMaskedInput();
+
+    /**
+     * Resets the lower override, so that the lower scalar is used instead of the override.
+     */
+    public void resetLower() {
+        lowerOverride = null;
+    }
+
+    /**
+     * Resets the upper override, so that the upper scalar is used instead of the override.
+     */
+    public void resetUpper() {
+        upperOverride = null;
+    }
 
     @Override
     public final void update() {
         for (MatOfPoint contour : contours) {
             ContourData newData = new ContourData(Imgproc.boundingRect(contour));
             // Min-max bounding
-            if (newData.getAreaPercent() < CONTOUR_AREA_MIN_PERCENT || newData.getAreaPercent() > CONTOUR_AREA_MAX_PERCENT)
+            if (newData.getAreaPercent() < getContourAreaMinPercent() || newData.getAreaPercent() > getContourAreaMaxPercent())
                 continue;
             data.add(newData);
         }
@@ -63,13 +117,13 @@ public abstract class YCbCrColourThreshold extends Processor<ContourData> {
          * space you want to use.
          *
          * Takes our "input" mat as an input, and outputs
-         * to a separate Mat buffer "ycrcbMat"
+         * to a separate Mat buffer "processingMat"
          */
-        Imgproc.cvtColor(frame, ycrcbMat, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(frame, processingMat, colourSpace.cvtCode);
 
         /*
          * This is where our thresholding actually happens.
-         * Takes our "ycrcbMat" as input and outputs a "binary"
+         * Takes our "processingMat" as input and outputs a "binary"
          * Mat to "binaryMat" of the same size as our input.
          * "Discards" all the pixels outside the bounds specified
          * by the scalars "lower" and "upper".
@@ -80,7 +134,12 @@ public abstract class YCbCrColourThreshold extends Processor<ContourData> {
          * 0 represents our pixels that were outside the bounds
          * 255 represents our pixels that are inside the bounds
          */
-        Core.inRange(ycrcbMat, getLower(), getUpper(), binaryMat);
+        Core.inRange(
+                processingMat,
+                lowerOverride == null ? getLower() : lowerOverride,
+                upperOverride == null ? getUpper() : upperOverride,
+                binaryMat
+        );
 
         /*
          * Release the reusable Mat so that old data doesn't
@@ -111,7 +170,7 @@ public abstract class YCbCrColourThreshold extends Processor<ContourData> {
             maskedInputMat.copyTo(frame);
 
         binaryMat.release();
-        ycrcbMat.release();
+        processingMat.release();
         hierarchy.release();
     }
 
@@ -128,9 +187,27 @@ public abstract class YCbCrColourThreshold extends Processor<ContourData> {
                     new Paint() {{
                         setColor(getBoxColour());
                         setStyle(Style.STROKE);
-                        setStrokeWidth(contour == biggest ? ACTIVE_THICKNESS : PASSIVE_THICKNESS);
+                        setStrokeWidth(contour == biggest ? BIGGEST_CONTOUR_BORDER_THICKNESS : CONTOUR_BORDER_THICKNESS);
                     }}
             );
+        }
+    }
+
+    public enum ColourSpace {
+        /*
+         * Define our "conversion codes" in the enum
+         * so that we don't have to do a switch
+         * statement in the processFrame method.
+         */
+        RGB(Imgproc.COLOR_RGBA2RGB),
+        HSV(Imgproc.COLOR_RGB2HSV),
+        YCrCb(Imgproc.COLOR_RGB2YCrCb),
+        Lab(Imgproc.COLOR_RGB2Lab);
+
+        public final int cvtCode;
+
+        ColourSpace(int cvtCode) {
+            this.cvtCode = cvtCode;
         }
     }
 }

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
-import org.murraybridgebunyips.bunyipslib.vision.processors.YCbCrColourThreshold;
+import org.murraybridgebunyips.bunyipslib.vision.processors.ColourThreshold;
 import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.GreenPixel;
 import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.PurplePixel;
 import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.WhitePixel;
@@ -17,12 +17,12 @@ public class VisionTuner extends BunyipsOpMode {
     int pixelIndex = 1;
     int theEquation = 0;
 
-    YCbCrColourThreshold whitePixel;
-    YCbCrColourThreshold purplePixel;
-    YCbCrColourThreshold yellowPixel;
-    YCbCrColourThreshold greenPixel;
-    YCbCrColourThreshold[] pixels;
-    YCbCrColourThreshold currentPixel;
+    ColourThreshold whitePixel;
+    ColourThreshold purplePixel;
+    ColourThreshold yellowPixel;
+    ColourThreshold greenPixel;
+    ColourThreshold[] pixels;
+    ColourThreshold currentPixel;
 
     private boolean upPressed;
     private boolean downPressed;
@@ -39,7 +39,7 @@ public class VisionTuner extends BunyipsOpMode {
             yellowPixel = new YellowPixel();
             greenPixel = new GreenPixel();
 
-            pixels = new YCbCrColourThreshold[]{whitePixel, purplePixel, yellowPixel, greenPixel};
+            pixels = new ColourThreshold[]{whitePixel, purplePixel, yellowPixel, greenPixel};
             currentPixel = whitePixel;  // Set it to white pixel by default
         } catch (IllegalArgumentException e) {
             throw new EmergencyStop("VisionTest is missing a webcam called 'webcam'!");
@@ -92,22 +92,16 @@ public class VisionTuner extends BunyipsOpMode {
 
         switch (thresholdIndex) {
             case 1:
-                WhitePixel.LOWER_Y = theEquation;
                 break;
             case 2:
-                WhitePixel.LOWER_CB = theEquation;
                 break;
             case 3:
-                WhitePixel.LOWER_CR = theEquation;
                 break;
             case 4:
-                WhitePixel.UPPER_Y = theEquation;
                 break;
             case 5:
-                WhitePixel.UPPER_CB = theEquation;
                 break;
             case 6:
-                WhitePixel.UPPER_CR = theEquation;
                 break;
         }
 

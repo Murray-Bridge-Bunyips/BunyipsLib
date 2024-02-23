@@ -14,20 +14,20 @@ import org.opencv.core.Mat;
 import java.util.ArrayList;
 
 /**
- * A processor that applies multiple YCbCrColourThreshold processors to the same frame and
+ * A processor that applies multiple ColourThreshold processors to the same frame and
  * combines their draw results. The MASK variable can be used to select which processor's mask
  * is drawn to the frame.
  *
  * @author Lucas Bubner, 2024
- * @see YCbCrColourThreshold
+ * @see ColourThreshold
  */
 @Config
-public class MultiYCbCrThreshold extends Processor<ContourData> {
+public class MultiColourThreshold extends Processor<ContourData> {
     public static int MASK;
-    private final ArrayList<Pair<YCbCrColourThreshold, Mat>> colourProcessors = new ArrayList<>();
+    private final ArrayList<Pair<ColourThreshold, Mat>> colourProcessors = new ArrayList<>();
 
-    public MultiYCbCrThreshold(YCbCrColourThreshold... thresholdProcessors) {
-        for (YCbCrColourThreshold processor : thresholdProcessors) {
+    public MultiColourThreshold(ColourThreshold... thresholdProcessors) {
+        for (ColourThreshold processor : thresholdProcessors) {
             colourProcessors.add(new Pair<>(processor, new Mat()));
         }
     }
@@ -39,7 +39,7 @@ public class MultiYCbCrThreshold extends Processor<ContourData> {
 
     @Override
     public void update() {
-        for (Pair<YCbCrColourThreshold, Mat> processor : colourProcessors) {
+        for (Pair<ColourThreshold, Mat> processor : colourProcessors) {
             processor.first.clearData();
             processor.first.update();
             data.addAll(processor.first.getData());
@@ -49,7 +49,7 @@ public class MultiYCbCrThreshold extends Processor<ContourData> {
 
     @Override
     public void onProcessFrame(Mat frame, long captureTimeNanos) {
-        for (Pair<YCbCrColourThreshold, Mat> processor : colourProcessors) {
+        for (Pair<ColourThreshold, Mat> processor : colourProcessors) {
             frame.copyTo(processor.second);
             processor.first.onProcessFrame(processor.second, captureTimeNanos);
         }
@@ -60,7 +60,7 @@ public class MultiYCbCrThreshold extends Processor<ContourData> {
 
     @Override
     public void onFrameDraw(Canvas canvas) {
-        for (Pair<YCbCrColourThreshold, Mat> processor : colourProcessors) {
+        for (Pair<ColourThreshold, Mat> processor : colourProcessors) {
             processor.first.onFrameDraw(canvas);
         }
         // Display mask name on camera feed
