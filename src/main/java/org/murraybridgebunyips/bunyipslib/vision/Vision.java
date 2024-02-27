@@ -83,7 +83,7 @@ public class Vision extends BunyipsSubsystem {
      * @param processors Processor instances
      */
     @SuppressWarnings("rawtypes")
-    public void init(Processor... processors) {
+    public Vision init(Processor... processors) {
         if (visionPortal != null) {
             Dbg.logd(getClass(), "WARNING: Vision already initialised! Tearing down...");
             terminate();
@@ -143,6 +143,7 @@ public class Vision extends BunyipsSubsystem {
         }
 
         Dbg.logd(getClass(), "visionportal ready.");
+        return this;
     }
 
     /**
@@ -152,7 +153,7 @@ public class Vision extends BunyipsSubsystem {
      * @param processors Processor instances
      */
     @SuppressWarnings("rawtypes")
-    public void start(Processor... processors) {
+    public Vision start(Processor... processors) {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
         }
@@ -176,6 +177,7 @@ public class Vision extends BunyipsSubsystem {
             visionPortal.setProcessorEnabled(processor, true);
             Dbg.logd(getClass(), "vision processor '%' started.", processor.getName());
         }
+        return this;
     }
 
     /**
@@ -196,7 +198,7 @@ public class Vision extends BunyipsSubsystem {
      * @param processors Processor instances
      */
     @SuppressWarnings("rawtypes")
-    public void stop(Processor... processors) {
+    public Vision stop(Processor... processors) {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
         }
@@ -212,18 +214,20 @@ public class Vision extends BunyipsSubsystem {
             visionPortal.setProcessorEnabled(processor, false);
             Dbg.logd(getClass(), "vision processor '%' paused.", processor.getName());
         }
+        return this;
     }
 
     /**
      * Stop all processors and pause the camera stream (Level 3).
      */
-    public void stop() {
+    public Vision stop() {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
         }
         // Pause the VisionPortal, this will stagnate any attached processors
         visionPortal.stopStreaming();
         Dbg.logd(getClass(), "visionportal stopped.");
+        return this;
     }
 
     /**
@@ -256,7 +260,7 @@ public class Vision extends BunyipsSubsystem {
      * Repeated calls to {@code init()} will also cause a termination of the VisionPortal.
      */
     @SuppressWarnings("rawtypes")
-    public void terminate() {
+    public Vision terminate() {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
         }
@@ -266,6 +270,7 @@ public class Vision extends BunyipsSubsystem {
         visionPortal.close();
         visionPortal = null;
         Dbg.logd(getClass(), "visionportal terminated.");
+        return this;
     }
 
     /**
@@ -275,7 +280,7 @@ public class Vision extends BunyipsSubsystem {
      * @param processors Processor instances
      */
     @SuppressWarnings("rawtypes")
-    public void flip(Processor... processors) {
+    public Vision flip(Processor... processors) {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
         }
@@ -289,6 +294,7 @@ public class Vision extends BunyipsSubsystem {
             processor.setFlipped(!processor.isFlipped());
             Dbg.logd(getClass(), "vision processor '%' flipped %.", processor.getName(), processor.isFlipped() ? "upside-down" : "right-side up");
         }
+        return this;
     }
 
     /**
@@ -296,7 +302,7 @@ public class Vision extends BunyipsSubsystem {
      * Should be called after processors are initialised, and can be called at any time after.
      */
     @SuppressWarnings("rawtypes")
-    public void flip() {
+    public Vision flip() {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
         }
@@ -304,6 +310,7 @@ public class Vision extends BunyipsSubsystem {
             processor.setFlipped(!processor.isFlipped());
             Dbg.logd(getClass(), "vision processor '%' flipped %.", processor.getName(), processor.isFlipped() ? "upside-down" : "right-side up");
         }
+        return this;
     }
 
     /**
@@ -359,9 +366,10 @@ public class Vision extends BunyipsSubsystem {
      *
      * @see SwitchableVisionSender
      */
-    public void startPreview() {
+    public Vision startPreview() {
         visionSender = new SwitchableVisionSender(this);
         Threads.start(visionSender);
+        return this;
     }
 
     /**
@@ -370,10 +378,11 @@ public class Vision extends BunyipsSubsystem {
      * @param processorName the name of the processor to display on FtcDashboard
      * @see SwitchableVisionSender
      */
-    public void setPreview(String processorName) {
+    public Vision setPreview(String processorName) {
         if (visionSender != null) {
             visionSender.setStreamingProcessor(processorName);
         }
+        return this;
     }
 
     /**
@@ -383,10 +392,11 @@ public class Vision extends BunyipsSubsystem {
      * @see SwitchableVisionSender
      */
     @SuppressWarnings("rawtypes")
-    public void setPreview(Processor processor) {
+    public Vision setPreview(Processor processor) {
         if (visionSender != null) {
             visionSender.setStreamingProcessor(processor.getName());
         }
+        return this;
     }
 
     /**
@@ -396,11 +406,12 @@ public class Vision extends BunyipsSubsystem {
      *
      * @see SwitchableVisionSender
      */
-    public void stopPreview() {
+    public Vision stopPreview() {
         if (visionSender != null) {
             Threads.stop(visionSender);
             visionSender = null;
         }
+        return this;
     }
 
     /**

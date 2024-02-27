@@ -1,7 +1,6 @@
 package org.murraybridgebunyips.bunyipslib;
 
 import java.util.Arrays;
-import java.util.IllegalFormatFlagsException;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,17 +29,16 @@ public class Text {
             if (fstring.charAt(i) == '%') {
                 // Remove character and insert new string
                 try {
-                    newString.append(objs.get(occurrences));
+                    // Check for \ before %, if so, add a % to the string instead of the value
+                    newString.append(i > 0 && fstring.charAt(i - 1) == '\\' ? "%" : objs.get(occurrences));
                 } catch (IndexOutOfBoundsException e) {
-                    throw new IllegalFormatFlagsException("Missing args for '%' formatString() placeholders!");
+                    // User did not provide enough arguments, we'll just append a % and continue
+                    newString.append("%");
                 }
                 occurrences++;
                 continue;
             }
             newString.append(fstring.charAt(i));
-        }
-        if (occurrences != objs.size()) {
-            Dbg.warn(getCallingUserCodeFunction(), "Missing '%' placeholders for formatString() objects!");
         }
         return newString.toString();
     }

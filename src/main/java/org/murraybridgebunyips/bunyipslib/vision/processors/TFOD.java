@@ -43,6 +43,7 @@ public class TFOD extends Processor<TfodData> {
         return "tfod";
     }
 
+    @Override
     public void update() {
         List<Recognition> recognitions = instance.getRecognitions();
         for (Recognition recognition : recognitions) {

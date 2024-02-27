@@ -29,48 +29,52 @@ public class DualServos extends BunyipsSubsystem {
         update();
     }
 
-    public void toggleServo(ServoSide servo) {
+    public DualServos toggleServo(ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = (leftServoPosition == LEFT_SERVO_OPEN_POSITION) ? LEFT_SERVO_CLOSED_POSITION : LEFT_SERVO_OPEN_POSITION;
-            return;
+            return this;
         }
         if (servo == ServoSide.RIGHT) {
             rightServoPosition = (rightServoPosition == RIGHT_SERVO_OPEN_POSITION) ? RIGHT_SERVO_CLOSED_POSITION : RIGHT_SERVO_OPEN_POSITION;
-            return;
+            return this;
         }
         leftServoPosition = (leftServoPosition == LEFT_SERVO_OPEN_POSITION) ? LEFT_SERVO_CLOSED_POSITION : LEFT_SERVO_OPEN_POSITION;
         rightServoPosition = (rightServoPosition == RIGHT_SERVO_OPEN_POSITION) ? RIGHT_SERVO_CLOSED_POSITION : RIGHT_SERVO_OPEN_POSITION;
+        return this;
     }
 
-    public void openServo(ServoSide servo) {
+    public DualServos openServo(ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = LEFT_SERVO_OPEN_POSITION;
-            return;
+            return this;
         }
         if (servo == ServoSide.RIGHT) {
             rightServoPosition = RIGHT_SERVO_OPEN_POSITION;
-            return;
+            return this;
         }
         leftServoPosition = LEFT_SERVO_OPEN_POSITION;
         rightServoPosition = RIGHT_SERVO_OPEN_POSITION;
+        return this;
     }
 
-    public void closeServo(ServoSide servo) {
+    public DualServos closeServo(ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = LEFT_SERVO_CLOSED_POSITION;
-            return;
+            return this;
         }
         if (servo == ServoSide.RIGHT) {
             rightServoPosition = RIGHT_SERVO_CLOSED_POSITION;
-            return;
+            return this;
         }
         leftServoPosition = LEFT_SERVO_CLOSED_POSITION;
         rightServoPosition = RIGHT_SERVO_CLOSED_POSITION;
+        return this;
     }
 
     /**
      * Push stateful changes to the servos.
      */
+    @Override
     public void update() {
         left.setPosition(leftServoPosition);
         right.setPosition(rightServoPosition);

@@ -86,8 +86,9 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param y gamepad.left_stick_y or similar
      * @param r gamepad.right_stick_x or similar
      */
-    public void setSpeedUsingController(double x, double y, double r) {
+    public MecanumDrive setSpeedUsingController(double x, double y, double r) {
         drive.setWeightedDrivePower(Controller.makeRobotPose(x, y, r));
+        return this;
     }
 
     @Override

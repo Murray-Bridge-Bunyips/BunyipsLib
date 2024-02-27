@@ -11,6 +11,7 @@ import org.murraybridgebunyips.bunyipslib.vision.Vision;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.opencv.core.Mat;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -70,7 +71,7 @@ public class AprilTag extends Processor<AprilTagData> {
                     detection.hamming,
                     detection.decisionMargin,
                     detection.center,
-                    detection.corners,
+                    Arrays.asList(detection.corners),
                     detection.metadata != null ? detection.metadata.name : null,
                     detection.metadata != null ? detection.metadata.tagsize : null,
                     detection.metadata != null ? detection.metadata.fieldPosition : null,
