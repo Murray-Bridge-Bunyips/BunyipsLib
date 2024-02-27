@@ -10,12 +10,13 @@ import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.GreenPix
 import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.PurplePixel;
 import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.WhitePixel;
 import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.YellowPixel;
+import org.opencv.core.Scalar;
 
 @TeleOp(name = "Vision Tuner")
 public class VisionTuner extends BunyipsOpMode {
     int thresholdIndex = 1;
     int pixelIndex = 1;
-    int theEquation = 0;
+    double theEquation = 0;
 
     ColourThreshold whitePixel;
     ColourThreshold purplePixel;
@@ -23,6 +24,14 @@ public class VisionTuner extends BunyipsOpMode {
     ColourThreshold greenPixel;
     ColourThreshold[] pixels;
     ColourThreshold currentPixel;
+
+    double lower_y;
+    double lower_cb;
+    double lower_cr;
+    double upper_y;
+    double upper_cb;
+    double upper_cr;
+
 
     private boolean upPressed;
     private boolean downPressed;
@@ -39,11 +48,19 @@ public class VisionTuner extends BunyipsOpMode {
             yellowPixel = new YellowPixel();
             greenPixel = new GreenPixel();
 
+            // This hasn't been used thus far, and it probably won't be.
+            // But just in case we're keeping it here.
             pixels = new ColourThreshold[]{whitePixel, purplePixel, yellowPixel, greenPixel};
             currentPixel = whitePixel;  // Set it to white pixel by default
         } catch (IllegalArgumentException e) {
             throw new EmergencyStop("VisionTest is missing a webcam called 'webcam'!");
         }
+
+        addTelemetry("Threshold Index Key:");
+        addTelemetry("1: lower_y\n2: lower_cb\n3: lower_cr\n4: upper_y\n5: upper_cb\n6: upper_cr\n");
+
+        addTelemetry("Pixel Index Key");
+        addTelemetry("1: White Pixel\n2: Purple Pixel\n3: Yellow Pixel\n4: Green Pixel");
     }
 
     @Override
@@ -55,7 +72,7 @@ public class VisionTuner extends BunyipsOpMode {
         //  The value and the variable it was currently writing to should be shown in telemetry.
 
         if (gamepad1.right_bumper) {
-            float theEquation = (gamepad1.left_stick_y + gamepad1.left_stick_x) * 2;
+            theEquation = (gamepad1.left_stick_y + gamepad1.left_stick_x) * 2;
         }
 
         if (gamepad1.dpad_up && !upPressed && !downPressed) {
@@ -75,43 +92,66 @@ public class VisionTuner extends BunyipsOpMode {
         }
 
         if (gamepad1.dpad_left && !leftPressed && !rightPressed) {
-            if (thresholdIndex == 1)
-                thresholdIndex = 5;
-            else {
+            if (thresholdIndex == 1) {
+                thresholdIndex = 6;
+            } else {
                 thresholdIndex--;
             }
         }
 
         if (gamepad1.dpad_right && !leftPressed && !rightPressed) {
-            if (thresholdIndex == 5)
-                thresholdIndex = 0;
-            else {
+            if (thresholdIndex == 6) {
+                thresholdIndex = 1;
+            } else {
                 thresholdIndex++;
             }
         }
 
-        switch (thresholdIndex) {
+        switch (pixelIndex) {
             case 1:
+                currentPixel = whitePixel;
                 break;
             case 2:
+                currentPixel = purplePixel;
                 break;
             case 3:
+                currentPixel = yellowPixel;
                 break;
             case 4:
+                currentPixel = greenPixel;
+        }
+
+        switch (thresholdIndex) {
+            case 1:
+                lower_y += theEquation;
+                break;
+            case 2:
+                lower_cb += theEquation;
+                break;
+            case 3:
+                lower_cr += theEquation;
+                break;
+            case 4:
+                upper_y += theEquation;
                 break;
             case 5:
+                upper_cb += theEquation;
                 break;
             case 6:
+                upper_cr += theEquation;
                 break;
         }
 
         upPressed = gamepad1.dpad_up;
         downPressed = gamepad1.dpad_down;
-        leftPressed = gamepad1.dpad_right;
+        leftPressed = gamepad1.dpad_left;
         rightPressed = gamepad1.dpad_right;
 
-        addTelemetry(thresholdIndex);
-        addTelemetry(currentPixel);
-        addTelemetry(pixels);
+        currentPixel.setLower(new Scalar(lower_y, lower_cb, lower_cr));
+        currentPixel.setUpper(new Scalar(upper_y, upper_cb, upper_cr));
+
+        addTelemetry("Current Threshold Index: %", thresholdIndex);
+        addTelemetry("Current Pixel Index: %", pixelIndex);
+        addTelemetry("Current Gamepad Thing: %", theEquation);
     }
 }
