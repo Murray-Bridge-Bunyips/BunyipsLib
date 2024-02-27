@@ -73,7 +73,7 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
         if (biggestContour != null) {
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            translationController.calculate(biggestContour.getPitch(), 0.0),
+                            -translationController.calculate(biggestContour.getPitch(), 0.0),
                             pose.getY(),
                             rotationController.calculate(biggestContour.getYaw(), 0.0)
                     )
