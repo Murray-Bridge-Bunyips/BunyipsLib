@@ -53,7 +53,7 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun error(stck: StackTraceElement, format: Any?, vararg args: Any?) {
+    fun error(stck: StackTraceElement, format: Any, vararg args: Any?) {
         RobotLog.ee(TAG, "$ERR_PREPEND [$stck] ${formatString(format.toString(), *args)}")
     }
 
@@ -66,7 +66,7 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun error(obj: Class<*>, format: Any?, vararg args: Any?) {
+    fun error(obj: Class<*>, format: Any, vararg args: Any?) {
         RobotLog.ee(
             TAG,
             "$ERR_PREPEND [${obj.simpleName}] ${formatString(format.toString(), *args)}"
@@ -81,7 +81,7 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun error(format: Any?, vararg args: Any?) {
+    fun error(format: Any, vararg args: Any?) {
         RobotLog.ee(TAG, "$ERR_PREPEND ${formatString(format.toString(), *args)}")
     }
 
@@ -106,7 +106,7 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun warn(stck: StackTraceElement, format: Any?, vararg args: Any?) {
+    fun warn(stck: StackTraceElement, format: Any, vararg args: Any?) {
         RobotLog.ww(TAG, "$WRN_PREPEND [$stck] ${formatString(format.toString(), *args)}")
     }
 
@@ -119,7 +119,7 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun warn(obj: Class<*>, format: Any?, vararg args: Any?) {
+    fun warn(obj: Class<*>, format: Any, vararg args: Any?) {
         RobotLog.ww(
             TAG,
             "$WRN_PREPEND [${obj.simpleName}] ${formatString(format.toString(), *args)}"
@@ -134,7 +134,7 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun warn(format: Any?, vararg args: Any?) {
+    fun warn(format: Any, vararg args: Any?) {
         RobotLog.ww(TAG, "$WRN_PREPEND ${formatString(format.toString(), *args)}")
     }
 
@@ -146,7 +146,7 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun logd(stck: StackTraceElement, format: Any?, vararg args: Any?) {
+    fun logd(stck: StackTraceElement, format: Any, vararg args: Any?) {
         RobotLog.dd(TAG, "[$stck] ${formatString(format.toString(), *args)}")
     }
 
@@ -158,8 +158,11 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun logd(obj: Class<*>, format: Any?, vararg args: Any?) {
-        RobotLog.dd(TAG, "[${obj.simpleName}] ${formatString(format.toString(), *args)}")
+    fun logd(obj: Class<*>, format: Any, vararg args: Any?) {
+        RobotLog.dd(
+            TAG,
+            "[${obj.simpleName}] ${formatString(format.toString(), *args)}"
+        )
     }
 
     /**
@@ -169,7 +172,7 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun logd(format: Any?, vararg args: Any?) {
+    fun logd(format: Any, vararg args: Any?) {
         RobotLog.dd(TAG, formatString(format.toString(), *args))
     }
 
@@ -181,7 +184,7 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun log(stck: StackTraceElement, format: Any?, vararg args: Any?) {
+    fun log(stck: StackTraceElement, format: Any, vararg args: Any?) {
         RobotLog.ii(TAG, "[$stck] ${formatString(format.toString(), *args)}")
     }
 
@@ -193,8 +196,11 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun log(obj: Class<*>, format: Any?, vararg args: Any?) {
-        RobotLog.ii(TAG, "[${obj.simpleName}] ${formatString(format.toString(), *args)}")
+    fun log(obj: Class<*>, format: Any, vararg args: Any?) {
+        RobotLog.ii(
+            TAG,
+            "[${obj.simpleName}] ${formatString(format.toString(), *args)}"
+        )
     }
 
     /**
@@ -204,7 +210,7 @@ object Dbg {
      * @param args The objects to format into the object format string
      */
     @JvmStatic
-    fun log(format: Any?, vararg args: Any?) {
+    fun log(format: Any, vararg args: Any?) {
         RobotLog.ii(TAG, formatString(format.toString(), *args))
     }
 }

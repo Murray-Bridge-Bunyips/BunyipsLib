@@ -389,7 +389,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * @param args The objects to format into the object format string
      * @return The telemetry item added to the Driver Station, null if the send failed from overflow
      */
-    fun addTelemetry(format: Any?, vararg args: Any?): Item? {
+    fun addTelemetry(format: Any, vararg args: Any?): Item? {
         flushTelemetryQueue()
         if (telemetryQueue >= 255 && !telemetry.isAutoClear) {
             // Auto flush will fail as clearing is not permitted
@@ -407,7 +407,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * @param args The objects to format into the object format string
      * @return The telemetry item added to the Driver Station
      */
-    fun addRetainedTelemetry(format: Any?, vararg args: Any?): Item {
+    fun addRetainedTelemetry(format: Any, vararg args: Any?): Item {
         flushTelemetryQueue()
         // Retained objects will never be cleared, so we can just add them immediately, as usually
         // retained messages should be important and not be discarded
@@ -442,7 +442,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
-    fun log(format: Any?, vararg args: Any?) {
+    fun log(format: Any, vararg args: Any?) {
         val fstring = formatString(format.toString(), *args)
         telemetry.log().add(fstring)
         telemetryItems.add(Pair(ItemType.LOG, fstring))
@@ -454,7 +454,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
-    fun log(obj: Class<*>, format: Any?, vararg args: Any?) {
+    fun log(obj: Class<*>, format: Any, vararg args: Any?) {
         val msg = "[${obj.simpleName}] ${formatString(format.toString(), *args)}"
         telemetry.log().add(msg)
         telemetryItems.add(Pair(ItemType.LOG, msg))
@@ -466,7 +466,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
-    fun log(stck: StackTraceElement, format: Any?, vararg args: Any?) {
+    fun log(stck: StackTraceElement, format: Any, vararg args: Any?) {
         val msg = "[${stck}] ${formatString(format.toString(), *args)}"
         telemetry.log().add(msg)
         telemetryItems.add(Pair(ItemType.LOG, msg))
