@@ -37,8 +37,8 @@ import java.util.Arrays;
  *
  * <p></p>
  * Controls:<br>
- *  dpad_up: Decrement selected pixel index<br>
- *  dpad_down: Increment selected pixel index<br>
+ *  dpad_up: Increment selected pixel index<br>
+ *  dpad_down: Decrement selected pixel index<br>
  *  dpad_left: Decrement selected Threshold index<br>
  *  dpad_right: Increment selected Threshold index<br>
  *  right_bumper(while held): Changes amount Threshold is changed by. Equation is left stick x and y times by 2<br>
@@ -83,18 +83,18 @@ public class VisionTuner extends BunyipsOpMode {
             yellowPixel = new YellowPixel();
             greenPixel = new GreenPixel();
 
-            ArrayList<ColourThreshold> pixels = new ArrayList<>(Arrays.asList(whitePixel, purplePixel, yellowPixel, greenPixel));
-            ArrayList<Double> scalars = new ArrayList<>(Arrays.asList(lower_y, lower_cb, lower_cr, upper_y, upper_cb, upper_cr));
+            // TODO: Make it so it doesn't start them all at once.
+            //  It's fine for now but for performance's sake.
+            vision.init(whitePixel, purplePixel, yellowPixel, greenPixel);
+            vision.start(whitePixel, purplePixel, yellowPixel, greenPixel);
+            vision.startPreview();
+
+            pixels = new ArrayList<>(Arrays.asList(whitePixel, purplePixel, yellowPixel, greenPixel));
+            scalars = new ArrayList<>(Arrays.asList(lower_y, lower_cb, lower_cr, upper_y, upper_cb, upper_cr));
             currentPixel = whitePixel;  // Set it to white pixel by default
         } catch (IllegalArgumentException e) {
             throw new EmergencyStop("VisionTest is missing a webcam called 'webcam'!");
         }
-
-        addTelemetry("Threshold Index Key:");
-        addTelemetry("0: lower_y\n1: lower_cb\n2: lower_cr\n3: upper_y\n4: upper_cb\n5: upper_cr\n");
-
-        addTelemetry("Pixel Index Key");
-        addTelemetry("0: White Pixel\n1: Purple Pixel\n2: Yellow Pixel\n3: Green Pixel");
     }
 
     @Override
@@ -110,18 +110,18 @@ public class VisionTuner extends BunyipsOpMode {
         }
 
         if (gamepad1.dpad_up && !upPressed && !downPressed) {
-            if (pixelIndex == 0) {
-                pixelIndex = 3;
-            } else {
-                pixelIndex--;
-            }
-        }
-
-        if (gamepad1.dpad_down && !upPressed && !downPressed) {
             if (pixelIndex == 3) {
                 pixelIndex = 0;
             } else {
                 pixelIndex++;
+            }
+        }
+
+        if (gamepad1.dpad_down && !upPressed && !downPressed) {
+            if (pixelIndex == 0) {
+                pixelIndex = 3;
+            } else {
+                pixelIndex--;
             }
         }
 
@@ -157,5 +157,11 @@ public class VisionTuner extends BunyipsOpMode {
         addTelemetry("Current Threshold Index: %", thresholdIndex);
         addTelemetry("Current Pixel Index: %", pixelIndex);
         addTelemetry("Current Value to Change Threshold By: %", theEquation);
+
+        addTelemetry("\nThreshold Index Key:");
+        addTelemetry("0: lower_y\n1: lower_cb\n2: lower_cr\n3: upper_y\n4: upper_cb\n5: upper_cr\n");
+
+        addTelemetry("Pixel Index Key");
+        addTelemetry("0: White Pixel\n1: Purple Pixel\n2: Yellow Pixel\n3: Green Pixel");
     }
 }
