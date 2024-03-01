@@ -19,7 +19,7 @@ import java.util.Arrays;
  * Manual tuner that allows the user to tune the colour thresholds the camera uses to detect pixels
  * using gamepad1's left analogue stick.
  * <p></p>
- *
+ * <p>
  * Threshold Index:<br>
  * 0: lower_y<br>
  * 1: lower_cb<br>
@@ -28,7 +28,7 @@ import java.util.Arrays;
  * 4: upper_cb<br>
  * 5: upper_cr<br>
  * <p></p>
- *
+ * <p>
  * Pixel Index:<br>
  * 0: White Pixel<br>
  * 1: Purple Pixel<br>
@@ -37,12 +37,12 @@ import java.util.Arrays;
  *
  * <p></p>
  * Controls:<br>
- *  dpad_up: Increment selected pixel index<br>
- *  dpad_down: Decrement selected pixel index<br>
- *  dpad_left: Decrement selected Threshold index<br>
- *  dpad_right: Increment selected Threshold index<br>
- *  right_bumper(while held): Changes amount Threshold is changed by. Equation is left stick x and y times by 2<br>
- *  right_trigger: Saves values (to telem maybe? dunno yet)
+ * dpad_up: Increment selected pixel index<br>
+ * dpad_down: Decrement selected pixel index<br>
+ * dpad_left: Decrement selected Threshold index<br>
+ * dpad_right: Increment selected Threshold index<br>
+ * right_bumper(while held): Changes amount Threshold is changed by. Equation is left stick x and y times by 2<br>
+ * right_trigger: Saves values (to telem maybe? dunno yet)
  *
  * @author Lachlan Paul, 2024
  */

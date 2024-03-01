@@ -3,7 +3,6 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.Range;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controller;
@@ -12,15 +11,13 @@ import org.murraybridgebunyips.bunyipslib.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
-import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
-import org.murraybridgebunyips.bunyipslib.vision.processors.MultiColourThreshold;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Task to align to an AprilTag (first).
+ * Task to align to an AprilTag.
  *
  * @param <T> the drivetrain to use (must implement RoadRunnerDrive for X pose forward info/FCD)
  * @author Lucas Bubner, 2024
@@ -69,12 +66,12 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask
             drive.setWeightedDrivePower(pose);
             return;
         }
-        // TODO: Optimise
+        // TODO: Optimise, may need to use a different error calculation method
         drive.setWeightedDrivePower(
                 new Pose2d(
                         pose.getX(),
                         pose.getY(),
-                        -controller.calculate(target.get().getBearing(), 0.0)
+                        -controller.calculate(target.get().getYaw(), 0.0)
                 )
         );
     }
