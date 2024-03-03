@@ -23,6 +23,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +47,7 @@ public final class LogFiles {
 
             // clean up old files
             File[] fs = Objects.requireNonNull(ROOT.listFiles());
-            Arrays.sort(fs, (a, b) -> Long.compare(a.lastModified(), b.lastModified()));
+            Arrays.sort(fs, Comparator.comparingLong(File::lastModified));
             long totalSizeBytes = 0;
             for (File f : fs) {
                 totalSizeBytes += f.length();

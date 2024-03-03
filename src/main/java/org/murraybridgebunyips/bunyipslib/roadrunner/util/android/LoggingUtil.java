@@ -4,7 +4,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -31,8 +31,7 @@ public class LoggingUtil {
     private static void pruneLogsIfNecessary() {
         List<File> logFiles = new ArrayList<>();
         buildLogList(logFiles, ROAD_RUNNER_FOLDER);
-        Collections.sort(logFiles, (lhs, rhs) ->
-                Long.compare(lhs.lastModified(), rhs.lastModified()));
+        logFiles.sort(Comparator.comparingLong(File::lastModified));
 
         long dirSize = 0;
         for (File file : logFiles) {
@@ -40,7 +39,7 @@ public class LoggingUtil {
         }
 
         while (dirSize > LOG_QUOTA) {
-            if (logFiles.size() == 0) break;
+            if (logFiles.isEmpty()) break;
             File fileToRemove = logFiles.remove(0);
             dirSize -= fileToRemove.length();
             //noinspection ResultOfMethodCallIgnored
