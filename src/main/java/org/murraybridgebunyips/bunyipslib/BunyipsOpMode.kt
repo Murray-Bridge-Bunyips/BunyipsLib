@@ -91,8 +91,23 @@ abstract class BunyipsOpMode : LinearOpMode() {
     protected abstract fun activeLoop()
 
     /**
+     * Perform one time clean-up operations after the activeLoop() finishes from an uninterrupted
+     * OpMode lifecycle. This method is called after a finish() or exit() call, but may not
+     * be called if the OpMode is terminated by an unhandled exception. This method is useful for
+     * ensuring the robot is in a safe state after the OpMode has finished.
+     * @see onStop
+     */
+    protected open fun onFinish() {
+    }
+
+    /**
      * Perform one time clean-up operations after the OpMode finishes.
+     * This method is called after the OpMode has been requested to stop, and will be the last method
+     * called before the OpMode is terminated, and is *guaranteed* to be called. This method is useful
+     * for releasing resources to prevent memory leaks, as motor controllers will be powered off
+     * as the OpMode is ending.
      * This method is not exception protected!
+     * @see onFinish
      */
     protected open fun onStop() {
     }
@@ -226,7 +241,13 @@ abstract class BunyipsOpMode : LinearOpMode() {
             }
 
             opModeStatus = "finished"
+            try {
+                onFinish()
+            } catch (e: Exception) {
+                ErrorUtil.handleCatchAllException(e, ::log)
+            }
             // overheadTelemetry will no longer update, will remain frozen on last value
+            movingAverageTimer.update()
             pushTelemetry()
             Dbg.logd("BunyipsOpMode: all tasks finished.")
             // Wait for user to hit stop or for the OpMode to be terminated
