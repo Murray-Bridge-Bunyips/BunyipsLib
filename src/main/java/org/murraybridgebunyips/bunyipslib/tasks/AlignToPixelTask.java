@@ -9,7 +9,7 @@ import org.murraybridgebunyips.bunyipslib.Controller;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
-import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
+import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.MultiColourThreshold;
 
@@ -22,23 +22,35 @@ import java.util.List;
  * @author Lucas Bubner, 2024
  */
 @Config
-public class AlignToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
+public class AlignToPixelTask<T extends BunyipsSubsystem> extends Task {
     public static double kP;
     public static double kI;
     public static double kD;
 
     private final RoadRunnerDrive drive;
     private final MultiColourThreshold processors;
-    private final Gamepad gamepad;
     private final PIDController controller;
+    private Gamepad gamepad;
 
     public AlignToPixelTask(Gamepad gamepad, T drive, MultiColourThreshold processors, PIDController controller) {
-        super(drive, false);
+        super(0, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToPixelTask must be used with a drivetrain with X forward Pose/IMU info");
         this.drive = (RoadRunnerDrive) drive;
         this.processors = processors;
         this.gamepad = gamepad;
+        this.controller = controller;
+        kP = controller.getP();
+        kI = controller.getI();
+        kD = controller.getD();
+    }
+
+    public AlignToPixelTask(double timeout, T drive, MultiColourThreshold processors, PIDController controller) {
+        super(timeout, drive, false);
+        if (!(drive instanceof RoadRunnerDrive))
+            throw new EmergencyStop("AlignToPixelTask must be used with a drivetrain with X forward Pose/IMU info");
+        this.drive = (RoadRunnerDrive) drive;
+        this.processors = processors;
         this.controller = controller;
         kP = controller.getP();
         kI = controller.getI();
@@ -56,7 +68,9 @@ public class AlignToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
         // FtcDashboard live tuning
         controller.setPID(kP, kI, kD);
 
-        Pose2d pose = Controller.makeRobotPose(gamepad.left_stick_x, gamepad.left_stick_y, gamepad.right_stick_x);
+        Pose2d pose = new Pose2d(0, 0, 0);
+        if (gamepad != null)
+            pose = Controller.makeRobotPose(gamepad.left_stick_x, gamepad.left_stick_y, gamepad.right_stick_x);
 
         List<ContourData> data = processors.getData();
         ContourData biggestContour = ContourData.getLargest(data);
@@ -77,5 +91,11 @@ public class AlignToPixelTask<T extends BunyipsSubsystem> extends ForeverTask {
     @Override
     public void onFinish() {
 //        drive.setSpeedUsingController(0, 0, 0);
+    }
+
+    @Override
+    public boolean isTaskFinished() {
+        // Will be timed out, replaced, or manually stopped
+        return false;
     }
 }
