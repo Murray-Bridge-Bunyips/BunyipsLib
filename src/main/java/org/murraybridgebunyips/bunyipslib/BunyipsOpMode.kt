@@ -559,7 +559,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
         operationsCompleted = true
         Dbg.logd("BunyipsOpMode: activeLoop() terminated by finish().")
         createTelemetryItem(
-            "BunyipsOpMode: Robot is stopped. All operations completed.",
+            "BunyipsOpMode: Robot ${if (safeHaltHardwareOnStop) "is stopped" else "tasks finished"}. All operations completed.",
             true
         )
         pushTelemetry()
