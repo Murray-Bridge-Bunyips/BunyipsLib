@@ -62,8 +62,10 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * @param lower the lower scalar to use
      */
     public void setLower(Scalar lower) {
-        Dbg.logd(getClass(), "Overriding lower scalar to " + lower.toString() + " from " + getLower().toString());
-        lowerOverride = lower;
+        if (!lower.equals(lowerOverride)) {
+            Dbg.logd(getClass(), "Overriding lower scalar to " + lower + " from " + getLower().toString());
+            lowerOverride = lower;
+        }
     }
 
     public abstract Scalar getUpper();
@@ -74,8 +76,10 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * @param upper the upper scalar to use
      */
     public void setUpper(Scalar upper) {
-        Dbg.logd(getClass(), "Overriding upper scalar to " + upper.toString() + " from " + getUpper().toString());
-        upperOverride = upper;
+        if (!upper.equals(upperOverride)) {
+            Dbg.logd(getClass(), "Overriding upper scalar to " + upper + " from " + getUpper().toString());
+            upperOverride = upper;
+        }
     }
 
     public abstract int getBoxColour();

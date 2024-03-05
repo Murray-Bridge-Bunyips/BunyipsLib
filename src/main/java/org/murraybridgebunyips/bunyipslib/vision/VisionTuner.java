@@ -107,6 +107,8 @@ public class VisionTuner extends BunyipsOpMode {
 
         if (gamepad1.right_bumper) {
             theEquation = (gamepad1.left_stick_y + gamepad1.left_stick_x) * 2;
+        } else {
+            theEquation = 0;
         }
 
         if (gamepad1.dpad_up && !upPressed && !downPressed) {
@@ -151,8 +153,10 @@ public class VisionTuner extends BunyipsOpMode {
         leftPressed = gamepad1.dpad_left;
         rightPressed = gamepad1.dpad_right;
 
-        currentPixel.setLower(new Scalar(lower_y, lower_cb, lower_cr));
-        currentPixel.setUpper(new Scalar(upper_y, upper_cb, upper_cr));
+        // TODO: Clip the range of all the thresholds to 0 and 255
+
+        currentPixel.setLower(new Scalar(scalars.get(0), scalars.get(1), scalars.get(2)));
+        currentPixel.setUpper(new Scalar(scalars.get(0), scalars.get(1), scalars.get(2)));
 
         addTelemetry("Current Threshold Index: %", thresholdIndex);
         addTelemetry("Current Pixel Index: %", pixelIndex);
