@@ -77,7 +77,6 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
             return;
         }
 
-        // TODO: test
         double rangeError = (target.get().getRange() - Inches.fromM(DESIRED_DISTANCE)) * SPEED_GAIN;
         double yawError = -target.get().getYaw() * STRAFE_GAIN;
         double headingError = target.get().getBearing() * TURN_GAIN;

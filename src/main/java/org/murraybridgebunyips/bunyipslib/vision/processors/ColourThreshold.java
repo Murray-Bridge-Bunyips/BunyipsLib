@@ -90,6 +90,8 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * Resets the lower override, so that the lower scalar is used instead of the override.
      */
     public void resetLower() {
+        if (lowerOverride != null)
+            Dbg.logd(getClass(), "Resetting scalar to " + getLower().toString());
         lowerOverride = null;
     }
 
@@ -97,6 +99,8 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * Resets the upper override, so that the upper scalar is used instead of the override.
      */
     public void resetUpper() {
+        if (upperOverride != null)
+            Dbg.logd(getClass(), "Resetting scalar to " + getUpper().toString());
         upperOverride = null;
     }
 

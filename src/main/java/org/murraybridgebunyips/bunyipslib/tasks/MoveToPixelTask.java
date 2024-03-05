@@ -3,6 +3,7 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
@@ -24,12 +25,8 @@ import java.util.List;
  */
 @Config
 public class MoveToPixelTask<T extends BunyipsSubsystem> extends Task {
-    public static double TRANSLATIONAL_kP;
-    public static double TRANSLATIONAL_kI;
-    public static double TRANSLATIONAL_kD;
-    public static double ROTATIONAL_kP;
-    public static double ROTATIONAL_kI;
-    public static double ROTATIONAL_kD;
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients();
+    public static PIDCoefficients ROTATIONAL_PID = new PIDCoefficients();
     public static double PITCH_TARGET = 0.0;
 
     private final RoadRunnerDrive drive;
@@ -47,12 +44,8 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends Task {
         this.gamepad = gamepad;
         this.translationController = translationController;
         this.rotationController = rotationController;
-        TRANSLATIONAL_kP = translationController.getP();
-        TRANSLATIONAL_kI = translationController.getI();
-        TRANSLATIONAL_kD = translationController.getD();
-        ROTATIONAL_kP = rotationController.getP();
-        ROTATIONAL_kI = rotationController.getI();
-        ROTATIONAL_kD = rotationController.getD();
+        translationController.updatePID(TRANSLATIONAL_PID);
+        rotationController.updatePID(ROTATIONAL_PID);
     }
 
     public MoveToPixelTask(double timeout, T drive, MultiColourThreshold processors, PIDController translationController, PIDController rotationController) {
@@ -63,12 +56,8 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends Task {
         this.processors = processors;
         this.translationController = translationController;
         this.rotationController = rotationController;
-        TRANSLATIONAL_kP = translationController.getP();
-        TRANSLATIONAL_kI = translationController.getI();
-        TRANSLATIONAL_kD = translationController.getD();
-        ROTATIONAL_kP = rotationController.getP();
-        ROTATIONAL_kI = rotationController.getI();
-        ROTATIONAL_kD = rotationController.getD();
+        translationController.updatePID(TRANSLATIONAL_PID);
+        rotationController.updatePID(ROTATIONAL_PID);
     }
 
     public MoveToPixelTask<T> withPitchTarget(double pitchTarget) {
@@ -85,8 +74,8 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends Task {
     @Override
     public void periodic() {
         // FtcDashboard live tuning
-        translationController.setPID(TRANSLATIONAL_kP, TRANSLATIONAL_kI, TRANSLATIONAL_kD);
-        rotationController.setPID(ROTATIONAL_kP, ROTATIONAL_kI, ROTATIONAL_kD);
+        translationController.setPID(TRANSLATIONAL_PID);
+        rotationController.setPID(ROTATIONAL_PID);
 
         Pose2d pose = new Pose2d(0, 0, 0);
         if (gamepad != null)

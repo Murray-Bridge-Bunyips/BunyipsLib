@@ -3,6 +3,7 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controller;
@@ -23,9 +24,7 @@ import java.util.List;
  */
 @Config
 public class AlignToPixelTask<T extends BunyipsSubsystem> extends Task {
-    public static double kP;
-    public static double kI;
-    public static double kD;
+    public static PIDCoefficients PID = new PIDCoefficients();
 
     private final RoadRunnerDrive drive;
     private final MultiColourThreshold processors;
@@ -40,9 +39,7 @@ public class AlignToPixelTask<T extends BunyipsSubsystem> extends Task {
         this.processors = processors;
         this.gamepad = gamepad;
         this.controller = controller;
-        kP = controller.getP();
-        kI = controller.getI();
-        kD = controller.getD();
+        controller.updatePID(PID);
     }
 
     public AlignToPixelTask(double timeout, T drive, MultiColourThreshold processors, PIDController controller) {
@@ -52,9 +49,7 @@ public class AlignToPixelTask<T extends BunyipsSubsystem> extends Task {
         this.drive = (RoadRunnerDrive) drive;
         this.processors = processors;
         this.controller = controller;
-        kP = controller.getP();
-        kI = controller.getI();
-        kD = controller.getD();
+        controller.updatePID(PID);
     }
 
     @Override
@@ -66,7 +61,7 @@ public class AlignToPixelTask<T extends BunyipsSubsystem> extends Task {
     @Override
     public void periodic() {
         // FtcDashboard live tuning
-        controller.setPID(kP, kI, kD);
+        controller.setPID(PID);
 
         Pose2d pose = new Pose2d(0, 0, 0);
         if (gamepad != null)
