@@ -91,7 +91,7 @@ public class VisionTuner extends BunyipsOpMode {
 
             pixels = new ArrayList<>(Arrays.asList(whitePixel, purplePixel, yellowPixel, greenPixel));
             scalars = new ArrayList<>(Arrays.asList(lower_y, lower_cb, lower_cr, upper_y, upper_cb, upper_cr));
-            currentPixel = whitePixel;  // Set it to white pixel by default
+            currentPixel = whitePixel;  // Set to white pixel by default
         } catch (IllegalArgumentException e) {
             throw new EmergencyStop("VisionTest is missing a webcam called 'webcam'!");
         }
@@ -108,7 +108,9 @@ public class VisionTuner extends BunyipsOpMode {
         if (gamepad1.right_bumper) {
             theEquation = (gamepad1.left_stick_y + gamepad1.left_stick_x) * 2;
         } else {
-            theEquation = 0;
+            // TODO: Test. Hopefully stops the number infinitely adding up if you release the buttons wrong
+            //  If not, set to 0. Might be inconvenient at times but at least it works that way
+            theEquation = theEquation;
         }
 
         if (gamepad1.dpad_up && !upPressed && !downPressed) {
@@ -141,6 +143,14 @@ public class VisionTuner extends BunyipsOpMode {
             } else {
                 thresholdIndex++;
             }
+        }
+
+        // Temporary (maybe)
+        // Preferably, use Range.clip() to clip the value
+        if (theEquation < 0) {
+            theEquation = 0;
+        } else if (theEquation > 255) {
+            theEquation = 255;
         }
 
         // NOTE: If this doesn't work, I have a backup of the original match case string with fixed
