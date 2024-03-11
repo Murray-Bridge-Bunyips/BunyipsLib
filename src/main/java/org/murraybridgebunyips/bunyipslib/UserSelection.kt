@@ -72,7 +72,7 @@ class UserSelection<T>(
             try {
                 callback(null)
             } catch (e: Exception) {
-                ErrorUtil.handleCatchAllException(e, opMode::log)
+                Exceptions.handle(e, opMode::log)
             }
         }
 
@@ -159,7 +159,7 @@ class UserSelection<T>(
         try {
             callback(selectedOpMode)
         } catch (e: Exception) {
-            ErrorUtil.handleCatchAllException(e, opMode::log)
+            Exceptions.handle(e, opMode::log)
         }
     }
 }
