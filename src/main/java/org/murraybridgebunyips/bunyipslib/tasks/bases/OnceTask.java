@@ -32,5 +32,8 @@ public abstract class OnceTask extends Task {
     public final void onFinish() {
     }
 
+    /**
+     * Code to run once.
+     */
     public abstract void runOnce();
 }

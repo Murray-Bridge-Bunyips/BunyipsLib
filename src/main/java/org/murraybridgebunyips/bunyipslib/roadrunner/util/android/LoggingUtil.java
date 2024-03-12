@@ -6,11 +6,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Utility functions for log files.
  */
-public class LoggingUtil {
+public final class LoggingUtil {
+    /**
+     * The folder where RoadRunner logs are stored.
+     */
     public static final File ROAD_RUNNER_FOLDER =
             new File(AppUtil.ROOT_FOLDER + "/RoadRunner/");
     private static final long LOG_QUOTA = 25 * 1024 * 1024; // 25MB log quota for now
@@ -18,8 +22,8 @@ public class LoggingUtil {
     private LoggingUtil() {
     }
 
-    private static void buildLogList(List<File> logFiles, File dir) {
-        for (File file : dir.listFiles()) {
+    private static void buildLogList(List<? super File> logFiles, File dir) {
+        for (File file : Objects.requireNonNull(dir.listFiles())) {
             if (file.isDirectory()) {
                 buildLogList(logFiles, file);
             } else {
@@ -49,6 +53,8 @@ public class LoggingUtil {
 
     /**
      * Obtain a log file with the provided name
+     * @param name the name of the log file
+     * @return the log file
      */
     public static File getLogFile(String name) {
         //noinspection ResultOfMethodCallIgnored

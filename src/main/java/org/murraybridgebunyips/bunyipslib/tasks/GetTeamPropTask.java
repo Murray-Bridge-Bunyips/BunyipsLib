@@ -18,10 +18,20 @@ public class GetTeamPropTask extends NoTimeoutTask {
     private boolean initFired;
     private TeamProp.Positions position;
 
+    // TODO: consider refactor moving Vision component out of this class, pair with SequentialTaskGroup instead,
+    //  need to also consider making Tasks for all subsystems too.
+
+    /**
+     * @param vision Vision instance to use
+     */
     public GetTeamPropTask(Vision vision) {
         this.vision = vision;
     }
 
+    /**
+     * @param vision Vision instance to use
+     * @param teamProp TeamProp Processor to use
+     */
     public GetTeamPropTask(Vision vision, TeamProp teamProp) {
         this.vision = vision;
         this.teamProp = teamProp;

@@ -52,31 +52,31 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     /**
      * Set the current task to the given task.
      *
-     * @param currentTask The task to set as the current task
+     * @param newTask The task to set as the current task
      * @return whether the task was successfully set or ignored
      */
-    public final boolean setCurrentTask(Task currentTask) {
-        if (this.currentTask == currentTask)
+    public final boolean setCurrentTask(Task newTask) {
+        if (currentTask == newTask)
             return true;
 
         // Lockout if a task is currently running that is not the default task
-        if (this.currentTask != defaultTask) {
+        if (currentTask != defaultTask) {
             // Override if the task is designed to override
             // shouldOverrideOnConflict might be null if it is a non-command task
-            if (Boolean.TRUE.equals(currentTask.shouldOverrideOnConflict())) {
-                setHighPriorityCurrentTask(currentTask);
+            if (Boolean.TRUE.equals(newTask.shouldOverrideOnConflict())) {
+                setHighPriorityCurrentTask(newTask);
                 return true;
             }
-            Dbg.log(getClass(), "Ignored task change: %->%", this.currentTask.getName(), currentTask.getName());
+            Dbg.log(getClass(), "Ignored task change: %->%", currentTask.getName(), newTask.getName());
             return false;
         }
 
-        currentTask.reset();
+        newTask.reset();
         // Default task technically can't finish, but it can be interrupted, so we will just run the finish callback
-        if (this.currentTask == defaultTask)
+        if (currentTask == defaultTask)
             defaultTask.onFinish();
-        Dbg.logd(getClass(), "Task changed: %->%", this.currentTask.getName(), currentTask.getName());
-        this.currentTask = currentTask;
+        Dbg.logd(getClass(), "Task changed: %->%", currentTask.getName(), newTask.getName());
+        currentTask = newTask;
         return true;
     }
 

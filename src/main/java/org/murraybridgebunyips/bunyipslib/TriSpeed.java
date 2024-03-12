@@ -9,6 +9,9 @@ package org.murraybridgebunyips.bunyipslib;
 public class TriSpeed {
     private Speed speed;
 
+    /**
+     * @param initialSpeed The initial speed the selector should be set to
+     */
     public TriSpeed(Speed initialSpeed) {
         speed = initialSpeed;
     }
@@ -54,9 +57,21 @@ public class TriSpeed {
         }
     }
 
+    /**
+     * Toggle speeds
+     */
     public enum Speed {
+        /**
+         * Minimum speed
+         */
         SLOW,
+        /**
+         * Normal speed
+         */
         NORMAL,
+        /**
+         * Maximum speed
+         */
         FAST
     }
 }

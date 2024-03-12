@@ -14,7 +14,10 @@ import java.util.List;
  * @author Lucas Bubner, 2023
  * @see Exceptions
  */
-public class NullSafety {
+public final class NullSafety {
+    /**
+     * Components that are unusable and should not have their errors logged.
+     */
     public static final List<String> unusableComponents = new ArrayList<>();
 
     private NullSafety() {
@@ -36,6 +39,12 @@ public class NullSafety {
         return true;
     }
 
+    /**
+     * Ensure that all objects are not null.
+     *
+     * @param objs Objects to check for null
+     * @return Whether all objects are not null
+     */
     public static boolean assertNotNull(List<Object> objs) {
         return assertNotNull(objs.toArray());
     }

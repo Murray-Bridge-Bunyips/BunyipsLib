@@ -178,6 +178,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         log("auto: % has been added as task %/%", newTask.getName(), taskCount, taskCount);
     }
 
+    /**
+     * Can be called to add custom tasks in a robot's autonomous
+     * @param newTask task to add to the run queue
+     */
     public void addTask(@NotNull RobotTask newTask) {
         addTask(newTask, false);
     }
@@ -186,6 +190,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Add a task to the run queue, but after onReady() has processed tasks. This is useful to call
      * when working with tasks that should be queued at the very end of the autonomous, while still
      * being able to add tasks asynchronously with user input in onReady().
+     * @param newTask task to add to the run queue
      */
     public void addTaskLast(@NotNull RobotTask newTask) {
         if (!hasGottenCallback) {
@@ -202,6 +207,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Add a task to the very start of the queue. This is useful to call when working with tasks that
      * should be queued at the very start of the autonomous, while still being able to add tasks
      * asynchronously with user input in onQueueReady().
+     * @param newTask task to add to the run queue
      */
     public void addTaskFirst(@NotNull RobotTask newTask) {
         if (!hasGottenCallback) {

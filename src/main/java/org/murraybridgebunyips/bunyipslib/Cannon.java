@@ -18,6 +18,10 @@ public class Cannon extends BunyipsSubsystem {
     private final Servo prolong;
     private double target;
 
+    /**
+     * Constructs a new Cannon.
+     * @param prolong the servo to use
+     */
     public Cannon(Servo prolong) {
         this.prolong = prolong;
 
@@ -28,6 +32,7 @@ public class Cannon extends BunyipsSubsystem {
 
     /**
      * Fire in the hole!
+     * @return this
      */
     public Cannon fire() {
         target = FIRED;
@@ -36,6 +41,7 @@ public class Cannon extends BunyipsSubsystem {
 
     /**
      * Reset the cannon to its initial position
+     * @return this
      */
     public Cannon reset() {
         target = RESET;

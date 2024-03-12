@@ -13,6 +13,10 @@ public class SequentialTaskGroup extends TaskGroup {
     private final Iterator<Task> taskIterator;
     private Task currentTask;
 
+    /**
+     * Create a new SequentialTaskGroup with tasks.
+     * @param tasks The tasks to run in sequence
+     */
     public SequentialTaskGroup(Task... tasks) {
         super(tasks);
         taskIterator = super.tasks.iterator();

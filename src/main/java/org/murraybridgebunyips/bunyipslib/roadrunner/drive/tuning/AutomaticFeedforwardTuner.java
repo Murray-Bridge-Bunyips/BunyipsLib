@@ -17,7 +17,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.util.android.LoggingUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
+/**
  * Op mode for computing kV, kStatic, and kA from various drive routines. For the curious, here's an
  * outline of the procedure:
  *   1. Slowly ramp the motor power and record encoder values along the way.
@@ -29,7 +29,13 @@ import java.util.List;
  */
 //@Config
 public abstract class AutomaticFeedforwardTuner extends LinearOpMode {
+    /**
+     * The maximum power for the feedforward tuning routine.
+     */
     public static double MAX_POWER = 0.7;
+    /**
+     * The distance in inches to travel for the feedforward tuning routine.
+     */
     public static double DISTANCE = 100; // in
 
     protected RoadRunnerDrive drive;

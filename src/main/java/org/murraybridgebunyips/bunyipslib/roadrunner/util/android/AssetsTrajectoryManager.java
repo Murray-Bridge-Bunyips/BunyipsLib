@@ -16,13 +16,14 @@ import java.io.InputStream;
 /**
  * Set of utilities for loading trajectories from assets (the plugin save location).
  */
-public class AssetsTrajectoryManager {
+public final class AssetsTrajectoryManager {
 
     private AssetsTrajectoryManager() {
     }
 
     /**
      * Loads the group config.
+     * @return the group config, or null if it could not be loaded
      */
     @Nullable
     public static TrajectoryGroupConfig loadGroupConfig() {
@@ -37,6 +38,8 @@ public class AssetsTrajectoryManager {
 
     /**
      * Loads a trajectory config with the given name.
+     * @param name the name of the trajectory config
+     * @return the trajectory config, or null if it could not be loaded
      */
     @Nullable
     public static TrajectoryConfig loadConfig(String name) {
@@ -51,6 +54,8 @@ public class AssetsTrajectoryManager {
 
     /**
      * Loads a trajectory builder with the given name.
+     * @param name the name of the trajectory config
+     * @return the trajectory builder, or null if it could not be loaded
      */
     @Nullable
     public static TrajectoryBuilder loadBuilder(String name) {
@@ -64,6 +69,8 @@ public class AssetsTrajectoryManager {
 
     /**
      * Loads a trajectory with the given name.
+     * @param name the name of the trajectory config
+     * @return the trajectory, or null if it could not be loaded
      */
     @Nullable
     public static Trajectory load(String name) {

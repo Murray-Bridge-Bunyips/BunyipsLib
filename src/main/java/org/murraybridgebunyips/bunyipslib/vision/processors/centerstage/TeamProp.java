@@ -24,6 +24,9 @@ import java.util.List;
  */
 @Config
 public class TeamProp extends Processor<TeamPropData> {
+    /**
+     * The distance threshold where colour should be ignored.
+     */
     public static double NONE_THRESHOLD = 220;
     private final List<Integer> ELEMENT_COLOR;
 
@@ -55,8 +58,8 @@ public class TeamProp extends Processor<TeamPropData> {
         zone1.setTo(avgColor1);
         zone2.setTo(avgColor2);
 
-        distance1 = color_distance(avgColor1, ELEMENT_COLOR);
-        distance2 = color_distance(avgColor2, ELEMENT_COLOR);
+        distance1 = colourDistance(avgColor1, ELEMENT_COLOR);
+        distance2 = colourDistance(avgColor2, ELEMENT_COLOR);
 
         if (distance1 > NONE_THRESHOLD && distance2 > NONE_THRESHOLD) {
             max_distance = -1;
@@ -66,8 +69,14 @@ public class TeamProp extends Processor<TeamPropData> {
         }
     }
 
+    /**
+     * Calculate the distance between two colours.
+     * @param color1 The first colour
+     * @param color2 The second colour
+     * @return The distance between the two colours
+     */
     @SuppressWarnings("rawtypes")
-    public double color_distance(Scalar color1, List color2) {
+    public double colourDistance(Scalar color1, List color2) {
         double r1 = color1.val[0];
         double g1 = color1.val[1];
         double b1 = color1.val[2];
@@ -106,9 +115,21 @@ public class TeamProp extends Processor<TeamPropData> {
         zone2.release();
     }
 
+    /**
+     * The position of the team prop, CENTERSTAGE.
+     */
     public enum Positions {
+        /**
+         * The team prop is on the left Spike Mark.
+         */
         LEFT,
+        /**
+         * The team prop is on the center Spike Mark.
+         */
         CENTER,
+        /**
+         * The team prop is on the right Spike Mark.
+         */
         RIGHT
     }
 }

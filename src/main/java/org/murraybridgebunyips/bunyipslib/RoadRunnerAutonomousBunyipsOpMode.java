@@ -18,6 +18,7 @@ import java.util.ArrayList;
  * Additional abstraction for RoadRunner drives to integrate trajectories seamlessly into Autonomous.
  *
  * @author Lucas Bubner, 2023
+ * @param <T> RoadRunner drive instance
  */
 public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDrive> extends AutonomousBunyipsOpMode {
     /**

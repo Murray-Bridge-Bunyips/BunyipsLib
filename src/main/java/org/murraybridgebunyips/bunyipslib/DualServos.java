@@ -15,6 +15,15 @@ public class DualServos extends BunyipsSubsystem {
     private double leftServoPosition;
     private double rightServoPosition;
 
+    /**
+     * Create a new DualServos.
+     * @param left the left servo
+     * @param right the right servo
+     * @param leftClosed the left servo closed position
+     * @param leftOpen the left servo open position
+     * @param rightClosed the right servo closed position
+     * @param rightOpen the right servo open position
+     */
     public DualServos(Servo left, Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
         this.left = left;
         this.right = right;
@@ -29,6 +38,11 @@ public class DualServos extends BunyipsSubsystem {
         update();
     }
 
+    /**
+     * Toggle the state of the servos.
+     * @param servo the servo to toggle
+     * @return this
+     */
     public DualServos toggleServo(ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = (leftServoPosition == LEFT_SERVO_OPEN_POSITION) ? LEFT_SERVO_CLOSED_POSITION : LEFT_SERVO_OPEN_POSITION;
@@ -43,6 +57,11 @@ public class DualServos extends BunyipsSubsystem {
         return this;
     }
 
+    /**
+     * Open the servos.
+     * @param servo the servo to open
+     * @return this
+     */
     public DualServos openServo(ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = LEFT_SERVO_OPEN_POSITION;
@@ -57,6 +76,11 @@ public class DualServos extends BunyipsSubsystem {
         return this;
     }
 
+    /**
+     * Close the servos.
+     * @param servo the servo to close
+     * @return this
+     */
     public DualServos closeServo(ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = LEFT_SERVO_CLOSED_POSITION;
@@ -81,9 +105,21 @@ public class DualServos extends BunyipsSubsystem {
         opMode.addTelemetry("Servos: L_% R_%", left.getPosition() == LEFT_SERVO_OPEN_POSITION ? "OPEN" : "CLOSE", right.getPosition() == RIGHT_SERVO_OPEN_POSITION ? "OPEN" : "CLOSE");
     }
 
+    /**
+     * Represents the side of the servos to control.
+     */
     public enum ServoSide {
+        /**
+         * The left servo.
+         */
         LEFT,
+        /**
+         * The right servo.
+         */
         RIGHT,
+        /**
+         * Both servos.
+         */
         BOTH
     }
 }

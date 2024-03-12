@@ -30,6 +30,10 @@ import java.util.Objects;
 
 import fi.iki.elonen.NanoHTTPD;
 
+/**
+ * Logs RoadRunner data to a file for later analysis.
+ * @noinspection ALL
+ */
 public final class LogFiles {
     private static final File ROOT =
             new File(AppUtil.ROOT_FOLDER + "/RoadRunner/logs/");
