@@ -28,7 +28,7 @@ public class TeamProp extends Processor<TeamPropData> {
      * The distance threshold where colour should be ignored.
      */
     public static double NONE_THRESHOLD = 220;
-    private final List<Integer> ELEMENT_COLOR;
+    private int[] ELEMENT_COLOR;
 
     private double distance1;
     private double distance2;
@@ -44,8 +44,9 @@ public class TeamProp extends Processor<TeamPropData> {
      * @param g Green value of the element color (0-255)
      * @param b Blue value of the element color (0-255)
      */
-    public TeamProp(int r, int g, int b) {
-        ELEMENT_COLOR = Arrays.asList(r, g, b);
+    public TeamProp setColours(int r, int g, int b) {
+        ELEMENT_COLOR = new int[]{ r, g, b };
+        return this;
     }
 
     @Override
@@ -75,15 +76,14 @@ public class TeamProp extends Processor<TeamPropData> {
      * @param color2 The second colour
      * @return The distance between the two colours
      */
-    @SuppressWarnings("rawtypes")
-    public double colourDistance(Scalar color1, List color2) {
+    public double colourDistance(Scalar color1, int[] color2) {
         double r1 = color1.val[0];
         double g1 = color1.val[1];
         double b1 = color1.val[2];
 
-        int r2 = (int) color2.get(0);
-        int g2 = (int) color2.get(1);
-        int b2 = (int) color2.get(2);
+        int r2 = (int) color2[0];
+        int g2 = (int) color2[1];
+        int b2 = (int) color2[2];
 
         return Math.sqrt(Math.pow((r1 - r2), 2) + Math.pow((g1 - g2), 2) + Math.pow((b1 - b2), 2));
     }

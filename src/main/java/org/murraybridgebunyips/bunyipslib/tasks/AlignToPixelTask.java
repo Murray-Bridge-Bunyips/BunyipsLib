@@ -107,8 +107,6 @@ public class AlignToPixelTask<T extends BunyipsSubsystem> extends Task {
 
     @Override
     public boolean isTaskFinished() {
-        // Will be timed out, replaced, or manually stopped
-        // TODO: Tolerances for Autonomous?
-        return false;
+        return gamepad == null && controller.atSetPoint();
     }
 }

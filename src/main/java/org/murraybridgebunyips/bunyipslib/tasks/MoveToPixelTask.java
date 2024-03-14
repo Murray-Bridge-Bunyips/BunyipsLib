@@ -134,7 +134,6 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends Task {
 
     @Override
     public boolean isTaskFinished() {
-        // TODO: Autonomous threshold
-        return false;
+        return gamepad == null && translationController.atSetPoint() && rotationController.atSetPoint();
     }
 }
