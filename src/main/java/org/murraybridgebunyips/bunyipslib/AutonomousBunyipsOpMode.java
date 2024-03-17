@@ -3,6 +3,7 @@ package org.murraybridgebunyips.bunyipslib;
 import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
+import org.murraybridgebunyips.bunyipslib.tasks.InstantTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask;
 
 import java.util.ArrayDeque;
@@ -184,6 +185,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     public void addTask(@NotNull RobotTask newTask) {
         addTask(newTask, false);
+    }
+
+    /**
+     * Implicitly construct a new InstantTask and add it to the run queue
+     * @param runnable the code to add to the run queue to run once
+     */
+    public void addTask(@NotNull Runnable runnable) {
+        addTask(new InstantTask(runnable));
     }
 
     /**

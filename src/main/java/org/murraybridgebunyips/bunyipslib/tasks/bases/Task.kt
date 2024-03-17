@@ -23,6 +23,8 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
 
     private var overrideOnConflict: Boolean? = null
 
+    private var name = this.javaClass.simpleName
+
     /**
      * @return Whether this task should override other tasks in the queue if they conflict with this task.
      */
@@ -50,10 +52,30 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
     }
 
     /**
+     * Set the name of this task to be displayed in the OpMode.
+     */
+    fun withName(name: String): Task {
+        this.name = name
+        return this
+    }
+
+    override fun getName(): String {
+        return name
+    }
+
+    /**
      * Maximum timeout (sec) of the task. If set to 0 this will serve as an indefinite task, and
      * will only finish when isTaskFinished() returns true.
      */
     var timeout: Double = timeoutSeconds
+
+    /**
+     * Set the timeout of this task dynamically and return the task.
+     */
+    fun withTimeout(timeout: Double): Task {
+        this.timeout = timeout
+        return this
+    }
 
     /**
      * Whether the task is finished or not.

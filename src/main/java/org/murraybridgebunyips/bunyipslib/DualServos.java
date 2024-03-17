@@ -2,6 +2,9 @@ package org.murraybridgebunyips.bunyipslib;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.murraybridgebunyips.bunyipslib.tasks.InstantTask;
+import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
+
 /**
  * Control a set of two servos together.
  */
@@ -58,6 +61,15 @@ public class DualServos extends BunyipsSubsystem {
     }
 
     /**
+     * Create a task to toggle the state of the servos.
+     * @param servo the servo to toggle
+     * @return the task
+     */
+    public Task toggleServoTask(ServoSide servo) {
+        return new InstantTask(() -> toggleServo(servo).update(), this, true).withName("ToggleServoTask");
+    }
+
+    /**
      * Open the servos.
      * @param servo the servo to open
      * @return this
@@ -77,6 +89,15 @@ public class DualServos extends BunyipsSubsystem {
     }
 
     /**
+     * Create a task to open the servos.
+     * @param servo the servo to open
+     * @return the task
+     */
+    public Task openServoTask(ServoSide servo) {
+        return new InstantTask(() -> openServo(servo).update(), this, true).withName("OpenServoTask");
+    }
+
+    /**
      * Close the servos.
      * @param servo the servo to close
      * @return this
@@ -93,6 +114,15 @@ public class DualServos extends BunyipsSubsystem {
         leftServoPosition = LEFT_SERVO_CLOSED_POSITION;
         rightServoPosition = RIGHT_SERVO_CLOSED_POSITION;
         return this;
+    }
+
+    /**
+     * Create a task to close the servos.
+     * @param servo the servo to close
+     * @return the task
+     */
+    public Task closeServoTask(ServoSide servo) {
+        return new InstantTask(() -> closeServo(servo).update(), this, true).withName("CloseServoTask");
     }
 
     /**

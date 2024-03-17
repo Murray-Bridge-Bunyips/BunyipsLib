@@ -35,6 +35,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
 
     /**
      * Call to mute the Scheduler from reporting task status for this subsystem.
+     * Useful for subsystems that are not task-based.
      */
     public void muteTaskReports() {
         mutedReports = true;

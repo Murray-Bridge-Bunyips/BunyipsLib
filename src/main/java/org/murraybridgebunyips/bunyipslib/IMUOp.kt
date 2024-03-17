@@ -19,6 +19,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation
  * @author Lucas Bubner, 2022
  */
 class IMUOp(private val imu: IMU) : BunyipsSubsystem() {
+    init {
+        muteTaskReports()
+    }
+
     /**
      * Get the current IMU reading from the internal IMU.
      */

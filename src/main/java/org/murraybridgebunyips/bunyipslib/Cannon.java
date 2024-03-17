@@ -2,6 +2,9 @@ package org.murraybridgebunyips.bunyipslib;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.murraybridgebunyips.bunyipslib.tasks.InstantTask;
+import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
+
 /**
  * Class for a generic servo switch.
  * A whole new file is technically unnecessary, but we wanted to make a class named Cannon
@@ -46,6 +49,22 @@ public class Cannon extends BunyipsSubsystem {
     public Cannon reset() {
         target = RESET;
         return this;
+    }
+
+    /**
+     * Fire the cannon.
+     * @return Fire cannon task
+     */
+    public Task fireTask() {
+        return new InstantTask(() -> fire().update(), this, true).withName("FireCannonTask");
+    }
+
+    /**
+     * Reset the cannon.
+     * @return Reset cannon task
+     */
+    public Task resetTask() {
+        return new InstantTask(() -> reset().update(), this, true).withName("ResetCannonTask");
     }
 
     @Override
