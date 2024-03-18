@@ -31,7 +31,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * @param parameters constructor parameters for your subsystem that should be checked for null,
      *                   in which case the subsystem should be disabled
      */
-    public void assertParamsNotNull(Object... parameters) {
+    protected void assertParamsNotNull(Object... parameters) {
         // If a previous check has already failed, we don't need to check again otherwise we might
         // erase a previous check that failed
         if (!shouldRun) return;
