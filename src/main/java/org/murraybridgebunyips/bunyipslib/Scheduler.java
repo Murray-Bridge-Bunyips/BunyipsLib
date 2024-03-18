@@ -41,6 +41,24 @@ public class Scheduler extends BunyipsComponent {
     }
 
     /**
+     * Disable all subsystems attached to the Scheduler.
+     */
+    public void disable() {
+        for (BunyipsSubsystem subsystem : subsystems) {
+            subsystem.disable();
+        }
+    }
+
+    /**
+     * Enable all subsystems attached to the Scheduler, unless they failed from null assertion.
+     */
+    public void enable() {
+        for (BunyipsSubsystem subsystem : subsystems) {
+            subsystem.enable();
+        }
+    }
+
+    /**
      * Run the scheduler. This will run all subsystems and tasks allocated to the scheduler.
      * This should be called in the activeLoop() method of the BunyipsOpMode.
      */

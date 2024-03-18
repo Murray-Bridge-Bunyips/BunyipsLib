@@ -21,6 +21,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     private Task currentTask;
     private Task defaultTask = new IdleTask();
     private boolean shouldRun = true;
+    private boolean assertionFailed = false;
 
     /**
      * Utility function to run NullSafety.assertComponentArgs() on the given parameters, usually on
@@ -39,7 +40,28 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         // is check if it failed and if so, disable the subsystem
         shouldRun = NullSafety.assertComponentArgs(getClass(), parameters);
         if (!shouldRun) {
+            assertionFailed = true;
             Dbg.error(getClass(), "Subsystem has been disabled as assertParamsNotNull() failed.");
+        }
+    }
+
+    /**
+     * Prevent a subsystem from running.
+     */
+    public void disable() {
+        if (!shouldRun) return;
+        shouldRun = false;
+        Dbg.logd(getClass(), "Subsystem disabled via disable() call.");
+    }
+
+    /**
+     * Re-enable a subsystem if it was previously disabled via a disable() call.
+     * This method will no-op if the assertion from assertParamsNotNull() failed.
+     */
+    public void enable() {
+        if (!shouldRun && !assertionFailed) {
+            shouldRun = true;
+            Dbg.logd("Subsystem enabled via enable() call.");
         }
     }
 
@@ -77,7 +99,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final boolean setCurrentTask(Task newTask) {
         if (!shouldRun) {
-            Dbg.warn(getClass(), "Subsystem is disabled from failed assertion, ignoring task change.");
+            Dbg.warn(getClass(), "Subsystem is disabled, ignoring task change.");
             return false;
         }
         if (newTask == null)
@@ -131,7 +153,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final void setHighPriorityCurrentTask(Task currentTask) {
         if (!shouldRun) {
-            Dbg.warn(getClass(), "Subsystem is disabled from failed assertion, ignoring high-priority task change.");
+            Dbg.warn(getClass(), "Subsystem is disabled, ignoring high-priority task change.");
             return;
         }
         if (currentTask == null)
