@@ -16,6 +16,7 @@ public class GetTeamPropTask extends NoTimeoutTask {
 
     /**
      * Constructor for the GetTeamPropTask.
+     *
      * @param teamProp The TeamProp vision processor to use.
      */
     public GetTeamPropTask(TeamProp teamProp) {

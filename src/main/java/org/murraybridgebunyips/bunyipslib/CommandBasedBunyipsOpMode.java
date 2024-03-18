@@ -29,6 +29,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     /**
      * Call to add subsystems that should be managed by the Scheduler. This is required to be
      * called in the onInitialisation() method, otherwise your subsystems will not be updated.
+     *
      * @param subsystems the subsystems to be managed and updated by the Scheduler
      */
     public void addSubsystems(BunyipsSubsystem... subsystems) {
