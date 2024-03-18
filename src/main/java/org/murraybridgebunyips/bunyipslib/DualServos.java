@@ -28,6 +28,7 @@ public class DualServos extends BunyipsSubsystem {
      * @param rightOpen the right servo open position
      */
     public DualServos(Servo left, Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
+        assertParamsNotNull(left, right);
         this.left = left;
         this.right = right;
         LEFT_SERVO_CLOSED_POSITION = leftClosed;
@@ -129,7 +130,7 @@ public class DualServos extends BunyipsSubsystem {
      * Push stateful changes to the servos.
      */
     @Override
-    public void update() {
+    protected void periodic() {
         left.setPosition(leftServoPosition);
         right.setPosition(rightServoPosition);
         opMode.addTelemetry("Servos: L_% R_%", left.getPosition() == LEFT_SERVO_OPEN_POSITION ? "OPEN" : "CLOSE", right.getPosition() == RIGHT_SERVO_OPEN_POSITION ? "OPEN" : "CLOSE");

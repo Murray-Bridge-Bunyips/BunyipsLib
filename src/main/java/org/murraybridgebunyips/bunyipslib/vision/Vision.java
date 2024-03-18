@@ -66,6 +66,7 @@ public class Vision extends BunyipsSubsystem {
      * @param cameraHeight The camera height resolution to use
      */
     public Vision(CameraName camera, int cameraWidth, int cameraHeight) {
+        assertParamsNotNull(camera);
         this.camera = camera;
         // Allow the user to set the camera resolution if they want
         CAMERA_WIDTH = cameraWidth;
@@ -443,7 +444,7 @@ public class Vision extends BunyipsSubsystem {
      * Optional telemetry for subsystem attachment
      */
     @Override
-    public void update() {
+    protected void periodic() {
         if (visionPortal != null) {
             opMode.addTelemetry(
                     "Vision: % | % fps | %/% processors",

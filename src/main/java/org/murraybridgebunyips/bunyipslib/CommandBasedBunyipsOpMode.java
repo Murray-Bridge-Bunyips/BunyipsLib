@@ -1,5 +1,9 @@
 package org.murraybridgebunyips.bunyipslib;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+
 /**
  * Command-based structure for a BunyipsOpMode utilising the Scheduler.
  * This can be used for seamless/zero-step integration with the Scheduler in TeleOp, for Autonomous it is
@@ -11,6 +15,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     // Components can't be final due to runtime instantiation,
     // so we cannot expose the scheduler directly and must use a getter.
     private Scheduler scheduler;
+    private final HashSet<BunyipsSubsystem> managedSubsystems = new HashSet<>();
 
     /**
      * Call to access the Scheduler from within the OpMode.
@@ -21,15 +26,25 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
         return scheduler;
     }
 
+    /**
+     * Call to add subsystems that should be managed by the Scheduler. This is required to be
+     * called in the onInitialisation() method, otherwise your subsystems will not be updated.
+     */
+    public void addSubsystems(BunyipsSubsystem... subsystems) {
+        if (!NullSafety.assertNotNull(Arrays.stream(subsystems).toArray())) {
+            throw new RuntimeException("Null subsystems were added in the addSubsystems() method!");
+        }
+        Collections.addAll(managedSubsystems, subsystems);
+    }
+
     @Override
     protected final void onInit() {
         scheduler = new Scheduler();
         onInitialisation();
-        BunyipsSubsystem[] subsystems = setSubsystems();
-        if (subsystems == null || subsystems.length == 0) {
-            throw new EmergencyStop("No subsystems were set in setSubsystems() method");
+        if (managedSubsystems == null || managedSubsystems.isEmpty()) {
+            throw new RuntimeException("No BunyipsSubsystems were added in the addSubsystems() method!");
         }
-        scheduler.addSubsystems(subsystems);
+        scheduler.addSubsystems(managedSubsystems.toArray(new BunyipsSubsystem[0]));
         assignCommands();
     }
 
@@ -50,14 +65,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     protected abstract void onInitialisation();
 
     /**
-     * Populate with the BunyipsSubsystems that need to be updated and managed by the Scheduler.
-     *
-     * @return {@code return new BunyipsSubsystem[] { ... };}
-     */
-    protected abstract BunyipsSubsystem[] setSubsystems();
-
-    /**
-     * Assign your scheduler commands here by accessing the `scheduler` field.
+     * Assign your scheduler commands here by accessing the {@link #scheduler()}.
      */
     protected abstract void assignCommands();
 

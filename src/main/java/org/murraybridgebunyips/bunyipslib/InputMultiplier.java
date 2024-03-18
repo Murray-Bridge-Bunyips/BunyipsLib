@@ -102,7 +102,7 @@ public class InputMultiplier extends BunyipsSubsystem {
      * Optionally update the telemetry with the current multiplier.
      */
     @Override
-    public void update() {
+    protected void periodic() {
         opMode.addTelemetry(
                 "%: %x (%/%)",
                 name != null ? "Mul-" + name : "Input Multiplier",

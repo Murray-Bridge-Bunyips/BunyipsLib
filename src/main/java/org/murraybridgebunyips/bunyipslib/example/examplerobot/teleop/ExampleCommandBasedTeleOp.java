@@ -41,8 +41,9 @@ public class ExampleCommandBasedTeleOp extends BunyipsOpMode {
         // This is because the scheduler will be responsible for running the subsystems, and will
         // need to know what subsystems to call their update() methods on
         scheduler.addSubsystems(drive);
-        // CommandBasedBunyipsOpMode has a dedicated method to ensure your subsystems are added to the scheduler,
-        // by requiring it be passed an array of subsystems in the setSubsystems() method
+        // CommandBasedBunyipsOpMode has a method to ensure your subsystems are added to the scheduler,
+        // by requiring it be passed a vararg or array of subsystems in the addSubsystems() method call,
+        // similar to just using the scheduler.addSubsystems() method.
 
         // Here is where you will assign your commands. In CommandBasedBunyipsOpMode, you will have access to the
         // assignCommands() method, which internally is simply a function that is called after onInit(). Putting them
@@ -84,7 +85,6 @@ public class ExampleCommandBasedTeleOp extends BunyipsOpMode {
 
         scheduler.when(() -> drive.isBusy())
                 .run(new InstantTask(() -> addTelemetry("Drive system is busy!")));
-                
     }
 
     @Override

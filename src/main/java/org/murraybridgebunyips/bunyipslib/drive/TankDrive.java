@@ -43,6 +43,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param backRight The back right motor
      */
     public TankDrive(DriveConstants constants, TankCoefficients coefficients, IMU imu, DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight) {
+        assertParamsNotNull(constants, coefficients, imu, frontLeft, frontRight, backLeft, backRight);
         instance = new TankRoadRunnerDrive(opMode, constants, coefficients, opMode.hardwareMap.voltageSensor, imu, frontLeft, frontRight, backLeft, backRight);
     }
 
@@ -123,7 +124,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     @Override
-    public void update() {
+    protected void periodic() {
         instance.update();
     }
 

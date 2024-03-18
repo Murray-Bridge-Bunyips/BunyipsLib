@@ -131,13 +131,9 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
 
         // Full FtcDashboard integrations for individual processor stream previews
         vision.startPreview();
-    }
-
-    @Override
-    protected BunyipsSubsystem[] setSubsystems() {
-        return new BunyipsSubsystem[]{
-                drive,
-        };
+       
+        // Scheduler will manage these subsystems
+        addSubsystems(drive, vision);
     }
 
     @Override

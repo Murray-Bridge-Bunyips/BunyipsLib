@@ -20,6 +20,7 @@ public class ExampleLift extends BunyipsSubsystem {
      * @param liftMotor the lift motor to control
      */
     public ExampleLift(DcMotor liftMotor) {
+        assertParamsNotNull(liftMotor);
         this.liftMotor = liftMotor;
 
         // In the constructor you are also able to set any other variables that you wish to use in
@@ -64,7 +65,7 @@ public class ExampleLift extends BunyipsSubsystem {
     }
 
     @Override
-    public void update() {
+    protected void periodic() {
         // Use the array and pointer to determine what position the motor should be set to.
         int position = liftPositions[liftPositionPointer];
 

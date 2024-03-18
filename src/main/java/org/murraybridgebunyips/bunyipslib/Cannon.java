@@ -26,6 +26,7 @@ public class Cannon extends BunyipsSubsystem {
      * @param prolong the servo to use
      */
     public Cannon(Servo prolong) {
+        assertParamsNotNull(prolong);
         this.prolong = prolong;
 
         // We assume there will always be something in the reset position for us to hold
@@ -68,7 +69,7 @@ public class Cannon extends BunyipsSubsystem {
     }
 
     @Override
-    public void update() {
+    protected void periodic() {
         opMode.addTelemetry("Cannon: %", target == FIRED ? "FIRED" : "READY");
         prolong.setPosition(target);
     }

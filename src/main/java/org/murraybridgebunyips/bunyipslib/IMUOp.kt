@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation
  */
 class IMUOp(private val imu: IMU) : BunyipsSubsystem() {
     init {
+        assertParamsNotNull(imu)
         muteTaskReports()
     }
 
@@ -116,7 +117,7 @@ class IMUOp(private val imu: IMU) : BunyipsSubsystem() {
     /**
      * Update the latest state in the IMU to current data
      */
-    override fun update() {
+    override fun periodic() {
         this.currentAngles = imu.getRobotOrientation(
             AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES
         )

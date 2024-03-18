@@ -116,7 +116,7 @@ public class Scheduler extends BunyipsComponent {
         }
 
         for (BunyipsSubsystem subsystem : subsystems) {
-            subsystem.run();
+            subsystem.update();
         }
     }
 

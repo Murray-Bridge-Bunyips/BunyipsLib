@@ -48,12 +48,11 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
      * @param backRight the back right motor
      */
     public CartesianMecanumDrive(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight) {
+        assertParamsNotNull(frontLeft, frontRight, backLeft, backRight);
         this.frontLeft = frontLeft;
         this.backLeft = backLeft;
         this.frontRight = frontRight;
         this.backRight = backRight;
-        // Critical component, cannot be ignored if null
-        assert frontLeft != null && backLeft != null && frontRight != null && backRight != null;
     }
 
     // Setters for the prioritisation of the drive system
@@ -130,7 +129,7 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
      * calculate the motor powers based on these variables.
      */
     @Override
-    public void update() {
+    protected void periodic() {
         if (priority == Priority.ROTATIONAL) {
             rotationalUpdate();
             opMode.addTelemetry(String.format(Locale.getDefault(), "Rotation-priority Mecanum Drive: Forward: %.2f, Strafe: %.2f, Rotate: %.2f", speedX, speedY, speedR));

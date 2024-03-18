@@ -37,7 +37,7 @@ public class ExampleTask extends Task {
         lift.liftUp();
     }
 
-    // The run() method will run until the task timer runs out, or the finished state is set to true.
+    // The periodic() method will run until the task timer runs out, or the finished state is set to true.
     @Override
     public void periodic() {
         lift.update();
