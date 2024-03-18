@@ -54,6 +54,7 @@ public class Scheduler extends BunyipsComponent {
                 subsystems.size() == 1 ? "" : "s"
         );
         for (String item : subsystemReports) {
+            if (item.contains("IdleTask")) continue;
             opMode.addTelemetry(item);
         }
         for (ConditionalTask task : allocatedTasks) {

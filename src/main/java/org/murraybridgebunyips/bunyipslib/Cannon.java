@@ -57,7 +57,11 @@ public class Cannon extends BunyipsSubsystem {
      * @return Fire cannon task
      */
     public Task fireTask() {
+<<<<<<< Updated upstream
+        return new InstantTask(this::fire, this, true).withName("FireCannonTask");
+=======
         return new InstantTask(() -> fire().update(), this, true).withName("FireCannonTask");
+>>>>>>> Stashed changes
     }
 
     /**
@@ -65,7 +69,11 @@ public class Cannon extends BunyipsSubsystem {
      * @return Reset cannon task
      */
     public Task resetTask() {
+<<<<<<< Updated upstream
+        return new InstantTask(this::reset, this, true).withName("ResetCannonTask");
+=======
         return new InstantTask(() -> reset().update(), this, true).withName("ResetCannonTask");
+>>>>>>> Stashed changes
     }
 
     @Override

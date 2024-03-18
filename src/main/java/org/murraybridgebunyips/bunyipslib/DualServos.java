@@ -67,7 +67,11 @@ public class DualServos extends BunyipsSubsystem {
      * @return the task
      */
     public Task toggleServoTask(ServoSide servo) {
+<<<<<<< Updated upstream
+        return new InstantTask(() -> toggleServo(servo), this, true).withName("ToggleServoTask");
+=======
         return new InstantTask(() -> toggleServo(servo).update(), this, true).withName("ToggleServoTask");
+>>>>>>> Stashed changes
     }
 
     /**
@@ -95,7 +99,11 @@ public class DualServos extends BunyipsSubsystem {
      * @return the task
      */
     public Task openServoTask(ServoSide servo) {
+<<<<<<< Updated upstream
+        return new InstantTask(() -> openServo(servo), this, true).withName("OpenServoTask");
+=======
         return new InstantTask(() -> openServo(servo).update(), this, true).withName("OpenServoTask");
+>>>>>>> Stashed changes
     }
 
     /**
@@ -123,7 +131,11 @@ public class DualServos extends BunyipsSubsystem {
      * @return the task
      */
     public Task closeServoTask(ServoSide servo) {
+<<<<<<< Updated upstream
+        return new InstantTask(() -> closeServo(servo), this, true).withName("CloseServoTask");
+=======
         return new InstantTask(() -> closeServo(servo).update(), this, true).withName("CloseServoTask");
+>>>>>>> Stashed changes
     }
 
     /**

@@ -21,7 +21,6 @@ public class InputMultiplier extends BunyipsSubsystem {
      */
     public InputMultiplier(double... multipliers) {
         this.multipliers = multipliers;
-        muteTaskReports();
     }
 
     /**
@@ -107,7 +106,7 @@ public class InputMultiplier extends BunyipsSubsystem {
                 "%: %x (%/%)",
                 name != null ? "Mul-" + name : "Input Multiplier",
                 multipliers[index],
-                index,
+                index + 1,
                 multipliers.length
         );
     }

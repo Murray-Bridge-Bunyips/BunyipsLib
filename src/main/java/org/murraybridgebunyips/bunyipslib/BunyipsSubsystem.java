@@ -20,7 +20,6 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     private final ArrayList<Integer> dependencies = new ArrayList<>();
     private Task currentTask;
     private Task defaultTask = new IdleTask();
-    private boolean mutedReports;
     private boolean shouldRun = true;
 
     /**
@@ -59,6 +58,8 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     }
 
     /**
+<<<<<<< Updated upstream
+=======
      * Call to mute the Scheduler from reporting task status for this subsystem.
      * Useful for subsystems that are not task-based.
      */
@@ -67,6 +68,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     }
 
     /**
+>>>>>>> Stashed changes
      * Set the default task for this subsystem, which will be run when no other task is running.
      *
      * @param defaultTask The task to set as the default task
@@ -165,13 +167,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             task.run();
             // Update the state of isFinished() after running the task as it may have changed
             task.pollFinished();
-            if (!mutedReports) {
-                Scheduler.addSubsystemTaskReport(
-                        getClass().getSimpleName(),
-                        task.getName(),
-                        round(task.getDeltaTime(), 1)
-                );
-            }
+            Scheduler.addSubsystemTaskReport(
+                    getClass().getSimpleName(),
+                    task.getName(),
+                    round(task.getDeltaTime(), 1)
+            );
         }
         // This should be the only place where periodic() is called for this subsystem
         periodic();

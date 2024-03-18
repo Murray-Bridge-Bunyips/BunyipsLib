@@ -75,8 +75,8 @@ public final class NullSafety {
     private static boolean reportUnusable(Class<?> component) {
         BunyipsOpMode opMode = BunyipsOpMode.getInstance();
         opMode.addRetainedTelemetry("! COM_FAULT: % failed to instantiate due to null constructor arguments", component.getSimpleName());
-        opMode.log("error: % is null. attempting to suppress errors...", component.getSimpleName());
-        Dbg.error("% is null, adding to unusable components...", component.getSimpleName());
+        opMode.log("error: % disabled.", component.getSimpleName());
+        Dbg.error("% failed assertion, adding to unusable components...", component.getSimpleName());
         if (!unusableComponents.contains(component.getSimpleName()))
             unusableComponents.add(component.getSimpleName());
         return false;

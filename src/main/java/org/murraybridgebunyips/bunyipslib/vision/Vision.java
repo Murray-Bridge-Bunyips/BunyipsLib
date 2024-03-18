@@ -71,8 +71,6 @@ public class Vision extends BunyipsSubsystem {
         // Allow the user to set the camera resolution if they want
         CAMERA_WIDTH = cameraWidth;
         CAMERA_HEIGHT = cameraHeight;
-        // Vision itself is generally never used with tasks, so we can mute the scheduler reports
-        muteTaskReports();
     }
 
     /**
