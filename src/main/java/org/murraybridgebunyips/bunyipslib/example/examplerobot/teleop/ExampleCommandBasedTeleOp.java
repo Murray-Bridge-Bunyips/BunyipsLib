@@ -70,7 +70,7 @@ public class ExampleCommandBasedTeleOp extends BunyipsOpMode {
         // or if no subsystem is attached it will run directly on the scheduler.
         scheduler.whenPressed(Controller.User.ONE, Controller.A)
                 .run(new InstantTask(() -> log("A was pressed!")));
-                
+
 
         // There are plenty of configuration options, including setting a queue delay, stop condition for continuous tasks,
         // and more. See the Scheduler class and implementations for more information.

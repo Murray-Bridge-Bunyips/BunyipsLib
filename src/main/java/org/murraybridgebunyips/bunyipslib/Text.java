@@ -18,8 +18,9 @@ public final class Text {
      * Differs from String.format() as type can be omitted.
      * <p>
      * {@code formatString("Hello %!", "world")} -> {@code "Hello world!"}
+     *
      * @param fstring The string to format
-     * @param objs The objects to insert into the string
+     * @param objs    The objects to insert into the string
      * @return The formatted string
      */
     public static String formatString(String fstring, List<Object> objs) {
@@ -56,8 +57,9 @@ public final class Text {
 
     /**
      * Format a string using only '%' placeholders.
+     *
      * @param fstring The string to format
-     * @param objs The objects to insert into the string
+     * @param objs    The objects to insert into the string
      * @return The formatted string
      */
     public static String formatString(String fstring, Object... objs) {
@@ -66,7 +68,8 @@ public final class Text {
 
     /**
      * Round a number to a certain number of decimal points.
-     * @param num The number to round
+     *
+     * @param num             The number to round
      * @param toDecimalPlaces The number of decimal places to round to
      * @return The rounded number
      */
@@ -80,7 +83,8 @@ public final class Text {
 
     /**
      * Round a number to a certain number of decimal points.
-     * @param num The number to round
+     *
+     * @param num             The number to round
      * @param toDecimalPlaces The number of decimal places to round to
      * @return The rounded number
      */

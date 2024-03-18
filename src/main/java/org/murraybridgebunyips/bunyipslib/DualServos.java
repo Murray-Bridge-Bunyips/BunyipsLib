@@ -20,12 +20,13 @@ public class DualServos extends BunyipsSubsystem {
 
     /**
      * Create a new DualServos.
-     * @param left the left servo
-     * @param right the right servo
-     * @param leftClosed the left servo closed position
-     * @param leftOpen the left servo open position
+     *
+     * @param left        the left servo
+     * @param right       the right servo
+     * @param leftClosed  the left servo closed position
+     * @param leftOpen    the left servo open position
      * @param rightClosed the right servo closed position
-     * @param rightOpen the right servo open position
+     * @param rightOpen   the right servo open position
      */
     public DualServos(Servo left, Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
         assertParamsNotNull(left, right);
@@ -44,6 +45,7 @@ public class DualServos extends BunyipsSubsystem {
 
     /**
      * Toggle the state of the servos.
+     *
      * @param servo the servo to toggle
      * @return this
      */
@@ -63,19 +65,17 @@ public class DualServos extends BunyipsSubsystem {
 
     /**
      * Create a task to toggle the state of the servos.
+     *
      * @param servo the servo to toggle
      * @return the task
      */
     public Task toggleServoTask(ServoSide servo) {
-<<<<<<< Updated upstream
         return new InstantTask(() -> toggleServo(servo), this, true).withName("ToggleServoTask");
-=======
-        return new InstantTask(() -> toggleServo(servo).update(), this, true).withName("ToggleServoTask");
->>>>>>> Stashed changes
     }
 
     /**
      * Open the servos.
+     *
      * @param servo the servo to open
      * @return this
      */
@@ -95,19 +95,17 @@ public class DualServos extends BunyipsSubsystem {
 
     /**
      * Create a task to open the servos.
+     *
      * @param servo the servo to open
      * @return the task
      */
     public Task openServoTask(ServoSide servo) {
-<<<<<<< Updated upstream
         return new InstantTask(() -> openServo(servo), this, true).withName("OpenServoTask");
-=======
-        return new InstantTask(() -> openServo(servo).update(), this, true).withName("OpenServoTask");
->>>>>>> Stashed changes
     }
 
     /**
      * Close the servos.
+     *
      * @param servo the servo to close
      * @return this
      */
@@ -127,15 +125,12 @@ public class DualServos extends BunyipsSubsystem {
 
     /**
      * Create a task to close the servos.
+     *
      * @param servo the servo to close
      * @return the task
      */
     public Task closeServoTask(ServoSide servo) {
-<<<<<<< Updated upstream
         return new InstantTask(() -> closeServo(servo), this, true).withName("CloseServoTask");
-=======
-        return new InstantTask(() -> closeServo(servo).update(), this, true).withName("CloseServoTask");
->>>>>>> Stashed changes
     }
 
     /**

@@ -33,12 +33,13 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     /**
      * Create a new StandardTrackingWheelLocalizer with coefficients, encoders, and last encoder positions and velocities.
-     * @param coefficients The coefficients for the localizer
-     * @param leftEncoder The left encoder
-     * @param rightEncoder The right encoder
-     * @param frontEncoder The front encoder
+     *
+     * @param coefficients             The coefficients for the localizer
+     * @param leftEncoder              The left encoder
+     * @param rightEncoder             The right encoder
+     * @param frontEncoder             The front encoder
      * @param lastTrackingEncPositions The last encoder positions
-     * @param lastTrackingEncVels The last encoder velocities
+     * @param lastTrackingEncVels      The last encoder velocities
      */
     public StandardTrackingWheelLocalizer(StandardTrackingWheelLocalizerCoefficients coefficients, Encoder leftEncoder, Encoder rightEncoder, Encoder frontEncoder, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
         super(Arrays.asList(
@@ -65,6 +66,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     /**
      * Convert encoder ticks to inches.
+     *
      * @param ticks The encoder ticks
      * @return The inches traveled
      */

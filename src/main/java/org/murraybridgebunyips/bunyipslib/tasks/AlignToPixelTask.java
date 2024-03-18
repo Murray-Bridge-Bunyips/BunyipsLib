@@ -36,8 +36,9 @@ public class AlignToPixelTask<T extends BunyipsSubsystem> extends Task {
 
     /**
      * TeleOp constructor
-     * @param gamepad the gamepad to use for input
-     * @param drive the drivetrain to use
+     *
+     * @param gamepad    the gamepad to use for input
+     * @param drive      the drivetrain to use
      * @param processors the vision processor to use
      * @param controller the PID controller to use for aligning to a target
      */
@@ -54,8 +55,9 @@ public class AlignToPixelTask<T extends BunyipsSubsystem> extends Task {
 
     /**
      * Autonomous constructor
-     * @param timeout the maximum time in seconds to run the task for
-     * @param drive the drivetrain to use
+     *
+     * @param timeout    the maximum time in seconds to run the task for
+     * @param drive      the drivetrain to use
      * @param processors the vision processor to use
      * @param controller the PID controller to use for aligning to a target
      */

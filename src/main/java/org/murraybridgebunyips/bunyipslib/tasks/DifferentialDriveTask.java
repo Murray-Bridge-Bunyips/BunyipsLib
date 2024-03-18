@@ -20,8 +20,9 @@ public class DifferentialDriveTask extends ForeverTask {
 
     /**
      * Constructs a new DifferentialDriveTask.
+     *
      * @param gamepad the gamepad to use
-     * @param drive the drive to control
+     * @param drive   the drive to control
      */
     public DifferentialDriveTask(Gamepad gamepad, @NotNull TankDrive drive) {
         super(drive, false);

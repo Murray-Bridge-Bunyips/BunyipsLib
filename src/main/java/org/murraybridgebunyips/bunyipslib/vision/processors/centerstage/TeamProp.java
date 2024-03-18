@@ -12,9 +12,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Detection for a custom team prop based on colour ranges,
  * refactored to work with our vision system
@@ -43,9 +40,10 @@ public class TeamProp extends Processor<TeamPropData> {
      * @param r Red value of the element color (0-255)
      * @param g Green value of the element color (0-255)
      * @param b Blue value of the element color (0-255)
+     * @return The TeamProp instance
      */
     public TeamProp setColours(int r, int g, int b) {
-        ELEMENT_COLOR = new int[]{ r, g, b };
+        ELEMENT_COLOR = new int[]{r, g, b};
         return this;
     }
 
@@ -72,6 +70,7 @@ public class TeamProp extends Processor<TeamPropData> {
 
     /**
      * Calculate the distance between two colours.
+     *
      * @param color1 The first colour
      * @param color2 The second colour
      * @return The distance between the two colours
@@ -81,9 +80,9 @@ public class TeamProp extends Processor<TeamPropData> {
         double g1 = color1.val[1];
         double b1 = color1.val[2];
 
-        int r2 = (int) color2[0];
-        int g2 = (int) color2[1];
-        int b2 = (int) color2[2];
+        int r2 = color2[0];
+        int g2 = color2[1];
+        int b2 = color2[2];
 
         return Math.sqrt(Math.pow((r1 - r2), 2) + Math.pow((g1 - g2), 2) + Math.pow((b1 - b2), 2));
     }

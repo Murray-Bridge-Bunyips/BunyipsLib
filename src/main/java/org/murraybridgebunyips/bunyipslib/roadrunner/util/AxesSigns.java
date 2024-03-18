@@ -48,6 +48,7 @@ public enum AxesSigns {
 
     /**
      * Converts the axes signs to a binary value.
+     *
      * @param bVal binary value
      * @return axes signs
      */

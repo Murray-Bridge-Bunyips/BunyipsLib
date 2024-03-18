@@ -8,6 +8,7 @@ import java.util.TreeMap;
  * <p>
  * Utility from FTCLib
  * <a href="https://github.com/FTCLib/FTCLib/blob/master/core/src/main/java/com/arcrobotics/ftclib/util/LUT.java">Source</a>
+ *
  * @param <T> the input type
  * @param <R> the output type
  */

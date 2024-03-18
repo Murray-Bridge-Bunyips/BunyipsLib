@@ -23,6 +23,7 @@ public class Encoder {
 
     /**
      * Constructs a new Encoder instance.
+     *
      * @param motor the motor to wrap
      * @param clock the clock to use
      */
@@ -39,6 +40,7 @@ public class Encoder {
 
     /**
      * Constructs a new Encoder instance.
+     *
      * @param motor the motor to wrap
      */
     public Encoder(DcMotorEx motor) {
@@ -47,9 +49,10 @@ public class Encoder {
 
     /**
      * Constructs a new Encoder instance.
+     *
      * @param hardwareMapName the name of the motor in the hardware map
-     * @param configInstance the RobotConfig instance for easy instantiation
-     * @param clock the clock to use
+     * @param configInstance  the RobotConfig instance for easy instantiation
+     * @param clock           the clock to use
      */
     public Encoder(String hardwareMapName, RobotConfig configInstance, NanoClock clock) {
         DcMotorEx motor = (DcMotorEx) configInstance.getHardware(hardwareMapName, DcMotorEx.class);
@@ -72,8 +75,9 @@ public class Encoder {
 
     /**
      * Constructs a new Encoder instance.
+     *
      * @param hardwareMapName the name of the motor in the hardware map
-     * @param configInstance the RobotConfig instance for easy instantiation
+     * @param configInstance  the RobotConfig instance for easy instantiation
      */
     public Encoder(String hardwareMapName, RobotConfig configInstance) {
         this(hardwareMapName, configInstance, NanoClock.system());

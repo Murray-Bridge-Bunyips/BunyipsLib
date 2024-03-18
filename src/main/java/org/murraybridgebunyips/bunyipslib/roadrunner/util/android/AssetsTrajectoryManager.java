@@ -23,6 +23,7 @@ public final class AssetsTrajectoryManager {
 
     /**
      * Loads the group config.
+     *
      * @return the group config, or null if it could not be loaded
      */
     @Nullable
@@ -38,6 +39,7 @@ public final class AssetsTrajectoryManager {
 
     /**
      * Loads a trajectory config with the given name.
+     *
      * @param name the name of the trajectory config
      * @return the trajectory config, or null if it could not be loaded
      */
@@ -54,6 +56,7 @@ public final class AssetsTrajectoryManager {
 
     /**
      * Loads a trajectory builder with the given name.
+     *
      * @param name the name of the trajectory config
      * @return the trajectory builder, or null if it could not be loaded
      */
@@ -69,6 +72,7 @@ public final class AssetsTrajectoryManager {
 
     /**
      * Loads a trajectory with the given name.
+     *
      * @param name the name of the trajectory config
      * @return the trajectory, or null if it could not be loaded
      */

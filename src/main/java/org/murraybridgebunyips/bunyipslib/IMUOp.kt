@@ -20,11 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation
  */
 class IMUOp(private val imu: IMU) : BunyipsSubsystem() {
     init {
-<<<<<<< Updated upstream
         assertParamsNotNull(imu)
-=======
-        muteTaskReports()
->>>>>>> Stashed changes
     }
 
     /**

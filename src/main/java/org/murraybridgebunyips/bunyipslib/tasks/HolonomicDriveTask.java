@@ -19,8 +19,8 @@ import java.util.function.DoubleSupplier;
  * Left stick controls translation, right stick controls rotation.
  * This task is designed to be used as a default task, other tasks will override it.
  *
- * @author Lucas Bubner, 2024
  * @param <T> The type of the MecanumDrive to use
+ * @author Lucas Bubner, 2024
  */
 public class HolonomicDriveTask<T extends BunyipsSubsystem> extends ForeverTask {
     private final T drive;

@@ -16,6 +16,7 @@ public class PController extends PDController {
 
     /**
      * The extended constructor.
+     *
      * @param kp The value of kP for the coefficients.
      * @param sp The setpoint for the controller.
      * @param pv The process variable for the controller.

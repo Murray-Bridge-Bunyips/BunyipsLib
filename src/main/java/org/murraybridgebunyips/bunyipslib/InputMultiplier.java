@@ -36,6 +36,7 @@ public class InputMultiplier extends BunyipsSubsystem {
 
     /**
      * Set the default index of the multiplier table.
+     *
      * @param defaultIndex the index to set
      * @return this
      */
@@ -56,6 +57,7 @@ public class InputMultiplier extends BunyipsSubsystem {
 
     /**
      * Create a task to increment the multiplier table index.
+     *
      * @return the task
      */
     public Task incrementTask() {
@@ -72,6 +74,7 @@ public class InputMultiplier extends BunyipsSubsystem {
 
     /**
      * Create a task to decrement the multiplier table index.
+     *
      * @return the task
      */
     public Task decrementTask() {

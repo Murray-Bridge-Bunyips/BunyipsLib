@@ -46,11 +46,12 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends Task {
 
     /**
      * TeleOp constructor.
-     * @param gamepad the gamepad to use for manual control
-     * @param drive the drivetrain to use
-     * @param processors the vision processors to use
+     *
+     * @param gamepad               the gamepad to use for manual control
+     * @param drive                 the drivetrain to use
+     * @param processors            the vision processors to use
      * @param translationController the PID controller for the translational movement
-     * @param rotationController the PID controller for the rotational movement
+     * @param rotationController    the PID controller for the rotational movement
      */
     public MoveToPixelTask(Gamepad gamepad, T drive, MultiColourThreshold processors, PIDController translationController, PIDController rotationController) {
         super(0, drive, false);
@@ -67,11 +68,12 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends Task {
 
     /**
      * Autonomous constructor.
-     * @param timeout the maximum timeout for the task
-     * @param drive the drivetrain to use
-     * @param processors the vision processors to use
+     *
+     * @param timeout               the maximum timeout for the task
+     * @param drive                 the drivetrain to use
+     * @param processors            the vision processors to use
      * @param translationController the PID controller for the translational movement
-     * @param rotationController the PID controller for the rotational movement
+     * @param rotationController    the PID controller for the rotational movement
      */
     public MoveToPixelTask(double timeout, T drive, MultiColourThreshold processors, PIDController translationController, PIDController rotationController) {
         super(timeout, drive, false);
@@ -87,6 +89,7 @@ public class MoveToPixelTask<T extends BunyipsSubsystem> extends Task {
 
     /**
      * Set the pitch target of where the pixel should be on the camera. 0.0 is the middle.
+     *
      * @param pitchTarget the target pitch to move to
      * @return the task
      */

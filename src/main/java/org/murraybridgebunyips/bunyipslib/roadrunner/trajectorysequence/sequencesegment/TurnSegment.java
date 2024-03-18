@@ -16,10 +16,11 @@ public final class TurnSegment extends SequenceSegment {
 
     /**
      * Create a new turn segment
-     * @param startPose The start pose
+     *
+     * @param startPose     The start pose
      * @param totalRotation The total rotation to turn
      * @param motionProfile The motion profile to use
-     * @param markers The markers to use
+     * @param markers       The markers to use
      */
     public TurnSegment(Pose2d startPose, double totalRotation, MotionProfile motionProfile, List<TrajectoryMarker> markers) {
         super(

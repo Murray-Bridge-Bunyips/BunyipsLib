@@ -19,7 +19,8 @@ public final class DashboardUtil {
 
     /**
      * Draw a filled polygon on the dashboard canvas.
-     * @param canvas dashboard canvas
+     *
+     * @param canvas      dashboard canvas
      * @param poseHistory list of robot poses
      */
     public static void drawPoseHistory(Canvas canvas, List<Pose2d> poseHistory) {
@@ -35,8 +36,9 @@ public final class DashboardUtil {
 
     /**
      * Draw a filled polygon on the dashboard canvas.
-     * @param canvas dashboard canvas
-     * @param path path to draw
+     *
+     * @param canvas     dashboard canvas
+     * @param path       path to draw
      * @param resolution distance units; presumed inches
      */
     public static void drawSampledPath(Canvas canvas, Path path, double resolution) {
@@ -55,8 +57,9 @@ public final class DashboardUtil {
 
     /**
      * Draw a filled polygon on the dashboard canvas.
+     *
      * @param canvas dashboard canvas
-     * @param path path to draw
+     * @param path   path to draw
      */
     public static void drawSampledPath(Canvas canvas, Path path) {
         drawSampledPath(canvas, path, DEFAULT_RESOLUTION);
@@ -64,8 +67,9 @@ public final class DashboardUtil {
 
     /**
      * Draw a filled polygon on the dashboard canvas.
+     *
      * @param canvas dashboard canvas
-     * @param pose robot pose
+     * @param pose   robot pose
      */
     public static void drawRobot(Canvas canvas, Pose2d pose) {
         canvas.strokeCircle(pose.getX(), pose.getY(), ROBOT_RADIUS);

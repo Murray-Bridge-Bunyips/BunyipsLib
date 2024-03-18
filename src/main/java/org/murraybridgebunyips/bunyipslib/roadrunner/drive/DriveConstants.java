@@ -96,6 +96,7 @@ public class DriveConstants {
 
     /**
      * Get the motor velocity feedforward gain.
+     *
      * @param ticksPerSecond the number of ticks per second
      * @return the motor velocity feedforward gain
      */
@@ -106,6 +107,7 @@ public class DriveConstants {
 
     /**
      * Convert encoder ticks to wheel distance in inches.
+     *
      * @param ticks the encoder ticks
      * @return the wheel distance in inches
      */
@@ -115,6 +117,7 @@ public class DriveConstants {
 
     /**
      * Convert motor RPM to wheel velocity in inches per second.
+     *
      * @param rpm the motor RPM
      * @return the wheel velocity in inches per second
      */
@@ -208,6 +211,7 @@ public class DriveConstants {
 
         /**
          * Finalise your configuration.
+         *
          * @return the DriveConstants object
          */
         public DriveConstants build() {

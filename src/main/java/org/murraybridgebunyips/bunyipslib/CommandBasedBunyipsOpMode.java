@@ -12,10 +12,10 @@ import java.util.HashSet;
  * @author Lucas Bubner, 2024
  */
 public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
+    private final HashSet<BunyipsSubsystem> managedSubsystems = new HashSet<>();
     // Components can't be final due to runtime instantiation,
     // so we cannot expose the scheduler directly and must use a getter.
     private Scheduler scheduler;
-    private final HashSet<BunyipsSubsystem> managedSubsystems = new HashSet<>();
 
     /**
      * Call to access the Scheduler from within the OpMode.
@@ -29,6 +29,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     /**
      * Call to add subsystems that should be managed by the Scheduler. This is required to be
      * called in the onInitialisation() method, otherwise your subsystems will not be updated.
+     * @param subsystems the subsystems to be managed and updated by the Scheduler
      */
     public void addSubsystems(BunyipsSubsystem... subsystems) {
         if (!NullSafety.assertNotNull(Arrays.stream(subsystems).toArray())) {

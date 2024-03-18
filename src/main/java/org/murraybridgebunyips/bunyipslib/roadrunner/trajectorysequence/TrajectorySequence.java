@@ -15,6 +15,7 @@ public class TrajectorySequence {
 
     /**
      * Create a new trajectory sequence
+     *
      * @param sequenceList The list of segments to use
      */
     public TrajectorySequence(List<SequenceSegment> sequenceList) {
@@ -25,6 +26,7 @@ public class TrajectorySequence {
 
     /**
      * Get the start pose of the sequence
+     *
      * @return The start pose
      */
     public Pose2d start() {
@@ -33,6 +35,7 @@ public class TrajectorySequence {
 
     /**
      * Get the end pose of the sequence
+     *
      * @return The end pose
      */
     public Pose2d end() {
@@ -41,6 +44,7 @@ public class TrajectorySequence {
 
     /**
      * Get the time in seconds for the sequence to execute.
+     *
      * @return The duration of the sequence
      */
     public double duration() {
@@ -55,6 +59,7 @@ public class TrajectorySequence {
 
     /**
      * Get the segment at the given index
+     *
      * @param i The index
      * @return The segment
      */
@@ -64,6 +69,7 @@ public class TrajectorySequence {
 
     /**
      * Get the number of segments in the sequence
+     *
      * @return The number of segments
      */
     public int size() {

@@ -89,6 +89,7 @@ public class TwoWheelTrackingLocalizerCoefficients {
 
         /**
          * Build the coefficients.
+         *
          * @return The coefficients
          */
         public TwoWheelTrackingLocalizerCoefficients build() {

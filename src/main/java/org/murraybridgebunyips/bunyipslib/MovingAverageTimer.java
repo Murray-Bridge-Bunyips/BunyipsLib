@@ -47,6 +47,7 @@ public class MovingAverageTimer {
 
     /**
      * Create a new MovingAverageTimer with the specified buffer size and a resolution of milliseconds.
+     *
      * @param bufSize the size of the ring buffer
      */
     public MovingAverageTimer(int bufSize) {
@@ -55,7 +56,8 @@ public class MovingAverageTimer {
 
     /**
      * Create a new MovingAverageTimer with the specified buffer size and resolution.
-     * @param bufSize the size of the ring buffer
+     *
+     * @param bufSize    the size of the ring buffer
      * @param resolution the resolution of the timer
      */
     public MovingAverageTimer(int bufSize, Resolution resolution) {
@@ -147,6 +149,7 @@ public class MovingAverageTimer {
 
     /**
      * Get the number of loops that have been counted.
+     *
      * @return the number of loops
      */
     public long count() {

@@ -42,10 +42,10 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
     private Priority priority = Priority.NORMALISED;
 
     /**
-     * @param frontLeft the front left motor
+     * @param frontLeft  the front left motor
      * @param frontRight the front right motor
-     * @param backLeft the back left motor
-     * @param backRight the back right motor
+     * @param backLeft   the back left motor
+     * @param backRight  the back right motor
      */
     public CartesianMecanumDrive(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight) {
         assertParamsNotNull(frontLeft, frontRight, backLeft, backRight);
@@ -63,6 +63,7 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
 
     /**
      * Swap the priority of the drive system.
+     *
      * @return this
      */
     public CartesianMecanumDrive swapPriority() {
@@ -77,8 +78,8 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
      * @param left_stick_x  X value of the controller
      * @param left_stick_y  Y value of the controller
      * @param right_stick_x R value of the controller
-     * @see Controller#Companion
      * @return this
+     * @see Controller#Companion
      */
     public CartesianMecanumDrive setSpeedUsingController(double left_stick_x, double left_stick_y, double right_stick_x) {
         speedX = Range.clip(left_stick_x, -1.0, 1.0);
@@ -175,6 +176,7 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
 
     /**
      * Set the drive system to brake.
+     *
      * @return this
      */
     public CartesianMecanumDrive setToBrake() {
@@ -187,6 +189,7 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
 
     /**
      * Set the drive system to float.
+     *
      * @return this
      */
     public CartesianMecanumDrive setToFloat() {

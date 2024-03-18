@@ -88,15 +88,16 @@ public class TrajectorySequenceRunner {
 
     /**
      * Create a new trajectory sequence runner.
-     * @param opMode The OpMode to use for logging.
+     *
+     * @param opMode                        The OpMode to use for logging.
      * @param driveConstantsRunUsingEncoder Whether the drive constants are run using encoders.
-     * @param follower The trajectory follower to use.
-     * @param headingPIDCoefficients The PID coefficients for the heading controller.
-     * @param voltageSensor The voltage sensor to use.
-     * @param lastDriveEncPositions The last drive encoder positions.
-     * @param lastDriveEncVels The last drive encoder velocities.
-     * @param lastTrackingEncPositions The last tracking encoder positions.
-     * @param lastTrackingEncVels The last tracking encoder velocities.
+     * @param follower                      The trajectory follower to use.
+     * @param headingPIDCoefficients        The PID coefficients for the heading controller.
+     * @param voltageSensor                 The voltage sensor to use.
+     * @param lastDriveEncPositions         The last drive encoder positions.
+     * @param lastDriveEncVels              The last drive encoder velocities.
+     * @param lastTrackingEncPositions      The last tracking encoder positions.
+     * @param lastTrackingEncVels           The last tracking encoder velocities.
      */
     public TrajectorySequenceRunner(
             @Nullable BunyipsOpMode opMode, boolean driveConstantsRunUsingEncoder, TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients, VoltageSensor voltageSensor,
@@ -124,6 +125,7 @@ public class TrajectorySequenceRunner {
 
     /**
      * Follow a trajectory sequence asynchronously.
+     *
      * @param trajectorySequence The trajectory sequence to follow.
      */
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
@@ -135,6 +137,7 @@ public class TrajectorySequenceRunner {
 
     /**
      * Update the trajectory sequence runner.
+     *
      * @param poseEstimate The pose estimate.
      * @param poseVelocity The pose velocity.
      * @return The drive signal to set the motors to.

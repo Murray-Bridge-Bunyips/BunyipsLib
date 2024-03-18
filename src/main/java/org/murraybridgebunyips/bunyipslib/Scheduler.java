@@ -22,8 +22,9 @@ public class Scheduler extends BunyipsComponent {
 
     /**
      * Used internally by subsystems to report their task-running status.
+     *
      * @param className The class name of the subsystem.
-     * @param taskName The name of the task.
+     * @param taskName  The name of the task.
      * @param deltaTime The time this task has been running
      */
     public static void addSubsystemTaskReport(String className, String taskName, double deltaTime) {
@@ -313,6 +314,7 @@ public class Scheduler extends BunyipsComponent {
 
         /**
          * Create and allocate a new conditional task. This will automatically be added to the scheduler.
+         *
          * @param runCondition The condition to start running the task.
          */
         public ConditionalTask(BooleanSupplier runCondition) {
@@ -339,6 +341,7 @@ public class Scheduler extends BunyipsComponent {
 
         /**
          * Run a task when the condition is met, debouncing the task from running more than once the condition is met.
+         *
          * @param task The task to run.
          * @return Timing control for allocation (none: immediate, inSeconds(), finishingWhen(), inSecondsFinishingWhen()).
          */
@@ -373,7 +376,7 @@ public class Scheduler extends BunyipsComponent {
          * Once this condition is met, the task will be forcefully stopped and the scheduler will move on.
          * This is useful for continuous tasks.
          *
-         * @param seconds      The amount of seconds to wait before running the task.
+         * @param seconds   The amount of seconds to wait before running the task.
          * @param condition The condition to stop the task.
          */
         public void inSecondsFinishingWhen(double seconds, BooleanSupplier condition) {

@@ -47,10 +47,11 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
     /**
      * Create a new TwoWheelTrackingLocalizer
-     * @param coefficients The coefficients to use
-     * @param parallelEncoder The parallel encoder
+     *
+     * @param coefficients         The coefficients to use
+     * @param parallelEncoder      The parallel encoder
      * @param perpendicularEncoder The perpendicular encoder
-     * @param drive The drivetrain
+     * @param drive                The drivetrain
      */
     public TwoWheelTrackingLocalizer(TwoWheelTrackingLocalizerCoefficients coefficients, Encoder parallelEncoder, Encoder perpendicularEncoder, RoadRunnerDrive drive) {
         super(Arrays.asList(
@@ -71,6 +72,7 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
     /**
      * Convert encoder ticks to inches
+     *
      * @param ticks The ticks to convert
      * @return The inches traveled
      */

@@ -36,9 +36,9 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask
     private final PIDController controller;
 
     /**
-     * @param gamepad the gamepad to use for input
-     * @param drive the drivetrain to use
-     * @param at the AprilTag processor to use
+     * @param gamepad    the gamepad to use for input
+     * @param drive      the drivetrain to use
+     * @param at         the AprilTag processor to use
      * @param controller the PID controller to use for aligning to a target
      */
     public AlignToAprilTagTask(Gamepad gamepad, T drive, AprilTag at, PIDController controller) {

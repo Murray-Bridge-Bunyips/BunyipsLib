@@ -29,9 +29,10 @@ import java.util.List;
 public interface RoadRunnerDrive {
     /**
      * Get a velocity constraint for the drive.
-     * @param maxVel The maximum velocity of the drive.
+     *
+     * @param maxVel        The maximum velocity of the drive.
      * @param maxAngularVel The maximum angular velocity of the drive.
-     * @param trackWidth The track width of the drive.
+     * @param trackWidth    The track width of the drive.
      * @return A velocity constraint for the drive.
      */
     static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
@@ -43,6 +44,7 @@ public interface RoadRunnerDrive {
 
     /**
      * Get an acceleration constraint for the drive.
+     *
      * @param maxAccel The maximum acceleration of the drive.
      * @return An acceleration constraint for the drive.
      */
@@ -66,6 +68,7 @@ public interface RoadRunnerDrive {
 
     /**
      * Get a trajectory builder for the drive.
+     *
      * @param startPose The starting pose of the drive.
      * @return A trajectory builder for the drive.
      */
@@ -73,15 +76,17 @@ public interface RoadRunnerDrive {
 
     /**
      * Get a trajectory builder for the drive.
+     *
      * @param startPose The starting pose of the drive.
-     * @param reversed Whether the drive is reversed.
+     * @param reversed  Whether the drive is reversed.
      * @return A trajectory builder for the drive.
      */
     TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed);
 
     /**
      * Get a trajectory builder for the drive.
-     * @param startPose The starting pose of the drive.
+     *
+     * @param startPose    The starting pose of the drive.
      * @param startHeading The starting heading of the drive.
      * @return A trajectory builder for the drive.
      */
@@ -89,6 +94,7 @@ public interface RoadRunnerDrive {
 
     /**
      * Get a trajectory builder for the drive.
+     *
      * @param startPose The starting pose of the drive.
      * @return A trajectory builder for the drive.
      */
@@ -97,36 +103,42 @@ public interface RoadRunnerDrive {
 
     /**
      * Turn the drive asynchronously.
+     *
      * @param angle The angle to turn the drive in radians.
      */
     void turnAsync(double angle);
 
     /**
      * Turn the drive.
+     *
      * @param angle The angle to turn the drive in radians.
      */
     void turn(double angle);
 
     /**
      * Follow a trajectory asynchronously.
+     *
      * @param trajectory The trajectory to follow.
      */
     void followTrajectoryAsync(Trajectory trajectory);
 
     /**
      * Follow a trajectory.
+     *
      * @param trajectory The trajectory to follow.
      */
     void followTrajectory(Trajectory trajectory);
 
     /**
      * Follow a trajectory sequence asynchronously.
+     *
      * @param trajectorySequence The trajectory sequence to follow.
      */
     void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence);
 
     /**
      * Follow a trajectory sequence.
+     *
      * @param trajectorySequence The trajectory sequence to follow.
      */
     void followTrajectorySequence(TrajectorySequence trajectorySequence);
@@ -154,7 +166,8 @@ public interface RoadRunnerDrive {
 
     /**
      * Set the PIDF coefficients for the drive motors.
-     * @param runMode The run mode of the drive.
+     *
+     * @param runMode      The run mode of the drive.
      * @param coefficients The PIDF coefficients for the motors.
      */
     void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients);

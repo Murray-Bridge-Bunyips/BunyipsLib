@@ -14,6 +14,10 @@ public class GetTeamPropTask extends NoTimeoutTask {
     private final TeamProp teamProp;
     private TeamProp.Positions position;
 
+    /**
+     * Constructor for the GetTeamPropTask.
+     * @param teamProp The TeamProp vision processor to use.
+     */
     public GetTeamPropTask(TeamProp teamProp) {
         this.teamProp = teamProp;
         if (!teamProp.isAttached())

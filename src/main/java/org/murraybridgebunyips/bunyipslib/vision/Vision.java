@@ -61,8 +61,9 @@ public class Vision extends BunyipsSubsystem {
 
     /**
      * Create a new Vision instance with the specified camera and resolution.
-     * @param camera The camera to use
-     * @param cameraWidth The camera width resolution to use
+     *
+     * @param camera       The camera to use
+     * @param cameraWidth  The camera width resolution to use
      * @param cameraHeight The camera height resolution to use
      */
     public Vision(CameraName camera, int cameraWidth, int cameraHeight) {
@@ -75,6 +76,7 @@ public class Vision extends BunyipsSubsystem {
 
     /**
      * Create a new Vision instance with the specified camera and default resolution.
+     *
      * @param camera The camera to use
      */
     public Vision(CameraName camera) {
@@ -237,6 +239,7 @@ public class Vision extends BunyipsSubsystem {
 
     /**
      * Stop all processors and pause the camera stream (Level 3).
+     *
      * @return the vision instance
      */
     public Vision stop() {
@@ -277,6 +280,7 @@ public class Vision extends BunyipsSubsystem {
      * takes significant time and may cause the OpMode to hang or become unresponsive. Instead,
      * use the {@code start()} and {@code stop()} methods to enable/disable the VisionPortal.
      * Repeated calls to {@code init()} will also cause a termination of the VisionPortal.
+     *
      * @return the vision instance
      */
     @SuppressWarnings("rawtypes")
@@ -321,6 +325,7 @@ public class Vision extends BunyipsSubsystem {
     /**
      * Flip all processor feeds horizontally and vertically (180deg, useful if your camera is mounted upside-down).
      * Should be called after processors are initialised, and can be called at any time after.
+     *
      * @return the vision instance
      */
     @SuppressWarnings("rawtypes")
@@ -386,8 +391,8 @@ public class Vision extends BunyipsSubsystem {
      * Activating this sender will set both FtcDashboard and the DS streams to be of a processor
      * of your choosing, by changing a processor's name with setPreview() or via FtcDashboard.
      *
-     * @see SwitchableVisionSender
      * @return the vision instance
+     * @see SwitchableVisionSender
      */
     public Vision startPreview() {
         visionSender = new SwitchableVisionSender(this);
@@ -427,8 +432,8 @@ public class Vision extends BunyipsSubsystem {
      * The DS will return to a raw unprocessed feed, and FtcDashboard feed will be disabled.
      * This method is effectively called automatically when the OpMode is no longer active.
      *
-     * @see SwitchableVisionSender
      * @return the vision instance
+     * @see SwitchableVisionSender
      */
     public Vision stopPreview() {
         if (visionSender != null) {

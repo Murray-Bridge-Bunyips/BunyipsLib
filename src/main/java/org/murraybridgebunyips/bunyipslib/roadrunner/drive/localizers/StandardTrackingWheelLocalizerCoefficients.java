@@ -70,6 +70,7 @@ public class StandardTrackingWheelLocalizerCoefficients {
 
         /**
          * Build the coefficients.
+         *
          * @return The coefficients
          */
         public StandardTrackingWheelLocalizerCoefficients build() {

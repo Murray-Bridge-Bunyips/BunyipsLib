@@ -26,7 +26,8 @@ public class InterpolatedLookupTable {
 
     /**
      * Adds a control point to the lookup table.
-     * @param input x
+     *
+     * @param input  x
      * @param output y
      */
     public void add(double input, double output) {

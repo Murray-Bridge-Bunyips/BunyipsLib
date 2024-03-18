@@ -30,7 +30,7 @@ import java.util.List;
  * MOTOR_VELO_PID field.
  * Recommended tuning process:
  * 1. Increase kP until any phase lag is eliminated. Concurrently increase kD as necessary to
- *    mitigate oscillations.
+ * mitigate oscillations.
  * 2. Add kI (or adjust kF) until the steady state/constant velocity plateaus are reached.
  * 3. Back off kP and kD a little until the response is less oscillatory (but without lag).
  * Pressing Y/Δ (Xbox/PS4) will pause the tuning process and enter driver override, allowing the

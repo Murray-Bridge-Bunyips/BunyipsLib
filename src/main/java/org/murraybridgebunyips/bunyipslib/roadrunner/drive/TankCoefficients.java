@@ -71,6 +71,7 @@ public class TankCoefficients {
 
         /**
          * Build the coefficients.
+         *
          * @return The coefficients
          */
         public TankCoefficients build() {

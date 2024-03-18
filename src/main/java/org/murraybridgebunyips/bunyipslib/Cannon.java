@@ -23,6 +23,7 @@ public class Cannon extends BunyipsSubsystem {
 
     /**
      * Constructs a new Cannon.
+     *
      * @param prolong the servo to use
      */
     public Cannon(Servo prolong) {
@@ -36,6 +37,7 @@ public class Cannon extends BunyipsSubsystem {
 
     /**
      * Fire in the hole!
+     *
      * @return this
      */
     public Cannon fire() {
@@ -45,6 +47,7 @@ public class Cannon extends BunyipsSubsystem {
 
     /**
      * Reset the cannon to its initial position
+     *
      * @return this
      */
     public Cannon reset() {
@@ -54,26 +57,20 @@ public class Cannon extends BunyipsSubsystem {
 
     /**
      * Fire the cannon.
+     *
      * @return Fire cannon task
      */
     public Task fireTask() {
-<<<<<<< Updated upstream
         return new InstantTask(this::fire, this, true).withName("FireCannonTask");
-=======
-        return new InstantTask(() -> fire().update(), this, true).withName("FireCannonTask");
->>>>>>> Stashed changes
     }
 
     /**
      * Reset the cannon.
+     *
      * @return Reset cannon task
      */
     public Task resetTask() {
-<<<<<<< Updated upstream
         return new InstantTask(this::reset, this, true).withName("ResetCannonTask");
-=======
-        return new InstantTask(() -> reset().update(), this, true).withName("ResetCannonTask");
->>>>>>> Stashed changes
     }
 
     @Override

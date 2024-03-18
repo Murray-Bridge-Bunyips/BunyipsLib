@@ -80,6 +80,7 @@ public class MecanumCoefficients {
 
         /**
          * Build the coefficients.
+         *
          * @return The coefficients
          */
         public MecanumCoefficients build() {

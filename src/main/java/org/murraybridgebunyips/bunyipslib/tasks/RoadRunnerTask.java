@@ -15,8 +15,8 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * Task for running RoadRunner trajectories using the BunyipsOpMode Task system.
  * This is the task that is used for all RoadRunner tasks in RoadRunnerAutonomousBunyipsOpMode.
  *
- * @author Lucas Bubner, 2023
  * @param <T> The type of RoadRunnerDrive to be used
+ * @author Lucas Bubner, 2023
  */
 public class RoadRunnerTask<T extends RoadRunnerDrive> extends Task {
     private final T drive;
@@ -30,8 +30,9 @@ public class RoadRunnerTask<T extends RoadRunnerDrive> extends Task {
 
     /**
      * Create a new RoadRunnerTask with a time, drive, and trajectory.
-     * @param time The time to run the task for
-     * @param drive The drive to use
+     *
+     * @param time       The time to run the task for
+     * @param drive      The drive to use
      * @param trajectory The trajectory to follow
      */
     public RoadRunnerTask(double time, T drive, Trajectory trajectory) {
@@ -42,8 +43,9 @@ public class RoadRunnerTask<T extends RoadRunnerDrive> extends Task {
 
     /**
      * Create a new RoadRunnerTask with a time, drive, and trajectory sequence.
-     * @param time The time to run the task for
-     * @param drive The drive to use
+     *
+     * @param time               The time to run the task for
+     * @param drive              The drive to use
      * @param trajectorySequence The trajectory sequence to follow
      */
     public RoadRunnerTask(double time, T drive, TrajectorySequence trajectorySequence) {
@@ -54,10 +56,11 @@ public class RoadRunnerTask<T extends RoadRunnerDrive> extends Task {
 
     /**
      * Create a new RoadRunnerTask with a time, drive, trajectory, and dependency.
-     * @param time The time to run the task for
-     * @param drive The drive to use
-     * @param trajectory The trajectory to follow
-     * @param dependency The subsystem to run this task on
+     *
+     * @param time                           The time to run the task for
+     * @param drive                          The drive to use
+     * @param trajectory                     The trajectory to follow
+     * @param dependency                     The subsystem to run this task on
      * @param shouldOverrideConflictingTasks Whether this task should override conflicting tasks
      */
     public RoadRunnerTask(double time, T drive, Trajectory trajectory, BunyipsSubsystem dependency, boolean shouldOverrideConflictingTasks) {
@@ -68,10 +71,11 @@ public class RoadRunnerTask<T extends RoadRunnerDrive> extends Task {
 
     /**
      * Create a new RoadRunnerTask with a time, drive, trajectory sequence, and dependency.
-     * @param time The time to run the task for
-     * @param drive The drive to use
-     * @param trajectorySequence The trajectory sequence to follow
-     * @param dependency The subsystem to run this task on
+     *
+     * @param time                           The time to run the task for
+     * @param drive                          The drive to use
+     * @param trajectorySequence             The trajectory sequence to follow
+     * @param dependency                     The subsystem to run this task on
      * @param shouldOverrideConflictingTasks Whether this task should override conflicting tasks
      */
     public RoadRunnerTask(double time, T drive, TrajectorySequence trajectorySequence, BunyipsSubsystem dependency, boolean shouldOverrideConflictingTasks) {

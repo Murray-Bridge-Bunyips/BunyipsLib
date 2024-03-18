@@ -13,7 +13,8 @@ public class RunForTask extends Task {
 
     /**
      * Subsystem-independent task.
-     * @param timeout The time to run the task for
+     *
+     * @param timeout  The time to run the task for
      * @param callback The callback to run every loop
      */
     public RunForTask(double timeout, Runnable callback) {
@@ -23,9 +24,10 @@ public class RunForTask extends Task {
 
     /**
      * Subsystem-dependent task.
-     * @param timeout The time to run the task for
-     * @param callback The callback to run every loop
-     * @param dependency The subsystem to run this task on
+     *
+     * @param timeout                        The time to run the task for
+     * @param callback                       The callback to run every loop
+     * @param dependency                     The subsystem to run this task on
      * @param shouldOverrideConflictingTasks Whether this task should override conflicting tasks
      */
     public RunForTask(double timeout, Runnable callback, BunyipsSubsystem dependency, boolean shouldOverrideConflictingTasks) {

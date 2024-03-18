@@ -43,6 +43,7 @@ public class SwitchableVisionSender implements Runnable {
 
     /**
      * Create a new SwitchableVisionSender with a Vision system.
+     *
      * @param vision The Vision system to send to FtcDashboard
      */
     public SwitchableVisionSender(Vision vision) {

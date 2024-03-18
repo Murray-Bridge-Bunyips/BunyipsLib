@@ -53,6 +53,7 @@ public final class LoggingUtil {
 
     /**
      * Obtain a log file with the provided name
+     *
      * @param name the name of the log file
      * @return the log file
      */

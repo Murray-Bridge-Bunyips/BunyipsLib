@@ -28,6 +28,7 @@ public abstract class TaskGroup extends Task {
 
     /**
      * Add subsystems to the task group to determine which subsystems each task should be attached.
+     *
      * @param dependencies the subsystems to add, in order of task addition
      * @return the task group
      */

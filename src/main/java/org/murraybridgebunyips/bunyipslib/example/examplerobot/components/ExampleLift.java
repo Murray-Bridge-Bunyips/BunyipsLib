@@ -30,6 +30,7 @@ public class ExampleLift extends BunyipsSubsystem {
 
     /**
      * Move the lift up one position.
+     *
      * @return this
      */
     public ExampleLift liftUp() {
@@ -52,6 +53,7 @@ public class ExampleLift extends BunyipsSubsystem {
 
     /**
      * Move the lift down one position.
+     *
      * @return this
      */
     public ExampleLift liftDown() {

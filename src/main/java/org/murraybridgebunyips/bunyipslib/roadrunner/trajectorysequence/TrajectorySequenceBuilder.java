@@ -31,6 +31,7 @@ import java.util.List;
 
 /**
  * RoadRunner Trajectory Builder
+ *
  * @param <T> The type of the subclass (used for fluent builder pattern)
  */
 @SuppressWarnings("unchecked")
@@ -66,11 +67,12 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Create a new TrajectorySequenceBuilder
-     * @param startPose The starting pose
-     * @param startTangent The starting tangent
-     * @param baseVelConstraint The base velocity constraint
-     * @param baseAccelConstraint The base acceleration constraint
-     * @param baseTurnConstraintMaxAngVel The base turn constraint maximum angular velocity
+     *
+     * @param startPose                     The starting pose
+     * @param startTangent                  The starting tangent
+     * @param baseVelConstraint             The base velocity constraint
+     * @param baseAccelConstraint           The base acceleration constraint
+     * @param baseTurnConstraintMaxAngVel   The base turn constraint maximum angular velocity
      * @param baseTurnConstraintMaxAngAccel The base turn constraint maximum angular acceleration
      */
     public TrajectorySequenceBuilder(
@@ -117,10 +119,11 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Create a new TrajectorySequenceBuilder
-     * @param startPose The starting pose
-     * @param baseVelConstraint The base velocity constraint
-     * @param baseAccelConstraint The base acceleration constraint
-     * @param baseTurnConstraintMaxAngVel The base turn constraint maximum angular velocity
+     *
+     * @param startPose                     The starting pose
+     * @param baseVelConstraint             The base velocity constraint
+     * @param baseAccelConstraint           The base acceleration constraint
+     * @param baseTurnConstraintMaxAngVel   The base turn constraint maximum angular velocity
      * @param baseTurnConstraintMaxAngAccel The base turn constraint maximum angular acceleration
      */
     public TrajectorySequenceBuilder(
@@ -155,6 +158,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move in a straight line to a given position.
+     *
      * @param endPosition The end position
      * @return The builder
      */
@@ -164,8 +168,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move in a straight line to a given position with custom velocity and acceleration constraints.
-     * @param endPosition The end position
-     * @param velConstraint The velocity constraint
+     *
+     * @param endPosition     The end position
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -179,6 +184,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move in a straight line to a given position with a constant heading.
+     *
      * @param endPosition The end position
      * @return The builder
      */
@@ -188,8 +194,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move in a straight line to a given position with a constant heading and custom velocity and acceleration constraints.
-     * @param endPosition The end position
-     * @param velConstraint The velocity constraint
+     *
+     * @param endPosition     The end position
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -203,6 +210,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move in a straight line to a given position with a linear heading.
+     *
      * @param endPose The end pose
      * @return The builder
      */
@@ -212,8 +220,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move in a straight line to a given position with a linear heading and custom velocity and acceleration constraints.
-     * @param endPose The end pose
-     * @param velConstraint The velocity constraint
+     *
+     * @param endPose         The end pose
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -227,6 +236,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move in a straight line to a given position with a spline heading.
+     *
      * @param endPose The end pose
      * @return The builder
      */
@@ -236,8 +246,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move in a straight line to a given position with a spline heading and custom velocity and acceleration constraints.
-     * @param endPose The end pose
-     * @param velConstraint The velocity constraint
+     *
+     * @param endPose         The end pose
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -251,6 +262,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move in a strafe straight line to a given position.
+     *
      * @param endPosition The end position
      * @return The builder
      */
@@ -260,8 +272,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move in a strafe straight line to a given position with custom velocity and acceleration constraints.
-     * @param endPosition The end position
-     * @param velConstraint The velocity constraint
+     *
+     * @param endPosition     The end position
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -275,6 +288,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move forward a given distance.
+     *
      * @param distance The distance to move
      * @return The builder
      */
@@ -284,8 +298,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move forward a given distance with custom velocity and acceleration constraints.
-     * @param distance The distance to move
-     * @param velConstraint The velocity constraint
+     *
+     * @param distance        The distance to move
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -299,6 +314,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move backward a given distance.
+     *
      * @param distance The distance to move
      * @return The builder
      */
@@ -308,8 +324,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Move backward a given distance with custom velocity and acceleration constraints.
-     * @param distance The distance to move
-     * @param velConstraint The velocity constraint
+     *
+     * @param distance        The distance to move
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -323,6 +340,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Strafe left a given distance.
+     *
      * @param distance The distance to strafe
      * @return The builder
      */
@@ -332,8 +350,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Strafe left a given distance with custom velocity and acceleration constraints.
-     * @param distance The distance to strafe
-     * @param velConstraint The velocity constraint
+     *
+     * @param distance        The distance to strafe
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -347,6 +366,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Strafe right a given distance.
+     *
      * @param distance The distance to strafe
      * @return The builder
      */
@@ -356,8 +376,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Strafe right a given distance with custom velocity and acceleration constraints.
-     * @param distance The distance to strafe
-     * @param velConstraint The velocity constraint
+     *
+     * @param distance        The distance to strafe
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -371,8 +392,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Spline to a given position with a given heading.
+     *
      * @param endPosition The end position
-     * @param endHeading The end heading
+     * @param endHeading  The end heading
      * @return The builder
      */
     public T splineTo(Vector2d endPosition, double endHeading) {
@@ -381,9 +403,10 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Spline to a given position with a given heading and custom velocity and acceleration constraints.
-     * @param endPosition The end position
-     * @param endHeading The end heading
-     * @param velConstraint The velocity constraint
+     *
+     * @param endPosition     The end position
+     * @param endHeading      The end heading
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -398,8 +421,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Spline to a given position with a constant heading.
+     *
      * @param endPosition The end position
-     * @param endHeading The end heading
+     * @param endHeading  The end heading
      * @return The builder
      */
     public T splineToConstantHeading(Vector2d endPosition, double endHeading) {
@@ -408,9 +432,10 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Spline to a given position with a constant heading and custom velocity and acceleration constraints.
-     * @param endPosition The end position
-     * @param endHeading The end heading
-     * @param velConstraint The velocity constraint
+     *
+     * @param endPosition     The end position
+     * @param endHeading      The end heading
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -425,7 +450,8 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Spline to a given position with a linear heading.
-     * @param endPose The end pose
+     *
+     * @param endPose    The end pose
      * @param endHeading The end heading
      * @return The builder
      */
@@ -435,9 +461,10 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Spline to a given position with a linear heading and custom velocity and acceleration constraints.
-     * @param endPose The end pose
-     * @param endHeading The end heading
-     * @param velConstraint The velocity constraint
+     *
+     * @param endPose         The end pose
+     * @param endHeading      The end heading
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -452,7 +479,8 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Spline to a given position with a spline heading.
-     * @param endPose The end pose
+     *
+     * @param endPose    The end pose
      * @param endHeading The end heading
      * @return The builder
      */
@@ -462,9 +490,10 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Spline to a given position with a spline heading and custom velocity and acceleration constraints.
-     * @param endPose The end pose
-     * @param endHeading The end heading
-     * @param velConstraint The velocity constraint
+     *
+     * @param endPose         The end pose
+     * @param endHeading      The end heading
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -526,7 +555,8 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Set the velocity and acceleration constraints for the next builder instructions.
-     * @param velConstraint The velocity constraint
+     *
+     * @param velConstraint   The velocity constraint
      * @param accelConstraint The acceleration constraint
      * @return The builder
      */
@@ -542,6 +572,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Reset the velocity and acceleration constraints to the base constraints.
+     *
      * @return The builder
      */
     public T resetConstraints() {
@@ -559,6 +590,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Reset the velocity constraint to the base velocity constraint.
+     *
      * @return The builder
      */
     public T resetVelConstraint() {
@@ -575,6 +607,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Reset the acceleration constraint to the base acceleration constraint.
+     *
      * @return The builder
      */
     public T resetAccelConstraint() {
@@ -585,7 +618,8 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Set the turn constraints for the next builder instructions.
-     * @param maxAngVel The maximum angular velocity
+     *
+     * @param maxAngVel   The maximum angular velocity
      * @param maxAngAccel The maximum angular acceleration
      * @return The builder
      */
@@ -598,6 +632,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Reset the turn constraints to the base turn constraints.
+     *
      * @return The builder
      */
     public T resetTurnConstraint() {
@@ -609,6 +644,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a temporal marker at the current duration to run a callback at that time.
+     *
      * @param callback The callback to run
      * @return The builder
      */
@@ -618,7 +654,8 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a temporal marker at the current duration plus an offset to run a callback at that time.
-     * @param offset The offset to add to the current duration
+     *
+     * @param offset   The offset to add to the current duration
      * @param callback The callback to run
      * @return The builder
      */
@@ -628,7 +665,8 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a temporal marker at a given time to run a callback at that time.
-     * @param time The time to run the callback
+     *
+     * @param time     The time to run the callback
      * @param callback The callback to run
      * @return The builder
      */
@@ -638,8 +676,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a temporal marker at a given time to run a callback at that time.
-     * @param scale The scale to apply to the time
-     * @param offset The offset to add to the time
+     *
+     * @param scale    The scale to apply to the time
+     * @param offset   The offset to add to the time
      * @param callback The callback to run
      * @return The builder
      */
@@ -649,7 +688,8 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a temporal marker at a given time to run a callback at that time.
-     * @param time The time to run the callback
+     *
+     * @param time     The time to run the callback
      * @param callback The callback to run
      * @return The builder
      */
@@ -660,7 +700,8 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a spatial marker at the current position to run a callback at that position.
-     * @param point The point to run the callback
+     *
+     * @param point    The point to run the callback
      * @param callback The callback to run
      * @return The builder
      */
@@ -671,6 +712,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a displacement marker at the current displacement to run a callback at that displacement.
+     *
      * @param callback The callback to run
      * @return The builder
      */
@@ -680,7 +722,8 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a displacement marker at the current displacement plus an offset to run a callback at that displacement.
-     * @param offset The offset to add to the current displacement
+     *
+     * @param offset   The offset to add to the current displacement
      * @param callback The callback to run
      * @return The builder
      */
@@ -690,8 +733,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a displacement marker at a given displacement to run a callback at that displacement.
+     *
      * @param displacement The displacement to run the callback
-     * @param callback The callback to run
+     * @param callback     The callback to run
      * @return The builder
      */
     public T addDisplacementMarker(double displacement, MarkerCallback callback) {
@@ -700,8 +744,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a displacement marker at a given displacement to run a callback at that displacement.
-     * @param scale The scale to apply to the displacement
-     * @param offset The offset to add to the displacement
+     *
+     * @param scale    The scale to apply to the displacement
+     * @param offset   The offset to add to the displacement
      * @param callback The callback to run
      * @return The builder
      */
@@ -711,8 +756,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a displacement marker at a given displacement to run a callback at that displacement.
+     *
      * @param displacement The displacement to run the callback
-     * @param callback The callback to run
+     * @param callback     The callback to run
      * @return The builder
      */
     public T addDisplacementMarker(DisplacementProducer displacement, MarkerCallback callback) {
@@ -723,6 +769,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Turn to a given angle.
+     *
      * @param angle The angle to turn in radians
      * @return The builder
      */
@@ -732,8 +779,9 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Turn to a given angle with custom maximum angular velocity and acceleration.
-     * @param angle The angle to turn in radians
-     * @param maxAngVel The maximum angular velocity
+     *
+     * @param angle       The angle to turn in radians
+     * @param maxAngVel   The maximum angular velocity
      * @param maxAngAccel The maximum angular acceleration
      * @return The builder
      */
@@ -761,6 +809,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Wait for a given number of seconds.
+     *
      * @param seconds The number of seconds to wait
      * @return The builder
      */
@@ -774,6 +823,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Add a trajectory to the sequence.
+     *
      * @param trajectory The trajectory to add
      * @return The builder
      */
@@ -807,6 +857,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
 
     /**
      * Create a TrajectorySequence from the current builder state.
+     *
      * @return The TrajectorySequence to run.
      */
     public TrajectorySequence build() {

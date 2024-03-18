@@ -41,6 +41,7 @@ public final class Voltage {
 
     /**
      * Poll the hardware map for the robot voltage
+     *
      * @param opMode the opmode
      * @return the robot voltage
      */

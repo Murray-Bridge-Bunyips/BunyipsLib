@@ -31,6 +31,7 @@ public class MultiColourThreshold extends Processor<ContourData> {
 
     /**
      * Create a new MultiColourThreshold with the given processors.
+     *
      * @param thresholdProcessors the colour processors to use
      */
     public MultiColourThreshold(ColourThreshold... thresholdProcessors) {

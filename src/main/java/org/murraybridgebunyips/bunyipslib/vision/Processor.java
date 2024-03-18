@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * for tasks to access the latest data from the vision system, without needing to directly
  * interface with the Vision instance.
  *
- * @author Lucas Bubner, 2023
  * @param <T> the type of VisionData to be processed
+ * @author Lucas Bubner, 2023
  */
 public abstract class Processor<T extends VisionData> implements VisionProcessor, CameraStreamSource {
 

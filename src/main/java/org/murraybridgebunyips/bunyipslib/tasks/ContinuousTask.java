@@ -13,6 +13,7 @@ public class ContinuousTask extends ForeverTask {
 
     /**
      * Subsystem-independent continuous task.
+     *
      * @param callback the task to run continuously
      */
     public ContinuousTask(Runnable callback) {
@@ -21,8 +22,9 @@ public class ContinuousTask extends ForeverTask {
 
     /**
      * Subsystem-dependent continuous task.
-     * @param callback the task to run continuously
-     * @param dependency the subsystem to depend on
+     *
+     * @param callback                       the task to run continuously
+     * @param dependency                     the subsystem to depend on
      * @param shouldOverrideConflictingTasks whether to override conflicting tasks on this subsystem
      */
     public ContinuousTask(Runnable callback, BunyipsSubsystem dependency, boolean shouldOverrideConflictingTasks) {

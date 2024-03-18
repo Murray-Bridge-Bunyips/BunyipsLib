@@ -9,6 +9,7 @@ package org.murraybridgebunyips.bunyipslib;
 public class EmergencyStop extends RuntimeException {
     /**
      * Emergency stop a BunyipsOpMode.
+     *
      * @param message the message to display on the Driver Station.
      */
     public EmergencyStop(String message) {

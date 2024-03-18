@@ -15,6 +15,7 @@ public class SequentialTaskGroup extends TaskGroup {
 
     /**
      * Create a new SequentialTaskGroup with tasks.
+     *
      * @param tasks The tasks to run in sequence
      */
     public SequentialTaskGroup(Task... tasks) {

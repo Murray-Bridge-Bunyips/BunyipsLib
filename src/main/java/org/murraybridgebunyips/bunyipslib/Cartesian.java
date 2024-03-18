@@ -29,8 +29,8 @@ public final class Cartesian {
     }
 
     /**
-     * @param x the x coordinate
-     * @param y the y coordinate
+     * @param x       the x coordinate
+     * @param y       the y coordinate
      * @param heading the heading
      * @return the pose with the x and y coordinates swapped and the heading negated
      */
@@ -40,8 +40,8 @@ public final class Cartesian {
     }
 
     /**
-     * @param x the x coordinate
-     * @param y the y coordinate
+     * @param x       the x coordinate
+     * @param y       the y coordinate
      * @param heading the heading
      * @return the pose with the x and y coordinates swapped and the heading negated
      */

@@ -93,9 +93,10 @@ public final class LynxModuleUtil {
 
         /**
          * Create a new firmware version object.
+         *
          * @param major major version number
          * @param minor minor version number
-         * @param eng engineering version number
+         * @param eng   engineering version number
          */
         public LynxFirmwareVersion(int major, int minor, int eng) {
             this.major = major;
@@ -142,6 +143,7 @@ public final class LynxModuleUtil {
     public static class LynxFirmwareVersionException extends RuntimeException {
         /**
          * Emergency stop an OpMode on outdated firmware.
+         *
          * @param detailMessage message to display.
          */
         public LynxFirmwareVersionException(String detailMessage) {

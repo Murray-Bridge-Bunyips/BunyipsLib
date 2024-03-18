@@ -10,7 +10,7 @@ import java.util.List;
  */
 public final class WaitSegment extends SequenceSegment {
     /**
-     * @param pose The pose
+     * @param pose    The pose
      * @param seconds The number of seconds to wait
      * @param markers The markers to use
      */

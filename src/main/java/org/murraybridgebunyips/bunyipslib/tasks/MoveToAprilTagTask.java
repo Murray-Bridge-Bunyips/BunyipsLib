@@ -64,17 +64,18 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     /**
      * TeleOp constructor.
-     * @param gamepad the gamepad to use for manual control
-     * @param drive the drivetrain to use
-     * @param aprilTag the AprilTag processor to use
+     *
+     * @param gamepad          the gamepad to use for manual control
+     * @param drive            the drivetrain to use
+     * @param aprilTag         the AprilTag processor to use
      * @param desiredDistanceM the desired distance from the tag in meters
-     * @param speedGain the speed gain for the distance error
-     * @param strafeGain the strafe gain for the yaw error
-     * @param turnGain the turn gain for the heading error
-     * @param maxAutoSpeed the maximum speed the robot can move at
-     * @param maxAutoStrafe the maximum strafe the robot can move at
-     * @param maxAutoTurn the maximum turn the robot can move at
-     * @param targetTag the tag to target. -1 for any tag
+     * @param speedGain        the speed gain for the distance error
+     * @param strafeGain       the strafe gain for the yaw error
+     * @param turnGain         the turn gain for the heading error
+     * @param maxAutoSpeed     the maximum speed the robot can move at
+     * @param maxAutoStrafe    the maximum strafe the robot can move at
+     * @param maxAutoTurn      the maximum turn the robot can move at
+     * @param targetTag        the tag to target. -1 for any tag
      */
     public MoveToAprilTagTask(Gamepad gamepad, T drive, AprilTag aprilTag, double desiredDistanceM, double speedGain, double strafeGain, double turnGain, double maxAutoSpeed, double maxAutoStrafe, double maxAutoTurn, int targetTag) {
         super(drive, false);
@@ -95,9 +96,10 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     /**
      * TeleOp constructor with default values.
-     * @param gamepad the gamepad to use for manual control
-     * @param drive the drivetrain to use
-     * @param aprilTag the AprilTag processor to use
+     *
+     * @param gamepad   the gamepad to use for manual control
+     * @param drive     the drivetrain to use
+     * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */
     public MoveToAprilTagTask(Gamepad gamepad, T drive, AprilTag aprilTag, int targetTag) {

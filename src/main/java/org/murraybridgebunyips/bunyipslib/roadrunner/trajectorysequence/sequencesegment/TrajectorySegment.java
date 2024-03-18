@@ -12,6 +12,7 @@ public final class TrajectorySegment extends SequenceSegment {
 
     /**
      * Create a new trajectory segment
+     *
      * @param trajectory The trajectory to use
      */
     public TrajectorySegment(Trajectory trajectory) {

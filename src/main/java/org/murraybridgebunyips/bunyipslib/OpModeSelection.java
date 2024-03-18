@@ -15,6 +15,7 @@ public class OpModeSelection {
 
     /**
      * Wrap an object with a name for selection.
+     *
      * @param obj the object to wrap
      */
     public OpModeSelection(Object obj) {
