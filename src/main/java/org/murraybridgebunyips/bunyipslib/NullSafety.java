@@ -1,6 +1,5 @@
 package org.murraybridgebunyips.bunyipslib;
 
-import static org.murraybridgebunyips.bunyipslib.Text.formatString;
 import static org.murraybridgebunyips.bunyipslib.Text.getCallingUserCodeFunction;
 
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.Encoder;
@@ -75,9 +74,9 @@ public final class NullSafety {
 
     private static boolean reportUnusable(Class<?> component) {
         BunyipsOpMode opMode = BunyipsOpMode.getInstance();
-        opMode.addRetainedTelemetry(formatString("! COM_FAULT: % failed to instantiate due to null constructor arguments", component.getSimpleName()));
+        opMode.addRetainedTelemetry("! COM_FAULT: % failed to instantiate due to null constructor arguments", component.getSimpleName());
         opMode.log("error: % is null. attempting to suppress errors...", component.getSimpleName());
-        Dbg.error(formatString("% is null, adding to unusable components...", component.getSimpleName()));
+        Dbg.error("% is null, adding to unusable components...", component.getSimpleName());
         if (!unusableComponents.contains(component.getSimpleName()))
             unusableComponents.add(component.getSimpleName());
         return false;

@@ -145,8 +145,8 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
         drive.setDefaultTask(new HolonomicDriveTask<>(gamepad1, drive, () -> false));
 
         scheduler().whenHeld(Controller.User.ONE, Controller.Y)
-                .run(new InstantTask(() -> drive.resetYaw()))
-                .immediately();
+                .run(new InstantTask(() -> drive.resetYaw()));
+                
 
         scheduler().whenPressed(Controller.User.ONE, Controller.RIGHT_BUMPER)
                 .run(new AlignToPixelTask<>(gamepad1, drive, pixels, new PIDController(1, 0.25, 0.0)))

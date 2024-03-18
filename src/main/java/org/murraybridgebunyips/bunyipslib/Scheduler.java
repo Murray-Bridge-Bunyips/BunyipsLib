@@ -304,26 +304,29 @@ public class Scheduler extends BunyipsComponent {
     public class ConditionalTask {
         protected final BooleanSupplier runCondition;
         protected Task taskToRun;
-        protected double time;
+        protected double time = 0.0;
         protected boolean debouncing;
         protected boolean lastState;
         protected BooleanSupplier stopCondition = () -> false;
         protected long activeSince = -1;
 
         /**
-         * Create a new ConditionalTask.
+         * Create and allocate a new conditional task. This will automatically be added to the scheduler.
          * @param runCondition The condition to start running the task.
          */
         public ConditionalTask(BooleanSupplier runCondition) {
             this.runCondition = runCondition;
+            allocatedTasks.add(this);
         }
 
         /**
          * Run a task when the condition is met.
          * This method can only be called once per ConditionalTask.
+         * If you do not mention timing control, this task will be run immediately when the condition is met,
+         * ending when the task ends.
          *
          * @param task The task to run.
-         * @return Timing control for allocation (to queue this Task call forSeconds(), inSeconds(), or immediately()).
+         * @return Timing control for allocation (none: immediate, inSeconds(), finishingWhen(), inSecondsFinishingWhen()).
          */
         public ConditionalTask run(Task task) {
             if (taskToRun != null) {
@@ -336,7 +339,7 @@ public class Scheduler extends BunyipsComponent {
         /**
          * Run a task when the condition is met, debouncing the task from running more than once the condition is met.
          * @param task The task to run.
-         * @return Timing control for allocation (to queue this Task call forSeconds(), inSeconds(), or immediately()).
+         * @return Timing control for allocation (none: immediate, inSeconds(), finishingWhen(), inSecondsFinishingWhen()).
          */
         public ConditionalTask runDebounced(Task task) {
             debouncing = true;
@@ -351,7 +354,6 @@ public class Scheduler extends BunyipsComponent {
          */
         public void inSeconds(double seconds) {
             time = Math.abs(seconds);
-            allocatedTasks.add(this);
         }
 
         /**
@@ -362,7 +364,6 @@ public class Scheduler extends BunyipsComponent {
          */
         public void finishingWhen(BooleanSupplier condition) {
             stopCondition = condition;
-            allocatedTasks.add(this);
         }
 
         /**
@@ -377,15 +378,6 @@ public class Scheduler extends BunyipsComponent {
         public void inSecondsFinishingWhen(double seconds, BooleanSupplier condition) {
             time = Math.abs(seconds);
             stopCondition = condition;
-            allocatedTasks.add(this);
-        }
-
-        /**
-         * Run the task assigned to in run() immediately once the condition is true.
-         */
-        public void immediately() {
-            time = 0.0;
-            allocatedTasks.add(this);
         }
     }
 }

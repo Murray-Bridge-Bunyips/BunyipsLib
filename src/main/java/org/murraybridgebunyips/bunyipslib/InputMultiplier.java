@@ -1,6 +1,9 @@
 package org.murraybridgebunyips.bunyipslib;
 
 
+import org.murraybridgebunyips.bunyipslib.tasks.InstantTask;
+import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
+
 /**
  * Multi-purpose input sensitivity multiplier with increment and decrement.
  *
@@ -53,11 +56,27 @@ public class InputMultiplier extends BunyipsSubsystem {
     }
 
     /**
+     * Create a task to increment the multiplier table index.
+     * @return the task
+     */
+    public Task incrementTask() {
+        return new InstantTask(this::increment, this, false).withName("IncrementMultiplier");
+    }
+
+    /**
      * Decrement the multiplier table index.
      */
     public void decrement() {
         if (index <= 0) return;
         index--;
+    }
+
+    /**
+     * Create a task to decrement the multiplier table index.
+     * @return the task
+     */
+    public Task decrementTask() {
+        return new InstantTask(this::decrement, this, false).withName("DecrementMultiplier");
     }
 
     /**

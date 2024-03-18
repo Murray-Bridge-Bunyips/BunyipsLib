@@ -68,8 +68,8 @@ public class ExampleCommandBasedTeleOp extends BunyipsOpMode {
         // or based on controller input. These tasks will replace the default tasks when the subsystem is mentioned as a task parameter,
         // or if no subsystem is attached it will run directly on the scheduler.
         scheduler.whenPressed(Controller.User.ONE, Controller.A)
-                .run(new InstantTask(() -> log("A was pressed!")))
-                .immediately();
+                .run(new InstantTask(() -> log("A was pressed!")));
+                
 
         // There are plenty of configuration options, including setting a queue delay, stop condition for continuous tasks,
         // and more. See the Scheduler class and implementations for more information.
@@ -83,8 +83,8 @@ public class ExampleCommandBasedTeleOp extends BunyipsOpMode {
                 .finishingWhen(() -> Controller.isSelected(gamepad2, Controller.X));
 
         scheduler.when(() -> drive.isBusy())
-                .run(new InstantTask(() -> addTelemetry("Drive system is busy!")))
-                .immediately();
+                .run(new InstantTask(() -> addTelemetry("Drive system is busy!")));
+                
     }
 
     @Override
