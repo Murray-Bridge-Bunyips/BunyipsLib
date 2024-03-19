@@ -184,11 +184,13 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             task.run();
             // Update the state of isFinished() after running the task as it may have changed
             task.pollFinished();
-            Scheduler.addSubsystemTaskReport(
-                    getClass().getSimpleName(),
-                    task.getName(),
-                    round(task.getDeltaTime(), 1)
-            );
+            if (!task.isMuted()) {
+                Scheduler.addSubsystemTaskReport(
+                        getClass().getSimpleName(),
+                        task.getName(),
+                        round(task.getDeltaTime(), 1)
+                );
+            }
         }
         // This should be the only place where periodic() is called for this subsystem
         periodic();

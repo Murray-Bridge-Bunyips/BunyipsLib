@@ -33,8 +33,9 @@ abstract class RobotConfig {
      * Uses the HardwareMap to fetch HardwareDevices and assign instances from `onRuntime`.
      * Should be called as the first line in your init cycle.
      * @param opMode the OpMode instance - usually the `this` object when at the root OpMode.
+     * @return the instance of the RobotConfig
      */
-    fun init(opMode: OpMode) {
+    fun init(opMode: OpMode): RobotConfig {
         errors.clear()
         this.hardwareMap = opMode.hardwareMap
         onRuntime()
@@ -57,6 +58,7 @@ abstract class RobotConfig {
                 }
             }
         }
+        return this
     }
 
     /**
@@ -67,8 +69,9 @@ abstract class RobotConfig {
      *
      * @throws UnsupportedOperationException if not called from a BunyipsOpMode.
      * @see init(opMode: OpMode)
+     * @return the instance of the RobotConfig
      */
-    fun init() {
+    fun init(): RobotConfig {
         try {
             // Access the singleton associated with a BunyipsOpMode, if we're not running one Kotlin
             // will throw a UninitializedPropertyAccessException, so we can tell the user off here.
@@ -76,6 +79,7 @@ abstract class RobotConfig {
         } catch (e: UninitializedPropertyAccessException) {
             throw UnsupportedOperationException("Argument-less RobotConfig.init() method is only supported in a BunyipsOpMode. Use RobotConfig.init(opMode) instead.")
         }
+        return this
     }
 
     /**

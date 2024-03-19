@@ -25,6 +25,23 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
 
     private var name = this.javaClass.simpleName
 
+    private var mutedReport = false
+
+    /**
+     * Mute task reports from the Scheduler.
+     */
+    fun withMutedReports(): Task {
+        mutedReport = true
+        return this
+    }
+
+    /**
+     * @return Whether this task is muted or not.
+     */
+    fun isMuted(): Boolean {
+        return mutedReport
+    }
+
     /**
      * @return Whether this task should override other tasks in the queue if they conflict with this task.
      */
