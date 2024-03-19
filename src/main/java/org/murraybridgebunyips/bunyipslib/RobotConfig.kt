@@ -93,10 +93,10 @@ abstract class RobotConfig {
      * @param name   name of device saved in the configuration file
      * @param device the class of the item to configure, in final abstraction extending HardwareDevice
      */
-    fun getHardware(name: String, device: Class<*>?): HardwareDevice? {
-        var hardwareDevice: HardwareDevice? = null
+    fun <T : HardwareDevice> getHardware(name: String, device: Class<T>): T? {
+        var hardwareDevice: T? = null
         try {
-            hardwareDevice = hardwareMap.get(device, name) as HardwareDevice
+            hardwareDevice = hardwareMap.get(device, name)
         } catch (e: Throwable) {
             errors.add(name)
             e.localizedMessage?.let { Dbg.warn(it) }
