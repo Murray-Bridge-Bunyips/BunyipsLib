@@ -4,7 +4,7 @@ import static org.murraybridgebunyips.bunyipslib.MovingAverageTimer.NANOS_IN_SEC
 import static org.murraybridgebunyips.bunyipslib.Text.formatString;
 import static org.murraybridgebunyips.bunyipslib.Text.round;
 
-import org.murraybridgebunyips.bunyipslib.tasks.InstantTask;
+import org.murraybridgebunyips.bunyipslib.tasks.CallbackTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.ArrayList;
@@ -362,16 +362,16 @@ public class Scheduler extends BunyipsComponent {
         }
 
         /**
-         * Implicitly make a new InstantTask to run once the condition is met.
+         * Implicitly make a new CallbackTask to run once the condition is met.
          * This method can only be called once per ConditionalTask.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
-         * ending immediately as it is an InstantTask.
+         * ending immediately as it is an CallbackTask.
          *
          * @param runnable The code to run
          * @return Timing control for allocation (none: immediate, inSeconds(), finishingWhen(), inSecondsFinishingWhen()).
          */
         public ConditionalTask run(Runnable runnable) {
-            return run(new InstantTask(runnable));
+            return run(new CallbackTask(runnable));
         }
 
         /**
