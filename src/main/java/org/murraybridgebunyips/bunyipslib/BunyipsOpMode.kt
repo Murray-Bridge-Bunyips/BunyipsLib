@@ -79,6 +79,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
          * without raising an exception due to the field being null.
          * @return Whether a BunyipsOpMode is currently running.
          */
+        @JvmStatic
         val isRunning: Boolean
             get() = _instance != null
     }
