@@ -52,9 +52,11 @@ abstract class RobotConfig {
         if (errors.isNotEmpty()) {
             for (error in errors) {
                 if (opMode is BunyipsOpMode) {
-                    opMode.addRetainedTelemetry("! DEV_FAULT: $error")
+                    opMode.addRetainedTelemetry("! MISSING_DEVICE: $error")
+                    opMode.log("error: '$error' is not configured in the current saved configuration.")
                 } else {
-                    opMode.telemetry.addData("", "! DEV_FAULT: $error").setRetained(true)
+                    opMode.telemetry.addData("", "! MISSING_DEVICE: $error").setRetained(true)
+                    opMode.telemetry.log().add("error: '$error' is not configured in the current saved configuration.")
                 }
             }
         }
