@@ -29,7 +29,7 @@ public class Scheduler extends BunyipsComponent {
      * @param deltaTime The time this task has been running
      */
     public static void addSubsystemTaskReport(String className, String taskName, double deltaTime) {
-        subsystemReports.add(formatString("    % | % -> %s", className, taskName, deltaTime));
+        subsystemReports.add(formatString("    % |\n% -> %s", className, taskName, deltaTime));
     }
 
     /**
@@ -64,7 +64,7 @@ public class Scheduler extends BunyipsComponent {
      * This should be called in the activeLoop() method of the BunyipsOpMode.
      */
     public void run() {
-        opMode.addTelemetry("Managing % task% (%sys, %cmd) on % subsystem%",
+        opMode.addTelemetry("Managing % task% (%s, %c) on % subsystem%",
                 // Subsystem count will account for default tasks
                 allocatedTasks.size() + subsystems.size(),
                 allocatedTasks.size() + subsystems.size() == 1 ? "" : "s",
@@ -80,8 +80,8 @@ public class Scheduler extends BunyipsComponent {
         for (ConditionalTask task : allocatedTasks) {
             if (task.taskToRun.shouldOverrideOnConflict() != null)
                 continue;
-            if (!task.taskToRun.isMuted() && task.taskToRun.isRunning() || task.runCondition.getAsBoolean())
-                opMode.addTelemetry("    Scheduler | % -> %s", task.taskToRun.getName(), round(task.taskToRun.getDeltaTime(), 1));
+            if (!task.taskToRun.isMuted() && (task.taskToRun.isRunning() || task.runCondition.getAsBoolean()))
+                opMode.addTelemetry("    Scheduler |\n% -> %s", task.taskToRun.getName(), round(task.taskToRun.getDeltaTime(), 1));
         }
         opMode.addTelemetry("");
         subsystemReports.clear();
@@ -390,6 +390,9 @@ public class Scheduler extends BunyipsComponent {
          * @return Timing control for allocation (none: immediate, inSeconds(), finishingWhen(), inSecondsFinishingWhen()).
          */
         public ConditionalTask muted() {
+            if (taskToRun != null) {
+                taskToRun.withMutedReports();
+            }
             isMuted = true;
             return this;
         }

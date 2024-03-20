@@ -22,9 +22,7 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
     protected val opMode: BunyipsOpMode = BunyipsOpMode.instance
 
     private var overrideOnConflict: Boolean? = null
-
     private var name = this.javaClass.simpleName
-
     private var mutedReport = false
 
     /**
