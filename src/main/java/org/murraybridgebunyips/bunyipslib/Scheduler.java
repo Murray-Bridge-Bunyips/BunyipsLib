@@ -376,6 +376,9 @@ public class Scheduler extends BunyipsComponent {
 
         /**
          * Run a task when the condition is met, debouncing the task from running more than once the condition is met.
+         * This method can only be called once per ConditionalTask.
+         * If you do not mention timing control, this task will be run immediately when the condition is met,
+         * ending when the task ends.
          *
          * @param task The task to run.
          * @return Timing control for allocation (none: immediate, inSeconds(), finishingWhen(), inSecondsFinishingWhen()).
@@ -383,6 +386,19 @@ public class Scheduler extends BunyipsComponent {
         public ConditionalTask runDebounced(Task task) {
             debouncing = true;
             return run(task);
+        }
+
+        /**
+         * Implicitly make a new CallbackTask to run once the condition is met, debouncing the task from running more than once the condition is met.
+         * This method can only be called once per ConditionalTask.
+         * If you do not mention timing control, this task will be run immediately when the condition is met,
+         * ending immediately as it is an CallbackTask.
+         *
+         * @param runnable The code to run
+         * @return Timing control for allocation (none: immediate, inSeconds(), finishingWhen(), inSecondsFinishingWhen()).
+         */
+        public ConditionalTask runDebounced(Runnable runnable) {
+            return runDebounced(new CallbackTask(runnable));
         }
 
         /**
