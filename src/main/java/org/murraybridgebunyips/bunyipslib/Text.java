@@ -122,13 +122,14 @@ public final class Text {
     }
 
     /**
-     * Get the calling user code function of the current context.
+     * Get the calling user code function of the current context by looking at the stacktrace until it leaves BunyipsLib.
      */
     public static StackTraceElement getCallingUserCodeFunction() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         // Keep going down the stack trace until we leave the BunyipsLib package
         for (StackTraceElement stackTraceElement : stackTrace) {
-            if (stackTraceElement.getClassName().contains("getStackTrace")) continue;
+            // dalvik.system.VMStack.getThreadStackTrace(Native Method) is not useful, which shows up in the stacktrace
+            if (stackTraceElement.toString().toLowerCase().contains("stacktrace")) continue;
             // If porting, ensure the string below is set to the package name of BunyipsLib
             if (!stackTraceElement.getClassName().startsWith("org.murraybridgebunyips.bunyipslib")) {
                 return stackTraceElement;
@@ -136,6 +137,6 @@ public final class Text {
         }
         // If we can't find the calling function, then we can't return a stack trace element
         Dbg.warn("Could not find calling function in getCallingUserCodeFunction()!");
-        return new StackTraceElement("Unknown", "-", "-", -1);
+        return new StackTraceElement("Unknown", "userMethod", "User Code", -1);
     }
 }
