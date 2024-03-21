@@ -12,6 +12,11 @@ import java.util.function.BooleanSupplier;
 public class WaitUntilTask extends NoTimeoutTask {
     private final BooleanSupplier condition;
 
+    /**
+     * Create a new WaitUntilTask with the given condition.
+     *
+     * @param condition the condition to wait for true
+     */
     public WaitUntilTask(BooleanSupplier condition) {
         this.condition = condition;
     }

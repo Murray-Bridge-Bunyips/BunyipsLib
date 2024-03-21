@@ -13,6 +13,7 @@ public class RepeatTask extends ForeverTask {
 
     /**
      * Create a new RepeatTask with the given task.
+     *
      * @param task The task to repeat after it is completed.
      */
     public RepeatTask(Task task) {

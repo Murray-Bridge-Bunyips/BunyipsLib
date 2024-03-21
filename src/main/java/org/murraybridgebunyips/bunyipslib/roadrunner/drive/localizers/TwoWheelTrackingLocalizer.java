@@ -48,10 +48,10 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     /**
      * Create a new TwoWheelTrackingLocalizer
      *
-     * @param coefficients         The coefficients to use
+     * @param coefficients           The coefficients to use
      * @param parallelDeadwheel      The parallel encoder
      * @param perpendicularDeadwheel The perpendicular encoder
-     * @param drive                The drivetrain
+     * @param drive                  The drivetrain
      */
     public TwoWheelTrackingLocalizer(TwoWheelTrackingLocalizerCoefficients coefficients, Deadwheel parallelDeadwheel, Deadwheel perpendicularDeadwheel, RoadRunnerDrive drive) {
         super(Arrays.asList(

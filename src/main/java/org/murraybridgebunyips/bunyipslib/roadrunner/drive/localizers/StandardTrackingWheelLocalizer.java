@@ -35,9 +35,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
      * Create a new StandardTrackingWheelLocalizer with coefficients, encoders, and last encoder positions and velocities.
      *
      * @param coefficients             The coefficients for the localizer
-     * @param leftDeadwheel              The left encoder
-     * @param rightDeadwheel             The right encoder
-     * @param frontDeadwheel             The front encoder
+     * @param leftDeadwheel            The left encoder
+     * @param rightDeadwheel           The right encoder
+     * @param frontDeadwheel           The front encoder
      * @param lastTrackingEncPositions The last encoder positions
      * @param lastTrackingEncVels      The last encoder velocities
      */

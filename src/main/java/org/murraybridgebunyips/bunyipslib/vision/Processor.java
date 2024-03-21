@@ -70,6 +70,7 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
 
     /**
      * Determine whether the processor is currently started on a Vision instance.
+     * This will also check if the processor is attached.
      * This will not reflect whether the Vision instance is streaming, only if the processor has been started.
      * Checking this is useful for processors that have been passed into tasks but cannot
      * be checked by looking directly at the vision system.

@@ -105,6 +105,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * Note: this method is always called even if initialisation is cut short by the Driver Station.
      */
     protected open fun onInitDone() {
+        // no-op
     }
 
     /**
@@ -112,6 +113,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * Unlike onInitDone, this will only execute once play is hit and not when initialisation is done.
      */
     protected open fun onStart() {
+        // no-op
     }
 
     /**
@@ -128,6 +130,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * @see onStop
      */
     protected open fun onFinish() {
+        // no-op
     }
 
     /**
@@ -140,6 +143,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * @see onFinish
      */
     protected open fun onStop() {
+        // no-op
     }
 
     /**

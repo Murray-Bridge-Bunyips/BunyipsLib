@@ -5,9 +5,9 @@ import org.murraybridgebunyips.bunyipslib.Controller;
 import org.murraybridgebunyips.bunyipslib.Scheduler;
 import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
 import org.murraybridgebunyips.bunyipslib.example.examplerobot.components.ExampleConfig;
-import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.ContinuousTask;
 import org.murraybridgebunyips.bunyipslib.tasks.DifferentialDriveTask;
+import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 
 /**
  * Example command-based teleop

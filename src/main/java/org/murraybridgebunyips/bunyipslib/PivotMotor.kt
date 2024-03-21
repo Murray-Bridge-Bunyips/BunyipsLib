@@ -14,6 +14,7 @@ class PivotMotor(
     private val reduction: Double = 1.0,
 ) : DcMotorImpl(motor.controller, motor.portNumber), ScopedEncoder {
     constructor(motor: DcMotorEx, ticksPerRevolution: Double) : this(motor, ticksPerRevolution, 1.0)
+
     private val encoder: Encoder = Encoder(motor, ticksPerRevolution, null, reduction)
 
     /**

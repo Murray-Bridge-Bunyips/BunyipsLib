@@ -14,7 +14,7 @@ class Encoder(
     private val ticksPerRevolution: Double? = null,
     private val wheelDiameterMM: Double? = null,
     private var reduction: Double = 1.0
-): ScopedEncoder {
+) : ScopedEncoder {
     constructor(motor: DcMotorEx, ticksPerRevolution: Double) : this(motor, ticksPerRevolution, null)
     constructor(motor: DcMotorEx, ticksPerRevolution: Double, wheelDiameterMM: Double?) : this(
         motor,
