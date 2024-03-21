@@ -15,6 +15,7 @@ public class SelectTask<T> extends NoTimeoutTask {
 
     /**
      * Create a new select task with the given state supplier.
+     *
      * @param stateSupplier the supplier of states to check in the when() method
      */
     public SelectTask(Supplier<T> stateSupplier) {
@@ -23,8 +24,9 @@ public class SelectTask<T> extends NoTimeoutTask {
 
     /**
      * Add a task to run when the state is equal to the given state.
+     *
      * @param state the state to run the task on
-     * @param task the task to run
+     * @param task  the task to run
      * @return this task
      */
     public SelectTask<T> when(T state, Task task) {

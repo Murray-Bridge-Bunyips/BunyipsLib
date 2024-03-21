@@ -6,6 +6,7 @@ import java.util.function.BooleanSupplier;
 
 /**
  * A task that waits until a condition is true before finishing.
+ *
  * @author Lucas Bubner, 2024
  */
 public class WaitUntilTask extends NoTimeoutTask {

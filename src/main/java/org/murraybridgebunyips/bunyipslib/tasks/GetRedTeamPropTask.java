@@ -9,18 +9,12 @@ public class GetRedTeamPropTask extends ForeverTask {
     private final RedTeamProp redTeamProp;
     private volatile TeamPropPositions position = TeamPropPositions.LEFT_SPIKE;
 
-    public TeamPropPositions getPosition() {
-        return position;
-    }
-
     public GetRedTeamPropTask(RedTeamProp redTeamProp) {
         this.redTeamProp = redTeamProp;
     }
 
-    public enum TeamPropPositions {
-        LEFT_SPIKE,
-        CENTER_SPIKE,
-        RIGHT_SPIKE
+    public TeamPropPositions getPosition() {
+        return position;
     }
 
     @Override
@@ -42,5 +36,11 @@ public class GetRedTeamPropTask extends ForeverTask {
     @Override
     protected void onFinish() {
         // no-op
+    }
+
+    public enum TeamPropPositions {
+        LEFT_SPIKE,
+        CENTER_SPIKE,
+        RIGHT_SPIKE
     }
 }

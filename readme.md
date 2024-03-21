@@ -1,6 +1,8 @@
 ![BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/.github/blob/main/bunyipslib_banner.png)
 [![CodeFactor](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib/badge)](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib)
+
 ##### A powerful all-in-one library for FTC used by the Murray Bridge High School Student Robotics Club.
+
 BunyipsLib was originally a collection of common functions that our FTC teams used in competition.
 It has since evolved into a full-fledged library that is used by all of our teams. It is designed to
 provide useful development utilities in making robot code, offering efficient common modules and

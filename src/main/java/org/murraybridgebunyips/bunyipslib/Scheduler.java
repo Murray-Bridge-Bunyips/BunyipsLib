@@ -18,9 +18,9 @@ import java.util.function.BooleanSupplier;
  */
 public class Scheduler extends BunyipsComponent {
     private static final ArrayList<String> subsystemReports = new ArrayList<>();
+    private static boolean isMuted = false;
     private final ArrayList<BunyipsSubsystem> subsystems = new ArrayList<>();
     private final ArrayList<ConditionalTask> allocatedTasks = new ArrayList<>();
-    private static boolean isMuted;
 
     public Scheduler() {
         isMuted = false;
@@ -360,7 +360,7 @@ public class Scheduler extends BunyipsComponent {
         protected boolean lastState;
         protected BooleanSupplier stopCondition = () -> false;
         protected long activeSince = -1;
-        private boolean isMuted = false;
+        private boolean isTaskMuted = false;
 
         /**
          * Create and allocate a new conditional task. This will automatically be added to the scheduler.
@@ -386,7 +386,7 @@ public class Scheduler extends BunyipsComponent {
                 throw new EmergencyStop("A run(Task) method has been called more than once on a scheduler task. If you wish to run multiple tasks see about using a task group as your task.");
             }
             taskToRun = task;
-            if (isMuted)
+            if (isTaskMuted)
                 taskToRun.withMutedReports();
             return this;
         }
@@ -433,13 +433,14 @@ public class Scheduler extends BunyipsComponent {
 
         /**
          * Mute this task from being a part of the Scheduler report.
+         *
          * @return Timing control for allocation (none: immediate, inSeconds(), finishingWhen(), inSecondsFinishingWhen()).
          */
         public ConditionalTask muted() {
             if (taskToRun != null) {
                 taskToRun.withMutedReports();
             }
-            isMuted = true;
+            isTaskMuted = true;
             return this;
         }
 

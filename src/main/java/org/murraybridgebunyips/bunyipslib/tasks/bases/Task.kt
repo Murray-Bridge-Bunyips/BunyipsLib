@@ -68,10 +68,10 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
         return this
     }
 
-     /**
+    /**
      * Get the name of this task. By default, it will be the class simple name, but you can override this method to
      * provide a custom name.
-      * @return String representing the name of this task.
+     * @return String representing the name of this task.
      */
     override fun toString(): String {
         return name

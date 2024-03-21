@@ -5,7 +5,6 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Text and string manipulation utilities.
@@ -93,9 +92,10 @@ public final class Text {
 
     /**
      * Round a number to a certain number of decimal points.
-     * @param num       The number to round
-     * @param thDigits  The number of decimal places to use after the decimal point
-     * @param sigFigs   The number of significant figures to use
+     *
+     * @param num      The number to round
+     * @param thDigits The number of decimal places to use after the decimal point
+     * @param sigFigs  The number of significant figures to use
      * @return The rounded number
      */
     public static float round(float num, int thDigits, int sigFigs) {

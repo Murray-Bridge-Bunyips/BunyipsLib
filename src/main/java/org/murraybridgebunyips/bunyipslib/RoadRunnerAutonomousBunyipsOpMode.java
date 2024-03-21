@@ -1,6 +1,5 @@
 package org.murraybridgebunyips.bunyipslib;
 
-import androidx.annotation.Nullable;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
@@ -11,7 +10,6 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequence;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.murraybridgebunyips.bunyipslib.tasks.RoadRunnerTask;
-import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.ArrayList;
 
@@ -62,8 +60,8 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
     }
 
     private void assertDrive() {
-        if (drive == null)
-            drive = setDrive();
+        if (drive != null) return;
+        drive = setDrive();
         if (drive == null)
             throw new NullPointerException("drive instance is not set!");
     }
@@ -71,10 +69,6 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
     private Pose2d getPreviousPose() {
         // Needed to splice the last pose from the last trajectory
         return rrTasks.isEmpty() ? drive.getPoseEstimate() : rrTasks.get(rrTasks.size() - 1).getEndPose();
-    }
-
-    private void addPrioritisedTask(RoadRunnerTask<T> task, PriorityLevel priority) {
-        assertDrive();
     }
 
     /**
@@ -176,6 +170,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
 
     /**
      * Add a trajectory to the task queue with a timeout and priority level.
+     *
      * @param trajectory Trajectory to add
      * @return Builder for the task
      */
@@ -185,11 +180,24 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
 
     /**
      * Add a trajectory sequence to the task queue with a timeout and priority level.
+     *
      * @param trajectory Trajectory sequence to add
      * @return Builder for the task
      */
     protected AddTrajectoryBuilder<TrajectorySequence> addTrajectory(TrajectorySequence trajectory) {
         return new AddTrajectoryBuilder<>(trajectory);
+    }
+
+    /**
+     * Priority representation for building tasks.
+     * LAST: Add the task to the end of the queue after the onQueueReady() init callback has fired
+     * NORMAL: Add the task to the queue immediately (default)
+     * FIRST: Add the task to the front of the queue after the onQueueReady() init callback has fired
+     */
+    protected enum PriorityLevel {
+        LAST,
+        NORMAL,
+        FIRST//® Tech Challenge
     }
 
     protected class AddTrajectoryBuilder<S> {
@@ -250,18 +258,6 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
     }
 
     /**
-     * Priority representation for building tasks.
-     * LAST: Add the task to the end of the queue after the onQueueReady() init callback has fired
-     * NORMAL: Add the task to the queue immediately (default)
-     * FIRST: Add the task to the front of the queue after the onQueueReady() init callback has fired
-     */
-    protected enum PriorityLevel {
-        LAST,
-        NORMAL,
-        FIRST//® Tech Challenge
-    }
-
-    /**
      * Builder class for a RoadRunner trajectory, which supports adding the trajectory to the Task queue.
      */
     protected class RoadRunnerTrajectoryTaskBuilder extends TrajectorySequenceBuilder<RoadRunnerTrajectoryTaskBuilder> {
@@ -296,6 +292,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
 
         /**
          * Set the task name of the trajectory to show up in the telemetry.
+         *
          * @param taskName Name of the task
          * @return trajectory builder
          */
