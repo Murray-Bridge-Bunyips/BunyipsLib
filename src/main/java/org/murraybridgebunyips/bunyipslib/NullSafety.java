@@ -2,7 +2,7 @@ package org.murraybridgebunyips.bunyipslib;
 
 import static org.murraybridgebunyips.bunyipslib.Text.getCallingUserCodeFunction;
 
-import org.murraybridgebunyips.bunyipslib.roadrunner.util.Encoder;
+import org.murraybridgebunyips.bunyipslib.roadrunner.util.Deadwheel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,8 +63,8 @@ public final class NullSafety {
         for (Object o : objs) {
             if (o == null) {
                 return reportUnusable(T);
-            } else if (o instanceof Encoder) {
-                if (((Encoder) o).isNull()) {
+            } else if (o instanceof Deadwheel) {
+                if (((Deadwheel) o).isNull()) {
                     return reportUnusable(T);
                 }
             }

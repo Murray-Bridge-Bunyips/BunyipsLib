@@ -11,7 +11,7 @@ import org.murraybridgebunyips.bunyipslib.RobotConfig;
  * Wraps a motor instance to provide corrected velocity counts and allow reversing independently of the corresponding
  * slot's motor direction
  */
-public class Encoder {
+public class Deadwheel {
     private static final int CPS_STEP = 0x10000;
     private DcMotorEx motor;
     private NanoClock clock;
@@ -27,7 +27,7 @@ public class Encoder {
      * @param motor the motor to wrap
      * @param clock the clock to use
      */
-    public Encoder(DcMotorEx motor, NanoClock clock) {
+    public Deadwheel(DcMotorEx motor, NanoClock clock) {
         this.motor = motor;
         this.clock = clock;
 
@@ -43,7 +43,7 @@ public class Encoder {
      *
      * @param motor the motor to wrap
      */
-    public Encoder(DcMotorEx motor) {
+    public Deadwheel(DcMotorEx motor) {
         this(motor, NanoClock.system());
     }
 
@@ -54,7 +54,7 @@ public class Encoder {
      * @param configInstance  the RobotConfig instance for easy instantiation
      * @param clock           the clock to use
      */
-    public Encoder(String hardwareMapName, RobotConfig configInstance, NanoClock clock) {
+    public Deadwheel(String hardwareMapName, RobotConfig configInstance, NanoClock clock) {
         DcMotorEx motor = configInstance.getHardware(hardwareMapName, DcMotorEx.class);
         if (motor == null) {
             // Instantiation will still continue, NullPointerExceptions are bound to happen beyond this point
@@ -79,7 +79,7 @@ public class Encoder {
      * @param hardwareMapName the name of the motor in the hardware map
      * @param configInstance  the RobotConfig instance for easy instantiation
      */
-    public Encoder(String hardwareMapName, RobotConfig configInstance) {
+    public Deadwheel(String hardwareMapName, RobotConfig configInstance) {
         this(hardwareMapName, configInstance, NanoClock.system());
     }
 

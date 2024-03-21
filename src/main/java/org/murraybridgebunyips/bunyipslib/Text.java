@@ -122,21 +122,20 @@ public final class Text {
     }
 
     /**
-     * Get the calling function of the current context.
+     * Get the calling user code function of the current context.
      */
     public static StackTraceElement getCallingUserCodeFunction() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         // Keep going down the stack trace until we leave the BunyipsLib package
         for (StackTraceElement stackTraceElement : stackTrace) {
-            if (stackTraceElement.getMethodName().equals("getStackTrace")) continue;
+            if (stackTraceElement.getClassName().contains("getStackTrace")) continue;
             // If porting, ensure the string below is set to the package name of BunyipsLib
             if (!stackTraceElement.getClassName().startsWith("org.murraybridgebunyips.bunyipslib")) {
                 return stackTraceElement;
             }
         }
-        // If we can't find the calling function, we'll settle for the first stack trace element
-        // This is likely going to be the getStackTrace() function, and we will warn the user as well
+        // If we can't find the calling function, then we can't return a stack trace element
         Dbg.warn("Could not find calling function in getCallingUserCodeFunction()!");
-        return stackTrace[0];
+        return new StackTraceElement("Unknown", "-", "-", -1);
     }
 }
