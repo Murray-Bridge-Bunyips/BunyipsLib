@@ -60,7 +60,10 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
     /**
      * Set the name of this task to be displayed in the OpMode.
      */
-    fun withName(name: String): Task {
+    fun withName(name: String?): Task {
+        if (name == null) {
+            return this
+        }
         this.name = name
         return this
     }

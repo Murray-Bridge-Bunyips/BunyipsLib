@@ -1,5 +1,6 @@
 package org.murraybridgebunyips.bunyipslib;
 
+import androidx.annotation.Nullable;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
@@ -10,6 +11,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequence;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.murraybridgebunyips.bunyipslib.tasks.RoadRunnerTask;
+import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.ArrayList;
 
@@ -71,32 +73,8 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
         return rrTasks.isEmpty() ? drive.getPoseEstimate() : rrTasks.get(rrTasks.size() - 1).getEndPose();
     }
 
-    private <S> RoadRunnerTask<T> makeTask(double timeout, S sequence) {
-        RoadRunnerTask<T> task = null;
-        if (sequence instanceof Trajectory) {
-            task = new RoadRunnerTask<>(timeout, drive, (Trajectory) sequence);
-        } else if (sequence instanceof TrajectorySequence) {
-            task = new RoadRunnerTask<>(timeout, drive, (TrajectorySequence) sequence);
-        }
-        if (task == null)
-            throw new EmergencyStop("attempted to make a null/unsupported sequence RoadRunnerTask!");
-        rrTasks.add(task);
-        return task;
-    }
-
     private void addPrioritisedTask(RoadRunnerTask<T> task, PriorityLevel priority) {
         assertDrive();
-        switch (priority) {
-            case LAST:
-                addTaskLast(task);
-                break;
-            case NORMAL:
-                addTask(task);
-                break;
-            case FIRST:
-                addTaskFirst(task);
-                break;
-        }
     }
 
     /**
@@ -197,97 +175,78 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
     }
 
     /**
-     * Add a RoadRunner trajectory to the queue, with a default infinite timeout and default priority.
-     * To customise the timeout, see {@link #addTrajectory(Trajectory, double)}.
-     * To customise the priority, see {@link #addTrajectory(Trajectory, PriorityLevel)}.
-     * To customise both, see {@link #addTrajectory(Trajectory, PriorityLevel, double)}.
-     *
+     * Add a trajectory to the task queue with a timeout and priority level.
      * @param trajectory Trajectory to add
+     * @return Builder for the task
      */
-    protected void addTrajectory(Trajectory trajectory) {
-        assertDrive();
-        addTask(makeTask(DEFAULT_TIMEOUT, trajectory));
+    protected AddTrajectoryBuilder<Trajectory> addTrajectory(Trajectory trajectory) {
+        return new AddTrajectoryBuilder<>(trajectory);
     }
 
     /**
-     * Add a RoadRunner trajectory to the queue, with a default infinite timeout.
-     * To customise the timeout, see {@link #addTrajectory(Trajectory, PriorityLevel, double)}.
-     *
-     * @param trajectory Trajectory to add
-     * @param priority   Priority level of the task, see {@link PriorityLevel}
+     * Add a trajectory sequence to the task queue with a timeout and priority level.
+     * @param trajectory Trajectory sequence to add
+     * @return Builder for the task
      */
-    protected void addTrajectory(Trajectory trajectory, PriorityLevel priority) {
-        addPrioritisedTask(makeTask(DEFAULT_TIMEOUT, trajectory), priority);
+    protected AddTrajectoryBuilder<TrajectorySequence> addTrajectory(TrajectorySequence trajectory) {
+        return new AddTrajectoryBuilder<>(trajectory);
     }
 
-    /**
-     * Add a RoadRunner trajectory to the queue, with a task timeout other than the default, and default priority.
-     * To customise the priority, see {@link #addTrajectory(Trajectory, PriorityLevel, double)}.
-     *
-     * @param trajectory Trajectory to add
-     * @param timeout    Timeout in seconds
-     */
-    protected void addTrajectory(Trajectory trajectory, double timeout) {
-        assertDrive();
-        addTask(makeTask(timeout, trajectory));
-    }
+    protected class AddTrajectoryBuilder<S> {
+        private final S trajectory;
+        private double timeout = DEFAULT_TIMEOUT;
+        private PriorityLevel priority = PriorityLevel.NORMAL;
+        private String name = null;
 
-    /**
-     * Add a RoadRunner trajectory to the queue, with a task timeout other than the default.
-     *
-     * @param trajectory Trajectory to add
-     * @param timeout    Timeout in seconds
-     * @param priority   Priority level of the task, see {@link PriorityLevel}
-     */
-    protected void addTrajectory(Trajectory trajectory, PriorityLevel priority, double timeout) {
-        addPrioritisedTask(makeTask(timeout, trajectory), priority);
-    }
+        public AddTrajectoryBuilder(S trajectory) {
+            if (trajectory == null)
+                throw new NullPointerException("trajectory cannot be null!");
+            if (!(trajectory instanceof Trajectory) && !(trajectory instanceof TrajectorySequence))
+                throw new EmergencyStop("trajectory must be a Trajectory or TrajectorySequence!");
+            this.trajectory = trajectory;
+        }
 
-    /**
-     * Add a RoadRunner trajectory to the queue, with a default infinite timeout and default priority.
-     * To customise the timeout, see {@link #addTrajectory(TrajectorySequence, double)}.
-     * To customise the priority, see {@link #addTrajectory(TrajectorySequence, PriorityLevel)}.
-     * To customise both, see {@link #addTrajectory(TrajectorySequence, PriorityLevel, double)}.
-     *
-     * @param trajectorySequence Trajectory to add
-     */
-    protected void addTrajectory(TrajectorySequence trajectorySequence) {
-        assertDrive();
-        addTask(makeTask(DEFAULT_TIMEOUT, trajectorySequence));
-    }
+        public AddTrajectoryBuilder<S> withTimeout(double sec) {
+            timeout = Math.abs(sec);
+            return this;
+        }
 
-    /**
-     * Add a RoadRunner trajectory to the queue, with a default infinite timeout.
-     * To customise the timeout, see {@link #addTrajectory(TrajectorySequence, PriorityLevel, double)}.
-     *
-     * @param trajectorySequence Trajectory to add
-     * @param priority           Priority level of the task, see {@link PriorityLevel}
-     */
-    protected void addTrajectory(TrajectorySequence trajectorySequence, PriorityLevel priority) {
-        addPrioritisedTask(makeTask(DEFAULT_TIMEOUT, trajectorySequence), priority);
-    }
+        public AddTrajectoryBuilder<S> withPriority(PriorityLevel p) {
+            priority = p;
+            return this;
+        }
 
-    /**
-     * Add a RoadRunner trajectory to the queue, with a task timeout other than the default, and default priority.
-     * To customise the timeout, see {@link #addTrajectory(TrajectorySequence, PriorityLevel, double)}.
-     *
-     * @param trajectorySequence Trajectory to add
-     * @param timeout            Timeout in seconds
-     */
-    protected void addTrajectory(TrajectorySequence trajectorySequence, double timeout) {
-        assertDrive();
-        addTask(makeTask(timeout, trajectorySequence));
-    }
+        public AddTrajectoryBuilder<S> withName(String taskName) {
+            name = taskName;
+            return this;
+        }
 
-    /**
-     * Add a RoadRunner trajectory to the queue, with a task timeout other than the default.
-     *
-     * @param trajectorySequence Trajectory to add
-     * @param timeout            Timeout in seconds
-     * @param priority           Priority level of the task, see {@link PriorityLevel}
-     */
-    protected void addTrajectory(TrajectorySequence trajectorySequence, PriorityLevel priority, double timeout) {
-        addPrioritisedTask(makeTask(timeout, trajectorySequence), priority);
+        /**
+         * Add the trajectory to the task queue based on the builder arguments.
+         */
+        public void build() {
+            assertDrive();
+            RoadRunnerTask<T> task = null;
+            if (trajectory instanceof Trajectory) {
+                task = new RoadRunnerTask<>(timeout, drive, (Trajectory) trajectory);
+            } else if (trajectory instanceof TrajectorySequence) {
+                task = new RoadRunnerTask<>(timeout, drive, (TrajectorySequence) trajectory);
+            }
+            assert task != null;
+            task.withName(name);
+            rrTasks.add(task);
+            switch (priority) {
+                case LAST:
+                    addTaskLast(task);
+                    break;
+                case NORMAL:
+                    addTask(task);
+                    break;
+                case FIRST:
+                    addTaskFirst(task);
+                    break;
+            }
+        }
     }
 
     /**
@@ -307,6 +266,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      */
     protected class RoadRunnerTrajectoryTaskBuilder extends TrajectorySequenceBuilder<RoadRunnerTrajectoryTaskBuilder> {
         private double timeout = DEFAULT_TIMEOUT;
+        private String name = null;
 
         public RoadRunnerTrajectoryTaskBuilder(Pose2d startPose, Double startTangent, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel) {
             super(startPose, startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
@@ -335,13 +295,23 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
         }
 
         /**
+         * Set the task name of the trajectory to show up in the telemetry.
+         * @param taskName Name of the task
+         * @return trajectory builder
+         */
+        public RoadRunnerTrajectoryTaskBuilder withName(String taskName) {
+            name = taskName;
+            return this;
+        }
+
+        /**
          * Build the trajectory sequence and add it to the task queue with default priority.
          */
         @Override
         public TrajectorySequence build() {
             assertDrive();
             TrajectorySequence builtTrajectory = super.build();
-            addTask(makeTask(timeout, builtTrajectory));
+            addTask(createTask(builtTrajectory));
             return builtTrajectory;
         }
 
@@ -353,7 +323,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
         public TrajectorySequence buildWithPriority() {
             assertDrive();
             TrajectorySequence builtTrajectory = super.build();
-            addTaskFirst(makeTask(timeout, builtTrajectory));
+            addTaskFirst(createTask(builtTrajectory));
             return builtTrajectory;
         }
 
@@ -365,8 +335,15 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
         public TrajectorySequence buildWithLowPriority() {
             assertDrive();
             TrajectorySequence builtTrajectory = super.build();
-            addTaskLast(makeTask(timeout, builtTrajectory));
+            addTaskLast(createTask(builtTrajectory));
             return builtTrajectory;
+        }
+
+        private RoadRunnerTask<T> createTask(TrajectorySequence builtTrajectory) {
+            RoadRunnerTask<T> task = new RoadRunnerTask<>(timeout, drive, builtTrajectory);
+            task.withName(name);
+            rrTasks.add(task);
+            return task;
         }
     }
 }
