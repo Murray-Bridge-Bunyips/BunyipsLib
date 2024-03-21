@@ -142,7 +142,7 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
         drive.setDefaultTask(new HolonomicDriveTask<>(gamepad1, drive, () -> false));
 
         scheduler().whenHeld(Controller.User.ONE, Controller.Y)
-                .run(new CallbackTask(() -> drive.resetYaw()));
+                .run(new RunTask(() -> drive.resetYaw()));
                 
 
         scheduler().whenPressed(Controller.User.ONE, Controller.RIGHT_BUMPER)
@@ -257,7 +257,7 @@ public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumD
 
     @Override
     protected void onQueueReady(@Nullable OpModeSelection selectedOpMode) {
-        addTask(new CallbackTask(() -> vision.start(purplePixelProcessor));
+        addTask(new RunTask(() -> vision.start(purplePixelProcessor));
 
         // Full RoadRunner support with utility methods such as addNewTrajectory()
         addNewTrajectory(new Pose2d(11.40, -62.00, Math.toRadians(180.00)))
@@ -269,7 +269,7 @@ public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumD
         // This makes tasks reusable and easier to write, where you can define your own tasks just as quick
         addTask(new MoveToContourTask<>(5, drive, purplePixel, new PIDController(1, 0.25, 0)));
 
-        addTask(new CallbackTask(() -> arm.drop());
+        addTask(new RunTask(() -> arm.drop());
 
         switch (selectedOpMode.getName()) {
             case "PARK":

@@ -5,7 +5,7 @@ import org.murraybridgebunyips.bunyipslib.Controller;
 import org.murraybridgebunyips.bunyipslib.Scheduler;
 import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
 import org.murraybridgebunyips.bunyipslib.example.examplerobot.components.ExampleConfig;
-import org.murraybridgebunyips.bunyipslib.tasks.CallbackTask;
+import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.ContinuousTask;
 import org.murraybridgebunyips.bunyipslib.tasks.DifferentialDriveTask;
 
@@ -57,7 +57,7 @@ public class ExampleCommandBasedTeleOp extends BunyipsOpMode {
         // As such, the first priority is to set default tasks for your subsystems, which is a task that will always
         // run when the scheduler does not have any more tasks to run. This is useful for setting a default state for
         // your subsystems. This is the same as command-based programming in WPILib. Some tasks already exist that can
-        // run callbacks on demand, such as CallbackTask, ConditionalTask, RunForTask, and others located in the
+        // run callbacks on demand, such as RunTask, ConditionalTask, RunForTask, and others located in the
         // org.murraybridgebunyips.bunyipslib.tasks package.
 
         // Using the default DifferentialDriveTask from BunyipsLib, which will run the drive system based on gamepad1
@@ -69,13 +69,13 @@ public class ExampleCommandBasedTeleOp extends BunyipsOpMode {
         // or based on controller input. These tasks will replace the default tasks when the subsystem is mentioned as a task parameter,
         // or if no subsystem is attached it will run directly on the scheduler.
         scheduler.whenPressed(Controller.User.ONE, Controller.A)
-                .run(new CallbackTask(() -> log("A was pressed!")));
+                .run(new RunTask(() -> log("A was pressed!")));
 
 
         // There are plenty of configuration options, including setting a queue delay, stop condition for continuous tasks,
         // and more. See the Scheduler class and implementations for more information.
         scheduler.whenHeld(Controller.User.ONE, Controller.B)
-                .run(new CallbackTask(() -> log("B started being held 3 seconds ago!")))
+                .run(new RunTask(() -> log("B started being held 3 seconds ago!")))
                 .inSeconds(3);
 
         scheduler.whenReleased(Controller.User.TWO, Controller.X)
@@ -84,7 +84,7 @@ public class ExampleCommandBasedTeleOp extends BunyipsOpMode {
                 .finishingWhen(() -> Controller.isSelected(gamepad2, Controller.X));
 
         scheduler.when(() -> drive.isBusy())
-                .run(new CallbackTask(() -> addTelemetry("Drive system is busy!")));
+                .run(new RunTask(() -> addTelemetry("Drive system is busy!")));
     }
 
     @Override

@@ -4,7 +4,7 @@ import static org.murraybridgebunyips.bunyipslib.MovingAverageTimer.NANOS_IN_SEC
 import static org.murraybridgebunyips.bunyipslib.Text.formatString;
 import static org.murraybridgebunyips.bunyipslib.Text.round;
 
-import org.murraybridgebunyips.bunyipslib.tasks.CallbackTask;
+import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.ArrayList;
@@ -22,6 +22,9 @@ public class Scheduler extends BunyipsComponent {
     private final ArrayList<BunyipsSubsystem> subsystems = new ArrayList<>();
     private final ArrayList<ConditionalTask> allocatedTasks = new ArrayList<>();
 
+    /**
+     * Create a new scheduler and reset static fields.
+     */
     public Scheduler() {
         isMuted = false;
         subsystemReports.clear();
@@ -392,16 +395,16 @@ public class Scheduler extends BunyipsComponent {
         }
 
         /**
-         * Implicitly make a new CallbackTask to run once the condition is met.
+         * Implicitly make a new RunTask to run once the condition is met.
          * This method can only be called once per ConditionalTask.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
-         * ending immediately as it is an CallbackTask.
+         * ending immediately as it is an RunTask.
          *
          * @param runnable The code to run
          * @return Timing control for allocation (none: immediate, inSeconds(), finishingWhen(), inSecondsFinishingWhen()).
          */
         public ConditionalTask run(Runnable runnable) {
-            return run(new CallbackTask(runnable));
+            return run(new RunTask(runnable));
         }
 
         /**
@@ -419,16 +422,16 @@ public class Scheduler extends BunyipsComponent {
         }
 
         /**
-         * Implicitly make a new CallbackTask to run once the condition is met, debouncing the task from running more than once the condition is met.
+         * Implicitly make a new RunTask to run once the condition is met, debouncing the task from running more than once the condition is met.
          * This method can only be called once per ConditionalTask.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
-         * ending immediately as it is an CallbackTask.
+         * ending immediately as it is an RunTask.
          *
          * @param runnable The code to run
          * @return Timing control for allocation (none: immediate, inSeconds(), finishingWhen(), inSecondsFinishingWhen()).
          */
         public ConditionalTask runDebounced(Runnable runnable) {
-            return runDebounced(new CallbackTask(runnable));
+            return runDebounced(new RunTask(runnable));
         }
 
         /**
