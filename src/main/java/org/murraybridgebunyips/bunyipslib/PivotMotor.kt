@@ -22,8 +22,11 @@ class PivotMotor(
 
     /**
      * Setup the motor for tracking the position of a target position.
+     * @param reset whether to reset the encoder
      */
-    fun setup() {
+    fun setup(reset: Boolean) {
+        if (reset)
+            motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         motor.targetPosition = motor.currentPosition
         motor.mode = DcMotor.RunMode.RUN_TO_POSITION
         motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
