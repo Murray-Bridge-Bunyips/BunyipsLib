@@ -1,5 +1,6 @@
 package org.murraybridgebunyips.bunyipslib.vision;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -47,6 +48,7 @@ import java.util.Arrays;
  * @author Lachlan Paul, 2024
  */
 @TeleOp(name = "Vision Tuner")
+@Disabled
 public class VisionTuner extends BunyipsOpMode {
     int thresholdIndex = 0;
     int pixelIndex = 0;
