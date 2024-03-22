@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.murraybridgebunyips.bunyipslib.Direction;
 import org.murraybridgebunyips.bunyipslib.vision.Processor;
 import org.murraybridgebunyips.bunyipslib.vision.Vision;
 import org.murraybridgebunyips.bunyipslib.vision.data.TeamPropData;
@@ -104,34 +105,16 @@ public class TeamProp extends Processor<TeamPropData> {
     @Override
     public void update() {
         if (max_distance == -1) {
-            data.add(new TeamPropData(Positions.RIGHT, distance1, distance2, max_distance));
+            data.add(new TeamPropData(Direction.RIGHT, distance1, distance2, max_distance));
             return;
         }
         if (max_distance == distance1) {
-            data.add(new TeamPropData(Positions.LEFT, distance1, distance2, max_distance));
+            data.add(new TeamPropData(Direction.LEFT, distance1, distance2, max_distance));
             return;
         }
-        data.add(new TeamPropData(Positions.CENTER, distance1, distance2, max_distance));
+        data.add(new TeamPropData(Direction.FORWARD, distance1, distance2, max_distance));
 
         zone1.release();
         zone2.release();
-    }
-
-    /**
-     * The position of the team prop, CENTERSTAGE.
-     */
-    public enum Positions {
-        /**
-         * The team prop is on the left Spike Mark.
-         */
-        LEFT,
-        /**
-         * The team prop is on the center Spike Mark.
-         */
-        CENTER,
-        /**
-         * The team prop is on the right Spike Mark.
-         */
-        RIGHT
     }
 }

@@ -1,5 +1,6 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
+import org.murraybridgebunyips.bunyipslib.Direction;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.NoTimeoutTask;
 import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.TeamProp;
 
@@ -12,7 +13,7 @@ import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.TeamProp
  */
 public class GetTeamPropTask extends NoTimeoutTask {
     private final TeamProp teamProp;
-    private TeamProp.Positions position;
+    private Direction position;
 
     /**
      * Constructor for the GetTeamPropTask.
@@ -25,7 +26,7 @@ public class GetTeamPropTask extends NoTimeoutTask {
             throw new RuntimeException("Vision processor is not initialised on a vision system");
     }
 
-    public TeamProp.Positions getPosition() {
+    public Direction getPosition() {
         return position;
     }
 

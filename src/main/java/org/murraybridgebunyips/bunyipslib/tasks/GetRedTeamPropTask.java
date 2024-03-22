@@ -1,7 +1,7 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
 import org.murraybridgebunyips.bunyipslib.Dbg;
-import org.murraybridgebunyips.bunyipslib.RelativePose2d;
+import org.murraybridgebunyips.bunyipslib.Direction;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.RedTeamProp;
@@ -13,7 +13,7 @@ import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.RedTeamP
  */
 public class GetRedTeamPropTask extends ForeverTask {
     private final RedTeamProp redTeamProp;
-    private volatile RelativePose2d position = RelativePose2d.LEFT;
+    private volatile Direction position = Direction.LEFT;
 
     /**
      * Create a new GetRedTeamPropTask.
@@ -24,7 +24,7 @@ public class GetRedTeamPropTask extends ForeverTask {
         this.redTeamProp = redTeamProp;
     }
 
-    public RelativePose2d getPosition() {
+    public Direction getPosition() {
         return position;
     }
 
@@ -40,7 +40,7 @@ public class GetRedTeamPropTask extends ForeverTask {
         ContourData biggestContour = ContourData.getLargest(redTeamProp.getData());
         if (biggestContour != null) {
             Dbg.log(biggestContour.getYaw());
-            position = biggestContour.getYaw() > 0.5 ? RelativePose2d.RIGHT : RelativePose2d.FORWARD;
+            position = biggestContour.getYaw() > 0.5 ? Direction.RIGHT : Direction.FORWARD;
         }
     }
 

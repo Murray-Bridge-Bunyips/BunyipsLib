@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.murraybridgebunyips.bunyipslib.Controller;
 import org.murraybridgebunyips.bunyipslib.IMUOp;
-import org.murraybridgebunyips.bunyipslib.RelativePose2d;
+import org.murraybridgebunyips.bunyipslib.Direction;
 
 /**
  * Variant of the Cartesian MecanumDrive that uses field-centric controls, accounting for robot heading.
@@ -27,12 +27,12 @@ public class CartesianFieldCentricMecanumDrive extends CartesianMecanumDrive {
      * @param invalidatePreviousHeading whether to invalidate the previous heading of the IMU
      * @param startingDirection         the starting direction of the robot
      */
-    public CartesianFieldCentricMecanumDrive(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, IMUOp imu, boolean invalidatePreviousHeading, RelativePose2d startingDirection) {
+    public CartesianFieldCentricMecanumDrive(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, IMUOp imu, boolean invalidatePreviousHeading, Direction.Rotation startingDirection) {
         super(frontLeft, frontRight, backLeft, backRight);
         assertParamsNotNull(imu);
 
         this.imu = imu;
-        if (startingDirection == RelativePose2d.CLOCKWISE || startingDirection == RelativePose2d.ANTICLOCKWISE) {
+        if (startingDirection == Direction.Rotation.CLOCKWISE || startingDirection == Direction.Rotation.ANTICLOCKWISE) {
             throw new IllegalArgumentException("FCMD: Cannot use rotational quantities as a starting direction");
         }
 
@@ -41,7 +41,7 @@ public class CartesianFieldCentricMecanumDrive extends CartesianMecanumDrive {
             imu.resetHeading();
 
         // Current vector will be the robot's starting vector, must offset the IMU to align straight
-        imu.setOffset(startingDirection.getDegrees());
+        imu.setOffset(-startingDirection.getPose().getHeading());
     }
 
     /**

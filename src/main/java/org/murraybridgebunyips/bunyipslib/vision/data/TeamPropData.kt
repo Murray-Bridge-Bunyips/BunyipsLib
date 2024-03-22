@@ -1,6 +1,6 @@
 package org.murraybridgebunyips.bunyipslib.vision.data
 
-import org.murraybridgebunyips.bunyipslib.vision.processors.centerstage.TeamProp
+import org.murraybridgebunyips.bunyipslib.Direction
 
 /**
  * Utility data structure for Team Prop detections.
@@ -10,7 +10,7 @@ data class TeamPropData(
     /**
      * Position of the prop in the image.
      */
-    val position: TeamProp.Positions,
+    val position: Direction,
     /**
      * Colour distance of section 1 (left).
      */
