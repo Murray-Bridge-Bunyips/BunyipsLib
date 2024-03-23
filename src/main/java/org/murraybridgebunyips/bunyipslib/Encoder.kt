@@ -40,12 +40,25 @@ class Encoder(
     }
 
     /**
+     * Hold the current position of the encoder using RUN_TO_POSITION.
+     * @param holdingPower the power to hold the position at
+     */
+    fun holdCurrentPosition(holdingPower: Double) {
+        motor.targetPosition = motor.currentPosition
+        motor.mode = DcMotor.RunMode.RUN_TO_POSITION
+        motor.power = holdingPower
+    }
+
+    /**
      * Reset encoder positions to zero. Useful when saved state is not needed or can be discarded.
+     * This will also stop the motor.
      */
     override fun reset() {
         this.snapshot = 0.0
+        motor.power = 0.0
         val prev = motor.mode
         motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        motor.targetPosition = 0
         motor.mode = prev
     }
 

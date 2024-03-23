@@ -27,6 +27,7 @@ public class HolonomicDriveTask<T extends BunyipsSubsystem> extends ForeverTask 
     private final Gamepad gamepad;
     private final BooleanSupplier fieldCentricEnabled;
     private final DoubleSupplier multiplierSupplier;
+    private boolean squaredInputs = false;
 
     /**
      * Constructor for HolonomicDriveTask.
@@ -62,6 +63,16 @@ public class HolonomicDriveTask<T extends BunyipsSubsystem> extends ForeverTask 
         this.fieldCentricEnabled = fieldCentricEnabled;
     }
 
+    /**
+     * Use squared inputs for the drive. This is useful for more precise control as the control
+     * curve is quadratic instead of linear.
+     * @return this
+     */
+    public HolonomicDriveTask<T> withSquaredInputs() {
+        squaredInputs = true;
+        return this;
+    }
+
     @Override
     protected void init() {
         // no-op
@@ -69,25 +80,35 @@ public class HolonomicDriveTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     @Override
     protected void periodic() {
+        double x = gamepad.left_stick_x;
+        double y = gamepad.left_stick_y;
+        double r = gamepad.right_stick_x;
+
+        if (squaredInputs) {
+            x = Math.copySign(x * x, x);
+            y = Math.copySign(y * y, y);
+            r = Math.copySign(r * r, r);
+        }
+
         if (drive instanceof MecanumDrive) {
             if (fieldCentricEnabled.getAsBoolean()) {
                 ((MecanumDrive) drive).setSpeedUsingControllerFieldCentric(
-                        gamepad.left_stick_x * multiplierSupplier.getAsDouble(),
-                        gamepad.left_stick_y * multiplierSupplier.getAsDouble(),
-                        gamepad.right_stick_x * multiplierSupplier.getAsDouble()
+                        x * multiplierSupplier.getAsDouble(),
+                        y * multiplierSupplier.getAsDouble(),
+                        r * multiplierSupplier.getAsDouble()
                 );
             } else {
                 ((MecanumDrive) drive).setSpeedUsingController(
-                        gamepad.left_stick_x * multiplierSupplier.getAsDouble(),
-                        gamepad.left_stick_y * multiplierSupplier.getAsDouble(),
-                        gamepad.right_stick_x * multiplierSupplier.getAsDouble()
+                        x * multiplierSupplier.getAsDouble(),
+                        y * multiplierSupplier.getAsDouble(),
+                        r * multiplierSupplier.getAsDouble()
                 );
             }
         } else if (drive instanceof CartesianMecanumDrive) {
             ((CartesianMecanumDrive) drive).setSpeedUsingController(
-                    gamepad.right_stick_x * multiplierSupplier.getAsDouble(),
-                    gamepad.left_stick_y * multiplierSupplier.getAsDouble(),
-                    gamepad.right_stick_x * multiplierSupplier.getAsDouble()
+                    x * multiplierSupplier.getAsDouble(),
+                    y * multiplierSupplier.getAsDouble(),
+                    r * multiplierSupplier.getAsDouble()
             );
         }
     }

@@ -190,7 +190,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             task.pollFinished();
             if (!task.isMuted()) {
                 Scheduler.addSubsystemTaskReport(
-                        getClass().getSimpleName(),
+                        getClass().getSimpleName() + (task == defaultTask ? " (d.)" : ""),
                         task.toString(),
                         round(task.getDeltaTime(), 1)
                 );
