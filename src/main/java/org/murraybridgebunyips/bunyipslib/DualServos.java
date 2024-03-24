@@ -134,6 +134,23 @@ public class DualServos extends BunyipsSubsystem {
     }
 
     /**
+     * Query if a servo is open.
+     * @param servo the servo to query
+     * @return whether the servo side is open
+     */
+    public boolean isOpen(ServoSide servo) {
+        switch (servo) {
+            case LEFT:
+                return left.getPosition() == LEFT_SERVO_OPEN_POSITION;
+            case RIGHT:
+                return right.getPosition() == RIGHT_SERVO_OPEN_POSITION;
+            case BOTH:
+                return left.getPosition() == LEFT_SERVO_OPEN_POSITION && right.getPosition() == RIGHT_SERVO_OPEN_POSITION;
+        }
+        return false;
+    }
+
+    /**
      * Push stateful changes to the servos.
      */
     @Override
