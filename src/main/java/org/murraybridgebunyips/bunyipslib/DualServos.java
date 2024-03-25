@@ -9,12 +9,12 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * Control a set of two servos together.
  */
 public class DualServos extends BunyipsSubsystem {
-    private final Servo left;
-    private final Servo right;
-    private final double LEFT_SERVO_CLOSED_POSITION;
-    private final double LEFT_SERVO_OPEN_POSITION;
-    private final double RIGHT_SERVO_CLOSED_POSITION;
-    private final double RIGHT_SERVO_OPEN_POSITION;
+    private Servo left;
+    private Servo right;
+    private double LEFT_SERVO_CLOSED_POSITION;
+    private double LEFT_SERVO_OPEN_POSITION;
+    private double RIGHT_SERVO_CLOSED_POSITION;
+    private double RIGHT_SERVO_OPEN_POSITION;
     private double leftServoPosition;
     private double rightServoPosition;
 
@@ -29,7 +29,7 @@ public class DualServos extends BunyipsSubsystem {
      * @param rightOpen   the right servo open position
      */
     public DualServos(Servo left, Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
-        assertParamsNotNull(left, right);
+        if (!assertParamsNotNull(left, right)) return;
         this.left = left;
         this.right = right;
         LEFT_SERVO_CLOSED_POSITION = leftClosed;

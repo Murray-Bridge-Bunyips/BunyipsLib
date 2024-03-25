@@ -18,18 +18,21 @@ import java.util.List;
 public final class Storage {
     /**
      * Static array of hardware errors stored via hardware name.
+     *
      * @see RobotConfig
      */
     public static final ArrayList<String> hardwareErrors = new ArrayList<>();
 
     /**
      * Components that are unusable and should not have their errors logged.
+     *
      * @see NullSafety
      */
     public static final List<String> unusableComponents = new ArrayList<>();
 
     /**
      * The last known position of the robot from odometry.
+     *
      * @see RoadRunnerDrive
      */
     public static Pose2d lastKnownPosition = null;

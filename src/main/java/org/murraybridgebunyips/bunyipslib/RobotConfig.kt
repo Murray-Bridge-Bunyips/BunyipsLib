@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.Deadwheel
+import java.util.function.Consumer
 
 /**
  * Abstract class to use as parent to the class you will define to mirror a "saved configuration"
@@ -111,7 +112,7 @@ abstract class RobotConfig {
      *                  without having to check for null explicitly.
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T : HardwareDevice> getHardware(name: String, device: Class<T>, onSuccess: Runnable): T? {
+    fun <T : HardwareDevice> getHardware(name: String, device: Class<T>, onSuccess: Consumer<T>): T? {
         var hardwareDevice: T? = null
         try {
             if (Storage.hardwareErrors.contains(name)) return null
@@ -124,7 +125,9 @@ abstract class RobotConfig {
             } else {
                 hardwareMap.get(device, name)
             }
-            onSuccess.run()
+            if (hardwareDevice == null)
+                throw NullPointerException()
+            onSuccess.accept(hardwareDevice)
         } catch (e: Exception) {
             Storage.hardwareErrors.add(name)
             e.localizedMessage?.let { Dbg.warn(it) }

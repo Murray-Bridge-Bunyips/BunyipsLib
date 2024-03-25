@@ -13,6 +13,7 @@ import java.util.HashSet;
  */
 public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     private final HashSet<BunyipsSubsystem> managedSubsystems = new HashSet<>();
+
     // Components can't be final due to runtime instantiation,
     // so we cannot expose the scheduler directly and must use a getter.
     private Scheduler scheduler;

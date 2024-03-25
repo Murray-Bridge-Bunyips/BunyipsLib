@@ -35,7 +35,7 @@ public class DualDeadwheelMecanumDrive extends MecanumDrive {
      */
     public DualDeadwheelMecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, HardwareMap.DeviceMapping<VoltageSensor> voltageSensor, IMU imu, DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight, TwoWheelTrackingLocalizerCoefficients localizerCoefficients, Deadwheel parallel, Deadwheel perpendicular) {
         super(constants, mecanumCoefficients, voltageSensor, imu, frontLeft, frontRight, backLeft, backRight);
-        assertParamsNotNull(localizerCoefficients, parallel, perpendicular);
+        if (!assertParamsNotNull(localizerCoefficients, parallel, perpendicular)) return;
         setLocalizer(new TwoWheelTrackingLocalizer(localizerCoefficients, parallel, perpendicular, getInstance()));
     }
 }

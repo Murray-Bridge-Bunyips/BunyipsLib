@@ -18,13 +18,6 @@ import java.util.Locale;
  */
 public class CartesianMecanumDrive extends BunyipsSubsystem {
 
-    private final DcMotor frontLeft;
-    private final DcMotor backLeft;
-    private final DcMotor frontRight;
-    private final DcMotor backRight;
-
-    // Axial translation speeds
-
     /**
      * Horizontal speed of the robot.
      */
@@ -37,7 +30,12 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
      * Rotational speed of the robot.
      */
     public double speedR;
+    private DcMotor frontLeft;
 
+    // Axial translation speeds
+    private DcMotor backLeft;
+    private DcMotor frontRight;
+    private DcMotor backRight;
     // Store and declare prioritisation when given instruction to calculate motor powers
     private Priority priority = Priority.NORMALISED;
 
@@ -48,7 +46,7 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
      * @param backRight  the back right motor
      */
     public CartesianMecanumDrive(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight) {
-        assertParamsNotNull(frontLeft, frontRight, backLeft, backRight);
+        if (!assertParamsNotNull(frontLeft, frontRight, backLeft, backRight)) return;
         this.frontLeft = frontLeft;
         this.backLeft = backLeft;
         this.frontRight = frontRight;

@@ -14,7 +14,7 @@ import org.murraybridgebunyips.bunyipslib.IMUOp;
  * @see MecanumDrive
  */
 public class CartesianFieldCentricMecanumDrive extends CartesianMecanumDrive {
-    private final IMUOp imu;
+    private IMUOp imu;
 
     /**
      * Constructs a new CartesianFieldCentricMecanumDrive.
@@ -29,7 +29,7 @@ public class CartesianFieldCentricMecanumDrive extends CartesianMecanumDrive {
      */
     public CartesianFieldCentricMecanumDrive(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, IMUOp imu, boolean invalidatePreviousHeading, Direction.Rotation startingDirection) {
         super(frontLeft, frontRight, backLeft, backRight);
-        assertParamsNotNull(imu);
+        if (!assertParamsNotNull(imu)) return;
 
         this.imu = imu;
         if (startingDirection == Direction.Rotation.CLOCKWISE || startingDirection == Direction.Rotation.ANTICLOCKWISE) {
