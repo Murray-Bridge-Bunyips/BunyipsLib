@@ -313,6 +313,7 @@ abstract class BunyipsOpMode : LinearOpMode() {
             Dbg.logd("BunyipsOpMode: active cycle completed in ${movingAverageTimer.elapsedTime() / 1000.0} secs")
             pushTelemetry()
             Dbg.logd("BunyipsOpMode: exiting...")
+            _instance = null
         }
     }
 
