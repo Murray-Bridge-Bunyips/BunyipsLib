@@ -135,6 +135,7 @@ public class DualServos extends BunyipsSubsystem {
 
     /**
      * Query if a servo is open.
+     *
      * @param servo the servo to query
      * @return whether the servo side is open
      */

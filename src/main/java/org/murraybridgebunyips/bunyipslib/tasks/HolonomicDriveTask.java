@@ -66,6 +66,7 @@ public class HolonomicDriveTask<T extends BunyipsSubsystem> extends ForeverTask 
     /**
      * Use squared inputs for the drive. This is useful for more precise control as the control
      * curve is quadratic instead of linear.
+     *
      * @return this
      */
     public HolonomicDriveTask<T> withSquaredInputs() {

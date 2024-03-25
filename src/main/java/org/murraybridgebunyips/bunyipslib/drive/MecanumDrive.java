@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controller;
 import org.murraybridgebunyips.bunyipslib.Inches;
-import org.murraybridgebunyips.bunyipslib.RobotConfig;
+import org.murraybridgebunyips.bunyipslib.Storage;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.DriveConstants;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.MecanumCoefficients;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.MecanumRoadRunnerDrive;
@@ -56,8 +56,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         assertParamsNotNull(constants, mecanumCoefficients, voltageSensor, imu, fl, fr, bl, br);
         drive = new MecanumRoadRunnerDrive(opMode, constants, mecanumCoefficients, voltageSensor, imu, fl, fr, bl, br);
         // If we have a last known position, set the pose estimate to it
-        if (RobotConfig.getLastKnownPosition() != null) {
-            drive.setPoseEstimate(RobotConfig.getLastKnownPosition());
+        if (Storage.lastKnownPosition != null) {
+            drive.setPoseEstimate(Storage.lastKnownPosition);
         }
         this.imu = imu;
     }
@@ -80,7 +80,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     public void stop() {
         // Store the last pose estimate in global storage
-        RobotConfig.setLastKnownPosition(drive.getPoseEstimate());
+        Storage.lastKnownPosition = drive.getPoseEstimate();
         // Safety stop to prevent a runaway robot
         drive.stop();
     }

@@ -1,8 +1,8 @@
 package org.murraybridgebunyips.bunyipslib.example.examplerobot.autonomous;
 
 import org.murraybridgebunyips.bunyipslib.AutonomousBunyipsOpMode;
-import org.murraybridgebunyips.bunyipslib.OpModeSelection;
 import org.murraybridgebunyips.bunyipslib.Direction;
+import org.murraybridgebunyips.bunyipslib.OpModeSelection;
 import org.murraybridgebunyips.bunyipslib.example.examplerobot.components.ExampleConfig;
 import org.murraybridgebunyips.bunyipslib.tasks.GetSignalTask;
 import org.murraybridgebunyips.bunyipslib.tasks.WaitTask;

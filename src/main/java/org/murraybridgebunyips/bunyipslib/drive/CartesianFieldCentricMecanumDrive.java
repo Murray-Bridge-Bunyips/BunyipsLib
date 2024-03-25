@@ -3,8 +3,8 @@ package org.murraybridgebunyips.bunyipslib.drive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.murraybridgebunyips.bunyipslib.Controller;
-import org.murraybridgebunyips.bunyipslib.IMUOp;
 import org.murraybridgebunyips.bunyipslib.Direction;
+import org.murraybridgebunyips.bunyipslib.IMUOp;
 
 /**
  * Variant of the Cartesian MecanumDrive that uses field-centric controls, accounting for robot heading.
