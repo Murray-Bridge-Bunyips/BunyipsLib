@@ -139,7 +139,6 @@ abstract class BunyipsOpMode : LinearOpMode() {
      * called before the OpMode is terminated, and is *guaranteed* to be called. This method is useful
      * for releasing resources to prevent memory leaks, as motor controllers will be powered off
      * as the OpMode is ending.
-     * This method is not exception protected!
      * @see onFinish
      */
     protected open fun onStop() {
@@ -306,14 +305,19 @@ abstract class BunyipsOpMode : LinearOpMode() {
             Dbg.logd("BunyipsOpMode: opmode stop requested. cleaning up...")
             // Ensure all user threads have been told to stop
             Threads.stopAll()
-            onStop()
+            try {
+                onStop()
+            } catch (e: Exception) {
+                Exceptions.handle(e, ::log)
+            }
+            _instance = null
+            safeHaltHardware()
             // Telemetry may be not in a nice state, so we will call our stateful functions
             // such as thread stops and cleanup in onStop() first before updating the status
             opModeStatus = "terminating"
             Dbg.logd("BunyipsOpMode: active cycle completed in ${movingAverageTimer.elapsedTime() / 1000.0} secs")
             pushTelemetry()
             Dbg.logd("BunyipsOpMode: exiting...")
-            _instance = null
         }
     }
 
