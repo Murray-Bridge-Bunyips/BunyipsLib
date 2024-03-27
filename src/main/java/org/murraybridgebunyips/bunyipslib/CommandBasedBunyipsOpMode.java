@@ -28,6 +28,24 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
+     * Call to access the driver() method from the Scheduler.
+     * This is the same as calling scheduler().driver().
+     * @return a ControllerButtonCreator for the driver controller
+     */
+    public Scheduler.ControllerButtonCreator driver() {
+        return scheduler.driver();
+    }
+
+    /**
+     * Call to access the operator() method from the Scheduler.
+     * This is the same as calling scheduler().operator().
+     * @return a ControllerButtonCreator for the operator controller
+     */
+    public Scheduler.ControllerButtonCreator operator() {
+        return scheduler.operator();
+    }
+
+    /**
      * Call to add subsystems that should be managed by the Scheduler. This is required to be
      * called in the onInitialisation() method, otherwise your subsystems will not be updated.
      *
