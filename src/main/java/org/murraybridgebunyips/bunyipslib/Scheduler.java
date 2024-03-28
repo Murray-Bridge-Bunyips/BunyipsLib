@@ -28,13 +28,31 @@ public class Scheduler extends BunyipsComponent {
 
     /**
      * Create a new scheduler and reset static fields.
+     * @param gamepad1 The first Driver.
+     * @param gamepad2 The second Driver.
      */
-    public Scheduler() {
+    public Scheduler(Driver gamepad1, Driver gamepad2) {
         isMuted = false;
         subsystemReports.clear();
 
-        gamepad1 = new Driver(BunyipsOpMode.getInstance().gamepad1);
-        gamepad2 = new Driver(BunyipsOpMode.getInstance().gamepad2);
+        if (gamepad1 != null) {
+            this.gamepad1 = gamepad1;
+        } else {
+            this.gamepad1 = new Driver(opMode.gamepad1);
+        }
+
+        if (gamepad2 != null) {
+            this.gamepad2 = gamepad2;
+        } else {
+            this.gamepad2 = new Driver(opMode.gamepad2);
+        }
+    }
+
+    /**
+     * Create a new scheduler with the default drivers.
+     */
+    public Scheduler() {
+        this(null, null);
     }
 
     /**

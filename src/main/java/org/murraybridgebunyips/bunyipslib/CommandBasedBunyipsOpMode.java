@@ -60,8 +60,8 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     @Override
     protected final void onInit() {
-        scheduler = new Scheduler();
         onInitialisation();
+        scheduler = new Scheduler();
         if (managedSubsystems == null || managedSubsystems.isEmpty()) {
             throw new RuntimeException("No BunyipsSubsystems were added in the addSubsystems() method!");
         }
