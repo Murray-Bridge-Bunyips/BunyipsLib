@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.Controller;
+import org.murraybridgebunyips.bunyipslib.Controls;
 
 import java.util.Locale;
 
@@ -77,7 +77,7 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
      * @param left_stick_y  Y value of the controller
      * @param right_stick_x R value of the controller
      * @return this
-     * @see Controller#Companion
+     * @see Controls#Companion
      */
     public CartesianMecanumDrive setSpeedUsingController(double left_stick_x, double left_stick_y, double right_stick_x) {
         speedX = Range.clip(left_stick_x, -1.0, 1.0);

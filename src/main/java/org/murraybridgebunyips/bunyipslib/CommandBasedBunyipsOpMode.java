@@ -5,11 +5,12 @@ import java.util.Collections;
 import java.util.HashSet;
 
 /**
- * Command-based structure for a BunyipsOpMode utilising the Scheduler.
+ * Command-based structure for a {@link BunyipsOpMode} utilising the Scheduler.
  * This can be used for seamless/zero-step integration with the Scheduler in TeleOp, for Autonomous it is
- * recommended to use the AutonomousBunyipsOpMode classes as Tasks there are used in a different context.
+ * recommended to use the {@link AutonomousBunyipsOpMode} classes as Tasks there are used in a different context.
  *
  * @author Lucas Bubner, 2024
+ * @see BunyipsOpMode
  */
 public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     private final HashSet<BunyipsSubsystem> managedSubsystems = new HashSet<>();
@@ -30,6 +31,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     /**
      * Call to access the driver() method from the Scheduler.
      * This is the same as calling scheduler().driver().
+     *
      * @return a ControllerButtonCreator for the driver controller
      */
     public Scheduler.ControllerButtonCreator driver() {
@@ -39,6 +41,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     /**
      * Call to access the operator() method from the Scheduler.
      * This is the same as calling scheduler().operator().
+     *
      * @return a ControllerButtonCreator for the operator controller
      */
     public Scheduler.ControllerButtonCreator operator() {

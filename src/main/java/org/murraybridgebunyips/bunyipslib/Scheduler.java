@@ -16,6 +16,7 @@ import java.util.function.Predicate;
  * Scheduler and command plexus for use with the BunyipsLib task system.
  *
  * @author Lucas Bubner, 2024
+ * @see CommandBasedBunyipsOpMode
  */
 public class Scheduler extends BunyipsComponent {
     private static final ArrayList<String> subsystemReports = new ArrayList<>();
@@ -23,36 +24,12 @@ public class Scheduler extends BunyipsComponent {
     private final ArrayList<BunyipsSubsystem> subsystems = new ArrayList<>();
     private final ArrayList<ConditionalTask> allocatedTasks = new ArrayList<>();
 
-    private final Driver gamepad1;
-    private final Driver gamepad2;
-
     /**
      * Create a new scheduler and reset static fields.
-     * @param gamepad1 The first Driver.
-     * @param gamepad2 The second Driver.
-     */
-    public Scheduler(Driver gamepad1, Driver gamepad2) {
-        isMuted = false;
-        subsystemReports.clear();
-
-        if (gamepad1 != null) {
-            this.gamepad1 = gamepad1;
-        } else {
-            this.gamepad1 = new Driver(opMode.gamepad1);
-        }
-
-        if (gamepad2 != null) {
-            this.gamepad2 = gamepad2;
-        } else {
-            this.gamepad2 = new Driver(opMode.gamepad2);
-        }
-    }
-
-    /**
-     * Create a new scheduler with the default drivers.
      */
     public Scheduler() {
-        this(null, null);
+        isMuted = false;
+        subsystemReports.clear();
     }
 
     /**
@@ -212,107 +189,30 @@ public class Scheduler extends BunyipsComponent {
 
     /**
      * Create a new controller button trigger creator.
+     *
      * @param user The driver to use for the controller.
      * @return The controller button trigger creator.
      */
-    public ControllerButtonCreator when(Driver user) {
+    public ControllerButtonCreator when(Controller user) {
         return new ControllerButtonCreator(user);
     }
 
     /**
      * Create a new controller button trigger creator for the driver.
+     *
      * @return The controller button trigger creator.
      */
     public ControllerButtonCreator driver() {
-        return new ControllerButtonCreator(gamepad1);
+        return new ControllerButtonCreator(opMode.gamepad1);
     }
 
     /**
      * Create a new controller button trigger creator for the operator.
+     *
      * @return The controller button trigger creator.
      */
     public ControllerButtonCreator operator() {
-        return new ControllerButtonCreator(gamepad2);
-    }
-
-    /**
-     * Controller button trigger creator.
-     * Used for ControllerStateHandler creation.
-     */
-    public class ControllerButtonCreator {
-        private final Driver user;
-
-        private ControllerButtonCreator(Driver user) {
-            this.user = user;
-        }
-
-        /**
-         * Get the underlying driver for this controller button creator.
-         * @return The driver to access the controller.
-         */
-        public Driver get() {
-            return user;
-        }
-
-        /**
-         * Run a task once this analog axis condition is met.
-         * @param axis The axis of the controller.
-         * @param threshold The threshold to meet.
-         * @return Timing/stop control for allocation.
-         */
-        public ConditionalTask when(Controller.Analog axis, Predicate<? super Double> threshold) {
-            return new ConditionalTask(
-                    () -> threshold.test(user.get(axis))
-            );
-        }
-
-        /**
-         * Run a task when a controller button is held.
-         *
-         * @param button The button of the controller.
-         * @return Timing/stop control for allocation.
-         */
-        public ConditionalTask whenHeld(Controller button) {
-            return new ConditionalTask(
-                    new ControllerStateHandler(
-                            user,
-                            button,
-                            ControllerStateHandler.State.HELD
-                    )
-            );
-        }
-
-        /**
-         * Run a task when a controller button is pressed (will run once when pressing the desired input).
-         *
-         * @param button The button of the controller.
-         * @return Timing/stop control for allocation.
-         */
-        public ConditionalTask whenPressed(Controller button) {
-            return new ConditionalTask(
-                    new ControllerStateHandler(
-                            user,
-                            button,
-                            ControllerStateHandler.State.PRESSED
-                    )
-            );
-        }
-
-        /**
-         * Run a task when a controller button is released (will run once letting go of the desired input).
-         *
-         * @param button The button of the controller.
-         * @return Timing/stop control for allocation.
-         */
-        public ConditionalTask whenReleased(Controller button) {
-            return new ConditionalTask(
-                    new ControllerStateHandler(
-                            user,
-                            button,
-                            ControllerStateHandler.State.RELEASED
-                    )
-            );
-        }
+        return new ControllerButtonCreator(opMode.gamepad2);
     }
 
     /**
@@ -383,16 +283,16 @@ public class Scheduler extends BunyipsComponent {
 
     private static class ControllerStateHandler implements BooleanSupplier {
         private final State state;
-        private final Controller button;
-        private final Driver driver;
+        private final Controls button;
+        private final Controller controller;
         private final DebounceCondition debounceCondition;
         private boolean timerIsRunning;
 
-        public ControllerStateHandler(Driver driver, Controller button, State state) {
+        public ControllerStateHandler(Controller controller, Controls button, State state) {
             this.button = button;
             this.state = state;
-            this.driver = driver;
-            debounceCondition = new DebounceCondition(() -> driver.get(button));
+            this.controller = controller;
+            debounceCondition = new DebounceCondition(() -> controller.get(button));
         }
 
         public void setTimeoutCondition(boolean timerNotFinished) {
@@ -412,7 +312,7 @@ public class Scheduler extends BunyipsComponent {
                 case RELEASED:
                     return debounceCondition.getReversedAsBoolean() || timerIsRunning;
                 case HELD:
-                    return driver.get(button);
+                    return controller.get(button);
             }
             return false;
         }
@@ -421,6 +321,79 @@ public class Scheduler extends BunyipsComponent {
             PRESSED,
             RELEASED,
             HELD
+        }
+    }
+
+    /**
+     * Controller button trigger creator.
+     * Used for ControllerStateHandler creation.
+     */
+    public class ControllerButtonCreator {
+        private final Controller user;
+
+        private ControllerButtonCreator(Controller user) {
+            this.user = user;
+        }
+
+        /**
+         * Run a task once this analog axis condition is met.
+         *
+         * @param axis      The axis of the controller.
+         * @param threshold The threshold to meet.
+         * @return Timing/stop control for allocation.
+         */
+        public ConditionalTask when(Controls.Analog axis, Predicate<? super Float> threshold) {
+            return new ConditionalTask(
+                    () -> threshold.test(user.get(axis))
+            );
+        }
+
+        /**
+         * Run a task when a controller button is held.
+         *
+         * @param button The button of the controller.
+         * @return Timing/stop control for allocation.
+         */
+        public ConditionalTask whenHeld(Controls button) {
+            return new ConditionalTask(
+                    new ControllerStateHandler(
+                            user,
+                            button,
+                            ControllerStateHandler.State.HELD
+                    )
+            );
+        }
+
+        /**
+         * Run a task when a controller button is pressed (will run once when pressing the desired input).
+         *
+         * @param button The button of the controller.
+         * @return Timing/stop control for allocation.
+         */
+        public ConditionalTask whenPressed(Controls button) {
+            return new ConditionalTask(
+                    new ControllerStateHandler(
+                            user,
+                            button,
+                            ControllerStateHandler.State.PRESSED
+                    )
+            );
+        }
+
+        /**
+         * Run a task when a controller button is released (will run once letting go of the desired input).
+         *
+         * @param button The button of the controller.
+         * @return Timing/stop control for allocation.
+         */
+        public ConditionalTask whenReleased(Controls button) {
+            return new ConditionalTask(
+                    new ControllerStateHandler(
+                            user,
+                            button,
+                            ControllerStateHandler.State.RELEASED
+                    )
+            );
         }
     }
 

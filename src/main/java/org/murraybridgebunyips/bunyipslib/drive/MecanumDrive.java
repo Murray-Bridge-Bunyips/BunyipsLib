@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.Controller;
+import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.Inches;
 import org.murraybridgebunyips.bunyipslib.Storage;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.DriveConstants;
@@ -104,7 +104,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @return this
      */
     public MecanumDrive setSpeedUsingController(double x, double y, double r) {
-        drive.setWeightedDrivePower(Controller.makeRobotPose(x, y, r));
+        drive.setWeightedDrivePower(Controls.makeRobotPose(x, y, r));
         return this;
     }
 
@@ -249,7 +249,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @see #setWeightedDrivePowerFieldCentric(Pose2d)
      */
     public void setSpeedUsingControllerFieldCentric(double x, double y, double r) {
-        setWeightedDrivePowerFieldCentric(Controller.makeRobotPose(x, y, r));
+        setWeightedDrivePowerFieldCentric(Controls.makeRobotPose(x, y, r));
     }
 
     @Override

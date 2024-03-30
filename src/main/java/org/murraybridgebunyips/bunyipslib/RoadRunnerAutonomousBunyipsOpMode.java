@@ -14,11 +14,13 @@ import org.murraybridgebunyips.bunyipslib.tasks.RoadRunnerTask;
 import java.util.ArrayList;
 
 /**
- * RoadRunnerAutonomousBunyipsOpMode (RRABOM, nickname "Rabone")
- * Additional abstraction for RoadRunner drives to integrate trajectories seamlessly into Autonomous.
+ * RoadRunnerAutonomousBunyipsOpMode (RRABOM, nickname "Rabone").
+ * Superset of {@link AutonomousBunyipsOpMode} that integrates RoadRunner trajectories into the task queue through
+ * utility methods such as {@code addNewTrajectory}.
  *
  * @param <T> RoadRunner drive instance
  * @author Lucas Bubner, 2023
+ * @see BunyipsOpMode
  */
 public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDrive> extends AutonomousBunyipsOpMode {
     /**

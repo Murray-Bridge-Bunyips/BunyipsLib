@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask;
+import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -14,10 +15,11 @@ import java.util.List;
 import kotlin.Unit;
 
 /**
- * OpMode abstraction for Autonomous operation using the BunyipsOpMode ecosystem.
+ * {@link BunyipsOpMode} variant for Autonomous operation using the {@link Task} system for a queued action OpMode.
  *
  * @author Lucas Bubner, 2023
  * @author Lachlan Paul, 2023
+ * @see BunyipsOpMode
  */
 public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
