@@ -32,9 +32,14 @@ public class Controller extends Gamepad {
      * A function that negates the input value.
      */
     public static final Function<Float, Float> NEGATE = x -> -x;
-    private final Gamepad sdkGamepad;
     private final HashMap<Controls, Predicate<Boolean>> buttons = new HashMap<>();
     private final HashMap<Controls.Analog, Function<Float, Float>> axes = new HashMap<>();
+    /**
+     * The SDK gamepad that this Controller wraps and takes input from.
+     * This is public for advanced users who need to access the raw gamepad values, or need to access hardware
+     * related gamepad methods that are not available in the Controller class which copies state.
+     */
+    public final Gamepad sdk;
     /**
      * Shorthand for left_stick_x
      */
@@ -98,7 +103,7 @@ public class Controller extends Gamepad {
      * @param gamepad The Gamepad to wrap (gamepad1, gamepad2)
      */
     public Controller(Gamepad gamepad) {
-        sdkGamepad = gamepad;
+        sdk = gamepad;
     }
 
     /**
@@ -109,7 +114,7 @@ public class Controller extends Gamepad {
      */
     public void update() {
         // Copy over all state changes from the SDK gamepad
-        copy(sdkGamepad);
+        copy(sdk);
 
         // Recalculate all custom inputs
         left_stick_x = get(Controls.Analog.LEFT_STICK_X);
