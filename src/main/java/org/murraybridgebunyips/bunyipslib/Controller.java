@@ -16,6 +16,7 @@ import java.util.function.Predicate;
  * @author Lucas Bubner, 2024
  * @see BunyipsOpMode
  */
+@SuppressWarnings("EnumValuesSoftDeprecateInJava")
 public class Controller extends Gamepad {
     /**
      * A function that returns the input value as-is.
@@ -212,7 +213,7 @@ public class Controller extends Gamepad {
             case SPECIAL:
                 return new Controls[]{Controls.START, Controls.BACK, Controls.LEFT_STICK_BUTTON, Controls.RIGHT_STICK_BUTTON};
             case ALL:
-                return Controls.getEntries().toArray(new Controls[0]);
+                return Controls.values();
             default:
                 return new Controls[0];
         }
@@ -225,7 +226,7 @@ public class Controller extends Gamepad {
             case TRIGGERS:
                 return new Controls.Analog[]{Controls.Analog.LEFT_TRIGGER, Controls.Analog.RIGHT_TRIGGER};
             case ALL:
-                return Controls.Analog.getEntries().toArray(new Controls.Analog[0]);
+                return Controls.Analog.values();
             default:
                 return new Controls.Analog[0];
         }
