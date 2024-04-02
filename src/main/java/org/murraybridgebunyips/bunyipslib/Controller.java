@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -32,14 +33,14 @@ public class Controller extends Gamepad {
      * A function that negates the input value.
      */
     public static final Function<Float, Float> NEGATE = x -> -x;
-    private final HashMap<Controls, Predicate<Boolean>> buttons = new HashMap<>();
-    private final HashMap<Controls.Analog, Function<Float, Float>> axes = new HashMap<>();
     /**
      * The SDK gamepad that this Controller wraps and takes input from.
      * This is public for advanced users who need to access the raw gamepad values, or need to access hardware
      * related gamepad methods that are not available in the Controller class which copies state.
      */
     public final Gamepad sdk;
+    private final HashMap<Controls, Predicate<Boolean>> buttons = new HashMap<>();
+    private final HashMap<Controls.Analog, Function<Float, Float>> axes = new HashMap<>();
     /**
      * Shorthand for left_stick_x
      */
@@ -113,8 +114,47 @@ public class Controller extends Gamepad {
      * called in BunyipsOpMode on another thread.
      */
     public void update() {
-        // Copy over all state changes from the SDK gamepad
-        copy(sdk);
+        ByteBuffer byteBuffer = getReadBuffer(sdk.toByteArray());
+
+        int buttons;
+        byte version = byteBuffer.get();
+
+        if (version >= 1) {
+            id = byteBuffer.getInt();
+            timestamp = byteBuffer.getLong();
+            // Skip over buffers we don't care about
+            for (int i = 0; i < 6; i++) {
+                byteBuffer.getFloat();
+            }
+
+            buttons = byteBuffer.getInt();
+            touchpad_finger_1 = (buttons & 0x20000) != 0;
+            touchpad_finger_2 = (buttons & 0x10000) != 0;
+            touchpad = (buttons & 0x08000) != 0;
+            guide = (buttons & 0x00010) != 0;
+        }
+
+        if (version >= 2) {
+            user = byteBuffer.get();
+        }
+
+        if (version >= 3) {
+            type = Type.values()[byteBuffer.get()];
+        }
+
+        if (version >= 4) {
+            byte v4TypeValue = byteBuffer.get();
+            if (v4TypeValue < Type.values().length) {
+                type = Type.values()[v4TypeValue];
+            }
+        }
+
+        if (version >= 5) {
+            touchpad_finger_1_x = byteBuffer.getFloat();
+            touchpad_finger_1_y = byteBuffer.getFloat();
+            touchpad_finger_2_x = byteBuffer.getFloat();
+            touchpad_finger_2_y = byteBuffer.getFloat();
+        }
 
         // Recalculate all custom inputs
         left_stick_x = get(Controls.Analog.LEFT_STICK_X);
@@ -138,6 +178,12 @@ public class Controller extends Gamepad {
         start = get(Controls.START);
         back = get(Controls.BACK);
 
+        updateButtonAliases();
+    }
+
+    @Override
+    protected void updateButtonAliases() {
+        super.updateButtonAliases();
         // Assign public field aliases
         lsx = left_stick_x;
         lsy = left_stick_y;
@@ -253,7 +299,7 @@ public class Controller extends Gamepad {
      * @return The value of the button
      */
     public boolean get(Controls button) {
-        boolean isPressed = Controls.isSelected(this, button);
+        boolean isPressed = Controls.isSelected(sdk, button);
         Predicate<Boolean> predicate = buttons.get(button);
         return predicate == null ? isPressed : predicate.test(isPressed);
     }
@@ -265,7 +311,7 @@ public class Controller extends Gamepad {
      * @return The value of the axis
      */
     public float get(Controls.Analog axis) {
-        float value = Controls.Analog.get(this, axis);
+        float value = Controls.Analog.get(sdk, axis);
         Function<Float, Float> function = axes.get(axis);
         return function == null ? value : function.apply(value);
     }
