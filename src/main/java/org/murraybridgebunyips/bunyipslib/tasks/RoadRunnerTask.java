@@ -57,14 +57,14 @@ public class RoadRunnerTask<T extends RoadRunnerDrive> extends Task {
     /**
      * Create a new RoadRunnerTask with a time, drive, trajectory, and dependency.
      *
-     * @param time                           The time to run the task for
-     * @param drive                          The drive to use
-     * @param trajectory                     The trajectory to follow
-     * @param dependency                     The subsystem to run this task on
-     * @param shouldOverrideConflictingTasks Whether this task should override conflicting tasks
+     * @param time       The time to run the task for
+     * @param drive      The drive to use
+     * @param trajectory The trajectory to follow
+     * @param dependency The subsystem to run this task on
+     * @param override   Whether this task should override conflicting tasks
      */
-    public RoadRunnerTask(double time, T drive, Trajectory trajectory, BunyipsSubsystem dependency, boolean shouldOverrideConflictingTasks) {
-        super(time, dependency, shouldOverrideConflictingTasks);
+    public RoadRunnerTask(double time, T drive, Trajectory trajectory, BunyipsSubsystem dependency, boolean override) {
+        super(time, dependency, override);
         this.drive = drive;
         this.trajectory = trajectory;
     }
@@ -72,14 +72,14 @@ public class RoadRunnerTask<T extends RoadRunnerDrive> extends Task {
     /**
      * Create a new RoadRunnerTask with a time, drive, trajectory sequence, and dependency.
      *
-     * @param time                           The time to run the task for
-     * @param drive                          The drive to use
-     * @param trajectorySequence             The trajectory sequence to follow
-     * @param dependency                     The subsystem to run this task on
-     * @param shouldOverrideConflictingTasks Whether this task should override conflicting tasks
+     * @param time               The time to run the task for
+     * @param drive              The drive to use
+     * @param trajectorySequence The trajectory sequence to follow
+     * @param dependency         The subsystem to run this task on
+     * @param override           Whether this task should override conflicting tasks
      */
-    public RoadRunnerTask(double time, T drive, TrajectorySequence trajectorySequence, BunyipsSubsystem dependency, boolean shouldOverrideConflictingTasks) {
-        super(time, dependency, shouldOverrideConflictingTasks);
+    public RoadRunnerTask(double time, T drive, TrajectorySequence trajectorySequence, BunyipsSubsystem dependency, boolean override) {
+        super(time, dependency, override);
         this.drive = drive;
         this.trajectorySequence = trajectorySequence;
     }

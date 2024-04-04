@@ -23,12 +23,12 @@ public class ContinuousTask extends ForeverTask {
     /**
      * Subsystem-dependent continuous task.
      *
-     * @param callback                       the task to run continuously
-     * @param dependency                     the subsystem to depend on
-     * @param shouldOverrideConflictingTasks whether to override conflicting tasks on this subsystem
+     * @param callback   the task to run continuously
+     * @param dependency the subsystem to depend on
+     * @param override   whether to override conflicting tasks on this subsystem
      */
-    public ContinuousTask(Runnable callback, BunyipsSubsystem dependency, boolean shouldOverrideConflictingTasks) {
-        super(dependency, shouldOverrideConflictingTasks);
+    public ContinuousTask(Runnable callback, BunyipsSubsystem dependency, boolean override) {
+        super(dependency, override);
         this.callback = callback;
     }
 
