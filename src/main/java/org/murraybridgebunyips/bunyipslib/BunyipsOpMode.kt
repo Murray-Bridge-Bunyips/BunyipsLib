@@ -448,7 +448,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * Call to manually finish the OpMode.
      * This is a dangerous method, as the OpMode will no longer be able to run any main thread code.
      * This method should be called when the OpMode is finished and no longer needs to run, and will
-     * will put the OpMode in a state where it will not run any more code (including timers & telemetry).
+     * put the OpMode in a state where it will not run any more code (including timers & telemetry).
      * @param safeHaltHardwareOnStop If true (default), all motors/devices will be actively told to stop for the remainder of the OpMode.
      */
     @JvmOverloads
