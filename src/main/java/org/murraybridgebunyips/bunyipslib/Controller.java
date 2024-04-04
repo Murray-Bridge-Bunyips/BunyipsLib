@@ -45,59 +45,59 @@ public class Controller extends Gamepad {
     /**
      * Shorthand for left_stick_x
      */
-    public volatile float lsx;
+    public float lsx;
     /**
      * Shorthand for left_stick_y
      */
-    public volatile float lsy;
+    public float lsy;
     /**
      * Shorthand for right_stick_x
      */
-    public volatile float rsx;
+    public float rsx;
     /**
      * Shorthand for right_stick_y
      */
-    public volatile float rsy;
+    public float rsy;
     /**
      * Shorthand for left_trigger
      */
-    public volatile float lt;
+    public float lt;
     /**
      * Shorthand for right_trigger
      */
-    public volatile float rt;
+    public float rt;
     /**
      * Shorthand for left_bumper
      */
-    public volatile boolean lb;
+    public boolean lb;
     /**
      * Shorthand for right_bumper
      */
-    public volatile boolean rb;
+    public boolean rb;
     /**
      * Shorthand for dpad_up
      */
-    public volatile boolean du;
+    public boolean du;
     /**
      * Shorthand for dpad_down
      */
-    public volatile boolean dd;
+    public boolean dd;
     /**
      * Shorthand for dpad_left
      */
-    public volatile boolean dl;
+    public boolean dl;
     /**
      * Shorthand for dpad_right
      */
-    public volatile boolean dr;
+    public boolean dr;
     /**
      * Shorthand for left_stick_button
      */
-    public volatile boolean lsb;
+    public boolean lsb;
     /**
      * Shorthand for right_stick_button
      */
-    public volatile boolean rsb;
+    public boolean rsb;
 
     /**
      * Create a new Controller to manage.
@@ -108,14 +108,8 @@ public class Controller extends Gamepad {
         sdk = gamepad;
     }
 
-    /**
-     * Update the public fields of this Controller with the values from the wrapped Gamepad, performing calculations
-     * on the inputs as specified by the user.
-     * This method must be called in a loop of the OpMode to update the Controller's values. This is automatically
-     * called in BunyipsOpMode on another thread.
-     */
-    public void update() {
-        ByteBuffer byteBuffer = getReadBuffer(sdk.toByteArray());
+    private void parseUnmanagedControllerBuffer() {
+        ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[0]);
 
         int buttons;
         byte version = byteBuffer.get();
@@ -156,6 +150,16 @@ public class Controller extends Gamepad {
             touchpad_finger_2_x = byteBuffer.getFloat();
             touchpad_finger_2_y = byteBuffer.getFloat();
         }
+    }
+
+    /**
+     * Update the public fields of this Controller with the values from the wrapped Gamepad, performing calculations
+     * on the inputs as specified by the user.
+     * This method must be called in a loop of the OpMode to update the Controller's values. This is automatically
+     * called in BunyipsOpMode on another thread.
+     */
+    public void update() {
+        parseUnmanagedControllerBuffer();
 
         // Recalculate all custom inputs
         left_stick_x = get(Controls.Analog.LEFT_STICK_X);
