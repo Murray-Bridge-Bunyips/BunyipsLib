@@ -109,7 +109,7 @@ public class Controller extends Gamepad {
     }
 
     private void parseUnmanagedControllerBuffer() {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[0]);
+        ByteBuffer byteBuffer = ByteBuffer.wrap(sdk.toByteArray());
 
         int buttons;
         byte version = byteBuffer.get();
