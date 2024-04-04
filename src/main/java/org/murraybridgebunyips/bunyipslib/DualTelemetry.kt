@@ -205,7 +205,7 @@ class DualTelemetry(
                 }
             } | ${Controls.movementString(opMode.gamepad1)} ${Controls.movementString(opMode.gamepad2)}\n"
 
-        overheadTelemetry.setValue("BOM: $overheadStatus")
+        overheadTelemetry.setValue("$overheadTag: $overheadStatus")
 
         // FtcDashboard
         if (packet == null) {
@@ -213,7 +213,7 @@ class DualTelemetry(
         }
 
         packet?.let {
-            it.put("BOM", overheadStatus + "\n")
+            it.put(overheadTag, overheadStatus + "\n")
 
             // Copy with toList() to avoid ConcurrentModificationExceptions
             telemetryItems.toList().forEachIndexed { index, pair ->
@@ -265,7 +265,7 @@ class DualTelemetry(
         telemetryItems.clear()
         FtcDashboard.getInstance().clearTelemetry()
         telemetryQueue = 0
-        overheadTelemetry = opMode.telemetry.addData("", "BOM: unknown | T+?s | ?ms | (?) (?))\n")
+        overheadTelemetry = opMode.telemetry.addData("", "$overheadTag: unknown | T+?s | ?ms | (?) (?))\n")
             .setRetained(true)
     }
 
