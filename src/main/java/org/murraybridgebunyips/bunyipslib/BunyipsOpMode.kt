@@ -170,8 +170,12 @@ abstract class BunyipsOpMode : BOMInternal() {
                 module.bulkCachingMode = LynxModule.BulkCachingMode.AUTO
             }
 
-            telemetry.opModeStatus = "setup"
             Dbg.logd("BunyipsOpMode: setting up...")
+            // Telemetry
+            telemetry = BunyipsTelemetry(sdkTelemetry, BuildConfig.GIT_COMMIT, BuildConfig.BUILD_TIME)
+            telemetry.setup()
+            // Ring-buffer timing utility
+            movingAverageTimer = MovingAverageTimer()
             // Controller setup and monitoring threads
             gamepad1 = Controller(sdkGamepad1)
             gamepad2 = Controller(sdkGamepad2)
@@ -184,11 +188,6 @@ abstract class BunyipsOpMode : BOMInternal() {
                 while (!Thread.currentThread().isInterrupted)
                     gamepad2.update()
             }
-            // Ring-buffer timing utility
-            movingAverageTimer = MovingAverageTimer()
-            // Telemetry
-            telemetry = BunyipsTelemetry(sdkTelemetry, BuildConfig.GIT_COMMIT, BuildConfig.BUILD_TIME)
-            telemetry.clearAll()
             pushTelemetry()
 
             telemetry.opModeStatus = "static_init"
@@ -361,7 +360,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * @return The telemetry item added to the Driver Station, null if the send failed from overflow
      */
     fun addTelemetry(format: Any, vararg args: Any?): Item? {
-        return telemetry.add(format, args)
+        return telemetry.add(format, *args)
     }
 
     /**
@@ -371,7 +370,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * @return The telemetry item added to the Driver Station
      */
     fun addRetainedTelemetry(format: Any, vararg args: Any?): Item {
-        return telemetry.addRetained(format, args)
+        return telemetry.addRetained(format, *args)
     }
 
     /**
@@ -396,7 +395,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * @param args The objects to format into the object format string
      */
     fun log(format: Any, vararg args: Any?) {
-        telemetry.log(format, args)
+        telemetry.log(format, *args)
     }
 
     /**
@@ -406,7 +405,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * @param args The objects to format into the object format string
      */
     fun log(obj: Class<*>, format: Any, vararg args: Any?) {
-        telemetry.log(obj, format, args)
+        telemetry.log(obj, format, *args)
     }
 
     /**
@@ -416,7 +415,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * @param args The objects to format into the object format string
      */
     fun log(stck: StackTraceElement, format: Any, vararg args: Any?) {
-        telemetry.log(stck, format, args)
+        telemetry.log(stck, format, *args)
     }
 
     /**
@@ -441,7 +440,6 @@ abstract class BunyipsOpMode : BOMInternal() {
         operationsPaused = false
         safeHaltHardwareOnStop = false
         gamepadExecutor = null
-        telemetry.reset()
     }
 
     /**

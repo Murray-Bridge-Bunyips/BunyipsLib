@@ -335,10 +335,11 @@ class BunyipsTelemetry(private val sdkTelemetry: Telemetry, gitCommit: String, b
     }
 
     /**
-     * Reset the telemetry object for the start of an OpMode.
+     * Setup and reset the telemetry object for the start of an OpMode.
      */
-    fun reset() {
-        opModeStatus = "idle"
+    fun setup() {
+        clearAll()
+        opModeStatus = "setup"
         telemetryQueue = 0
         telemetryItems.clear()
         packet = null
