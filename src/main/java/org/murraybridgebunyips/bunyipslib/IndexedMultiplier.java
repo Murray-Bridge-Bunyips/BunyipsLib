@@ -5,21 +5,21 @@ import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 /**
- * Multi-purpose input sensitivity multiplier with increment and decrement.
+ * Multi-purpose index sensitivity multiplier with increment and decrement.
  *
  * @author Lucas Bubner, 2024
  */
-public class InputMultiplier extends BunyipsSubsystem {
+public class IndexedMultiplier extends BunyipsSubsystem {
     private final double[] multipliers;
     private String name = null;
     private int index = 0;
 
     /**
-     * Create a new InputMultiplier.
+     * Create a new IndexedMultiplier.
      *
      * @param multipliers the multipliers to use, when the index is selected the corresponding multiplier is used
      */
-    public InputMultiplier(double... multipliers) {
+    public IndexedMultiplier(double... multipliers) {
         this.multipliers = multipliers;
     }
 
@@ -29,7 +29,7 @@ public class InputMultiplier extends BunyipsSubsystem {
      * @param displayName the name to set
      * @return this
      */
-    public InputMultiplier withName(String displayName) {
+    public IndexedMultiplier withName(String displayName) {
         name = displayName;
         return this;
     }
@@ -40,7 +40,7 @@ public class InputMultiplier extends BunyipsSubsystem {
      * @param defaultIndex the index to set
      * @return this
      */
-    public InputMultiplier withDefaultIndex(int defaultIndex) {
+    public IndexedMultiplier withDefaultIndex(int defaultIndex) {
         if (defaultIndex < 0 || defaultIndex >= multipliers.length)
             throw new EmergencyStop("Default index out of bounds");
         index = defaultIndex;
@@ -107,7 +107,7 @@ public class InputMultiplier extends BunyipsSubsystem {
     protected void periodic() {
         opMode.addTelemetry(
                 "%: %x (%/%)",
-                name != null ? "Mul-" + name : "Input Multiplier",
+                name != null ? "Mul-" + name : "Index Multiplier",
                 multipliers[index],
                 index + 1,
                 multipliers.length

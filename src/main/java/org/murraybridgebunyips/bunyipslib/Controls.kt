@@ -52,6 +52,58 @@ enum class Controls {
         }
     }
 
+    /**
+     * Groups of buttons that can be customised.
+     */
+    enum class ButtonGroup {
+        /**
+         * All bumpers
+         */
+        BUMPERS,
+
+        /**
+         * All face buttons
+         */
+        DPAD,
+
+        /**
+         * ABXY buttons
+         */
+        BUTTONS,
+
+        /**
+         * Start, back, and stick buttons
+         */
+        SPECIAL,
+
+        /**
+         * All buttons
+         */
+        ALL
+    }
+
+
+    /**
+     * Groups of axes that can be customised.
+     */
+    enum class AnalogGroup {
+        /**
+         * Both analog sticks
+         */
+        STICKS,
+
+        /**
+         * Both triggers
+         */
+        TRIGGERS,
+
+        /**
+         * All analog inputs
+         */
+        ALL
+    }
+
+
     companion object {
         /**
          * Check if a button is currently pressed on a gamepad.
@@ -170,6 +222,37 @@ enum class Controls {
                 str += "n"
             str += ")"
             return str
+        }
+
+        /**
+         * Get the buttons in a specified ButtonGroup.
+         */
+        @JvmStatic
+        fun getButtons(group: ButtonGroup): Array<Controls> {
+            return when (group) {
+                ButtonGroup.BUMPERS -> arrayOf(LEFT_BUMPER, RIGHT_BUMPER)
+                ButtonGroup.DPAD -> arrayOf(DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT)
+                ButtonGroup.BUTTONS -> arrayOf(A, B, X, Y)
+                ButtonGroup.SPECIAL -> arrayOf(START, BACK, LEFT_STICK_BUTTON, RIGHT_STICK_BUTTON)
+                ButtonGroup.ALL -> entries.toTypedArray()
+            }
+        }
+
+        /**
+         * Get the axes in a specified AnalogGroup.
+         */
+        @JvmStatic
+        fun getAxes(group: AnalogGroup): Array<Analog> {
+            return when (group) {
+                AnalogGroup.STICKS -> arrayOf(
+                    Analog.LEFT_STICK_X,
+                    Analog.LEFT_STICK_Y,
+                    Analog.RIGHT_STICK_X,
+                    Analog.RIGHT_STICK_Y
+                )
+                AnalogGroup.TRIGGERS -> arrayOf(Analog.LEFT_TRIGGER, Analog.RIGHT_TRIGGER)
+                AnalogGroup.ALL -> Analog.entries.toTypedArray()
+            }
         }
     }
 }
