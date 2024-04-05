@@ -41,7 +41,7 @@ public final class LogFiles {
     public static LogFile log = new LogFile("uninitialized");
     private static final OpModeManagerNotifier.Notifications notifHandler = new OpModeManagerNotifier.Notifications() {
         @SuppressLint("SimpleDateFormat")
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd__HH_mm_ss_SSS");
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd__HH_mss_SSS");
 
         final ObjectWriter jsonWriter = new ObjectMapper(new JsonFactory())
                 .writerWithDefaultPrettyPrinter();
