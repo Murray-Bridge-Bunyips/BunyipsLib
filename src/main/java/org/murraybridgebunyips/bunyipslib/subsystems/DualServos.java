@@ -1,7 +1,8 @@
-package org.murraybridgebunyips.bunyipslib;
+package org.murraybridgebunyips.bunyipslib.subsystems;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
@@ -49,7 +50,7 @@ public class DualServos extends BunyipsSubsystem {
      * @param servo the servo to toggle
      * @return this
      */
-    public DualServos toggleServo(ServoSide servo) {
+    public DualServos toggle(ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = (leftServoPosition == LEFT_SERVO_OPEN_POSITION) ? LEFT_SERVO_CLOSED_POSITION : LEFT_SERVO_OPEN_POSITION;
             return this;
@@ -69,8 +70,8 @@ public class DualServos extends BunyipsSubsystem {
      * @param servo the servo to toggle
      * @return the task
      */
-    public Task toggleServoTask(ServoSide servo) {
-        return new RunTask(() -> toggleServo(servo), this, true).withName("ToggleServoTask");
+    public Task toggleTask(ServoSide servo) {
+        return new RunTask(() -> toggle(servo), this, true).withName("ToggleServoTask");
     }
 
     /**
@@ -79,7 +80,7 @@ public class DualServos extends BunyipsSubsystem {
      * @param servo the servo to open
      * @return this
      */
-    public DualServos openServo(ServoSide servo) {
+    public DualServos open(ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = LEFT_SERVO_OPEN_POSITION;
             return this;
@@ -99,8 +100,8 @@ public class DualServos extends BunyipsSubsystem {
      * @param servo the servo to open
      * @return the task
      */
-    public Task openServoTask(ServoSide servo) {
-        return new RunTask(() -> openServo(servo), this, true).withName("OpenServoTask");
+    public Task openTask(ServoSide servo) {
+        return new RunTask(() -> open(servo), this, true).withName("OpenServoTask");
     }
 
     /**
@@ -109,7 +110,7 @@ public class DualServos extends BunyipsSubsystem {
      * @param servo the servo to close
      * @return this
      */
-    public DualServos closeServo(ServoSide servo) {
+    public DualServos close(ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = LEFT_SERVO_CLOSED_POSITION;
             return this;
@@ -129,8 +130,8 @@ public class DualServos extends BunyipsSubsystem {
      * @param servo the servo to close
      * @return the task
      */
-    public Task closeServoTask(ServoSide servo) {
-        return new RunTask(() -> closeServo(servo), this, true).withName("CloseServoTask");
+    public Task closeTask(ServoSide servo) {
+        return new RunTask(() -> close(servo), this, true).withName("CloseServoTask");
     }
 
     /**

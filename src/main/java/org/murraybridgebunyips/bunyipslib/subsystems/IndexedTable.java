@@ -1,6 +1,8 @@
-package org.murraybridgebunyips.bunyipslib;
+package org.murraybridgebunyips.bunyipslib.subsystems;
 
 
+import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
+import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
