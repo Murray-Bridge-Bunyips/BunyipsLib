@@ -2,6 +2,7 @@ package org.murraybridgebunyips.bunyipslib
 
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorImpl
 import org.murraybridgebunyips.bunyipslib.external.units.Distance
 import org.murraybridgebunyips.bunyipslib.external.units.Measure
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Millimeters
@@ -17,7 +18,7 @@ class EncoderMotor @JvmOverloads constructor(
     private var reduction: Double = 1.0,
     private val ticksPerRevolution: Double? = null,
     private val wheelDiameter: Measure<Distance>? = null
-) : ScopedEncoder {
+) : DcMotorImpl(motor.controller, motor.portNumber), ScopedEncoder {
     /**
      * Store a snapshot of encoder position when tracking is started.
      */
