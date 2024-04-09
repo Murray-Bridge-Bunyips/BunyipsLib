@@ -11,9 +11,6 @@ import org.murraybridgebunyips.bunyipslib.OpModeSelection;
 import org.murraybridgebunyips.bunyipslib.RoadRunnerAutonomousBunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
 import org.murraybridgebunyips.bunyipslib.example.examplerobot.components.ExampleConfig;
-import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask;
-
-import java.util.List;
 
 /**
  * Example RoadRunner autonomous OpMode for a robot with a tank drive.
@@ -35,18 +32,6 @@ public class ExampleRoadRunnerAutonomous extends RoadRunnerAutonomousBunyipsOpMo
         // No further configuration is required here for setting up drive systems, see setDrive()
         // You can also define your drive here if you wish, but using setDrive() is recommended
         // drive = new TankDrive(...);
-    }
-
-
-    // These methods are the same as defined in AutonomousBunyipsOpMode
-    @Override
-    protected List<OpModeSelection> setOpModes() {
-        return null;
-    }
-
-    @Override
-    protected RobotTask setInitTask() {
-        return null;
     }
 
     @Override

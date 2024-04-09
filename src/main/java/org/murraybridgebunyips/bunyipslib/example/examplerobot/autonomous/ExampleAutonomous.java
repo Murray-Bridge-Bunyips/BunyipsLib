@@ -10,9 +10,6 @@ import org.murraybridgebunyips.bunyipslib.example.examplerobot.components.Exampl
 import org.murraybridgebunyips.bunyipslib.example.examplerobot.components.ExampleLift;
 import org.murraybridgebunyips.bunyipslib.example.examplerobot.tasks.ExampleTask;
 import org.murraybridgebunyips.bunyipslib.tasks.WaitTask;
-import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask;
-
-import java.util.List;
 
 /**
  * Example autonomous OpMode for a robot with a lift and a mecanum drive.
@@ -48,35 +45,14 @@ public class ExampleAutonomous extends AutonomousBunyipsOpMode {
         config.init();
         drive = new CartesianMecanumDrive(config.leftFrontMotor, config.rightFrontMotor, config.leftBackMotor, config.rightBackMotor);
         lift = new ExampleLift(config.liftMotor);
-    }
 
-    // setOpModes is used to define dynamic OpMode selection, using an asynchronous UserSelection
-    // This is not required, and you can return null if you do not need to use this feature
-    // However, if you do need to use this feature, you must return a list of OpModeSelections
-    // which will be automatically handled to show up as gamepad inputs when you initialise the OpMode
-    // When one of these inputs is pressed, the OpMode will return the corresponding OpModeSelection
-    // to the onQueueReady() method, which you can use to determine which OpMode to run.
-    @Override
-    protected List<OpModeSelection> setOpModes() {
-        // A utility from StartingPositions allows the most commonly used setOpModes config,
-        // which is STARTING_BLUE_LEFT STARTING_BLUE_RIGHT STARTING_RED_LEFT and STARTING_RED_RIGHT
-        return StartingPositions.use();
-
-        // Go immediately to onQueueReady() and ignore this phase
-//        return null;
-
-        // Custom implementation
-//        return new ArrayList<OpModeSelection>() {{
-//            // This is also compatible with Enums and any other object, see OpModeSelection definition.
-//            add(new OpModeSelection("Number 1 OpMode"));
-//            add(new OpModeSelection("Number 2 OpMode"));
-//            add(new OpModeSelection("Number 3 OpMode"));
-//        }};
-    }
-
-    @Override
-    protected RobotTask setInitTask() {
-        return null;
+        // setOpModes is used to define dynamic OpMode selection, using an asynchronous UserSelection
+        // This is not required, and you can return null if you do not need to use this feature
+        // However, if you do need to use this feature, you must return a list of OpModeSelections
+        // which will be automatically handled to show up as gamepad inputs when you initialise the OpMode
+        // When one of these inputs is pressed, the OpMode will return the corresponding OpModeSelection
+        // to the onQueueReady() method, which you can use to determine which OpMode to run.
+        setOpModes(StartingPositions.use());
     }
 
     @Override

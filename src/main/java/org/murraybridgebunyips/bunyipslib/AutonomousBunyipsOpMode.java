@@ -9,6 +9,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,9 +28,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * For example, you may have configurations for RED_LEFT, RED_RIGHT, BLUE_LEFT, BLUE_RIGHT.
      * By default, this will be empty, and the user will not be prompted for a selection.
      *
-     * @see #setOpModes()
+     * @see #setOpModes(OpModeSelection...)
      */
-    protected final ArrayList<OpModeSelection> opModes = new ArrayList<>();
+    private final ArrayList<OpModeSelection> opModes = new ArrayList<>();
     private final ArrayDeque<RobotTask> tasks = new ArrayDeque<>();
     // Pre and post queues cannot have their tasks removed, so we can rely on their .size() methods
     private final ArrayDeque<RobotTask> postQueue = new ArrayDeque<>();
@@ -64,15 +65,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     protected final void onInit() {
         // Run user-defined hardware initialisation
         onInitialisation();
-        // Set user-defined initTask
-        initTask = setInitTask();
         if (initTask == null) {
             log("auto: initTask is null, skipping.");
-        }
-        List<OpModeSelection> userSelections = setOpModes();
-        if (userSelections != null) {
-            // User defined OpModeSelections
-            opModes.addAll(userSelections);
         }
         // Convert user defined OpModeSelections to varargs
         OpModeSelection[] varargs = opModes.toArray(new OpModeSelection[0]);
@@ -309,31 +303,53 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     /**
      * Runs upon the pressing of the INIT button on the Driver Station.
      * This is where your hardware should be initialised. You may also add specific tasks to the queue
-     * here, but it is recommended to use {@link #setInitTask()} or {@link #onQueueReady(OpModeSelection)} instead.
+     * here, but it is recommended to use {@link #setInitTask(RobotTask)} or {@link #onQueueReady(OpModeSelection)} instead.
      */
     protected abstract void onInitialisation();
 
     /**
-     * Implement to define your OpModeSelections, if you list any, then the user will be prompted to select
+     * Call to define your OpModeSelections, if you list any, then the user will be prompted to select
      * an OpMode before the OpMode begins. If you return null, then the user will not
      * be prompted for a selection, and the OpMode will move to task-ready state immediately.
-     * <pre><code>
-     *     protected List<OpModeSelection> setOpModes() {
-     *         return Arrays.asList(
-     *                 new OpModeSelection("GO_PARK"),
-     *                 new OpModeSelection("GO_SHOOT"),
-     *                 new OpModeSelection("GO_SHOOT_AND_PARK"),
-     *                 new OpModeSelection("SABOTAGE_ALLIANCE")
-     *         );
-     *         // Use `StartingPositions.use();` for using the four Robot starting positions
-     *     }
-     * </code></pre>
+     * <pre>{@code
+     *     setOpModes(
+     *             new OpModeSelection("GO_PARK"),
+     *             new OpModeSelection("GO_SHOOT"),
+     *             new OpModeSelection("GO_SHOOT_AND_PARK"),
+     *             new OpModeSelection("SABOTAGE_ALLIANCE")
+     *     );
+     *     // Use `StartingPositions.use();` for using the four Robot starting positions
+     * }</pre>
      */
-    @Nullable
-    protected abstract List<OpModeSelection> setOpModes();
+    protected void setOpModes(@Nullable OpModeSelection... selectableOpModes) {
+        if (selectableOpModes != null) {
+            opModes.addAll(Arrays.asList(selectableOpModes));
+        }
+    }
+
 
     /**
-     * Return a task that will run as an init-task. This will run
+     * Call to define your OpModeSelections, if you list any, then the user will be prompted to select
+     * an OpMode before the OpMode begins. If you return null, then the user will not
+     * be prompted for a selection, and the OpMode will move to task-ready state immediately.
+     * <pre>{@code
+     *     setOpModes(
+     *             new OpModeSelection("GO_PARK"),
+     *             new OpModeSelection("GO_SHOOT"),
+     *             new OpModeSelection("GO_SHOOT_AND_PARK"),
+     *             new OpModeSelection("SABOTAGE_ALLIANCE")
+     *     );
+     *     // Use `StartingPositions.use();` for using the four Robot starting positions
+     * }</pre>
+     */
+    protected void setOpModes(@Nullable List<? extends OpModeSelection> selectableOpModes) {
+        if (selectableOpModes != null) {
+            opModes.addAll(selectableOpModes);
+        }
+    }
+
+    /**
+     * Set a task that will run as an init-task. This will run
      * after your onInitialisation() has completed, allowing you to initialise hardware first.
      * This is an optional method.
      * <p>
@@ -348,8 +364,12 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @see #addTaskFirst(RobotTask)
      * @see #addTaskLast(RobotTask)
      */
-    @Nullable
-    protected abstract RobotTask setInitTask();
+    protected void setInitTask(@Nullable RobotTask task) {
+        if (initTask != null) {
+            Dbg.warn(getClass(), "Init Task has already been set to %, overriding it with %...", initTask, task);
+        }
+        initTask = task;
+    }
 
     /**
      * Called when the OpMode is ready to process tasks.
