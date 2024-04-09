@@ -141,16 +141,19 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     public Task gotoTask(int targetPosition) {
         return new NoTimeoutTask(this, true) {
+            private boolean hasRunce;  // Don't ask
+
             @Override
             public void init() {
                 lockout = true;
+                motor.setTargetPosition(targetPosition);
+                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motor.setPower(MOVING_POWER);
             }
 
             @Override
             public void periodic() {
-                motor.setTargetPosition(targetPosition);
-                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motor.setPower(MOVING_POWER);
+                hasRunce = true;
             }
 
             @Override
@@ -160,7 +163,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
             @Override
             public boolean isTaskFinished() {
-                return !motor.isBusy();
+                return hasRunce && !motor.isBusy();
             }
         }.withName("RunToPositionTask");
     }
@@ -178,7 +181,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     @Override
     protected void periodic() {
         if (lockout) {
-            opMode.addTelemetry("%: MOVING to % ticks", name, motor.getCurrentPosition());
+            opMode.addTelemetry("%: MOVING to %/% ticks", name, motor.getTargetPosition(), motor.getCurrentPosition());
             return;
         }
 
