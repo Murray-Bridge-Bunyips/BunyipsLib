@@ -25,7 +25,7 @@ BunyipsLib is the current library that is used to write OpModes, and is a collec
 objects that are used to make writing OpModes easier, with built in error handling, RoadRunner,
 vision, command-based paradigms, and more.
 
-View the BYOEcosystem.png image in this directory to view what methods are available to use in a
+View the BOM.png image in this directory to view what methods are available to use in a
 BunyipsOpMode, or look at specific implementations of OpModes such as AutonomousBunyipsOpMode,
 CommandBasedBunyipsOpMode,
 and RoadRunnerAutonomousBunyipsOpMode.
