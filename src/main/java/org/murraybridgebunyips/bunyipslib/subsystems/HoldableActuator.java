@@ -141,8 +141,6 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     public Task gotoTask(int targetPosition) {
         return new NoTimeoutTask(this, true) {
-            private boolean hasRunce;  // Don't ask
-
             @Override
             public void init() {
                 lockout = true;
@@ -153,7 +151,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
             @Override
             public void periodic() {
-                hasRunce = true;
+                // no-op
             }
 
             @Override
@@ -163,7 +161,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
             @Override
             public boolean isTaskFinished() {
-                return hasRunce && !motor.isBusy();
+                return !motor.isBusy();
             }
         }.withName("RunToPositionTask");
     }

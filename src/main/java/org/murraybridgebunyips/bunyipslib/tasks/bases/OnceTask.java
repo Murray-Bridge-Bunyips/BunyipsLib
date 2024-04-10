@@ -25,6 +25,7 @@ public abstract class OnceTask extends Task {
 
     @Override
     protected final boolean isTaskFinished() {
+        // OnceTasks may sometimes have their timeouts adjusted at runtime
         return getTimeout() == 0.0;
     }
 

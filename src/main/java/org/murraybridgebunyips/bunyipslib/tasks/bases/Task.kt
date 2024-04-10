@@ -147,8 +147,8 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
             // Must poll finished on the first iteration to ensure that the task does not overrun
             pollFinished()
         }
-        // Here we check the taskFinished condition but don't poll updateFinishedState(), to ensure that the task is only
-        // updated with latest finish information at the user's discretion
+        // Here we check the taskFinished condition but don't call pollFinished(), to ensure that the task is only
+        // updated with latest finish information at the user's discretion (excluding the first-call requirement)
         if (taskFinished && !finisherFired) {
             onFinish()
             finisherFired = true
@@ -190,10 +190,11 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
         // Early return
         if (taskFinished) return finisherFired
 
-        // Finish on user defined task finished condition, or by timeout
-        taskFinished =
-            (timeout != 0.0 && startTime != 0L && System.nanoTime() > startTime + (timeout * NANOS_IN_SECONDS))
-                    || isTaskFinished()
+        val startCalled = startTime != 0L
+        val timeoutFinished = timeout != 0.0 && System.nanoTime() > startTime + (timeout * NANOS_IN_SECONDS)
+        val userCondition = isTaskFinished()
+
+        taskFinished = startCalled && (timeoutFinished || userCondition)
 
         // run() will handle firing the finisher, in which case we can return true and the polling loop can stop
         return taskFinished && finisherFired
