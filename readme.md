@@ -69,6 +69,11 @@ public class MyTeleOp extends BunyipsOpMode {
                 config.backLeft, config.backRight, config.localizerCoefficients,
                 config.parallelEncoder, config.perpendicularEncoder
         );
+
+        // Custom gamepad objects which support feeding lambda functions to evaluate each
+        // input or a group of inputs (for custom functions for inputs without having to change component code)
+        gamepad1.set(Controls.AnalogGroup.STICKS, (v) -> v * 0.8f);
+
         cannon = new Cannon(...);
         arm = new MyArm(...);
     }
@@ -86,7 +91,8 @@ public class MyTeleOp extends BunyipsOpMode {
             arm.faceClawToGround();
         }
 
-        if (gamepad1.right_trigger == 1.0) {
+        // Custom gamepad objects allow for shorthand field names (rt == right_trigger)
+        if (gamepad1.rt == 1.0) {
             cannon.fire();
         }
         if (gamepad1.back) {
@@ -110,14 +116,13 @@ Are you more of a fan of full-command-based systems? We've brewed our own comman
 full integrations with our ecosystem.
 
 ```java
-
 @TeleOp(name = "Align To Pixel (Command Based)")
 public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
     private final MyBotConfig config = new MyBotConfig();
 
     private MecanumDrive drive;
     private Vision vision;
-    private MultiYCbCrThreshold pixels;
+    private MultiColourThreshold pixels;
 
     @Override
     protected void onInitialisation() {
@@ -126,7 +131,7 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
         drive = new DualDeadwheelMecanumDrive(...);
         vision = new Vision(...);
 
-        pixels = new MultiYCbCrThreshold(Pixels.createProcessors());
+        pixels = new MultiColourThreshold(Pixels.createProcessors());
         vision.init(pixels, vision.raw);
         vision.start(pixels, vision.raw);
 
@@ -141,14 +146,14 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
     protected void assignCommands() {
         drive.setDefaultTask(new HolonomicDriveTask<>(gamepad1, drive, () -> false));
 
-        driver().whenHeld(Controller.Y)
-                .run(new RunTask(() -> drive.resetYaw()));
+        driver().whenHeld(Controls.Y)
+                .run(() -> drive.resetYaw());
         
         operator().whenReleased(Controls.X)
-                .run(() -> drive.stop())
-                .in(3, Seconds);
+                .run(new RunForTask(Seconds.of(2), () -> drive.stop()))
+                .in(2, Seconds);
 
-        driver().whenPressed(Controller.RIGHT_BUMPER)
+        driver().whenPressed(Controls.RIGHT_BUMPER)
                 .run(new AlignToContourTask<>(gamepad1, drive, pixels, new PIDController(1, 0.25, 0.0)))
                 .finishingWhen(() -> !gamepad1.right_bumper);
     }
@@ -177,7 +182,7 @@ public class RunArmFor extends Task {
     @Override
     public void periodic() {
         // Full telemetry utilities for FtcDashboard and Driver Station
-        opMode.addTelemetry("Arm is at % ticks.", arm.getTicks());
+        opMode.telemetry.add("Arm is at % ticks.", arm.getTicks());
         arm.update();
     }
 
@@ -221,15 +226,16 @@ public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumD
         // Optionally send all feeds to FtcDashboard, can switch between processor feeds for debugging
         // vision.startPreview();
 
-        addTelemetry("Hello world!"); // Full telemetry utilities with FtcDashboard
-        addRetainedTelemetry("Greetings, world.");
+        telemetry.add("Hello world!"); // Custom telemetry object to provide joint FtcDashboard/DS telemetry
+        telemetry.addRetained("Greetings, world.");
        
        // Full support for any object to use as a selection, including enums
        // This will be automatically shown on the init-cycle.
        setOpModes(
                new OpModeSelection("PARK"),
-               new OpModeSelection("GO_AGAIN"),
-               new OpModeSelection("SABOTAGE_ALLIANCE")
+               new OpModeSelection("GO_TWICE"),
+               new OpModeSelection("SABOTAGE_ALLIANCE"),
+               new OpModeSelection("STOP")
        );
        
        setInitTask(initTask);
@@ -272,7 +278,7 @@ public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumD
             case "PARK":
                 addTask(...);
                 break;
-            case "GO_AGAIN":
+            case "GO_TWICE":
                 addTask(new SequentialTaskGroup(..., ..., ...));
                 break;
             case "SABOTAGE_ALLIANCE":
@@ -285,12 +291,13 @@ public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumD
         }
     }
 }
-
 ```
 
 This is only a small fraction of what BunyipsLib can do. BunyipsLib is continually expanding
 with newer and faster features, including full FtcDashboard-compatible Vision processing,
 robust logging, and a focus on developer utilities.
+
+![bunyipslib](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/assets/81782264/8cc2ac0f-c377-4383-9c3b-b8c4815834ac)
 
 BunyipsLib will provide the tools to get the job done quickly, no matter the skill level,
 experience, or understanding. Reusability between robots is an essential design element
