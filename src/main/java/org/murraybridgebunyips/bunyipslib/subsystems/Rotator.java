@@ -11,6 +11,7 @@ import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.PivotMotor;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.ContinuousTask;
 import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.NoTimeoutTask;
@@ -115,7 +116,7 @@ public class Rotator extends BunyipsSubsystem {
      * @param runTime the time to allocate for the rotator to reach the target
      * @return the task
      */
-    public Task gotoTimeTask(Measure<Angle> angle, double runTime) {
+    public Task gotoTimeTask(Measure<Angle> angle, Measure<Time> runTime) {
         return new Task(runTime, this, true) {
             @Override
             protected void init() {
@@ -185,7 +186,7 @@ public class Rotator extends BunyipsSubsystem {
      * @param resetAfter whether to reset the rotator encoder after the task
      * @return the task
      */
-    public Task runForTask(double time, double targetPower, boolean resetAfter) {
+    public Task runForTask(Measure<Time> time, double targetPower, boolean resetAfter) {
         return new Task(time, this, true) {
             @Override
             protected void init() {

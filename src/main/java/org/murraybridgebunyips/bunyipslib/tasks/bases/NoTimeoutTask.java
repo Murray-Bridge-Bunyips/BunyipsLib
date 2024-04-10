@@ -1,5 +1,7 @@
 package org.murraybridgebunyips.bunyipslib.tasks.bases;
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
+
 import androidx.annotation.NonNull;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
@@ -9,10 +11,10 @@ import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
  */
 public abstract class NoTimeoutTask extends Task {
     protected NoTimeoutTask() {
-        super(0.0);
+        super(Seconds.zero());
     }
 
     protected NoTimeoutTask(@NonNull BunyipsSubsystem dependencySubsystem, boolean override) {
-        super(0.0, dependencySubsystem, override);
+        super(Seconds.zero(), dependencySubsystem, override);
     }
 }

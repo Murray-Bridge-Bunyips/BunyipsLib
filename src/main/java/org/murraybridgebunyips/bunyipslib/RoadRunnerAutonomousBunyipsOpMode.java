@@ -1,15 +1,20 @@
 package org.murraybridgebunyips.bunyipslib;
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 
+import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequence;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.murraybridgebunyips.bunyipslib.tasks.RoadRunnerTask;
+import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask;
 
 import java.util.ArrayList;
 
@@ -26,7 +31,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
     /**
      * Default timeout for RoadRunner tasks, a value of 0.0 will run the task until it is finished.
      */
-    public static final double DEFAULT_TIMEOUT = 0.0;
+    public static final Measure<Time> DEFAULT_TIMEOUT = Seconds.zero();
     private final ArrayList<RoadRunnerTask<T>> rrTasks = new ArrayList<>();
 
     /**
@@ -41,7 +46,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
     /**
      * Runs upon the pressing of the INIT button on the Driver Station.
      * This is where your hardware should be initialised. You may also add specific tasks to the queue
-     * here, but it is recommended to use {@link #setInitTask()} or {@link #onQueueReady(OpModeSelection)} instead.
+     * here, but it is recommended to use {@link #setInitTask(RobotTask)} or {@link #onQueueReady(OpModeSelection)} instead.
      */
     protected abstract void onInitialise();
 
@@ -76,12 +81,12 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
     /**
      * STRONGLY RECOMMENDED: Use this method to build a new RoadRunner trajectory to the queue.
      * Creates a new builder for a RoadRunner trajectory, which will automatically add a
-     * task to the queue when build() is called, optionally with a timeout control ({@link RoadRunnerTrajectoryTaskBuilder#setTimeout(double)}).
+     * task to the queue when build() is called, optionally with a timeout control ({@link RoadRunnerTrajectoryTaskBuilder#setTimeout(Measure)}).
      * <p>
      * This method is the combination of {@link #newTrajectorySequence()} and {@link #addTrajectory(TrajectorySequence)},
      * using a custom builder that supports {@code setTimeout()} and priority building.
      *
-     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **
+     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **, (in, in, rad)
      * @return Builder for the trajectory
      */
     protected RoadRunnerTrajectoryTaskBuilder addNewTrajectory(Pose2d startPose) {
@@ -130,7 +135,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * integrated task building, or if you prefer you can use {@link #addTrajectory(Trajectory)}
      * to add your sequence to the queue manually.
      *
-     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **
+     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **, (in, in, rad)
      * @return Builder for the trajectory
      */
     protected TrajectoryBuilder newTrajectory(Pose2d startPose) {
@@ -160,7 +165,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * integrated task building, or if you prefer you can use {@link #addTrajectory(TrajectorySequence)}
      * to add your sequence to the queue manually.
      *
-     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **
+     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **, (in, in, rad)
      * @return Builder for the trajectory
      */
     @SuppressWarnings("rawtypes")
@@ -204,7 +209,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
 
     protected class AddTrajectoryBuilder<S> {
         private final S trajectory;
-        private double timeout = DEFAULT_TIMEOUT;
+        private Measure<Time> timeout = DEFAULT_TIMEOUT;
         private PriorityLevel priority = PriorityLevel.NORMAL;
         private String name = null;
 
@@ -216,16 +221,31 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
             this.trajectory = trajectory;
         }
 
-        public AddTrajectoryBuilder<S> withTimeout(double sec) {
-            timeout = Math.abs(sec);
+        /**
+         * Set a timeout for the trajectory, to be applied to the overhead task running the trajectory.
+         * @param interval Timeout for the trajectory
+         * @return trajectory builder
+         */
+        public AddTrajectoryBuilder<S> withTimeout(Measure<Time> interval) {
+            timeout = interval;
             return this;
         }
 
+        /**
+         * Set the priority level of the task.
+         * @param p Priority level
+         * @return trajectory builder
+         */
         public AddTrajectoryBuilder<S> withPriority(PriorityLevel p) {
             priority = p;
             return this;
         }
 
+        /**
+         * Set the task name of the trajectory to show up in the telemetry.
+         * @param taskName Name of the task
+         * @return trajectory builder
+         */
         public AddTrajectoryBuilder<S> withName(String taskName) {
             name = taskName;
             return this;
@@ -263,7 +283,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * Builder class for a RoadRunner trajectory, which supports adding the trajectory to the Task queue.
      */
     protected class RoadRunnerTrajectoryTaskBuilder extends TrajectorySequenceBuilder<RoadRunnerTrajectoryTaskBuilder> {
-        private double timeout = DEFAULT_TIMEOUT;
+        private Measure<Time> timeout = DEFAULT_TIMEOUT;
         private String name = null;
 
         public RoadRunnerTrajectoryTaskBuilder(Pose2d startPose, Double startTangent, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel) {
@@ -279,13 +299,13 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
          * Should be called first, before any other builder methods.
          * If this method is not called or fed negative values, an infinite timeout will be used.
          *
-         * @param timeout Timeout in seconds
+         * @param timeout Timeout for the trajectory
          * @return trajectory builder
          */
         // javascript reference incoming
-        public RoadRunnerTrajectoryTaskBuilder setTimeout(double timeout) {
+        public RoadRunnerTrajectoryTaskBuilder setTimeout(Measure<Time> timeout) {
             // javascript reference is done
-            if (timeout < 0) {
+            if (timeout.lt(Seconds.zero())) {
                 return this;
             }
             this.timeout = timeout;

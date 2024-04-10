@@ -1,5 +1,7 @@
 package org.murraybridgebunyips.bunyipslib.tasks.bases;
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
+
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 
 /**
@@ -7,11 +9,11 @@ import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
  */
 public abstract class OnceTask extends Task {
     protected OnceTask() {
-        super(0.0);
+        super(Seconds.zero());
     }
 
     protected OnceTask(BunyipsSubsystem dependencySubsystem, boolean override) {
-        super(0.0, dependencySubsystem, override);
+        super(Seconds.zero(), dependencySubsystem, override);
     }
 
     @Override
@@ -26,7 +28,7 @@ public abstract class OnceTask extends Task {
     @Override
     protected final boolean isTaskFinished() {
         // OnceTasks may sometimes have their timeouts adjusted at runtime
-        return getTimeout() == 0.0;
+        return getTimeout().magnitude() == 0.0;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.murraybridgebunyips.bunyipslib.example.examplerobot.autonomous;
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
+
 import androidx.annotation.Nullable;
 
 import org.murraybridgebunyips.bunyipslib.AutonomousBunyipsOpMode;
@@ -74,13 +76,13 @@ public class ExampleAutonomous extends AutonomousBunyipsOpMode {
         }
 
         // onQueueReady is where you should assign all of your tasks, using addTask, addTaskFirst, and addTaskLast
-        addTask(new WaitTask(5));
+        addTask(new WaitTask(Seconds.of(5)));
 
         // This method is called when the UserSelection phase is done, if you have an initTask running
         // a better place to put code for that is in the overridable onInitDone()/onStart() methods from BunyipsOpMode.
         // Ensure to read the overhead definitions for AutonomousBunyipsOpMode to make sure you do not override any important code.
         // If unsure, make sure to always have a supercall to methods that you explicitly override.
-        addTask(new ExampleTask(3, lift));
+        addTask(new ExampleTask(Seconds.of(3), lift));
 
         // See the tasks directory for defining your own tasks.
     }

@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.RobotCoreLynxUsbDevice
 import com.qualcomm.robotcore.hardware.ServoController
 import com.qualcomm.robotcore.util.ThreadPool
 import org.firstinspires.ftc.robotcore.external.Telemetry.Item
+import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
 import java.util.concurrent.ExecutorService
 
@@ -240,7 +241,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // Ready to go.
             telemetry.opModeStatus = "ready"
             movingAverageTimer.update()
-            Dbg.logd("BunyipsOpMode: init cycle completed in ${movingAverageTimer.elapsedTime() / 1000.0} secs")
+            Dbg.logd("BunyipsOpMode: init cycle completed in ${movingAverageTimer.elapsedTime(Seconds)} secs")
             // DS only telemetry
             telemetry.addDS("BunyipsOpMode: INIT COMPLETE -- PLAY WHEN READY.")
             Dbg.logd("BunyipsOpMode: ready.")
@@ -328,7 +329,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // Telemetry may be not in a nice state, so we will call our stateful functions
             // such as thread stops and cleanup in onStop() first before updating the status
             telemetry.opModeStatus = "terminating"
-            Dbg.logd("BunyipsOpMode: active cycle completed in ${movingAverageTimer.elapsedTime() / 1000.0} secs")
+            Dbg.logd("BunyipsOpMode: active cycle completed in ${movingAverageTimer.elapsedTime(Seconds)} secs")
             pushTelemetry()
             Dbg.logd("BunyipsOpMode: exiting...")
         }

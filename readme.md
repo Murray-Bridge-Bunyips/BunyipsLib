@@ -141,11 +141,14 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
     protected void assignCommands() {
         drive.setDefaultTask(new HolonomicDriveTask<>(gamepad1, drive, () -> false));
 
-        scheduler().whenHeld(Controller.User.ONE, Controller.Y)
+        driver().whenHeld(Controller.Y)
                 .run(new RunTask(() -> drive.resetYaw()));
-                
+        
+        operator().whenReleased(Controls.X)
+                .run(() -> drive.stop())
+                .in(3, Seconds);
 
-        scheduler().whenPressed(Controller.User.ONE, Controller.RIGHT_BUMPER)
+        driver().whenPressed(Controller.RIGHT_BUMPER)
                 .run(new AlignToContourTask<>(gamepad1, drive, pixels, new PIDController(1, 0.25, 0.0)))
                 .finishingWhen(() -> !gamepad1.right_bumper);
     }
@@ -160,8 +163,8 @@ public class RunArmFor extends Task {
     private final MyArm arm;
     private final double power;
 
-    public RunArmFor(double time, MyArm arm, double power) {
-        super(time); // Built-in timeout management
+    public RunArmFor(Measure<Time> time, MyArm arm, double power) {
+        super(time); // Built-in timeout management with the full WPILib units conversion system
         this.arm = arm;
         this.power = power;
     }
@@ -220,27 +223,21 @@ public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumD
 
         addTelemetry("Hello world!"); // Full telemetry utilities with FtcDashboard
         addRetainedTelemetry("Greetings, world.");
+       
+       // Full support for any object to use as a selection, including enums
+       // This will be automatically shown on the init-cycle.
+       setOpModes(
+               new OpModeSelection("PARK"),
+               new OpModeSelection("GO_AGAIN"),
+               new OpModeSelection("SABOTAGE_ALLIANCE")
+       );
+       
+       setInitTask(initTask);
     }
 
     @Override
     protected MecanumDrive setDrive() {
         return new DualDeadwheelMecanumDrive(...);
-    }
-
-    @Override
-    protected List<OpModeSelection> setOpModes() {
-        // Full support for any object to use as a selection, including enums
-        // This will be automatically shown on the init-cycle.
-        return new Arrays.asList(
-                new OpModeSelection("PARK"),
-                new OpModeSelection("GO_AGAIN"),
-                new OpModeSelection("SABOTAGE_ALLIANCE")
-        );
-    }
-
-    @Override
-    protected RobotTask setInitTask() {
-        return initTask;
     }
 
     @Override

@@ -234,7 +234,7 @@ enum class Controls {
                 ButtonGroup.DPAD -> arrayOf(DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT)
                 ButtonGroup.BUTTONS -> arrayOf(A, B, X, Y)
                 ButtonGroup.SPECIAL -> arrayOf(START, BACK, LEFT_STICK_BUTTON, RIGHT_STICK_BUTTON)
-                ButtonGroup.ALL -> entries.toTypedArray()
+                ButtonGroup.ALL -> values()
             }
         }
 
@@ -251,7 +251,7 @@ enum class Controls {
                     Analog.RIGHT_STICK_Y
                 )
                 AnalogGroup.TRIGGERS -> arrayOf(Analog.LEFT_TRIGGER, Analog.RIGHT_TRIGGER)
-                AnalogGroup.ALL -> Analog.entries.toTypedArray()
+                AnalogGroup.ALL -> Analog.values()
             }
         }
     }

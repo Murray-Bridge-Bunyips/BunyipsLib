@@ -1,5 +1,7 @@
 package org.murraybridgebunyips.bunyipslib.example.examplerobot.autonomous;
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
+
 import org.murraybridgebunyips.bunyipslib.AutonomousBunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.Direction;
 import org.murraybridgebunyips.bunyipslib.OpModeSelection;
@@ -38,12 +40,12 @@ public class ExampleSignalAutonomous extends AutonomousBunyipsOpMode {
         if (initTask.getPosition() == Direction.FORWARD) {
             // Do something. Note that the first and last variants of the addTask method respect
             // the asynchronous nature of onQueueReady, and will be queued appropriately.
-            addTaskFirst(new WaitTask(5.0));
+            addTaskFirst(new WaitTask(Seconds.of(5.0)));
         }
     }
 
     @Override
     protected void onQueueReady(OpModeSelection selectedOpMode) {
-        addTask(new WaitTask(5.0));
+        addTask(new WaitTask(Seconds.of(5.0)));
     }
 }

@@ -2,7 +2,9 @@ package org.murraybridgebunyips.bunyipslib.tasks.bases
 
 import org.murraybridgebunyips.bunyipslib.BunyipsOpMode
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem
-import org.murraybridgebunyips.bunyipslib.MovingAverageTimer.NANOS_IN_SECONDS
+import org.murraybridgebunyips.bunyipslib.external.units.Measure
+import org.murraybridgebunyips.bunyipslib.external.units.Time
+import org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds
 import java.util.Optional
 
 /**
@@ -11,7 +13,13 @@ import java.util.Optional
  * reflective of the past nature of how the Task system was implemented in BunyipsLib.
  * @author Lucas Bubner, 2024
  */
-abstract class Task(timeoutSeconds: Double) : RobotTask {
+abstract class Task(
+    /**
+     * Maximum timeout of the task. If set to 0 magnitude this will serve as an indefinite task, and
+     * will only finish when isTaskFinished() returns true.
+     */
+    var timeout: Measure<Time>
+) : RobotTask {
     // Since the OpMode is static, this means ** ALL tasks MUST be instantiated in the init phase **, and not
     // in the constructor/member fields. You will experience extremely strange behaviour if you do not follow this.
     // This should not be a problem as all tasks are usually instantiated in the init phase anyway as tasks usually need
@@ -67,10 +75,10 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
     }
 
     constructor(
-        timeoutSeconds: Double,
+        timeout: Measure<Time>,
         dependencySubsystem: BunyipsSubsystem,
         override: Boolean
-    ) : this(timeoutSeconds) {
+    ) : this(timeout) {
         dependency = dependencySubsystem
         overrideDependency = override
     }
@@ -99,19 +107,13 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
      * Get a verbose string representation of this task, including all of its properties.
      */
     fun toVerboseString(): String {
-        return name + "[${if (taskFinished) "FINISHED" else "ACTIVE"}, ${if (isRunning) deltaTime else "NOT RUNNING"}/${if (timeout == 0.0) "INDEFINITE" else "$timeout sec"}, ${if (dependency != null) "DEPENDENT ON <${dependency?.javaClass?.simpleName}>" else "INDEPENDENT"}, ${if (overrideDependency) "OVERRIDING" else "NON-OVERRIDING"}, ${if (mutedReport) "MUTED" else "REPORTING"}]"
+        return name + "[${if (taskFinished) "FINISHED" else "ACTIVE"}, ${if (isRunning) deltaTime else "NOT RUNNING"}/${if (timeout.magnitude() == 0.0) "INDEFINITE" else "$timeout sec"}, ${if (dependency != null) "DEPENDENT ON <${dependency?.javaClass?.simpleName}>" else "INDEPENDENT"}, ${if (overrideDependency) "OVERRIDING" else "NON-OVERRIDING"}, ${if (mutedReport) "MUTED" else "REPORTING"}]"
     }
-
-    /**
-     * Maximum timeout (sec) of the task. If set to 0 this will serve as an indefinite task, and
-     * will only finish when isTaskFinished() returns true.
-     */
-    var timeout: Double = timeoutSeconds
 
     /**
      * Set the timeout of this task dynamically and return the task.
      */
-    fun withTimeout(timeout: Double): Task {
+    fun withTimeout(timeout: Measure<Time>): Task {
         this.timeout = timeout
         return this
     }
@@ -191,7 +193,7 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
         if (taskFinished) return finisherFired
 
         val startCalled = startTime != 0L
-        val timeoutFinished = timeout != 0.0 && System.nanoTime() > startTime + (timeout * NANOS_IN_SECONDS)
+        val timeoutFinished = timeout.magnitude() != 0.0 && System.nanoTime() > startTime + timeout.inUnit(Nanoseconds)
         val userCondition = isTaskFinished()
 
         taskFinished = startCalled && (timeoutFinished || userCondition)
@@ -239,10 +241,10 @@ abstract class Task(timeoutSeconds: Double) : RobotTask {
     /**
      * Time in seconds since the task was started.
      */
-    val deltaTime: Double
+    val deltaTime: Measure<Time>
         get() {
             if (startTime == 0L)
-                return 0.0
-            return (System.nanoTime() - startTime) / NANOS_IN_SECONDS
+                return Nanoseconds.of(0.0)
+            return Nanoseconds.of((System.nanoTime() - startTime).toDouble())
         }
 }

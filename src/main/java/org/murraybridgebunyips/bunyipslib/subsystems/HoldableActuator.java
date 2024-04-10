@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
+import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.ContinuousTask;
 import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.NoTimeoutTask;
@@ -103,10 +105,10 @@ public class HoldableActuator extends BunyipsSubsystem {
      * Run the actuator for a certain amount of time.
      *
      * @param p    the power to run at
-     * @param time the time to run for in seconds
+     * @param time the time to run for
      * @return a task to run the actuator
      */
-    public Task runForTask(double p, double time) {
+    public Task runForTask(double p, Measure<Time> time) {
         return new Task(time, this, true) {
             @Override
             public void init() {
@@ -173,7 +175,30 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return a task to delta the position
      */
     public Task deltaTask(int deltaPosition) {
-        return gotoTask(motor.getCurrentPosition() + deltaPosition);
+        return new NoTimeoutTask(this, true) {
+            @Override
+            public void init() {
+                lockout = true;
+                motor.setTargetPosition(motor.getCurrentPosition() + deltaPosition);
+                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                motor.setPower(MOVING_POWER);
+            }
+
+            @Override
+            public void periodic() {
+                // no-op
+            }
+
+            @Override
+            public void onFinish() {
+                lockout = false;
+            }
+
+            @Override
+            public boolean isTaskFinished() {
+                return !motor.isBusy();
+            }
+        }.withName("DeltaPositionTask");
     }
 
     @Override
