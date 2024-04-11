@@ -198,7 +198,8 @@ class DualTelemetry @JvmOverloads constructor(
         val retVal = opMode.telemetry.update()
 
         // Requeue new overhead status message
-        val loopTime = if (movingAverageTimer != null) Text.round(movingAverageTimer.movingAverage(Milliseconds), 2) else 0.0
+        val loopTime =
+            if (movingAverageTimer != null) Text.round(movingAverageTimer.movingAverage(Milliseconds), 2) else 0.0
         val loopsSec = if (movingAverageTimer != null)
             if (!movingAverageTimer.loopsPer(Second).isNaN())
                 Text.round(movingAverageTimer.loopsPer(Second), 1)

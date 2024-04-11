@@ -53,29 +53,33 @@ public class ExampleAutonomous extends AutonomousBunyipsOpMode {
         // However, if you do need to use this feature, you must return a list of OpModeSelections
         // which will be automatically handled to show up as gamepad inputs when you initialise the OpMode
         // When one of these inputs is pressed, the OpMode will return the corresponding OpModeSelection
-        // to the onQueueReady() method, which you can use to determine which OpMode to run.
+        // to the onReady() method, which you can use to determine which OpMode to run.
         setOpModes(StartingPositions.use());
     }
 
     @Override
-    protected void onQueueReady(@Nullable OpModeSelection selectedOpMode) {
-        // onQueueReady will return the OpModeSelection that was selected in setOpModes()
+    protected void onReady(@Nullable OpModeSelection selectedOpMode) {
+        // onReady will return the OpModeSelection that was selected in setOpModes()
         // or will return null if the user did not select an OpMode,
-        // or an instance of DefaultOpMode if setOpModes() method is null
+        // or an instance of UserDefaultSelection if setOpModes() method is null
         // See the definition of this method for more information.
         if (selectedOpMode == null) {
             addRetainedTelemetry("where opmode?");
             return;
         }
-        if (selectedOpMode.toString().equals("Number 1 OpMode")) {
-            // Do something
-        } else if (selectedOpMode.toString().equals("Number 2 OpMode")) {
-            // Do something else
-        } else if (selectedOpMode.toString().equals("Number 3 OpMode")) {
-            // Do something else again
+        switch (selectedOpMode.toString()) {
+            case "Number 1 OpMode":
+                // Do something
+                break;
+            case "Number 2 OpMode":
+                // Do something else
+                break;
+            case "Number 3 OpMode":
+                // Do something else again
+                break;
         }
 
-        // onQueueReady is where you should assign all of your tasks, using addTask, addTaskFirst, and addTaskLast
+        // onReady is where you should assign all of your tasks, using addTask, addTaskFirst, and addTaskLast
         addTask(new WaitTask(Seconds.of(5)));
 
         // This method is called when the UserSelection phase is done, if you have an initTask running

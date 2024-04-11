@@ -4,6 +4,7 @@ import static org.murraybridgebunyips.bunyipslib.Text.formatString;
 import static org.murraybridgebunyips.bunyipslib.Text.round;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
+import static org.murraybridgebunyips.bunyipslib.tasks.bases.Task.INFINITE_TIMEOUT;
 
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
@@ -38,8 +39,8 @@ public class Scheduler extends BunyipsComponent {
     /**
      * Used internally by subsystems and tasks to report their running status statically.
      *
-     * @param className The class name of the subsystem or context.
-     * @param taskName  The name of the task.
+     * @param className    The class name of the subsystem or context.
+     * @param taskName     The name of the task.
      * @param deltaTimeSec The time this task has been running in seconds
      * @param timeoutSec   The time this task is allowed to run in seconds, 0.0 if indefinite
      */
@@ -137,11 +138,11 @@ public class Scheduler extends BunyipsComponent {
                 }
                 // Update controller states for determining whether they need to be continued to be run
                 boolean timeoutExceeded = timeExceeded(task);
-                if (task.runCondition instanceof ControllerStateHandler && !task.time.equals(Seconds.zero())) {
+                if (task.runCondition instanceof ControllerStateHandler && !task.time.equals(INFINITE_TIMEOUT)) {
                     ((ControllerStateHandler) task.runCondition).setTimeoutCondition(timeoutExceeded);
                 }
                 // Trigger upon timeout goal or if the task does not have one
-                if (task.time.equals(Seconds.zero()) || timeoutExceeded) {
+                if (task.time.equals(INFINITE_TIMEOUT) || timeoutExceeded) {
                     if (!task.taskToRun.hasDependency()) {
                         if (task.stopCondition.getAsBoolean()) {
                             // Finish handler will be called below
@@ -407,7 +408,7 @@ public class Scheduler extends BunyipsComponent {
     public class ConditionalTask {
         protected final BooleanSupplier runCondition;
         protected Task taskToRun;
-        protected Measure<Time> time = Seconds.zero();
+        protected Measure<Time> time = INFINITE_TIMEOUT;
         protected boolean debouncing;
         protected boolean lastState;
         protected BooleanSupplier stopCondition = () -> false;

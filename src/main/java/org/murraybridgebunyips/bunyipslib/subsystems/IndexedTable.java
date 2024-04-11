@@ -97,6 +97,7 @@ public class IndexedTable extends BunyipsSubsystem {
 
     /**
      * Get the applied value from the index.
+     *
      * @return the table value
      */
     public double get() {

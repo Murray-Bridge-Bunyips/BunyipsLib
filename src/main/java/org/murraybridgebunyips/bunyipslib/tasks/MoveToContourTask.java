@@ -1,7 +1,5 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
-import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -58,7 +56,7 @@ public class MoveToContourTask<T extends BunyipsSubsystem> extends Task {
      * @param rotationController    the PID controller for the rotational movement
      */
     public MoveToContourTask(Gamepad gamepad, T drive, MultiColourThreshold processors, PIDController translationController, PIDController rotationController) {
-        super(Seconds.zero(), drive, false);
+        super(Task.INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToContourTask must be used with a drivetrain with X forward Pose/IMU info");
         this.drive = (RoadRunnerDrive) drive;

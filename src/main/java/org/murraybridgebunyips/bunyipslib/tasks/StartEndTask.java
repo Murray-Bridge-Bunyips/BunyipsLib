@@ -1,7 +1,5 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
-import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
-
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
@@ -22,7 +20,7 @@ public class StartEndTask extends Task {
      * @param onEnd   the callback to run when the task finishes
      */
     public StartEndTask(Runnable onStart, Runnable onEnd) {
-        this(Seconds.zero(), onStart, onEnd);
+        this(Task.INFINITE_TIMEOUT, onStart, onEnd);
     }
 
     /**

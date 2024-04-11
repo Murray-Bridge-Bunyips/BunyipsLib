@@ -232,10 +232,10 @@ public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumD
        // Full support for any object to use as a selection, including enums
        // This will be automatically shown on the init-cycle.
        setOpModes(
-               new OpModeSelection("PARK"),
-               new OpModeSelection("GO_TWICE"),
-               new OpModeSelection("SABOTAGE_ALLIANCE"),
-               new OpModeSelection("STOP")
+               "PARK",
+               "GO_TWICE",
+               "SABOTAGE_ALLIANCE",
+               "STOP"
        );
        
        setInitTask(initTask);
@@ -259,7 +259,7 @@ public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumD
     }
 
     @Override
-    protected void onQueueReady(@Nullable OpModeSelection selectedOpMode) {
+    protected void onReady(@Nullable OpModeSelection selectedOpMode) {
         addTask(new RunTask(() -> vision.start(purplePixelProcessor));
 
         // Full RoadRunner support with utility methods such as addNewTrajectory()
@@ -274,7 +274,7 @@ public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumD
 
         addTask(new RunTask(() -> arm.drop());
 
-        switch (selectedOpMode.getName()) {
+        switch (selectedOpMode.toString()) {
             case "PARK":
                 addTask(...);
                 break;

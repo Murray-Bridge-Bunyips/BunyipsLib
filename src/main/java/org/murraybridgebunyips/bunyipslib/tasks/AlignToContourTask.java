@@ -1,7 +1,5 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
-import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -47,7 +45,7 @@ public class AlignToContourTask<T extends BunyipsSubsystem> extends Task {
      * @param controller the PID controller to use for aligning to a target
      */
     public AlignToContourTask(Gamepad gamepad, T drive, MultiColourThreshold processors, PIDController controller) {
-        super(Seconds.zero(), drive, false);
+        super(Task.INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToContourTask must be used with a drivetrain with X forward Pose/IMU info");
         this.drive = (RoadRunnerDrive) drive;

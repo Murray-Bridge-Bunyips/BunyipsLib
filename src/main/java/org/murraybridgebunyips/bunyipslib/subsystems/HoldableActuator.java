@@ -18,8 +18,8 @@ import java.util.function.DoubleSupplier;
  * Controls a generic holdable arm, that may be actuated by a user's input
  * but will hold its position when the input is released.
  *
- * @see Rotator
  * @author Lucas Bubner, 2024
+ * @see Rotator
  */
 public class HoldableActuator extends BunyipsSubsystem {
     // Power to hold the actuator in place
@@ -48,6 +48,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
     /**
      * Set the name of the actuator to display in telemetry.
+     *
      * @param newName the name to set
      * @return this
      */
@@ -58,6 +59,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
     /**
      * Set the holding power of the actuator.
+     *
      * @param targetPower the power to set
      * @return this
      */
@@ -68,6 +70,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
     /**
      * Set the moving power of the actuator.
+     *
      * @param targetPower the power to set
      * @return this
      */

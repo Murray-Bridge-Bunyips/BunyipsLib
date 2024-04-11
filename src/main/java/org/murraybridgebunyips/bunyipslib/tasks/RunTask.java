@@ -24,7 +24,8 @@ public class RunTask extends OnceTask {
      * Run nothing and complete, this is useful as a placeholder task.
      */
     public RunTask() {
-        this(() -> {});
+        this(() -> {
+        });
     }
 
     /**

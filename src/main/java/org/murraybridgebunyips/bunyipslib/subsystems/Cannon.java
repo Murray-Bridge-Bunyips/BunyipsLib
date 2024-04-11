@@ -24,9 +24,9 @@ public class Cannon extends BunyipsSubsystem {
     /**
      * Constructs a new Cannon.
      *
-     * @param prolong the servo to use
+     * @param prolong       the servo to use
      * @param closePosition the position to set the servo to when not firing
-     * @param openPosition the position to set the servo to when firing
+     * @param openPosition  the position to set the servo to when firing
      */
     public Cannon(Servo prolong, double openPosition, double closePosition) {
         FIRED = openPosition;
@@ -43,6 +43,7 @@ public class Cannon extends BunyipsSubsystem {
     /**
      * Constructs a new Cannon.
      * Implicitly set the close position to 0.0 and the open position to 1.0.
+     *
      * @param prolong the servo to use
      */
     public Cannon(Servo prolong) {

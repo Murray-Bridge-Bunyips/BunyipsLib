@@ -2,7 +2,6 @@ package org.murraybridgebunyips.bunyipslib.tasks
 
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.murraybridgebunyips.bunyipslib.Direction
-import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
 import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task
 import org.murraybridgebunyips.bunyipslib.vision.Vision
@@ -13,7 +12,7 @@ import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag
  * Updated 26/12/23 to use the new Vision class.
  * @author Lucas Bubner, 2022
  */
-class GetSignalTask(private val vision: Vision) : Task(Seconds.zero()),
+class GetSignalTask(private val vision: Vision) : Task(INFINITE_TIMEOUT),
     RobotTask {
     private lateinit var at: AprilTag
     private val lockTimer = ElapsedTime()

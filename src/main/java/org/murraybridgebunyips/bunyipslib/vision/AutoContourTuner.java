@@ -23,16 +23,9 @@ import org.opencv.core.Rect;
  * @author Lucas Bubner, 2024
  */
 public abstract class AutoContourTuner extends BunyipsOpMode {
-    protected abstract ColourThreshold setThresholdToTune();
-    protected abstract CameraName setCamera();
-
-    @Nullable
-    protected abstract Rect setCustomFittingRect();
-
     private RectangleAid aid;
     private ColourThreshold processor;
     private Vision vision;
-
     private Rect fittingRect = new Rect(
             Vision.CAMERA_WIDTH / 3,
             Vision.CAMERA_HEIGHT / 3,
@@ -40,6 +33,45 @@ public abstract class AutoContourTuner extends BunyipsOpMode {
             Vision.CAMERA_WIDTH * 2 / 3,
             Vision.CAMERA_HEIGHT * 2 / 3
     );
+
+    protected abstract ColourThreshold setThresholdToTune();
+
+    protected abstract CameraName setCamera();
+
+    @Nullable
+    protected abstract Rect setCustomFittingRect();
+
+    @Override
+    protected void onInit() {
+        processor = setThresholdToTune();
+
+        Rect customRect = setCustomFittingRect();
+        if (customRect != null)
+            fittingRect = customRect;
+
+        vision = new Vision(setCamera());
+        aid = new RectangleAid();
+
+        vision.init(processor, aid);
+        vision.start(processor, aid);
+        vision.startPreview();
+        vision.setPreview(aid);
+
+        telemetry.add("Please place the object to tune the threshold for in the camera view, in the box highlighted on the preview.");
+    }
+
+    @Override
+    protected void onStart() {
+        vision.stop(aid);
+        vision.setPreview(processor);
+    }
+
+    @Override
+    protected void activeLoop() {
+        // TODO: Fitting max contour to fittingRect dimensions
+
+        vision.update();
+    }
 
     private class RectangleAid extends Processor<VisionData> {
         private final ElapsedTime timer = new ElapsedTime();
@@ -84,37 +116,5 @@ public abstract class AutoContourTuner extends BunyipsOpMode {
                 timer.reset();
             }
         }
-    }
-
-    @Override
-    protected void onInit() {
-        processor = setThresholdToTune();
-
-        Rect customRect = setCustomFittingRect();
-        if (customRect != null)
-            fittingRect = customRect;
-
-        vision = new Vision(setCamera());
-        aid = new RectangleAid();
-
-        vision.init(processor, aid);
-        vision.start(processor, aid);
-        vision.startPreview();
-        vision.setPreview(aid);
-
-        telemetry.add("Please place the object to tune the threshold for in the camera view, in the box highlighted on the preview.");
-    }
-
-    @Override
-    protected void onStart() {
-        vision.stop(aid);
-        vision.setPreview(processor);
-    }
-
-    @Override
-    protected void activeLoop() {
-        // TODO: Fitting max contour to fittingRect dimensions
-
-        vision.update();
     }
 }

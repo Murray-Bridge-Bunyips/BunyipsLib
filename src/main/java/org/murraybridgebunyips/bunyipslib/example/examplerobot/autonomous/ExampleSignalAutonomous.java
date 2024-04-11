@@ -39,13 +39,13 @@ public class ExampleSignalAutonomous extends AutonomousBunyipsOpMode {
         // e.g
         if (initTask.getPosition() == Direction.FORWARD) {
             // Do something. Note that the first and last variants of the addTask method respect
-            // the asynchronous nature of onQueueReady, and will be queued appropriately.
+            // the asynchronous nature of onReady, and will be queued appropriately.
             addTaskFirst(new WaitTask(Seconds.of(5.0)));
         }
     }
 
     @Override
-    protected void onQueueReady(OpModeSelection selectedOpMode) {
+    protected void onReady(OpModeSelection selectedOpMode) {
         addTask(new WaitTask(Seconds.of(5.0)));
     }
 }

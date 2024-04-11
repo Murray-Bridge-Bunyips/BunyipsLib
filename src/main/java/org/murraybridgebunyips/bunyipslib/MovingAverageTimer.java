@@ -54,7 +54,7 @@ public class MovingAverageTimer {
     /**
      * Create a new MovingAverageTimer with the specified buffer size and resolution.
      *
-     * @param bufSize    the size of the ring buffer
+     * @param bufSize                the size of the ring buffer
      * @param formatStringResolution the resolution of the timer for format strings
      */
     public MovingAverageTimer(int bufSize, Time formatStringResolution) {

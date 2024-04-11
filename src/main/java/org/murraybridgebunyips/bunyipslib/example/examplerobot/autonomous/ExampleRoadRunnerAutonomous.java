@@ -35,7 +35,7 @@ public class ExampleRoadRunnerAutonomous extends RoadRunnerAutonomousBunyipsOpMo
     }
 
     @Override
-    protected void onQueueReady(@Nullable OpModeSelection selectedOpMode) {
+    protected void onReady(@Nullable OpModeSelection selectedOpMode) {
         // You have access to a range of RoadRunner methods here, primary one being addNewTrajectory
 //        addNewTrajectory()
 //                .lineToLinearHeading(...)
@@ -45,13 +45,15 @@ public class ExampleRoadRunnerAutonomous extends RoadRunnerAutonomousBunyipsOpMo
 //                .build();
         addNewTrajectory(new Pose2d(0, 0, 0))
                 .forward(Inches.convertFrom(1234, Millimeters))
-                .buildWithPriority();
+                .withPriority(PriorityLevel.FIRST)
+                .build();
         addNewTrajectory()
-                .buildWithLowPriority();
+                .withPriority(PriorityLevel.LAST)
+                .build();
         // These methods are syntactic sugar for the following:
-//        addTask(new RoadRunnerTask<>(0, drive, drive.trajectoryBuilder().lineToLinearHeading(...).splineTo(...).splineTo(...).splineTo(...).build()));
-        // where using buildWithPriority() will add the task to the front of the queue (addTaskFirst()), and
-        // buildWithLowPriority() will add the task to the back of the queue (addTaskLast())
+//        addTask(new RoadRunnerTask<>(Task.INFINITE_TIMEOUT, drive, drive.trajectoryBuilder().lineToLinearHeading(...).splineTo(...).splineTo(...).splineTo(...).build()));
+        // where using FIRST priority will add the task to the front of the queue (addTaskFirst()), and
+        // LAST priority will add the task to the back of the queue (addTaskLast())
 
         // It is recommended to use the syntactic sugar methods and this class with RoadRunner, as they are more readable and less error prone
         // See the definition of this class to see all the methods available to you

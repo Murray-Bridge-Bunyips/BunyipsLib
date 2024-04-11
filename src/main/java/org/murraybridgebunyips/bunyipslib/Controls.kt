@@ -250,6 +250,7 @@ enum class Controls {
                     Analog.RIGHT_STICK_X,
                     Analog.RIGHT_STICK_Y
                 )
+
                 AnalogGroup.TRIGGERS -> arrayOf(Analog.LEFT_TRIGGER, Analog.RIGHT_TRIGGER)
                 AnalogGroup.ALL -> Analog.values()
             }

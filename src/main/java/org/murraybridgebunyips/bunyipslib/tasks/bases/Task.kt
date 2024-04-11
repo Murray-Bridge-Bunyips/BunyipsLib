@@ -247,4 +247,12 @@ abstract class Task(
                 return Nanoseconds.of(0.0)
             return Nanoseconds.of((System.nanoTime() - startTime).toDouble())
         }
+
+    companion object {
+        /**
+         * Timeout value for an infinite task that will run forever.
+         */
+        @JvmField
+        val INFINITE_TIMEOUT: Measure<Time> = Task.INFINITE_TIMEOUT
+    }
 }

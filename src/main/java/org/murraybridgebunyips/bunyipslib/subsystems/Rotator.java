@@ -22,9 +22,9 @@ import java.util.function.DoubleSupplier;
 /**
  * Controls a generic holdable arm as a rotator with limited degrees positions.
  *
- * @see HoldableActuator
  * @author Lachlan Paul, 2024
  * @author Lucas Bubner, 2024
+ * @see HoldableActuator
  */
 public class Rotator extends BunyipsSubsystem {
     /**
@@ -55,12 +55,12 @@ public class Rotator extends BunyipsSubsystem {
     /**
      * Create a new ClawRotator
      *
-     * @param motor the motor to use as the rotator
+     * @param motor              the motor to use as the rotator
      * @param ticksPerRevolution the number of ticks per revolution of the motor
-     * @param minDegrees the minimum degrees the rotator can rotate to
-     * @param maxDegrees the maximum degrees the rotator can rotate to
-     * @param lowerPower the lower power clamp
-     * @param upperPower the upper power clamp
+     * @param minDegrees         the minimum degrees the rotator can rotate to
+     * @param maxDegrees         the maximum degrees the rotator can rotate to
+     * @param lowerPower         the lower power clamp
+     * @param upperPower         the upper power clamp
      */
     public Rotator(DcMotorEx motor, double ticksPerRevolution, int minDegrees, int maxDegrees, double lowerPower, double upperPower) {
         MIN_DEGREES = minDegrees;
@@ -75,6 +75,7 @@ public class Rotator extends BunyipsSubsystem {
 
     /**
      * Set the name of the rotator for telemetry.
+     *
      * @param newName the name to set
      * @return this
      */
@@ -94,6 +95,7 @@ public class Rotator extends BunyipsSubsystem {
 
     /**
      * Set the current power of the rotator.
+     *
      * @param targetPower the current targetPower
      * @return the task
      */
@@ -103,6 +105,7 @@ public class Rotator extends BunyipsSubsystem {
 
     /**
      * Set a target power supplier for the rotator.
+     *
      * @param targetPower target power
      * @return a task to set the power
      */
@@ -112,7 +115,8 @@ public class Rotator extends BunyipsSubsystem {
 
     /**
      * Set the degrees target for the rotator, which will run until it reaches the target based on a timeout.
-     * @param angle the target angle
+     *
+     * @param angle   the target angle
      * @param runTime the time to allocate for the rotator to reach the target
      * @return the task
      */
@@ -146,6 +150,7 @@ public class Rotator extends BunyipsSubsystem {
 
     /**
      * Set the degrees target for the rotator, which will run until it reaches the target based on the encoder.
+     *
      * @param angle the target angle
      * @return the task
      */
@@ -181,9 +186,10 @@ public class Rotator extends BunyipsSubsystem {
     /**
      * Run the rotator for a certain amount of time with certain power.
      * This can be used as a homing task, passing resetAfter as true will reset the encoder after the task.
-     * @param time the time to run for
+     *
+     * @param time        the time to run for
      * @param targetPower the power to run at
-     * @param resetAfter whether to reset the rotator encoder after the task
+     * @param resetAfter  whether to reset the rotator encoder after the task
      * @return the task
      */
     public Task runForTask(Measure<Time> time, double targetPower, boolean resetAfter) {

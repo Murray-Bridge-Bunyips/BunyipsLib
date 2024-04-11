@@ -107,6 +107,7 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
     }
 
     // Kotlin compatibility, the `in` token is a reserved keyword
+
     /**
      * Converts this measure to a measure with a different unit of the same type, eg minutes to
      * seconds. Converting to the same unit is equivalent to calling {@link #magnitude()}.
