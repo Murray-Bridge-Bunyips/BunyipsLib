@@ -156,17 +156,17 @@ public class Rotator extends BunyipsSubsystem {
      */
     public Task gotoTask(Measure<Angle> angle) {
         return new NoTimeoutTask(this, true) {
+            // TODO: doesnt like to run without continuous interaction
             @Override
             protected void init() {
                 lockout = true;
-                pivot.set(angle);
-                pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                pivot.setPower(1.0);
             }
 
             @Override
             protected void periodic() {
-                // no-op
+                pivot.set(angle);
+                pivot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                pivot.setPower(1.0);
             }
 
             @Override
@@ -177,10 +177,9 @@ public class Rotator extends BunyipsSubsystem {
 
             @Override
             protected boolean isTaskFinished() {
-                // TODO: Test, may need to manually calculate error brackets
                 return !pivot.isBusy();
             }
-        }.withName("SetDegreesTimeTask");
+        }.withName("SetDegreesGotoTask");
     }
 
     /**

@@ -56,7 +56,7 @@ public class MoveToContourTask<T extends BunyipsSubsystem> extends Task {
      * @param rotationController    the PID controller for the rotational movement
      */
     public MoveToContourTask(Gamepad gamepad, T drive, MultiColourThreshold processors, PIDController translationController, PIDController rotationController) {
-        super(Task.INFINITE_TIMEOUT, drive, false);
+        super(INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToContourTask must be used with a drivetrain with X forward Pose/IMU info");
         this.drive = (RoadRunnerDrive) drive;

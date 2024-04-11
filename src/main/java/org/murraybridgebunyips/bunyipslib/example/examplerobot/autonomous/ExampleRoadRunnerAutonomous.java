@@ -51,7 +51,7 @@ public class ExampleRoadRunnerAutonomous extends RoadRunnerAutonomousBunyipsOpMo
                 .withPriority(PriorityLevel.LAST)
                 .build();
         // These methods are syntactic sugar for the following:
-//        addTask(new RoadRunnerTask<>(Task.INFINITE_TIMEOUT, drive, drive.trajectoryBuilder().lineToLinearHeading(...).splineTo(...).splineTo(...).splineTo(...).build()));
+//        addTask(new RoadRunnerTask<>(INFINITE_TIMEOUT, drive, drive.trajectoryBuilder().lineToLinearHeading(...).splineTo(...).splineTo(...).splineTo(...).build()));
         // where using FIRST priority will add the task to the front of the queue (addTaskFirst()), and
         // LAST priority will add the task to the back of the queue (addTaskLast())
 

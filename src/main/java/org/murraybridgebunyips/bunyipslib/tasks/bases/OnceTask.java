@@ -7,11 +7,11 @@ import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
  */
 public abstract class OnceTask extends Task {
     protected OnceTask() {
-        super(Task.INFINITE_TIMEOUT);
+        super(INFINITE_TIMEOUT);
     }
 
     protected OnceTask(BunyipsSubsystem dependencySubsystem, boolean override) {
-        super(Task.INFINITE_TIMEOUT, dependencySubsystem, override);
+        super(INFINITE_TIMEOUT, dependencySubsystem, override);
     }
 
     @Override

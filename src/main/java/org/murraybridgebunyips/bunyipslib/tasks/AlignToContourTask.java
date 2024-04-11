@@ -45,7 +45,7 @@ public class AlignToContourTask<T extends BunyipsSubsystem> extends Task {
      * @param controller the PID controller to use for aligning to a target
      */
     public AlignToContourTask(Gamepad gamepad, T drive, MultiColourThreshold processors, PIDController controller) {
-        super(Task.INFINITE_TIMEOUT, drive, false);
+        super(INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToContourTask must be used with a drivetrain with X forward Pose/IMU info");
         this.drive = (RoadRunnerDrive) drive;

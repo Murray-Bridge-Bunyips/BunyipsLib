@@ -9,10 +9,10 @@ import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
  */
 public abstract class NoTimeoutTask extends Task {
     protected NoTimeoutTask() {
-        super(Task.INFINITE_TIMEOUT);
+        super(INFINITE_TIMEOUT);
     }
 
     protected NoTimeoutTask(@NonNull BunyipsSubsystem dependencySubsystem, boolean override) {
-        super(Task.INFINITE_TIMEOUT, dependencySubsystem, override);
+        super(INFINITE_TIMEOUT, dependencySubsystem, override);
     }
 }

@@ -20,7 +20,7 @@ public class StartEndTask extends Task {
      * @param onEnd   the callback to run when the task finishes
      */
     public StartEndTask(Runnable onStart, Runnable onEnd) {
-        this(Task.INFINITE_TIMEOUT, onStart, onEnd);
+        this(INFINITE_TIMEOUT, onStart, onEnd);
     }
 
     /**

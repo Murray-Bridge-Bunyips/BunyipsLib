@@ -5,6 +5,7 @@ import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem
 import org.murraybridgebunyips.bunyipslib.external.units.Measure
 import org.murraybridgebunyips.bunyipslib.external.units.Time
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds
+import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
 import java.util.Optional
 
 /**
@@ -253,6 +254,6 @@ abstract class Task(
          * Timeout value for an infinite task that will run forever.
          */
         @JvmField
-        val INFINITE_TIMEOUT: Measure<Time> = Task.INFINITE_TIMEOUT
+        val INFINITE_TIMEOUT: Measure<Time> = Seconds.zero()
     }
 }

@@ -5,7 +5,6 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanosecond
 
 import androidx.annotation.NonNull;
 
-import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 
 /**
@@ -26,14 +25,14 @@ public class MovingAverageTimer {
     private long movingTotal;
     private long previousTime;
     private long runningTotal;
-    private Measure<Time> movingAverage;
-    private Measure<Time> minMovingAverage = Nanoseconds.of(Double.MAX_VALUE);
-    private Measure<Time> maxMovingAverage = Nanoseconds.of(Double.MIN_VALUE);
-    private Measure<Time> average;
-    private Measure<Time> minAverage = Nanoseconds.of(Double.MAX_VALUE);
-    private Measure<Time> maxAverage = Nanoseconds.of(Double.MIN_VALUE);
-    private Measure<Time> minLoopTime = Nanoseconds.of(Double.MAX_VALUE);
-    private Measure<Time> maxLoopTime = Nanoseconds.of(Double.MIN_VALUE);
+    private double movingAverage;
+    private double minMovingAverage = Double.MAX_VALUE;
+    private double maxMovingAverage = Double.MIN_VALUE;
+    private double average;
+    private double minAverage = Double.MAX_VALUE;
+    private double maxAverage = Double.MIN_VALUE;
+    private double minLoopTime = Double.MAX_VALUE;
+    private double maxLoopTime = Double.MIN_VALUE;
 
     /**
      * Create a new MovingAverageTimer with a ring buffer size of 100 and a resolution of milliseconds.
@@ -77,8 +76,8 @@ public class MovingAverageTimer {
         previousTime = System.nanoTime();
         movingTotal = 0;
         runningTotal = 0;
-        movingAverage = Nanoseconds.zero();
-        average = Nanoseconds.zero();
+        movingAverage = 0;
+        average = 0;
     }
 
     /**
@@ -90,12 +89,12 @@ public class MovingAverageTimer {
         previousTime = now;
 
         if (loopCount > 0) {
-            minLoopTime = Nanoseconds.of(Math.min(minLoopTime.in(Nanoseconds), loopTime));
-            maxLoopTime = Nanoseconds.of(Math.max(maxLoopTime.in(Nanoseconds), loopTime));
+            minLoopTime = Math.min(minLoopTime, loopTime);
+            maxLoopTime = Math.max(maxLoopTime, loopTime);
         }
 
         // Adjust the running total
-        movingTotal -= loopTimeRingBuffer[ringBufferIndex] + loopTime;
+        movingTotal = movingTotal - loopTimeRingBuffer[ringBufferIndex] + loopTime;
         runningTotal += loopTime;
 
         // Add the new value
@@ -109,30 +108,30 @@ public class MovingAverageTimer {
 
         if (loopCount < ringBufferSize) {
             if (loopCount == 0) {
-                movingAverage = Nanoseconds.zero();
+                movingAverage = 0.0;
             } else {
-                movingAverage = Nanoseconds.of((double) movingTotal / loopCount);
+                movingAverage = (double) movingTotal / loopCount;
             }
             // Temporarily fill the min/max movingAverage
-            minMovingAverage = Nanoseconds.of(Math.min(minMovingAverage.in(Nanoseconds), movingAverage.in(Nanoseconds)));
-            maxMovingAverage = Nanoseconds.of(Math.max(maxMovingAverage.in(Nanoseconds), movingAverage.in(Nanoseconds)));
+            minMovingAverage = Math.min(minMovingAverage, movingAverage);
+            maxMovingAverage = Math.max(maxMovingAverage, movingAverage);
 
         } else {
-            movingAverage = Nanoseconds.of((double) movingTotal / ringBufferSize);
+            movingAverage = (double) movingTotal / ringBufferSize;
 
             // Reset the min/max movingAverage values the each time the buffer is filled
             if (ringBufferIndex == 0) {
                 minMovingAverage = movingAverage;
                 maxMovingAverage = movingAverage;
             } else {
-                minMovingAverage = Nanoseconds.of(Math.min(minMovingAverage.in(Nanoseconds), movingAverage.in(Nanoseconds)));
-                maxMovingAverage = Nanoseconds.of(Math.max(maxMovingAverage.in(Nanoseconds), movingAverage.in(Nanoseconds)));
+                minMovingAverage = Math.min(minMovingAverage, movingAverage);
+                maxMovingAverage = Math.max(maxMovingAverage, movingAverage);
             }
         }
 
-        average = Nanoseconds.of((double) runningTotal / loopCount);
-        minAverage = Nanoseconds.of(Math.min(minAverage.in(Nanoseconds), average.in(Nanoseconds)));
-        maxAverage = Nanoseconds.of(Math.min(maxAverage.in(Nanoseconds), average.in(Nanoseconds)));
+        average = (double) runningTotal / loopCount;
+        minAverage = Math.min(minAverage, average);
+        maxAverage = Math.max(maxAverage, average);
     }
 
     /**
@@ -155,7 +154,7 @@ public class MovingAverageTimer {
      * @return the moving average loop time
      */
     public double movingAverage(Time unit) {
-        return movingAverage.in(unit);
+        return Nanoseconds.of(movingAverage).in(unit);
     }
 
     /**
@@ -163,7 +162,7 @@ public class MovingAverageTimer {
      * @return the minimum moving average loop time
      */
     public double minMovingAverage(Time unit) {
-        return minMovingAverage.in(unit);
+        return Nanoseconds.of(minMovingAverage).in(unit);
     }
 
     /**
@@ -171,7 +170,7 @@ public class MovingAverageTimer {
      * @return the maximum moving average loop time
      */
     public double maxMovingAverage(Time unit) {
-        return maxMovingAverage.in(unit);
+        return Nanoseconds.of(maxMovingAverage).in(unit);
     }
 
     /**
@@ -186,7 +185,7 @@ public class MovingAverageTimer {
      * @return the average loop time
      */
     public double average(Time unit) {
-        return average.in(unit);
+        return Nanoseconds.of(average).in(unit);
     }
 
     /**
@@ -194,7 +193,7 @@ public class MovingAverageTimer {
      * @return the minimum average loop time
      */
     public double minAverage(Time unit) {
-        return minAverage.in(unit);
+        return Nanoseconds.of(minAverage).in(unit);
     }
 
     /**
@@ -202,7 +201,7 @@ public class MovingAverageTimer {
      * @return the maximum average loop time
      */
     public double maxAverage(Time unit) {
-        return maxAverage.in(unit);
+        return Nanoseconds.of(maxAverage).in(unit);
     }
 
     /**
@@ -210,7 +209,7 @@ public class MovingAverageTimer {
      * @return the minimum loop time
      */
     public double minLoopTime(Time unit) {
-        return minLoopTime.in(unit);
+        return Nanoseconds.of(minLoopTime).in(unit);
     }
 
     /**
@@ -218,7 +217,7 @@ public class MovingAverageTimer {
      * @return the maximum loop time
      */
     public double maxLoopTime(Time unit) {
-        return maxLoopTime.in(unit);
+        return Nanoseconds.of(maxLoopTime).in(unit);
     }
 
     /**

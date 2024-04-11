@@ -81,7 +81,7 @@ public final class Units {
     public static final Time Microsecond = Microseconds; // Singularised alias
 
     /** 1/1,000,000,000 of a {@link #Seconds Second}. */
-    public static final Time Nanoseconds = Micro(Microseconds);
+    public static final Time Nanoseconds = Micro(Milliseconds);
 
     /** Alias for {@link #Nanoseconds} to make combined unit definitions read more smoothly. */
     public static final Time Nanosecond = Nanoseconds; // Singularised alias
