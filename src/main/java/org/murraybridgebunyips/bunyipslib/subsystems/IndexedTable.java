@@ -13,7 +13,8 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  */
 public class IndexedTable extends BunyipsSubsystem {
     private final double[] tableValues;
-    private String name = null;
+    // Name of the table for telemetry, default "Index Table"
+    private String NAME = null;
     private int index = 0;
 
     /**
@@ -32,7 +33,7 @@ public class IndexedTable extends BunyipsSubsystem {
      * @return this
      */
     public IndexedTable withName(String displayName) {
-        name = displayName;
+        NAME = displayName;
         return this;
     }
 
@@ -111,7 +112,7 @@ public class IndexedTable extends BunyipsSubsystem {
     protected void periodic() {
         opMode.addTelemetry(
                 "%: % (%/%)",
-                name != null ? "Idx-" + name : "Index Table",
+                NAME != null ? "Idx-" + NAME : "Index Table",
                 tableValues[index],
                 index + 1,
                 tableValues.length

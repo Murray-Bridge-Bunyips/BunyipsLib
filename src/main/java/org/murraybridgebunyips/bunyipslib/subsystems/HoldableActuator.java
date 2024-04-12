@@ -26,10 +26,14 @@ public class HoldableActuator extends BunyipsSubsystem {
     private double HOLDING_POWER = 1.0;
     // Power to move the actuator when in auto mode
     private double MOVING_POWER = 0.7;
+    // targetPosition tolerance in encoder ticks, default of 10
+    private int TOLERANCE = 10;
+    // Name of the actuator for telemetry
+    private String NAME = "Actuator";
+
     private DcMotorEx motor;
     private double power;
     private boolean lockout;
-    private String name = "Actuator";
 
     /**
      * @param motor the motor to control as the actuator
@@ -53,7 +57,18 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return this
      */
     public HoldableActuator withName(String newName) {
-        name = newName;
+        NAME = newName;
+        return this;
+    }
+
+    /**
+     * Set the target tolerance of the actuator.
+     *
+     * @param tolerance the tolerance to set in encoder ticks
+     * @return this
+     */
+    public HoldableActuator withTolerance(int tolerance) {
+        TOLERANCE = tolerance;
         return this;
     }
 
@@ -166,7 +181,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
             @Override
             public boolean isTaskFinished() {
-                return !motor.isBusy();
+                return !motor.isBusy() && Math.abs(targetPosition - motor.getCurrentPosition()) < TOLERANCE;
             }
         }.withName("RunToPositionTask");
     }
@@ -179,10 +194,13 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     public Task deltaTask(int deltaPosition) {
         return new NoTimeoutTask(this, true) {
+            private int target;
+
             @Override
             public void init() {
                 lockout = true;
-                motor.setTargetPosition(motor.getCurrentPosition() + deltaPosition);
+                target = motor.getCurrentPosition() + deltaPosition;
+                motor.setTargetPosition(target);
                 motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 motor.setPower(MOVING_POWER);
             }
@@ -199,7 +217,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
             @Override
             public boolean isTaskFinished() {
-                return !motor.isBusy();
+                return !motor.isBusy() && Math.abs(target - motor.getCurrentPosition()) < TOLERANCE;
             }
         }.withName("DeltaPositionTask");
     }
@@ -207,7 +225,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     @Override
     protected void periodic() {
         if (lockout) {
-            opMode.addTelemetry("%: MOVING to %/% ticks", name, motor.getTargetPosition(), motor.getCurrentPosition());
+            opMode.addTelemetry("%: MOVING to %/% ticks", NAME, motor.getTargetPosition(), motor.getCurrentPosition());
             return;
         }
 
@@ -222,6 +240,6 @@ public class HoldableActuator extends BunyipsSubsystem {
             motor.setPower(power);
         }
 
-        opMode.addTelemetry("%: % at % ticks", name, power == 0.0 ? "HOLDING" : "MOVING", motor.getCurrentPosition());
+        opMode.addTelemetry("%: % at % ticks", NAME, power == 0.0 ? "HOLDING" : "MOVING", motor.getCurrentPosition());
     }
 }

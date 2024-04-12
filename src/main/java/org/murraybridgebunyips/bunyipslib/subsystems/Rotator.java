@@ -27,46 +27,35 @@ import java.util.function.DoubleSupplier;
  * @see HoldableActuator
  */
 public class Rotator extends BunyipsSubsystem {
-    /**
-     * Encoder lower limit in degrees
-     */
-    private final int MIN_DEGREES;
+    // Encoder lower limit angle
+    private Measure<Angle> MIN_LIMIT = Degrees.of(Double.MIN_VALUE);
 
-    /**
-     * Encoder upper limit in degrees
-     */
-    private final int MAX_DEGREES;
+    // Encoder upper limit angle
+    private Measure<Angle> MAX_LIMIT = Degrees.of(Double.MAX_VALUE);
 
-    /**
-     * Lower power clamp
-     */
-    private final double LOWER_POWER;
+    // Lower power clamp
+    private double LOWER_POWER = -1.0;
 
-    /**
-     * Upper power clamp
-     */
-    private final double UPPER_POWER;
+    // Upper power clamp
+    private double UPPER_POWER = 1.0;
+
+    // Tolerance for the rotator in degrees, default 5
+    private Measure<Angle> TOLERANCE = Degrees.of(5);
+
+    // Name of the rotator for telemetry
+    private String NAME = "Rotator";
 
     private PivotMotor pivot;
     private double power;
     private boolean lockout;
-    private String name = "Rotator";
 
     /**
      * Create a new ClawRotator
      *
      * @param motor              the motor to use as the rotator
      * @param ticksPerRevolution the number of ticks per revolution of the motor
-     * @param minDegrees         the minimum degrees the rotator can rotate to
-     * @param maxDegrees         the maximum degrees the rotator can rotate to
-     * @param lowerPower         the lower power clamp
-     * @param upperPower         the upper power clamp
      */
-    public Rotator(DcMotorEx motor, double ticksPerRevolution, int minDegrees, int maxDegrees, double lowerPower, double upperPower) {
-        MIN_DEGREES = minDegrees;
-        MAX_DEGREES = maxDegrees;
-        LOWER_POWER = lowerPower;
-        UPPER_POWER = upperPower;
+    public Rotator(DcMotorEx motor, double ticksPerRevolution) {
         if (!assertParamsNotNull(motor)) return;
         pivot = new PivotMotor(motor, ticksPerRevolution);
         pivot.reset();
@@ -80,7 +69,44 @@ public class Rotator extends BunyipsSubsystem {
      * @return this
      */
     public Rotator withName(String newName) {
-        name = newName;
+        NAME = newName;
+        return this;
+    }
+
+    /**
+     * Set the tolerance for the target angle of the rotator.
+     *
+     * @param tolerance the tolerance to set
+     * @return this
+     */
+    public Rotator withTolerance(Measure<Angle> tolerance) {
+        TOLERANCE = tolerance;
+        return this;
+    }
+
+    /**
+     * Set the upper and lower power clamps for the rotator.
+     *
+     * @param lowerPower the lower power clamp
+     * @param upperPower the upper power clamp
+     * @return this
+     */
+    public Rotator withPowerClamps(double lowerPower, double upperPower) {
+        LOWER_POWER = lowerPower;
+        UPPER_POWER = upperPower;
+        return this;
+    }
+
+    /**
+     * Set the upper and lower angle limits for the rotator.
+     *
+     * @param min the min angle that can be achieved
+     * @param max the max angle that can be achieved
+     * @return this
+     */
+    public Rotator withAngleLimits(Measure<Angle> min, Measure<Angle> max) {
+        MIN_LIMIT = min;
+        MAX_LIMIT = max;
         return this;
     }
 
@@ -156,7 +182,6 @@ public class Rotator extends BunyipsSubsystem {
      */
     public Task gotoTask(Measure<Angle> angle) {
         return new NoTimeoutTask(this, true) {
-            // TODO: doesnt like to run without continuous interaction
             @Override
             protected void init() {
                 lockout = true;
@@ -177,7 +202,8 @@ public class Rotator extends BunyipsSubsystem {
 
             @Override
             protected boolean isTaskFinished() {
-                return !pivot.isBusy();
+                // TODO: test
+                return !pivot.isBusy() && Math.abs(angle.minus(pivot.getCurrent()).in(Degrees)) < TOLERANCE.in(Degrees);
             }
         }.withName("SetDegreesGotoTask");
     }
@@ -226,7 +252,7 @@ public class Rotator extends BunyipsSubsystem {
     protected void periodic() {
         if (lockout) return;
 
-        if ((pivot.getCurrent().in(Degrees) < MIN_DEGREES && power < 0.0) || (pivot.getCurrent().in(Degrees) > MAX_DEGREES && power > 0.0))
+        if ((pivot.getCurrent().lt(MIN_LIMIT) && power < 0.0) || (pivot.getCurrent().gt(MAX_LIMIT) && power > 0.0))
             power = 0.0;
 
         if (power == 0.0) {
@@ -238,6 +264,6 @@ public class Rotator extends BunyipsSubsystem {
             pivot.setPower(power);
         }
 
-        opMode.addTelemetry("%: % <= % <= % degs, % pwr", name, MIN_DEGREES, round(pivot.getCurrent().in(Degrees), 1), MAX_DEGREES, power);
+        opMode.addTelemetry("%: % <= % <= % degs, % pwr", NAME, MIN_LIMIT, round(pivot.getCurrent().in(Degrees), 1), MAX_LIMIT, power);
     }
 }
