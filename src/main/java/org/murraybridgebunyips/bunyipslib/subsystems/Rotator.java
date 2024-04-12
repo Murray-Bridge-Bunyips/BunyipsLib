@@ -202,7 +202,6 @@ public class Rotator extends BunyipsSubsystem {
 
             @Override
             protected boolean isTaskFinished() {
-                // TODO: test
                 return !pivot.isBusy() && Math.abs(angle.minus(pivot.getCurrent()).in(Degrees)) < TOLERANCE.in(Degrees);
             }
         }.withName("SetDegreesGotoTask");

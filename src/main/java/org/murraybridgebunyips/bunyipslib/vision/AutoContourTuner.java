@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
+import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
 import org.murraybridgebunyips.bunyipslib.vision.data.VisionData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.ColourThreshold;
 import org.opencv.core.Mat;
@@ -30,8 +31,8 @@ public abstract class AutoContourTuner extends BunyipsOpMode {
             Vision.CAMERA_WIDTH / 3,
             Vision.CAMERA_HEIGHT / 3,
             // Default of 1/3 of the camera view
-            Vision.CAMERA_WIDTH * 2 / 3,
-            Vision.CAMERA_HEIGHT * 2 / 3
+            Vision.CAMERA_WIDTH / 3,
+            Vision.CAMERA_HEIGHT / 3
     );
 
     protected abstract ColourThreshold setThresholdToTune();
@@ -68,9 +69,12 @@ public abstract class AutoContourTuner extends BunyipsOpMode {
 
     @Override
     protected void activeLoop() {
-        // TODO: Fitting max contour to fittingRect dimensions
-
         vision.update();
+
+        ContourData biggestContour = ContourData.getLargest(processor.getData());
+        if (biggestContour == null) return;
+
+        // TODO: fitting bounding boxes positions and size
     }
 
     private class RectangleAid extends Processor<VisionData> {
