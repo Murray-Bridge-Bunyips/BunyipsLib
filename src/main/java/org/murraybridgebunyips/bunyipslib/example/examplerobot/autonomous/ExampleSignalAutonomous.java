@@ -24,7 +24,7 @@ public class ExampleSignalAutonomous extends AutonomousBunyipsOpMode {
     private Vision cam;
 
     @Override
-    protected void onInitialisation() {
+    protected void onInitialise() {
         config.init();
         cam = new Vision(config.webcam);
         initTask = new GetSignalTask(cam);

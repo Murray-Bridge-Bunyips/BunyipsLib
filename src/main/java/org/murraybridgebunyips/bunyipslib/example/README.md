@@ -28,7 +28,7 @@ vision, command-based paradigms, and more.
 View the BOM.png image in this directory to view what methods are available to use in a
 BunyipsOpMode, or look at specific implementations of OpModes such as AutonomousBunyipsOpMode,
 CommandBasedBunyipsOpMode,
-and RoadRunnerAutonomousBunyipsOpMode.
+and RoadRunner (an interface for AutonomousBunyipsOpMode).
 
 Each `robot` package contains classes and objects that are specific to that robot. This includes
 their configuration, OpModes, and components specific to that robot.

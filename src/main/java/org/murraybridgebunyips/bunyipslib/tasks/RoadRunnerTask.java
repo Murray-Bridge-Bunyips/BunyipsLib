@@ -17,7 +17,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 /**
  * Task for running RoadRunner trajectories using the BunyipsOpMode Task system.
- * This is the task that is used for all RoadRunner tasks in RoadRunnerAutonomousBunyipsOpMode.
+ * This is the task that is used for all RoadRunner tasks in the RoadRunner interface.
  *
  * @param <T> The type of RoadRunnerDrive to be used
  * @author Lucas Bubner, 2023

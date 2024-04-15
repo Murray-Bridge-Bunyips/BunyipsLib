@@ -87,7 +87,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Call to add subsystems that should be managed by the Scheduler. This is required to be
-     * called in the onInitialisation() method, otherwise your subsystems will not be updated.
+     * called in the onInitialise() method, otherwise your subsystems will not be updated.
      *
      * @param subsystems the subsystems to be managed and updated by the Scheduler
      */
@@ -100,7 +100,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     @Override
     protected final void onInit() {
-        onInitialisation();
+        onInitialise();
         scheduler = new Scheduler();
         if (managedSubsystems == null || managedSubsystems.isEmpty()) {
             throw new RuntimeException("No BunyipsSubsystems were added in the addSubsystems() method!");
@@ -123,7 +123,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * Runs upon the pressing of the INIT button on the Driver Station.
      * This is where you should initialise your hardware and other components.
      */
-    protected abstract void onInitialisation();
+    protected abstract void onInitialise();
 
     /**
      * Assign your scheduler commands here by accessing the {@link #scheduler()}.

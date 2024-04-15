@@ -3,35 +3,34 @@ package org.murraybridgebunyips.bunyipslib.example.examplerobot.autonomous;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Millimeters;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import org.murraybridgebunyips.bunyipslib.AutonomousBunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.OpModeSelection;
-import org.murraybridgebunyips.bunyipslib.RoadRunnerAutonomousBunyipsOpMode;
+import org.murraybridgebunyips.bunyipslib.RoadRunner;
 import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
 import org.murraybridgebunyips.bunyipslib.example.examplerobot.components.ExampleConfig;
+import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 
 /**
  * Example RoadRunner autonomous OpMode for a robot with a tank drive.
  */
-public class ExampleRoadRunnerAutonomous extends RoadRunnerAutonomousBunyipsOpMode<TankDrive> {
+public class ExampleRoadRunnerAutonomous extends AutonomousBunyipsOpMode implements RoadRunner {
     // This class is an extension of AutonomousBunyipsOpMode that allows integrated RoadRunner methods
     // Read ExampleAutonomous.java for more information on AutonomousBunyipsOpMode
 
-    // Ensure to set the generic type for RoadRunnerAutonomousBunyipsOpMode to your drive class
-    // In this instance, we are using a TankDrive, so we set the generic type to TankDrive
-    // Drive classes must extend RoadRunnerDrive, defined in BunyipsLib
-
     // Define configurations as normal
     private final ExampleConfig config = new ExampleConfig();
+    private TankDrive drive;
 
     @Override
     protected void onInitialise() {
         config.init();
-        // No further configuration is required here for setting up drive systems, see setDrive()
-        // You can also define your drive here if you wish, but using setDrive() is recommended
-        // drive = new TankDrive(...);
+        // Configure your systems as normal...
+        drive = new TankDrive(config.driveConstants, config.coefficients, config.imu, config.leftFrontMotor, config.rightFrontMotor, config.leftBackMotor, config.rightBackMotor);
     }
 
     @Override
@@ -56,17 +55,16 @@ public class ExampleRoadRunnerAutonomous extends RoadRunnerAutonomousBunyipsOpMo
         // LAST priority will add the task to the back of the queue (addTaskLast())
 
         // It is recommended to use the syntactic sugar methods and this class with RoadRunner, as they are more readable and less error prone
-        // See the definition of this class to see all the methods available to you
+        // See the definition of this interface to see all the methods available to you
     }
 
-    // The major difference in RoadRunnerAutonomousBunyipsOpMode is that you delegate the drive class
-    // to RoadRunner, so you don't need to implement the drive class yourself.
-    // If you would like to access your drive methods, which is unlikely, you can instead pass an
-    // instance of your drive class here or directly define `drive` in onInitialisation.
+    // The major difference in this variant is that you delegate the drive class
+    // to RoadRunner, so you don't need to manage the drive class yourself
     // This method mainly exists for the sake of avoiding headaches by forgetting to set the drive
-    // instance, leading to runtime errors. This method will be called after onInitialisation.
+    // instance, leading to runtime errors. This method will be called after onInitialise.
+    @NonNull
     @Override
-    protected TankDrive setDrive() {
-        return new TankDrive(config.driveConstants, config.coefficients, config.imu, config.leftFrontMotor, config.rightFrontMotor, config.leftBackMotor, config.rightBackMotor);
+    public RoadRunnerDrive getDrive() {
+        return drive;
     }
 }

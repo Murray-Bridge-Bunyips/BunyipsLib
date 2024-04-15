@@ -125,7 +125,7 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
     private MultiColourThreshold pixels;
 
     @Override
-    protected void onInitialisation() {
+    protected void onInitialise() {
         config.init();
 
         drive = new DualDeadwheelMecanumDrive(...);
@@ -201,95 +201,99 @@ public class RunArmFor extends Task {
 All with full RoadRunner utilities, runtime OpMode selectors, and much more.
 
 ```java
-
 @Autonomous(name = "Place a Pixel")
-public class MyPlacePixelAuto extends RoadRunnerAutonomousBunyipsOpMode<MecanumDrive> {
-    private final MyBotConfig config = new MyBotConfig();
+public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRunner {
+   private final MyBotConfig config = new MyBotConfig();
+   private DualDeadwheelMecanumDrive drive;
 
-    private MyArm arm;
-    private Vision vision;
-    private PurplePixel purplePixelProcessor;
-    private WhitePixel whitePixelProcessor;
+   private MyArm arm;
+   private Vision vision;
+   private PurplePixel purplePixelProcessor;
+   private WhitePixel whitePixelProcessor;
 
-    private YourInitTask initTask;
+   private YourInitTask initTask;
 
-    @Override
-    protected void onInitialise() {
-        config.init();
+   @Override
+   protected void onInitialise() {
+      config.init();
 
-        vision = new Vision(...);
-        arm = new MyArm(...);
+      drive = new DualDeadwheelMecanumDrive(...);
+      vision = new Vision(...);
+      arm = new MyArm(...);
 
-        vision.init(purplePixelProcessor, whitePixelProcessor);
-        vision.start(whitePixelProcessor);
+      vision.init(purplePixelProcessor, whitePixelProcessor);
+      vision.start(whitePixelProcessor);
 
-        // Optionally send all feeds to FtcDashboard, can switch between processor feeds for debugging
-        // vision.startPreview();
+      // Optionally send all feeds to FtcDashboard, can switch between processor feeds for debugging
+      // vision.startPreview();
 
-        telemetry.add("Hello world!"); // Custom telemetry object to provide joint FtcDashboard/DS telemetry
-        telemetry.addRetained("Greetings, world.");
-       
-       // Full support for any object to use as a selection, including enums
-       // This will be automatically shown on the init-cycle.
-       setOpModes(
-               "PARK",
-               "GO_TWICE",
-               "SABOTAGE_ALLIANCE",
-               "STOP"
-       );
-       
-       setInitTask(initTask);
-    }
+      telemetry.add("Hello world!"); // Custom telemetry object to provide joint FtcDashboard/DS telemetry
+      telemetry.addRetained("Greetings, world.");
 
-    @Override
-    protected MecanumDrive setDrive() {
-        return new DualDeadwheelMecanumDrive(...);
-    }
+      // Full support for any object to use as a selection, including enums
+      // This will be automatically shown on the init-cycle.
+      setOpModes(
+              "PARK",
+              "GO_TWICE",
+              "SABOTAGE_ALLIANCE",
+              "STOP"
+      );
 
-    @Override
-    protected void onInitDone() {
-        switch (initTask.getSpikeResult()) {
-            case LEFT:
-                // RoadRunner trajectory to get to the Spike Mark
-                addNewTrajectory(...);
-                break;
-            // ...
-        }
-        vision.stop(whitePixelProcessor);
-    }
+      setInitTask(initTask);
+   }
 
-    @Override
-    protected void onReady(@Nullable OpModeSelection selectedOpMode) {
-        addTask(new RunTask(() -> vision.start(purplePixelProcessor));
+   @NotNull
+   @Override
+   public MecanumDrive getDrive() {
+      // Passes the drive to the RoadRunner interface to provide
+      // utility methods for fast, reusable, and efficient trajectory generation
+      return drive;
+   }
 
-        // Full RoadRunner support with utility methods such as addNewTrajectory()
-        addNewTrajectory(new Pose2d(11.40, -62.00, Math.toRadians(180.00)))
-                .lineToLinearHeading(new Pose2d(16.40, -48.10, Math.toRadians(90.00)))
-                .lineToLinearHeading(new Pose2d(11.71, -34.52, Math.toRadians(90.00)))
-                .build();
+   @Override
+   protected void onInitDone() {
+      switch (initTask.getSpikeResult()) {
+         case LEFT:
+            // RoadRunner trajectory to get to the Spike Mark
+            addNewTrajectory(...);
+            break;
+         // ...
+      }
+      vision.stop(whitePixelProcessor);
+   }
 
-        // Interchangeable tasks between TeleOp commands and Autonomous tasks using overloads
-        // This makes tasks reusable and easier to write, where you can define your own tasks just as quick
-        addTask(new MoveToContourTask<>(5, drive, purplePixel, new PIDController(1, 0.25, 0)));
+   @Override
+   protected void onReady(@Nullable OpModeSelection selectedOpMode) {
+      addTask(new RunTask(() -> vision.start(purplePixelProcessor));
 
-        addTask(new RunTask(() -> arm.drop());
+      // Full RoadRunner support with utility methods such as addNewTrajectory()
+      addNewTrajectory(new Pose2d(11.40, -62.00, Math.toRadians(180.00)))
+              .lineToLinearHeading(new Pose2d(16.40, -48.10, Math.toRadians(90.00)))
+              .lineToLinearHeading(new Pose2d(11.71, -34.52, Math.toRadians(90.00)))
+              .build();
 
-        switch (selectedOpMode.toString()) {
-            case "PARK":
-                addTask(...);
-                break;
-            case "GO_TWICE":
-                addTask(new SequentialTaskGroup(..., ..., ...));
-                break;
-            case "SABOTAGE_ALLIANCE":
-                // BunyipsLib offers full automatic exception catching and debug logging
-                // with support for exceptions that can emergency stop an OpMode as well
-                throw new EmergencyStop("You have been banished for being a traitor.");
-            default:
-            case "STOP":
-                break;
-        }
-    }
+      // Interchangeable tasks between TeleOp commands and Autonomous tasks using overloads
+      // This makes tasks reusable and easier to write, where you can define your own tasks just as quick
+      addTask(new MoveToContourTask<>(5, drive, purplePixel, new PIDController(1, 0.25, 0)));
+
+      addTask(new RunTask(() -> arm.drop());
+
+      switch (selectedOpMode.toString()) {
+         case "PARK":
+            addTask(...);
+            break;
+         case "GO_TWICE":
+            addTask(new SequentialTaskGroup(..., ..., ...));
+            break;
+         case "SABOTAGE_ALLIANCE":
+            // BunyipsLib offers full automatic exception catching and debug logging
+            // with support for exceptions that can emergency stop an OpMode as well
+            throw new EmergencyStop("You have been banished for being a traitor.");
+         default:
+         case "STOP":
+            break;
+      }
+   }
 }
 ```
 

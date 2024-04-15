@@ -18,8 +18,8 @@ import org.murraybridgebunyips.bunyipslib.tasks.WaitTask;
  */
 public class ExampleAutonomous extends AutonomousBunyipsOpMode {
     // This class extends BunyipsOpMode, which is the base class for all OpModes in BunyipsLib
-    // If you need to use RoadRunner, it is recommended to use RoadRunnerAutonomousBunyipsOpMode,
-    // which is the variant of this class that allows for RoadRunner methods to be used with special
+    // If you need to use RoadRunner, it is recommended to implement the RoadRunner interface as well,
+    // which is an interface that allows for RoadRunner methods to be used with special
     // methods such as addNewTrajectory()
 
     // The primary difference between AutonomousBunyipsOpMode and BunyipsOpMode is that looping
@@ -35,7 +35,7 @@ public class ExampleAutonomous extends AutonomousBunyipsOpMode {
     // caution when overriding custom methods. Most cases you will be fine to use the abstract methods of
     // AutonomousBunyipsOpMode, but if you need to override a method, check the definition first.
 
-    // You will define your components as normal here, and initialise them in onInitialisation()
+    // You will define your components as normal here, and initialise them in onInitialise()
     // This procedure is exactly the same as a normal BunyipsOpMode
     private final ExampleConfig config = new ExampleConfig();
     // All components and tasks must be instantiated during runtime, and not in the constructor or member fields.
@@ -43,7 +43,7 @@ public class ExampleAutonomous extends AutonomousBunyipsOpMode {
     private ExampleLift lift;
 
     @Override
-    protected void onInitialisation() {
+    protected void onInitialise() {
         config.init();
         drive = new CartesianMecanumDrive(config.leftFrontMotor, config.rightFrontMotor, config.leftBackMotor, config.rightBackMotor);
         lift = new ExampleLift(config.liftMotor);

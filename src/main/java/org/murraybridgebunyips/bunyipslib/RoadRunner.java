@@ -2,7 +2,6 @@ package org.murraybridgebunyips.bunyipslib;
 
 import static org.murraybridgebunyips.bunyipslib.tasks.bases.Task.INFINITE_TIMEOUT;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
@@ -15,73 +14,45 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequence;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.murraybridgebunyips.bunyipslib.tasks.RoadRunnerTask;
-import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask;
 
 import java.util.ArrayList;
 
 /**
- * RoadRunnerAutonomousBunyipsOpMode (RRABOM, nickname "Rabone").
- * Superset of {@link AutonomousBunyipsOpMode} that integrates RoadRunner trajectories into the task queue through
- * utility methods such as {@code addNewTrajectory}.
+ * RoadRunner utility interface for autonomous OpModes. Implement this interface in a {@link AutonomousBunyipsOpMode}.
+ * Do not override any of the default methods in this interface, as they are used for RoadRunner task scheduling.
+ * <p>
+ * Previously named RoadRunnerAutonomousBunyipsOpMode (RRABOM, nickname "Rabone").
+ * <p>
+ * <i>This interface may also be used in a normal {@link BunyipsOpMode}, however all the {@code addTrajectory} related methods
+ * will not work as they require the presence of {@link AutonomousBunyipsOpMode}.</i>
  *
- * @param <T> RoadRunner drive instance
- * @author Lucas Bubner, 2023
- * @see BunyipsOpMode
+ * @author Lucas Bubner, 2024
+ * @noinspection InterfaceMayBeAnnotatedFunctional
+ * @see AutonomousBunyipsOpMode
  */
-@Config
-public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDrive> extends AutonomousBunyipsOpMode {
+public interface RoadRunner extends RoadRunnerDriveInstance {
     /**
      * Default timeout for all RoadRunner tasks, if not explicitly mentioned.
      */
-    public static Measure<Time> DEFAULT_TIMEOUT = INFINITE_TIMEOUT;
-    private final ArrayList<RoadRunnerTask<T>> rrTasks = new ArrayList<>();
-
+    Measure<Time> DEFAULT_TIMEOUT = INFINITE_TIMEOUT;
     /**
-     * Drive instance to be used for RoadRunner trajectories.
-     * This is automatically set by the {@link #setDrive()} method, ensuring that the drive instance
-     * is set before any tasks are added to the queue.
-     * <p>
-     * {@code drive = new MecanumDrive(...)}
+     * A list of all RoadRunner tasks that have been scheduled using the RoadRunner methods.
+     * Will be auto-cleared at the start of an {@link AutonomousBunyipsOpMode}.
      */
-    protected T drive;
+    ArrayList<RoadRunnerTask<RoadRunnerDrive>> rrTasks = new ArrayList<>();
 
     /**
-     * Runs upon the pressing of the INIT button on the Driver Station.
-     * This is where your hardware should be initialised. You may also add specific tasks to the queue
-     * here, but it is recommended to use {@link #setInitTask(RobotTask)} or {@link #onReady(OpModeSelection)} instead.
-     */
-    protected abstract void onInitialise();
-
-    /**
-     * Set the drive instance to be used for RoadRunner trajectories. This method ensures
-     * that the drive instance is set to avoid accidental NullPointerExceptions, similar to how
-     * setOpModes and setInitTask are handled. This is called after initialisation, so your config
-     * instance will be available.
+     * Get the last known pose of the drive system, or the last pose from the last trajectory.
      *
-     * @return RoadRunner drive instance, can be instantiated here or as a class member
+     * @return Last known pose of the scheduled tasks or current pose of the drive
      */
-    protected abstract T setDrive();
-
-    @Override
-    protected final void onInitialisation() {
-        onInitialise();
-        assertDrive();
-    }
-
-    private void assertDrive() {
-        if (drive != null) return;
-        drive = setDrive();
-        if (drive == null)
-            throw new NullPointerException("drive instance is not set!");
-    }
-
-    private Pose2d getPreviousPose() {
+    default Pose2d getPreviousPose() {
         // Needed to splice the last pose from the last trajectory
-        return rrTasks.isEmpty() ? drive.getPoseEstimate() : rrTasks.get(rrTasks.size() - 1).getEndPose();
+        return rrTasks.isEmpty() ? getDrive().getPoseEstimate() : rrTasks.get(rrTasks.size() - 1).getEndPose();
     }
 
     /**
-     * STRONGLY RECOMMENDED: Use this method to build a new RoadRunner trajectory to the queue.
+     * Use this method to build a new RoadRunner trajectory to the queue.
      * Creates a new builder for a RoadRunner trajectory, which will automatically add a
      * task to the queue when build() is called, optionally with a timeout control ({@link RoadRunnerTrajectoryTaskBuilder#withTimeout(Measure)}).
      * <p>
@@ -91,16 +62,15 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **, (in, in, rad)
      * @return Builder for the trajectory
      */
-    protected final RoadRunnerTrajectoryTaskBuilder addNewTrajectory(Pose2d startPose) {
-        assertDrive();
+    default RoadRunnerTrajectoryTaskBuilder addNewTrajectory(Pose2d startPose) {
         // noinspection rawtypes
-        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
-        drive.setPoseEstimate(startPose);
-        return new RoadRunnerTrajectoryTaskBuilder(startPose, builder.getBaseVelConstraint(), builder.getBaseAccelConstraint(), builder.getBaseTurnConstraintMaxAngVel(), builder.getBaseTurnConstraintMaxAngAccel());
+        TrajectorySequenceBuilder builder = getDrive().trajectorySequenceBuilder(startPose);
+        getDrive().setPoseEstimate(startPose);
+        return new RoadRunnerTrajectoryTaskBuilder(getDrive(), startPose, builder.getBaseVelConstraint(), builder.getBaseAccelConstraint(), builder.getBaseTurnConstraintMaxAngVel(), builder.getBaseTurnConstraintMaxAngAccel());
     }
 
     /**
-     * STRONGLY RECOMMENDED: Use this method to build a new RoadRunner trajectory to the queue.
+     * Use this method to build a new RoadRunner trajectory to the queue.
      * Creates a new builder for a RoadRunner trajectory, which will automatically add a
      * task to the queue when build() is called, optionally with a timeout control.
      * This method is the combination of {@link #newTrajectorySequence()} and {@link #addTrajectory(TrajectorySequence)},
@@ -110,11 +80,10 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * @return Builder for the trajectory
      * @see #addNewTrajectory(Pose2d)
      */
-    protected final RoadRunnerTrajectoryTaskBuilder addNewTrajectory() {
-        assertDrive();
+    default RoadRunnerTrajectoryTaskBuilder addNewTrajectory() {
         // noinspection rawtypes
-        TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(getPreviousPose());
-        return new RoadRunnerTrajectoryTaskBuilder(getPreviousPose(), builder.getBaseVelConstraint(), builder.getBaseAccelConstraint(), builder.getBaseTurnConstraintMaxAngVel(), builder.getBaseTurnConstraintMaxAngAccel());
+        TrajectorySequenceBuilder builder = getDrive().trajectorySequenceBuilder(getPreviousPose());
+        return new RoadRunnerTrajectoryTaskBuilder(getDrive(), getPreviousPose(), builder.getBaseVelConstraint(), builder.getBaseAccelConstraint(), builder.getBaseTurnConstraintMaxAngVel(), builder.getBaseTurnConstraintMaxAngAccel());
     }
 
     /**
@@ -126,9 +95,8 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * @return Builder for the trajectory
      * @see #newTrajectory(Pose2d)
      */
-    protected final TrajectoryBuilder newTrajectory() {
-        assertDrive();
-        return drive.trajectoryBuilder(getPreviousPose());
+    default TrajectoryBuilder newTrajectory() {
+        return getDrive().trajectoryBuilder(getPreviousPose());
     }
 
     /**
@@ -140,10 +108,9 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **, (in, in, rad)
      * @return Builder for the trajectory
      */
-    protected final TrajectoryBuilder newTrajectory(Pose2d startPose) {
-        assertDrive();
-        drive.setPoseEstimate(startPose);
-        return drive.trajectoryBuilder(startPose);
+    default TrajectoryBuilder newTrajectory(Pose2d startPose) {
+        getDrive().setPoseEstimate(startPose);
+        return getDrive().trajectoryBuilder(startPose);
     }
 
     /**
@@ -156,9 +123,8 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * @see #newTrajectorySequence(Pose2d)
      */
     @SuppressWarnings("rawtypes")
-    protected final TrajectorySequenceBuilder newTrajectorySequence() {
-        assertDrive();
-        return drive.trajectorySequenceBuilder(getPreviousPose());
+    default TrajectorySequenceBuilder newTrajectorySequence() {
+        return getDrive().trajectorySequenceBuilder(getPreviousPose());
     }
 
     /**
@@ -171,10 +137,9 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * @return Builder for the trajectory
      */
     @SuppressWarnings("rawtypes")
-    protected final TrajectorySequenceBuilder newTrajectorySequence(Pose2d startPose) {
-        assertDrive();
-        drive.setPoseEstimate(startPose);
-        return drive.trajectorySequenceBuilder(startPose);
+    default TrajectorySequenceBuilder newTrajectorySequence(Pose2d startPose) {
+        getDrive().setPoseEstimate(startPose);
+        return getDrive().trajectorySequenceBuilder(startPose);
     }
 
     /**
@@ -183,8 +148,8 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * @param trajectory Trajectory to add
      * @return Builder for the task
      */
-    protected final AddTrajectoryBuilder<Trajectory> addTrajectory(Trajectory trajectory) {
-        return new AddTrajectoryBuilder<>(trajectory);
+    default AddTrajectoryBuilder<Trajectory> addTrajectory(Trajectory trajectory) {
+        return new AddTrajectoryBuilder<>(trajectory, getDrive());
     }
 
     /**
@@ -193,34 +158,58 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
      * @param trajectory Trajectory sequence to add
      * @return Builder for the task
      */
-    protected final AddTrajectoryBuilder<TrajectorySequence> addTrajectory(TrajectorySequence trajectory) {
-        return new AddTrajectoryBuilder<>(trajectory);
+    default AddTrajectoryBuilder<TrajectorySequence> addTrajectory(TrajectorySequence trajectory) {
+        return new AddTrajectoryBuilder<>(trajectory, getDrive());
     }
 
     /**
      * Priority representation for building tasks.
-     * LAST: Add the task to the end of the queue after the onReady() init callback has fired
-     * NORMAL: Add the task to the queue immediately (default)
-     * FIRST: Add the task to the front of the queue after the onReady() init callback has fired
      */
-    protected enum PriorityLevel {
+    enum PriorityLevel {
+        /**
+         * Add the task to the end of the queue after the onReady() init callback has fired
+         */
         LAST,
+        /**
+         * Add the task to the queue immediately (default)
+         */
         NORMAL,
+        /**
+         * Add the task to the front of the queue after the onReady() init callback has fired
+         */
         FIRST//® Tech Challenge
     }
 
-    protected final class AddTrajectoryBuilder<S> {
+    /**
+     * Builder class for adding a trajectory to the task queue. This will not work in a normal {@link BunyipsOpMode}.
+     * This doesn't need to be used directly, as the {@link #addTrajectory(Trajectory)} method will handle this functionality.
+     *
+     * @param <S> Trajectory type
+     */
+    final class AddTrajectoryBuilder<S> {
         private final S trajectory;
+        private final RoadRunnerDrive drive;
         private Measure<Time> timeout = DEFAULT_TIMEOUT;
         private PriorityLevel priority = PriorityLevel.NORMAL;
         private String name = null;
 
-        public AddTrajectoryBuilder(S trajectory) {
+        /**
+         * Create a new builder for adding a trajectory to the task queue.
+         *
+         * @param trajectory Trajectory to add
+         * @param drive      Drive system to use
+         */
+        public AddTrajectoryBuilder(S trajectory, RoadRunnerDrive drive) {
             if (trajectory == null)
                 throw new NullPointerException("trajectory cannot be null!");
+            if (drive == null)
+                throw new NullPointerException("drive cannot be null!");
+            if (!BunyipsOpMode.isRunning() || !(BunyipsOpMode.getInstance() instanceof AutonomousBunyipsOpMode))
+                throw new IllegalStateException("RoadRunner Task additions can only be used in an AutonomousBunyipsOpMode!");
             if (!(trajectory instanceof Trajectory) && !(trajectory instanceof TrajectorySequence))
                 throw new EmergencyStop("trajectory must be a Trajectory or TrajectorySequence!");
             this.trajectory = trajectory;
+            this.drive = drive;
         }
 
         /**
@@ -260,8 +249,7 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
          * Add the trajectory to the task queue based on the builder arguments.
          */
         public void build() {
-            assertDrive();
-            RoadRunnerTask<T> task = null;
+            RoadRunnerTask<RoadRunnerDrive> task = null;
             if (trajectory instanceof Trajectory) {
                 task = new RoadRunnerTask<>(timeout, drive, (Trajectory) trajectory);
             } else if (trajectory instanceof TrajectorySequence) {
@@ -270,15 +258,16 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
             assert task != null;
             task.withName(name);
             rrTasks.add(task);
+            // We can assume we are in an AutonomousBunyipsOpMode as the constructor already checks for this
             switch (priority) {
                 case LAST:
-                    addTaskLast(task);
+                    ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTaskLast(task);
                     break;
                 case NORMAL:
-                    addTask(task);
+                    ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTask(task);
                     break;
                 case FIRST:
-                    addTaskFirst(task);
+                    ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTaskFirst(task);
                     break;
             }
         }
@@ -286,18 +275,45 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
 
     /**
      * Builder class for a RoadRunner trajectory, which supports adding the trajectory to the Task queue.
+     * This class may be used outside of an {@link AutonomousBunyipsOpMode} to build a trajectory sequence, but
+     * cannot be used to add the sequence to the task queue.
+     * This doesn't need to be used directly, as the {@link #newTrajectory()} method will handle this functionality.
      */
-    protected final class RoadRunnerTrajectoryTaskBuilder extends TrajectorySequenceBuilder<RoadRunnerTrajectoryTaskBuilder> {
+    final class RoadRunnerTrajectoryTaskBuilder extends TrajectorySequenceBuilder<RoadRunnerTrajectoryTaskBuilder> {
+        private final RoadRunnerDrive drive;
         private Measure<Time> timeout = DEFAULT_TIMEOUT;
         private PriorityLevel priority = PriorityLevel.NORMAL;
         private String name = null;
 
-        public RoadRunnerTrajectoryTaskBuilder(Pose2d startPose, Double startTangent, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel) {
+        /**
+         * Create a new builder for a RoadRunner trajectory task.
+         *
+         * @param drive                         Drive system to use
+         * @param startPose                     Starting pose of the trajectory (in, in, rad)
+         * @param startTangent                  Starting tangent of the trajectory (rad)
+         * @param baseVelConstraint             Base velocity constraint (in/s)
+         * @param baseAccelConstraint           Base acceleration constraint (in/s^2)
+         * @param baseTurnConstraintMaxAngVel   Base turn constraint max angular velocity (rad/s)
+         * @param baseTurnConstraintMaxAngAccel Base turn constraint max angular acceleration (rad/s^2)
+         */
+        public RoadRunnerTrajectoryTaskBuilder(RoadRunnerDrive drive, Pose2d startPose, Double startTangent, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel) {
             super(startPose, startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
+            this.drive = drive;
         }
 
-        public RoadRunnerTrajectoryTaskBuilder(Pose2d startPose, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel) {
+        /**
+         * Create a new builder for a RoadRunner trajectory task.
+         *
+         * @param drive                         Drive system to use
+         * @param startPose                     Starting pose of the trajectory (in, in, rad)
+         * @param baseVelConstraint             Base velocity constraint
+         * @param baseAccelConstraint           Base acceleration constraint
+         * @param baseTurnConstraintMaxAngVel   Base turn constraint max angular velocity
+         * @param baseTurnConstraintMaxAngAccel Base turn constraint max angular acceleration
+         */
+        public RoadRunnerTrajectoryTaskBuilder(RoadRunnerDrive drive, Pose2d startPose, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel) {
             super(startPose, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
+            this.drive = drive;
         }
 
         /**
@@ -339,12 +355,36 @@ public abstract class RoadRunnerAutonomousBunyipsOpMode<T extends RoadRunnerDriv
         }
 
         /**
-         * Build the trajectory sequence and add it to the task queue with default priority.
+         * Build the trajectory sequence without adding it to the task queue.
+         * This method is useful if you are not running an {@link AutonomousBunyipsOpMode}.
+         * @return The built trajectory sequence from the builder
+         */
+        public TrajectorySequence buildOnlyTrajectory() {
+            return super.build();
+        }
+
+        /**
+         * Build the trajectory sequence and task, without adding it to a task queue.
+         * This method is useful if you are not running an {@link AutonomousBunyipsOpMode}, but still want to
+         * use the task system to run the trajectory with your own implementation.
+         * @return The built task.
+         */
+        public RoadRunnerTask<RoadRunnerDrive> buildOnlyTask() {
+            TrajectorySequence sequence = super.build();
+            RoadRunnerTask<RoadRunnerDrive> task = new RoadRunnerTask<>(timeout, drive, sequence);
+            task.withTimeout(timeout);
+            task.withName(name);
+            return task;
+        }
+
+        /**
+         * Build the trajectory sequence and add it to the task queue.
+         * This method will only work in an {@link AutonomousBunyipsOpMode}.
          */
         @Override
         public TrajectorySequence build() {
             TrajectorySequence sequence = super.build();
-            AddTrajectoryBuilder<TrajectorySequence> builder = new AddTrajectoryBuilder<>(sequence);
+            AddTrajectoryBuilder<TrajectorySequence> builder = new AddTrajectoryBuilder<>(sequence, drive);
             builder.withTimeout(timeout)
                     .withPriority(priority)
                     .withName(name)

@@ -14,10 +14,11 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@link BunyipsOpMode} variant for Autonomous operation using the {@link Task} system for a queued action OpMode.
+ * {@link BunyipsOpMode} variant for Autonomous operation. Uses the {@link Task} system for a queued action OpMode.
  *
  * @author Lucas Bubner, 2023
  * @author Lachlan Paul, 2023
+ * @see RoadRunner
  * @see BunyipsOpMode
  */
 public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
@@ -63,8 +64,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     @Override
     protected final void onInit() {
+        // If the user is using RoadRunner, clear the task list for them as it may be reused
+        RoadRunner.rrTasks.clear();
         // Run user-defined hardware initialisation
-        onInitialisation();
+        onInitialise();
         if (initTask == null) {
             log("auto: initTask is null, skipping.");
         }
@@ -138,7 +141,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Run code in a loop AFTER {@link #onInitialisation()} has completed, until
+     * Run code in a loop AFTER {@link #onInitialise()} has completed, until
      * start is pressed on the Driver Station or the {@link #setInitTask initTask} is done.
      * If not implemented, the OpMode will try to run your initTask, and if that is null,
      * the {@code dynamic_init} phase will be skipped.
@@ -305,7 +308,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * This is where your hardware should be initialised. You may also add specific tasks to the queue
      * here, but it is recommended to use {@link #setInitTask(RobotTask)} or {@link #onReady(OpModeSelection)} instead.
      */
-    protected abstract void onInitialisation();
+    protected abstract void onInitialise();
 
     /**
      * Call to define your OpModeSelections, if you list any, then the user will be prompted to select
@@ -356,7 +359,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Set a task that will run as an init-task. This will run
-     * after your {@link #onInitialisation()} has completed, allowing you to initialise hardware first.
+     * after your {@link #onInitialise()} has completed, allowing you to initialise hardware first.
      * This is an optional method.
      * <p>
      * You should store any running variables inside the task itself, and keep the instance of the task
