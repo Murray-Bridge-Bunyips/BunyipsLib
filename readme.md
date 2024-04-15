@@ -291,7 +291,7 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
 
         // Interchangeable tasks between TeleOp commands and Autonomous tasks using overloads
         // This makes tasks reusable and easier to write, where you can define your own tasks just as quick
-        addTask(new MoveToContourTask<>(5, drive, purplePixel, new PIDController(1, 0.25, 0)));
+        addTask(new MoveToContourTask<>(Seconds.of(5), drive, purplePixel, new PIDController(1, 0.25, 0)));
 
         addTask(() -> arm.drop());
 
