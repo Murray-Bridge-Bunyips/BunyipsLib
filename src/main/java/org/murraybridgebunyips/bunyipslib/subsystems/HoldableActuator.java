@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
+import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.ContinuousTask;
@@ -150,6 +151,38 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     // TODO: Task for running the actuator until it can detect it is homed
+    // They didn't go big :(
+    public Task homeTask() {
+        return new NoTimeoutTask() {
+            double veloc;
+            int youCanCheckNow = 0;
+            @Override
+            protected void init() {
+                motor.setPower(MOVING_POWER);
+                motor.setTargetPosition(-3000);
+                veloc = motor.getVelocity();
+                Dbg.log(veloc);
+            }
+
+            @Override
+            protected void periodic() {
+                motor.setTargetPosition(-3000);
+                veloc = motor.getVelocity();
+                Dbg.log(veloc);
+                youCanCheckNow++;
+            }
+
+            @Override
+            protected void onFinish() {
+                Dbg.log("home task is DONE");
+            }
+
+            @Override
+            protected boolean isTaskFinished() {
+                return veloc > -50;
+            }
+        }.withName("homeTask");
+    }
 
     /**
      * Set the position of the actuator.
