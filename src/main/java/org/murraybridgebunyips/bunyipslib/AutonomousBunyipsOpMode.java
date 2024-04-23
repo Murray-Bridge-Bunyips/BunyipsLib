@@ -9,7 +9,6 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -324,9 +323,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *     // Use `StartingPositions.use();` for using the four Robot starting positions
      * }</pre>
      */
-    protected final void setOpModes(@Nullable Object... selectableOpModes) {
+    protected final void setOpModes(@Nullable List<Object> selectableOpModes) {
         if (selectableOpModes == null) return;
-        setOpModes(Arrays.asList(selectableOpModes));
+        setOpModes(selectableOpModes.toArray(new Object[0]));
     }
 
 
@@ -344,15 +343,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *     // Use `StartingPositions.use();` for using the four Robot starting positions
      * }</pre>
      */
-    protected final void setOpModes(@Nullable List<Object> selectableOpModes) {
-        if (selectableOpModes != null) {
-            opModes.clear();
-            for (Object selectableOpMode : selectableOpModes) {
-                if (selectableOpMode instanceof OpModeSelection) {
-                    opModes.add((OpModeSelection) selectableOpMode);
-                } else {
-                    opModes.add(new OpModeSelection(selectableOpMode));
-                }
+    protected final void setOpModes(@Nullable Object... selectableOpModes) {
+        if (selectableOpModes == null) return;
+        opModes.clear();
+        for (Object selectableOpMode : selectableOpModes) {
+            if (selectableOpMode instanceof OpModeSelection) {
+                opModes.add((OpModeSelection) selectableOpMode);
+            } else {
+                opModes.add(new OpModeSelection(selectableOpMode));
             }
         }
     }
