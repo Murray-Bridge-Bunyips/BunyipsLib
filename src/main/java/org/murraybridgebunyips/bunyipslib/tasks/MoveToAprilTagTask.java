@@ -13,8 +13,9 @@ import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
-import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
+import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
 
@@ -29,7 +30,7 @@ import java.util.function.DoubleSupplier;
  * @author Lucas Bubner, 2024
  */
 @Config
-public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask {
+public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends Task {
     /**
      * The desired distance from the tag.
      */
@@ -59,17 +60,39 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
      */
     public static double MAX_AUTO_TURN = 0.3;
     /**
+     * Tolerance of the error for the robot to stop the task in an Autonomous context.
+     */
+    public static double AUTO_FINISH_ERROR_TOLERANCE = 0.1;
+    /**
      * The tag to target. -1 for any tag.
      */
     public static int TARGET_TAG = -1;
 
     private final RoadRunnerDrive drive;
     private final AprilTag aprilTag;
-    private final DoubleSupplier x;
-    private final DoubleSupplier y;
-    private final DoubleSupplier r;
+    private DoubleSupplier x;
+    private DoubleSupplier y;
+    private DoubleSupplier r;
 
-    // TODO: Autonomous constructor
+    private double rangeError;
+    private double yawError;
+    private double headingError;
+
+    /**
+     * Autonomous constructor.
+     *
+     * @param timeout   the timeout for the task
+     * @param drive     the drivetrain to use
+     * @param aprilTag  the AprilTag processor to use
+     * @param targetTag the tag to target. -1 for any tag
+     */
+    public MoveToAprilTagTask(Measure<Time> timeout, T drive, AprilTag aprilTag, int targetTag) {
+        super(timeout, drive, false);
+        if (!(drive instanceof RoadRunnerDrive))
+            throw new EmergencyStop("MoveToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
+        this.drive = (RoadRunnerDrive) drive;
+        this.aprilTag = aprilTag;
+    }
 
     /**
      * TeleOp constructor with default values.
@@ -82,7 +105,7 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
      * @param targetTag the tag to target. -1 for any tag
      */
     public MoveToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, T drive, AprilTag aprilTag, int targetTag) {
-        super(drive, false);
+        super(INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
         this.drive = (RoadRunnerDrive) drive;
@@ -95,9 +118,9 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
     /**
      * TeleOp constructor using a default Mecanum binding.
      *
-     * @param gamepad  the gamepad to use for driving
-     * @param drive    the drivetrain to use
-     * @param aprilTag the AprilTag processor to use
+     * @param gamepad   the gamepad to use for driving
+     * @param drive     the drivetrain to use
+     * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */
     public MoveToAprilTagTask(Gamepad gamepad, T drive, AprilTag aprilTag, int targetTag) {
@@ -106,6 +129,7 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     /**
      * Set the desired distance from the tag.
+     *
      * @param desiredDistance the desired distance from the tag
      * @return this
      */
@@ -116,6 +140,7 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     /**
      * Set the forward speed gain for the distance error.
+     *
      * @param speedGain the speed gain for the distance error
      * @return this
      */
@@ -126,6 +151,7 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     /**
      * Set the strafe gain for the yaw error.
+     *
      * @param strafeGain the strafe gain for the yaw error
      * @return this
      */
@@ -136,6 +162,7 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     /**
      * Set the turn gain for the heading error.
+     *
      * @param turnGain the turn gain for the heading error
      * @return this
      */
@@ -146,6 +173,7 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     /**
      * Set the maximum speed the robot can move at.
+     *
      * @param maxAutoSpeed the maximum speed the robot can move at
      * @return this
      */
@@ -156,6 +184,7 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     /**
      * Set the maximum strafe the robot can move at.
+     *
      * @param maxAutoStrafe the maximum strafe the robot can move at
      * @return this
      */
@@ -166,6 +195,7 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     /**
      * Set the maximum turn the robot can move at.
+     *
      * @param maxAutoTurn the maximum turn the robot can move at
      * @return this
      */
@@ -176,6 +206,7 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
 
     /**
      * Set the tag ID to target. -1 for any tag.
+     *
      * @param targetTag the tag ID to target
      * @return this
      */
@@ -202,9 +233,9 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
             return;
         }
 
-        double rangeError = (target.get().getRange() - DESIRED_DISTANCE.in(Inches)) * SPEED_GAIN;
-        double yawError = -target.get().getYaw() * STRAFE_GAIN;
-        double headingError = target.get().getBearing() * TURN_GAIN;
+        rangeError = (target.get().getRange() - DESIRED_DISTANCE.in(Inches)) * SPEED_GAIN;
+        yawError = -target.get().getYaw() * STRAFE_GAIN;
+        headingError = target.get().getBearing() * TURN_GAIN;
 
         drive.setWeightedDrivePower(
                 new Pose2d(
@@ -218,5 +249,10 @@ public class MoveToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask 
     @Override
     protected void onFinish() {
 //        drive.setSpeedUsingController(0, 0, 0);
+    }
+
+    @Override
+    protected boolean isTaskFinished() {
+        return x == null && Math.abs(rangeError) < AUTO_FINISH_ERROR_TOLERANCE && Math.abs(yawError) < AUTO_FINISH_ERROR_TOLERANCE && Math.abs(headingError) < AUTO_FINISH_ERROR_TOLERANCE;
     }
 }

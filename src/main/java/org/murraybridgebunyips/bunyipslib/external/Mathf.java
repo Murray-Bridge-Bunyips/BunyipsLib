@@ -86,6 +86,37 @@ public final class Mathf {
     }
 
     /**
+     * Scale a number in the range of {@code x1} to {@code x2}, to the range of {@code y1} to {@code y2}.
+     *
+     * @param n number to scale
+     * @param x1 lower bound range of n
+     * @param x2 upper bound range of n
+     * @param y1 lower bound of scale
+     * @param y2 upper bound of scale
+     * @return a double scaled to a value between y1 and y2, inclusive
+     */
+    public static double scale(double n, double x1, double x2, double y1, double y2) {
+        double m = (y1 - y2) / (x1 - x2);
+        double c = y1 - x1 * (y1 - y2) / (x1 - x2);
+        // y = mx + c
+        return m * n + c;
+    }
+
+    /**
+     * Scale a number in the range of {@code x1} to {@code x2}, to the range of {@code y1} to {@code y2}.
+     *
+     * @param n number to scale
+     * @param x1 lower bound range of n
+     * @param x2 upper bound range of n
+     * @param y1 lower bound of scale
+     * @param y2 upper bound of scale
+     * @return a float scaled to a value between y1 and y2, inclusive
+     */
+    public static float scale(float n, float x1, float x2, float y1, float y2) {
+        return (float) scale((double) n, x1, x2, y1, y2);
+    }
+
+    /**
      * Returns 0.0 if the given value is within the specified range around zero. The remaining range
      * between the deadband and the maximum magnitude is scaled from 0.0 to the maximum magnitude.
      *

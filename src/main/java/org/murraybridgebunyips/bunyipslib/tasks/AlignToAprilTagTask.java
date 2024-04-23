@@ -9,8 +9,10 @@ import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
+import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
-import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
+import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
 
@@ -25,7 +27,7 @@ import java.util.function.DoubleSupplier;
  * @author Lucas Bubner, 2024
  */
 @Config
-public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask {
+public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
     /**
      * PID coefficients for the alignment controller.
      */
@@ -33,12 +35,28 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask
 
     private final RoadRunnerDrive drive;
     private final AprilTag at;
-    private final DoubleSupplier x;
-    private final DoubleSupplier y;
-    private final DoubleSupplier r;
     private final PIDController controller;
+    private DoubleSupplier x;
+    private DoubleSupplier y;
+    private DoubleSupplier r;
 
-    // TODO: Autonomous constructor
+    /**
+     * Autonomous constructor.
+     *
+     * @param timeout the timeout for the task
+     * @param drive the drivetrain to use
+     * @param at the AprilTag processor to use
+     * @param controller the PID controller to use for aligning to a target
+     */
+    public AlignToAprilTagTask(Measure<Time> timeout, T drive, AprilTag at, PIDController controller) {
+        super(timeout, drive, false);
+        if (!(drive instanceof RoadRunnerDrive))
+            throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
+        this.drive = (RoadRunnerDrive) drive;
+        this.at = at;
+        this.controller = controller;
+        controller.updatePID(PID);
+    }
 
     /**
      * TeleOp constructor.
@@ -51,7 +69,7 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask
      * @param controller the PID controller to use for aligning to a target
      */
     public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, T drive, AprilTag at, PIDController controller) {
-        super(drive, false);
+        super(INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
         this.drive = (RoadRunnerDrive) drive;
@@ -86,7 +104,9 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask
         // FtcDashboard live tuning
         controller.setPID(PID);
 
-        Pose2d pose = Controls.makeRobotPose(x.getAsDouble(), y.getAsDouble(), r.getAsDouble());
+        Pose2d pose = new Pose2d();
+        if (x != null)
+            pose = Controls.makeRobotPose(x.getAsDouble(), y.getAsDouble(), r.getAsDouble());
 
         List<AprilTagData> data = at.getData();
 
@@ -108,5 +128,10 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends ForeverTask
     @Override
     protected void onFinish() {
 //        drive.setSpeedUsingController(0, 0, 0);
+    }
+
+    @Override
+    protected boolean isTaskFinished() {
+        return x == null && controller.atSetPoint();
     }
 }

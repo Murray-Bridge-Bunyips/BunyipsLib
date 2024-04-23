@@ -150,6 +150,10 @@ public class HoldableActuator extends BunyipsSubsystem {
         }.withName("RunForTask");
     }
 
+    /**
+     * Home the actuator based on encoder tick velocity against a hard stop.
+     * @return a task to home the actuator
+     */
     // TODO: Task for running the actuator until it can detect it is homed
     // They didn't go big :(
     public Task homeTask() {
