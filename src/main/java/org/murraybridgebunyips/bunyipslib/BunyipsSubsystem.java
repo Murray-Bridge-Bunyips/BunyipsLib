@@ -1,8 +1,10 @@
 package org.murraybridgebunyips.bunyipslib;
 
+import static org.murraybridgebunyips.bunyipslib.Text.formatString;
 import static org.murraybridgebunyips.bunyipslib.Text.round;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.murraybridgebunyips.bunyipslib.tasks.IdleTask;
@@ -20,6 +22,12 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     private Task defaultTask = new IdleTask();
     private boolean shouldRun = true;
     private boolean assertionFailed = false;
+
+    @Override
+    @NonNull
+    public String toString() {
+        return formatString("%%(%): %", assertionFailed ? "[error] " : "", getClass().getSimpleName(), shouldRun ? "enabled" : "disabled", getCurrentTask());
+    }
 
     /**
      * Utility function to run NullSafety.assertComponentArgs() on the given parameters, usually on
@@ -114,7 +122,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             return false;
 
         if (currentTask == null) {
-            Dbg.warn(getClass(), "Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated via update() or by the Scheduler.");
+            Dbg.warn(getClass(), "Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated via update() or by the addSubsystems() calls of the Scheduler or AutonomousBunyipsOpMode.");
             currentTask = defaultTask;
         }
 
@@ -171,7 +179,8 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
 
     /**
      * Update the subsystem and run the current task, if tasks are not set up this will just call {@link #periodic()}.
-     * This method should be called if you are running this subsystem manually, otherwise it will be called by the Scheduler.
+     * This method should be called if you are running this subsystem manually, otherwise it will be called by the {@link Scheduler}
+     * or by {@link AutonomousBunyipsOpMode}.
      */
     public final void update() {
         if (!shouldRun) return;
