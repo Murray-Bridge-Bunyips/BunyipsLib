@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.ContinuousTask;
@@ -29,6 +28,8 @@ public class HoldableActuator extends BunyipsSubsystem {
     private double MOVING_POWER = 0.7;
     // targetPosition tolerance in encoder ticks, default of 10
     private int TOLERANCE = 10;
+    // Number of zero hits required for Home Task
+    private int ZERO_HIT_THRESHOLD = 30;
     // Name of the actuator for telemetry
     private String NAME = "Actuator";
 
@@ -70,6 +71,17 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     public HoldableActuator withTolerance(int tolerance) {
         TOLERANCE = tolerance;
+        return this;
+    }
+
+    /**
+     * Set the zero hit threshold manually.
+     *
+     * @param threshold the new threshold to use
+     * @return this
+     */
+    public HoldableActuator withZeroHitThreshold(int threshold) {
+        ZERO_HIT_THRESHOLD = threshold;
         return this;
     }
 
@@ -158,34 +170,34 @@ public class HoldableActuator extends BunyipsSubsystem {
     // They didn't go big :(
     public Task homeTask() {
         return new NoTimeoutTask() {
-            double veloc;
-            int youCanCheckNow = 0;
+            double zeroHits = 0;
+
             @Override
             protected void init() {
-                motor.setPower(MOVING_POWER);
-                motor.setTargetPosition(-3000);
-                veloc = motor.getVelocity();
-                Dbg.log(veloc);
+                lockout = true;
+                motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                motor.setPower(-MOVING_POWER);
             }
 
             @Override
             protected void periodic() {
-                motor.setTargetPosition(-3000);
-                veloc = motor.getVelocity();
-                Dbg.log(veloc);
-                youCanCheckNow++;
+                if (motor.getVelocity() >= 0) {
+                    zeroHits++;
+                } else {
+                    zeroHits = 0;
+                }
             }
 
             @Override
             protected void onFinish() {
-                Dbg.log("home task is DONE");
+                lockout = false;
             }
 
             @Override
             protected boolean isTaskFinished() {
-                return veloc > -50;
+                return zeroHits > ZERO_HIT_THRESHOLD;
             }
-        }.withName("homeTask");
+        }.withName("HomeTask");
     }
 
     /**
