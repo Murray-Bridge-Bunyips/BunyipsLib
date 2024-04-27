@@ -21,6 +21,8 @@ import org.murraybridgebunyips.bunyipslib.tasks.RoadRunnerTask;
 
 import java.util.ArrayList;
 
+import kotlin.NotImplementedError;
+
 /**
  * RoadRunner utility interface for autonomous OpModes. Implement this interface in a {@link AutonomousBunyipsOpMode}.
  * Do not override any of the default methods in this interface, as they are used for RoadRunner task scheduling.
@@ -44,6 +46,20 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * Will be auto-cleared at the start of an {@link AutonomousBunyipsOpMode}.
      */
     ArrayList<RoadRunnerTask<RoadRunnerDrive>> rrTasks = new ArrayList<>();
+
+    /**
+     * Mirror a {@link Trajectory}, which will effectively "flip" over the y-axis from the center of the field.
+     * This method is useful for trajectories that need to be run in the opposite direction, such as a Red Left trajectory
+     * being flipped to a Blue Right trajectory.
+     *
+     * @param trajectory Trajectory to flip
+     * @see #newTrajectory()
+     * @return Flipped trajectory
+     */
+    default Trajectory mirror(Trajectory trajectory) {
+        // TODO
+        throw new NotImplementedError();
+    }
 
     /**
      * Get the last known pose of the drive system, or the last pose from the last trajectory.
