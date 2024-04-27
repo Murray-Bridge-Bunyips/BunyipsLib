@@ -79,7 +79,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * This method is the combination of {@link #newTrajectorySequence()} and {@link #addTrajectory(TrajectorySequence)},
      * using a custom builder that supports {@code setTimeout()} and priority building.
      *
-     * @param startPoseInchRad Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **, (in, in, radians)
+     * @param startPoseInchRad Starting pose of the trajectory, <b>WILL SET DRIVE POSE ESTIMATE TO THIS POSE</b>, (in, in, radians)
      * @return Builder for the trajectory
      */
     default RoadRunnerTrajectoryTaskBuilder addNewTrajectory(Pose2d startPoseInchRad) {
@@ -98,7 +98,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * This method is the combination of {@link #newTrajectorySequence()} and {@link #addTrajectory(TrajectorySequence)},
      * using a custom builder that supports {@code setTimeout()} and priority building.
      *
-     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **
+     * @param startPose Starting pose of the trajectory, <b>WILL SET DRIVE POSE ESTIMATE TO THIS POSE</b>
      * @param inUnit    The unit of the end pose vector (will be converted to inches)
      * @param angleUnit The unit of the end pose heading (will be converted to radians)
      * @return Builder for the trajectory
@@ -146,7 +146,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * integrated task building, or if you prefer you can use {@link #addTrajectory(Trajectory)}
      * to add your sequence to the queue manually.
      *
-     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **, (in, in, radians)
+     * @param startPose Starting pose of the trajectory, <b>WILL SET DRIVE POSE ESTIMATE TO THIS POSE</b>, (in, in, radians)
      * @return Builder for the trajectory
      */
     default TrajectoryBuilder newTrajectory(Pose2d startPose) {
@@ -160,7 +160,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * integrated task building, or if you prefer you can use {@link #addTrajectory(Trajectory)}
      * to add your sequence to the queue manually.
      *
-     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **
+     * @param startPose Starting pose of the trajectory, <b>WILL SET DRIVE POSE ESTIMATE TO THIS POSE</b>
      * @param inUnit    The unit of the end pose vector (will be converted to inches)
      * @param angleUnit The unit of the end pose heading (will be converted to radians)
      * @return Builder for the trajectory
@@ -192,7 +192,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * integrated task building, or if you prefer you can use {@link #addTrajectory(TrajectorySequence)}
      * to add your sequence to the queue manually.
      *
-     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **, (in, in, radians)
+     * @param startPose Starting pose of the trajectory, <b>WILL SET DRIVE POSE ESTIMATE TO THIS POSE</b>, (in, in, radians)
      * @return Builder for the trajectory
      */
     @SuppressWarnings("rawtypes")
@@ -207,7 +207,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * integrated task building, or if you prefer you can use {@link #addTrajectory(TrajectorySequence)}
      * to add your sequence to the queue manually.
      *
-     * @param startPose Starting pose of the trajectory, ** WILL SET DRIVE POSE ESTIMATE TO THIS POSE **
+     * @param startPose Starting pose of the trajectory, <b>WILL SET DRIVE POSE ESTIMATE TO THIS POSE</b>
      * @param inUnit    The unit of the end pose vector (will be converted to inches)
      * @param angleUnit The unit of the end pose heading (will be converted to radians)
      * @return Builder for the trajectory
@@ -324,9 +324,30 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         }
 
         /**
-         * Add the trajectory to the task queue based on the builder arguments.
+         * Build the task, without adding it to a task queue.
+         * This method is useful if you wish to run this task as part of a task group, and to handle when you want this
+         * task to run at your own discretion.
+         * <p>
+         * This task will be added to the global poses list, so the next implicitly created trajectory will
+         * start from the end of this one.
+         *
+         * @see #buildOnlyTask(boolean)
+         * @return The built task.
          */
-        public void build() {
+        public RoadRunnerTask<RoadRunnerDrive> buildOnlyTask() {
+            return buildOnlyTask(true);
+        }
+
+        /**
+         * Build the task, without adding it to a task queue.
+         * This method is useful if you wish to run this task as part of a task group, and to handle when you want this
+         * task to run at your own discretion.
+         *
+         * @param addToGlobalPoses Whether to add the trajectory to the rrTasks list, therefore making the next implicit
+         *                         trajectory start from the end of this one
+         * @return The built task.
+         */
+        public RoadRunnerTask<RoadRunnerDrive> buildOnlyTask(boolean addToGlobalPoses) {
             RoadRunnerTask<RoadRunnerDrive> task = null;
             if (trajectory instanceof Trajectory) {
                 task = new RoadRunnerTask<>(timeout, drive, (Trajectory) trajectory);
@@ -335,7 +356,16 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
             }
             assert task != null;
             task.withName(name);
-            rrTasks.add(task);
+            if (addToGlobalPoses)
+                rrTasks.add(task);
+            return task;
+        }
+
+        /**
+         * Add the trajectory to the task queue based on the builder arguments.
+         */
+        public void build() {
+            RoadRunnerTask<RoadRunnerDrive> task = buildOnlyTask(true);
             // We can assume we are in an AutonomousBunyipsOpMode as the constructor already checks for this
             switch (priority) {
                 case LAST:
@@ -433,7 +463,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         }
 
         /**
-         * Build the trajectory sequence without adding it to the task queue.
+         * Build the trajectory sequence without adding it to the task queue automatically.
          * This method is useful if you are not running an {@link AutonomousBunyipsOpMode}.
          *
          * @return The built trajectory sequence from the builder
@@ -442,18 +472,40 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
             return super.build();
         }
 
+
         /**
-         * Build the trajectory sequence and task, without adding it to a task queue.
+         * Build the trajectory sequence and task, without adding it to the task queue automatically.
          * This method is useful if you are not running an {@link AutonomousBunyipsOpMode}, but still want to
-         * use the task system to run the trajectory with your own implementation.
+         * use the task system to run the trajectory with your own implementation, or if you are running this task
+         * as part of groups or other task systems.
+         * <p>
+         * This task will be added to the global poses list, so the next implicitly created trajectory will
+         * start from the end of this one.
          *
+         * @see #buildOnlyTask(boolean)
          * @return The built task.
          */
         public RoadRunnerTask<RoadRunnerDrive> buildOnlyTask() {
+            return buildOnlyTask(true);
+        }
+
+        /**
+         * Build the trajectory sequence and task, without adding it to the task queue automatically.
+         * This method is useful if you are not running an {@link AutonomousBunyipsOpMode}, but still want to
+         * use the task system to run the trajectory with your own implementation, or if you are running this task
+         * as part of groups or other task systems.
+         *
+         * @param addToGlobalPoses Whether to add the trajectory to the rrTasks list, therefore making the next implicit
+         *                         trajectory start from the end of this one
+         * @return The built task.
+         */
+        public RoadRunnerTask<RoadRunnerDrive> buildOnlyTask(boolean addToGlobalPoses) {
             TrajectorySequence sequence = super.build();
             RoadRunnerTask<RoadRunnerDrive> task = new RoadRunnerTask<>(timeout, drive, sequence);
             task.withTimeout(timeout);
             task.withName(name);
+            if (addToGlobalPoses)
+                rrTasks.add(task);
             return task;
         }
 
