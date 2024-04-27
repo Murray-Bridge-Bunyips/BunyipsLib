@@ -65,8 +65,8 @@ public class AlignToContourTask<T extends BunyipsSubsystem> extends Task {
     /**
      * TeleOp constructor using a default Mecanum binding.
      *
-     * @param driver the gamepad to use for driving
-     * @param drive the drivetrain to use
+     * @param driver     the gamepad to use for driving
+     * @param drive      the drivetrain to use
      * @param processors the vision processor to use
      * @param controller the PID controller to use for aligning to a target
      */

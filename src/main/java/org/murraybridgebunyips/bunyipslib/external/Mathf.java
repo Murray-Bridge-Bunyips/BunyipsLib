@@ -50,6 +50,16 @@ public final class Mathf {
     }
 
     /**
+     * Normalizes the given angle to be within the range of [0, 2pi].
+     *
+     * @param angle The angle to normalize.
+     * @return The normalized angle.
+     */
+    public static Measure<Angle> normaliseAngle(Measure<Angle> angle) {
+        return Radians.of(com.acmerobotics.roadrunner.util.Angle.norm(angle.in(Radians)));
+    }
+
+    /**
      * Returns value clamped between low and high boundaries.
      *
      * @param value Value to clamp.
@@ -88,7 +98,7 @@ public final class Mathf {
     /**
      * Scale a number in the range of {@code x1} to {@code x2}, to the range of {@code y1} to {@code y2}.
      *
-     * @param n number to scale
+     * @param n  number to scale
      * @param x1 lower bound range of n
      * @param x2 upper bound range of n
      * @param y1 lower bound of scale
@@ -105,7 +115,7 @@ public final class Mathf {
     /**
      * Scale a number in the range of {@code x1} to {@code x2}, to the range of {@code y1} to {@code y2}.
      *
-     * @param n number to scale
+     * @param n  number to scale
      * @param x1 lower bound range of n
      * @param x2 upper bound range of n
      * @param y1 lower bound of scale

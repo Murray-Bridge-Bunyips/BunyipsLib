@@ -43,9 +43,9 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
     /**
      * Autonomous constructor.
      *
-     * @param timeout the timeout for the task
-     * @param drive the drivetrain to use
-     * @param at the AprilTag processor to use
+     * @param timeout    the timeout for the task
+     * @param drive      the drivetrain to use
+     * @param at         the AprilTag processor to use
      * @param controller the PID controller to use for aligning to a target
      */
     public AlignToAprilTagTask(Measure<Time> timeout, T drive, AprilTag at, PIDController controller) {

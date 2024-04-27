@@ -78,11 +78,11 @@ public class MoveToContourTask<T extends BunyipsSubsystem> extends Task {
     /**
      * TeleOp constructor using a default Mecanum binding.
      *
-     * @param driver the gamepad to use for driving
-     * @param drive the drivetrain to use
-     * @param processors the vision processor to use
+     * @param driver                the gamepad to use for driving
+     * @param drive                 the drivetrain to use
+     * @param processors            the vision processor to use
      * @param translationController the PID controller for the translational movement
-     * @param rotationController the PID controller for the rotational movement
+     * @param rotationController    the PID controller for the rotational movement
      */
     public MoveToContourTask(Gamepad driver, T drive, MultiColourThreshold processors, PIDController translationController, PIDController rotationController) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, processors, translationController, rotationController);

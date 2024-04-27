@@ -69,7 +69,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     /**
      * Set the target tolerance of the actuator.
      *
-     * @param tolerance the tolerance to set in encoder ticks
+     * @param tolerance    the tolerance to set in encoder ticks
      * @param applyToMotor whether to apply this tolerance to the motor as well as the task checks
      * @return this
      */

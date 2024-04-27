@@ -13,8 +13,9 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 public class Switch extends Cannon {
     /**
      * Constructs a new Switch.
-     * @param servo the servo to use
-     * @param openPosition the position to set the servo to when open
+     *
+     * @param servo         the servo to use
+     * @param openPosition  the position to set the servo to when open
      * @param closePosition the position to set the servo to when closed
      */
     public Switch(Servo servo, double openPosition, double closePosition) {
@@ -24,6 +25,7 @@ public class Switch extends Cannon {
 
     /**
      * Constructs a new Switch with default open and close positions.
+     *
      * @param servo the servo to use
      */
     public Switch(Servo servo) {
@@ -47,6 +49,7 @@ public class Switch extends Cannon {
 
     /**
      * Open the switch.
+     *
      * @return a task that opens the switch
      */
     public Task openTask() {
@@ -55,6 +58,7 @@ public class Switch extends Cannon {
 
     /**
      * Close the switch.
+     *
      * @return a task that closes the switch
      */
     public Task closeTask() {
