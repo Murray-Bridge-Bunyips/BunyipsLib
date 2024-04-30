@@ -327,6 +327,11 @@ public class HoldableActuator extends BunyipsSubsystem {
         }
 
         if (bottomSwitch != null) {
+            if (bottomSwitch.isPressed() && motorPower < 0) {
+                // Stop going down if the limit switch is pressed
+                motorPower = 0;
+            }
+
             if (bottomSwitch.isPressed() && !zeroed) {
                 DcMotor.RunMode prev = motor.getMode();
                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
