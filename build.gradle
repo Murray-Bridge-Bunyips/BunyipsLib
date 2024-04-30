@@ -40,6 +40,7 @@ android {
         buildConfigField "String", "GIT_COMMIT", '"' + getCommit() + '"'
         buildConfigField "String", "BUILD_TIME", '"' + getBuildTime() + '"'
         buildConfigField "String", "ID", '"' + getRandomID() + '"'
+        buildConfigField "String", "SEMVER", '"' + project.version + '"'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

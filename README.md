@@ -1,5 +1,6 @@
 ![BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/.github/blob/main/bunyipslib_banner.png)
 [![CodeFactor](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib/badge)](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib)
+[![View Changelog](https://img.shields.io/static/v1?label=changelog&message=View&color=informational)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/CHANGELOG.md)
 
 ##### A powerful all-in-one library for FTC used by the Murray Bridge High School Student Robotics Club.
 
@@ -272,7 +273,7 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
         switch (initTask.getSpikeResult()) {
             case LEFT:
                 // RoadRunner trajectory to get to the Spike Mark
-                addNewTrajectory(...);
+                makeTrajectory(...);
                 break;
             // ...
         }
@@ -283,11 +284,11 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
     protected void onReady(@Nullable OpModeSelection selectedOpMode) {
         addTask(() -> vision.start(purplePixelProcessor));
 
-        // Full RoadRunner support with utility methods such as addNewTrajectory()
-        addNewTrajectory(new Pose2d(11.40, -62.00, Math.toRadians(180.00)))
+        // Full RoadRunner support with utility methods such as makeTrajectory()
+        makeTrajectory(new Pose2d(11.40, -62.00, Math.toRadians(180.00)))
                 .lineToLinearHeading(new Pose2d(16.40, -48.10, Math.toRadians(90.00)))
                 .lineToLinearHeading(new Pose2d(11.71, -34.52, Math.toRadians(90.00)))
-                .build();
+                .addTask();
 
         // Interchangeable tasks between TeleOp commands and Autonomous tasks using overloads
         // This makes tasks reusable and easier to write, where you can define your own tasks just as quick

@@ -14,27 +14,6 @@ public class Reference<V> {
     private V value;
 
     /**
-     * Creates a new reference with the given value.
-     *
-     * @return a new reference with the given value
-     * @param value the value of the reference
-     * @param <V> the type of the reference
-     */
-    public static <V> Reference<V> of(@Nullable V value) {
-        return new Reference<>(value);
-    }
-
-    /**
-     * Creates a new reference with a null value.
-     *
-     * @return a new reference with a null value
-     * @param <V> the type of the reference
-     */
-    public static <V> Reference<V> empty() {
-        return new Reference<>();
-    }
-
-    /**
      * Creates a new reference with a null value.
      */
     public Reference() {
@@ -43,6 +22,7 @@ public class Reference<V> {
 
     /**
      * Creates a new reference with the given value.
+     *
      * @param value the value of the reference
      */
     public Reference(@Nullable V value) {
@@ -50,7 +30,29 @@ public class Reference<V> {
     }
 
     /**
+     * Creates a new reference with the given value.
+     *
+     * @param value the value of the reference
+     * @param <V>   the type of the reference
+     * @return a new reference with the given value
+     */
+    public static <V> Reference<V> of(@Nullable V value) {
+        return new Reference<>(value);
+    }
+
+    /**
+     * Creates a new reference with a null value.
+     *
+     * @param <V> the type of the reference
+     * @return a new reference with a null value
+     */
+    public static <V> Reference<V> empty() {
+        return new Reference<>();
+    }
+
+    /**
      * Gets the value of the reference.
+     *
      * @return the value of the reference
      */
     @Nullable
@@ -60,6 +62,7 @@ public class Reference<V> {
 
     /**
      * Sets the value of the reference.
+     *
      * @param value the new value of the reference
      */
     public void set(@Nullable V value) {
@@ -68,6 +71,7 @@ public class Reference<V> {
 
     /**
      * Checks if the reference is null.
+     *
      * @return true if the reference is null, false otherwise
      */
     public boolean isNull() {
@@ -76,6 +80,7 @@ public class Reference<V> {
 
     /**
      * Checks if the reference is not null.
+     *
      * @return true if the reference is not null, false otherwise
      */
     public boolean isNotNull() {
@@ -91,6 +96,7 @@ public class Reference<V> {
 
     /**
      * Returns a string representation of the reference.
+     *
      * @return a string representing the reference, or "null" if the reference is null
      */
     @NonNull
