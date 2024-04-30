@@ -168,6 +168,36 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
             this.drive = drive;
         }
 
+        // TODO: unfixed mirror methods
+
+        private Pose2d mirror(Pose2d pose) {
+            return new Pose2d(pose.getX(), -pose.getY(), mirror(pose.getHeading()));
+        }
+
+        private Pose2d mirror(Pose2d pose, Distance inUnit, Angle angleUnit) {
+            double x = Inches.convertFrom(pose.getX(), inUnit);
+            double y = Inches.convertFrom(pose.getY(), inUnit);
+            return new Pose2d(x, -y, mirror(pose.getHeading(), angleUnit));
+        }
+
+        private Vector2d mirror(Vector2d vector) {
+            return new Vector2d(vector.getX(), -vector.getY());
+        }
+
+        private Vector2d mirror(Vector2d vector, Distance inUnit) {
+            double x = Inches.convertFrom(vector.getX(), inUnit);
+            double y = Inches.convertFrom(vector.getY(), inUnit);
+            return new Vector2d(x, -y);
+        }
+
+        private double mirror(double radians) {
+            return mirror(radians, Radians);
+        }
+
+        private double mirror(double unit, Angle angleUnit) {
+            return Mathf.normaliseAngle(angleUnit.of(unit).plus(Radians.of(Math.PI))).in(angleUnit);
+        }
+
         /**
          * Move in a straight line to a given position.
          *
@@ -175,7 +205,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder lineTo(Vector2d endPositionInches) {
-            mirroredBuilder.lineTo(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()));
+            mirroredBuilder.lineTo(mirror(endPositionInches));
             return super.lineTo(endPositionInches);
         }
 
@@ -187,7 +217,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder lineTo(Vector2d endPosition, Distance inUnit) {
-            mirroredBuilder.lineTo(new Vector2d(endPosition.getX(), -endPosition.getY()), inUnit);
+            mirroredBuilder.lineTo(mirror(endPosition), inUnit);
             double x = Inches.convertFrom(endPosition.getX(), inUnit);
             double y = Inches.convertFrom(endPosition.getY(), inUnit);
             return lineTo(new Vector2d(x, y));
@@ -206,7 +236,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.lineTo(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()), velConstraint, accelConstraint);
+            mirroredBuilder.lineTo(mirror(endPositionInches), velConstraint, accelConstraint);
             return super.lineTo(endPositionInches, velConstraint, accelConstraint);
         }
 
@@ -225,7 +255,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.lineTo(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()), inUnit, velConstraint, accelConstraint);
+            mirroredBuilder.lineTo(mirror(endPositionInches, inUnit), inUnit, velConstraint, accelConstraint);
             return super.lineTo(endPositionInches, inUnit, velConstraint, accelConstraint);
         }
 
@@ -236,7 +266,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder lineToConstantHeading(Vector2d endPositionInches) {
-            mirroredBuilder.lineToConstantHeading(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()));
+            mirroredBuilder.lineToConstantHeading(mirror(endPositionInches));
             return super.lineToConstantHeading(endPositionInches);
         }
 
@@ -248,7 +278,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder lineToConstantHeading(Vector2d endPosition, Distance inUnit) {
-            mirroredBuilder.lineToConstantHeading(new Vector2d(endPosition.getX(), -endPosition.getY()), inUnit);
+            mirroredBuilder.lineToConstantHeading(mirror(endPosition, inUnit), inUnit);
             return super.lineToConstantHeading(endPosition, inUnit);
         }
 
@@ -265,7 +295,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.lineToConstantHeading(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()), velConstraint, accelConstraint);
+            mirroredBuilder.lineToConstantHeading(mirror(endPositionInches), velConstraint, accelConstraint);
             return super.lineToConstantHeading(endPositionInches, velConstraint, accelConstraint);
         }
 
@@ -284,7 +314,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.lineToConstantHeading(new Vector2d(endPosition.getX(), -endPosition.getY()), inUnit, velConstraint, accelConstraint);
+            mirroredBuilder.lineToConstantHeading(mirror(endPosition, inUnit), inUnit, velConstraint, accelConstraint);
             return super.lineToConstantHeading(endPosition, inUnit, velConstraint, accelConstraint);
         }
 
@@ -295,7 +325,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder lineToLinearHeading(Pose2d endPoseInchRad) {
-            mirroredBuilder.lineToLinearHeading(new Pose2d(endPoseInchRad.getX(), -endPoseInchRad.getY(), Mathf.normaliseAngle(Radians.of(endPoseInchRad.getHeading()).plus(Radians.of(Math.PI))).in(Radians)));
+            mirroredBuilder.lineToLinearHeading(mirror(endPoseInchRad));
             return super.lineToLinearHeading(endPoseInchRad);
         }
 
@@ -308,7 +338,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder lineToLinearHeading(Pose2d endPose, Distance distanceUnit, Angle angleUnit) {
-            mirroredBuilder.lineToLinearHeading(new Pose2d(endPose.getX(), -endPose.getY(), Mathf.normaliseAngle(angleUnit.of(endPose.getHeading()).plus(Radians.of(Math.PI))).in(angleUnit)), distanceUnit, angleUnit);
+            mirroredBuilder.lineToLinearHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit);
             return super.lineToLinearHeading(endPose, distanceUnit, angleUnit);
         }
 
@@ -325,7 +355,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.lineToLinearHeading(new Pose2d(endPoseInchRad.getX(), -endPoseInchRad.getY(), Mathf.normaliseAngle(Radians.of(endPoseInchRad.getHeading()).plus(Radians.of(Math.PI))).in(Radians)), velConstraint, accelConstraint);
+            mirroredBuilder.lineToLinearHeading(mirror(endPoseInchRad), velConstraint, accelConstraint);
             return super.lineToLinearHeading(endPoseInchRad, velConstraint, accelConstraint);
         }
 
@@ -346,7 +376,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.lineToLinearHeading(new Pose2d(endPose.getX(), -endPose.getY(), Mathf.normaliseAngle(angleUnit.of(endPose.getHeading()).plus(Radians.of(Math.PI))).in(angleUnit)), distanceUnit, angleUnit, velConstraint, accelConstraint);
+            mirroredBuilder.lineToLinearHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, velConstraint, accelConstraint);
             return super.lineToLinearHeading(endPose, distanceUnit, angleUnit, velConstraint, accelConstraint);
         }
 
@@ -357,7 +387,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder lineToSplineHeading(Pose2d endPoseInchRad) {
-            mirroredBuilder.lineToSplineHeading(new Pose2d(endPoseInchRad.getX(), -endPoseInchRad.getY(), Mathf.normaliseAngle(Radians.of(endPoseInchRad.getHeading()).plus(Radians.of(Math.PI))).in(Radians)));
+            mirroredBuilder.lineToSplineHeading(mirror(endPoseInchRad));
             return super.lineToSplineHeading(endPoseInchRad);
         }
 
@@ -370,7 +400,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder lineToSplineHeading(Pose2d endPose, Distance distanceUnit, Angle angleUnit) {
-            mirroredBuilder.lineToSplineHeading(new Pose2d(endPose.getX(), -endPose.getY(), Mathf.normaliseAngle(angleUnit.of(endPose.getHeading()).plus(Radians.of(Math.PI))).in(angleUnit)), distanceUnit, angleUnit);
+            mirroredBuilder.lineToSplineHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit);
             return super.lineToSplineHeading(endPose, distanceUnit, angleUnit);
         }
 
@@ -387,7 +417,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.lineToSplineHeading(new Pose2d(endPoseInchRad.getX(), -endPoseInchRad.getY(), Mathf.normaliseAngle(Radians.of(endPoseInchRad.getHeading()).plus(Radians.of(Math.PI))).in(Radians)), velConstraint, accelConstraint);
+            mirroredBuilder.lineToSplineHeading(mirror(endPoseInchRad), velConstraint, accelConstraint);
             return super.lineToSplineHeading(endPoseInchRad, velConstraint, accelConstraint);
         }
 
@@ -408,7 +438,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.lineToSplineHeading(new Pose2d(endPose.getX(), -endPose.getY(), Mathf.normaliseAngle(angleUnit.of(endPose.getHeading()).plus(Radians.of(Math.PI))).in(angleUnit)), distanceUnit, angleUnit, velConstraint, accelConstraint);
+            mirroredBuilder.lineToSplineHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, velConstraint, accelConstraint);
             return super.lineToSplineHeading(endPose, distanceUnit, angleUnit, velConstraint, accelConstraint);
         }
 
@@ -419,7 +449,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder strafeTo(Vector2d endPositionInches) {
-            mirroredBuilder.strafeTo(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()));
+            mirroredBuilder.strafeTo(mirror(endPositionInches));
             return super.strafeTo(endPositionInches);
         }
 
@@ -431,7 +461,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder strafeTo(Vector2d endPosition, Distance inUnit) {
-            mirroredBuilder.strafeTo(new Vector2d(endPosition.getX(), -endPosition.getY()), inUnit);
+            mirroredBuilder.strafeTo(mirror(endPosition, inUnit), inUnit);
             return super.strafeTo(endPosition, inUnit);
         }
 
@@ -448,7 +478,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.strafeTo(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()), velConstraint, accelConstraint);
+            mirroredBuilder.strafeTo(mirror(endPositionInches), velConstraint, accelConstraint);
             return super.strafeTo(endPositionInches, velConstraint, accelConstraint);
         }
 
@@ -467,7 +497,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.strafeTo(new Vector2d(endPosition.getX(), -endPosition.getY()), inUnit, velConstraint, accelConstraint);
+            mirroredBuilder.strafeTo(mirror(endPosition, inUnit), inUnit, velConstraint, accelConstraint);
             return super.strafeTo(endPosition, inUnit, velConstraint, accelConstraint);
         }
 
@@ -715,7 +745,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder splineTo(Vector2d endPositionInches, double endHeadingRad) {
-            mirroredBuilder.splineTo(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()), Mathf.normaliseAngle(Radians.of(endHeadingRad).plus(Radians.of(Math.PI))).in(Radians));
+            mirroredBuilder.splineTo(mirror(endPositionInches), mirror(endHeadingRad));
             return super.splineTo(endPositionInches, endHeadingRad);
         }
 
@@ -729,7 +759,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder splineTo(Vector2d endPosition, Distance inUnit, double endHeading, Angle angleUnit) {
-            mirroredBuilder.splineTo(new Vector2d(endPosition.getX(), -endPosition.getY()), inUnit, Mathf.normaliseAngle(angleUnit.of(endHeading).plus(Radians.of(Math.PI))).in(angleUnit), angleUnit);
+            mirroredBuilder.splineTo(mirror(endPosition, inUnit), inUnit, mirror(endHeading, angleUnit), angleUnit);
             return super.splineTo(endPosition, inUnit, endHeading, angleUnit);
         }
 
@@ -748,7 +778,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineTo(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()), Mathf.normaliseAngle(Radians.of(endHeadingRad).plus(Radians.of(Math.PI))).in(Radians), velConstraint, accelConstraint);
+            mirroredBuilder.splineTo(mirror(endPositionInches), mirror(endHeadingRad), velConstraint, accelConstraint);
             return super.splineTo(endPositionInches, endHeadingRad, velConstraint, accelConstraint);
         }
 
@@ -771,7 +801,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineTo(new Vector2d(endPosition.getX(), -endPosition.getY()), inUnit, Mathf.normaliseAngle(angleUnit.of(endHeading).plus(Radians.of(Math.PI))).in(angleUnit), angleUnit, velConstraint, accelConstraint);
+            mirroredBuilder.splineTo(mirror(endPosition, inUnit), inUnit, mirror(endHeading, angleUnit), angleUnit, velConstraint, accelConstraint);
             return super.splineTo(endPosition, inUnit, endHeading, angleUnit, velConstraint, accelConstraint);
         }
 
@@ -783,7 +813,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder splineToConstantHeading(Vector2d endPositionInches, double endHeadingRad) {
-            mirroredBuilder.splineToConstantHeading(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()), Mathf.normaliseAngle(Radians.of(endHeadingRad).plus(Radians.of(Math.PI))).in(Radians));
+            mirroredBuilder.splineToConstantHeading(mirror(endPositionInches), mirror(endHeadingRad));
             return super.splineToConstantHeading(endPositionInches, endHeadingRad);
         }
 
@@ -797,7 +827,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder splineToConstantHeading(Vector2d endPosition, Distance inUnit, double endHeading, Angle angleUnit) {
-            mirroredBuilder.splineToConstantHeading(new Vector2d(endPosition.getX(), -endPosition.getY()), inUnit, Mathf.normaliseAngle(angleUnit.of(endHeading).plus(Radians.of(Math.PI))).in(angleUnit), angleUnit);
+            mirroredBuilder.splineToConstantHeading(mirror(endPosition, inUnit), inUnit, mirror(endHeading, angleUnit), angleUnit);
             return super.splineToConstantHeading(endPosition, inUnit, endHeading, angleUnit);
         }
 
@@ -816,7 +846,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineToConstantHeading(new Vector2d(endPositionInches.getX(), -endPositionInches.getY()), Mathf.normaliseAngle(Radians.of(endHeadingRad).plus(Radians.of(Math.PI))).in(Radians), velConstraint, accelConstraint);
+            mirroredBuilder.splineToConstantHeading(mirror(endPositionInches), mirror(endHeadingRad), velConstraint, accelConstraint);
             return super.splineToConstantHeading(endPositionInches, endHeadingRad, velConstraint, accelConstraint);
         }
 
@@ -839,7 +869,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineToConstantHeading(new Vector2d(endPosition.getX(), -endPosition.getY()), inUnit, Mathf.normaliseAngle(angleUnit.of(endHeading).plus(Radians.of(Math.PI))).in(angleUnit), angleUnit, velConstraint, accelConstraint);
+            mirroredBuilder.splineToConstantHeading(mirror(endPosition), inUnit, mirror(endHeading, angleUnit), angleUnit, velConstraint, accelConstraint);
             return super.splineToConstantHeading(endPosition, inUnit, endHeading, angleUnit, velConstraint, accelConstraint);
         }
 
@@ -851,7 +881,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder splineToLinearHeading(Pose2d endPoseInchRad, double endHeadingRad) {
-            mirroredBuilder.splineToLinearHeading(new Pose2d(endPoseInchRad.getX(), -endPoseInchRad.getY(), Mathf.normaliseAngle(Radians.of(endPoseInchRad.getHeading()).plus(Radians.of(Math.PI))).in(Radians)), endHeadingRad);
+            mirroredBuilder.splineToLinearHeading(mirror(endPoseInchRad), endHeadingRad);
             return super.splineToLinearHeading(endPoseInchRad, endHeadingRad);
         }
 
@@ -866,7 +896,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder splineToLinearHeading(Pose2d endPose, Distance distanceUnit, Angle angleUnit, double endHeading, Angle endAngleUnit) {
-            mirroredBuilder.splineToLinearHeading(new Pose2d(endPose.getX(), -endPose.getY(), Mathf.normaliseAngle(angleUnit.of(endPose.getHeading()).plus(Radians.of(Math.PI))).in(angleUnit)), distanceUnit, angleUnit, endHeading, endAngleUnit);
+            mirroredBuilder.splineToLinearHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, endHeading, endAngleUnit);
             return super.splineToLinearHeading(endPose, distanceUnit, angleUnit, endHeading, endAngleUnit);
         }
 
@@ -885,7 +915,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineToLinearHeading(new Pose2d(endPoseInchRad.getX(), -endPoseInchRad.getY(), Mathf.normaliseAngle(Radians.of(endPoseInchRad.getHeading()).plus(Radians.of(Math.PI))).in(Radians)), Mathf.normaliseAngle(Radians.of(endHeadingRad).plus(Radians.of(Math.PI))).in(Radians), velConstraint, accelConstraint);
+            mirroredBuilder.splineToLinearHeading(mirror(endPoseInchRad), mirror(endHeadingRad), velConstraint, accelConstraint);
             return super.splineToLinearHeading(endPoseInchRad, endHeadingRad, velConstraint, accelConstraint);
         }
 
@@ -910,7 +940,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineToLinearHeading(new Pose2d(endPose.getX(), -endPose.getY(), Mathf.normaliseAngle(angleUnit.of(endPose.getHeading()).plus(Radians.of(Math.PI))).in(angleUnit)), distanceUnit, angleUnit, Mathf.normaliseAngle(endAngleUnit.of(endHeading).plus(Radians.of(Math.PI))).in(endAngleUnit), endAngleUnit, velConstraint, accelConstraint);
+            mirroredBuilder.splineToLinearHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, Mathf.normaliseAngle(endAngleUnit.of(endHeading).plus(Radians.of(Math.PI))).in(endAngleUnit), endAngleUnit, velConstraint, accelConstraint);
             double x = Inches.convertFrom(endPose.getX(), distanceUnit);
             double y = Inches.convertFrom(endPose.getY(), distanceUnit);
             double r = Radians.convertFrom(endHeading, angleUnit);
@@ -926,7 +956,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder splineToSplineHeading(Pose2d endPoseInchRad, double endHeadingRad) {
-            mirroredBuilder.splineToSplineHeading(new Pose2d(endPoseInchRad.getX(), -endPoseInchRad.getY(), Mathf.normaliseAngle(Radians.of(endPoseInchRad.getHeading()).plus(Radians.of(Math.PI))).in(Radians)), Mathf.normaliseAngle(Radians.of(endPoseInchRad.getHeading()).plus(Radians.of(Math.PI))).in(Radians));
+            mirroredBuilder.splineToSplineHeading(mirror(endPoseInchRad), mirror(endPoseInchRad.getHeading()));
             return super.splineToSplineHeading(endPoseInchRad, endHeadingRad);
         }
 
@@ -941,7 +971,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder splineToSplineHeading(Pose2d endPose, Distance distanceUnit, Angle angleUnit, double endHeading, Angle endAngleUnit) {
-            mirroredBuilder.splineToSplineHeading(new Pose2d(endPose.getX(), -endPose.getY(), Mathf.normaliseAngle(angleUnit.of(endPose.getHeading()).plus(Radians.of(Math.PI))).in(angleUnit)), distanceUnit, angleUnit, Mathf.normaliseAngle(endAngleUnit.of(endPose.getHeading()).plus(Radians.of(Math.PI))).in(endAngleUnit), endAngleUnit);
+            mirroredBuilder.splineToSplineHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, mirror(endPose.getHeading(), endAngleUnit), endAngleUnit);
             return super.splineToSplineHeading(endPose, distanceUnit, angleUnit, endHeading, endAngleUnit);
         }
 
@@ -960,7 +990,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineToSplineHeading(new Pose2d(endPoseInchRad.getX(), -endPoseInchRad.getY(), Mathf.normaliseAngle(Radians.of(endPoseInchRad.getHeading()).plus(Radians.of(Math.PI))).in(Radians)), Mathf.normaliseAngle(Radians.of(endPoseInchRad.getHeading()).plus(Radians.of(Math.PI))).in(Radians), velConstraint, accelConstraint);
+            mirroredBuilder.splineToSplineHeading(mirror(endPoseInchRad), mirror(endPoseInchRad.getHeading()), velConstraint, accelConstraint);
             return super.splineToSplineHeading(endPoseInchRad, endHeadingRad, velConstraint, accelConstraint);
         }
 
@@ -985,7 +1015,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineToSplineHeading(new Pose2d(endPose.getX(), -endPose.getY(), Mathf.normaliseAngle(angleUnit.of(endPose.getHeading()).plus(Radians.of(Math.PI))).in(angleUnit)), distanceUnit, angleUnit, Mathf.normaliseAngle(endAngleUnit.of(endPose.getHeading()).plus(Radians.of(Math.PI))).in(endAngleUnit), endAngleUnit, velConstraint, accelConstraint);
+            mirroredBuilder.splineToSplineHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, mirror(endPose.getHeading(), endAngleUnit), endAngleUnit, velConstraint, accelConstraint);
             return super.splineToSplineHeading(endPose, distanceUnit, angleUnit, endHeading, endAngleUnit, velConstraint, accelConstraint);
         }
 
@@ -1244,7 +1274,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder addSpatialMarker(Vector2d pointInches, MarkerCallback callback) {
-            mirroredBuilder.addSpatialMarker(new Vector2d(pointInches.getX(), -pointInches.getY()), callback);
+            mirroredBuilder.addSpatialMarker(mirror(pointInches), callback);
             return super.addSpatialMarker(pointInches, callback);
         }
 
@@ -1257,7 +1287,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder addSpatialMarker(Vector2d point, Distance inUnit, MarkerCallback callback) {
-            mirroredBuilder.addSpatialMarker(new Vector2d(point.getX(), -point.getY()), callback);
+            mirroredBuilder.addSpatialMarker(mirror(point, inUnit), callback);
             return super.addSpatialMarker(point, inUnit, callback);
         }
 
@@ -1381,7 +1411,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder turn(double radians) {
-            mirroredBuilder.turn(Mathf.normaliseAngle(Radians.of(radians).plus(Radians.of(Math.PI))).in(Radians));
+            mirroredBuilder.turn(mirror(radians));
             return super.turn(radians);
         }
 
@@ -1393,21 +1423,21 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder turn(double angle, Angle angleUnit) {
-            mirroredBuilder.turn(Mathf.normaliseAngle(angleUnit.of(angle).plus(Radians.of(Math.PI))).in(angleUnit), angleUnit);
+            mirroredBuilder.turn(mirror(angle, angleUnit), angleUnit);
             return super.turn(angle, angleUnit);
         }
 
         /**
          * Turn to a given angle with custom maximum angular velocity and acceleration.
          *
-         * @param angle       The angle to turn (radians)
+         * @param radians     The angle to turn (radians)
          * @param maxAngVel   The maximum angular velocity (radians/sec)
          * @param maxAngAccel The maximum angular acceleration (radians/sec^2)
          * @return The builder
          */
-        public RoadRunnerTrajectoryTaskBuilder turn(double angle, double maxAngVel, double maxAngAccel) {
-            mirroredBuilder.turn(Mathf.normaliseAngle(Radians.of(angle).plus(Radians.of(Math.PI))).in(Radians), maxAngVel, maxAngAccel);
-            return super.turn(angle, maxAngVel, maxAngAccel);
+        public RoadRunnerTrajectoryTaskBuilder turn(double radians, double maxAngVel, double maxAngAccel) {
+            mirroredBuilder.turn(mirror(radians), maxAngVel, maxAngAccel);
+            return super.turn(radians, maxAngVel, maxAngAccel);
         }
 
         /**
@@ -1422,7 +1452,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder turn(double angle, Angle angleUnit, double maxAngVel, Velocity<Angle> velUnit, double maxAngAccel, Velocity<Velocity<Angle>> accelUnit) {
-            mirroredBuilder.turn(Mathf.normaliseAngle(angleUnit.of(angle).plus(Radians.of(Math.PI))).in(Radians), angleUnit, maxAngVel, velUnit, maxAngAccel, accelUnit);
+            mirroredBuilder.turn(mirror(angle, angleUnit), angleUnit, maxAngVel, velUnit, maxAngAccel, accelUnit);
             return super.turn(angle, angleUnit, maxAngVel, velUnit, maxAngAccel, accelUnit);
         }
 
