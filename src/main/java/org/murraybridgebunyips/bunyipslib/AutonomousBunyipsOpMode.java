@@ -43,7 +43,6 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     private UserSelection<OpModeSelection> userSelection;
     // Init-task does not count as a queued task, so we start at 1
     private int currentTask = 1;
-    private RobotTask initTask;
     private boolean hasGottenCallback;
 
     private void callback(@Nullable OpModeSelection selectedOpMode) {
@@ -69,9 +68,6 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     protected final void onInit() {
         // Run user-defined hardware initialisation
         onInitialise();
-        if (initTask == null) {
-            log("auto: initTask is null, skipping.");
-        }
         // Convert user defined OpModeSelections to varargs
         OpModeSelection[] varargs = opModes.toArray(new OpModeSelection[0]);
         if (varargs.length == 0) {
@@ -157,10 +153,6 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     @Override
     protected final boolean onInitLoop() {
-        if (initTask != null) {
-            initTask.run();
-            return initTask.pollFinished() && (userSelection == null || !Threads.isRunning(userSelection));
-        }
         return userSelection == null || !Threads.isRunning(userSelection);
     }
 
@@ -383,29 +375,6 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                 opModes.add(new OpModeSelection(selectableOpMode));
             }
         }
-    }
-
-    /**
-     * Set a task that will run as an init-task. This will run
-     * after your {@link #onInitialise()} has completed, allowing you to initialise hardware first.
-     * This is an optional method.
-     * <p>
-     * You should store any running variables inside the task itself, and keep the instance of the task
-     * defined as a field in your OpMode. You can then use this value in your {@link #onInitDone()} to do
-     * what you need to after the init-task has finished. This method should be paired with {@link #onInitDone()}
-     * to do anything after the initTask has finished.
-     * </p>
-     * If you do not define an initTask by returning null, then the init-task {@code dynamic_init} phase will be skipped.
-     *
-     * @see #onInitDone()
-     * @see #addTaskFirst(RobotTask)
-     * @see #addTaskLast(RobotTask)
-     */
-    protected final void setInitTask(@Nullable RobotTask task) {
-        if (initTask != null) {
-            Dbg.warn(getClass(), "Init-task has already been set to %, overriding it with %...", initTask, task);
-        }
-        initTask = task;
     }
 
     /**

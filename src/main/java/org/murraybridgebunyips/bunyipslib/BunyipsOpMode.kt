@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ThreadPool
 import org.firstinspires.ftc.robotcore.external.Telemetry.Item
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
+import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask
 import java.util.concurrent.ExecutorService
 
 
@@ -58,6 +59,8 @@ abstract class BunyipsOpMode : BOMInternal() {
      * BunyipsLib Driver Station & FtcDashboard Telemetry
      */
     lateinit var telemetry: DualTelemetry
+
+    private var initTask: RobotTask? = null
 
     companion object {
         private var _instance: BunyipsOpMode? = null
@@ -216,11 +219,16 @@ abstract class BunyipsOpMode : BOMInternal() {
             telemetry.opModeStatus = "dynamic_init"
             pushTelemetry()
             Dbg.logd("BunyipsOpMode: starting onInitLoop()...")
+            if (initTask != null) {
+                log("running init task: %", initTask)
+            }
             // Run user-defined dynamic initialisation
             do {
                 try {
-                    // Run until onInitLoop returns true or the OpMode is continued
-                    if (onInitLoop()) break
+                    // Run the user's init task, if it isn't null
+                    initTask?.run()
+                    // Run until onInitLoop returns true, and the initTask is done, or the OpMode is continued
+                    if (onInitLoop() && (initTask != null && initTask?.pollFinished() == true)) break
                 } catch (e: Exception) {
                     Exceptions.handle(e, ::log)
                 }
@@ -333,6 +341,27 @@ abstract class BunyipsOpMode : BOMInternal() {
             pushTelemetry()
             Dbg.logd("BunyipsOpMode: exiting...")
         }
+    }
+
+    /**
+     * Set a task that will run as an init-task. This will run
+     * after your [onInit] has completed, allowing you to initialise hardware first.
+     * This is an optional method, and runs alongside [onInitLoop].
+     *
+     * You should store any running variables inside the task itself, and keep the instance of the task
+     * defined as a field in your OpMode. You can then use this value in your [onInitDone] to do
+     * what you need to after the init-task has finished. This method should be paired with [onInitDone]
+     * to do anything after the initTask has finished.
+     *
+     * If you do not define an initTask, then the init-task `dynamic_init` phase will be skipped.
+     *
+     * @see onInitDone
+     */
+    protected fun setInitTask(task: RobotTask) {
+        if (initTask != null) {
+            Dbg.warn(javaClass, "Init-task has already been set to %, overriding it with %...", initTask, task)
+        }
+        initTask = task
     }
 
     // These telemetry methods exist for continuity as they used to be the primary way to use telemetry in BunyipsLib,
