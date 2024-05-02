@@ -13,19 +13,17 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 
-import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
-import org.murraybridgebunyips.bunyipslib.external.units.Velocity;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequence;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.murraybridgebunyips.bunyipslib.tasks.RoadRunnerTask;
 import org.murraybridgebunyips.bunyipslib.tasks.groups.TaskGroup;
 
-import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * RoadRunner utility interface for autonomous OpModes. Implement this interface in a {@link AutonomousBunyipsOpMode}.
@@ -33,8 +31,8 @@ import java.util.ArrayList;
  * <p>
  * Previously named RoadRunnerAutonomousBunyipsOpMode (RRABOM, nickname "Rabone").
  * <p>
- * <i>This interface may also be used in a normal {@link BunyipsOpMode}, however all the {@code addTrajectory} related methods
- * will not work as they require the presence of {@link AutonomousBunyipsOpMode}.</i>
+ * <i>This interface may also be used in a normal {@link BunyipsOpMode}, however the {@code addTask()} builder method
+ * will not work as it requires the presence of {@link AutonomousBunyipsOpMode}.</i>
  *
  * @author Lucas Bubner, 2024
  * @noinspection InterfaceMayBeAnnotatedFunctional
@@ -46,19 +44,15 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      */
     Measure<Time> DEFAULT_TIMEOUT = INFINITE_TIMEOUT;
     /**
-     * A list of all RoadRunner tasks that have been scheduled using the RoadRunner methods.
-     * Will be auto-cleared at the start of an {@link AutonomousBunyipsOpMode}.
+     * Stores last spliced pose.
      */
-    ArrayList<RoadRunnerTask<RoadRunnerDrive>> rrTasks = new ArrayList<>();
+    Reference<Pose2d> splicedPose = Reference.empty();
 
     /**
-     * Get the last known pose of the drive system, or the last pose from the last trajectory.
-     *
-     * @return Last known pose of the scheduled tasks or current pose of the drive, in inches
+     * Reset fields for an OpMode.
      */
-    default Pose2d getPreviousPose() {
-        // Needed to splice the last pose from the last trajectory
-        return rrTasks.isEmpty() ? getDrive().getPoseEstimate() : rrTasks.get(rrTasks.size() - 1).getEndPose();
+    static void resetForOpMode() {
+        splicedPose.clear();
     }
 
     /**
@@ -73,7 +67,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         getDrive().setPoseEstimate(startPoseInchRad);
         return new RoadRunnerTrajectoryTaskBuilder(getDrive(), startPoseInchRad, builder.getBaseVelConstraint(), builder.getBaseAccelConstraint(), builder.getBaseTurnConstraintMaxAngVel(), builder.getBaseTurnConstraintMaxAngAccel());
     }
-
 
     /**
      * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
@@ -98,9 +91,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * @see #makeTrajectory(Pose2d)
      */
     default RoadRunnerTrajectoryTaskBuilder makeTrajectory() {
-        // noinspection rawtypes
-        TrajectorySequenceBuilder builder = getDrive().trajectorySequenceBuilder(getPreviousPose());
-        return new RoadRunnerTrajectoryTaskBuilder(getDrive(), getPreviousPose(), builder.getBaseVelConstraint(), builder.getBaseAccelConstraint(), builder.getBaseTurnConstraintMaxAngVel(), builder.getBaseTurnConstraintMaxAngAccel());
+        return makeTrajectory(splicedPose.isNotNull() ? splicedPose.get() : getDrive().getPoseEstimate());
     }
 
     /**
@@ -148,7 +139,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          */
         public RoadRunnerTrajectoryTaskBuilder(RoadRunnerDrive drive, Pose2d startPose, Double startTangent, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel) {
             super(startPose, startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
-            mirroredBuilder = new TrajectorySequenceBuilder<>(new Pose2d(startPose.getX(), -startPose.getY(), Mathf.normaliseAngle(Radians.of(startPose.getHeading()).plus(Radians.of(Math.PI))).in(Radians)), startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
+            mirroredBuilder = new TrajectorySequenceBuilder<>(splicedPose.isNotNull() ? mirror(Objects.requireNonNull(splicedPose.get())) : mirror(startPose), -startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
             this.drive = drive;
         }
 
@@ -164,63 +155,16 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          */
         public RoadRunnerTrajectoryTaskBuilder(RoadRunnerDrive drive, Pose2d startPose, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel) {
             super(startPose, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
-            mirroredBuilder = new TrajectorySequenceBuilder<>(new Pose2d(startPose.getX(), -startPose.getY(), Mathf.normaliseAngle(Radians.of(startPose.getHeading()).plus(Radians.of(Math.PI))).in(Radians)), baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
+            mirroredBuilder = new TrajectorySequenceBuilder<>(splicedPose.isNotNull() ? mirror(Objects.requireNonNull(splicedPose.get())) : mirror(startPose), baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
             this.drive = drive;
         }
 
-        // TODO: unfixed mirror methods
-
         private Pose2d mirror(Pose2d pose) {
-            return new Pose2d(pose.getX(), -pose.getY(), mirror(pose.getHeading()));
-        }
-
-        private Pose2d mirror(Pose2d pose, Distance inUnit, Angle angleUnit) {
-            double x = Inches.convertFrom(pose.getX(), inUnit);
-            double y = Inches.convertFrom(pose.getY(), inUnit);
-            return new Pose2d(x, -y, mirror(pose.getHeading(), angleUnit));
+            return new Pose2d(pose.getX(), -pose.getY(), -pose.getHeading());
         }
 
         private Vector2d mirror(Vector2d vector) {
             return new Vector2d(vector.getX(), -vector.getY());
-        }
-
-        private Vector2d mirror(Vector2d vector, Distance inUnit) {
-            double x = Inches.convertFrom(vector.getX(), inUnit);
-            double y = Inches.convertFrom(vector.getY(), inUnit);
-            return new Vector2d(x, -y);
-        }
-
-        private double mirror(double radians) {
-            return mirror(radians, Radians);
-        }
-
-        private double mirror(double unit, Angle angleUnit) {
-            return Mathf.normaliseAngle(angleUnit.of(unit).plus(Radians.of(Math.PI))).in(angleUnit);
-        }
-
-        /**
-         * Move in a straight line to a given position.
-         *
-         * @param endPositionInches The end position (inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineTo(Vector2d endPositionInches) {
-            mirroredBuilder.lineTo(mirror(endPositionInches));
-            return super.lineTo(endPositionInches);
-        }
-
-        /**
-         * Move in a straight line to a given position.
-         *
-         * @param endPosition The end position
-         * @param inUnit      The unit of the end position vector (will be converted to inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineTo(Vector2d endPosition, Distance inUnit) {
-            mirroredBuilder.lineTo(mirror(endPosition), inUnit);
-            double x = Inches.convertFrom(endPosition.getX(), inUnit);
-            double y = Inches.convertFrom(endPosition.getY(), inUnit);
-            return lineTo(new Vector2d(x, y));
         }
 
         /**
@@ -241,48 +185,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         }
 
         /**
-         * Move in a straight line to a given position with custom velocity and acceleration constraints.
-         *
-         * @param endPositionInches The end position (inches)
-         * @param inUnit            The unit of the end position vector (will be converted to inches)
-         * @param velConstraint     The velocity constraint (inches/sec)
-         * @param accelConstraint   The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineTo(
-                Vector2d endPositionInches,
-                Distance inUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.lineTo(mirror(endPositionInches, inUnit), inUnit, velConstraint, accelConstraint);
-            return super.lineTo(endPositionInches, inUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Move in a straight line to a given position with a constant heading.
-         *
-         * @param endPositionInches The end position (inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineToConstantHeading(Vector2d endPositionInches) {
-            mirroredBuilder.lineToConstantHeading(mirror(endPositionInches));
-            return super.lineToConstantHeading(endPositionInches);
-        }
-
-        /**
-         * Move in a straight line to a given position with a constant heading.
-         *
-         * @param endPosition The end position
-         * @param inUnit      The unit of the end position vector (will be converted to inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineToConstantHeading(Vector2d endPosition, Distance inUnit) {
-            mirroredBuilder.lineToConstantHeading(mirror(endPosition, inUnit), inUnit);
-            return super.lineToConstantHeading(endPosition, inUnit);
-        }
-
-        /**
          * Move in a straight line to a given position with a constant heading and custom velocity and acceleration constraints.
          *
          * @param endPositionInches The end position (inches)
@@ -297,49 +199,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         ) {
             mirroredBuilder.lineToConstantHeading(mirror(endPositionInches), velConstraint, accelConstraint);
             return super.lineToConstantHeading(endPositionInches, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Move in a straight line to a given position with a constant heading and custom velocity and acceleration constraints.
-         *
-         * @param endPosition     The end position
-         * @param inUnit          The unit of the end position vector (will be converted to inches)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineToConstantHeading(
-                Vector2d endPosition,
-                Distance inUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.lineToConstantHeading(mirror(endPosition, inUnit), inUnit, velConstraint, accelConstraint);
-            return super.lineToConstantHeading(endPosition, inUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Move in a straight line to a given position with a linear heading.
-         *
-         * @param endPoseInchRad The end pose (in, in, radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineToLinearHeading(Pose2d endPoseInchRad) {
-            mirroredBuilder.lineToLinearHeading(mirror(endPoseInchRad));
-            return super.lineToLinearHeading(endPoseInchRad);
-        }
-
-        /**
-         * Move in a straight line to a given position with a linear heading.
-         *
-         * @param endPose      The end pose
-         * @param distanceUnit The unit of the end pose vector (will be converted to inches)
-         * @param angleUnit    The unit of the end pose heading (will be converted to radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineToLinearHeading(Pose2d endPose, Distance distanceUnit, Angle angleUnit) {
-            mirroredBuilder.lineToLinearHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit);
-            return super.lineToLinearHeading(endPose, distanceUnit, angleUnit);
         }
 
         /**
@@ -360,51 +219,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         }
 
         /**
-         * Move in a straight line to a given position with a linear heading and custom velocity and acceleration constraints.
-         *
-         * @param endPose         The end pose
-         * @param distanceUnit    The unit of the end pose vector (will be converted to inches)
-         * @param angleUnit       The unit of the end pose heading (will be converted to radians)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineToLinearHeading(
-                Pose2d endPose,
-                Distance distanceUnit,
-                Angle angleUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.lineToLinearHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, velConstraint, accelConstraint);
-            return super.lineToLinearHeading(endPose, distanceUnit, angleUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Move in a straight line to a given position with a spline heading.
-         *
-         * @param endPoseInchRad The end pose (in, in, radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineToSplineHeading(Pose2d endPoseInchRad) {
-            mirroredBuilder.lineToSplineHeading(mirror(endPoseInchRad));
-            return super.lineToSplineHeading(endPoseInchRad);
-        }
-
-        /**
-         * Move in a straight line to a given position with a spline heading.
-         *
-         * @param endPose      The end pose
-         * @param distanceUnit The unit of the end pose vector (will be converted to inches)
-         * @param angleUnit    The unit of the end pose heading (will be converted to radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineToSplineHeading(Pose2d endPose, Distance distanceUnit, Angle angleUnit) {
-            mirroredBuilder.lineToSplineHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit);
-            return super.lineToSplineHeading(endPose, distanceUnit, angleUnit);
-        }
-
-        /**
          * Move in a straight line to a given position with a spline heading and custom velocity and acceleration constraints.
          *
          * @param endPoseInchRad  The end pose (in, in, radians)
@@ -419,50 +233,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         ) {
             mirroredBuilder.lineToSplineHeading(mirror(endPoseInchRad), velConstraint, accelConstraint);
             return super.lineToSplineHeading(endPoseInchRad, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Move in a straight line to a given position with a spline heading and custom velocity and acceleration constraints.
-         *
-         * @param endPose         The end pose
-         * @param distanceUnit    The unit of the end pose vector (will be converted to inches)
-         * @param angleUnit       The unit of the end pose heading (will be converted to radians)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder lineToSplineHeading(
-                Pose2d endPose,
-                Distance distanceUnit,
-                Angle angleUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.lineToSplineHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, velConstraint, accelConstraint);
-            return super.lineToSplineHeading(endPose, distanceUnit, angleUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Move in a strafe straight line to a given position.
-         *
-         * @param endPositionInches The end position (inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder strafeTo(Vector2d endPositionInches) {
-            mirroredBuilder.strafeTo(mirror(endPositionInches));
-            return super.strafeTo(endPositionInches);
-        }
-
-        /**
-         * Move in a strafe straight line to a given position.
-         *
-         * @param endPosition The end position
-         * @param inUnit      The unit of the end position vector (will be converted to inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder strafeTo(Vector2d endPosition, Distance inUnit) {
-            mirroredBuilder.strafeTo(mirror(endPosition, inUnit), inUnit);
-            return super.strafeTo(endPosition, inUnit);
         }
 
         /**
@@ -483,48 +253,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         }
 
         /**
-         * Move in a strafe straight line to a given position with custom velocity and acceleration constraints.
-         *
-         * @param endPosition     The end position
-         * @param inUnit          The unit of the end position vector (will be converted to inches)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder strafeTo(
-                Vector2d endPosition,
-                Distance inUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.strafeTo(mirror(endPosition, inUnit), inUnit, velConstraint, accelConstraint);
-            return super.strafeTo(endPosition, inUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Move forward a given distance.
-         *
-         * @param inches The distance to move (inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder forward(double inches) {
-            mirroredBuilder.forward(inches);
-            return super.forward(inches);
-        }
-
-        /**
-         * Move forward a given distance.
-         *
-         * @param distance The distance to move
-         * @param inUnit   The unit of the distance (will be converted to inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder forward(double distance, Distance inUnit) {
-            mirroredBuilder.forward(distance, inUnit);
-            return super.forward(distance, inUnit);
-        }
-
-        /**
          * Move forward a given distance with custom velocity and acceleration constraints.
          *
          * @param inches          The distance to move (inches)
@@ -539,48 +267,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         ) {
             mirroredBuilder.forward(inches, velConstraint, accelConstraint);
             return super.forward(inches, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Move forward a given distance with custom velocity and acceleration constraints.
-         *
-         * @param distance        The distance to move
-         * @param inUnit          The unit of the distance (will be converted to inches)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder forward(
-                double distance,
-                Distance inUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.forward(distance, inUnit, velConstraint, accelConstraint);
-            return super.forward(distance, inUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Move backward a given distance.
-         *
-         * @param inches The distance to move (inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder back(double inches) {
-            mirroredBuilder.back(inches);
-            return super.back(inches);
-        }
-
-        /**
-         * Move backward a given distance.
-         *
-         * @param distance The distance to move
-         * @param inUnit   The unit of the distance (will be converted to inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder back(double distance, Distance inUnit) {
-            mirroredBuilder.back(distance, inUnit);
-            return super.back(distance, inUnit);
         }
 
         /**
@@ -601,48 +287,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         }
 
         /**
-         * Move backward a given distance with custom velocity and acceleration constraints.
-         *
-         * @param distance        The distance to move
-         * @param inUnit          The unit of the distance (will be converted to inches)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder back(
-                double distance,
-                Distance inUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.back(distance, inUnit, velConstraint, accelConstraint);
-            return super.back(distance, inUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Strafe left a given distance.
-         *
-         * @param inches The distance to strafe (inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder strafeLeft(double inches) {
-            mirroredBuilder.strafeRight(inches);
-            return super.strafeLeft(inches);
-        }
-
-        /**
-         * Strafe left a given distance.
-         *
-         * @param distance The distance to strafe
-         * @param inUnit   The unit of the distance (will be converted to inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder strafeLeft(double distance, Distance inUnit) {
-            mirroredBuilder.strafeRight(distance, inUnit);
-            return super.strafeLeft(distance, inUnit);
-        }
-
-        /**
          * Strafe left a given distance with custom velocity and acceleration constraints.
          *
          * @param inches          The distance to strafe (inches)
@@ -655,53 +299,11 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.strafeRight(inches, velConstraint, accelConstraint);
+            mirroredBuilder.strafeLeft(-inches, velConstraint, accelConstraint);
             return super.strafeLeft(inches, velConstraint, accelConstraint);
         }
 
         /**
-         * Strafe left a given distance with custom velocity and acceleration constraints.
-         *
-         * @param distance        The distance to strafe
-         * @param inUnit          The unit of the distance (will be converted to inches)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder strafeLeft(
-                double distance,
-                Distance inUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.strafeRight(distance, inUnit, velConstraint, accelConstraint);
-            return super.strafeLeft(distance, inUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Strafe right a given distance.
-         *
-         * @param inches The distance to strafe (inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder strafeRight(double inches) {
-            mirroredBuilder.strafeLeft(inches);
-            return super.strafeRight(inches);
-        }
-
-        /**
-         * Strafe right a given distance.
-         *
-         * @param distance The distance to strafe
-         * @param inUnit   The unit of the distance (will be converted to inches)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder strafeRight(double distance, Distance inUnit) {
-            mirroredBuilder.strafeLeft(distance, inUnit);
-            return super.strafeRight(distance, inUnit);
-        }
-
-        /**
          * Strafe right a given distance with custom velocity and acceleration constraints.
          *
          * @param inches          The distance to strafe (inches)
@@ -714,56 +316,11 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.strafeLeft(inches, velConstraint, accelConstraint);
+            mirroredBuilder.strafeRight(-inches, velConstraint, accelConstraint);
             return super.strafeRight(inches, velConstraint, accelConstraint);
         }
 
         /**
-         * Strafe right a given distance with custom velocity and acceleration constraints.
-         *
-         * @param distance        The distance to strafe
-         * @param inUnit          The unit of the distance (will be converted to inches)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder strafeRight(
-                double distance,
-                Distance inUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.strafeLeft(distance, inUnit, velConstraint, accelConstraint);
-            return super.strafeRight(distance, inUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Spline to a given position with a given heading.
-         *
-         * @param endPositionInches The end position (inches)
-         * @param endHeadingRad     The end heading (radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineTo(Vector2d endPositionInches, double endHeadingRad) {
-            mirroredBuilder.splineTo(mirror(endPositionInches), mirror(endHeadingRad));
-            return super.splineTo(endPositionInches, endHeadingRad);
-        }
-
-        /**
-         * Spline to a given position with a given heading.
-         *
-         * @param endPosition The end position
-         * @param inUnit      The unit of the end position vector (will be converted to inches)
-         * @param endHeading  The end heading
-         * @param angleUnit   The unit of the end heading (will be converted to radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineTo(Vector2d endPosition, Distance inUnit, double endHeading, Angle angleUnit) {
-            mirroredBuilder.splineTo(mirror(endPosition, inUnit), inUnit, mirror(endHeading, angleUnit), angleUnit);
-            return super.splineTo(endPosition, inUnit, endHeading, angleUnit);
-        }
-
-        /**
          * Spline to a given position with a given heading and custom velocity and acceleration constraints.
          *
          * @param endPositionInches The end position (inches)
@@ -778,60 +335,11 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineTo(mirror(endPositionInches), mirror(endHeadingRad), velConstraint, accelConstraint);
+            mirroredBuilder.splineTo(mirror(endPositionInches), -endHeadingRad, velConstraint, accelConstraint);
             return super.splineTo(endPositionInches, endHeadingRad, velConstraint, accelConstraint);
         }
 
         /**
-         * Spline to a given position with a given heading and custom velocity and acceleration constraints.
-         *
-         * @param endPosition     The end position
-         * @param inUnit          The unit of the end position vector (will be converted to inches)
-         * @param endHeading      The end heading
-         * @param angleUnit       The unit of the end heading (will be converted to radians)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineTo(
-                Vector2d endPosition,
-                Distance inUnit,
-                double endHeading,
-                Angle angleUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.splineTo(mirror(endPosition, inUnit), inUnit, mirror(endHeading, angleUnit), angleUnit, velConstraint, accelConstraint);
-            return super.splineTo(endPosition, inUnit, endHeading, angleUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Spline to a given position with a constant heading.
-         *
-         * @param endPositionInches The end position (inches)
-         * @param endHeadingRad     The end heading (radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineToConstantHeading(Vector2d endPositionInches, double endHeadingRad) {
-            mirroredBuilder.splineToConstantHeading(mirror(endPositionInches), mirror(endHeadingRad));
-            return super.splineToConstantHeading(endPositionInches, endHeadingRad);
-        }
-
-        /**
-         * Spline to a given position with a constant heading.
-         *
-         * @param endPosition The end position
-         * @param inUnit      The unit of the end position vector (will be converted to inches)
-         * @param endHeading  The end heading
-         * @param angleUnit   The unit of the end heading (will be converted to radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineToConstantHeading(Vector2d endPosition, Distance inUnit, double endHeading, Angle angleUnit) {
-            mirroredBuilder.splineToConstantHeading(mirror(endPosition, inUnit), inUnit, mirror(endHeading, angleUnit), angleUnit);
-            return super.splineToConstantHeading(endPosition, inUnit, endHeading, angleUnit);
-        }
-
-        /**
          * Spline to a given position with a constant heading and custom velocity and acceleration constraints.
          *
          * @param endPositionInches The end position (inches)
@@ -846,61 +354,11 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineToConstantHeading(mirror(endPositionInches), mirror(endHeadingRad), velConstraint, accelConstraint);
+            mirroredBuilder.splineToConstantHeading(mirror(endPositionInches), -endHeadingRad, velConstraint, accelConstraint);
             return super.splineToConstantHeading(endPositionInches, endHeadingRad, velConstraint, accelConstraint);
         }
 
         /**
-         * Spline to a given position with a constant heading and custom velocity and acceleration constraints.
-         *
-         * @param endPosition     The end position
-         * @param inUnit          The unit of the end position vector (will be converted to inches)
-         * @param endHeading      The end heading
-         * @param angleUnit       The unit of the end heading (will be converted to radians)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineToConstantHeading(
-                Vector2d endPosition,
-                Distance inUnit,
-                double endHeading,
-                Angle angleUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.splineToConstantHeading(mirror(endPosition), inUnit, mirror(endHeading, angleUnit), angleUnit, velConstraint, accelConstraint);
-            return super.splineToConstantHeading(endPosition, inUnit, endHeading, angleUnit, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Spline to a given position with a linear heading.
-         *
-         * @param endPoseInchRad The end pose (in, in, radians)
-         * @param endHeadingRad  The end heading (radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineToLinearHeading(Pose2d endPoseInchRad, double endHeadingRad) {
-            mirroredBuilder.splineToLinearHeading(mirror(endPoseInchRad), endHeadingRad);
-            return super.splineToLinearHeading(endPoseInchRad, endHeadingRad);
-        }
-
-        /**
-         * Spline to a given position with a linear heading.
-         *
-         * @param endPose      The end pose
-         * @param distanceUnit The unit of the end pose vector (will be converted to inches)
-         * @param angleUnit    The unit of the end pose heading (will be converted to radians)
-         * @param endHeading   The end heading
-         * @param endAngleUnit The unit of the end heading (will be converted to radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineToLinearHeading(Pose2d endPose, Distance distanceUnit, Angle angleUnit, double endHeading, Angle endAngleUnit) {
-            mirroredBuilder.splineToLinearHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, endHeading, endAngleUnit);
-            return super.splineToLinearHeading(endPose, distanceUnit, angleUnit, endHeading, endAngleUnit);
-        }
-
-        /**
          * Spline to a given position with a linear heading and custom velocity and acceleration constraints.
          *
          * @param endPoseInchRad  The end pose (in, in, radians)
@@ -915,67 +373,11 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineToLinearHeading(mirror(endPoseInchRad), mirror(endHeadingRad), velConstraint, accelConstraint);
+            mirroredBuilder.splineToLinearHeading(mirror(endPoseInchRad), -endHeadingRad, velConstraint, accelConstraint);
             return super.splineToLinearHeading(endPoseInchRad, endHeadingRad, velConstraint, accelConstraint);
         }
 
         /**
-         * Spline to a given position with a linear heading and custom velocity and acceleration constraints.
-         *
-         * @param endPose         The end pose
-         * @param distanceUnit    The unit of the end pose vector (will be converted to inches)
-         * @param angleUnit       The unit of the end pose heading (will be converted to radians)
-         * @param endHeading      The end heading
-         * @param endAngleUnit    The unit of the end heading (will be converted to radians)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineToLinearHeading(
-                Pose2d endPose,
-                Distance distanceUnit,
-                Angle angleUnit,
-                double endHeading,
-                Angle endAngleUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.splineToLinearHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, Mathf.normaliseAngle(endAngleUnit.of(endHeading).plus(Radians.of(Math.PI))).in(endAngleUnit), endAngleUnit, velConstraint, accelConstraint);
-            double x = Inches.convertFrom(endPose.getX(), distanceUnit);
-            double y = Inches.convertFrom(endPose.getY(), distanceUnit);
-            double r = Radians.convertFrom(endHeading, angleUnit);
-            double r2 = Radians.convertFrom(endPose.getHeading(), endAngleUnit);
-            return splineToLinearHeading(new Pose2d(x, y, r), r2, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Spline to a given position with a spline heading.
-         *
-         * @param endPoseInchRad The end pose (in, in, radians)
-         * @param endHeadingRad  The end heading (radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineToSplineHeading(Pose2d endPoseInchRad, double endHeadingRad) {
-            mirroredBuilder.splineToSplineHeading(mirror(endPoseInchRad), mirror(endPoseInchRad.getHeading()));
-            return super.splineToSplineHeading(endPoseInchRad, endHeadingRad);
-        }
-
-        /**
-         * Spline to a given position with a spline heading.
-         *
-         * @param endPose      The end pose
-         * @param distanceUnit The unit of the end pose vector (will be converted to inches)
-         * @param angleUnit    The unit of the end pose heading (will be converted to radians)
-         * @param endHeading   The end heading
-         * @param endAngleUnit The unit of the end heading (will be converted to radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineToSplineHeading(Pose2d endPose, Distance distanceUnit, Angle angleUnit, double endHeading, Angle endAngleUnit) {
-            mirroredBuilder.splineToSplineHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, mirror(endPose.getHeading(), endAngleUnit), endAngleUnit);
-            return super.splineToSplineHeading(endPose, distanceUnit, angleUnit, endHeading, endAngleUnit);
-        }
-
-        /**
          * Spline to a given position with a spline heading and custom velocity and acceleration constraints.
          *
          * @param endPoseInchRad  The end pose (in, in, radians)
@@ -990,33 +392,8 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
                 TrajectoryVelocityConstraint velConstraint,
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
-            mirroredBuilder.splineToSplineHeading(mirror(endPoseInchRad), mirror(endPoseInchRad.getHeading()), velConstraint, accelConstraint);
+            mirroredBuilder.splineToSplineHeading(mirror(endPoseInchRad), -endPoseInchRad.getHeading(), velConstraint, accelConstraint);
             return super.splineToSplineHeading(endPoseInchRad, endHeadingRad, velConstraint, accelConstraint);
-        }
-
-        /**
-         * Spline to a given position with a spline heading and custom velocity and acceleration constraints.
-         *
-         * @param endPose         The end pose
-         * @param distanceUnit    The unit of the end pose vector (will be converted to inches)
-         * @param angleUnit       The unit of the end pose heading (will be converted to radians)
-         * @param endHeading      The end heading
-         * @param endAngleUnit    The unit of the end heading (will be converted to radians)
-         * @param velConstraint   The velocity constraint (inches/sec)
-         * @param accelConstraint The acceleration constraint (inches/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder splineToSplineHeading(
-                Pose2d endPose,
-                Distance distanceUnit,
-                Angle angleUnit,
-                double endHeading,
-                Angle endAngleUnit,
-                TrajectoryVelocityConstraint velConstraint,
-                TrajectoryAccelerationConstraint accelConstraint
-        ) {
-            mirroredBuilder.splineToSplineHeading(mirror(endPose, distanceUnit, angleUnit), distanceUnit, angleUnit, mirror(endPose.getHeading(), endAngleUnit), endAngleUnit, velConstraint, accelConstraint);
-            return super.splineToSplineHeading(endPose, distanceUnit, angleUnit, endHeading, endAngleUnit, velConstraint, accelConstraint);
         }
 
         /**
@@ -1028,18 +405,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         public RoadRunnerTrajectoryTaskBuilder setTangent(double tangent) {
             mirroredBuilder.setTangent(tangent);
             return super.setTangent(tangent);
-        }
-
-        /**
-         * Set the tangent of the next path.
-         *
-         * @param tangent   The tangent
-         * @param angleUnit The unit of the tangent (will be converted to radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder setTangent(double tangent, Angle angleUnit) {
-            mirroredBuilder.setTangent(tangent, angleUnit);
-            return super.setTangent(tangent, angleUnit);
         }
 
         /**
@@ -1130,20 +495,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         public RoadRunnerTrajectoryTaskBuilder setTurnConstraint(double maxAngVel, double maxAngAccel) {
             mirroredBuilder.setTurnConstraint(maxAngVel, maxAngAccel);
             return super.setTurnConstraint(maxAngVel, maxAngAccel);
-        }
-
-        /**
-         * Set the turn constraints for the next builder instructions.
-         *
-         * @param maxAngVel   The maximum angular velocity
-         * @param velUnit     The unit of the maximum angular velocity (will be converted to radians/sec)
-         * @param maxAngAccel The maximum angular acceleration
-         * @param accelUnit   The unit of the maximum angular acceleration (will be converted to radians/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder setTurnConstraint(double maxAngVel, Velocity<Angle> velUnit, double maxAngAccel, Velocity<Velocity<Angle>> accelUnit) {
-            mirroredBuilder.setTurnConstraint(maxAngVel, velUnit, maxAngAccel, accelUnit);
-            return super.setTurnConstraint(maxAngVel, velUnit, maxAngAccel, accelUnit);
         }
 
         /**
@@ -1254,19 +605,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         }
 
         /**
-         * Add a temporal marker at a given time to run a callback at that time.
-         *
-         * @param time     The time to run the callback
-         * @param timeUnit The unit of the time supplied (will be converted to seconds)
-         * @param callback The callback to run
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder addTemporalMarker(TimeProducer time, Time timeUnit, MarkerCallback callback) {
-            mirroredBuilder.addTemporalMarker(time, timeUnit, callback);
-            return super.addTemporalMarker(time, timeUnit, callback);
-        }
-
-        /**
          * Add a spatial marker at the current position to run a callback at that position.
          *
          * @param pointInches The point to run the callback (inches)
@@ -1276,19 +614,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         public RoadRunnerTrajectoryTaskBuilder addSpatialMarker(Vector2d pointInches, MarkerCallback callback) {
             mirroredBuilder.addSpatialMarker(mirror(pointInches), callback);
             return super.addSpatialMarker(pointInches, callback);
-        }
-
-        /**
-         * Add a spatial marker at the current position to run a callback at that position.
-         *
-         * @param point    The point to run the callback
-         * @param inUnit   The unit of the point (will be converted to inches)
-         * @param callback The callback to run
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder addSpatialMarker(Vector2d point, Distance inUnit, MarkerCallback callback) {
-            mirroredBuilder.addSpatialMarker(mirror(point, inUnit), callback);
-            return super.addSpatialMarker(point, inUnit, callback);
         }
 
         /**
@@ -1315,19 +640,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         }
 
         /**
-         * Add a displacement marker at the current displacement plus an offset to run a callback at that displacement.
-         *
-         * @param offset   The offset to add to the current displacement
-         * @param inUnit   The unit of the offset (will be converted to inches)
-         * @param callback The callback to run
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder UNSTABLE_addDisplacementMarkerOffset(double offset, Distance inUnit, MarkerCallback callback) {
-            mirroredBuilder.UNSTABLE_addDisplacementMarkerOffset(offset, inUnit, callback);
-            return super.UNSTABLE_addDisplacementMarkerOffset(offset, inUnit, callback);
-        }
-
-        /**
          * Add a displacement marker at a given displacement to run a callback at that displacement.
          *
          * @param displacementInches The displacement to run the callback (inches)
@@ -1337,19 +649,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         public RoadRunnerTrajectoryTaskBuilder addDisplacementMarker(double displacementInches, MarkerCallback callback) {
             mirroredBuilder.addDisplacementMarker(displacementInches, callback);
             return super.addDisplacementMarker(displacementInches, callback);
-        }
-
-        /**
-         * Add a displacement marker at a given displacement to run a callback at that displacement.
-         *
-         * @param displacement The displacement to run the callback
-         * @param inUnit       The unit of the displacement (will be converted to inches)
-         * @param callback     The callback to run
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder addDisplacementMarker(double displacement, Distance inUnit, MarkerCallback callback) {
-            mirroredBuilder.addDisplacementMarker(displacement, inUnit, callback);
-            return super.addDisplacementMarker(displacement, inUnit, callback);
         }
 
         /**
@@ -1368,20 +667,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         /**
          * Add a displacement marker at a given displacement to run a callback at that displacement.
          *
-         * @param scale    A multiplicative scale to apply to the displacement
-         * @param offset   The offset to add to the displacement
-         * @param inUnit   The unit of the offset (will be converted to inches)
-         * @param callback The callback to run
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder addDisplacementMarker(double scale, double offset, Distance inUnit, MarkerCallback callback) {
-            mirroredBuilder.addDisplacementMarker(scale, offset, inUnit, callback);
-            return super.addDisplacementMarker(scale, offset, inUnit, callback);
-        }
-
-        /**
-         * Add a displacement marker at a given displacement to run a callback at that displacement.
-         *
          * @param displacementInches The displacement to run the callback (inches)
          * @param callback           The callback to run
          * @return The builder
@@ -1389,42 +674,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         public RoadRunnerTrajectoryTaskBuilder addDisplacementMarker(DisplacementProducer displacementInches, MarkerCallback callback) {
             mirroredBuilder.addDisplacementMarker(displacementInches, callback);
             return super.addDisplacementMarker(displacementInches, callback);
-        }
-
-        /**
-         * Add a displacement marker at a given displacement to run a callback at that displacement.
-         *
-         * @param displacement The displacement to run the callback
-         * @param inUnit       The unit of the displacement (will be converted to inches)
-         * @param callback     The callback to run
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder addDisplacementMarker(DisplacementProducer displacement, Distance inUnit, MarkerCallback callback) {
-            mirroredBuilder.addDisplacementMarker(displacement, inUnit, callback);
-            return super.addDisplacementMarker(displacement, inUnit, callback);
-        }
-
-        /**
-         * Turn to a given angle.
-         *
-         * @param radians The angle to turn (radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder turn(double radians) {
-            mirroredBuilder.turn(mirror(radians));
-            return super.turn(radians);
-        }
-
-        /**
-         * Turn to a given angle.
-         *
-         * @param angle     The angle to turn
-         * @param angleUnit The unit of the angle (will be converted to radians)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder turn(double angle, Angle angleUnit) {
-            mirroredBuilder.turn(mirror(angle, angleUnit), angleUnit);
-            return super.turn(angle, angleUnit);
         }
 
         /**
@@ -1436,24 +685,8 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder turn(double radians, double maxAngVel, double maxAngAccel) {
-            mirroredBuilder.turn(mirror(radians), maxAngVel, maxAngAccel);
+            mirroredBuilder.turn(-radians, maxAngVel, maxAngAccel);
             return super.turn(radians, maxAngVel, maxAngAccel);
-        }
-
-        /**
-         * Turn to a given angle with custom maximum angular velocity and acceleration.
-         *
-         * @param angle       The angle to turn
-         * @param angleUnit   The unit of the angle (will be converted to radians)
-         * @param maxAngVel   The maximum angular velocity
-         * @param velUnit     The unit of the maximum angular velocity (will be converted to radians/sec)
-         * @param maxAngAccel The maximum angular acceleration
-         * @param accelUnit   The unit of the maximum angular acceleration (will be converted to radians/sec^2)
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder turn(double angle, Angle angleUnit, double maxAngVel, Velocity<Angle> velUnit, double maxAngAccel, Velocity<Velocity<Angle>> accelUnit) {
-            mirroredBuilder.turn(mirror(angle, angleUnit), angleUnit, maxAngVel, velUnit, maxAngAccel, accelUnit);
-            return super.turn(angle, angleUnit, maxAngVel, velUnit, maxAngAccel, accelUnit);
         }
 
         /**
@@ -1468,23 +701,13 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         }
 
         /**
-         * Wait for a given amount of time.
-         *
-         * @param time The amount of time to wait.
-         * @return The builder
-         */
-        public RoadRunnerTrajectoryTaskBuilder waitFor(Measure<Time> time) {
-            mirroredBuilder.waitFor(time);
-            return super.waitFor(time);
-        }
-
-        /**
          * Add a trajectory to the sequence.
          *
          * @param trajectory The trajectory to add
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder addTrajectory(Trajectory trajectory) {
+            // Trajectories that are built cannot be mirrored, so we have to use the non-mirrored builder
             mirroredBuilder.addTrajectory(trajectory);
             return super.addTrajectory(trajectory);
         }
@@ -1543,7 +766,8 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
         /**
          * Run a sequence of trajectories, useful if you do not need to build a trajectory but
          * run one directly. This method will override any previous trajectories added to the builder,
-         * but will still mirror the sequence and accept task settings.
+         * but will still mirror the sequence and accept task settings. This will set the drive pose
+         * estimate to the start of the sequence.
          * <p>
          * Example usage:
          * {@code
@@ -1555,6 +779,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          */
         public RoadRunnerTrajectoryTaskBuilder runSequence(TrajectorySequence sequence) {
             overrideSequence = sequence;
+            drive.setPoseEstimate(sequence.start());
             return this;
         }
 
@@ -1578,7 +803,8 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * not running an {@link AutonomousBunyipsOpMode} and cannot use the queue system.
          * <p>
          * This task will be added to the global poses list, so the next implicitly created trajectory will
-         * start from the end of this one.
+         * start from the end of this one. Set {@code useAsImplicitPose} to false if you do not want this behavior,
+         * such as if there are side effects of construction using multiple implicit trajectories.
          *
          * @return The built task, not added to the task queue automatically.
          * @see #buildTask(boolean)
@@ -1592,24 +818,27 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
          * This method is useful is you are running this task as part of a {@link TaskGroup}, or if you are
          * not running an {@link AutonomousBunyipsOpMode} and cannot use the queue system.
          *
-         * @param addToGlobalPoses Whether to add the trajectory to the rrTasks list, therefore making the next implicit
-         *                         trajectory start from the end of this one
+         * @param useAsImplicitPose Whether to use this trajectory end point as a global splice, therefore making the
+         *                          next implicit trajectory start from the end of this one. This should be used if you are using
+         *                          makeTrajectory() and building a task, and there are no side effects of construction using
+         *                          multiple implicit trajectories.
          * @return The built task, not added to the task queue automatically.
          */
-        public RoadRunnerTask<RoadRunnerDrive> buildTask(boolean addToGlobalPoses) {
+        public RoadRunnerTask<RoadRunnerDrive> buildTask(boolean useAsImplicitPose) {
             TrajectorySequence sequence = overrideSequence != null ? overrideSequence : build();
             RoadRunnerTask<RoadRunnerDrive> task = new RoadRunnerTask<>(timeout, drive, sequence);
             task.withTimeout(timeout);
             task.withName(name);
-            if (addToGlobalPoses)
-                rrTasks.add(task);
+            if (useAsImplicitPose)
+                splicedPose.set(sequence.end());
             return task;
         }
 
         /**
          * Build the trajectory sequence and task, and add it automatically to the {@link AutonomousBunyipsOpMode}
          * task queue. This method is useful if you are running this task as a standalone task, and will only
-         * work if you are running an {@link AutonomousBunyipsOpMode}.
+         * work if you are running an {@link AutonomousBunyipsOpMode}. This trajectory will be added to the global
+         * poses list, so the next implicitly created trajectory will start from the end of this one.
          */
         public void addTask() {
             RoadRunnerTask<RoadRunnerDrive> task = buildTask();

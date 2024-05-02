@@ -41,7 +41,7 @@ class DualTelemetry @JvmOverloads constructor(
     private var telemetryQueue = 0
 
     @Volatile
-    private var packet: TelemetryPacket? = TelemetryPacket()
+    private var packet: TelemetryPacket = TelemetryPacket()
 
     /**
      * A string to display the current 'status' of the OpMode, used for overhead telemetry.
@@ -115,22 +115,14 @@ class DualTelemetry @JvmOverloads constructor(
      * Add any additional telemetry to the FtcDashboard telemetry packet.
      */
     fun addDashboard(key: String, value: Any?) {
-        if (packet == null) {
-            packet = TelemetryPacket()
-        }
-        packet!!.put(key, value.toString())
+        packet.put(key, value.toString())
     }
 
     /**
      * Add any field overlay data to the FtcDashboard telemetry packet.
      */
     fun dashboardFieldOverlay(): Canvas {
-        // This will allow us to attach any field overlay data to the packet
-        // as we will only reassign if the packet is null
-        if (packet == null) {
-            packet = TelemetryPacket()
-        }
-        return packet!!.fieldOverlay()
+        return packet.fieldOverlay()
     }
 
     /**
@@ -232,11 +224,7 @@ class DualTelemetry @JvmOverloads constructor(
         overheadTelemetry.setValue("${if (overheadTag != null) "$overheadTag: " else ""}$overheadStatus")
 
         // FtcDashboard
-        if (packet == null) {
-            packet = TelemetryPacket()
-        }
-
-        packet?.let {
+        packet.let {
             synchronized(it) {
                 it.put(overheadTag ?: "status", overheadStatus + "\n")
 
@@ -261,7 +249,7 @@ class DualTelemetry @JvmOverloads constructor(
                 FtcDashboard.getInstance().sendTelemetryPacket(it)
 
                 // Invalidate this packet
-                packet = null
+                packet = TelemetryPacket()
             }
         }
 
@@ -383,7 +371,7 @@ class DualTelemetry @JvmOverloads constructor(
         synchronized(telemetryItems) {
             telemetryItems.clear()
         }
-        packet = null
+        packet = TelemetryPacket()
     }
 
     /**
