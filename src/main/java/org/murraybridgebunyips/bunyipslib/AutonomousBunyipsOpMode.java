@@ -142,12 +142,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Run code in a loop AFTER {@link #onInitialise()} has completed, until
-     * start is pressed on the Driver Station or the {@link #setInitTask initTask} is done.
-     * If not implemented, the OpMode will try to run your initTask, and if that is null,
-     * the {@code dynamic_init} phase will be skipped.
-     * This method should not be overridden,
-     * if you need to do anything in the init-loop use {@link #setInitTask(RobotTask)}.
+     * Use an init task if you wish to run looping code during the initialisation phase of the OpMode.
      *
      * @see #setInitTask
      */
@@ -327,7 +322,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     /**
      * Runs upon the pressing of the INIT button on the Driver Station.
      * This is where your hardware should be initialised. You may also add specific tasks to the queue
-     * here, but it is recommended to use {@link #setInitTask(RobotTask)} or {@link #onReady(OpModeSelection)} instead.
+     * here, but it is recommended to use {@link #setInitTask(Task)} or {@link #onReady(OpModeSelection)} instead.
      */
     protected abstract void onInitialise();
 

@@ -103,9 +103,9 @@ abstract class BunyipsOpMode : BOMInternal() {
 
     /**
      * Run code in a loop AFTER [onInit] has completed, until
-     * start is pressed on the Driver Station or true is returned to this method.
+     * start is pressed on the Driver Station and the init-task ([setInitTask]) is done.
      * This method is called at least once.
-     * If not implemented, the OpMode will continue on as normal and wait for start.
+     * If not implemented and no init-task is defined, the OpMode will continue on as normal and wait for start.
      */
     protected open fun onInitLoop(): Boolean {
         return true
@@ -236,6 +236,8 @@ abstract class BunyipsOpMode : BOMInternal() {
             } while (opModeInInit())
 
             telemetry.opModeStatus = "finish_init"
+            if (initTask?.isFinished() == false)
+                log("init task interrupted: %", initTask)
             initTask?.finishNow()
             pushTelemetry()
             Dbg.logd("BunyipsOpMode: firing onInitDone()...")
@@ -353,7 +355,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * what you need to after the init-task has finished. This method should be paired with [onInitDone]
      * to do anything after the initTask has finished.
      *
-     * If you do not define an initTask, then the init-task `dynamic_init` phase will be skipped.
+     * If you do not define an initTask, then running it during the `dynamic_init` phase will be skipped.
      *
      * @see onInitDone
      */

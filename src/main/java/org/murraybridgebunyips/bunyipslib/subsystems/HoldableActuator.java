@@ -96,8 +96,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      * If the actuator has a continuous negative velocity of zero for this many hits, the Home Task will complete.
      *
      * @param threshold the new threshold of continuous hits of zero velocity to complete homing. Default is 30.
-     * @see #disableHomingZeroHits()
      * @return this
+     * @see #disableHomingZeroHits()
      */
     public HoldableActuator withHomingZeroHits(int threshold) {
         ZERO_HIT_THRESHOLD = threshold;
@@ -119,8 +119,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      *
      * @param current the current which if exceeded in a Home Task will finish the reset. Default is 4A.
      * @param forTime the time the current must be exceeded for to finish the reset. Useful for filtering out momentary spikes. Default is 1s.
-     * @see #disableHomingOvercurrent()
      * @return this
+     * @see #disableHomingOvercurrent()
      */
     public HoldableActuator withHomingOvercurrent(Measure<Current> current, Measure<Time> forTime) {
         OVERCURRENT = current;
@@ -141,9 +141,9 @@ public class HoldableActuator extends BunyipsSubsystem {
      * Set the bottom limit switch of the actuator to use in homing and encoder awareness.
      *
      * @param bottomLimitSwitch the limit switch to set as the bottom switch where the arm would be "homed"
+     * @return this
      * @see #disableHomingZeroHits()
      * @see #disableHomingOvercurrent()
-     * @return this
      */
     public HoldableActuator withBottomSwitch(TouchSensor bottomLimitSwitch) {
         bottomSwitch = bottomLimitSwitch;
