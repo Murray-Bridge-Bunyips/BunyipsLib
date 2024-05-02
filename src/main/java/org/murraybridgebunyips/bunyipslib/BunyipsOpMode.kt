@@ -227,7 +227,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                     // Run the user's init task, if it isn't null
                     initTask?.run()
                     // Run until onInitLoop returns true, and the initTask is done, or the OpMode is continued
-                    if (onInitLoop() && (initTask != null && initTask?.pollFinished() == true)) break
+                    if (onInitLoop() && (initTask == null || initTask?.pollFinished() == true)) break
                 } catch (e: Exception) {
                     Exceptions.handle(e, ::log)
                 }
