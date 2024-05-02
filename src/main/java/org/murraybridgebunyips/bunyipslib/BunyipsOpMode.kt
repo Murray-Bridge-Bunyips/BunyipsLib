@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ThreadPool
 import org.firstinspires.ftc.robotcore.external.Telemetry.Item
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
-import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask
+import org.murraybridgebunyips.bunyipslib.tasks.bases.Task
 import java.util.concurrent.ExecutorService
 
 
@@ -44,6 +44,7 @@ abstract class BunyipsOpMode : BOMInternal() {
     private var safeHaltHardwareOnStop = false
 
     private var gamepadExecutor: ExecutorService? = null
+    private var initTask: Task? = null
 
     /**
      * BunyipsLib Gamepad 1: Driver
@@ -59,8 +60,6 @@ abstract class BunyipsOpMode : BOMInternal() {
      * BunyipsLib Driver Station & FtcDashboard Telemetry
      */
     lateinit var telemetry: DualTelemetry
-
-    private var initTask: RobotTask? = null
 
     companion object {
         private var _instance: BunyipsOpMode? = null
@@ -237,6 +236,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             } while (opModeInInit())
 
             telemetry.opModeStatus = "finish_init"
+            initTask?.finishNow()
             pushTelemetry()
             Dbg.logd("BunyipsOpMode: firing onInitDone()...")
             // Run user-defined final initialisation
@@ -357,7 +357,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      *
      * @see onInitDone
      */
-    protected fun setInitTask(task: RobotTask) {
+    protected fun setInitTask(task: Task) {
         if (initTask != null) {
             Dbg.warn(javaClass, "Init-task has already been set to %, overriding it with %...", initTask, task)
         }
