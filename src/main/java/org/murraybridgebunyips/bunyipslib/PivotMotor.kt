@@ -73,6 +73,13 @@ class PivotMotor(
     }
 
     /**
+     * Stop holding the current position set by [holdCurrentPosition].
+     */
+    fun resetHoldPosition() {
+        encoderMotor.resetHoldPosition()
+    }
+
+    /**
      * Get the current angle of the pivot.
      */
     @JvmOverloads

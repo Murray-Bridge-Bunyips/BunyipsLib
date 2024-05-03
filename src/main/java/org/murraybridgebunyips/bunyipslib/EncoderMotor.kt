@@ -25,6 +25,8 @@ class EncoderMotor @JvmOverloads constructor(
     var snapshot: Double = 0.0
         private set
 
+    private var lock: Boolean = false
+
     /**
      * Enable encoder and start tracking in the selected mode, which will also save a snapshot of the encoder position for relative tracking.
      * @param mode the mode to track the encoder in
@@ -41,9 +43,19 @@ class EncoderMotor @JvmOverloads constructor(
      */
     @JvmOverloads
     fun holdCurrentPosition(holdingPower: Double = 1.0) {
-        motor.targetPosition = motor.currentPosition
+        if (!lock) {
+            motor.targetPosition = motor.currentPosition
+            lock = true
+        }
         motor.mode = DcMotor.RunMode.RUN_TO_POSITION
         motor.power = holdingPower
+    }
+
+    /**
+     * Stop holding the current position set by [holdCurrentPosition].
+     */
+    fun resetHoldPosition() {
+        lock = false
     }
 
     /**

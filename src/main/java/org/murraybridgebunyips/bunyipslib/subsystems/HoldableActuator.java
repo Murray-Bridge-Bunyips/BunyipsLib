@@ -47,6 +47,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     private DcMotorEx motor;
     private TouchSensor bottomSwitch;
     private boolean zeroed;
+    private boolean userLatch;
     private double userPower;
     private double motorPower;
     private Mode inputMode = Mode.USER;
@@ -362,24 +363,29 @@ public class HoldableActuator extends BunyipsSubsystem {
                     break;
                 }
                 motorPower = MOVING_POWER;
-                opMode.addTelemetry("%: MOVING to %/% ticks", NAME, motor.getTargetPosition(), motor.getCurrentPosition());
+                opMode.addTelemetry("%: MOVING to %/% ticks [%tps]", NAME, motor.getTargetPosition(), motor.getCurrentPosition(), Math.round(motor.getVelocity()));
                 break;
             case HOMING:
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 motorPower = -MOVING_POWER;
+                opMode.addTelemetry("%: HOMING [%tps]", NAME, Math.round(motor.getVelocity()));
                 break;
             case USER:
                 if (userPower == 0.0) {
                     // Hold arm in place
-                    motor.setTargetPosition(motor.getCurrentPosition());
+                    if (!userLatch) {
+                        motor.setTargetPosition(motor.getCurrentPosition());
+                        userLatch = true;
+                    }
                     motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     motorPower = HOLDING_POWER;
                 } else {
+                    userLatch = false;
                     // Move arm in accordance with the user's input
                     motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     motorPower = userPower;
                 }
-                opMode.addTelemetry("%: % at % ticks", NAME, userPower == 0.0 ? "HOLDING" : "MOVING", motor.getCurrentPosition());
+                opMode.addTelemetry("%: % at % ticks [%tps]", NAME, userPower == 0.0 ? "HOLDING" : "MOVING", motor.getCurrentPosition(), Math.round(motor.getVelocity()));
                 break;
         }
 
