@@ -281,7 +281,7 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
     }
 
     @Override
-    protected void onReady(@Nullable OpModeSelection selectedOpMode) {
+    protected void onReady(@Nullable Reference<?> selectedOpMode, Controls selectedButton) {
         addTask(() -> vision.start(purplePixelProcessor));
 
         // Full RoadRunner support with utility methods such as makeTrajectory()
