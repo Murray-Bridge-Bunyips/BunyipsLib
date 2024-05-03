@@ -47,11 +47,6 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     private void callback(@Nullable Reference<?> selectedOpMode) {
         callbackReceived = true;
-        if (selectedOpMode != null) {
-            log("auto: mode selected. running opmode " + selectedOpMode);
-        } else {
-            log("auto: mode selected. running default opmode");
-        }
         onReady(selectedOpMode, userSelection.getSelectedButton());
         // Add any queued tasks
         for (RobotTask task : postQueue) {
@@ -71,14 +66,12 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         // Convert user defined OpModeSelections to varargs
         Reference<?>[] varargs = opModes.toArray(new Reference[0]);
         if (varargs.length == 0) {
-            log("auto: no setOpModes() defined, skipping selection phase");
             opModes.add(Reference.empty());
         }
         if (varargs.length > 1) {
             // Run task allocation if OpModeSelections are defined
             // This will run asynchronously, and the callback will be called
             // when the user has selected an OpMode
-            log("auto: waiting for user input...");
             userSelection = new UserSelection<>(this, this::callback, varargs);
             Threads.start(userSelection);
         } else {
