@@ -1,4 +1,10 @@
 # BunyipsLib Changelog
+## v2.0.1 (2024-05-04)
+Rotator exception patches and telemetry improvement.
+### Bug fixes
+- Fixed misuse of infinities with default lower and upper limits, replaced with `-Double.MAX_VALUE` and `Double.MAX_VALUE` respectively
+### Non-breaking changes
+- Hide infinite limits and replace with infinity symbols in telemetry for `Rotator`
 ## v2.0.0 (2024-05-03)
 Improvement of various subsystems for RoadRunner and Autonomous operation.
 ### Breaking changes

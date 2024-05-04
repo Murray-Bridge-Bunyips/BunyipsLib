@@ -28,10 +28,10 @@ import java.util.function.DoubleSupplier;
  */
 public class Rotator extends BunyipsSubsystem {
     // Encoder lower limit angle
-    private Measure<Angle> MIN_LIMIT = Degrees.of(Double.NEGATIVE_INFINITY);
+    private Measure<Angle> MIN_LIMIT = Degrees.of(-Double.MAX_VALUE);
 
     // Encoder upper limit angle
-    private Measure<Angle> MAX_LIMIT = Degrees.of(Double.POSITIVE_INFINITY);
+    private Measure<Angle> MAX_LIMIT = Degrees.of(Double.MAX_VALUE);
 
     // Lower power clamp
     private double LOWER_POWER = -1.0;
@@ -264,6 +264,9 @@ public class Rotator extends BunyipsSubsystem {
             pivot.setPower(power);
         }
 
-        opMode.addTelemetry("%: % <= % <= % degs, % pwr", NAME, round(MIN_LIMIT.in(Degrees), 1), round(pivot.getCurrent().in(Degrees), 1), round(MAX_LIMIT.in(Degrees), 1), round(power, 2));
+        String min = MIN_LIMIT.magnitude() != -Double.MAX_VALUE ? String.valueOf(round(MIN_LIMIT.in(Degrees), 1)) : "-∞";
+        String max = MAX_LIMIT.magnitude() != Double.MAX_VALUE ? String.valueOf(round(MAX_LIMIT.in(Degrees), 1)) : "∞";
+
+        opMode.addTelemetry("%: % <= % <= % degs, % pwr", NAME, min, round(pivot.getCurrent().in(Degrees), 1), max, round(power, 2));
     }
 }
