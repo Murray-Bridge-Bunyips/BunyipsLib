@@ -1,6 +1,12 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
+
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.murraybridgebunyips.bunyipslib.Direction;
+import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.ColourThreshold;
@@ -17,7 +23,9 @@ import org.murraybridgebunyips.bunyipslib.vision.processors.ColourThreshold;
  */
 public class GetTriPositionContourTask extends ForeverTask {
     private final ColourThreshold colourThreshold;
+    private Measure<Time> leftSidePersistenceTime = Seconds.of(3);
     private volatile Direction position = Direction.LEFT;
+    private final ElapsedTime lockoutTimer = new ElapsedTime();
 
     /**
      * Create a new GetTriPositionContourTask.
@@ -26,6 +34,18 @@ public class GetTriPositionContourTask extends ForeverTask {
      */
     public GetTriPositionContourTask(ColourThreshold colourThreshold) {
         this.colourThreshold = colourThreshold;
+    }
+
+    /**
+     * Set the time for the left side to be persistent before the position is set to LEFT.
+     *
+     * @param time the time for the left side to be persistent before the position is set back to LEFT from being RIGHT
+     *             or FORWARD
+     * @return this
+     */
+    public GetTriPositionContourTask withLeftSidePersistenceTime(Measure<Time> time) {
+        leftSidePersistenceTime = time;
+        return this;
     }
 
     public Direction getPosition() {
@@ -44,6 +64,9 @@ public class GetTriPositionContourTask extends ForeverTask {
         ContourData biggestContour = ContourData.getLargest(colourThreshold.getData());
         if (biggestContour != null) {
             position = biggestContour.getYaw() > 0.5 ? Direction.RIGHT : Direction.FORWARD;
+            lockoutTimer.reset();
+        } else if (lockoutTimer.seconds() >= leftSidePersistenceTime.in(Seconds)){
+            position = Direction.LEFT;
         }
     }
 
