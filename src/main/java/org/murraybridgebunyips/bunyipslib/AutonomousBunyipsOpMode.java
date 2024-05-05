@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * {@link BunyipsOpMode} variant for Autonomous operation. Uses the {@link Task} system for a queued action OpMode.
@@ -34,7 +35,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @see #setOpModes(Object...)
      */
     private final ArrayList<Reference<?>> opModes = new ArrayList<>();
-    private final ArrayDeque<RobotTask> tasks = new ArrayDeque<>();
+    private final ConcurrentLinkedDeque<RobotTask> tasks = new ConcurrentLinkedDeque<>();
     // Pre and post queues cannot have their tasks removed, so we can rely on their .size() methods
     private final ArrayDeque<RobotTask> postQueue = new ArrayDeque<>();
     private final ArrayDeque<RobotTask> preQueue = new ArrayDeque<>();
@@ -110,23 +111,25 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         periodic();
 
         // Run the queue of tasks
-        RobotTask currentTask = tasks.peekFirst();
-        if (currentTask == null) {
-            log("auto: all tasks done, finishing...");
-            finish();
-            return;
+        synchronized (tasks) {
+            RobotTask currentTask = tasks.peekFirst();
+            if (currentTask == null) {
+                log("auto: all tasks done, finishing...");
+                finish();
+                return;
+            }
+
+            addTelemetry("Running task (%/%): %", this.currentTask, taskCount, currentTask);
+
+            // AutonomousBunyipsOpMode is handling all task completion checks, manual checks not required
+            if (currentTask.pollFinished()) {
+                tasks.removeFirst();
+                log("auto: task %/% (%) finished", this.currentTask, taskCount, currentTask);
+                this.currentTask++;
+            }
+
+            currentTask.run();
         }
-
-        addTelemetry("Running task (%/%): %", this.currentTask, taskCount, currentTask);
-
-        // AutonomousBunyipsOpMode is handling all task completion checks, manual checks not required
-        if (currentTask.pollFinished()) {
-            tasks.removeFirst();
-            log("auto: task %/% (%) finished", this.currentTask, taskCount, currentTask);
-            this.currentTask++;
-        }
-
-        currentTask.run();
 
         // Update all subsystems
         for (BunyipsSubsystem subsystem : updatedSubsystems) {
@@ -168,7 +171,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (!callbackReceived && !ack) {
             log("auto: caution! a task was added manually before the onReady callback");
         }
-        tasks.add(newTask);
+        synchronized (tasks) {
+            tasks.add(newTask);
+        }
         taskCount++;
         log("auto: % has been added as task %/%", newTask, taskCount, taskCount);
     }
@@ -198,12 +203,24 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param index the index to insert the task at
      * @param newTask the task to add to the run queue
      */
-//    public final void addTaskAtIndex(int index, @NotNull RobotTask newTask) {
-//        checkTaskForDependency(newTask);
-//        TODO: Implement
-//        taskCount++;
-//        log("auto: % has been inserted as task %/%", newTask, index, taskCount);
-//    }
+    public final void addTaskAtIndex(int index, @NotNull RobotTask newTask) {
+        checkTaskForDependency(newTask);
+        ArrayDeque<RobotTask> tmp = new ArrayDeque<>();
+        synchronized (tasks) {
+            // Deconstruct the queue to insert the new task
+            while (tasks.size() > index) {
+                tmp.add(tasks.removeFirst());
+            }
+            // Insert the new task
+            tasks.addFirst(newTask);
+            // Refill the queue
+            while (!tmp.isEmpty()) {
+                tasks.addFirst(tmp.removeLast());
+            }
+        }
+        taskCount++;
+        log("auto: % has been inserted as task %/%", newTask, index, taskCount);
+    }
 
     /**
      * Insert a task at a specific index in the queue. This is useful for adding tasks that should be run
@@ -212,9 +229,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param index the index to insert the task at
      * @param runnable the code to add to the run queue to run once
      */
-//    public final void addTaskAtIndex(int index, @NotNull Runnable runnable) {
-//        addTaskAtIndex(index, new RunTask(runnable));
-//    }
+    public final void addTaskAtIndex(int index, @NotNull Runnable runnable) {
+        addTaskAtIndex(index, new RunTask(runnable));
+    }
 
     /**
      * Add a task to the run queue, but after {@link #onReady(Reference, Controls)} has processed tasks. This is useful
@@ -230,7 +247,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             log("auto: % has been queued as end-init task %/%", newTask, postQueue.size(), postQueue.size());
             return;
         }
-        tasks.addLast(newTask);
+        synchronized (tasks) {
+            tasks.addLast(newTask);
+        }
         taskCount++;
         log("auto: % has been added as task %/%", newTask, taskCount, taskCount);
     }
@@ -249,7 +268,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             log("auto: % has been queued as end-init task 1/%", newTask, preQueue.size());
             return;
         }
-        tasks.addFirst(newTask);
+        synchronized (tasks) {
+            tasks.addFirst(newTask);
+        }
         taskCount++;
         log("auto: % has been added as task 1/%", newTask, taskCount);
     }
@@ -266,30 +287,32 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             throw new IllegalArgumentException("Auto: Cannot remove items starting from last index, this isn't Python");
         }
 
-        if (taskIndex > tasks.size()) {
-            throw new IllegalArgumentException("Auto: Given index exceeds array size");
-        }
-
-        /*
-         * In the words of the great Lucas Bubner:
-         *      You've made an iterator for all those tasks
-         *      which is the goofinator car that can drive around your array
-         *      calling .next() on your car will move it one down the array
-         *      then if you call .remove() on your car it will remove the element wherever it is
-         */
-        Iterator<RobotTask> iterator = tasks.iterator();
-
-        int counter = 0;
-        while (iterator.hasNext()) {
-            if (counter == taskIndex) {
-                iterator.remove();
-                log("auto: task at index % was removed", taskIndex);
-                taskCount--;
-                break;
+        synchronized (tasks) {
+            if (taskIndex > tasks.size()) {
+                throw new IllegalArgumentException("Auto: Given index exceeds array size");
             }
 
-            iterator.next();
-            counter++;
+            /*
+             * In the words of the great Lucas Bubner:
+             *      You've made an iterator for all those tasks
+             *      which is the goofinator car that can drive around your array
+             *      calling .next() on your car will move it one down the array
+             *      then if you call .remove() on your car it will remove the element wherever it is
+             */
+            Iterator<RobotTask> iterator = tasks.iterator();
+
+            int counter = 0;
+            while (iterator.hasNext()) {
+                if (counter == taskIndex) {
+                    iterator.remove();
+                    log("auto: task at index % was removed", taskIndex);
+                    taskCount--;
+                    break;
+                }
+
+                iterator.next();
+                counter++;
+            }
         }
     }
 
@@ -301,12 +324,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param task the task to be removed
      */
     public final void removeTask(@NotNull RobotTask task) {
-        if (tasks.contains(task)) {
-            tasks.remove(task);
-            log("auto: task % was removed", task);
-            taskCount--;
-        } else {
-            log("auto: task % was not found in the queue", task);
+        synchronized (tasks) {
+            if (tasks.contains(task)) {
+                tasks.remove(task);
+                log("auto: task % was removed", task);
+                taskCount--;
+            } else {
+                log("auto: task % was not found in the queue", task);
+            }
         }
     }
 
@@ -314,7 +339,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Removes the last task in the task queue
      */
     public final void removeTaskLast() {
-        tasks.removeLast();
+        synchronized (tasks) {
+            tasks.removeLast();
+        }
         taskCount--;
         log("auto: task at index % was removed", taskCount + 1);
     }
@@ -323,7 +350,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Removes the first task in the task queue
      */
     public final void removeTaskFirst() {
-        tasks.removeFirst();
+        synchronized (tasks) {
+            tasks.removeFirst();
+        }
         taskCount--;
         log("auto: task at index 0 was removed");
     }

@@ -407,8 +407,10 @@ BunyipsLib is continually getting updates to ensure the latest features have bee
 debugged and tested. To ensure that you *aren't* using code that I've accidentally implemented a
 30-gigabyte memory leak into, you'll need to know how to update it.
 
-1. `git pull`  
-   Navigate to the directory of your BunyipsLib submodule, and run `git pull` on the `master`
-   branch. This should bring any changes into your repository.
-
+Navigate to the directory of your BunyipsLib submodule, and run `git pull` on the `master`
+branch for the latest dev changes. This should bring any changes into your repository. If you wish to use a more
+stable version of BunyipsLib, you can switch to the SemVer tags that are available in the repository using `git checkout <tag>`
+and available in the [Releases](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/releases/) section. These versions are more
+stable and are less likely to have runtime errors or bugs, with changes fully documented.
+___
 ###### BunyipsLib. Copyright (c) 2024 Lucas Bubner, MBHS Student Robotics Club, under the MIT License.<br><br>External libraries implemented/dependencies to BunyipsLib include [RoadRunner](https://github.com/acmerobotics/road-runner) v0.5, WPILib's [WPIUnits](https://github.com/wpilibsuite/allwpilib/tree/main/wpiunits), [FtcDashboard](https://github.com/acmerobotics/ftc-dashboard), and [FTCLib](https://github.com/FTCLib/FTCLib)'s utilities such as PID and lookup tables. These library features are copyright of their respective owners.<br><br>I am not responsible for any failed autonomous, broken servos or nuclear warfare that result after the usage of BunyipsLib.<br>Test and understand your code thoroughly.
