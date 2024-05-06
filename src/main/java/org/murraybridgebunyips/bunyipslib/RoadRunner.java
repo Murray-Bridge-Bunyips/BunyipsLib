@@ -74,7 +74,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * @return The velocity constraint
      */
     default TrajectoryVelocityConstraint atVelocity(double translation, Velocity<Distance> unit) {
-        return Limit.ofVelocity(unit.of(translation), getDrive().getConstants());
+        return Limit.ofVelocity(unit.of(translation), getDrive());
     }
 
     /**
@@ -85,7 +85,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * @return The velocity constraint
      */
     default TrajectoryVelocityConstraint atAngularVelocity(double rotation, Velocity<Angle> unit) {
-        return Limit.ofAngularVelocity(unit.of(rotation), getDrive().getConstants());
+        return Limit.ofAngularVelocity(unit.of(rotation), getDrive());
     }
 
     /**
@@ -98,7 +98,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * @return The velocity constraint
      */
     default TrajectoryVelocityConstraint atVelocities(double translation, Velocity<Distance> translationUnit, double rotation, Velocity<Angle> rotationUnit) {
-        return Limit.ofVelocities(translationUnit.of(translation), rotationUnit.of(rotation), getDrive().getConstants());
+        return Limit.ofVelocities(translationUnit.of(translation), rotationUnit.of(rotation), getDrive());
     }
 
     /**
@@ -109,7 +109,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * @return The acceleration constraint
      */
     default TrajectoryAccelerationConstraint atAcceleration(double acceleration, Velocity<Velocity<Distance>> unit) {
-        return Limit.ofAcceleration(unit.of(acceleration), getDrive().getConstants());
+        return Limit.ofAcceleration(unit.of(acceleration), getDrive());
     }
 
     /**
@@ -120,7 +120,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * @return The acceleration constraint
      */
     default TrajectoryAccelerationConstraint atAngularAcceleration(double acceleration, Velocity<Velocity<Angle>> unit) {
-        return Limit.ofAngularAcceleration(unit.of(acceleration), getDrive().getConstants());
+        return Limit.ofAngularAcceleration(unit.of(acceleration), getDrive());
     }
 
     /**
@@ -133,7 +133,7 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
      * @return The acceleration constraint
      */
     default TrajectoryAccelerationConstraint atAccelerations(double translation, Velocity<Velocity<Distance>> translationUnit, double rotation, Velocity<Velocity<Angle>> rotationUnit) {
-        return Limit.ofAccelerations(translationUnit.of(translation), rotationUnit.of(rotation), getDrive().getConstants());
+        return Limit.ofAccelerations(translationUnit.of(translation), rotationUnit.of(rotation), getDrive());
     }
 
     /**

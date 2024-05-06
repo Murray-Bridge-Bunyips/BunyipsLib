@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TankVelocityConstraint;
@@ -76,7 +77,7 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
         VEL_CONSTRAINT = getVelocityConstraint(constants.MAX_VEL, constants.MAX_ANG_VEL, constants.TRACK_WIDTH);
-        accelConstraint = getAccelerationConstraint(constants.MAX_ACCEL);
+        accelConstraint = getAccelerationConstraint(constants.MAX_ACCEL, constants.MAX_ANG_ACCEL);
 
         batteryVoltageSensor = voltageSensor.iterator().next();
 
@@ -122,7 +123,8 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
      * @param trackWidth    The track width in inches
      * @return The velocity constraint
      */
-    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
+    @Override
+    public TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
         return new MinVelocityConstraint(Arrays.asList(
                 new AngularVelocityConstraint(maxAngularVel),
                 new TankVelocityConstraint(maxVel, trackWidth)
@@ -135,8 +137,12 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
      * @param maxAccel The maximum acceleration in inches per second squared
      * @return The acceleration constraint
      */
-    public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
-        return new ProfileAccelerationConstraint(maxAccel);
+    @Override
+    public TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel, double maxAngularAccel) {
+        return new MinAccelerationConstraint(Arrays.asList(
+                new ProfileAccelerationConstraint(maxAccel),
+                new ProfileAccelerationConstraint(maxAngularAccel)
+        ));
     }
 
     @Override
