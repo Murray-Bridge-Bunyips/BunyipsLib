@@ -64,7 +64,7 @@ public final class Limit {
      * @return A TrajectoryAccelerationConstraint based on the given parameters.
      */
     public static TrajectoryAccelerationConstraint ofAcceleration(Measure<Velocity<Velocity<Distance>>> translationalAcceleration, RoadRunnerDrive drive) {
-        return drive.getAccelerationConstraint(translationalAcceleration.in(InchesPerSecond.per(Second)), drive.getConstants().MAX_ANG_ACCEL);
+        return drive.getAccelerationConstraint(translationalAcceleration.in(InchesPerSecond.per(Second)));
     }
 
     /**
@@ -75,18 +75,6 @@ public final class Limit {
      * @return A TrajectoryAccelerationConstraint based on the given parameters.
      */
     public static TrajectoryAccelerationConstraint ofAngularAcceleration(Measure<Velocity<Velocity<Angle>>> angularAcceleration, RoadRunnerDrive drive) {
-        return drive.getAccelerationConstraint(drive.getConstants().MAX_ACCEL, angularAcceleration.in(RadiansPerSecond.per(Second)));
-    }
-
-    /**
-     * Returns a TrajectoryAccelerationConstraint based on the given DriveConstants, translational acceleration, and angular acceleration.
-     *
-     * @param translationalAcceleration The translational acceleration to use.
-     * @param angularAcceleration       The angular acceleration to use.
-     * @param drive           The DriveConstants to use.
-     * @return A TrajectoryAccelerationConstraint based on the given parameters.
-     */
-    public static TrajectoryAccelerationConstraint ofAccelerations(Measure<Velocity<Velocity<Distance>>> translationalAcceleration, Measure<Velocity<Velocity<Angle>>> angularAcceleration, RoadRunnerDrive drive) {
-        return drive.getAccelerationConstraint(translationalAcceleration.in(InchesPerSecond.per(Second)), angularAcceleration.in(RadiansPerSecond.per(Second)));
+        return drive.getAccelerationConstraint(angularAcceleration.in(RadiansPerSecond.per(Second)));
     }
 }

@@ -70,7 +70,7 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
         VEL_CONSTRAINT = getVelocityConstraint(constants.MAX_VEL, constants.MAX_ANG_VEL, constants.TRACK_WIDTH);
-        ACCEL_CONSTRAINT = getAccelerationConstraint(constants.MAX_ACCEL, constants.MAX_ANG_ACCEL);
+        ACCEL_CONSTRAINT = getAccelerationConstraint(constants.MAX_ACCEL);
 
         batteryVoltageSensor = voltageSensor.iterator().next();
 

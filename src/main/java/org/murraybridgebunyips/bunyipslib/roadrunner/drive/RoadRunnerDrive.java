@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MinAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
@@ -51,14 +50,10 @@ public interface RoadRunnerDrive {
      * Override this method to use a custom acceleration constraint.
      *
      * @param maxAccel The maximum acceleration of the drive.
-     * @param maxAngAccel The maximum angular acceleration of the drive.
      * @return An acceleration constraint for the drive.
      */
-    default TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel, double maxAngAccel) {
-        return new MinAccelerationConstraint(Arrays.asList(
-                new ProfileAccelerationConstraint(maxAccel),
-                new ProfileAccelerationConstraint(maxAngAccel)
-        ));
+    default TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
+        return new ProfileAccelerationConstraint(maxAccel);
     }
 
     TrajectorySequenceRunner getTrajectorySequenceRunner();

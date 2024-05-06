@@ -10,7 +10,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
-import com.acmerobotics.roadrunner.trajectory.constraints.MinAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TankVelocityConstraint;
@@ -77,7 +76,7 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
         VEL_CONSTRAINT = getVelocityConstraint(constants.MAX_VEL, constants.MAX_ANG_VEL, constants.TRACK_WIDTH);
-        accelConstraint = getAccelerationConstraint(constants.MAX_ACCEL, constants.MAX_ANG_ACCEL);
+        accelConstraint = getAccelerationConstraint(constants.MAX_ACCEL);
 
         batteryVoltageSensor = voltageSensor.iterator().next();
 
@@ -138,11 +137,8 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
      * @return The acceleration constraint
      */
     @Override
-    public TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel, double maxAngularAccel) {
-        return new MinAccelerationConstraint(Arrays.asList(
-                new ProfileAccelerationConstraint(maxAccel),
-                new ProfileAccelerationConstraint(maxAngularAccel)
-        ));
+    public TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
+        return new ProfileAccelerationConstraint(maxAccel);
     }
 
     @Override
