@@ -113,17 +113,6 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
     }
 
     /**
-     * Make an angular acceleration constraint.
-     *
-     * @param acceleration The angular acceleration
-     * @param unit         The unit of the angular acceleration
-     * @return The acceleration constraint
-     */
-    default TrajectoryAccelerationConstraint atAngularAcceleration(double acceleration, Velocity<Velocity<Angle>> unit) {
-        return Limit.ofAngularAcceleration(unit.of(acceleration), getDrive());
-    }
-
-    /**
      * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
      *
      * @param startPoseInchRad Starting pose of the trajectory, <b>WILL SET DRIVE POSE ESTIMATE TO THIS POSE</b>, (in, in, radians)

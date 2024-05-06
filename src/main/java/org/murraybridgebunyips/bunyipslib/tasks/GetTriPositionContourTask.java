@@ -23,9 +23,9 @@ import org.murraybridgebunyips.bunyipslib.vision.processors.ColourThreshold;
  */
 public class GetTriPositionContourTask extends ForeverTask {
     private final ColourThreshold colourThreshold;
+    private final ElapsedTime lockoutTimer = new ElapsedTime();
     private Measure<Time> leftSidePersistenceTime = Seconds.of(3);
     private volatile Direction position = Direction.LEFT;
-    private final ElapsedTime lockoutTimer = new ElapsedTime();
 
     /**
      * Create a new GetTriPositionContourTask.
@@ -65,7 +65,7 @@ public class GetTriPositionContourTask extends ForeverTask {
         if (biggestContour != null) {
             position = biggestContour.getYaw() > 0.5 ? Direction.RIGHT : Direction.FORWARD;
             lockoutTimer.reset();
-        } else if (lockoutTimer.seconds() >= leftSidePersistenceTime.in(Seconds)){
+        } else if (lockoutTimer.seconds() >= leftSidePersistenceTime.in(Seconds)) {
             position = Direction.LEFT;
         }
     }

@@ -26,7 +26,7 @@ public final class Limit {
      * Returns a TrajectoryVelocityConstraint based on the given DriveConstants and translational velocity.
      *
      * @param translationalVelocity The translational velocity to use.
-     * @param drive       The DriveConstants to use.
+     * @param drive                 The DriveConstants to use.
      * @return A TrajectoryVelocityConstraint based on the given parameters.
      */
     public static TrajectoryVelocityConstraint ofVelocity(Measure<Velocity<Distance>> translationalVelocity, RoadRunnerDrive drive) {
@@ -37,7 +37,7 @@ public final class Limit {
      * Returns a TrajectoryVelocityConstraint based on the given DriveConstants and angular velocity.
      *
      * @param angularVelocity The angular velocity to use.
-     * @param drive The DriveConstants to use.
+     * @param drive           The DriveConstants to use.
      * @return A TrajectoryVelocityConstraint based on the given parameters.
      */
     public static TrajectoryVelocityConstraint ofAngularVelocity(Measure<Velocity<Angle>> angularVelocity, RoadRunnerDrive drive) {
@@ -49,7 +49,7 @@ public final class Limit {
      *
      * @param translationalVelocity The translational velocity to use.
      * @param angularVelocity       The angular velocity to use.
-     * @param drive       The DriveConstants to use.
+     * @param drive                 The DriveConstants to use.
      * @return A TrajectoryVelocityConstraint based on the given parameters.
      */
     public static TrajectoryVelocityConstraint ofVelocities(Measure<Velocity<Distance>> translationalVelocity, Measure<Velocity<Angle>> angularVelocity, RoadRunnerDrive drive) {
@@ -60,21 +60,10 @@ public final class Limit {
      * Returns a TrajectoryAccelerationConstraint based on the given DriveConstants and translational acceleration.
      *
      * @param translationalAcceleration The translational acceleration to use.
-     * @param drive           The DriveConstants to use.
+     * @param drive                     The DriveConstants to use.
      * @return A TrajectoryAccelerationConstraint based on the given parameters.
      */
     public static TrajectoryAccelerationConstraint ofAcceleration(Measure<Velocity<Velocity<Distance>>> translationalAcceleration, RoadRunnerDrive drive) {
         return drive.getAccelerationConstraint(translationalAcceleration.in(InchesPerSecond.per(Second)));
-    }
-
-    /**
-     * Returns a TrajectoryAccelerationConstraint based on the given DriveConstants and angular acceleration.
-     *
-     * @param angularAcceleration The angular acceleration to use.
-     * @param drive     The DriveConstants to use.
-     * @return A TrajectoryAccelerationConstraint based on the given parameters.
-     */
-    public static TrajectoryAccelerationConstraint ofAngularAcceleration(Measure<Velocity<Velocity<Angle>>> angularAcceleration, RoadRunnerDrive drive) {
-        return drive.getAccelerationConstraint(angularAcceleration.in(RadiansPerSecond.per(Second)));
     }
 }

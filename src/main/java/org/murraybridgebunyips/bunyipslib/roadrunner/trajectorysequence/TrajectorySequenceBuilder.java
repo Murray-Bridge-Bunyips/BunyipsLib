@@ -1215,7 +1215,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
      * Set the maximum angular velocity for the next builder instructions.
      *
      * @param maxAngVel The maximum angular velocity
-     * @param velUnit The unit of the maximum angular velocity (will be converted to radians/sec)
+     * @param velUnit   The unit of the maximum angular velocity (will be converted to radians/sec)
      * @return The builder
      */
     public T setAngVel(double maxAngVel, Velocity<Angle> velUnit) {
@@ -1238,7 +1238,7 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
      * Set the maximum angular acceleration for the next builder instructions.
      *
      * @param maxAngAccel The maximum angular acceleration
-     * @param accelUnit  The unit of the maximum angular acceleration (will be converted to radians/sec^2)
+     * @param accelUnit   The unit of the maximum angular acceleration (will be converted to radians/sec^2)
      * @return The builder
      */
     public T setAngAccel(double maxAngAccel, Velocity<Velocity<Angle>> accelUnit) {

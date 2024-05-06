@@ -200,7 +200,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Insert a task at a specific index in the queue. This is useful for adding tasks that should be run
      * at a specific point in the autonomous sequence.
      *
-     * @param index the index to insert the task at
+     * @param index   the index to insert the task at
      * @param newTask the task to add to the run queue
      */
     public final void addTaskAtIndex(int index, @NotNull RobotTask newTask) {
@@ -226,7 +226,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Insert a task at a specific index in the queue. This is useful for adding tasks that should be run
      * at a specific point in the autonomous sequence.
      *
-     * @param index the index to insert the task at
+     * @param index    the index to insert the task at
      * @param runnable the code to add to the run queue to run once
      */
     public final void addTaskAtIndex(int index, @NotNull Runnable runnable) {
