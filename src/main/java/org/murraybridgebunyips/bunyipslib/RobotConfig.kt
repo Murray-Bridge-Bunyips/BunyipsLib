@@ -54,10 +54,10 @@ abstract class RobotConfig {
         if (Storage.hardwareErrors.isNotEmpty()) {
             for (error in Storage.hardwareErrors) {
                 if (opMode is BunyipsOpMode) {
-                    opMode.addRetainedTelemetry("! MISSING_DEVICE: $error")
+                    opMode.addRetainedTelemetry("! DEVICE_ERROR: $error")
                     opMode.log("error: '$error' is not configured in the current saved configuration.")
                 } else {
-                    opMode.telemetry.addData("", "! MISSING_DEVICE: $error").setRetained(true)
+                    opMode.telemetry.addData("", "! DEVICE_ERROR: $error").setRetained(true)
                     opMode.telemetry.log().add("error: '$error' is not configured in the current saved configuration.")
                 }
             }

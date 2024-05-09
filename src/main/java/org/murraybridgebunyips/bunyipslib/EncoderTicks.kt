@@ -24,7 +24,7 @@ object EncoderTicks {
     @JvmStatic
     fun toAngle(ticks: Int, ticksPerRevolution: Int, reduction: Double): Measure<Angle> {
         // Equation: ticks / ticksPerRevolution * 360 * reduction = angle (in degrees)
-        return Degrees.of(ticks / ticksPerRevolution * 360.0).times(reduction)
+        return Degrees.of(ticks.toDouble() / ticksPerRevolution.toDouble() * 360.0).times(reduction)
     }
 
     /**
@@ -38,7 +38,7 @@ object EncoderTicks {
     @JvmStatic
     fun fromAngle(angle: Measure<Angle>, ticksPerRevolution: Int, reduction: Double): Int {
         // Equation: angle (in degrees) / 360 * ticksPerRevolution * reduction = ticks
-        return ((angle.inUnit(Degrees) / 360.0 * ticksPerRevolution) * reduction).toInt()
+        return ((angle.inUnit(Degrees) / 360.0 * ticksPerRevolution.toDouble()) * reduction).toInt()
     }
 
     /**
@@ -58,7 +58,7 @@ object EncoderTicks {
         reduction: Double
     ): Measure<Distance> {
         // Equation: circumference (2*pi*r_m) * (encoder ticks / ticksPerRevolution) = distance (in meters)
-        return wheelDiameter.times(Math.PI).times((ticks / ticksPerRevolution).toDouble()).times(reduction)
+        return wheelDiameter.times(Math.PI).times(ticks.toDouble() / ticksPerRevolution.toDouble()).times(reduction)
     }
 
     /**
@@ -77,9 +77,8 @@ object EncoderTicks {
         wheelDiameter: Measure<Distance>,
         reduction: Double
     ): Int {
-        // TODO: test distance conversions
         // Equation: distance * ticksPerRevolution / circumference (2*pi*r_m) = ticks
-        return ((distance.inUnit(Meters) * ticksPerRevolution / (wheelDiameter.inUnit(Meters) * Math.PI)) * reduction).toInt()
+        return ((distance.inUnit(Meters) * ticksPerRevolution.toDouble() / (wheelDiameter.inUnit(Meters) * Math.PI)) * reduction).toInt()
     }
 
     /**
