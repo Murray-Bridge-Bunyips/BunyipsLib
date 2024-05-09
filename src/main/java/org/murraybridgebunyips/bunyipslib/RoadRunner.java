@@ -40,7 +40,7 @@ import java.util.Objects;
  * @noinspection InterfaceMayBeAnnotatedFunctional
  * @see AutonomousBunyipsOpMode
  */
-public interface RoadRunner extends RoadRunnerDriveInstance {
+public interface RoadRunner {
     /**
      * Default timeout for all RoadRunner tasks, if not explicitly mentioned.
      */
@@ -56,6 +56,15 @@ public interface RoadRunner extends RoadRunnerDriveInstance {
     static void resetForOpMode() {
         splicedPose.clear();
     }
+
+    /**
+     * Get the drive instance reference to be used for RoadRunner trajectories.
+     * <b>Do NOT instantiate a new drive instance here, use the reference from your subsystems in your OpMode.</b>
+     * (e.g. {@code return drive;}) instead of ({@code return new MecanumDrive(...);})
+     *
+     * @return Drive instance reference
+     */
+    RoadRunnerDrive getDrive();
 
     /**
      * Reset pose info back to default.

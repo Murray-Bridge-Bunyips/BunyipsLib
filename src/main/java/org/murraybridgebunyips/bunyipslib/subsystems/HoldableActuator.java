@@ -64,6 +64,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
     /**
      * Create a new HoldableActuator.
+     *
      * @param motor the motor to control
      */
     public HoldableActuator(DcMotorEx motor) {
