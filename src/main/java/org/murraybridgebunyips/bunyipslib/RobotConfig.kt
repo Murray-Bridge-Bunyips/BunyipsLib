@@ -54,10 +54,10 @@ abstract class RobotConfig {
         if (Storage.hardwareErrors.isNotEmpty()) {
             for (error in Storage.hardwareErrors) {
                 if (opMode is BunyipsOpMode) {
-                    opMode.addRetainedTelemetry("! DEVICE_ERROR: $error")
+                    opMode.addRetainedTelemetry("! MISSING_DEVICE: $error")
                     opMode.log("error: '$error' is not configured in the current saved configuration.")
                 } else {
-                    opMode.telemetry.addData("", "! DEVICE_ERROR: $error").setRetained(true)
+                    opMode.telemetry.addData("", "! MISSING_DEVICE: $error").setRetained(true)
                     opMode.telemetry.log().add("error: '$error' is not configured in the current saved configuration.")
                 }
             }
@@ -102,6 +102,7 @@ abstract class RobotConfig {
     @JvmOverloads
     fun <T : HardwareDevice> getHardware(name: String, device: Class<T>, onSuccess: Consumer<T> = Consumer { }): T? {
         var hardwareDevice: T? = null
+        var ok = false
         try {
             if (Storage.hardwareErrors.contains(name)) return null
             hardwareDevice = if (Deadwheel::class.java.isAssignableFrom(device)) {
@@ -113,13 +114,19 @@ abstract class RobotConfig {
             } else {
                 hardwareMap.get(device, name)
             }
+            // Paranoia check as custom device classes may not throw exceptions when not found
             if (hardwareDevice == null)
                 throw NullPointerException()
-            onSuccess.accept(hardwareDevice)
+            ok = true
         } catch (e: Exception) {
             Storage.hardwareErrors.add(name)
             e.localizedMessage?.let { Dbg.warn(it) }
         }
+        // Run the user callback if the device was successfully configured, outside of the hardware device
+        // catch block as exceptions raised in onSuccess will be mishandled. We also know that the device
+        // is guaranteed to no longer be null.
+        if (ok)
+            onSuccess.accept(hardwareDevice!!)
         return hardwareDevice
     }
 }

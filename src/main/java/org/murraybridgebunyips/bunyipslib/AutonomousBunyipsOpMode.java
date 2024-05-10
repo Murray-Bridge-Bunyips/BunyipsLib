@@ -207,15 +207,17 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         checkTaskForDependency(newTask);
         ArrayDeque<RobotTask> tmp = new ArrayDeque<>();
         synchronized (tasks) {
+            if (index < 0 || index > tasks.size())
+                throw new IllegalArgumentException("Auto: Cannot insert task at index " + index + ", out of bounds");
             // Deconstruct the queue to insert the new task
             while (tasks.size() > index) {
-                tmp.add(tasks.removeFirst());
+                tmp.add(tasks.removeLast());
             }
             // Insert the new task
-            tasks.addFirst(newTask);
+            tasks.add(newTask);
             // Refill the queue
             while (!tmp.isEmpty()) {
-                tasks.addFirst(tmp.removeLast());
+                tasks.add(tmp.removeLast());
             }
         }
         taskCount++;
@@ -283,13 +285,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param taskIndex the array index to be removed
      */
     public final void removeTaskIndex(int taskIndex) {
-        if (taskIndex < 0) {
-            throw new IllegalArgumentException("Auto: Cannot remove items starting from last index, this isn't Python");
-        }
-
         synchronized (tasks) {
-            if (taskIndex > tasks.size()) {
-                throw new IllegalArgumentException("Auto: Given index exceeds array size");
+            if (taskIndex < 0 || taskIndex > tasks.size()) {
+                throw new IllegalArgumentException("Auto: Array index " + taskIndex + " out of bounds");
             }
 
             /*
