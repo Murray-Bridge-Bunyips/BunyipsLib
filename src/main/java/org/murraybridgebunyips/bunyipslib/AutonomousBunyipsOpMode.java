@@ -198,9 +198,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Insert a task at a specific index in the queue. This is useful for adding tasks that should be run
-     * at a specific point in the autonomous sequence.
+     * at a specific point in the autonomous sequence. Note that this function immediately produces side effects,
+     * and subsequent calls will not be able to insert tasks at the same index due to the shifting of tasks.
      *
-     * @param index   the index to insert the task at
+     * @param index   the index to insert the task at, starting from 0
      * @param newTask the task to add to the run queue
      */
     public final void addTaskAtIndex(int index, @NotNull RobotTask newTask) {
@@ -208,7 +209,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         ArrayDeque<RobotTask> tmp = new ArrayDeque<>();
         synchronized (tasks) {
             if (index < 0 || index > tasks.size())
-                throw new IllegalArgumentException("Auto: Cannot insert task at index " + index + ", out of bounds");
+                throw new IllegalArgumentException("Cannot insert task at index " + index + ", out of bounds");
             // Deconstruct the queue to insert the new task
             while (tasks.size() > index) {
                 tmp.add(tasks.removeLast());
@@ -226,9 +227,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Insert a task at a specific index in the queue. This is useful for adding tasks that should be run
-     * at a specific point in the autonomous sequence.
+     * at a specific point in the autonomous sequence. Note that this function immediately produces side effects,
+     * and subsequent calls will not be able to insert tasks at the same index due to the shifting of tasks.
      *
-     * @param index    the index to insert the task at
+     * @param index    the index to insert the task at, starting from 0
      * @param runnable the code to add to the run queue to run once
      */
     public final void addTaskAtIndex(int index, @NotNull Runnable runnable) {
@@ -280,15 +282,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     /**
      * Removes whatever task is at the given queue position
      * Note: this will remove the index and shift all other tasks down, meaning that
-     * tasks being added/removed may affect the index of the task you want to remove
+     * tasks being added/removed will affect the index of the task you want to remove
      *
-     * @param taskIndex the array index to be removed
+     * @param taskIndex the array index to be removed, starting from 0
      */
-    public final void removeTaskIndex(int taskIndex) {
+    public final void removeTaskAtIndex(int taskIndex) {
         synchronized (tasks) {
-            if (taskIndex < 0 || taskIndex > tasks.size()) {
-                throw new IllegalArgumentException("Auto: Array index " + taskIndex + " out of bounds");
-            }
+            if (taskIndex < 0 || taskIndex >= tasks.size())
+                throw new IllegalArgumentException("Cannot remove task at index " + taskIndex + ", out of bounds");
 
             /*
              * In the words of the great Lucas Bubner:
@@ -301,14 +302,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
             int counter = 0;
             while (iterator.hasNext()) {
+                iterator.next();
+
                 if (counter == taskIndex) {
                     iterator.remove();
                     log("auto: task at index % was removed", taskIndex);
                     taskCount--;
                     break;
                 }
-
-                iterator.next();
                 counter++;
             }
         }
