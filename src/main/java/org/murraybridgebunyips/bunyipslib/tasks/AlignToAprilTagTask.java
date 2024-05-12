@@ -32,6 +32,10 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
      * PID coefficients for the alignment controller.
      */
     public static PIDCoefficients PID = new PIDCoefficients();
+    /**
+     * The target tag to align to. -1 for any tag.
+     */
+    public static int TARGET_TAG = -1;
 
     private final RoadRunnerDrive drive;
     private final AprilTag at;
@@ -46,14 +50,16 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
      * @param timeout    the timeout for the task
      * @param drive      the drivetrain to use
      * @param at         the AprilTag processor to use
+     * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(Measure<Time> timeout, T drive, AprilTag at, PIDController controller) {
+    public AlignToAprilTagTask(Measure<Time> timeout, T drive, AprilTag at, int targetTag, PIDController controller) {
         super(timeout, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
         this.drive = (RoadRunnerDrive) drive;
         this.at = at;
+        TARGET_TAG = targetTag;
         this.controller = controller;
         controller.updatePID(PID);
     }
@@ -66,14 +72,16 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
      * @param rSupplier  r (rotate) value
      * @param drive      the drivetrain to use
      * @param at         the AprilTag processor to use
+     * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, T drive, AprilTag at, PIDController controller) {
+    public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, T drive, AprilTag at, int targetTag, PIDController controller) {
         super(INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
         this.drive = (RoadRunnerDrive) drive;
         this.at = at;
+        TARGET_TAG = targetTag;
         x = xSupplier;
         y = ySupplier;
         r = rSupplier;
@@ -87,10 +95,11 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
      * @param driver     The gamepad to use for driving
      * @param drive      The MecanumDrive to use for driving
      * @param at         The AprilTag processor to use
+     * @param targetTag  The tag to align to, -1 for any tag
      * @param controller The PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(Gamepad driver, T drive, AprilTag at, PIDController controller) {
-        this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, at, controller);
+    public AlignToAprilTagTask(Gamepad driver, T drive, AprilTag at, int targetTag, PIDController controller) {
+        this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, at, targetTag, controller);
     }
 
     @Override
@@ -110,12 +119,13 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
 
         List<AprilTagData> data = at.getData();
 
-        Optional<AprilTagData> target = data.stream().filter(p -> p.getId() == 2).findFirst();
+        Optional<AprilTagData> target = data.stream().filter(p -> TARGET_TAG == -1 || p.getId() == TARGET_TAG).findFirst();
         if (!target.isPresent()) {
             drive.setWeightedDrivePower(pose);
             return;
         }
-        // TODO: Optimise, may need to use a different error calculation method
+        // TODO: Optimise, may need to use a different error calculation method,
+        //  need to test performance and accuracy as well
         drive.setWeightedDrivePower(
                 new Pose2d(
                         pose.getX(),

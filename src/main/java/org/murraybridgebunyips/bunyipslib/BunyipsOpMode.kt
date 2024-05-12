@@ -212,7 +212,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 onInit()
             } catch (e: Exception) {
                 // Catch all exceptions, log them, and continue running the OpMode
-                // All InterruptedExceptions are handled by the FTC SDK and are raised in ErrorUtil
+                // All InterruptedExceptions are handled by the FTC SDK and are raised in the Exceptions handler
                 Exceptions.handle(e, ::log)
             }
 
