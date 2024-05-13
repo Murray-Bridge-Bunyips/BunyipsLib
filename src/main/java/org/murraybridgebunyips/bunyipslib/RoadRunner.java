@@ -4,6 +4,8 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 import static org.murraybridgebunyips.bunyipslib.tasks.bases.Task.INFINITE_TIMEOUT;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.DisplacementProducer;
@@ -64,6 +66,7 @@ public interface RoadRunner {
      *
      * @return Drive instance reference
      */
+    @NonNull
     RoadRunnerDrive getDrive();
 
     /**

@@ -2,6 +2,8 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.murraybridgebunyips.bunyipslib.Direction;
@@ -48,6 +50,7 @@ public class GetTriPositionContourTask extends ForeverTask {
         return this;
     }
 
+    @NonNull
     public Direction getPosition() {
         return position;
     }
