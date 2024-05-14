@@ -23,11 +23,10 @@ import java.util.function.DoubleSupplier;
 /**
  * Task to align to an AprilTag.
  *
- * @param <T> the drivetrain to use (must implement RoadRunnerDrive for X pose forward info/FCD)
  * @author Lucas Bubner, 2024
  */
 @Config
-public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
+public class AlignToAprilTagTask extends Task {
     /**
      * PID coefficients for the alignment controller.
      */
@@ -53,7 +52,7 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(Measure<Time> timeout, T drive, AprilTag at, int targetTag, PIDController controller) {
+    public AlignToAprilTagTask(Measure<Time> timeout, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDController controller) {
         super(timeout, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
@@ -75,7 +74,7 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, T drive, AprilTag at, int targetTag, PIDController controller) {
+    public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDController controller) {
         super(INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
@@ -98,7 +97,7 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
      * @param targetTag  The tag to align to, -1 for any tag
      * @param controller The PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(Gamepad driver, T drive, AprilTag at, int targetTag, PIDController controller) {
+    public AlignToAprilTagTask(Gamepad driver, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDController controller) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, at, targetTag, controller);
     }
 
@@ -130,7 +129,7 @@ public class AlignToAprilTagTask<T extends BunyipsSubsystem> extends Task {
                 new Pose2d(
                         pose.getX(),
                         pose.getY(),
-                        -controller.calculate(target.get().getYaw(), 0.0)
+                        -controller.calculate(target.get().getBearing(), 0.0)
                 )
         );
     }

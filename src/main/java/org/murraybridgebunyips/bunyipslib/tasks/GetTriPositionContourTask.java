@@ -71,6 +71,7 @@ public class GetTriPositionContourTask extends ForeverTask {
         } else if (lockoutTimer.seconds() >= leftSidePersistenceTime.in(Seconds)) {
             position = Direction.LEFT;
         }
+        opMode.addTelemetry("Currently detecting position: %", position);
     }
 
     @Override
