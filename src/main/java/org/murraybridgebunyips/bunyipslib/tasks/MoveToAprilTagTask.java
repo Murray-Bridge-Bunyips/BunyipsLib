@@ -81,7 +81,7 @@ public class MoveToAprilTagTask extends Task {
      * Autonomous constructor.
      *
      * @param timeout   the timeout for the task
-     * @param drive     the drivetrain to use
+     * @param drive     the drivetrain to use, must be a RoadRunnerDrive
      * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */
@@ -99,7 +99,7 @@ public class MoveToAprilTagTask extends Task {
      * @param xSupplier x (strafe) value
      * @param ySupplier y (forward) value
      * @param rSupplier r (rotate) value
-     * @param drive     the drivetrain to use
+     * @param drive     the drivetrain to use, must be a RoadRunnerDrive
      * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */
@@ -118,7 +118,7 @@ public class MoveToAprilTagTask extends Task {
      * TeleOp constructor using a default Mecanum binding.
      *
      * @param gamepad   the gamepad to use for driving
-     * @param drive     the drivetrain to use
+     * @param drive     the drivetrain to use, must be a RoadRunnerDrive
      * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */

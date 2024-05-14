@@ -148,7 +148,7 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
     @Override
     protected void assignCommands() {
         // Running with default binds on gamepad1, without activating Field Centric drive (POV only)
-        drive.setDefaultTask(new HolonomicDriveTask<>(gamepad1, drive, () -> false));
+        drive.setDefaultTask(new HolonomicDriveTask(gamepad1, drive, () -> false));
 
         // Calls reset yaw method every cycle while gamepad1.y is held
         driver().whenHeld(Controls.Y)
@@ -162,7 +162,7 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
         // Starts the AlignToContourTask on the drive subsystem when gamepad1.rb is pressed, cancelling on release
         driver().whenPressed(Controls.RIGHT_BUMPER)
                 .run(new AlignToContourTask<>(gamepad1, drive, pixels, new PIDController(1, 0.25, 0.0)))
-                .finishingWhen(() -> !gamepad1.right_bumper);
+                .finishingIf(() -> !gamepad1.right_bumper);
     }
 }
 ```

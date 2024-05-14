@@ -47,7 +47,7 @@ public class AlignToAprilTagTask extends Task {
      * Autonomous constructor.
      *
      * @param timeout    the timeout for the task
-     * @param drive      the drivetrain to use
+     * @param drive      the drivetrain to use, must be a RoadRunnerDrive
      * @param at         the AprilTag processor to use
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
@@ -69,7 +69,7 @@ public class AlignToAprilTagTask extends Task {
      * @param xSupplier  x (strafe) value
      * @param ySupplier  y (forward) value
      * @param rSupplier  r (rotate) value
-     * @param drive      the drivetrain to use
+     * @param drive      the drivetrain to use, must be a RoadRunnerDrive
      * @param at         the AprilTag processor to use
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
@@ -119,17 +119,18 @@ public class AlignToAprilTagTask extends Task {
         List<AprilTagData> data = at.getData();
 
         Optional<AprilTagData> target = data.stream().filter(p -> TARGET_TAG == -1 || p.getId() == TARGET_TAG).findFirst();
-        if (!target.isPresent()) {
+
+        Double bearing;
+        if (!target.isPresent() || (bearing = target.get().getBearing()) == null) {
             drive.setWeightedDrivePower(pose);
             return;
         }
-        // TODO: Optimise, may need to use a different error calculation method,
-        //  need to test performance and accuracy as well
+
         drive.setWeightedDrivePower(
                 new Pose2d(
                         pose.getX(),
                         pose.getY(),
-                        -controller.calculate(target.get().getBearing(), 0.0)
+                        -controller.calculate(bearing, 0.0)
                 )
         );
     }
