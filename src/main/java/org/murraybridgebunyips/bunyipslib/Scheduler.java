@@ -432,7 +432,7 @@ public class Scheduler extends BunyipsComponent {
          * ending when the task ends.
          *
          * @param task The task to run.
-         * @return finishingIfTiming control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
+         * @return Timing control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
          */
         public ConditionalTask run(Task task) {
             if (taskToRun != null) {
@@ -451,7 +451,7 @@ public class Scheduler extends BunyipsComponent {
          * ending immediately as it is an RunTask.
          *
          * @param runnable The code to run
-         * @return finishingIfTiming control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
+         * @return Timing control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
          */
         public ConditionalTask run(Runnable runnable) {
             return run(new RunTask(runnable));
@@ -464,7 +464,7 @@ public class Scheduler extends BunyipsComponent {
          * ending when the task ends.
          *
          * @param task The task to run.
-         * @return finishingIfTiming control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
+         * @return Timing control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
          */
         public ConditionalTask runDebounced(Task task) {
             debouncing = true;
@@ -478,7 +478,7 @@ public class Scheduler extends BunyipsComponent {
          * ending immediately as it is an RunTask.
          *
          * @param runnable The code to run
-         * @return finishingIfTiming control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
+         * @return Timing control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
          */
         public ConditionalTask runDebounced(Runnable runnable) {
             return runDebounced(new RunTask(runnable));
@@ -487,7 +487,7 @@ public class Scheduler extends BunyipsComponent {
         /**
          * Mute this task from being a part of the Scheduler report.
          *
-         * @return finishingIfTiming control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
+         * @return Timing control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
          */
         public ConditionalTask muted() {
             if (taskToRun != null) {
