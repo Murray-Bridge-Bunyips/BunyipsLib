@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.HardwareMap
@@ -110,7 +111,11 @@ abstract class RobotConfig {
                 val motor = hardwareMap.get(DcMotorEx::class.java, name)
                 // We can safely create a new Deadwheel instance, and we can ignore unchecked cast warnings since
                 // we have already checked the class type.
-                Deadwheel(motor) as T?
+                Deadwheel(motor) as T
+            } else if (DcMotorRamping::class.java.isAssignableFrom(device)) {
+                // Same applies to a DcMotorRamping instance
+                val motor = hardwareMap.get(DcMotor::class.java, name)
+                DcMotorRamping(motor) as T
             } else {
                 hardwareMap.get(device, name)
             }
