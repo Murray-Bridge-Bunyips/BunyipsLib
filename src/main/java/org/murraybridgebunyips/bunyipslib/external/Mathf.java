@@ -440,33 +440,35 @@ public final class Mathf {
      *                        This ref is modified by this function and should be passed back into it on subsequent calls.
      * @param smoothTime      Approximately the time it will take to reach the target.
      * @param maxSpeed        The maximum speed.
-     * @param deltaTime       The time since the last call to this method (sec).
+     * @param deltaTime       The time since the last call to this method.
      * @return The new position following the smooth damp. The new velocity is stored in the currentVelocity reference,
      * for when this method is called again. Any clamping of this value to minimum limits is left to your discretion.
      */
-    public static double smoothDamp(double current, double target, @NonNull Reference<Double> currentVelocity, Measure<Time> smoothTime, double maxSpeed, double deltaTime) {
-        double omega = 2.0 / smoothTime.in(Seconds);
+    public static double smoothDamp(double current, double target, @NonNull Reference<Double> currentVelocity, Measure<Time> smoothTime, double maxSpeed, Measure<Time> deltaTime) {
+        double t = smoothTime.in(Seconds);
+        double dt = deltaTime.in(Seconds);
+        double omega = 2.0 / t;
 
         // Exponential decay function
-        double x = omega * deltaTime;
+        double x = omega * dt;
         double exp = 1.0 / (1.0 + x + 0.48 * x * x + 0.235 * x * x * x);
         double change = current - target;
 
         // Clamp maximum speed
-        double maxChange = maxSpeed * smoothTime.in(Seconds);
+        double maxChange = maxSpeed * t;
         change = clamp(change, -maxChange, maxChange);
         double v = current - change;
 
         currentVelocity.ifNotPresent(() -> currentVelocity.set(0.0));
 
-        double temp = (currentVelocity.require() + omega * change) * deltaTime;
+        double temp = (currentVelocity.require() + omega * change) * dt;
         currentVelocity.set((currentVelocity.require() - omega * temp) * exp);
         double output = v + (change + temp) * exp;
 
         // Prevent overshooting
         if (target - current > 0.0 == output > target) {
             output = target;
-            currentVelocity.set((output - target) / deltaTime);
+            currentVelocity.set((output - target) / dt);
         }
 
         return output;
@@ -481,12 +483,12 @@ public final class Mathf {
      *                        This ref is modified by this function and should be passed back into it on subsequent calls.
      * @param smoothTime      Approximately the time it will take to reach the target.
      * @param maxSpeed        The maximum speed.
-     * @param deltaTime       The time since the last call to this method (sec).
+     * @param deltaTime       The time since the last call to this method.
      * @return The new position following the smooth damp. The new velocity is stored in the currentVelocity reference,
      * for when this method is called again. Any clamping of this value to minimum limits is left to your discretion.
      */
 
-    public static float smoothDamp(float current, float target, Reference<Double> currentVelocity, Measure<Time> smoothTime, float maxSpeed, float deltaTime) {
+    public static float smoothDamp(float current, float target, Reference<Double> currentVelocity, Measure<Time> smoothTime, float maxSpeed, Measure<Time> deltaTime) {
         double res = smoothDamp((double) current, target, currentVelocity, smoothTime, maxSpeed, deltaTime);
         return (float) res;
     }
@@ -500,12 +502,12 @@ public final class Mathf {
      *                        This ref is modified by this function and should be passed back into it on subsequent calls.
      * @param smoothTime      Approximately the time it will take to reach the target.
      * @param maxSpeed        The maximum speed.
-     * @param deltaTime       The time since the last call to this method (sec).
+     * @param deltaTime       The time since the last call to this method.
      * @return The new angle following the smooth damp. The new ang. velocity is stored in the currentVelocity reference,
      * for when this method is called again. Any clamping of this value to minimum limits is left to your discretion.
      */
 
-    public static Measure<Angle> smoothDampAngle(Measure<Angle> current, Measure<Angle> target, Reference<Double> currentVelocity, Measure<Time> smoothTime, double maxSpeed, double deltaTime) {
+    public static Measure<Angle> smoothDampAngle(Measure<Angle> current, Measure<Angle> target, Reference<Double> currentVelocity, Measure<Time> smoothTime, double maxSpeed, Measure<Time> deltaTime) {
         double res = smoothDamp(current.in(Degrees), current.plus(deltaAngle(current, target)).in(Degrees), currentVelocity, smoothTime, maxSpeed, deltaTime);
         return Degrees.of(res);
     }
