@@ -1,6 +1,12 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.0.1 (2024-05-16)
+Minor bug fix for `MoveToAprilTagTask`.
+### Bug fixes
+- Fixed a missing constructor assignment in `MoveToAprilTagTask`, where the targetTag was not being assigned to the class field
+  - This caused the task to always search and lock onto any tag, essentially ignoring the targetTag parameter
+
 ## v3.0.0 (2024-05-15)
 New utilities, autonomous task allocation improvements, API surface simplification, and vision integrity improvements.
 ### Breaking changes
