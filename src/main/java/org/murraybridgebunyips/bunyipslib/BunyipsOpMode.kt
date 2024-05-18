@@ -413,7 +413,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * @param args The objects to format into the object format string
      * @return The telemetry [Item] added to the Driver Station, null if the send failed from overflow
      */
-    fun addTelemetry(format: Any, vararg args: Any?): DualTelemetry.HtmlItem? {
+    fun addTelemetry(format: Any, vararg args: Any?): DualTelemetry.HtmlItem {
         return telemetry.add(format, *args)
     }
 
