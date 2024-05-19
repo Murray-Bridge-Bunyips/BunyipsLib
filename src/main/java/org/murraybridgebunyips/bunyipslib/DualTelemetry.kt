@@ -34,7 +34,7 @@ class DualTelemetry @JvmOverloads constructor(
     /**
      * A string to display as the first log message in the telemetry log.
      */
-    infoString: String? = null
+    private val infoString: String? = null
 ) : Telemetry {
     companion object {
         /**
@@ -47,18 +47,29 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     private lateinit var overheadTelemetry: Item
-    private val dashboardItems = Collections.synchronizedSet(mutableSetOf<Pair<ItemType, String>>())
+    private val dashboardItems = Collections.synchronizedSet(mutableSetOf<Pair<ItemType, Reference<String>>>())
+    private val userPacket: TelemetryPacket = TelemetryPacket()
 
     @Volatile
     private var telemetryQueue = 0
-
-    @Volatile
-    private var packet: TelemetryPacket = TelemetryPacket()
 
     /**
      * A string to display the current 'status' of the OpMode, used for overhead telemetry.
      */
     var opModeStatus = "idle"
+
+    /**
+     * A string that overrules the status message in the overhead telemetry, such as a warning or error message.
+     * Set to null to use the default status message.
+     */
+    var overrideStatus: String? = null
+
+    /**
+     * Additional information to display in the overhead telemetry message, as the line under the OpMode name above
+     * the timing and controller statistics.
+     * By default, this is an empty string.
+     */
+    var overheadSubtitle = ""
 
     private enum class ItemType {
         TELEMETRY,
@@ -67,10 +78,16 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     init {
+        clearAll()
+        opModeStatus = "setup"
         opMode.telemetry.setDisplayFormat(DisplayFormat.HTML)
         opMode.telemetry.log().displayOrder = Telemetry.Log.DisplayOrder.OLDEST_FIRST
         opMode.telemetry.captionValueSeparator = ""
         opMode.telemetry.log().capacity = TELEMETRY_LOG_LINE_LIMIT
+        telemetryQueue = 0
+        synchronized(dashboardItems) {
+            dashboardItems.clear()
+        }
         // Separate log from telemetry on the DS with an empty line
         opMode.telemetry.log().add("")
         if (infoString != null) {
@@ -78,7 +95,7 @@ class DualTelemetry @JvmOverloads constructor(
                 dashboardItems.add(
                     Pair(
                         ItemType.LOG,
-                        infoString
+                        Reference.of(infoString)
                     )
                 )
             }
@@ -128,14 +145,18 @@ class DualTelemetry @JvmOverloads constructor(
      * Add any additional telemetry to the FtcDashboard telemetry packet.
      */
     fun addDashboard(key: String, value: Any?) {
-        packet.put(key, value.toString())
+        synchronized(userPacket) {
+            userPacket.put(key, value.toString())
+        }
     }
 
     /**
      * Add any field overlay data to the FtcDashboard telemetry packet.
      */
     fun dashboardFieldOverlay(): Canvas {
-        return packet.fieldOverlay()
+        synchronized(userPacket) {
+            return userPacket.fieldOverlay()
+        }
     }
 
     /**
@@ -168,6 +189,16 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     /**
+     * Remove a data item from the telemetry object, which will remove only from the Driver Station.
+     * This is an alias for [removeRetained].
+     * @param item The item to remove from the telemetry object
+     * @see removeRetained
+     */
+    override fun removeItem(item: Item): Boolean {
+        return removeRetained(item)
+    }
+
+    /**
      * Log a message to the telemetry log, with integrated formatting.
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
@@ -176,7 +207,7 @@ class DualTelemetry @JvmOverloads constructor(
         val fstring = formatString(format.toString(), *args)
         opMode.telemetry.log().add(fstring)
         synchronized(dashboardItems) {
-            dashboardItems.add(Pair(ItemType.LOG, fstring))
+            dashboardItems.add(Pair(ItemType.LOG, Reference.of(fstring)))
         }
     }
 
@@ -187,10 +218,10 @@ class DualTelemetry @JvmOverloads constructor(
      * @param args The objects to format into the object format string
      */
     fun log(obj: Class<*>, format: Any, vararg args: Any?) {
-        val msg = "[${obj.simpleName}] ${formatString(format.toString(), *args)}"
+        val msg = "<font color='gray'>[${obj.simpleName}]</font> ${formatString(format.toString(), *args)}"
         opMode.telemetry.log().add(msg)
         synchronized(dashboardItems) {
-            dashboardItems.add(Pair(ItemType.LOG, msg))
+            dashboardItems.add(Pair(ItemType.LOG, Reference.of(msg)))
         }
     }
 
@@ -201,10 +232,10 @@ class DualTelemetry @JvmOverloads constructor(
      * @param args The objects to format into the object format string
      */
     fun log(stck: StackTraceElement, format: Any, vararg args: Any?) {
-        val msg = "[${stck}] ${formatString(format.toString(), *args)}"
+        val msg = "<font color='gray'>[${stck}]</font> ${formatString(format.toString(), *args)}"
         opMode.telemetry.log().add(msg)
         synchronized(dashboardItems) {
-            dashboardItems.add(Pair(ItemType.LOG, msg))
+            dashboardItems.add(Pair(ItemType.LOG, Reference.of(msg)))
         }
     }
 
@@ -240,44 +271,58 @@ class DualTelemetry @JvmOverloads constructor(
         val elapsedTime = movingAverageTimer?.elapsedTime()?.inUnit(Seconds)?.roundToInt() ?: "?"
 
         val overheadStatus =
-            "$opModeStatus | T+${elapsedTime}s | ${
+            "${if (overrideStatus == null) opModeStatus else overrideStatus}\n${if (overheadSubtitle.isNotEmpty()) overheadSubtitle + "\n" else ""}<small>T+${elapsedTime}s | ${
                 if (loopTime <= 0.0) {
                     if (loopsSec > 0) "$loopsSec l/s" else "?ms"
                 } else {
                     "${loopTime}ms"
                 }
-            } | ${Controls.movementString(opMode.gamepad1)} ${Controls.movementString(opMode.gamepad2)}\n"
+            } | ${Controls.movementString(opMode.gamepad1)} ${Controls.movementString(opMode.gamepad2)}</small>\n"
 
-        overheadTelemetry.setValue("${if (overheadTag != null) "$overheadTag: " else ""}$overheadStatus")
+        overheadTelemetry.setValue("${if (overheadTag != null) "$overheadTag | " else ""}$overheadStatus")
 
         // FtcDashboard
-        packet.let {
-            synchronized(it) {
-                it.put(overheadTag ?: "status", overheadStatus + "\n")
+        val packet = TelemetryPacket()
+        packet.put(overheadTag ?: "status", overheadStatus)
 
-                dashboardItems.forEachIndexed { index, pair ->
-                    val (type, value) = pair
-                    when (type) {
-                        ItemType.TELEMETRY -> it.put("DS$index", value)
-                        ItemType.RETAINED_TELEMETRY -> it.put("RT$index", value)
-                        ItemType.LOG -> {
-                            if (index == 0) {
-                                // BunyipsLib info, this is an always log and will always
-                                // be the first log in the list as it is added at the start
-                                // of the init cycle
-                                it.put("INFO", value)
-                                return@forEachIndexed
-                            }
-                            it.put("LOG$index", value)
+        synchronized(dashboardItems) {
+            // Index counters
+            var t = 0
+            var r = 0
+            var l = 0
+            // FtcDashboard uses alphabetical order for keys, so we will add a small padding
+            // to avoid the dreaded 1, 10, 2 sorting order
+            val padding = 3
+            dashboardItems.forEach { pair ->
+                val (type, ref) = pair
+                when (type) {
+                    ItemType.TELEMETRY -> packet.put(
+                        "<small>DS${String.format("%0${padding}d", t++)}</small>",
+                        ref.get()
+                    )
+
+                    ItemType.RETAINED_TELEMETRY -> packet.put(
+                        "<small>RT${String.format("%0${padding}d", r++)}</small>",
+                        ref.get()
+                    )
+
+                    ItemType.LOG -> {
+                        if (ref.get().equals(infoString)) {
+                            // BunyipsLib info, this is an always log and will always
+                            // be the first log in the list as it is added at the start
+                            // of the init cycle
+                            packet.put("<small>INFO</small>", ref.get())
+                            return@forEach
                         }
+                        packet.put("<small>LOG${String.format("%0${padding}d", l++)}</small>", ref.get())
                     }
                 }
-
-                FtcDashboard.getInstance().sendTelemetryPacket(it)
-
-                // Invalidate this packet
-                packet = TelemetryPacket()
             }
+        }
+
+        FtcDashboard.getInstance().sendTelemetryPacket(packet)
+        synchronized(userPacket) {
+            FtcDashboard.getInstance().sendTelemetryPacket(userPacket)
         }
 
         if (opMode.telemetry.isAutoClear) {
@@ -307,10 +352,7 @@ class DualTelemetry @JvmOverloads constructor(
         }
         FtcDashboard.getInstance().clearTelemetry()
         telemetryQueue = 0
-        overheadTelemetry = opMode.telemetry.addData(
-            "",
-            "${if (overheadTag != null) "$overheadTag: " else ""}unknown | T+?s | ?ms | (?) (?))\n"
-        )
+        overheadTelemetry = opMode.telemetry.addData("", "")
             .setRetained(true)
     }
 
@@ -375,7 +417,7 @@ class DualTelemetry @JvmOverloads constructor(
 
     /**
      * Get the current caption value separator for the Driver Station. This should always be an empty string as
-     * BunyipsTelemtry does not use captions.
+     * DualTelemetry does not use captions.
      */
     override fun getCaptionValueSeparator(): String {
         return opMode.telemetry.captionValueSeparator
@@ -389,148 +431,209 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     /**
-     * Setup and reset the telemetry object for the start of an OpMode.
-     */
-    fun setup() {
-        clearAll()
-        opModeStatus = "setup"
-        telemetryQueue = 0
-        synchronized(dashboardItems) {
-            dashboardItems.clear()
-        }
-        packet = TelemetryPacket()
-    }
-
-    /**
      * Uses HTML to alter the way text is displayed on the Driver Station.
      * Wraps a telemetry item displayed on the DS.
      *
      * @author Lachlan Paul, 2024
      */
     class HtmlItem(
-        private val value: String,
+        private var value: String,
         retained: Boolean,
         /**
          * Whether this item failed to send to the DS because of telemetry queue overload.
          */
         val isOverflow: Boolean,
+        private val dashboardRef: Reference<String>,
         opMode: OpMode
-    ): Item {
+    ) : Item {
         private var item: Item? = null
-
-        private var size: Int? = null
-        private var colour: String? = null
-        private var isBold: Boolean = false
-        private var isItalic: Boolean = false
-        private var isUnderlined: Boolean = false
+        private val tags = mutableSetOf<String>()
+        private var color: String? = null
+        private var bgColor: String? = null
 
         init {
             if (!isOverflow) {
                 // To let dynamic reformatting on an item that already exists, we will use the Func<T> attribute against
                 // the HTML string builder, which will ensure changes made after the item has been sent are reflected.
-                item = opMode.telemetry.addData("", ::buildFormattedString)
+                item = opMode.telemetry.addData("", ::build)
                 item?.setRetained(retained)
             }
         }
 
+        private fun build(): String {
+            // im david heath, and this is cs50
+            var out = ""
+            for (tag in tags)
+                out += "<$tag>"
+            if (!color.isNullOrEmpty())
+                out += "<font color=\"$color\">"
+            if (!bgColor.isNullOrEmpty())
+                out += "<span style=\"background-color: $bgColor;\">"
+            out += value
+            if (bgColor != null)
+                out += "</span>"
+            if (color != null)
+                out += "</font>"
+            for (tag in tags.reversed())
+                out += "</$tag>"
+            // Synchronise the FtcDashboard reference
+            dashboardRef.set(out)
+            return out
+        }
+
         /**
-         * Change the size of the string.
-         * @param px The size of the string in pixels
-         * @return The HtmlItem backing the DS item
+         * Wrap the string in a foreground color on the DS.
          */
-        fun setSize(px: Int): HtmlItem {
-            size = px
+        fun color(color: String): HtmlItem {
+            this.color = color
+            build()
             return this
         }
 
         /**
-         * Change the colour of the string.
-         * @param colour The colour of the string in HTML format, in any CSS colour format (hex, rgb(), name, etc.)
-         * @return The HtmlItem backing the DS item
+         * Wrap the string in a background color on the DS.
          */
-        fun setColour(colour: String): HtmlItem {
-            this.colour = colour
+        fun bgColor(bgColor: String): HtmlItem {
+            this.bgColor = bgColor
+            build()
             return this
         }
 
         /**
-         * Change whether the string is bold.
-         * @param bold Whether the string is bold
-         * @return The HtmlItem backing the DS item
+         * Wrap the string in a tag supplied by the user on the DS. Note that these tags are limited to the HTML tags that
+         * are available as part of `Html.fromHtml()`.
+         * @param tag The tag to wrap the string in, e.g. "strong" for strong.
          */
-        fun setBold(bold: Boolean): HtmlItem {
-            isBold = bold
+        fun wrapWith(tag: String): HtmlItem {
+            tags.add(tag)
+            build()
             return this
         }
 
         /**
-         * Makes the string bold.
-         * @return The HtmlItem backing the DS item
+         * Wrap the string in `<b>` tags, making the string bold on the DS.
          */
         fun bold(): HtmlItem {
-            isBold = true
+            tags.add("b")
+            build()
             return this
         }
 
         /**
-         * Change whether the string is italic.
-         * @param italic Whether the string is italic
-         * @return The HtmlItem backing the DS item
-         */
-        fun setItalic(italic: Boolean): HtmlItem {
-            isItalic = italic
-            return this
-        }
-
-        /**
-         * Makes the string italic.
-         * @return The HtmlItem backing the DS item
+         * Wrap the string in `<i>` tags, making the string italic on the DS.
          */
         fun italic(): HtmlItem {
-            isItalic = true
+            tags.add("i")
+            build()
             return this
         }
 
         /**
-         * Change whether the string is underlined.
-         * @param underlined Whether the string is underlined
-         * @return The HtmlItem backing the DS item
+         * Wrap the string in `<big>` tags, making the string large on the DS.
          */
-        fun setUnderlined(underlined: Boolean): HtmlItem {
-            isUnderlined = underlined
+        fun big(): HtmlItem {
+            tags.add("big")
+            build()
             return this
         }
 
         /**
-         * Makes the string underlined.
-         * @return The HtmlItem backing the DS item
+         * Wrap the string in `<small>` tags, making the string small on the DS.
          */
-        fun underlined(): HtmlItem {
-            isUnderlined = true
+        fun small(): HtmlItem {
+            tags.add("small")
+            build()
             return this
         }
 
         /**
-         * Builds the HTML string in relation to the current styling.
-         * This method does **not need to be called** in order to send your string to the DS telemetry.
-         * @return the HTML span string with the added styling from previous builder instruction
+         * Wrap the string in `<u>` tags, making the string underlined on the DS.
          */
-        private fun buildFormattedString(): String {
-            // im david heath, and this is cs50
-            var styleString = "<span style=\""
+        fun underline(): HtmlItem {
+            tags.add("u")
+            build()
+            return this
+        }
 
-            if (size != null)
-                styleString += "font-size:${size}px;"
-            if (colour != null)
-                styleString += "color:${colour};"
-            if (isBold)
-                styleString += "font-weight:bold;"
-            if (isItalic)
-                styleString += "font-style:italic;"
-            if (isUnderlined)
-                styleString += "text-decoration:underline;"
+        /**
+         * Wrap the string in `<s>` tags, making the string strikethrough on the DS.
+         */
+        fun strikethrough(): HtmlItem {
+            tags.add("s")
+            build()
+            return this
+        }
 
-            return "$styleString\">${value}</span>"
+        /**
+         * Wrap the string in `<sup>` tags, making the string superscript (top right align) on the DS.
+         */
+        fun superscript(): HtmlItem {
+            tags.add("sup")
+            build()
+            return this
+        }
+
+        /**
+         * Wrap the string in `<sub>` tags, making the string subscript (bottom right align) on the DS.
+         */
+        fun subscript(): HtmlItem {
+            tags.add("sub")
+            build()
+            return this
+        }
+
+        /**
+         * Wrap the string in `<h1>` tags, making the string a header 1 with a margin on the DS.
+         */
+        fun h1(): HtmlItem {
+            tags.add("h1")
+            build()
+            return this
+        }
+
+        /**
+         * Wrap the string in `<h2>` tags, making the string a header 2 with a margin on the DS.
+         */
+        fun h2(): HtmlItem {
+            tags.add("h2")
+            build()
+            return this
+        }
+
+        /**
+         * Wrap the string in `<h3>` tags, making the string a header 3 with a margin on the DS.
+         */
+        fun h3(): HtmlItem {
+            tags.add("h3")
+            build()
+            return this
+        }
+
+        /**
+         * Wrap the string in `<h4>` tags, making the string a header 4 with a margin on the DS.
+         */
+        fun h4(): HtmlItem {
+            tags.add("h4")
+            build()
+            return this
+        }
+
+        /**
+         * Wrap the string in `<h5>` tags, making the string a header 5 with a margin on the DS.
+         */
+        fun h5(): HtmlItem {
+            tags.add("h5")
+            build()
+            return this
+        }
+
+        /**
+         * Wrap the string in `<h6>` tags, making the string a header 6 with a margin on the DS.
+         */
+        fun h6(): HtmlItem {
+            tags.add("h6")
+            build()
+            return this
         }
 
         /**
@@ -539,6 +642,7 @@ class DualTelemetry @JvmOverloads constructor(
          * @see setCaption
          * @see addData
          */
+        @Deprecated("Captions are not used with DualTelemetry and should always be an empty string.")
         override fun getCaption(): String? {
             return item?.caption
         }
@@ -549,19 +653,24 @@ class DualTelemetry @JvmOverloads constructor(
          * @return the receiver
          * @see getCaption
          */
+        @Deprecated(
+            "Captions are not used with DualTelemetry and should always be left as an empty string",
+            level = DeprecationLevel.ERROR
+        )
         override fun setCaption(caption: String): Item? {
             return item?.setCaption(caption)
         }
 
         /**
          * Updates the value of this item to be the result of the indicated string formatting operation.
-         * @param format    the format of the data
+         * @param format    the format of the data, note this will call a BunyipsLib function to format the string
          * @param args      the arguments associated with the format
          * @return the receiver
          * @see addData
          */
         override fun setValue(format: String, vararg args: Any): Item? {
-            return item?.setValue(format, args)
+            value = formatString(format, *args)
+            return item?.setValue(build())
         }
 
         /**
@@ -571,12 +680,14 @@ class DualTelemetry @JvmOverloads constructor(
          * @return the receiver
          * @see addData
          */
-        override fun setValue(value: Any): Item? {
-            return item?.setValue(value)
+        override fun setValue(value: Any?): Item? {
+            this.value = value.toString()
+            return item?.setValue(build())
         }
 
         /**
-         * Updates the value of this item to be the indicated value producer.
+         * Updates the value of this item to be the indicated value producer. This will override any
+         * HTML formatting applied to the item as it is also a value producer.
          * @param valueProducer an object that produces values to be rendered.
          * @return the receiver
          * @see addData
@@ -586,7 +697,8 @@ class DualTelemetry @JvmOverloads constructor(
         }
 
         /**
-         * Updates the value of this item to be the indicated value producer.
+         * Updates the value of this item to be the indicated value producer. This will override any
+         * HTML formatting applied to the item as it is also a value producer.
          * @param format        this string used to format values produced
          * @param valueProducer an object that produces values to be rendered.
          * @return the receiver
@@ -623,6 +735,10 @@ class DualTelemetry @JvmOverloads constructor(
          * Adds a new data item in the associated [Telemetry] immediately following the receiver.
          * @see addData
          */
+        @Deprecated(
+            "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
+            level = DeprecationLevel.ERROR
+        )
         override fun addData(caption: String, format: String, vararg args: Any): Item? {
             return item?.addData(caption, format, args)
         }
@@ -631,6 +747,7 @@ class DualTelemetry @JvmOverloads constructor(
          * Adds a new data item in the associated [Telemetry] immediately following the receiver.
          * @see addData
          */
+        @Deprecated("This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.")
         override fun addData(caption: String, value: Any): Item? {
             return item?.addData(caption, value)
         }
@@ -639,6 +756,7 @@ class DualTelemetry @JvmOverloads constructor(
          * Adds a new data item in the associated [Telemetry] immediately following the receiver.
          * @see addData
          */
+        @Deprecated("This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.")
         override fun <T : Any> addData(caption: String, valueProducer: Func<T>): Item? {
             return item?.addData(caption, valueProducer)
         }
@@ -647,6 +765,7 @@ class DualTelemetry @JvmOverloads constructor(
          * Adds a new data item in the associated [Telemetry] immediately following the receiver.
          * @see addData
          */
+        @Deprecated("This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.")
         override fun <T : Any> addData(caption: String, format: String, valueProducer: Func<T>): Item? {
             return item?.addData(caption, format, valueProducer)
         }
@@ -671,17 +790,21 @@ class DualTelemetry @JvmOverloads constructor(
      * Create a new telemetry object and add it to the management queue.
      */
     private fun createTelemetryItem(value: String, retained: Boolean, isOverflow: Boolean): HtmlItem {
+        // Use a reference of the string to be added to telemetry. This allows us to pass it into HtmlItem where it
+        // may be modified at an arbitrary time, and the changes will be reflected in the telemetry object as part of
+        // the telemetry update cycle. This includes all styles to be applied through HtmlItem.
+        val ref = Reference.of(value)
         if (value.isNotBlank()) {
             synchronized(dashboardItems) {
                 dashboardItems.add(
                     Pair(
                         if (retained) ItemType.RETAINED_TELEMETRY else ItemType.TELEMETRY,
-                        value
+                        ref
                     )
                 )
             }
         }
-        return HtmlItem(value, false, isOverflow, opMode)
+        return HtmlItem(value, false, isOverflow, ref, opMode)
     }
 
     /**
@@ -689,12 +812,7 @@ class DualTelemetry @JvmOverloads constructor(
      */
     private fun clearTelemetryObjects() {
         synchronized(dashboardItems) {
-            val tmp = dashboardItems.toTypedArray()
-            for (item in tmp) {
-                if (item.first == ItemType.RETAINED_TELEMETRY)
-                    continue
-                dashboardItems.remove(item)
-            }
+            dashboardItems.removeAll { it.first == ItemType.TELEMETRY }
         }
     }
 
@@ -726,15 +844,6 @@ class DualTelemetry @JvmOverloads constructor(
     )
     override fun <T : Any> addData(caption: String, format: String, valueProducer: Func<T>): Item {
         return add(caption + format, valueProducer.value())
-    }
-
-    @Suppress("KDocMissingDocumentation")
-    @Deprecated(
-        "removeItem has been migrated to removeRetained with usages in retained telemetry (will still work for non-retained)",
-        replaceWith = ReplaceWith("removeRetained(item)")
-    )
-    override fun removeItem(item: Item): Boolean {
-        return removeRetained(item)
     }
 
     @Suppress("KDocMissingDocumentation")

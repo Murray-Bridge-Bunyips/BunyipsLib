@@ -39,9 +39,9 @@ public class DcMotorRamping extends DcMotorImplEx {
      * Create a new DcMotorRamping object, wrapping a DcMotor object and
      * returning a new object that can be used in place of the original.
      *
-     * @param motor the DcMotor object to wrap. By default, the ramping function is enabled.
+     * @param motor      the DcMotor object to wrap. By default, the ramping function is enabled.
      * @param smoothTime the time it takes for the motor to reach the target power level
-     * @param maxDelta the maximum change in power level per second
+     * @param maxDelta   the maximum change in power level per second
      */
     public DcMotorRamping(DcMotor motor, Measure<Time> smoothTime, double maxDelta) {
         super(motor.getController(), motor.getPortNumber());
@@ -63,7 +63,7 @@ public class DcMotorRamping extends DcMotorImplEx {
      * Set the ramping parameters of the motor.
      *
      * @param smoothTime the time it takes for the motor to reach the target power level
-     * @param maxDelta the maximum change in power level per second
+     * @param maxDelta   the maximum change in power level per second
      */
     public void setRampingParameters(Measure<Time> smoothTime, double maxDelta) {
         this.smoothTime = smoothTime;

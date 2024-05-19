@@ -1,6 +1,97 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.1.0 (2024-05-19)
+HTML-enhanced improved Driver Station and FtcDashboard telemetry.
+### Breaking changes
+- `Scheduler.addTaskReport()` now takes an extra argument whether this task is a default task
+  - This API was not designed to be used by the user, but rather by the `Scheduler` to collect task and subsystem info
+  - As such, this is a breaking change for any custom implementations of tasks/subsystems that may have used this method
+  - This is not enough to warrant a major version bump
+- `DualTelemetry` now calls all setup methods from within its constructor
+  - This removes the need to call `setup()` after creating a `DualTelemetry` object
+  - This is a breaking change for any custom implementations of `DualTelemetry`
+  - However, since this is an internal developer change, it is not enough to warrant a major version bump
+- `UserSelection` no longer sets auto-clear to true for the init-phase
+  - While this isn't an API change, it is a change in the default behaviour of `UserSelection` and may crash OpModes that relied on the auto-clear being active
+  - You will need to ensure auto-clear is set yourself, as nowhere in BunyipsLib it is enabled automatically during the init-phase
+  - Auto-clear is disabled in the init phase, and re-enabled in the active phase
+  - Init tasks that report continuous telemetry should use a single added retained telemetry item and call `setValue()` on it
+### Non-breaking changes
+- Added colours and styles to telemetry messages in the Driver Station
+  - All standard telemetry items associated with the stock usage of BunyipsLib have been updated to be more vibrant and easier to read
+  - Information is now colour-coded based on importance, and size varying to indicate between debug and normal telemetry
+  - `StartingPositions` now has a HTML generator when using `StartingPositions.use()` to display the starting position in a more readable format, reducing confusion
+- `UserSelection`, when running will now flash at the user with vibrant colours to indicate an action is needed
+  - This is to ensure the user is aware that they need to select an OpMode
+  - The message for the selected OpMode has also been moved to the log instead of telemetry to de-clutter the user telemetry space
+  - FtcDashboard will now display the selected OpMode status properly in a concise `USR` key, with time data of when it was selected relative to the start of init
+- `AutonomousBunyipsOpMode` now sends task finish messages to Logcat with time execution details
+- Exceptions are now shown more clearly in the Driver Station telemetry log
+- `StartingPositions.use()` now returns an Array instead of a List
+  - This array is backed by the JVM as a `StartingPositions[]`
+- Telemetry messages have been improved throughout BunyipsLib
+  - `Task` and `TaskGroup` now display their timeout information when added to the `AutonomousBunyipsOpMode` task queue
+    - `TaskGroup` is calculated by the maximum timeout of all tasks in the group, but may end early depending on the group's finish condition
+    - `TaskGroup` logs to the Driver Station as being added as a single task, but generates additional logs for each task in the group on construction
+  - Scheduler messages have been reduced in size and made more concise to be one line
+  - `AutonomousBunyipsOpMode` task queue messages have been refined to reduce wordiness
+  - Integrated subsystems now use colour to indicate their status in the Driver Station
+- `RoadRunnerTask` now sets the task timeout of itself to the trajectory duration if the task timeout is not set
+  - This is to ensure provide metrics on how long an Autonomous will take to complete as the task time should be the same as the trajectory time
+- `BunyipsOpMode` now slows down the loop during periods of idle execution to save CPU cycles
+  - During the `ready` phase, the loop is reduced to 5 iters/sec
+  - During a `halted` state, the loop is reduced to 10 iters/sec
+  - During the `finished` state, the loop is reduced to 2 iters/sec
+  - All other phases continue to run at maximum available speed
+- `BunyipsOpMode` will no longer run `activeLoop()` at least once if the OpMode is stopped before the first loop
+  - This is to prevent actuating motors or doing any heavy work when we want to stop the robot
+  - This effectively has moved the activeLoop from a do-while to a while loop
+  - Other loop-based methods such as `onInitLoop()` still use a do-while
+- `DualTelemetry` now uses the `Func<T>` constructor to pass data to the Driver Station telemetry
+  - This does not change any functionality but allows the internal state to work properly, but may present potential issues with clearing telemetry if not aware
+- `DualTelemetry`'s `removeItem` is no longer deprecated as it will call `removeRetained` internally
+  - The purpose of the deprecation was to discourage removing telemetry items that weren't retained, however to remove complication the method has been restored 
+### Bug fixes
+- Fixed a critical bug in `AutonomousBunyipsOpMode` where an exception would be thrown for an OpMode that doesn't call `setOpModes()`
+  - Additionally, `onReady()` will no longer be called if the OpMode is ended before the user selects an OpMode
+- Fixed a faulty debug statement in `BunyipsSubsystem` when a subsystem is enabled via `enable()`.
+- Exceptions thrown for `BunyipsSubsystem`'s default task ending now includes the class name
+- Improved no-subsystem operation of `CommandBasedBunyipsOpMode`, where an exception will still be thrown however it will not stop the calling of `assignCommands()`
+  - We choose to throw an exception here as passing no subsystems shouldn't be a common use case of this command-based system
+  - This is to prevent the user from accidentally running a command-based system without any subsystems and therefore no motor output
+- Various fixes for `DualTelemetry`
+  - FtcDashboard user packets should no longer be dropped
+  - Fixed a `ConcurrentModificationException` caused by a missing `synchronized` call on the dashboard items in `update()`
+  - In order to let HTML modifications make their way to the dashboard, the internal structure of `DualTelemetry` has been reworked
+    - Dashboard items are now a string by reference, which will be updated when the Driver Station evaluates the telemetry function
+  - FtcDashboard telemetry indexing has been vastly improved
+    - The telemetry is now indexed by type and accommodates for the alphabetical sorting of telemetry items
+    - This ensures the telemetry on the dashboard is as close to the DS as possible without any manual intervention
+  - Fixed a clearing bug for telemetry where items would be removed based on a clone instead of the original item
+### Additions
+- Telemetry now uses HTML formatting to enhance the appearance of telemetry messages
+  - Allows customisation of telemetry messages, including bold, italic, underline, and colour
+  - New HTML text builder utility `Text.html()` and built-in builder-like value wrappers for the `telemetry.add()` method, (`.bold()`, `.italic()`, etc)
+    - See `HtmlItem` of `DualTelemetry` for more information
+  - These changes also apply to the FtcDashboard telemetry
+  - Manual tags can also be used, such as `<b>`, `<i>`, `<u>`, `<font color="red">`, etc
+- `AutonomousBunyipsOpMode` now provides more concise data on the overhead display message
+  - This includes the current task, current task index, and a new Estimated Time Remaining field
+  - The Estimated Time Remaining field is calculated by the sum of the timeouts of all tasks after the current task
+  - If the task is a `RoadRunnerTask`, the time remaining will be calculated by the time remaining in the trajectory
+  - However, if it is an infinite task, the time remaining will be calculated by adding an arbitrary amount of time as defined by the static field in `AutonomousBunyipsOpMode`
+  - This is to provide more information to the driver on the current state of the autonomous program
+- `DualTelemetry` now includes a `overheadSubtitle`, which is a customisable text field that can be used to display additional information just under the main status
+  - This is useful for displaying statistics similar to the standard `BunyipsOpMode` timing and controller information
+- `DualTelemetry` now has an `overrideStatus` field, which allows the user to set the status message to a custom string
+  - This will override the status message set by the `opModeStatus` field, and will be displayed in the same location
+  - This field is used internally by `BunyipsOpMode` to display 'error' if an exception is thrown
+- `Dbg` now includes new `logTmp()` methods, which will log a message just like `log()`, but is marked as deprecated
+  - This is to ensure all temporary debug messages are removed before committing, as sometimes these log messages may be forgotten and hamper performance
+- `Reference` now has new methods `setIfNotPresent()` and `setIfPresent()`
+  - These methods are for setting the reference based on the nullability of the current reference 
+
 ## v3.0.1 (2024-05-16)
 Minor bug fix for `MoveToAprilTagTask`.
 ### Bug fixes
