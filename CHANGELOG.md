@@ -1,6 +1,19 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.1.1 (2024-05-19)
+Task timing and debugging telemetry improvements.
+### Non-breaking changes
+- Added an automatic `Dbg` call to run when the `onReady` callback is processed, with a list of tasks added at this period
+  - This is to provide a more detailed log of the tasks that are added up to the point of the `onReady` callback
+- Init-task now displays full verbose string into Logcat of when it starts running
+- Renamed ACTIVE to READY in `Task` when calling a verbose string for clarity
+### Bug fixes
+- OnceTask has been updated to actually have a timeout of 1 millisecond as it was previously treated as infinite 
+  - This allows telemetry to properly display the task as an instant task
+- Fixed a bug in `RoadRunner` where the robot would not accept the implicit timeout construction of a trajectory
+  - This resolves all RoadRunner trajectory tasks built with default parameters to be infinite
+
 ## v3.1.0 (2024-05-19)
 HTML-enhanced improved Driver Station and FtcDashboard telemetry.
 ### Breaking changes

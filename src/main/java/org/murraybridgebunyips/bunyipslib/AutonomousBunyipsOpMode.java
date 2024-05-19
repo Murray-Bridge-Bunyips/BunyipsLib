@@ -69,6 +69,17 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         }
         preQueue.clear();
         postQueue.clear();
+        String timeLeft = getApproximateTimeLeft();
+        Dbg.logd(
+                "[AutonomousBunyipsOpMode] onReady() called | %% tasks queued%",
+                userSelection != null ? "usr: " + selectedOpMode + " | " : "",
+                taskCount,
+                timeLeft.isEmpty() ? "" : timeLeft + " to complete"
+        );
+        for (RobotTask task : tasks) {
+            if (!(task instanceof Task)) continue;
+            Dbg.logd("  -> %", ((Task) task).toVerboseString());
+        }
     }
 
     @Override
@@ -125,7 +136,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         synchronized (tasks) {
             RobotTask currentTask = tasks.peekFirst();
             if (currentTask == null) {
-                log("<font color='gray'>auto:</font> all tasks done, finishing...");
+                log("<font color='gray'>auto:</font> tasks done -> finishing");
                 finish();
                 return;
             }
@@ -142,7 +153,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                 if (currentTask instanceof Task) {
                     runTime = ((Task) currentTask).getDeltaTime().in(Seconds);
                 }
-                Dbg.logd("[AutonomousBunyipsOpMode] task %/% (%) finished%", this.currentTask, taskCount, currentTask, runTime != 0 ? " in " + runTime + "s" : "");
+                Dbg.logd("[AutonomousBunyipsOpMode] task %/% (%) finished%", this.currentTask, taskCount, currentTask, runTime != 0 ? " -> " + runTime + "s" : "");
                 this.currentTask++;
             }
 
