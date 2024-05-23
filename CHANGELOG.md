@@ -1,6 +1,15 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.1.2 (2024-05-23)
+Update BunyipsLib dependencies.
+## Non-breaking changes
+- Updated WPIUnits to the latest branch, which reworks the internal logic of unit construction
+- `Task` now extends `BunyipsComponent` to retrieve the `opMode` field, instead of defining it again internally
+## Additions
+- Units can now be divided by other units performing dimensional analysis, similar to the multiplication of units
+- A few new units now exist, including a new base unit for moment of inertia and more integrated second-derivative units (`FeetPerSecondPerSecond`, `RadiansPerSecondPerSecond`, etc.)
+
 ## v3.1.1 (2024-05-19)
 Task timing and debugging telemetry improvements.
 ### Non-breaking changes
