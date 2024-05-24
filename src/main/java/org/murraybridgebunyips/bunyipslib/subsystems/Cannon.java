@@ -31,6 +31,9 @@ public class Cannon extends BunyipsSubsystem {
      * @param openPosition  the position to set the servo to when firing
      */
     public Cannon(Servo prolong, double openPosition, double closePosition) {
+        if (openPosition == closePosition)
+            throw new IllegalArgumentException("Open and close positions cannot be the same");
+
         FIRED = openPosition;
         RESET = closePosition;
 
@@ -90,6 +93,15 @@ public class Cannon extends BunyipsSubsystem {
      */
     public boolean isFired() {
         return target == FIRED;
+    }
+
+    /**
+     * Query if the cannon is reset.
+     *
+     * @return true if the cannon is reset
+     */
+    public boolean isReset() {
+        return target == RESET;
     }
 
     /**
