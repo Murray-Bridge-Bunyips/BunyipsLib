@@ -84,6 +84,15 @@ public class Cannon extends BunyipsSubsystem {
     }
 
     /**
+     * Query if the cannon is fired.
+     *
+     * @return true if the cannon is fired
+     */
+    public boolean isFired() {
+        return target == FIRED;
+    }
+
+    /**
      * Fire the cannon.
      *
      * @return Fire cannon task
