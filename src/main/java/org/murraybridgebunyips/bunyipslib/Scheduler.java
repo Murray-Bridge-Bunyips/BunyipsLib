@@ -126,16 +126,19 @@ public class Scheduler extends BunyipsComponent {
                 opMode.addTelemetry(item);
             }
             for (ConditionalTask task : allocatedTasks) {
-                if (task.taskToRun.hasDependency())
+                if (task.taskToRun.hasDependency() // Whether the task is never run from the Scheduler (and task reports will come from the reports array)
+                        || task.debouncing // Whether this task will only run once and then proceed to stay as "active" in the telemetry
+                        || task.taskToRun.isMuted() // Whether the task has declared itself as muted
+                        || task.activeSince == -1 // Whether the task is not being run by the Scheduler currently
+                        || !timeExceeded(task)) { // Whether this task has not met timeout requirements
                     continue;
-                if (!task.taskToRun.isMuted() && task.activeSince != -1 && timeExceeded(task)) {
-                    double deltaTime = round(task.taskToRun.getDeltaTime().in(Seconds), 1);
-                    opMode.addTelemetry(
-                            "<small><b>Scheduler</b> (c.) <font color='gray'>|</font> <b>%</b> -> %</small>",
-                            task.taskToRun,
-                            deltaTime == 0.0 ? "active" : deltaTime + "s"
-                    );
                 }
+                double deltaTime = round(task.taskToRun.getDeltaTime().in(Seconds), 1);
+                opMode.addTelemetry(
+                        "<small><b>Scheduler</b> (c.) <font color='gray'>|</font> <b>%</b> -> %</small>",
+                        task.taskToRun,
+                        deltaTime == 0.0 ? "active" : deltaTime + "s"
+                );
             }
             // Blank line to separate Scheduler information from addTelemetry()
             opMode.addTelemetry("");

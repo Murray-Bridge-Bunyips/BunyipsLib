@@ -84,7 +84,7 @@ public class DualServos extends BunyipsSubsystem {
      * @return the task
      */
     public Task toggleTask(ServoSide servo) {
-        return new RunTask(() -> toggle(servo), this, true).withName("ToggleServoTask");
+        return new RunTask(() -> toggle(servo), this, true).withName("Toggle:" + servo);
     }
 
     /**
@@ -114,7 +114,7 @@ public class DualServos extends BunyipsSubsystem {
      * @return the task
      */
     public Task openTask(ServoSide servo) {
-        return new RunTask(() -> open(servo), this, true).withName("OpenServoTask");
+        return new RunTask(() -> open(servo), this, true).withName("Open:" + servo);
     }
 
     /**
@@ -144,7 +144,7 @@ public class DualServos extends BunyipsSubsystem {
      * @return the task
      */
     public Task closeTask(ServoSide servo) {
-        return new RunTask(() -> close(servo), this, true).withName("CloseServoTask");
+        return new RunTask(() -> close(servo), this, true).withName("Close:" + servo);
     }
 
     /**
@@ -172,9 +172,9 @@ public class DualServos extends BunyipsSubsystem {
     protected void periodic() {
         left.setPosition(leftServoPosition);
         right.setPosition(rightServoPosition);
-        opMode.addTelemetry("%: L_% R_%", NAME,
-                left.getPosition() == LEFT_SERVO_OPEN_POSITION ? "<font color='green'>OPEN</font>" : "<font color='red'>CLOSE</font>",
-                right.getPosition() == RIGHT_SERVO_OPEN_POSITION ? "<font color='green'>OPEN</font>" : "<font color='red'>CLOSE</font>");
+        opMode.addTelemetry("%: Left->% Right->%", NAME,
+                left.getPosition() == LEFT_SERVO_OPEN_POSITION ? "<font color='green'>OPEN</font>" : "<font color='yellow'>CLOSE</font>",
+                right.getPosition() == RIGHT_SERVO_OPEN_POSITION ? "<font color='green'>OPEN</font>" : "<font color='yellow'>CLOSE</font>");
     }
 
     /**
