@@ -71,16 +71,15 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         preQueue.clear();
         postQueue.clear();
         String timeLeft = getApproximateTimeLeft();
-        StringBuilder out = new StringBuilder();
-        out.append(formatString(
-                "[AutonomousBunyipsOpMode] onReady() called | %% task(s) queued%\n",
+        Text.Builder out = Text.builder();
+        out.append("[AutonomousBunyipsOpMode] onReady() called | %% task(s) queued%\n",
                 userSelection != null ? "usr: " + selectedOpMode + " | " : "",
                 taskCount,
                 timeLeft.isEmpty() ? "" : timeLeft + " to complete"
-        ));
+        );
         for (RobotTask task : tasks) {
             if (!(task instanceof Task)) continue;
-            out.append(formatString("   -> %\n", ((Task) task).toVerboseString()));
+            out.append("   -> %\n", ((Task) task).toVerboseString());
         }
         Dbg.logd(out.toString());
     }
