@@ -12,6 +12,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
+import org.murraybridgebunyips.bunyipslib.tasks.groups.TaskGroup;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -70,16 +71,18 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         preQueue.clear();
         postQueue.clear();
         String timeLeft = getApproximateTimeLeft();
-        Dbg.logd(
-                "[AutonomousBunyipsOpMode] onReady() called | %% tasks queued%",
+        StringBuilder out = new StringBuilder();
+        out.append(formatString(
+                "[AutonomousBunyipsOpMode] onReady() called | %% task(s) queued%\n",
                 userSelection != null ? "usr: " + selectedOpMode + " | " : "",
                 taskCount,
                 timeLeft.isEmpty() ? "" : timeLeft + " to complete"
-        );
+        ));
         for (RobotTask task : tasks) {
             if (!(task instanceof Task)) continue;
-            Dbg.logd("  -> %", ((Task) task).toVerboseString());
+            out.append(formatString("   -> %\n", ((Task) task).toVerboseString()));
         }
+        Dbg.logd(out.toString());
     }
 
     @Override
@@ -203,6 +206,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         synchronized (tasks) {
             tasks.add(newTask);
         }
+        if (newTask instanceof TaskGroup)
+            ((TaskGroup) newTask).logCreation();
         taskCount++;
         log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
     }
@@ -250,6 +255,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                 tasks.add(tmp.removeLast());
             }
         }
+        if (newTask instanceof TaskGroup)
+            ((TaskGroup) newTask).logCreation();
         taskCount++;
         log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> inserted %/%", newTask, getTaskTimeout(newTask), index, taskCount);
     }
@@ -283,6 +290,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         synchronized (tasks) {
             tasks.addLast(newTask);
         }
+        if (newTask instanceof TaskGroup)
+            ((TaskGroup) newTask).logCreation();
         taskCount++;
         log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
     }
@@ -304,6 +313,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         synchronized (tasks) {
             tasks.addFirst(newTask);
         }
+        if (newTask instanceof TaskGroup)
+            ((TaskGroup) newTask).logCreation();
         taskCount++;
         log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added 1/%", newTask, getTaskTimeout(newTask), taskCount);
     }
