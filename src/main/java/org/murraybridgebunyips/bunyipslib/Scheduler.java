@@ -351,8 +351,6 @@ public class Scheduler extends BunyipsComponent {
      */
     public class ControllerButtonCreator {
         private final Controller user;
-        private final ArrayList<BooleanSupplier> and = new ArrayList<>();
-        private final ArrayList<BooleanSupplier> or = new ArrayList<>();
 
         private ControllerButtonCreator(Controller user) {
             this.user = user;
