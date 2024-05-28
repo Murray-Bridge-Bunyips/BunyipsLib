@@ -351,6 +351,8 @@ public class Scheduler extends BunyipsComponent {
      */
     public class ControllerButtonCreator {
         private final Controller user;
+        private final ArrayList<BooleanSupplier> and = new ArrayList<>();
+        private final ArrayList<BooleanSupplier> or = new ArrayList<>();
 
         private ControllerButtonCreator(Controller user) {
             this.user = user;
@@ -423,6 +425,8 @@ public class Scheduler extends BunyipsComponent {
      */
     public class ConditionalTask {
         protected final BooleanSupplier runCondition;
+        private final ArrayList<BooleanSupplier> and = new ArrayList<>();
+        private final ArrayList<BooleanSupplier> or = new ArrayList<>();
         protected Task taskToRun;
         protected Measure<Time> time = INFINITE_TIMEOUT;
         protected boolean debouncing;
@@ -437,7 +441,11 @@ public class Scheduler extends BunyipsComponent {
          * @param runCondition The condition to start running the task.
          */
         public ConditionalTask(BooleanSupplier runCondition) {
-            this.runCondition = runCondition;
+            // Run the task if the original expression is met,
+            // and all AND conditions are met, or any OR conditions are met
+            this.runCondition = () -> runCondition.getAsBoolean()
+                    && and.stream().allMatch(BooleanSupplier::getAsBoolean)
+                    || or.stream().anyMatch(BooleanSupplier::getAsBoolean);
             allocatedTasks.add(this);
         }
 
@@ -448,7 +456,7 @@ public class Scheduler extends BunyipsComponent {
          * ending when the task ends.
          *
          * @param task The task to run.
-         * @return Timing control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
+         * @return Current builder for additional task parameters
          */
         public ConditionalTask run(Task task) {
             if (taskToRun != null) {
@@ -467,7 +475,7 @@ public class Scheduler extends BunyipsComponent {
          * ending immediately as it is an RunTask.
          *
          * @param runnable The code to run
-         * @return Timing control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
+         * @return Current builder for additional task parameters
          */
         public ConditionalTask run(Runnable runnable) {
             return run(new RunTask(runnable));
@@ -480,7 +488,7 @@ public class Scheduler extends BunyipsComponent {
          * ending when the task ends.
          *
          * @param task The task to run.
-         * @return Timing control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
+         * @return Current builder for additional task parameters
          */
         public ConditionalTask runDebounced(Task task) {
             debouncing = true;
@@ -494,7 +502,7 @@ public class Scheduler extends BunyipsComponent {
          * ending immediately as it is an RunTask.
          *
          * @param runnable The code to run
-         * @return Timing control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
+         * @return Current builder for additional task parameters
          */
         public ConditionalTask runDebounced(Runnable runnable) {
             return runDebounced(new RunTask(runnable));
@@ -503,13 +511,37 @@ public class Scheduler extends BunyipsComponent {
         /**
          * Mute this task from being a part of the Scheduler report.
          *
-         * @return Timing control for allocation (none: immediate, in(), finishingIf(), inTimeFinishingIf()).
+         * @return Current builder for additional task parameters
          */
         public ConditionalTask muted() {
             if (taskToRun != null) {
                 taskToRun.withMutedReports();
             }
             isTaskMuted = true;
+            return this;
+        }
+
+        /**
+         * Chain an AND condition to the current conditional task.
+         * Will be evaluated after the controller condition, and before the OR conditions.
+         *
+         * @param condition The AND condition to chain.
+         * @return Current builder for additional task parameters
+         */
+        public ConditionalTask andIf(BooleanSupplier condition) {
+            and.add(condition);
+            return this;
+        }
+
+        /**
+         * Chain an OR condition to the current conditional task.
+         * Will be evaluated after the controller and AND conditions.
+         *
+         * @param condition The OR condition to chain.
+         * @return Current builder for additional task parameters
+         */
+        public ConditionalTask orIf(BooleanSupplier condition) {
+            or.add(condition);
             return this;
         }
 

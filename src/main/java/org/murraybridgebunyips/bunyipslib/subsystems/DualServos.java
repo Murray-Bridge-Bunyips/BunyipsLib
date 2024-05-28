@@ -10,12 +10,12 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * Control a set of two servos together.
  */
 public class DualServos extends BunyipsSubsystem {
+    private final double LEFT_SERVO_CLOSED_POSITION;
+    private final double LEFT_SERVO_OPEN_POSITION;
+    private final double RIGHT_SERVO_CLOSED_POSITION;
+    private final double RIGHT_SERVO_OPEN_POSITION;
     private Servo left;
     private Servo right;
-    private double LEFT_SERVO_CLOSED_POSITION;
-    private double LEFT_SERVO_OPEN_POSITION;
-    private double RIGHT_SERVO_CLOSED_POSITION;
-    private double RIGHT_SERVO_OPEN_POSITION;
     // Name of the servos for telemetry
     private String NAME = "Servos";
     private double leftServoPosition;
@@ -32,13 +32,17 @@ public class DualServos extends BunyipsSubsystem {
      * @param rightOpen   the right servo open position
      */
     public DualServos(Servo left, Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
-        if (!assertParamsNotNull(left, right)) return;
-        this.left = left;
-        this.right = right;
+        if (leftClosed == leftOpen || rightClosed == rightOpen)
+            throw new IllegalArgumentException("Open and close positions for either servo cannot be the same");
+
         LEFT_SERVO_CLOSED_POSITION = leftClosed;
         LEFT_SERVO_OPEN_POSITION = leftOpen;
         RIGHT_SERVO_CLOSED_POSITION = rightClosed;
         RIGHT_SERVO_OPEN_POSITION = rightOpen;
+
+        if (!assertParamsNotNull(left, right)) return;
+        this.left = left;
+        this.right = right;
 
         // Always close on init
         leftServoPosition = leftClosed;
