@@ -52,14 +52,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     private final HashSet<BunyipsSubsystem> updatedSubsystems = new HashSet<>();
     private int taskCount;
     private UserSelection<Reference<?>> userSelection;
-    // Init-task does not count as a queued task, so we start at 1
     private int currentTask = 1;
-    private boolean callbackReceived;
+    private volatile boolean callbackReceived;
+    private boolean safeToAddTasks;
 
     private void callback(@Nullable Reference<?> selectedOpMode) {
         if (isStopRequested())
             return;
-        callbackReceived = true;
+        safeToAddTasks = true;
         onReady(selectedOpMode, userSelection != null ? userSelection.getSelectedButton() : null);
         // Add any queued tasks
         for (RobotTask task : postQueue) {
@@ -82,6 +82,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             out.append("   -> %\n", ((Task) task).toVerboseString());
         }
         Dbg.logd(out.toString());
+        callbackReceived = true;
     }
 
     @Override
@@ -120,17 +121,15 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             // but we should wait here until it has actually terminated
             Threads.waitFor(userSelection, true);
         }
+        // Busy wait here until onReady() has processed and the callback is fully joined
+        // This is safe to do as there are no main thread operations left to run
+        while (!callbackReceived) {
+            sleep(1);
+        }
     }
 
     @Override
     protected final void activeLoop() {
-        if (!callbackReceived) {
-            // Not ready to run tasks yet, we can't do much. This shouldn't really happen,
-            // but just in case, we'll log it and wait for the callback to be run
-            Dbg.logd("AutonomousBunyipsOpMode is busy-waiting for a late UserSelection callback...");
-            return;
-        }
-
         // Run any code defined by the user
         periodic();
 
@@ -199,8 +198,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     public final void addTask(@NotNull RobotTask newTask, boolean ack) {
         checkTaskForDependency(newTask);
-        if (!callbackReceived && !ack) {
-            log("<font color='gray'>auto:</font> caution! a task was added manually before the onReady callback");
+        if (!safeToAddTasks && !ack) {
+            log("<font color='gray'>auto:</font> <font color='yellow'>caution!</font> a task was added manually before the onReady callback");
         }
         synchronized (tasks) {
             tasks.add(newTask);

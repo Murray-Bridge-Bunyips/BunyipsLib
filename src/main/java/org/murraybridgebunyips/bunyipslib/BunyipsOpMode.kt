@@ -10,6 +10,9 @@ import com.qualcomm.robotcore.hardware.RobotCoreLynxUsbDevice
 import com.qualcomm.robotcore.hardware.ServoController
 import com.qualcomm.robotcore.util.ThreadPool
 import org.firstinspires.ftc.robotcore.external.Telemetry.Item
+import org.murraybridgebunyips.bunyipslib.external.units.Measure
+import org.murraybridgebunyips.bunyipslib.external.units.Time
+import org.murraybridgebunyips.bunyipslib.external.units.Units.Milliseconds
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
 import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask
@@ -61,6 +64,12 @@ abstract class BunyipsOpMode : BOMInternal() {
      * @see DualTelemetry
      */
     lateinit var telemetry: DualTelemetry
+
+    /**
+     * Set how fast the OpMode is able to loop in the [activeLoop] or [onInitLoop] methods in Loops per Time Unit.
+     * Measures of less than or equal to zero will be ignored, and the OpMode will run as fast as possible.
+     */
+    var loopSpeed: Measure<Time> = Seconds.zero()
 
     private var operationsCompleted = false
     private var operationsPaused = false
@@ -191,6 +200,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 "<b>${javaClass.simpleName}</b>",
                 "<small><font color='#e5ffde'>bunyipslib</font> <font color='gray'>v${BuildConfig.SEMVER}-${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME}</font></small>"
             )
+            telemetry.logBracketColor = "gray"
             // Controller setup and monitoring threads
             gamepad1 = Controller(sdkGamepad1)
             gamepad2 = Controller(sdkGamepad2)
@@ -246,6 +256,8 @@ abstract class BunyipsOpMode : BOMInternal() {
                 }
                 timer.update()
                 pushTelemetry()
+                if (loopSpeed.magnitude() > 0)
+                    sleep(loopSpeed.inUnit(Milliseconds).toLong())
             } while (opModeInInit() && !operationsCompleted)
 
             telemetry.opModeStatus = "<font color='yellow'>finish_init</font>"
@@ -280,7 +292,6 @@ abstract class BunyipsOpMode : BOMInternal() {
             // DS only telemetry
             telemetry.addDS("<b>Init <font color='green'>complete</font>. Press play to start.</b>")
             Dbg.logd("BunyipsOpMode: ready.")
-            timer.reset()
 
             // Wait for start
             do {
@@ -293,8 +304,6 @@ abstract class BunyipsOpMode : BOMInternal() {
             telemetry.opModeStatus = "<font color='yellow'>starting</font>"
             telemetry.isAutoClear = true
             clearTelemetry()
-            pushTelemetry()
-            timer.reset()
             Dbg.logd("BunyipsOpMode: firing onStart()...")
             try {
                 // Run user-defined start operations
@@ -304,6 +313,9 @@ abstract class BunyipsOpMode : BOMInternal() {
                 telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
                 Exceptions.handle(e, ::log)
             }
+            pushTelemetry()
+            timer.reset()
+            telemetry.logBracketColor = "green"
 
             telemetry.opModeStatus = "<font color='green'><b>running</b></font>"
             Dbg.logd("BunyipsOpMode: starting activeLoop()...")
@@ -316,6 +328,8 @@ abstract class BunyipsOpMode : BOMInternal() {
                     sleep(100)
                     continue
                 }
+                if (loopSpeed.magnitude() > 0)
+                    sleep(loopSpeed.inUnit(Milliseconds).toLong())
                 try {
                     // Run user-defined active loop
                     activeLoop()

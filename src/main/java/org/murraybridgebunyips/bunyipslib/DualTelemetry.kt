@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.Telemetry.DisplayFormat
 import org.firstinspires.ftc.robotcore.external.Telemetry.Item
 import org.murraybridgebunyips.bunyipslib.Text.formatString
+import org.murraybridgebunyips.bunyipslib.external.units.Measure
+import org.murraybridgebunyips.bunyipslib.external.units.Time
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Milliseconds
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Second
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
@@ -70,6 +72,17 @@ class DualTelemetry @JvmOverloads constructor(
      * By default, this is an empty string.
      */
     var overheadSubtitle = ""
+
+    /**
+     * The color of the brackets in log messages, useful for distinguishing between different timer phases.
+     */
+    var logBracketColor = "white"
+
+    /**
+     * The low speed at which the loop timer will go yellow in the overhead telemetry to alert the user of slow
+     * looping times.
+     */
+    var loopSpeedSlowAlert: Measure<Time> = Milliseconds.of(60.0)
 
     private enum class ItemType {
         TELEMETRY,
@@ -198,17 +211,23 @@ class DualTelemetry @JvmOverloads constructor(
         return removeRetained(item)
     }
 
+    private fun logMessage(msg: String) {
+        var prepend = ""
+        if (movingAverageTimer != null)
+            prepend = "<small><font color='$logBracketColor'>[</font>T+${Math.round(movingAverageTimer.elapsedTime().inUnit(Seconds))}s<font color='$logBracketColor'>]</font></small> "
+        opMode.telemetry.log().add(prepend + msg)
+        synchronized(dashboardItems) {
+            dashboardItems.add(Pair(ItemType.LOG, Reference.of(msg)))
+        }
+    }
+
     /**
      * Log a message to the telemetry log, with integrated formatting.
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
     fun log(format: Any, vararg args: Any?) {
-        val fstring = formatString(format.toString(), *args)
-        opMode.telemetry.log().add(fstring)
-        synchronized(dashboardItems) {
-            dashboardItems.add(Pair(ItemType.LOG, Reference.of(fstring)))
-        }
+        logMessage(formatString(format.toString(), *args))
     }
 
     /**
@@ -218,11 +237,7 @@ class DualTelemetry @JvmOverloads constructor(
      * @param args The objects to format into the object format string
      */
     fun log(obj: Class<*>, format: Any, vararg args: Any?) {
-        val msg = "<font color='gray'>[${obj.simpleName}]</font> ${formatString(format.toString(), *args)}"
-        opMode.telemetry.log().add(msg)
-        synchronized(dashboardItems) {
-            dashboardItems.add(Pair(ItemType.LOG, Reference.of(msg)))
-        }
+        logMessage("<font color='gray'>[${obj.simpleName}]</font> ${formatString(format.toString(), *args)}")
     }
 
     /**
@@ -232,11 +247,7 @@ class DualTelemetry @JvmOverloads constructor(
      * @param args The objects to format into the object format string
      */
     fun log(stck: StackTraceElement, format: Any, vararg args: Any?) {
-        val msg = "<font color='gray'>[${stck}]</font> ${formatString(format.toString(), *args)}"
-        opMode.telemetry.log().add(msg)
-        synchronized(dashboardItems) {
-            dashboardItems.add(Pair(ItemType.LOG, Reference.of(msg)))
-        }
+        logMessage("<font color='gray'>[${stck}]</font> ${formatString(format.toString(), *args)}")
     }
 
     /**
@@ -258,28 +269,41 @@ class DualTelemetry @JvmOverloads constructor(
         val retVal = opMode.telemetry.update()
 
         // Requeue new overhead status message
-        val loopTime =
-            if (movingAverageTimer != null) Text.round(
-                movingAverageTimer.movingAverageLoopTime().inUnit(Milliseconds),
-                2
-            ) else 0.0
-        val loopsSec = if (movingAverageTimer != null)
-            if (!movingAverageTimer.loopsPer(Second).isNaN())
-                Text.round(movingAverageTimer.loopsPer(Second), 1)
-            else 0.0
-        else 0.0
-        val elapsedTime = movingAverageTimer?.elapsedTime()?.inUnit(Seconds)?.roundToInt() ?: "?"
-
-        val overheadStatus =
-            "${if (overrideStatus == null) opModeStatus else overrideStatus}\n${if (overheadSubtitle.isNotEmpty()) overheadSubtitle + "\n" else ""}<small>T+${elapsedTime}s | ${
-                if (loopTime <= 0.0) {
-                    if (loopsSec > 0) "$loopsSec l/s" else "?ms"
-                } else {
-                    "${loopTime}ms"
-                }
-            } | ${Controls.movementString(opMode.gamepad1)} ${Controls.movementString(opMode.gamepad2)}</small>\n"
-
-        overheadTelemetry.setValue("${if (overheadTag != null) "$overheadTag | " else ""}$overheadStatus")
+        val loopTime = movingAverageTimer?.let {
+            Text.round(it.movingAverageLoopTime().inUnit(Milliseconds), 2)
+        } ?: 0.0
+        val loopsSec = movingAverageTimer?.let {
+            val loopsPerSec = it.loopsPer(Second)
+            if (!loopsPerSec.isNaN()) Text.round(loopsPerSec, 1) else 0.0
+        } ?: 0.0
+        val elapsedTime = movingAverageTimer?.elapsedTime()?.inUnit(Seconds)?.roundToInt()?.toString() ?: "?"
+        val overheadStatus = StringBuilder()
+        overheadStatus.append(if (overrideStatus != null) overrideStatus else opModeStatus)
+        overheadStatus.append("\n")
+        if (overheadSubtitle.isNotEmpty())
+            overheadStatus.append(overheadSubtitle).append("\n")
+        overheadStatus.append("<small>T+").append(elapsedTime).append("s | ")
+        if (loopTime <= 0.0) {
+            if (loopsSec > 0) {
+                overheadStatus.append("$loopsSec l/s")
+            } else {
+                overheadStatus.append("?ms")
+            }
+        } else {
+            if (loopTime >= loopSpeedSlowAlert.inUnit(Milliseconds)) {
+                overheadStatus.append("<font color='yellow'>").append(loopTime).append("ms</font>")
+            } else {
+                overheadStatus.append(loopTime).append("ms")
+            }
+        }
+        overheadStatus.append(" | ")
+            .append(Controls.movementString(opMode.gamepad1))
+            .append(" ")
+            .append(Controls.movementString(opMode.gamepad2))
+            .append("</small>\n")
+        if (overheadTag != null)
+            overheadStatus.insert(0, "$overheadTag | ")
+        overheadTelemetry.setValue(overheadStatus.toString())
 
         // FtcDashboard
         val packet = TelemetryPacket()
