@@ -333,11 +333,11 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         // Must use an atomic boolean due to lambda restrictions
         AtomicBoolean approx = new AtomicBoolean(false);
         // Attempt to get the time left for all tasks by summing their timeouts
-        double timeLeft = tasks.stream().mapToDouble(t -> {
+        double timeLeft = tasks.stream().mapToDouble(task -> {
             // We cannot extract the duration of a task that is not a Task, we will return zero instead of the assumption
             // as they are completely out of our control and we don't even know how they function
-            if (!(t instanceof Task)) return 0;
-            Measure<Time> timeout = ((Task) t).getTimeout();
+            if (!(task instanceof Task)) return 0;
+            Measure<Time> timeout = ((Task) task).getTimeout();
             // We have to approximate and guess as we cannot determine the duration of a task that is infinite
             if (timeout.magnitude() == 0.0) {
                 // We also adjust the approx flag so we can notify the user that the time is an estimate with a tilde

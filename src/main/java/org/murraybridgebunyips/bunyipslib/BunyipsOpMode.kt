@@ -66,10 +66,18 @@ abstract class BunyipsOpMode : BOMInternal() {
     lateinit var telemetry: DualTelemetry
 
     /**
+     * Shorthand field alias for the [telemetry] ([DualTelemetry]) field.
+     * Sometimes, this field is required to be used as the Kotlin compiler might have trouble distinguishing between
+     * the overridden field and the base field. This method is a direct alias to the DualTelemetry field.
+     * @see telemetry
+     */
+    lateinit var t: DualTelemetry
+
+    /**
      * Set how fast the OpMode is able to loop in the [activeLoop] or [onInitLoop] methods in Loops per Time Unit.
      * Measures of less than or equal to zero will be ignored, and the OpMode will run as fast as possible.
      */
-    var loopSpeed: Measure<Time> = Seconds.zero()
+    var targetLoopSpeed: Measure<Time> = Seconds.zero()
 
     private var operationsCompleted = false
     private var operationsPaused = false
@@ -200,6 +208,8 @@ abstract class BunyipsOpMode : BOMInternal() {
                 "<b>${javaClass.simpleName}</b>",
                 "<small><font color='#e5ffde'>bunyipslib</font> <font color='gray'>v${BuildConfig.SEMVER}-${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME}</font></small>"
             )
+            // Configure alias
+            t = telemetry
             telemetry.logBracketColor = "gray"
             // Controller setup and monitoring threads
             gamepad1 = Controller(sdkGamepad1)
@@ -256,8 +266,8 @@ abstract class BunyipsOpMode : BOMInternal() {
                 }
                 timer.update()
                 telemetry.update()
-                if (loopSpeed.magnitude() > 0)
-                    sleep(loopSpeed.inUnit(Milliseconds).toLong())
+                if (targetLoopSpeed.magnitude() > 0)
+                    sleep(targetLoopSpeed.minus(timer.movingAverageLoopTime()).inUnit(Milliseconds).toLong())
             } while (opModeInInit() && !operationsCompleted)
 
             telemetry.opModeStatus = "<font color='yellow'>finish_init</font>"
@@ -328,8 +338,8 @@ abstract class BunyipsOpMode : BOMInternal() {
                     sleep(100)
                     continue
                 }
-                if (loopSpeed.magnitude() > 0)
-                    sleep(loopSpeed.inUnit(Milliseconds).toLong())
+                if (targetLoopSpeed.magnitude() > 0)
+                    sleep(targetLoopSpeed.minus(timer.movingAverageLoopTime()).inUnit(Milliseconds).toLong())
                 try {
                     // Run user-defined active loop
                     activeLoop()
