@@ -173,10 +173,10 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     /**
-     * Remove retained entries from the telemetry object.
-     * @param items The items to remove from the telemetry object
+     * Remove entries from the Driver Station telemetry object.
+     * @param items The items to remove from the DS telemetry object
      */
-    fun removeRetained(vararg items: Item): Boolean {
+    fun remove(vararg items: Item): Boolean {
         var ok = true
         for (item in items) {
             // We will be able to remove the item from the DS, but objects on FtcDashboard cannot
@@ -194,27 +194,49 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     /**
-     * Remove retained entries from the telemetry object.
-     * @param items The items to remove from the telemetry object
+     * Remove entries from the Driver Station telemetry object.
+     * @param items The items to remove from the DS telemetry object
      */
-    fun removeRetained(items: List<Item>) {
-        removeRetained(*items.toTypedArray())
+    fun remove(items: List<Item>): Boolean {
+        return remove(*items.toTypedArray())
+    }
+
+    /**
+     * Remove entries from the Driver Station telemetry object.
+     * @param items The items to remove from the DS telemetry object
+     */
+    @Deprecated("This method has been renamed", ReplaceWith("remove(items)"))
+    fun removeRetained(vararg items: Item): Boolean {
+        return remove(*items)
+    }
+
+    /**
+     * Remove entries from the Driver Station telemetry object.
+     * @param items The items to remove from the DS telemetry object
+     */
+    @Deprecated("This method has been renamed", ReplaceWith("remove(items)"))
+    fun removeRetained(items: List<Item>): Boolean {
+        return remove(items)
     }
 
     /**
      * Remove a data item from the telemetry object, which will remove only from the Driver Station.
-     * This is an alias for [removeRetained].
+     * This is an alias for [remove].
      * @param item The item to remove from the telemetry object
-     * @see removeRetained
+     * @see remove
      */
     override fun removeItem(item: Item): Boolean {
-        return removeRetained(item)
+        return remove(item)
     }
 
     private fun logMessage(msg: String) {
         var prepend = ""
         if (movingAverageTimer != null)
-            prepend = "<small><font color='$logBracketColor'>[</font>T+${Math.round(movingAverageTimer.elapsedTime().inUnit(Seconds))}s<font color='$logBracketColor'>]</font></small> "
+            prepend = "<small><font color='$logBracketColor'>[</font>T+${
+                Math.round(
+                    movingAverageTimer.elapsedTime().inUnit(Seconds)
+                )
+            }s<font color='$logBracketColor'>]</font></small> "
         opMode.telemetry.log().add(prepend + msg)
         synchronized(dashboardItems) {
             dashboardItems.add(Pair(ItemType.LOG, Reference.of(msg)))
@@ -771,7 +793,10 @@ class DualTelemetry @JvmOverloads constructor(
          * Adds a new data item in the associated [Telemetry] immediately following the receiver.
          * @see addData
          */
-        @Deprecated("This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.")
+        @Deprecated(
+            "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
+            level = DeprecationLevel.ERROR
+        )
         override fun addData(caption: String, value: Any): Item? {
             return item?.addData(caption, value)
         }
@@ -780,7 +805,10 @@ class DualTelemetry @JvmOverloads constructor(
          * Adds a new data item in the associated [Telemetry] immediately following the receiver.
          * @see addData
          */
-        @Deprecated("This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.")
+        @Deprecated(
+            "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
+            level = DeprecationLevel.ERROR
+        )
         override fun <T : Any> addData(caption: String, valueProducer: Func<T>): Item? {
             return item?.addData(caption, valueProducer)
         }
@@ -789,7 +817,10 @@ class DualTelemetry @JvmOverloads constructor(
          * Adds a new data item in the associated [Telemetry] immediately following the receiver.
          * @see addData
          */
-        @Deprecated("This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.")
+        @Deprecated(
+            "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
+            level = DeprecationLevel.ERROR
+        )
         override fun <T : Any> addData(caption: String, format: String, valueProducer: Func<T>): Item? {
             return item?.addData(caption, format, valueProducer)
         }
@@ -873,7 +904,8 @@ class DualTelemetry @JvmOverloads constructor(
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
         "The telemetry line system is not used with DualTelemetry",
-        replaceWith = ReplaceWith("add(format, args)")
+        replaceWith = ReplaceWith("add(format, args)"),
+        level = DeprecationLevel.ERROR
     )
     override fun addLine(): Telemetry.Line? {
         add("")
@@ -883,7 +915,8 @@ class DualTelemetry @JvmOverloads constructor(
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
         "The telemetry line system is not used with DualTelemetry",
-        replaceWith = ReplaceWith("add(format, args)")
+        replaceWith = ReplaceWith("add(format, args)"),
+        level = DeprecationLevel.ERROR
     )
     override fun addLine(lineCaption: String): Telemetry.Line? {
         add(lineCaption)
@@ -893,7 +926,8 @@ class DualTelemetry @JvmOverloads constructor(
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
         "The telemetry line system is not used with DualTelemetry",
-        replaceWith = ReplaceWith("add(format, args)")
+        replaceWith = ReplaceWith("add(format, args)"),
+        level = DeprecationLevel.ERROR
     )
     override fun removeLine(line: Telemetry.Line): Boolean {
         return false
@@ -911,7 +945,8 @@ class DualTelemetry @JvmOverloads constructor(
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
         "The telemetry line system is not used with DualTelemetry",
-        replaceWith = ReplaceWith("add(format, args)")
+        replaceWith = ReplaceWith("add(format, args)"),
+        level = DeprecationLevel.ERROR
     )
     override fun setItemSeparator(itemSeparator: String) {
         opMode.telemetry.itemSeparator = itemSeparator
@@ -926,7 +961,8 @@ class DualTelemetry @JvmOverloads constructor(
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
         "The telemetry log should not be accessed with this method, use log(msg) methods directly as FtcDashboard logging will not work with this method.",
-        replaceWith = ReplaceWith("log(...)")
+        replaceWith = ReplaceWith("log(...)"),
+        level = DeprecationLevel.ERROR
     )
     override fun log(): Telemetry.Log {
         return opMode.telemetry.log()

@@ -137,7 +137,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         synchronized (tasks) {
             RobotTask currentTask = tasks.peekFirst();
             if (currentTask == null) {
-                log("<font color='gray'>auto:</font> tasks done -> finishing");
+                telemetry.log("<font color='gray'>auto:</font> tasks done -> finishing");
                 finish();
                 return;
             }
@@ -199,7 +199,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     public final void addTask(@NotNull RobotTask newTask, boolean ack) {
         checkTaskForDependency(newTask);
         if (!safeToAddTasks && !ack) {
-            log("<font color='gray'>auto:</font> <font color='yellow'>caution!</font> a task was added manually before the onReady callback");
+            telemetry.log("<font color='gray'>auto:</font> <font color='yellow'>caution!</font> a task was added manually before the onReady callback");
         }
         synchronized (tasks) {
             tasks.add(newTask);
@@ -207,7 +207,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (newTask instanceof TaskGroup)
             ((TaskGroup) newTask).logCreation();
         taskCount++;
-        log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
+        telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
     }
 
     /**
@@ -256,7 +256,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (newTask instanceof TaskGroup)
             ((TaskGroup) newTask).logCreation();
         taskCount++;
-        log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> inserted %/%", newTask, getTaskTimeout(newTask), index, taskCount);
+        telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> inserted %/%", newTask, getTaskTimeout(newTask), index, taskCount);
     }
 
     /**
@@ -282,7 +282,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         checkTaskForDependency(newTask);
         if (!callbackReceived) {
             postQueue.add(newTask);
-            log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> queued end-init %/%", newTask, getTaskTimeout(newTask), postQueue.size(), postQueue.size());
+            telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> queued end-init %/%", newTask, getTaskTimeout(newTask), postQueue.size(), postQueue.size());
             return;
         }
         synchronized (tasks) {
@@ -291,7 +291,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (newTask instanceof TaskGroup)
             ((TaskGroup) newTask).logCreation();
         taskCount++;
-        log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
+        telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
     }
 
     /**
@@ -305,7 +305,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         checkTaskForDependency(newTask);
         if (!callbackReceived) {
             preQueue.add(newTask);
-            log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> queued end-init 1/%", newTask, getTaskTimeout(newTask), preQueue.size());
+            telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> queued end-init 1/%", newTask, getTaskTimeout(newTask), preQueue.size());
             return;
         }
         synchronized (tasks) {
@@ -314,7 +314,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (newTask instanceof TaskGroup)
             ((TaskGroup) newTask).logCreation();
         taskCount++;
-        log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added 1/%", newTask, getTaskTimeout(newTask), taskCount);
+        telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added 1/%", newTask, getTaskTimeout(newTask), taskCount);
     }
 
     private String getTaskTimeout(RobotTask task) {
@@ -388,7 +388,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
                 if (counter == taskIndex) {
                     iterator.remove();
-                    log("<font color='gray'>auto:</font> task at index % -> removed", taskIndex);
+                    telemetry.log("<font color='gray'>auto:</font> task at index % -> removed", taskIndex);
                     taskCount--;
                     break;
                 }
@@ -408,10 +408,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         synchronized (tasks) {
             if (tasks.contains(task)) {
                 tasks.remove(task);
-                log("<font color='gray'>auto:</font> task %<i>(t=%)</i> -> removed", task, getTaskTimeout(task));
+                telemetry.log("<font color='gray'>auto:</font> task %<i>(t=%)</i> -> removed", task, getTaskTimeout(task));
                 taskCount--;
             } else {
-                log("<font color='gray'>auto:</font> task %<i>(t=%)</i> -> <font color='yellow'>not found</font>", task, getTaskTimeout(task));
+                telemetry.log("<font color='gray'>auto:</font> task %<i>(t=%)</i> -> <font color='yellow'>not found</font>", task, getTaskTimeout(task));
             }
         }
     }
@@ -424,7 +424,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             tasks.removeLast();
         }
         taskCount--;
-        log("<font color='gray'>auto:</font> task at index % -> removed", taskCount + 1);
+        telemetry.log("<font color='gray'>auto:</font> task at index % -> removed", taskCount + 1);
     }
 
     /**
@@ -435,7 +435,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             tasks.removeFirst();
         }
         taskCount--;
-        log("<font color='gray'>auto:</font> task at index 0 -> removed");
+        telemetry.log("<font color='gray'>auto:</font> task at index 0 -> removed");
     }
 
     private void checkTaskForDependency(RobotTask task) {
