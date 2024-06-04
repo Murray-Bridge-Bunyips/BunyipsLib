@@ -12,12 +12,12 @@ import com.qualcomm.robotcore.util.ThreadPool
 import org.firstinspires.ftc.robotcore.external.Telemetry.Item
 import org.murraybridgebunyips.bunyipslib.external.units.Measure
 import org.murraybridgebunyips.bunyipslib.external.units.Time
-import org.murraybridgebunyips.bunyipslib.external.units.Units.Milliseconds
-import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
+import org.murraybridgebunyips.bunyipslib.external.units.Units.*
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
 import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task
 import java.util.concurrent.ExecutorService
+import kotlin.math.abs
 
 
 /**
@@ -75,9 +75,10 @@ abstract class BunyipsOpMode : BOMInternal() {
 
     /**
      * Set how fast the OpMode is able to loop in the [activeLoop] or [onInitLoop] methods in Loops per Time Unit.
+     * This will dynamically adjust to be the target speed of how fast loops should be executed.
      * Measures of less than or equal to zero will be ignored, and the OpMode will run as fast as possible.
      */
-    var targetLoopSpeed: Measure<Time> = Seconds.zero()
+    var loopSpeed: Measure<Time> = Seconds.zero()
 
     private var operationsCompleted = false
     private var operationsPaused = false
@@ -255,6 +256,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             }
             // Run user-defined dynamic initialisation
             do {
+                val curr = System.nanoTime()
                 try {
                     // Run the user's init task, if it isn't null
                     initTask?.run()
@@ -266,8 +268,8 @@ abstract class BunyipsOpMode : BOMInternal() {
                 }
                 timer.update()
                 telemetry.update()
-                if (targetLoopSpeed.magnitude() > 0)
-                    sleep(targetLoopSpeed.minus(timer.movingAverageLoopTime()).inUnit(Milliseconds).toLong())
+                if (loopSpeed.magnitude() > 0)
+                    sleep(abs((loopSpeed.inUnit(Nanoseconds).toLong() - (System.nanoTime() - curr))) / 1_000_000)
             } while (opModeInInit() && !operationsCompleted)
 
             telemetry.opModeStatus = "<font color='yellow'>finish_init</font>"
@@ -338,8 +340,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                     sleep(100)
                     continue
                 }
-                if (targetLoopSpeed.magnitude() > 0)
-                    sleep(targetLoopSpeed.minus(timer.movingAverageLoopTime()).inUnit(Milliseconds).toLong())
+                val curr = System.nanoTime()
                 try {
                     // Run user-defined active loop
                     activeLoop()
@@ -350,6 +351,8 @@ abstract class BunyipsOpMode : BOMInternal() {
                 // Update telemetry and timers
                 timer.update()
                 telemetry.update()
+                if (loopSpeed.magnitude() > 0)
+                    sleep(abs((loopSpeed.inUnit(Nanoseconds).toLong() - (System.nanoTime() - curr))) / 1_000_000)
             }
 
             telemetry.opModeStatus = "<font color='gray'>finished</font>"
