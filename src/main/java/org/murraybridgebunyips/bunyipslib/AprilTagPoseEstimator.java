@@ -1,9 +1,9 @@
 package org.murraybridgebunyips.bunyipslib;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
@@ -43,26 +43,20 @@ public class AprilTagPoseEstimator {
             return;
 
         // TODO: experimental
-
         // For now we will rely on simply the first entry
-        VectorF camPos = data.get(0).getFieldPosition();
-        Quaternion camOri = data.get(0).getFieldOrientation();
+        AprilTagData entry = data.get(0);
+        VectorF tagPos = entry.getFieldPosition();
+//        Quaternion camOri = entry.getFieldOrientation();
 
-        if (camPos == null || camOri == null)
+        if (tagPos == null || !entry.isFtcPoseAvailable())
             return;
+        assert entry.getX() != null && entry.getY() != null;
 
-        // Convert to Pose2d
-        Pose2d fieldTagPos = new Pose2d(
-                camPos.get(0), // x
-                camPos.get(1), // y
-                camOri.z // z
+        Vector2d pos = new Vector2d(
+                entry.getY() - tagPos.get(0),
+                entry.getX() - tagPos.get(1)
         );
 
-        // TODO: this is currently broken
-        fieldTagPos = fieldTagPos.plus(new Pose2d(data.get(0).getX(), data.get(0).getY(), data.get(0).getZ()));
-
-        Dbg.log("Current Pose: %, Cam Pose: %", drive.getPoseEstimate(), fieldTagPos);
-
-//        drive.setPoseEstimate(pose);
+        drive.setPoseEstimate(new Pose2d(-pos.getX(), -pos.getY(), drive.getPoseEstimate().getHeading()));
     }
 }
