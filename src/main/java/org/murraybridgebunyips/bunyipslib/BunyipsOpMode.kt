@@ -199,7 +199,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 module.bulkCachingMode = LynxModule.BulkCachingMode.AUTO
             }
 
-            Dbg.logd("BunyipsOpMode: setting up...")
+            Dbg.logv("BunyipsOpMode: setting up...")
             // Ring-buffer timing utility
             timer = MovingAverageTimer()
             // Telemetry
@@ -227,7 +227,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             telemetry.update()
 
             telemetry.opModeStatus = "<b><font color='yellow'></b>static_init</font>"
-            Dbg.logd("BunyipsOpMode: firing onInit()...")
+            Dbg.logv("BunyipsOpMode: firing onInit()...")
             // Store telemetry objects raised by onInit() by turning off auto-clear
             telemetry.isAutoClear = false
             telemetry.update()
@@ -246,7 +246,7 @@ abstract class BunyipsOpMode : BOMInternal() {
 
             telemetry.opModeStatus = "<font color='aqua'>dynamic_init</font>"
             telemetry.update()
-            Dbg.logd("BunyipsOpMode: starting onInitLoop()...")
+            Dbg.logv("BunyipsOpMode: starting onInitLoop()...")
             if (initTask != null) {
                 Dbg.logd(
                     "BunyipsOpMode: running initTask -> % ...",
@@ -288,7 +288,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 telemetry.log("<font color='gray'>init-task finished.</font>")
             }
             telemetry.update()
-            Dbg.logd("BunyipsOpMode: firing onInitDone()...")
+            Dbg.logv("BunyipsOpMode: firing onInitDone()...")
             // Run user-defined final initialisation
             try {
                 onInitDone()
@@ -316,7 +316,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             telemetry.opModeStatus = "<font color='yellow'>starting</font>"
             telemetry.isAutoClear = true
             telemetry.clear()
-            Dbg.logd("BunyipsOpMode: firing onStart()...")
+            Dbg.logv("BunyipsOpMode: firing onStart()...")
             try {
                 // Run user-defined start operations
                 onStart()
@@ -330,7 +330,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             telemetry.logBracketColor = "green"
 
             telemetry.opModeStatus = "<font color='green'><b>running</b></font>"
-            Dbg.logd("BunyipsOpMode: starting activeLoop()...")
+            Dbg.logv("BunyipsOpMode: starting activeLoop()...")
             while (opModeIsActive() && !operationsCompleted) {
                 if (operationsPaused) {
                     // If the OpMode is paused, skip the loop and wait for the next hardware cycle
@@ -403,7 +403,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             telemetry.opModeStatus = "<font color='red'>terminating</font>"
             Dbg.logd("BunyipsOpMode: active cycle completed in ${timer.elapsedTime().inUnit(Seconds)} secs")
             telemetry.update()
-            Dbg.logd("BunyipsOpMode: exiting...")
+            Dbg.logv("BunyipsOpMode: exiting...")
         }
     }
 
