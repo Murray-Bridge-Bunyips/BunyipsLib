@@ -329,7 +329,7 @@ class DualTelemetry @JvmOverloads constructor(
 
         // FtcDashboard
         val packet = TelemetryPacket()
-        packet.put(overheadTag ?: "status", overheadStatus)
+        packet.put("<small>STATUS</small>", overheadStatus)
 
         synchronized(dashboardItems) {
             // Index counters
