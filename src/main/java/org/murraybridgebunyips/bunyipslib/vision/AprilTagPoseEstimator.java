@@ -57,7 +57,11 @@ public class AprilTagPoseEstimator {
                 -relativePos.getX() + tagPos.get(1)
         );
 
-        // TODO: integrate heading with a kalman filter/clamper or similar
+        // Will not set heading, as the IMU is more reliable due to how AprilTags are interpreted.
+        // Most times, we will know what way we are facing with certainty, where encoders drift but IMU
+        // drift is less of a concern especially in the span of a single match
+        // Future: Can integrate heading with a Kalman filter or similar to allow it to be used (as heading is the most
+        //   unreliable part of the pose estimate)
         drive.setPoseEstimate(new Pose2d(pos.getX(), pos.getY(), drive.getPoseEstimate().getHeading()));
     }
 }

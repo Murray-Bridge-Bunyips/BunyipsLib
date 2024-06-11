@@ -1,7 +1,9 @@
 package org.murraybridgebunyips.bunyipslib
 
+import android.graphics.Color
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.qualcomm.hardware.lynx.LynxModule
+import com.qualcomm.robotcore.hardware.Blinker
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareDevice
@@ -17,6 +19,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
 import org.murraybridgebunyips.bunyipslib.tasks.bases.RobotTask
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
 
@@ -79,6 +82,11 @@ abstract class BunyipsOpMode : BOMInternal() {
      * Measures of less than or equal to zero will be ignored, and the OpMode will run as fast as possible.
      */
     var loopSpeed: Measure<Time> = Seconds.zero()
+
+    /**
+     * A list of all LynxModules (Control + Expansion Hub) modules on the robot.
+     */
+    val robotControllers: List<LynxModule> by lazy { hardwareMap.getAll(LynxModule::class.java) }
 
     private var operationsCompleted = false
     private var operationsPaused = false
@@ -195,8 +203,9 @@ abstract class BunyipsOpMode : BOMInternal() {
             resetFields()
             Dbg.log("=============== BunyipsLib v${BuildConfig.SEMVER} BunyipsOpMode ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME} uid:${BuildConfig.ID} ===============")
             LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap)
-            hardwareMap.getAll(LynxModule::class.java).forEach { module ->
+            robotControllers.forEach { module ->
                 module.bulkCachingMode = LynxModule.BulkCachingMode.AUTO
+                module.setConstant(Color.parseColor("#3300FF00"))
             }
 
             Dbg.logv("BunyipsOpMode: setting up...")
@@ -292,9 +301,15 @@ abstract class BunyipsOpMode : BOMInternal() {
             // Run user-defined final initialisation
             try {
                 onInitDone()
+                robotControllers.forEach { module ->
+                    module.setConstant(Color.GREEN)
+                }
             } catch (e: Exception) {
                 telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
                 Exceptions.handle(e, telemetry::log)
+                robotControllers.forEach { module ->
+                    module.setConstant(Color.YELLOW)
+                }
             }
 
             // Ready to go.
@@ -328,6 +343,12 @@ abstract class BunyipsOpMode : BOMInternal() {
             telemetry.update()
             timer.reset()
             telemetry.logBracketColor = "green"
+            robotControllers.forEach { module ->
+                module.pattern = listOf(
+                    Blinker.Step(Color.GREEN, 300, TimeUnit.MILLISECONDS),
+                    Blinker.Step(Color.BLACK, 300, TimeUnit.MILLISECONDS)
+                )
+            }
 
             telemetry.opModeStatus = "<font color='green'><b>running</b></font>"
             Dbg.logv("BunyipsOpMode: starting activeLoop()...")
@@ -366,6 +387,9 @@ abstract class BunyipsOpMode : BOMInternal() {
             timer.update()
             telemetry.update()
             Dbg.logd("BunyipsOpMode: all tasks finished.")
+            robotControllers.forEach { module ->
+                module.setConstant(Color.LTGRAY)
+            }
             // Wait for user to hit stop or for the OpMode to be terminated
             // We will continue running the OpMode as there might be some other user threads
             // under Threads that can still run, so we will wait indefinitely and simulate
