@@ -263,6 +263,12 @@ abstract class BunyipsOpMode : BOMInternal() {
                 )
                 telemetry.log("<font color='gray'>running init-task:</font> %", initTask)
             }
+            robotControllers.forEach { module ->
+                module.pattern = listOf(
+                    Blinker.Step(Color.CYAN, 300, TimeUnit.MILLISECONDS),
+                    Blinker.Step(Color.BLACK, 300, TimeUnit.MILLISECONDS)
+                )
+            }
             // Run user-defined dynamic initialisation
             do {
                 val curr = System.nanoTime()
