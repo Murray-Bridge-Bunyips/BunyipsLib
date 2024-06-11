@@ -92,6 +92,7 @@ abstract class BunyipsOpMode : BOMInternal() {
     private var operationsPaused = false
     private var safeHaltHardwareOnStop = false
 
+    private val runnables = mutableListOf<Runnable>()
     private var gamepadExecutor: ExecutorService? = null
     private var initTask: RobotTask? = null
 
@@ -370,6 +371,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 val curr = System.nanoTime()
                 try {
                     // Run user-defined active loop
+                    runnables.forEach { it.run() }
                     activeLoop()
                 } catch (e: Exception) {
                     telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
@@ -458,6 +460,17 @@ abstract class BunyipsOpMode : BOMInternal() {
         initTask = task
     }
 
+    /**
+     * Add a [Runnable] to the list of runnables to be executed just before the [activeLoop].
+     * This is useful for running code that needs to be executed on the main thread, but is not
+     * a subsystem or task.
+     *
+     * This method is called before the [activeLoop] method, and will run the runnables in the order they were added.
+     */
+    protected fun onActiveLoop(vararg runnables: Runnable) {
+        this.runnables.addAll(runnables)
+    }
+    
     // These telemetry methods exist for continuity as they used to be the primary way to use telemetry in BunyipsLib,
     // but have since moved to the DualTelemetry class. These methods are now simply aliases to the new methods.
     // These methods will be removed in a future release.

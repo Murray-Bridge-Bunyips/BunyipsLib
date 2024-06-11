@@ -373,6 +373,36 @@ public class Scheduler extends BunyipsComponent {
         }
 
         /**
+         * Represents an axis threshold for the controller.
+         */
+        public class AxisThreshold implements BooleanSupplier {
+            private final BooleanSupplier cond;
+            private final Controls.Analog axis;
+
+            /**
+             * Wrap a condition for an axis threshold.
+             *
+             * @param axis The axis of the controller.
+             * @param threshold The threshold to meet.
+             */
+            public AxisThreshold(Controls.Analog axis, Predicate<? super Float> threshold) {
+                this.axis = axis;
+                cond = () -> threshold.test(user.get(axis));
+            }
+
+            @Override
+            public boolean getAsBoolean() {
+                return cond.getAsBoolean();
+            }
+
+            @NonNull
+            @Override
+            public String toString() {
+                return "AxisThreshold:" + axis.toString();
+            }
+        }
+
+        /**
          * Run a task once this analog axis condition is met.
          *
          * @param axis      The axis of the controller.
@@ -381,7 +411,7 @@ public class Scheduler extends BunyipsComponent {
          */
         public ConditionalTask when(Controls.Analog axis, Predicate<? super Float> threshold) {
             return new ConditionalTask(
-                    () -> threshold.test(user.get(axis))
+                    new AxisThreshold(axis, threshold)
             );
         }
 

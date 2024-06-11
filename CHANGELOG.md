@@ -1,6 +1,59 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.2.0 (2024-06-11)
+New methods, improvements, and features.
+### Breaking changes
+- New deprecations, these functions will continue to work but be marked as deprecated and are subject to removal in future versions
+  - `runDebounced` of `Scheduler` has been renamed to `runOnce`
+  - Telemetry methods of `BunyipsOpMode` have been deprecated in favour of the new `DualTelemetry` methods (exposed through the `telemetry` field)
+    - As a result, `BunyipsOpMode` now exposes a field called `t` which aliases `telemetry` for convenience and to solve a bug with Kotlin interop
+  - `HtmlItem`'s now report errors when `addData` functions are called, as they are not supported
+- `Storage` was revamped, moving all volatile memory items into the `.memory()` subclass
+### Non-breaking changes
+- `Cannon`, `Switch` and `DualServos` now check if the open and fired states are configured the same, throwing an exception if they are
+- Task names throughout BunyipsLib have been updated to be more readable (e.g. "OpenServoTask" -> "Open:SIDE")
+  - All tasks as a default name try to represent what they are, including the `TaskGroups` by seeking the name of the tasks in the group
+- Debugging telemetry has been improved
+  - Task group creation has been improved to show when created in `AutonmoousBunyipsOpMode` through the `logCreation()` method
+  - `CommandBasedBunyipsOpMode` will try to describe what commands have been assigned to what subsystems and the binds to activate these commands
+- The LynxModules in `BunyipsOpMode`'s are now controlled to blink and change colours in accordance with the OpMode state
+### Bug fixes
+- Fixed a bug where setting a default task was impossible when the subsystem was disabled, where it should be possible
+- Removed an internal call to `update()` in `RoadRunnerTask`, users will have to ensure subsystems are being updated properly
+- `RoadRunner` now constructs tasks properly to provide timeout information to the upper task
+- Improved `AutonomousBunyipsOpMode` to busy-wait in the start phase of the OpMode for the UserSelection thread
+- Patch an FtcDashboard bug where telemetry was not working causing memory leaks
+- Fixed a crash where `AutonomousBunyipsOpMode` would crash if the user did not select an OpMode
+### Additions
+- `BunyipsOpMode` has a `onActiveLoop()` method, which is called before the `activeLoop()` method
+  - This is useful for any pre-loop operations that need to be performed before the main loop, or utilities that require a functional update
+- `AprilTagPoseEstimator` for RoadRunner drives, which will extract the pose from any Vision cameras that are attached to the robot
+  - This will set the current pose of the RoadRunner drive pose to what the webcam sees, which allows for dynamic calibration and field awareness
+  - It is structured like a subsystem with an update method, but is not a subsystem and should be treated as a utility, able to be updated in the `onActiveLoop()` method
+- `Storage` has been revamped to include static methods for accessing volatile memory and the filesystem
+  - Gson is used to store and retrieve objects from the filesystem, storing any object that can be serialised in a simple HashMap that can be accessed by the user
+- `Cannon` and `Switch` now have `isFired()` and `isOpen()` (as well as `isReset()` methods) for polling the state of the servo
+- `Dbg` has a `stamp()` method, which will log the current timestamp of a running BunyipsOpMode and user context
+- `HoldableActuator` now supports a top limit switch, which will stop the actuator from moving if it reaches this upper bound
+  - Configuration is performed similarly to the bottom switch, but by instead calling `withTopSwitch(...)` 
+- `Scheduler` now has `andIf()` and `orIf()` methods to chain boolean expressions together
+- `BunyipsSubsystem`'s have virtual methods `onEnable()` and `onDisable()` which are called when the subsystem is enabled or disabled
+  - `onEnable()` is called when `enable()` is called, or on the first active loop of the subsystem
+  - `onDisable()` is called when `disable()` is called, or when `assertParamsNotNull()` auto-disables the subsystem
+- `Scheduler` has `getAllocatedTasks()` and `getManagedSubsystems()` to retrieve the tasks and subsystems that are currently being managed by the scheduler
+- `Text` has a `StringBuilder` implementation which internally uses `formatString()` to build a string
+- New ramping function providers `RampingSupplier` and `RampingValue`
+  - These are extensions of what `DcMotorRamping` does, but can be used in other contexts for any values that need smooth damping
+- `BunyipsOpMode` has a new `loopSpeed` field, which can be set to a custom loop speed for the OpMode
+  - This is useful for setting a custom target loop speed for the OpMode, which can be used to save CPU cycles
+- `DualTelemetry` now displays the current time of when messages were logged in the telemetry log, if using a MovingAverageTimer
+  - This behaviour is automatically enabled on `BunyipsOpMode`, which uses the `timer` field to log the time of the message
+  - Bracket colours of the telemetry log timestamp represent init and active phases
+  - `DualTelemetry` now exposes a logBracketColor field as a result
+- `DualTelemetry` has a loopSpeedSlowAlert field, which will change the colour of the loop time (if available) to yellow if the loop speed is slower than this value
+- `BunyipsOpMode` exposes `robotControllers` as a method to get the LynxModule instances of the robot
+
 ## v3.1.2 (2024-05-23)
 Update BunyipsLib dependencies.
 ## Non-breaking changes
