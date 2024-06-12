@@ -472,7 +472,7 @@ abstract class BunyipsOpMode : BOMInternal() {
     protected fun onActiveLoop(vararg runnables: Runnable) {
         this.runnables.addAll(runnables)
     }
-    
+
     // These telemetry methods exist for continuity as they used to be the primary way to use telemetry in BunyipsLib,
     // but have since moved to the DualTelemetry class. These methods are now simply aliases to the new methods.
     // These methods will be removed in a future release.
