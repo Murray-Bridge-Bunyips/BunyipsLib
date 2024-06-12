@@ -26,7 +26,7 @@ New methods, improvements, and features.
 - Patch an FtcDashboard bug where telemetry was not working causing memory leaks
 - Fixed a crash where `AutonomousBunyipsOpMode` would crash if the user did not select an OpMode
 ### Additions
-- `BunyipsOpMode` has a `onActiveLoop()` method, which is called before the `activeLoop()` method
+- `BunyipsOpMode` has a `onActiveLoop(...)` method, which adds functions (Runnables) to be called before the `activeLoop()`
   - This is useful for any pre-loop operations that need to be performed before the main loop, or utilities that require a functional update
 - `AprilTagPoseEstimator` for RoadRunner drives, which will extract the pose from any Vision cameras that are attached to the robot
   - This will set the current pose of the RoadRunner drive pose to what the webcam sees, which allows for dynamic calibration and field awareness
@@ -36,7 +36,7 @@ New methods, improvements, and features.
 - `Cannon` and `Switch` now have `isFired()` and `isOpen()` (as well as `isReset()` methods) for polling the state of the servo
 - `Dbg` has a `stamp()` method, which will log the current timestamp of a running BunyipsOpMode and user context
 - `HoldableActuator` now supports a top limit switch, which will stop the actuator from moving if it reaches this upper bound
-  - Configuration is performed similarly to the bottom switch, but by instead calling `withTopSwitch(...)` 
+  - Configuration is performed similarly to the bottom switch, but by instead calling `withTopSwitch(...)`
 - `Scheduler` now has `andIf()` and `orIf()` methods to chain boolean expressions together
 - `BunyipsSubsystem`'s have virtual methods `onEnable()` and `onDisable()` which are called when the subsystem is enabled or disabled
   - `onEnable()` is called when `enable()` is called, or on the first active loop of the subsystem
