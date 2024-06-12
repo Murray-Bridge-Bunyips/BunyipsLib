@@ -205,7 +205,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             Dbg.log("=============== BunyipsLib v${BuildConfig.SEMVER} BunyipsOpMode ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME} uid:${BuildConfig.ID} ===============")
             LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap)
             robotControllers.forEach { module ->
-                module.bulkCachingMode = LynxModule.BulkCachingMode.AUTO
+                module.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
                 module.setConstant(Color.parseColor("#3300FF00"))
             }
 
@@ -274,6 +274,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             do {
                 val curr = System.nanoTime()
                 try {
+                    robotControllers.forEach { m -> m.clearBulkCache() }
                     // Run the user's init task, if it isn't null
                     initTask?.run()
                     // Run until onInitLoop returns true, and the initTask is done, or the OpMode is continued
@@ -369,6 +370,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                     continue
                 }
                 val curr = System.nanoTime()
+                robotControllers.forEach { m -> m.clearBulkCache() }
                 try {
                     // Run user-defined active loop
                     runnables.forEach { it.run() }
