@@ -1,6 +1,41 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.3.0 (2024-06-13)
+Drive To Pose task and some minor bug fixes.
+### Bug fixes
+- Added more try-catch blocks in `AutonomousBunyipsOpMode` and `CommandBasedBunyipsOpMode` when calling back user functions
+  - Before, if an exception was thrown, additional code that needed to be run as part of the natural lifecycle of these OpMode variants would not be executed
+  - OpModes should now be more exception resilient
+### Non-breaking changes
+- `BunyipsOpMode` now manually clears bulk cache data from the hardware
+  - Cache is automatically cleared once per activeLoop or initLoop, and the bulk read is called at the start of the loop
+  - This does not change any functionality, but is a performance improvement where hardware will not call multiple bulk reads in a single loop
+- Robot Controller lights in a `BunyipsOpMode` flash in accordance with the OpMode state
+  - **SOLID CYAN**: static_init 
+  - **FLASHING CYAN**: dynamic_init
+  - **SOLID GREEN**: ready with no exceptions thrown
+  - **SOLID YELLOW**: an exception was thrown during static_init or dynamic_init, and was caught
+  - **FLASHING GREEN**: running
+  - **SOLID WHITE/LIGHT GRAY**: finished
+  - **SOLID RED**: an *unhandled* exception was thrown during the execution of BunyipsOpMode
+  - *Note*: Due to limitations on the FTC SDK, if the OpMode is stopped these lights will not update and remain as they were when the OpMode was stopped
+- `Exceptions` class is now more Java-friendly
+  - The lambda function to log messages on an exception is now a `Consumer<String>`, and is JVM static
+  - This may break any custom implementations of `Exceptions` that relied on the old `(msg: String) -> Unit` KFunction
+  - This method also no longer handles the case of `throws InterruptedException` as realistically users won't need to handle this
+    - The FTC SDK will still handle this exception, but it is not necessary to add it as a throws clause in Java code 
+  - This does not change any previous functionality or API surface
+- Modified all instances of `PIDController` in BunyipsLib task construction to be `PIDFControllers`
+  - Allows more flexibility in the construction of PID controllers, and allows for the use of feedforward gains
+  - PIDController extends PIDFController, and as such all previous PIDController implementations will still work
+### Additions
+- Drive To Pose Task
+  - A RoadRunner-powered pose task that will drive the robot in a straight line to a target pose from the current estimated pose
+  - This task is different to a RoadRunner trajectory, as it will use PID and feedforward control to reach the pose
+  - Useful for dynamic "at runtime" pose alignment, where the pose estimate may have been updated externally
+    - An example of this is using the `AprilTagPoseEstimator` to update the pose of the robot, and then using the `DriveToPoseTask` to ensure the robot is aligned properly with a target pose
+
 ## v3.2.0 (2024-06-11)
 New methods, improvements, and features.
 ### Breaking changes

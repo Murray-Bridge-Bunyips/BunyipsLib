@@ -244,12 +244,14 @@ abstract class BunyipsOpMode : BOMInternal() {
             if (!gamepad1.atRest() || !gamepad2.atRest()) {
                 telemetry.log("<b><font color='yellow'>WARNING!</font></b> a gamepad was not zeroed during init. please ensure controllers zero out correctly.")
             }
+            var ok = true
             // Run user-defined setup
             try {
                 onInit()
             } catch (e: Exception) {
                 // Catch all exceptions, log them, and continue running the OpMode
                 // All InterruptedExceptions are handled by the FTC SDK and are raised in the Exceptions handler
+                ok = false
                 telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
                 Exceptions.handle(e, telemetry::log)
             }
@@ -280,6 +282,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                     // Run until onInitLoop returns true, and the initTask is done, or the OpMode is continued
                     if (onInitLoop() && (initTask == null || initTask?.pollFinished() == true)) break
                 } catch (e: Exception) {
+                    ok = false
                     telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
                     Exceptions.handle(e, telemetry::log)
                 }
@@ -309,15 +312,10 @@ abstract class BunyipsOpMode : BOMInternal() {
             // Run user-defined final initialisation
             try {
                 onInitDone()
-                robotControllers.forEach { module ->
-                    module.setConstant(Color.GREEN)
-                }
             } catch (e: Exception) {
+                ok = false
                 telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
                 Exceptions.handle(e, telemetry::log)
-                robotControllers.forEach { module ->
-                    module.setConstant(Color.YELLOW)
-                }
             }
 
             // Ready to go.
@@ -327,6 +325,9 @@ abstract class BunyipsOpMode : BOMInternal() {
             // DS only telemetry
             telemetry.addDS("<b>Init <font color='green'>complete</font>. Press play to start.</b>")
             Dbg.logd("BunyipsOpMode: ready.")
+            robotControllers.forEach { module ->
+                module.setConstant(if (ok) Color.GREEN else Color.YELLOW)
+            }
 
             // Wait for start
             do {
@@ -417,6 +418,9 @@ abstract class BunyipsOpMode : BOMInternal() {
         } catch (t: Throwable) {
             Dbg.error("BunyipsOpMode: unhandled throwable! <${t.message}>")
             Dbg.sendStacktrace(t)
+            robotControllers.forEach { module ->
+                module.setConstant(Color.RED)
+            }
             // As this error occurred somewhere not inside user code, we should not swallow it.
             // There is also a chance this error is an instance of Error, in which case we should
             // exit immediately as something has gone very wrong

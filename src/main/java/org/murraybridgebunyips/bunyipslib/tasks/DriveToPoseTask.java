@@ -11,7 +11,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
-import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
+import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
@@ -29,9 +29,9 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 public class DriveToPoseTask extends Task {
     private final RoadRunnerDrive drive;
     private final Pose2d targetPose;
-    private final PIDController forwardController;
-    private final PIDController strafeController;
-    private final PIDController headingController;
+    private final PIDFController forwardController;
+    private final PIDFController strafeController;
+    private final PIDFController headingController;
 
     private Measure<Angle> headingTolerance = Degrees.of(2);
     private Measure<Distance> vectorTolerance = Centimeters.of(5);
@@ -47,7 +47,7 @@ public class DriveToPoseTask extends Task {
      * @param headingController The PID controller for heading.
      */
     public DriveToPoseTask(@NonNull Measure<Time> timeout, @NonNull BunyipsSubsystem driveSubsystem,
-                           Pose2d targetPose, PIDController forwardController, PIDController strafeController, PIDController headingController) {
+                           Pose2d targetPose, PIDFController forwardController, PIDFController strafeController, PIDFController headingController) {
         super(timeout, driveSubsystem, true);
         if (!(driveSubsystem instanceof RoadRunnerDrive))
             throw new IllegalArgumentException("DriveToPoseTask requires a RoadRunnerDrive subsystem");
