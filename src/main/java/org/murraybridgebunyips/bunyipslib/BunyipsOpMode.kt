@@ -206,7 +206,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap)
             robotControllers.forEach { module ->
                 module.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
-                module.setConstant(Color.parseColor("#3300FF00"))
+                module.setConstant(Color.CYAN)
             }
 
             Dbg.logv("BunyipsOpMode: setting up...")
@@ -266,8 +266,8 @@ abstract class BunyipsOpMode : BOMInternal() {
             }
             robotControllers.forEach { module ->
                 module.pattern = listOf(
-                    Blinker.Step(Color.CYAN, 300, TimeUnit.MILLISECONDS),
-                    Blinker.Step(Color.BLACK, 300, TimeUnit.MILLISECONDS)
+                    Blinker.Step(Color.CYAN, 200, TimeUnit.MILLISECONDS),
+                    Blinker.Step(Color.BLACK, 200, TimeUnit.MILLISECONDS)
                 )
             }
             // Run user-defined dynamic initialisation
@@ -352,9 +352,11 @@ abstract class BunyipsOpMode : BOMInternal() {
             timer.reset()
             telemetry.logBracketColor = "green"
             robotControllers.forEach { module ->
+                // Limitation, flashing here and the OpMode ending will leave the light flashing,
+                // but we can't control LynxModules after the OpMode ends.
                 module.pattern = listOf(
-                    Blinker.Step(Color.GREEN, 300, TimeUnit.MILLISECONDS),
-                    Blinker.Step(Color.BLACK, 300, TimeUnit.MILLISECONDS)
+                    Blinker.Step(Color.GREEN, 200, TimeUnit.MILLISECONDS),
+                    Blinker.Step(Color.BLACK, 200, TimeUnit.MILLISECONDS)
                 )
             }
 
