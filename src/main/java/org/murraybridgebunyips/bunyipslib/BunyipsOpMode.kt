@@ -266,8 +266,8 @@ abstract class BunyipsOpMode : BOMInternal() {
             }
             robotControllers.forEach { module ->
                 module.pattern = listOf(
-                    Blinker.Step(Color.CYAN, 200, TimeUnit.MILLISECONDS),
-                    Blinker.Step(Color.BLACK, 200, TimeUnit.MILLISECONDS)
+                    Blinker.Step(Color.CYAN, 400, TimeUnit.MILLISECONDS),
+                    Blinker.Step(Color.BLACK, 400, TimeUnit.MILLISECONDS)
                 )
             }
             // Run user-defined dynamic initialisation
