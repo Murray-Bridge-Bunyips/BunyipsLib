@@ -1,6 +1,31 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.3.1 (2024-06-14)
+RoadRunner pose interpretation restructuring for improved global pose estimation and trajectory handling.
+### Breaking changes
+- While this is a minor version release, it changes how trajectories from the `RoadRunner` interface are parsed
+  - This was due to a bug where poses would be discarded and global reference frames were impossible, and minor tweaks have been made to the RoadRunner interface
+### Non-breaking changes
+- All RoadRunner trajectories built with `RoadRunner` no longer set the pose estimate to the start pose of the trajectory
+  - This is to allow for global reference frames to be used, and to allow for the pose estimate to be set to the start pose of the trajectory
+  - This is a breaking change for any code that relied on this pose estimate, and code will likely need to be re-tested
+  - This change was made to allow for more flexibility in the RoadRunner interface, and to allow for more accurate pose estimates
+- `RoadRunner` no longer discards the last known pose when implicitly making a trajectory in the presence of an existing pose estimate
+  - This allows users to call `.setPose()` without having their estimates reset by the implicit discarding rule
+- `runSequence` of `RoadRunner`'s `makeTrajectory` now has an optional second parameter if the current pose should be set to the start pose of the trajectory
+  - This is useful for when you want to set the pose estimate to the start pose of the trajectory, but not always
+  - The reason this is now optional as these pose calls will be called at initialisation, rather than at runtime, and providing the option gives more flexibility
+  - This will not change any previous `runSequence` implementations
+- `RoadRunnerTask` now sets the default task name to include the start and end trajectory poses in inch/rad format
+### Additions
+- `RoadRunner` now has new methods
+  - `setPose(...)` for setting the current pose of the robot in the RoadRunner drive quickly and with custom units
+  - `unitVec(...)` and `unitPose(...)` for creating custom unit vectors and poses (like `Pose2d` and `Vector2d`) with WPIUnits
+- `StartingPositions` now exposes a `pose` instead of a `vector` for the starting positions
+  - These poses face inwards to the field, and can be rotated by adding with `.plus()` calls
+  - The old `vector` field is still exposed for continuity, which simply calls `pose.vec()` internally, and will not break any previous code
+
 ## v3.3.0 (2024-06-13)
 Drive To Pose task and some minor bug fixes.
 ### Bug fixes
