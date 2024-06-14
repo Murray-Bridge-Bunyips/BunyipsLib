@@ -190,9 +190,9 @@ public interface RoadRunner {
         // If we're using an implicit start pose in the presence of a lastKnownPosition, it is likely the case that
         // we don't want to use the lastKnownPosition as the implicit pose, so we'll reset the pose info here
         Pose2d dp = getDrive().getPoseEstimate();
-        if (Storage.memory().lastKnownPosition != null && splicedPose.isNull() && dp.epsilonEquals(new Pose2d())) {
+        Pose2d lastKnown = Storage.memory().lastKnownPosition;
+        if (lastKnown != null && splicedPose.isNull() && dp.epsilonEquals(lastKnown))
             resetPoseInfo();
-        }
         Pose2d implicitPose = splicedPose.isNotNull() ? splicedPose.get() : dp;
         // noinspection rawtypes
         TrajectorySequenceBuilder builder = getDrive().trajectorySequenceBuilder(implicitPose);
