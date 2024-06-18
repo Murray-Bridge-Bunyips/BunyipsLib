@@ -386,6 +386,8 @@ public class HoldableActuator extends BunyipsSubsystem {
             @Override
             public void init() {
                 motor.setTargetPosition(targetPosition);
+                // Motor power is controlled in the periodic method
+                motor.setPower(0);
                 inputMode = Mode.AUTO;
             }
 
@@ -420,6 +422,8 @@ public class HoldableActuator extends BunyipsSubsystem {
             public void init() {
                 target = motor.getCurrentPosition() + deltaPosition;
                 motor.setTargetPosition(target);
+                // Motor power is controlled in the periodic method
+                motor.setPower(0);
                 inputMode = Mode.AUTO;
             }
 
