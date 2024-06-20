@@ -184,9 +184,12 @@ class DualTelemetry @JvmOverloads constructor(
             // This means all RT objects on the dashboard are permanent, and will respect their
             // last updated value. This is not a problem as retained objects are usually important
             // and can serve as a debugging tool.
-            val res = opMode.telemetry.removeItem(item)
+            var rem = item
+            if (item is HtmlItem && item.item != null)
+                rem = item.item!!
+            val res = opMode.telemetry.removeItem(rem)
             if (!res) {
-                Dbg.logd("Could not find telemetry item to remove: $item")
+                Dbg.logd("Could not find telemetry item to remove: $rem")
                 ok = false
             }
         }
@@ -495,7 +498,11 @@ class DualTelemetry @JvmOverloads constructor(
         private val dashboardRef: Reference<String>,
         opMode: OpMode
     ) : Item {
-        private var item: Item? = null
+        /**
+         * The underlying telemetry item added to the DS that this HTML item is wrapping.
+         */
+        var item: Item? = null
+            private set
         private val tags = mutableSetOf<String>()
         private var color: String? = null
         private var bgColor: String? = null
