@@ -698,7 +698,8 @@ class DualTelemetry @JvmOverloads constructor(
          * @see setCaption
          * @see addData
          */
-        @Deprecated("Captions are not used with DualTelemetry and should always be an empty string.",
+        @Deprecated(
+            "Captions are not used with DualTelemetry and should always be an empty string.",
             ReplaceWith("")
         )
         override fun getCaption(): String? {

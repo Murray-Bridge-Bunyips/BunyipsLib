@@ -25,8 +25,8 @@ import org.murraybridgebunyips.bunyipslib.vision.processors.ColourThreshold;
  * @author Lucas Bubner, 2024
  */
 public class GetTriPositionContourTask extends ForeverTask {
-    private ColourThreshold colourThreshold;
     private final ElapsedTime lockoutTimer = new ElapsedTime();
+    private ColourThreshold colourThreshold;
     private Measure<Time> leftSidePersistenceTime = Seconds.of(3);
     private volatile Direction position = Direction.LEFT;
     private Telemetry.Item item;
@@ -62,7 +62,7 @@ public class GetTriPositionContourTask extends ForeverTask {
 
     /**
      * Set the processor to use for the GetTriPositionContourTask.
-     * 
+     *
      * @param newProcessor the processor to use
      * @return this
      */
