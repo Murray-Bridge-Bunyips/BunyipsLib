@@ -698,7 +698,9 @@ class DualTelemetry @JvmOverloads constructor(
          * @see setCaption
          * @see addData
          */
-        @Deprecated("Captions are not used with DualTelemetry and should always be an empty string.")
+        @Deprecated("Captions are not used with DualTelemetry and should always be an empty string.",
+            ReplaceWith("")
+        )
         override fun getCaption(): String? {
             return item?.caption
         }
@@ -711,7 +713,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "Captions are not used with DualTelemetry and should always be left as an empty string",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.ERROR,
+            replaceWith = ReplaceWith("")
         )
         override fun setCaption(caption: String): Item? {
             return item?.setCaption(caption)
@@ -793,7 +796,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.ERROR,
+            replaceWith = ReplaceWith("")
         )
         override fun addData(caption: String, format: String, vararg args: Any): Item? {
             return item?.addData(caption, format, args)
@@ -805,7 +809,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.ERROR,
+            replaceWith = ReplaceWith("")
         )
         override fun addData(caption: String, value: Any): Item? {
             return item?.addData(caption, value)
@@ -817,7 +822,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.ERROR,
+            replaceWith = ReplaceWith("")
         )
         override fun <T : Any> addData(caption: String, valueProducer: Func<T>): Item? {
             return item?.addData(caption, valueProducer)
@@ -829,7 +835,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.ERROR,
+            replaceWith = ReplaceWith("")
         )
         override fun <T : Any> addData(caption: String, format: String, valueProducer: Func<T>): Item? {
             return item?.addData(caption, format, valueProducer)
