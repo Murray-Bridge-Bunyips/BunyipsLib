@@ -33,6 +33,10 @@ public class DriveToPoseTask extends Task {
     private final PIDFController strafeController;
     private final PIDFController headingController;
 
+    private double MAX_FORWARD_SPEED = 1.0;
+    private double MAX_STRAFE_SPEED = 1.0;
+    private double MAX_ROTATION_SPEED = 1.0;
+
     private Measure<Angle> headingTolerance = Degrees.of(2);
     private Measure<Distance> vectorTolerance = Centimeters.of(5);
 
@@ -69,6 +73,39 @@ public class DriveToPoseTask extends Task {
     public DriveToPoseTask withTolerances(Measure<Angle> heading, Measure<Distance> translation) {
         headingTolerance = heading;
         vectorTolerance = translation;
+        return this;
+    }
+
+    /**
+     * Set the maximum forward (x) speed (motor power) that the robot can move at.
+     *
+     * @param speed The maximum forward speed.
+     * @return this
+     */
+    public DriveToPoseTask withMaxForwardSpeed(double speed) {
+        MAX_FORWARD_SPEED = speed;
+        return this;
+    }
+
+    /**
+     * Set the maximum strafe (y) speed (motor power) that the robot can move at.
+     *
+     * @param speed The maximum strafe speed.
+     * @return this
+     */
+    public DriveToPoseTask withMaxStrafeSpeed(double speed) {
+        MAX_STRAFE_SPEED = speed;
+        return this;
+    }
+
+    /**
+     * Set the maximum rotation speed (motor power) that the robot can move at.
+     *
+     * @param speed The maximum rotation speed.
+     * @return this
+     */
+    public DriveToPoseTask withMaxRotationSpeed(double speed) {
+        MAX_ROTATION_SPEED = speed;
         return this;
     }
 
@@ -111,7 +148,13 @@ public class DriveToPoseTask extends Task {
         double strafePower = -strafeController.calculate(twistedYError);
         double headingPower = -headingController.calculate(angle);
 
-        drive.setWeightedDrivePower(new Pose2d(forwardPower, strafePower, headingPower));
+        drive.setWeightedDrivePower(
+                new Pose2d(
+                        Mathf.clamp(forwardPower, -MAX_FORWARD_SPEED, MAX_FORWARD_SPEED),
+                        Mathf.clamp(strafePower, -MAX_STRAFE_SPEED, MAX_STRAFE_SPEED),
+                        Mathf.clamp(headingPower, -MAX_ROTATION_SPEED, MAX_ROTATION_SPEED)
+                )
+        );
     }
 
     @Override
