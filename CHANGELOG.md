@@ -1,6 +1,50 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.3.2 (2024-06-25)
+General bug fixes and utility improvements.
+### Non-breaking changes
+- The `OpModeAnnotationProcessor` has been removed, as it does not impact any BunyipsLib code
+  - This processor is used when making OpModes in the BunyipsLib project, however all OpModes that should have this checking enabled shouldn't be in the BunyipsLib project
+  - The implementation of it in the past for BunyipsLib was also bugged and did not work anyways, and as such has been removed
+- `Reference` is now a `volatile` field
+  - Methods that rely on the snapshot of this field will be taken as a read on function call 
+- `HoldableActuator` now has a maximum timeout (default 5s enabled) for the `homeTask()`
+  - Ensure to call `disableHomingTimeout()` or increase the timeout if the actuator takes longer than 5s to home 
+  - As such, the `homeTask()` now returns an instance of Task rather than NoTimeoutTask
+- `AprilTagPoseEstimator` now has a `setActive(boolean)` method to enable or disable the estimator
+  - By setting this to false, no vision data will be processed and the pose will not be updated
+- `AutonomousBunyipsOpMode` now exposes a `addTask(Runnable, String)` method to add a task with a custom name
+  - This is useful for adding RunTasks that you want to give a name for, without needing to create a new RunTask explicitly
+- `StartingPositions` exposes new methods for determining information about a certain starting position
+  - `isRed()` and `isBlue()` to check if the starting position is on the red or blue alliance
+  - `isLeft()` and `isRight()` to check if the starting position is on the left or right side of the field
+  - These results are lazy-loaded and cached for future use, as with the `getVector()` method
+- `DriveToPoseTask` now has `withMaxForwardSpeed(...)`, `withMaxStrafeSpeed(...)`, and `withMaxTurnSpeed(...)` methods to set the maximum speed ranges for the task
+  - These speeds will be used to clamp the output of the PID controllers to ensure the robot does not exceed these speeds
+  - This is similar to how `MoveToAprilTagTask` work, allowing smoother and more controlled motion
+  - By default, these are set to `1.0`.
+### Bug fixes
+- Fixed a critical `RoadRunner` bug where the implicit drive pose was not discarded properly
+  - This was due to a cached result being used after the pose info was discarded
+  - Implicit pose construction should now work as expected
+- Motor power is explicitly set to zero in the `HoldableActuator` `deltaTask(...)` and `gotoTask(...)` when the task is initialised
+  - This seems to fix a bug where the motor controller ignores further power instructions and has the actuator moving at undefined speeds
+  - The update cycle will set the power to the correct value, as intended to conform to power clamping
+- `RoadRunnerTask` now actually sets the task timeout to the trajectory duration (if not explicitly set) and assigns the task to the subsystem
+  - Previously, this would only work for `Trajectory` objects, and not `TrajectorySequence` objects due to a missing implementation 
+- `DualTelemetry` methods for removing objects from telemetry now work to support HtmlItems
+  - Previously, the DS would not be able to find these objects as they were not the appropriates instances
+  - HtmlItems now expose a `getItem()` method to get the actual telemetry item that is wrapped
+  - The remove methods will try to unwrap these items automatically from an HtmlItem, so the user does not need to manually unwrap them
+- `AprilTagPoseEstimator` no longer checks for the processor to be active when instantiated
+  - This was an oversight as the processor should simply not set poses if it is not active, and has been updated accordingly
+  - This is to allow for the processor to be enabled or disabled at runtime which will impact if the pose estimator is run
+  - The `update()` method of the pose estimator now checks if the processor is active(attached+running) before updating the pose, and no-ops if it is not active (rather than emergency stopping on init and only checking once)
+- `DriveToPoseTask` now calculates twists properly
+  - Before the error was fed twice into the PID controllers, which worked but was not the intended behaviour and could pose some unexpected results
+  - The new calculation works as expected and should not change any previous implementations
+
 ## v3.3.1 (2024-06-14)
 RoadRunner pose interpretation restructuring for improved global pose estimation and trajectory handling.
 ### Breaking changes
