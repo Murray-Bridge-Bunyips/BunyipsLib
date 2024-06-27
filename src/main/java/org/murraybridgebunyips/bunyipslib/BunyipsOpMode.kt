@@ -86,6 +86,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // Warn the user if their target loop speed cannot be achieved
             telemetry.loopSpeedSlowAlert = field
             field = value
+            Dbg.warn("BunyipsOpMode: Loop speed set to % ms", value.inUnit(Milliseconds))
         }
 
     /**
