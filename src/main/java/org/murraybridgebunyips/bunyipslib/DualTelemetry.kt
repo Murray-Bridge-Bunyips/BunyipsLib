@@ -528,7 +528,7 @@ class DualTelemetry @JvmOverloads constructor(
 
         private fun build(): String {
             // im david heath, and this is cs50
-            if (!applyOnlyIf?.asBoolean!!) {
+            if (applyOnlyIf != null && applyOnlyIf?.asBoolean == false) {
                 // If the condition evaluates false, we will not apply the HTML formatting
                 dashboardRef.set(value)
                 return value
