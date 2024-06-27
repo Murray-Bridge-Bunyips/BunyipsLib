@@ -16,6 +16,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Units.Milliseconds
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Second
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
 import java.util.Collections
+import java.util.function.BooleanSupplier
 import kotlin.math.roundToInt
 
 /**
@@ -114,6 +115,14 @@ class DualTelemetry @JvmOverloads constructor(
             }
             opMode.telemetry.log().add(infoString)
         }
+    }
+
+    /**
+     * Add a new line to the telemetry object.
+     * This is an alias for `add("")`, to signify that a new line is intended.
+     */
+    fun addNewLine(): HtmlItem {
+        return add("")
     }
 
     /**
@@ -506,6 +515,7 @@ class DualTelemetry @JvmOverloads constructor(
         private val tags = mutableSetOf<String>()
         private var color: String? = null
         private var bgColor: String? = null
+        private var applyOnlyIf: BooleanSupplier? = null
 
         init {
             if (!isOverflow) {
@@ -518,6 +528,11 @@ class DualTelemetry @JvmOverloads constructor(
 
         private fun build(): String {
             // im david heath, and this is cs50
+            if (!applyOnlyIf?.asBoolean!!) {
+                // If the condition evaluates false, we will not apply the HTML formatting
+                dashboardRef.set(value)
+                return value
+            }
             var out = ""
             for (tag in tags)
                 out += "<$tag>"
@@ -535,6 +550,14 @@ class DualTelemetry @JvmOverloads constructor(
             // Synchronise the FtcDashboard reference
             dashboardRef.set(out)
             return out
+        }
+
+        /**
+         * Apply the HTML formatting to the string only if if this condition is true.
+         */
+        fun applyStylesIf(condition: BooleanSupplier): HtmlItem {
+            applyOnlyIf = condition
+            return this
         }
 
         /**

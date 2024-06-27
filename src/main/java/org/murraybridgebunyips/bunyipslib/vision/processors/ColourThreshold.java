@@ -32,11 +32,15 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * The thickness of the border to draw around all contours.
      */
     public static int CONTOUR_BORDER_THICKNESS = 3;
+    /**
+     * The colour space to use for thresholding.
+     */
+    public final ColourSpace colourSpace;
+
     // Default fields for convenience when using a mass of ColourThresholds
     // These cannot be tuned dynamically but can be overridden by subclasses
     protected static double DEFAULT_MIN_AREA = 1.2;
     protected static double DEFAULT_MAX_AREA = 10.0;
-    private final ColourSpace colourSpace;
     private final Mat processingMat = new Mat();
     private final Mat binaryMat = new Mat();
     private final Mat maskedInputMat = new Mat();
@@ -259,6 +263,27 @@ public abstract class ColourThreshold extends Processor<ContourData> {
          * OpenCV conversion code for the colour space.
          */
         public final int cvtCode;
+
+        /**
+         * Get a component (channel) name from the colour space at a given index (0-2).
+         *
+         * @param idx the index of the channel, 0-2
+         * @return the name of the channel, or null if the index is out of bounds
+         */
+        public final String getChannelName(int idx) {
+            switch (this) {
+                case RGB:
+                    return new String[]{"Red", "Green", "Blue"}[idx];
+                case HSV:
+                    return new String[]{"Hue", "Saturation", "Value"}[idx];
+                case YCrCb:
+                    return new String[]{"Luminance", "Chrominance Red", "Chrominance Blue"}[idx];
+                case Lab:
+                    return new String[]{"Lightness", "A", "B"}[idx];
+                default:
+                    return null;
+            }
+        }
 
         ColourSpace(int cvtCode) {
             this.cvtCode = cvtCode;
