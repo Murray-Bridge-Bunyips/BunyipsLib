@@ -32,15 +32,14 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * The thickness of the border to draw around all contours.
      */
     public static int CONTOUR_BORDER_THICKNESS = 3;
-    /**
-     * The colour space to use for thresholding.
-     */
-    public final ColourSpace colourSpace;
-
     // Default fields for convenience when using a mass of ColourThresholds
     // These cannot be tuned dynamically but can be overridden by subclasses
     protected static double DEFAULT_MIN_AREA = 1.2;
     protected static double DEFAULT_MAX_AREA = 10.0;
+    /**
+     * The colour space to use for thresholding.
+     */
+    public final ColourSpace colourSpace;
     private final Mat processingMat = new Mat();
     private final Mat binaryMat = new Mat();
     private final Mat maskedInputMat = new Mat();
@@ -264,6 +263,10 @@ public abstract class ColourThreshold extends Processor<ContourData> {
          */
         public final int cvtCode;
 
+        ColourSpace(int cvtCode) {
+            this.cvtCode = cvtCode;
+        }
+
         /**
          * Get a component (channel) name from the colour space at a given index (0-2).
          *
@@ -283,10 +286,6 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                 default:
                     return null;
             }
-        }
-
-        ColourSpace(int cvtCode) {
-            this.cvtCode = cvtCode;
         }
     }
 }

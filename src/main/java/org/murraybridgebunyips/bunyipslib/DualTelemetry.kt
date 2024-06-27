@@ -324,7 +324,7 @@ class DualTelemetry @JvmOverloads constructor(
                 overheadStatus.append("?ms")
             }
         } else {
-            if (loopTime >= loopSpeedSlowAlert.inUnit(Milliseconds)) {
+            if (loopTime > loopSpeedSlowAlert.inUnit(Milliseconds)) {
                 overheadStatus.append("<font color='yellow'>").append(loopTime).append("ms</font>")
             } else {
                 overheadStatus.append(loopTime).append("ms")
