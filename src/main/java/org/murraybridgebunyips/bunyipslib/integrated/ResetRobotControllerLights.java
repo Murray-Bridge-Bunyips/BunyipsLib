@@ -1,9 +1,8 @@
 package org.murraybridgebunyips.bunyipslib.integrated;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 
 /**
  * Reset OpMode to clear any BunyipsOpMode-set robot controller lights.
@@ -11,16 +10,12 @@ import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
  * @author Lucas Bubner, 2024
  */
 @TeleOp(name = "Reset Robot Controller Lights", group="BunyipsLib")
-public final class ResetRobotControllerLights extends BunyipsOpMode {
+public final class ResetRobotControllerLights extends LinearOpMode {
     @Override
-    protected void onInit() {
-        getRobotControllers().forEach((c) ->
+    public void runOpMode() throws InterruptedException {
+        hardwareMap.getAll(LynxModule.class).forEach((c) ->
             c.setPattern(LynxModule.blinkerPolicy.getIdlePattern(c)));
-        exit();
-    }
-
-    @Override
-    protected void activeLoop() {
-        // no-op
+        // TODO: check if this will complain about a stop before waitForStart
+        requestOpModeStop();
     }
 }
