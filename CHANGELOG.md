@@ -1,6 +1,36 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.4.0 (2024-06-28)
+Vision related updates and functionality optimisations.
+### Non-breaking changes
+- Changing `loopSpeed` of `BunyipsOpMode` will now log a warning message to Logcat to inform the user of this change
+  - The display of the loop speed in the Driver Station telemetry will also additionally turn yellow if this target speed cannot be achieved due to too slow of a loop speed
+- Removed/fixed/mitigated all TODOs in the BunyipsLib codebase
+- `AutonomousBunyipsOpMode` now has the `disableHardwareStopOnFinish()` method, which will turn off the automatic hardware halt protection when all tasks are completed
+  - This is useful to disable if you wish to keep a motor running after the BunyipsOpMode activeLoop is finished 
+  - By default, this safety feature is and has been enabled throughout all `AutonomousBunyipsOpMode`s
+### Bug fixes
+- Fixed faulty constructors of `AlignToContourTask` and `MoveToContourTask` where they were using type `MultiColourThreshold` instead of `Processor<ContourData`
+  - This made it so these tasks could only be used with a MultiColourThreshold, which was not the intended behaviour
+  - The constructors now take a `Processor<ContourData>` instead, which allows for any contour processor to be used
+  - Old implementations will still work as the `MultiColourThreshold` is a `Processor<ContourData>`
+### Additions
+- `ColourTuner`, a utility OpMode that can be extended to tune a variety of colour-based vision processors
+  - This allows the lower and upper bounds of a `ColourThreshold` to be tuned in real-time via controller input, and the processed image to be displayed on FtcDashboard 
+  - Consequently, the `colourSpace` of all `ColourThreshold` classes has been exposed as a public final field
+    - A utility attached to the `ColourSpace` is now able to determine the channel name (e.g Red, Green, Blue) of a given scalar
+    - These functions are used in the `ColourTuner` to display the channel name of the scalar being tuned
+- A new universal OpMode, "Reset Robot Controller Lights" has been added and inserted next to the FtcDashboard enable/disable OpMode
+  - As BunyipsOpMode will change the RC lights and not be able to change them back when the OpMode is stopped (as OpModes cannot access LynxModules when stopped), this OpMode will reset the lights to their default state
+  - This OpMode is useful for resetting the lights after a BunyipsOpMode has run, as the lights will remain in their last state, therefore resetting will inform others the robot is disabled
+  - Integrated/test OpModes, including this one, have been moved from the `test` package to the `integrated` package
+- `DualTelemetry` has an alias method for adding a newline to telemetry, `addNewLine()`
+- `HtmlItem` of `DualTelemetry` now has a builder parameter that can take in a `BooleanSupplier` to determine if the item should have styles applied to it
+  - Note that these styles only apply to the ones attached to the `HtmlItem` itself, and not the text inside the item
+  - This is useful for selectors that may want to apply styles to the item based on a condition
+- `Text.formatString` has an alias method `Text.format` for convenience
+
 ## v3.3.2 (2024-06-25)
 General bug fixes and utility improvements.
 ### Non-breaking changes
