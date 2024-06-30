@@ -242,7 +242,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             }
             telemetry.update()
 
-            telemetry.opModeStatus = "<b><font color='yellow'></b>static_init</font>"
+            telemetry.opModeStatus = "<b><font color='yellow'>static_init</font></b>"
             Dbg.logv("BunyipsOpMode: firing onInit()...")
             // Store telemetry objects raised by onInit() by turning off auto-clear
             telemetry.isAutoClear = false
