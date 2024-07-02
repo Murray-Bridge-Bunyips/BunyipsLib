@@ -332,7 +332,13 @@ abstract class BunyipsOpMode : BOMInternal() {
             telemetry.addDS("<b>Init <font color='green'>complete</font>. Press play to start.</b>")
             Dbg.logd("BunyipsOpMode: ready.")
             robotControllers.forEach { module ->
-                module.setConstant(if (ok) Color.GREEN else Color.YELLOW)
+                if (ok)
+                    module.pattern = listOf(
+                        Blinker.Step(Color.GREEN, 400, TimeUnit.MILLISECONDS),
+                        Blinker.Step(Color.CYAN, 400, TimeUnit.MILLISECONDS)
+                    )
+                else
+                    module.setConstant(Color.YELLOW)
             }
 
             // Wait for start

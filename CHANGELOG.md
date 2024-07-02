@@ -1,6 +1,16 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.4.1 (2024-07-02)
+Minor visual changes.
+### Non-breaking changes
+- Robot Controller blink pattern updated
+  - Replaced the READY state (solid green) with a *blinking green-cyan* (similar to `dynamic_init`) pattern, this is because the READY state was too similar to the default state of the Robot Controller
+- `DualTelemetry`'s `opModeStatus` can now be set to empty values
+  - The overhead status will now update more uniformly when the status is empty 
+### Bug fixes
+- Fixed mismatched HTML tags in `BunyipsOpMode`
+
 ## v3.4.0 (2024-06-28)
 Vision related updates and functionality optimisations.
 ### Non-breaking changes
