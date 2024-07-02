@@ -1,6 +1,20 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.4.2 (2024-07-03)
+Improved exception handling and edge case fixes.
+### Breaking changes
+- The `toString()` method of `Task` has been made final and documentation updated appropriately
+  - In order to change the name of a task, the `withName()` method should be used
+  - As this is a non-user-facing change, it is not enough to warrant a major version bump
+  - Users who have overridden the `toString()` method in their tasks will need to change this to use the `withName()` method
+### Non-breaking changes
+- `dynamic_init` is now in a while loop as opposed to a do-while loop, ensuring an early exit is respected before running more initialisation code
+### Bug fixes
+- Improved error catching with the `initTask`, where exceptions during the onFinish() method would cause a full crash
+- `BunyipsOpMode` now takes in a `RobotTask` instead of a `Task` in `setInitTask(...)`
+  - This was the intended behaviour, as it supported using a minimal interface to begin with
+
 ## v3.4.1 (2024-07-02)
 Minor visual changes.
 ### Non-breaking changes

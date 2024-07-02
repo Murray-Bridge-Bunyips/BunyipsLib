@@ -145,7 +145,6 @@ abstract class BunyipsOpMode : BOMInternal() {
     /**
      * Run code in a loop AFTER [onInit] has completed, until
      * start is pressed on the Driver Station and the init-task ([setInitTask]) is done.
-     * This method is called at least once.
      * If not implemented and no init-task is defined, the OpMode will continue on as normal and wait for start.
      */
     protected open fun onInitLoop(): Boolean {
@@ -279,7 +278,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 )
             }
             // Run user-defined dynamic initialisation
-            do {
+            while (opModeInInit() && !operationsCompleted) {
                 val curr = System.nanoTime()
                 try {
                     robotControllers.forEach { m -> m.clearBulkCache() }
@@ -296,22 +295,28 @@ abstract class BunyipsOpMode : BOMInternal() {
                 telemetry.update()
                 if (loopSpeed.magnitude() > 0)
                     sleep(abs((loopSpeed.inUnit(Nanoseconds).toLong() - (System.nanoTime() - curr))) / 1_000_000)
-            } while (opModeInInit() && !operationsCompleted)
+            }
 
             telemetry.opModeStatus = "<font color='yellow'>finish_init</font>"
             // We can only finish Task objects, as the RobotTask interface does not have a finish method
             // Most tasks will inherit from Task, so this should be safe, but this is to ensure maximum compatibility
-            if (initTask is Task && initTask?.isFinished() == false) {
-                Dbg.log("BunyipsOpMode: initTask did not finish in time, early finishing -> % ...", initTask)
-                telemetry.log("<font color='gray'>init-task interrupted by start request.</font>")
-                (initTask as Task).finishNow()
-            } else if (initTask?.isFinished() == false) {
-                // If we can't finish the task, log a warning and continue
-                Dbg.warn("BunyipsOpMode: initTask did not finish during the init-phase!", initTask)
-                telemetry.log("<b><font color='yellow'>WARNING!</font></b> <font color='gray'>init-task did not finish.</font>")
-            } else if (initTask != null) {
-                Dbg.logd("BunyipsOpMode: initTask finished -> % ...", initTask)
-                telemetry.log("<font color='gray'>init-task finished.</font>")
+            try {
+                if (initTask is Task && initTask?.isFinished() == false) {
+                    Dbg.log("BunyipsOpMode: initTask did not finish in time, early finishing -> % ...", initTask)
+                    telemetry.log("<font color='gray'>init-task interrupted by start request.</font>")
+                    (initTask as Task).finishNow()
+                } else if (initTask?.isFinished() == false) {
+                    // If we can't finish the task, log a warning and continue
+                    Dbg.warn("BunyipsOpMode: initTask did not finish during the init-phase!", initTask)
+                    telemetry.log("<b><font color='yellow'>WARNING!</font></b> <font color='gray'>init-task did not finish.</font>")
+                } else if (initTask != null) {
+                    Dbg.logd("BunyipsOpMode: initTask finished -> % ...", initTask)
+                    telemetry.log("<font color='gray'>init-task finished.</font>")
+                }
+            } catch (e: Exception) {
+                ok = false
+                telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                Exceptions.handle(e, telemetry::log)
             }
             telemetry.update()
             Dbg.logv("BunyipsOpMode: firing onInitDone()...")
@@ -474,7 +479,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      *
      * @see onInitDone
      */
-    protected fun setInitTask(task: Task) {
+    protected fun setInitTask(task: RobotTask?) {
         if (initTask != null) {
             Dbg.warn(javaClass, "Init-task has already been set to %, overriding it with %...", initTask, task)
         }
