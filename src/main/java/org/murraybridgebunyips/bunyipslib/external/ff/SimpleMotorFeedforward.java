@@ -10,6 +10,7 @@ package org.murraybridgebunyips.bunyipslib.external.ff;
 /**
  * A helper class that computes feedforward outputs for a simple permanent-magnet DC motor.
  * Units of this class are determined by the inputs to the gains.
+ * <a href="https://github.com/FTCLib/FTCLib/blob/1c8995d09413b406e0f4aff238ea4edc2bb860c4/core/src/main/java/com/arcrobotics/ftclib/controller/wpilibcontroller/SimpleMotorFeedforward.java">Source</a>
  */
 public class SimpleMotorFeedforward {
     /**
