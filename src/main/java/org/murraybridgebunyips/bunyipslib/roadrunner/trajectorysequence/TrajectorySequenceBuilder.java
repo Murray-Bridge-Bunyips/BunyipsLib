@@ -1590,6 +1590,17 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
     }
 
     /**
+     * Wait for a given magnitude and unit of time.
+     *
+     * @param time The time to wait
+     * @param unit The unit of the time
+     * @return The builder
+     */
+    public T waitFor(double time, Time unit) {
+        return waitSeconds(unit.of(time).in(Seconds));
+    }
+
+    /**
      * Wait for a given amount of time.
      *
      * @param time The amount of time to wait.

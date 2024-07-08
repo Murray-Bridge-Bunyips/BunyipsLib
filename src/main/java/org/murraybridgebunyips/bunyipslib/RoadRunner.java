@@ -2,7 +2,6 @@ package org.murraybridgebunyips.bunyipslib;
 
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
-import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 import static org.murraybridgebunyips.bunyipslib.tasks.bases.Task.INFINITE_TIMEOUT;
 
 import androidx.annotation.NonNull;
@@ -843,15 +842,26 @@ public interface RoadRunner {
         }
 
         /**
-         * Wait for a given time.
+         * Wait for a given magnitude and unit of time.
          *
-         * @param time The magnitude of time to wait
-         * @param unit The unit of the time magnitude
+         * @param time The time to wait
+         * @param unit The unit of the time
          * @return The builder
          */
-        public RoadRunnerTrajectoryTaskBuilder wait(double time, Time unit) {
-            mirroredBuilder.waitSeconds(unit.of(time).in(Seconds));
-            return super.waitSeconds(unit.of(time).in(Seconds));
+        public RoadRunnerTrajectoryTaskBuilder waitFor(double time, Time unit) {
+            mirroredBuilder.waitFor(time, unit);
+            return super.waitFor(time, unit);
+        }
+
+        /**
+         * Wait for a given amount of time.
+         *
+         * @param time The amount of time to wait.
+         * @return The builder
+         */
+        public RoadRunnerTrajectoryTaskBuilder waitFor(Measure<Time> time) {
+            mirroredBuilder.waitFor(time);
+            return super.waitFor(time);
         }
 
         /**
