@@ -1299,6 +1299,19 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
     }
 
     /**
+     * Add a temporal marker at the current duration plus an offset to run a callback at that time.
+     *
+     * @param offset   The offset magnitude to add to the current duration
+     * @param unit     The unit of the offset (will be converted to seconds)
+     * @param callback The callback to run
+     * @return The builder
+     */
+    public T UNSTABLE_addTemporalMarkerOffset(double offset, Time unit, MarkerCallback callback) {
+        double o = Seconds.convertFrom(offset, unit);
+        return UNSTABLE_addTemporalMarkerOffset(o, callback);
+    }
+
+    /**
      * Add a temporal marker at a given time to run a callback at that time.
      *
      * @param time     The time to run the callback (seconds)
@@ -1318,6 +1331,19 @@ public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {
      */
     public T addTemporalMarker(Measure<Time> time, MarkerCallback callback) {
         return addTemporalMarker(time.in(Seconds), callback);
+    }
+
+    /**
+     * Add a temporal marker at a given time to run a callback at that time.
+     *
+     * @param time     The time to run the callback
+     * @param unit     The unit of the time
+     * @param callback The callback to run
+     * @return The builder
+     */
+    public T addTemporalMarker(double time, Time unit, MarkerCallback callback) {
+        double t = Seconds.convertFrom(time, unit);
+        return addTemporalMarker(t, callback);
     }
 
     /**
