@@ -17,7 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Extension wrapper for AprilTag to interop with the Vision system
+ * AprilTag Detection Processor
+ * <p>
+ * This is an extension wrapper for the SDK-provided AprilTagProcessor to interop with the Vision system.
  *
  * @author Lucas Bubner, 2023
  */

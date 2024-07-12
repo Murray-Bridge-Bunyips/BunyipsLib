@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
  */
 @Config
 public class Vision extends BunyipsSubsystem {
+    // https://github.com/Murray-Bridge-Bunyips/BunyipsLib/issues/29
     /**
      * Camera width resolution to use.
      */

@@ -212,7 +212,11 @@ abstract class BunyipsOpMode : BOMInternal() {
             Dbg.log("=============== BunyipsLib v${BuildConfig.SEMVER} BunyipsOpMode ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME} uid:${BuildConfig.ID} ===============")
             LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap)
             if (!Version.getLibraryVersion().equals(BuildConfig.SDK_VER)) {
-                Dbg.warn("BunyipsOpMode: SDK version mismatch! (SDK: %, BunyipsLib: %)", Version.getLibraryVersion(), BuildConfig.SDK_VER)
+                Dbg.warn(
+                    "BunyipsOpMode: SDK version mismatch! (SDK: %, BunyipsLib: %)",
+                    Version.getLibraryVersion(),
+                    BuildConfig.SDK_VER
+                )
                 RobotLog.addGlobalWarningMessage("The version of the Robot Controller running on this robot is not the same as the recommended version for BunyipsLib. This may cause incompatibilities. Please ensure you are updated to the SDK version specified in the BunyipsLib documentation.")
             }
             robotControllers.forEach { module ->
