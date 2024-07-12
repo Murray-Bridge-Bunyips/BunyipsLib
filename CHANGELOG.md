@@ -1,6 +1,34 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v3.5.0 (2024-07-12)
+Migration to SDK v9.2, integration of new external control systems, some bug fixes and stability improvements.
+### Breaking changes
+- New deprecations which will be removed alongside SDK v10.0, including Tensorflow Object Detection
+  - `TFOD` and `GetWhitePixelTask` will be archived in the major release where SDK v10.0 is adopted
+  - As for other CENTERSTAGE-specific tasks, they will remain in BunyipsLib under the `centerstage` packages where appropriate
+  - In the BunyipsLib major release where SDK v10.0 is adopted, all other deprecated features throughout BunyipsLib will also be removed
+  - For now, these features will continue to work as expected and expected removals have been marked as deprecated
+  - This may include other changes to the Vision system to adopt full multi-camera support (https://github.com/Murray-Bridge-Bunyips/BunyipsLib/issues/29), as it is only partially implemented at the moment
+  - `VisionTest` has been removed of TFOD
+### Non-breaking changes
+- Added a Recommended SDK Version to the build process, which will be checked at runtime to ensure the currently used SDK version is the recommended version
+  - This is to ensure maximum compatibility with the BunyipsLib codebase, as this version is the one that has been tested and confirmed to work
+  - This will not prevent the user from running OpModes, but will log a robot warning message to the Driver Station telemetry and to Logcat at the start of any `BunyipsOpMode`
+  - The recommended version has been set to v9.2, which as of this release is the latest SDK version
+- `VisionTest` has changed which processors that can be tested, and now has options of `RAW`, `APRILTAG`, and the four CENTERSTAGE pixels
+### Bug fixes
+- Fixed broken implementations throughout `RoadRunner` where the method overloads were not being reflected properly
+   - This was due to not implementing correct methods from the `TrajectorySequenceBuilder` interface
+   - waitFor() has been given an additional overload to match the scheme of (magnitude, unit) for RoadRunner task building
+- Fix a misparse of the `Controller` gamepad to match what does SDK does
+  - This may have caused issues where unmanaged gamepad inputs did not work as expected as the buffer was not being wrapped properly
+### Additions
+- New control system utilities from WPILib have been ported to BunyipsLib
+  - This includes the `TrapezoidProfile`, `ArmFeedforward`, `ElevatorFeedforward`, `SimpleMotorFeedforward`, and `ProfiledPIDController` classes
+  - Documentation on using these utilities can be sourced from WPILib/FTCLib, as these classes are in line with these counterparts
+  - `ArmFeedforward` has been updated to use WPIUnits for the calculation method, to interop with the `EncoderTicks` class
+
 ## v3.4.2 (2024-07-03)
 Improved exception handling and edge case fixes.
 ### Breaking changes
