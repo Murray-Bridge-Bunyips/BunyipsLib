@@ -33,7 +33,6 @@ to the standard OpMode.
 All BunyipsLib OpModes are simple, declarative, and expansible.
 
 ```java
-
 @TeleOp(name = "My OpMode")
 public class MyOpMode extends BunyipsOpMode {
     private final MyBotConfig config = new MyBotConfig();
@@ -56,7 +55,6 @@ Subsystems are declared expressively, allowing a transitionary command-based sys
 code.
 
 ```java
-
 @TeleOp(name = "My TeleOp")
 public class MyTeleOp extends BunyipsOpMode {
     private final MyBotConfig config = new MyBotConfig();
@@ -79,8 +77,8 @@ public class MyTeleOp extends BunyipsOpMode {
         // input or a group of inputs (for custom functions for inputs without having to change component code)
         gamepad1.set(Controls.AnalogGroup.STICKS, (v) -> v * 0.8f);
 
-        cannon = new Cannon(...)
-        arm = new MyArm(...)
+        cannon = new Cannon(/* ... */);
+        arm = new MyArm(/* ... */);
     }
 
     @Override
@@ -114,14 +112,13 @@ public class MyTeleOp extends BunyipsOpMode {
         arm.update();
         cannon.update();
     }
-
+}
 ```
 
 Are you more of a fan of full-command-based systems? We've brewed our own command scheduler with
 full integrations with our ecosystem.
 
 ```java
-
 @TeleOp(name = "Align To Pixel (Command Based)")
 public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
     private final MyBotConfig config = new MyBotConfig();
@@ -134,8 +131,8 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
     protected void onInitialise() {
         config.init();
 
-        drive = new DualDeadwheelMecanumDrive(...)
-        vision = new Vision(...)
+        drive = new DualDeadwheelMecanumDrive(/* ... */);
+        vision = new Vision(/* ... */);
 
         pixels = new MultiColourThreshold(Pixels.createProcessors());
         // Choosable processors with full control methods
@@ -169,7 +166,7 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
                 .run(new AlignToContourTask<>(gamepad1, drive, pixels, new PIDController(1, 0.25, 0.0)))
                 .finishingIf(() -> !gamepad1.right_bumper);
     }
-
+}
 ```
 
 BunyipsLib has a multi-purpose Task system, not only for general commands but for actionable tasks to do in
@@ -240,9 +237,9 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
     protected void onInitialise() {
         config.init();
 
-        drive = new DualDeadwheelMecanumDrive(...)
-        vision = new Vision(...)
-        arm = new MyArm(...);
+        drive = new DualDeadwheelMecanumDrive(/* ... */);
+        vision = new Vision(/* ... */);
+        arm = new MyArm(/* ... */);
 
         vision.init(purplePixelProcessor, whitePixelProcessor);
         vision.start(whitePixelProcessor);
@@ -279,7 +276,7 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
         switch (initTask.getSpikeResult()) {
             case LEFT:
                 // RoadRunner trajectory to get to the Spike Mark
-                makeTrajectory(...);
+                makeTrajectory(/* ... */);
                 break;
             // ...
         }
@@ -304,12 +301,12 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
 
         switch (selectedOpMode.toString()) {
             case "PARK":
-                addTask(...);
+                addTask(/* ... */);
                 break;
             case "GO_TWICE":
                 // Convenience task groupings for allocating multiple subsystem interactions
                 // while only using a singular task. Useful in command-based OpModes.
-                addTask(new SequentialTaskGroup(..., ..., ...));
+                addTask(new SequentialTaskGroup(/* ..., ..., ... */));
                 break;
             case "SABOTAGE_ALLIANCE":
                 // BunyipsLib offers full automatic exception catching and debug logging
@@ -318,7 +315,9 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
             default:
             case "STOP":
                 break;
-      
+        }
+    }
+} 
 ```
 
 This is only a small fraction of what BunyipsLib can do. BunyipsLib is continually expanding
