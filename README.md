@@ -1,10 +1,10 @@
 ![BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/.github/blob/main/bunyipslib_banner.png)
 [![GitHub Release](https://img.shields.io/github/v/release/Murray-Bridge-Bunyips/BunyipsLib?color=darkgreen)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/releases/latest)
 [![GitHub commits since latest release](https://img.shields.io/github/commits-since/Murray-Bridge-Bunyips/BunyipsLib/latest)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/commits/master/)
+[![Recommended FTC SDK version](https://img.shields.io/static/v1?label=sdk&message=v9.1&color=orange)](https://github.com/FIRST-Tech-Challenge/FtcRobotController/tree/v9.1)
 [![View Changelog](https://img.shields.io/static/v1?label=changelog&message=View&color=informational)](/CHANGELOG.md)<br>
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Murray-Bridge-Bunyips/BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/pulse/monthly)
 [![CodeFactor](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib/badge)](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib)<br>
-
 
 ##### A powerful all-in-one library for FTC used by the Murray Bridge High School Student Robotics Club.
 
@@ -79,8 +79,8 @@ public class MyTeleOp extends BunyipsOpMode {
         // input or a group of inputs (for custom functions for inputs without having to change component code)
         gamepad1.set(Controls.AnalogGroup.STICKS, (v) -> v * 0.8f);
 
-        cannon = new Cannon(...);
-        arm = new MyArm(...);
+        cannon = new Cannon(...)
+        arm = new MyArm(...)
     }
 
     @Override
@@ -114,13 +114,14 @@ public class MyTeleOp extends BunyipsOpMode {
         arm.update();
         cannon.update();
     }
-}
+
 ```
 
 Are you more of a fan of full-command-based systems? We've brewed our own command scheduler with
 full integrations with our ecosystem.
 
 ```java
+
 @TeleOp(name = "Align To Pixel (Command Based)")
 public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
     private final MyBotConfig config = new MyBotConfig();
@@ -133,8 +134,8 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
     protected void onInitialise() {
         config.init();
 
-        drive = new DualDeadwheelMecanumDrive(...);
-        vision = new Vision(...);
+        drive = new DualDeadwheelMecanumDrive(...)
+        vision = new Vision(...)
 
         pixels = new MultiColourThreshold(Pixels.createProcessors());
         // Choosable processors with full control methods
@@ -144,7 +145,7 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
         // FtcDashboard integrations for individual processor stream previews
         vision.startPreview();
         vision.setPreview(pixels);
-       
+
         // Scheduler will manage these subsystems
         addSubsystems(drive, vision);
     }
@@ -168,7 +169,7 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
                 .run(new AlignToContourTask<>(gamepad1, drive, pixels, new PIDController(1, 0.25, 0.0)))
                 .finishingIf(() -> !gamepad1.right_bumper);
     }
-}
+
 ```
 
 BunyipsLib has a multi-purpose Task system, not only for general commands but for actionable tasks to do in
@@ -222,6 +223,7 @@ public class RunArmFor extends Task {
 All with full RoadRunner utilities, runtime OpMode selectors, and much more.
 
 ```java
+
 @Autonomous(name = "Place a Pixel")
 public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRunner {
     private final MyBotConfig config = new MyBotConfig();
@@ -238,8 +240,8 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
     protected void onInitialise() {
         config.init();
 
-        drive = new DualDeadwheelMecanumDrive(...);
-        vision = new Vision(...);
+        drive = new DualDeadwheelMecanumDrive(...)
+        vision = new Vision(...)
         arm = new MyArm(...);
 
         vision.init(purplePixelProcessor, whitePixelProcessor);
@@ -316,9 +318,7 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
             default:
             case "STOP":
                 break;
-        }
-    }
-}
+      
 ```
 
 This is only a small fraction of what BunyipsLib can do. BunyipsLib is continually expanding
@@ -342,7 +342,9 @@ BunyipsLib is distributed via a `git submodule`. This allows for direct source c
 you, as BunyipsLib should work harmoniously with your codebase.
 
 To get BunyipsLib in your codebase, you'll need experience with `git`, the Gradle build system, and
-the command line (used in this tutorial).
+the command line (used in this tutorial). The recommended FTC SDK version is specified with one of the badges at the top
+of this README. The specified version is the one that BunyipsLib is
+tested with and will have the most compatibility. Generally, this is the latest version of the SDK as offered by FTC.
 
 ### Integrating BunyipsLib into your codebase
 
@@ -413,8 +415,11 @@ debugged and tested. To ensure that you *aren't* using code that I've accidental
 
 Navigate to the directory of your BunyipsLib submodule, and run `git pull` on the `master`
 branch for the latest dev changes. This should bring any changes into your repository. If you wish to use a more
-stable version of BunyipsLib, you can switch to the SemVer tags that are available in the repository using `git checkout <tag>`
-and available in the [Releases](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/releases/) section. These versions are more
+stable version of BunyipsLib, you can switch to the SemVer tags that are available in the repository
+using `git checkout <tag>`
+and available in the [Releases](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/releases/) section. These versions
+are more
 stable and are less likely to have runtime errors or bugs, with changes fully documented.
 ___
+
 ###### BunyipsLib. Copyright (c) 2024 Lucas Bubner, MBHS Student Robotics Club, under the MIT License.<br><br>External libraries implemented/dependencies to BunyipsLib include [RoadRunner](https://github.com/acmerobotics/road-runner/tree/423c9554c97ecac249b8d07eff43235496b22f39) v0.5, WPILib's [WPIUnits](https://github.com/wpilibsuite/allwpilib/tree/0c822b45ab49b201455417d135474fc2f7b00f86/wpiunits/src/main/java/edu/wpi/first/units), [FtcDashboard](https://github.com/acmerobotics/ftc-dashboard), and [FTCLib](https://github.com/FTCLib/FTCLib)'s utilities such as PID/FF controllers and lookup tables. These library features are copyright of their respective owners.<br><br>I am not responsible for any failed autonomous, broken servos or nuclear warfare that result after the usage of BunyipsLib.<br>Test and understand your code thoroughly.

@@ -10,7 +10,9 @@ import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.LightSensor
 import com.qualcomm.robotcore.hardware.RobotCoreLynxUsbDevice
 import com.qualcomm.robotcore.hardware.ServoController
+import com.qualcomm.robotcore.util.RobotLog
 import com.qualcomm.robotcore.util.ThreadPool
+import com.qualcomm.robotcore.util.Version
 import org.firstinspires.ftc.robotcore.external.Telemetry.Item
 import org.murraybridgebunyips.bunyipslib.external.units.Measure
 import org.murraybridgebunyips.bunyipslib.external.units.Time
@@ -209,6 +211,10 @@ abstract class BunyipsOpMode : BOMInternal() {
             resetFields()
             Dbg.log("=============== BunyipsLib v${BuildConfig.SEMVER} BunyipsOpMode ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME} uid:${BuildConfig.ID} ===============")
             LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap)
+            if (!Version.getLibraryVersion().equals(BuildConfig.SDK_VER)) {
+                Dbg.warn("BunyipsOpMode: SDK version mismatch! (SDK: %, BunyipsLib: %)", Version.getLibraryVersion(), BuildConfig.SDK_VER)
+                RobotLog.addGlobalWarningMessage("The version of the Robot Controller running on this robot is not the same as the recommended version for BunyipsLib. This may cause incompatibilities. Please ensure you are updated to the SDK version specified in the BunyipsLib documentation.")
+            }
             robotControllers.forEach { module ->
                 module.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
                 module.setConstant(Color.CYAN)

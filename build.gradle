@@ -41,6 +41,7 @@ android {
         buildConfigField "String", "BUILD_TIME", '"' + getBuildTime() + '"'
         buildConfigField "String", "ID", '"' + getRandomID() + '"'
         buildConfigField "String", "SEMVER", '"' + project.version + '"'
+        buildConfigField "String", "SDK_VER", '"' + project.sdk_version + '"'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
