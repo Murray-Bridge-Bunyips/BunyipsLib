@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib.vision.processors;
 
 import android.graphics.Canvas;
+import android.util.Size;
 
 import androidx.annotation.NonNull;
 
@@ -9,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.murraybridgebunyips.bunyipslib.vision.Processor;
-import org.murraybridgebunyips.bunyipslib.vision.Vision;
 import org.murraybridgebunyips.bunyipslib.vision.data.TfodData;
 import org.opencv.core.Mat;
 
@@ -88,6 +88,7 @@ public class TFOD extends Processor<TfodData> {
 
     @Override
     protected void onFrameDraw(Canvas canvas) {
-        instance.onDrawFrame(canvas, Vision.CAMERA_WIDTH, Vision.CAMERA_HEIGHT, 1.0f, 1.0f, tfodCtx);
+        Size dimensions = getCameraDimensions();
+        instance.onDrawFrame(canvas, dimensions.getWidth(), dimensions.getHeight(), 1.0f, 1.0f, tfodCtx);
     }
 }

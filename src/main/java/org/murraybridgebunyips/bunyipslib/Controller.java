@@ -116,6 +116,8 @@ public class Controller extends Gamepad {
         byte[] buf = sdk.toByteArray();
         // Size of the Robocol header length is 5, minus 2 to skip the sequence number
         ByteBuffer byteBuffer = ByteBuffer.wrap(buf, 3, buf.length - 3);
+        // Skip over the sequence number as we don't need it, but still need to read the next bytes
+        byteBuffer.getShort();
 
         byte version = byteBuffer.get();
 
