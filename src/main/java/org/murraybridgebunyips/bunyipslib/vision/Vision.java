@@ -292,7 +292,7 @@ public class Vision extends BunyipsSubsystem {
     public HashMap<String, List<VisionData>> getAllData() {
         HashMap<String, List<VisionData>> data = new HashMap<>();
         for (Processor processor : processors) {
-            if (Objects.equals(processor.toString(), "rawfeed")) continue;
+            if (Objects.equals(processor.toString(), "raw")) continue;
             data.put(processor.toString(), processor.getData());
         }
         return data;
@@ -435,6 +435,7 @@ public class Vision extends BunyipsSubsystem {
     /**
      * Set the processor to display on FtcDashboard/DS from startPreview().
      * This will automatically switch the instance index, allowing an instant stream of this camera and processor combo.
+     * Will no-op if this processor name is invalid.
      *
      * @param processorName the name of the processor to display on FtcDashboard
      * @see SwitchableVisionSender
@@ -449,6 +450,7 @@ public class Vision extends BunyipsSubsystem {
     /**
      * Set the processor to display on FtcDashboard/DS from startPreview().
      * This will automatically switch the instance index, allowing an instant stream of this camera and processor combo.
+     * Will no-op if this processor is invalid.
      *
      * @param processor the processor to display on FtcDashboard
      * @see SwitchableVisionSender
@@ -464,10 +466,11 @@ public class Vision extends BunyipsSubsystem {
     @Override
     protected void periodic() {
         if (visionPortal != null) {
+            VisionPortal.CameraState state = visionPortal.getCameraState();
             opMode.telemetry.add(
                     "Vision: <font color='%'>%</font> | % fps | %/% processors",
-                    visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING ? "green" : "red",
-                    visionPortal.getCameraState(),
+                    state == VisionPortal.CameraState.STREAMING ? "green" : state == VisionPortal.CameraState.ERROR ? "red" : "yellow",
+                    state,
                     (int) round(visionPortal.getFps(), 0),
                     processors.stream().filter((p) -> visionPortal.getProcessorEnabled(p)).count(),
                     processors.size()
