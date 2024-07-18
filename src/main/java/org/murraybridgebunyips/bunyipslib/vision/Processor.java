@@ -250,7 +250,7 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
      * be instead acquired by updating the data list in {@link #update()}. If this is not possible,
      * you can simply hold a copy of the userContext when supplied to you in {@link #onProcessFrame(Mat, long)}.
      * <p>
-     * Width and height should be accessed with getCameraWidth() and getCameraHeight(), and
+     * Width and height should be accessed with {@link #getCameraDimensions()}, and
      * scaleBmpPxToCanvasPx and scaleCanvasDensity should be assumed as 1.0f.
      */
     @Override
