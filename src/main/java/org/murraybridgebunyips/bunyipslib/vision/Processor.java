@@ -110,6 +110,8 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
     }
 
     void setRunning(boolean running) {
+        if (running)
+            onRunning();
         isRunning = running;
     }
 
