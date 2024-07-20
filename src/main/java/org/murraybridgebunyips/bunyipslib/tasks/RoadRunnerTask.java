@@ -131,8 +131,9 @@ public class RoadRunnerTask extends Task {
 
     @Override
     protected void onFinish() {
-        drive.stop();
         taskStartedRunning = false;
+        drive.cancelTrajectory();
+        drive.stop();
     }
 
     @Override
