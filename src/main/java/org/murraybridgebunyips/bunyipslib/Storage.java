@@ -79,6 +79,12 @@ public final class Storage {
         public final List<String> unusableComponents = new ArrayList<>();
         private final HashMap<String, Object> store = new HashMap<>();
         /**
+         * The last known player Alliance.
+         *
+         * @see StartingPositions
+         */
+        public StartingPositions lastKnownAlliance = null;
+        /**
          * The last known position of the robot from odometry.
          *
          * @see RoadRunnerDrive

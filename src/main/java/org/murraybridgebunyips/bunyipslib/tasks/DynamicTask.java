@@ -61,7 +61,7 @@ public class DynamicTask extends NoTimeoutTask {
         builtTask.reset();
         builtTask = null;
     }
-    
+
     @Override
     protected boolean isTaskFinished() {
         if (builtTask == null) return false;

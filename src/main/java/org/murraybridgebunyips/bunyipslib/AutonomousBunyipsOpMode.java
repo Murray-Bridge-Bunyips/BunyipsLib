@@ -111,7 +111,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             // Run task allocation if OpModeSelections are defined
             // This will run asynchronously, and the callback will be called
             // when the user has selected an OpMode
-            userSelection = new UserSelection<>(this, this::callback, varargs);
+            userSelection = new UserSelection<>(this::callback, varargs);
             Threads.start(userSelection);
         } else {
             // There are no OpMode selections, so just run the callback with the default OpMode
