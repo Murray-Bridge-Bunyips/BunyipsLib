@@ -102,7 +102,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      */
     public void useSubsystems(BunyipsSubsystem... subsystems) {
         if (!NullSafety.assertNotNull(Arrays.stream(subsystems).toArray())) {
-            throw new RuntimeException("Null subsystems were added in the addSubsystems() method!");
+            throw new RuntimeException("Null subsystems were added in the useSubsystems() method!");
         }
         Collections.addAll(managedSubsystems, subsystems);
     }

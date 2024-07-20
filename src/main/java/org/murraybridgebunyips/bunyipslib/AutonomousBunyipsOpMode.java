@@ -224,7 +224,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     public final void useSubsystems(BunyipsSubsystem... subsystems) {
         if (!NullSafety.assertNotNull(Arrays.stream(subsystems).toArray())) {
-            throw new RuntimeException("Null subsystems were added in the addSubsystems() method!");
+            throw new RuntimeException("Null subsystems were added in the useSubsystems() method!");
         }
         Collections.addAll(updatedSubsystems, subsystems);
     }
@@ -491,7 +491,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (task instanceof Task) {
             ((Task) task).getDependency().ifPresent((s) -> {
                 if (!updatedSubsystems.contains(s))
-                    Dbg.warn(getClass(), "Task % has a dependency on %, but it is not being updated by the AutonomousBunyipsOpMode. Please ensure it is being updated properly through addSubsystems().", task, s);
+                    Dbg.warn(getClass(), "Task % has a dependency on %, but it is not being updated by the AutonomousBunyipsOpMode. This is due to a call to useSubsystems() that is not including this subsystem. Please ensure this is intended behaviour. A clearer alternative is to disable() the subsystem(s) you don't wish to update.", task, s);
             });
         }
     }

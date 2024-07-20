@@ -138,7 +138,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             return false;
 
         if (currentTask == null) {
-            Dbg.warn(getClass(), "Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated via update() or by the addSubsystems() calls of the Scheduler or AutonomousBunyipsOpMode.");
+            Dbg.warn(getClass(), "Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated if this behaviour is not intended.");
             currentTask = defaultTask;
         }
 

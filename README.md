@@ -140,11 +140,19 @@ public class MyAlignToPixelTeleOp extends CommandBasedBunyipsOpMode {
         vision.start(pixels, vision.raw);
 
         // FtcDashboard integrations for individual processor stream previews
+        // Vision previews work across multiple instances of Vision, allowing debugging across
+        // multiple processors across multiple cameras within FtcDashboard.
         vision.startPreview();
+        
+        // Programmatic selection of previews exist as well, which will auto-switch the stream to
+        // focus on this processor and camera.
         vision.setPreview(pixels);
 
-        // Scheduler will manage these subsystems
-        addSubsystems(drive, vision);
+        // The Scheduler will automatically manage all subsystems that are constructed, however
+        // users can choose to update their own choice of subsystems for rapid debugging purposes.
+        // More integrated solutions include calling .disable() on the subsystems in question
+        // that should not be updated.
+        useSubsystems(drive, vision); // Only update drive and vision
     }
 
     @Override
@@ -267,7 +275,7 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
     @Override
     public MecanumDrive getDrive() {
         // Passes the drive to the RoadRunner interface to provide
-        // utility methods for fast, reusable, and efficient trajectory generation
+        // utility methods for fast, reusable, and efficient trajectory generation (makeTrajectory() util)
         return drive;
     }
 
@@ -297,7 +305,7 @@ public class MyPlacePixelAuto extends AutonomousBunyipsOpMode implements RoadRun
         // This makes tasks reusable and easier to write, where you can define your own tasks just as quick
         addTask(new MoveToContourTask<>(Seconds.of(5), drive, purplePixel, new PIDController(1, 0.25, 0)));
 
-        addTask(() -> arm.drop());
+        addTask(arm::drop);
 
         switch (selectedOpMode.toString()) {
             case "PARK":
