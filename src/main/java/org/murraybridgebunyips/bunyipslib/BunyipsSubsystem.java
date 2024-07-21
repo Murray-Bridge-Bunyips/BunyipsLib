@@ -91,6 +91,13 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     }
 
     /**
+     * @return whether the name of the subsystem has not been modified (customisable name is the same as the class name)
+     */
+    public final boolean isDefaultName() {
+        return name.equals(getClass().getSimpleName());
+    }
+
+    /**
      * Utility function to run NullSafety.assertComponentArgs() on the given parameters, usually on
      * the motors/hardware/critical objects passed into the constructor. If this check fails, your subsystem
      * will automatically disable the update() method from calling to prevent exceptions, no-oping
@@ -109,7 +116,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         shouldRun = NullSafety.assertComponentArgs(name, getClass().getSimpleName(), parameters);
         if (!shouldRun) {
             assertionFailed = true;
-            Dbg.error(getClass(), "(%) Subsystem has been disabled as assertParamsNotNull() failed.", name);
+            Dbg.error(getClass(), "%Subsystem has been disabled as assertParamsNotNull() failed.", isDefaultName() ? "" : "(" + name + ") ");
             onDisable();
         }
         return shouldRun;
@@ -121,7 +128,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     public final void disable() {
         if (!shouldRun) return;
         shouldRun = false;
-        Dbg.logv(getClass(), "(%) Subsystem disabled via disable() call.", name);
+        Dbg.logv(getClass(), "%Subsystem disabled via disable() call.", isDefaultName() ? "" : "(" + name + ") ");
         onDisable();
     }
 
@@ -132,7 +139,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     public final void enable() {
         if (shouldRun || assertionFailed) return;
         shouldRun = true;
-        Dbg.logv(getClass(), "(%) Subsystem enabled via enable() call.", name);
+        Dbg.logv(getClass(), "%Subsystem enabled via enable() call.", isDefaultName() ? "" : "(" + name + ") ");
         onEnable();
     }
 
@@ -157,10 +164,10 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (!shouldRun) return null;
         if (currentTask == null || currentTask.isFinished()) {
             if (currentTask == null) {
-                Dbg.logv(getClass(), "(%) Subsystem awake.", name);
+                Dbg.logv(getClass(), "%Subsystem awake.", isDefaultName() ? "" : "(" + name + ") ");
                 onEnable();
             } else {
-                Dbg.logv(getClass(), "(%) Task changed: %<-%", name, defaultTask, currentTask);
+                Dbg.logv(getClass(), "%Task changed: %<-%", isDefaultName() ? "" : "(" + name + ") ", defaultTask, currentTask);
             }
             currentTask = defaultTask;
         }
@@ -193,14 +200,14 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final boolean setCurrentTask(Task newTask) {
         if (!shouldRun) {
-            Dbg.warn(getClass(), "(%) Subsystem is disabled, ignoring task change.", name);
+            Dbg.warn(getClass(), "%Subsystem is disabled, ignoring task change.", isDefaultName() ? "" : "(" + name + ") ");
             return false;
         }
         if (newTask == null)
             return false;
 
         if (currentTask == null) {
-            Dbg.warn(getClass(), "(%) Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated if this behaviour is not intended.", name);
+            Dbg.warn(getClass(), "%Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated if this behaviour is not intended.", isDefaultName() ? "" : "(" + name + ") ");
             currentTask = defaultTask;
         }
 
@@ -214,7 +221,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
                 setHighPriorityCurrentTask(newTask);
                 return true;
             }
-            Dbg.log(getClass(), "(%) Ignored task change: %->%", name, currentTask, newTask);
+            Dbg.log(getClass(), "%Ignored task change: %->%", isDefaultName() ? "" : "(" + name + ") ", currentTask, newTask);
             return false;
         }
 
@@ -224,7 +231,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             defaultTask.finishNow();
             defaultTask.reset();
         }
-        Dbg.logv(getClass(), "(%) Task changed: %->%", name, currentTask, newTask);
+        Dbg.logv(getClass(), "%Task changed: %->%", isDefaultName() ? "" : "(" + name + ") ", currentTask, newTask);
         currentTask = newTask;
         return true;
     }
@@ -236,14 +243,14 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final void setHighPriorityCurrentTask(Task currentTask) {
         if (!shouldRun) {
-            Dbg.warn(getClass(), "(%) Subsystem is disabled, ignoring high-priority task change.", name);
+            Dbg.warn(getClass(), "%Subsystem is disabled, ignoring high-priority task change.", isDefaultName() ? "" : "(" + name + ") ");
             return;
         }
         if (currentTask == null)
             return;
         // Task will be cancelled abruptly, run the finish callback now
         if (this.currentTask != defaultTask) {
-            Dbg.warn(getClass(), "(%) Task changed: %(INT)->%", name, this.currentTask, currentTask);
+            Dbg.warn(getClass(), "%Task changed: %(INT)->%", isDefaultName() ? "" : "(" + name + ") ", this.currentTask, currentTask);
             this.currentTask.finishNow();
         }
         currentTask.reset();
