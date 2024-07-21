@@ -64,7 +64,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     @NonNull
     public final String toVerboseString() {
-        return formatString("%%(%) <=> %", assertionFailed ? "[error] " : "", name, shouldRun ? "enabled" : "disabled", getCurrentTask());
+        return formatString("%% (%) <=> %", assertionFailed ? "[error] " : "", name, shouldRun ? "enabled" : "disabled", getCurrentTask());
     }
 
     /**

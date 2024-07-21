@@ -132,7 +132,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
                 Arrays.stream(tasks).filter(task -> !task.taskToRun.hasDependency()).count()
         );
         for (BunyipsSubsystem subsystem : subsystems) {
-            out.append("  | %\n", subsystem);
+            out.append("  | %\n", subsystem.toVerboseString());
             for (Scheduler.ConditionalTask task : tasks) {
                 Optional<BunyipsSubsystem> dep = task.taskToRun.getDependency();
                 if (!dep.isPresent() || !dep.get().equals(subsystem)) continue;
