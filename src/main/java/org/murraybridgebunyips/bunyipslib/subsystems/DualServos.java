@@ -16,8 +16,6 @@ public class DualServos extends BunyipsSubsystem {
     private final double RIGHT_SERVO_OPEN_POSITION;
     private Servo left;
     private Servo right;
-    // Name of the servos for telemetry
-    private String NAME = "Servos";
     private double leftServoPosition;
     private double rightServoPosition;
 
@@ -48,17 +46,6 @@ public class DualServos extends BunyipsSubsystem {
         leftServoPosition = leftClosed;
         rightServoPosition = rightClosed;
         update();
-    }
-
-    /**
-     * Set the name of the servos to display in telemetry.
-     *
-     * @param newName the name to set
-     * @return this
-     */
-    public DualServos withName(String newName) {
-        NAME = newName;
-        return this;
     }
 
     /**
@@ -176,7 +163,7 @@ public class DualServos extends BunyipsSubsystem {
     protected void periodic() {
         left.setPosition(leftServoPosition);
         right.setPosition(rightServoPosition);
-        opMode.telemetry.add("%: Left->% Right->%", NAME,
+        opMode.telemetry.add("%: Left->% Right->%", name,
                 left.getPosition() == LEFT_SERVO_OPEN_POSITION ? "<font color='green'>OPEN</font>" : "<font color='yellow'>CLOSE</font>",
                 right.getPosition() == RIGHT_SERVO_OPEN_POSITION ? "<font color='green'>OPEN</font>" : "<font color='yellow'>CLOSE</font>");
     }

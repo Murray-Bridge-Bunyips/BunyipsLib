@@ -632,8 +632,7 @@ abstract class BunyipsOpMode : BOMInternal() {
         operationsPaused = false
         safeHaltHardwareOnStop = false
         gamepadExecutor = null
-        RoadRunner.resetForOpMode()
-        BunyipsSubsystem.instances.clear()
+        Storage.resetAllStaticFieldsForOpMode()
     }
 
     /**

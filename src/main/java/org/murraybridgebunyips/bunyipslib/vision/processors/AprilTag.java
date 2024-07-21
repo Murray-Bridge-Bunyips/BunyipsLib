@@ -112,6 +112,7 @@ public class AprilTag extends Processor<AprilTagData> {
     @Override
     protected void onFrameDraw(Canvas canvas) {
         Size dimensions = getCameraDimensions();
+        if (dimensions == null) return;
         instance.onDrawFrame(canvas, dimensions.getWidth(), dimensions.getHeight(), 1.0f, 1.0f, atCtx);
     }
 }

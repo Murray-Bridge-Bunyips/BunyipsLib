@@ -39,6 +39,17 @@ public final class Storage {
     }
 
     /**
+     * Global method to clear all static state for an OpMode.
+     * Called internally by {@link BunyipsOpMode}.
+     */
+    public static void resetAllStaticFieldsForOpMode() {
+        // All static field resets go here
+        RoadRunner.resetForOpMode();
+        BunyipsSubsystem.resetForOpMode();
+        Tasks.resetForOpMode();
+    }
+
+    /**
      * Get the global volatile (cleared after restart) memory storage for the robot.
      *
      * @return Instance for volatile memory storage
@@ -101,6 +112,7 @@ public final class Storage {
             store.clear();
             hardwareErrors.clear();
             unusableComponents.clear();
+            lastKnownAlliance = null;
             lastKnownPosition = null;
         }
 

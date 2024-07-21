@@ -4,6 +4,7 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.Nullable;
 
+import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
@@ -49,18 +50,22 @@ public class DynamicTask extends NoTimeoutTask {
         Dbg.logd(getClass(), "built -> % (t=%)", name, timeout.magnitude() <= 0 ? "inf" : timeout.in(Seconds) + "s");
         withName(name);
         setTimeout(timeout);
+        builtTask.getDependency().ifPresent((dep) ->
+                dep.setHighPriorityCurrentTask(builtTask));
     }
 
     @Override
     protected void periodic() {
         if (builtTask == null) return;
-        builtTask.run();
+        if (!builtTask.hasDependency())
+            builtTask.run();
     }
 
     @Override
     protected void onFinish() {
         if (builtTask == null) return;
         builtTask.finishNow();
+        builtTask.getDependency().ifPresent(BunyipsSubsystem::cancelCurrentTask);
     }
 
     @Override
@@ -75,6 +80,6 @@ public class DynamicTask extends NoTimeoutTask {
     @Override
     protected boolean isTaskFinished() {
         if (builtTask == null) return false;
-        return builtTask.pollFinished();
+        return builtTask.hasDependency() ? builtTask.isFinished() : builtTask.pollFinished();
     }
 }

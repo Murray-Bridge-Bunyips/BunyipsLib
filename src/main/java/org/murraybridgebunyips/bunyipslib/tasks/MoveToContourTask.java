@@ -44,6 +44,7 @@ public class MoveToContourTask extends Task {
     private final Processor<ContourData> processor;
     private final PIDFController translationController;
     private final PIDFController rotationController;
+    private boolean hasCalculated;
     private DoubleSupplier x;
     private DoubleSupplier y;
     private DoubleSupplier r;
@@ -123,6 +124,7 @@ public class MoveToContourTask extends Task {
 
     @Override
     protected void init() {
+        hasCalculated = false;
         if (!processor.isAttached())
             throw new RuntimeException("Vision processor was initialised without being attached to the vision system");
     }
@@ -148,6 +150,7 @@ public class MoveToContourTask extends Task {
                             rotationController.calculate(biggestContour.getYaw(), 0.0)
                     )
             );
+            hasCalculated = true;
         } else {
             drive.setWeightedDrivePower(pose);
         }
@@ -160,6 +163,6 @@ public class MoveToContourTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return x == null && translationController.atSetPoint() && rotationController.atSetPoint();
+        return x == null && hasCalculated && translationController.atSetPoint() && rotationController.atSetPoint();
     }
 }

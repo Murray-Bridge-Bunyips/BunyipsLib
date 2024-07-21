@@ -101,7 +101,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             Exceptions.handle(e, telemetry::log);
         }
         if (updatedSubsystems.isEmpty())
-            updatedSubsystems = BunyipsSubsystem.instances;
+            updatedSubsystems = BunyipsSubsystem.getInstances();
         // Convert user defined OpModeSelections to varargs
         Reference<?>[] varargs = opModes.toArray(new Reference[0]);
         if (varargs.length == 0) {

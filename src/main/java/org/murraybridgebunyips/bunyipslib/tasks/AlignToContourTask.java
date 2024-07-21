@@ -34,6 +34,7 @@ public class AlignToContourTask extends Task {
     private final RoadRunnerDrive drive;
     private final Processor<ContourData> processor;
     private final PIDFController controller;
+    private boolean hasCalculated;
     private DoubleSupplier x;
     private DoubleSupplier y;
     private DoubleSupplier r;
@@ -95,6 +96,7 @@ public class AlignToContourTask extends Task {
 
     @Override
     protected void init() {
+        hasCalculated = false;
         if (!processor.isAttached())
             throw new RuntimeException("Vision processor was initialised without being attached to the vision system");
     }
@@ -119,6 +121,7 @@ public class AlignToContourTask extends Task {
                             controller.calculate(biggestContour.getYaw(), 0.0)
                     )
             );
+            hasCalculated = true;
         } else {
             drive.setWeightedDrivePower(pose);
         }
@@ -131,6 +134,6 @@ public class AlignToContourTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return x == null && controller.atSetPoint();
+        return x == null && hasCalculated && controller.atSetPoint();
     }
 }

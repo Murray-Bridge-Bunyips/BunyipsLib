@@ -116,7 +116,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
         }
         scheduler = new Scheduler();
         if (managedSubsystems.isEmpty()) {
-            managedSubsystems = BunyipsSubsystem.instances;
+            managedSubsystems = BunyipsSubsystem.getInstances();
         }
         scheduler.addSubsystems(managedSubsystems.toArray(new BunyipsSubsystem[0]));
         assignCommands();

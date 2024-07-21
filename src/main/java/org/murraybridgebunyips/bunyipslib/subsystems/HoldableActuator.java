@@ -44,8 +44,6 @@ public class HoldableActuator extends BunyipsSubsystem {
     private Measure<Time> OVERCURRENT_TIME = Seconds.of(1.0);
     // Maximum time spent in the Home Task before it is assumed completed
     private Measure<Time> HOMING_TIMEOUT = Seconds.of(5);
-    // Name of the actuator for telemetry
-    private String NAME = "Actuator";
     // Encoder lower limit in ticks
     private long MIN_LIMIT = -Long.MAX_VALUE;
     // Encoder upper limit in ticks
@@ -78,17 +76,6 @@ public class HoldableActuator extends BunyipsSubsystem {
         motor.setTargetPosition(0);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor.setPower(HOLDING_POWER);
-    }
-
-    /**
-     * Set the name of the actuator to display in telemetry.
-     *
-     * @param newName the name to set
-     * @return this
-     */
-    public HoldableActuator withName(String newName) {
-        NAME = newName;
-        return this;
     }
 
     /**
@@ -349,7 +336,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return a task to home the actuator
      */
     public Task homeTask() {
-        return new Task(HOMING_TIMEOUT) {
+        return new Task(HOMING_TIMEOUT, this, true) {
             private ElapsedTime overcurrentTimer;
             private double previousAmpAlert;
             private double zeroHits;
@@ -485,12 +472,12 @@ public class HoldableActuator extends BunyipsSubsystem {
                     break;
                 }
                 motorPower = MOVING_POWER;
-                opMode.telemetry.add("%: <font color='#FF5F1F'>MOVING -> %/% ticks</font> [%rps]", NAME, motor.getTargetPosition(), motor.getCurrentPosition(), round(DegreesPerSecond.of(motor.getVelocity(AngleUnit.DEGREES)).in(RevolutionsPerSecond), 1));
+                opMode.telemetry.add("%: <font color='#FF5F1F'>MOVING -> %/% ticks</font> [%rps]", name, motor.getTargetPosition(), motor.getCurrentPosition(), round(DegreesPerSecond.of(motor.getVelocity(AngleUnit.DEGREES)).in(RevolutionsPerSecond), 1));
                 break;
             case HOMING:
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 motorPower = -MOVING_POWER;
-                opMode.telemetry.add("%: <font color='yellow'><b>HOMING</b></font> [%rps]", NAME, round(DegreesPerSecond.of(motor.getVelocity(AngleUnit.DEGREES)).in(RevolutionsPerSecond), 1));
+                opMode.telemetry.add("%: <font color='yellow'><b>HOMING</b></font> [%rps]", name, round(DegreesPerSecond.of(motor.getVelocity(AngleUnit.DEGREES)).in(RevolutionsPerSecond), 1));
                 break;
             case USER:
                 if (userPower == 0.0) {
@@ -507,7 +494,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     motorPower = userPower;
                 }
-                opMode.telemetry.add("%: % at % ticks [%tps]", NAME, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", motor.getCurrentPosition(), Math.round(motor.getVelocity()));
+                opMode.telemetry.add("%: % at % ticks [%tps]", name, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", motor.getCurrentPosition(), Math.round(motor.getVelocity()));
                 break;
         }
 
