@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
@@ -231,14 +232,15 @@ public class MoveToAprilTagTask extends Task {
         List<AprilTagData> data = aprilTag.getData();
 
         Optional<AprilTagData> target = data.stream().filter(p -> TARGET_TAG == -1 || p.getId() == TARGET_TAG).findFirst();
-        if (!target.isPresent() || target.get().getRange() == null || target.get().getBearing() == null || target.get().getYaw() == null) {
+        if (!target.isPresent()) {
             drive.setWeightedDrivePower(pose);
             return;
         }
 
-        rangeError = (target.get().getRange() - DESIRED_DISTANCE.in(Inches)) * SPEED_GAIN;
-        yawError = -target.get().getYaw() * STRAFE_GAIN;
-        headingError = target.get().getBearing() * TURN_GAIN;
+        AprilTagPoseFtc camPose = target.get().getFtcPose();
+        rangeError = (camPose.range - DESIRED_DISTANCE.in(Inches)) * SPEED_GAIN;
+        yawError = -camPose.yaw * STRAFE_GAIN;
+        headingError = camPose.bearing * TURN_GAIN;
 
         drive.setWeightedDrivePower(
                 new Pose2d(
