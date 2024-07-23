@@ -1,14 +1,15 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
+import static org.murraybridgebunyips.bunyipslib.Text.getCallingUserCodeFunction;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
-import org.murraybridgebunyips.bunyipslib.tasks.bases.NoTimeoutTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.function.Supplier;
@@ -24,7 +25,7 @@ import java.util.function.Supplier;
  *
  * @author Lucas Bubner, 2024
  */
-public class DynamicTask extends NoTimeoutTask {
+public class DynamicTask extends Task {
     private final Supplier<Task> lazyTask;
 
     @Nullable
@@ -81,5 +82,12 @@ public class DynamicTask extends NoTimeoutTask {
     protected boolean isTaskFinished() {
         if (builtTask == null) return false;
         return builtTask.hasDependency() ? builtTask.isFinished() : builtTask.pollFinished();
+    }
+
+    @NonNull
+    @Override
+    public final Task onSubsystem(@NonNull BunyipsSubsystem subsystem, boolean override) {
+        Dbg.error(getCallingUserCodeFunction(), "Dynamic tasks are not designed to be attached to a subsystem, as the internal task will be scheduled to subsystems instead.");
+        return this;
     }
 }

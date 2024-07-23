@@ -14,7 +14,8 @@ import java.util.HashSet;
 
 /**
  * Base class for all robot subsystems.
- * Integrates with the Task system to allow for task-based command scheduling.
+ * Integrates with the Task system to allow for task-based command scheduling, where a subsystem is able to hook
+ * a {@link Task} to execute it until completion.
  *
  * @author Lucas Bubner, 2024
  * @see Scheduler
@@ -266,6 +267,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * Update the subsystem and run the current task, if tasks are not set up this will just call {@link #periodic()}.
      * This method should be called if you are running this subsystem manually, otherwise it will be called by the {@link Scheduler}
      * or by {@link AutonomousBunyipsOpMode}.
+     * Alternatively all subsystems that were instantiated can be statically updated via {@link #updateAll()}.
      */
     public final void update() {
         if (!shouldRun) return;

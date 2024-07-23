@@ -51,7 +51,7 @@ public class IndexedTable extends BunyipsSubsystem {
      * @return the task
      */
     public Task incrementTask() {
-        return new RunTask(this::increment, this, false).withName("Increment Index");
+        return new RunTask(this::increment).onSubsystem(this, false).withName("Increment Index");
     }
 
     /**
@@ -68,7 +68,7 @@ public class IndexedTable extends BunyipsSubsystem {
      * @return the task
      */
     public Task decrementTask() {
-        return new RunTask(this::decrement, this, false).withName("Decrement Index");
+        return new RunTask(this::decrement).onSubsystem(this, false).withName("Decrement Index");
     }
 
     /**

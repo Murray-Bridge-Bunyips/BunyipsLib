@@ -97,7 +97,7 @@ public class Cannon extends BunyipsSubsystem {
      * @return Fire cannon task
      */
     public Task fireTask() {
-        return new RunTask(this::fire, this, true).withName("Fire");
+        return new RunTask(this::fire).onSubsystem(this, true).withName("Fire");
     }
 
     /**
@@ -106,7 +106,7 @@ public class Cannon extends BunyipsSubsystem {
      * @return Reset cannon task
      */
     public Task resetTask() {
-        return new RunTask(this::reset, this, true).withName("Reset");
+        return new RunTask(this::reset).onSubsystem(this, true).withName("Reset");
     }
 
     @Override

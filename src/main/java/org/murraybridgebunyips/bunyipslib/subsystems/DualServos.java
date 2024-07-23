@@ -75,7 +75,7 @@ public class DualServos extends BunyipsSubsystem {
      * @return the task
      */
     public Task toggleTask(ServoSide servo) {
-        return new RunTask(() -> toggle(servo), this, true).withName("Toggle:" + servo);
+        return new RunTask(() -> toggle(servo)).onSubsystem(this, true).withName("Toggle:" + servo);
     }
 
     /**
@@ -105,7 +105,7 @@ public class DualServos extends BunyipsSubsystem {
      * @return the task
      */
     public Task openTask(ServoSide servo) {
-        return new RunTask(() -> open(servo), this, true).withName("Open:" + servo);
+        return new RunTask(() -> open(servo)).onSubsystem(this, true).withName("Open:" + servo);
     }
 
     /**
@@ -135,7 +135,7 @@ public class DualServos extends BunyipsSubsystem {
      * @return the task
      */
     public Task closeTask(ServoSide servo) {
-        return new RunTask(() -> close(servo), this, true).withName("Close:" + servo);
+        return new RunTask(() -> close(servo)).onSubsystem(this, true).withName("Close:" + servo);
     }
 
     /**

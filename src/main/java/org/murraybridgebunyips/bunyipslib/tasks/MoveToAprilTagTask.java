@@ -87,9 +87,10 @@ public class MoveToAprilTagTask extends Task {
      * @param targetTag the tag to target. -1 for any tag
      */
     public MoveToAprilTagTask(Measure<Time> timeout, BunyipsSubsystem drive, AprilTag aprilTag, int targetTag) {
-        super(timeout, drive, false);
+        super(timeout);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
+        onSubsystem(drive, false);
         this.drive = (RoadRunnerDrive) drive;
         this.aprilTag = aprilTag;
         TARGET_TAG = targetTag;
@@ -107,9 +108,9 @@ public class MoveToAprilTagTask extends Task {
      * @param targetTag the tag to target. -1 for any tag
      */
     public MoveToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, AprilTag aprilTag, int targetTag) {
-        super(INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
+        onSubsystem(drive, false);
         this.drive = (RoadRunnerDrive) drive;
         this.aprilTag = aprilTag;
         x = xSupplier;

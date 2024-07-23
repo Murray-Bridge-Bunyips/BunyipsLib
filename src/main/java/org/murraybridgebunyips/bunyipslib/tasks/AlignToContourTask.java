@@ -50,9 +50,9 @@ public class AlignToContourTask extends Task {
      * @param controller the PID controller to use for aligning to a target
      */
     public AlignToContourTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, Processor<ContourData> processor, PIDFController controller) {
-        super(INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToContourTask must be used with a drivetrain with X forward Pose/IMU info");
+        onSubsystem(drive, false);
         this.drive = (RoadRunnerDrive) drive;
         this.processor = processor;
         x = xSupplier;
@@ -84,9 +84,10 @@ public class AlignToContourTask extends Task {
      * @param controller the PID controller to use for aligning to a target
      */
     public AlignToContourTask(Measure<Time> timeout, BunyipsSubsystem drive, Processor<ContourData> processor, PIDFController controller) {
-        super(timeout, drive, false);
+        super(timeout);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToContourTask must be used with a drivetrain with X forward Pose/IMU info");
+        onSubsystem(drive, false);
         this.drive = (RoadRunnerDrive) drive;
         this.processor = processor;
         this.controller = controller;

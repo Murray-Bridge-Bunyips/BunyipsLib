@@ -20,7 +20,6 @@ import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.ContinuousTask;
 import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
-import org.murraybridgebunyips.bunyipslib.tasks.bases.NoTimeoutTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.function.DoubleSupplier;
@@ -280,7 +279,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return a task to move the actuator
      */
     public Task controlTask(DoubleSupplier powerSupplier) {
-        return new ContinuousTask(() -> setPower(powerSupplier.getAsDouble()), this, false).withName("Joystick Control");
+        return new ContinuousTask(() -> setPower(powerSupplier.getAsDouble())).onSubsystem(this, false).withName("Joystick Control");
     }
 
     public HoldableActuator setPower(double p) {
@@ -295,7 +294,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return a task to set the power
      */
     public Task setPowerTask(double p) {
-        return new RunTask(() -> setPower(p), this, false).withName("Set Power");
+        return new RunTask(() -> setPower(p)).onSubsystem(this, false).withName("Set Power");
     }
 
     /**
@@ -306,7 +305,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return a task to run the actuator
      */
     public Task runForTask(double p, Measure<Time> time) {
-        return new Task(time, this, true) {
+        return new Task(time) {
             @Override
             public void init() {
                 inputMode = Mode.USER;
@@ -327,7 +326,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             public boolean isTaskFinished() {
                 return false;
             }
-        }.withName("Run For Time");
+        }.onSubsystem(this, true).withName("Run For Time");
     }
 
     /**
@@ -336,7 +335,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return a task to home the actuator
      */
     public Task homeTask() {
-        return new Task(HOMING_TIMEOUT, this, true) {
+        return new Task(HOMING_TIMEOUT) {
             private ElapsedTime overcurrentTimer;
             private double previousAmpAlert;
             private double zeroHits;
@@ -384,7 +383,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 boolean sustainedOvercurrent = overcurrentTimer != null && overcurrentTimer.seconds() >= OVERCURRENT_TIME.in(Seconds);
                 return inputMode != Mode.HOMING || (bottomedOut || velocityZeroed || sustainedOvercurrent);
             }
-        }.withName("Return To Home");
+        }.onSubsystem(this, true).withName("Return To Home");
     }
 
     /**
@@ -396,7 +395,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return a task to set the position
      */
     public Task gotoTask(int targetPosition) {
-        return new NoTimeoutTask(this, true) {
+        return new Task() {
             @Override
             public void init() {
                 motor.setTargetPosition(targetPosition);
@@ -419,7 +418,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             public boolean isTaskFinished() {
                 return inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, motor.getCurrentPosition(), TOLERANCE));
             }
-        }.withName("Run To Position");
+        }.onSubsystem(this, true).withName("Run To Position");
     }
 
     /**
@@ -429,7 +428,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return a task to delta the position
      */
     public Task deltaTask(int deltaPosition) {
-        return new NoTimeoutTask(this, true) {
+        return new Task() {
             private int target;
 
             @Override
@@ -455,7 +454,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             public boolean isTaskFinished() {
                 return inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(target, motor.getCurrentPosition(), TOLERANCE));
             }
-        }.withName("Run To Delta");
+        }.onSubsystem(this, true).withName("Run To Delta");
     }
 
     @Override

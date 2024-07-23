@@ -61,9 +61,9 @@ public class MoveToContourTask extends Task {
      * @param rotationController    the PID controller for the rotational movement
      */
     public MoveToContourTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, Processor<ContourData> processor, PIDFController translationController, PIDFController rotationController) {
-        super(INFINITE_TIMEOUT, drive, false);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToContourTask must be used with a drivetrain with X forward Pose/IMU info");
+        onSubsystem(drive, false);
         this.drive = (RoadRunnerDrive) drive;
         this.processor = processor;
         x = xSupplier;
@@ -99,9 +99,10 @@ public class MoveToContourTask extends Task {
      * @param rotationController    the PID controller for the rotational movement
      */
     public MoveToContourTask(Measure<Time> timeout, BunyipsSubsystem drive, Processor<ContourData> processor, PIDFController translationController, PIDFController rotationController) {
-        super(timeout, drive, false);
+        super(timeout);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToContourTask must be used with a drivetrain with X forward Pose/IMU info");
+        onSubsystem(drive, false);
         this.drive = (RoadRunnerDrive) drive;
         this.processor = processor;
         this.translationController = translationController;

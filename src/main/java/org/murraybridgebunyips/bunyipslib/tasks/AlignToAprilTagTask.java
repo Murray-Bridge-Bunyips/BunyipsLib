@@ -54,9 +54,10 @@ public class AlignToAprilTagTask extends Task {
      * @param controller the PID controller to use for aligning to a target
      */
     public AlignToAprilTagTask(Measure<Time> timeout, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDFController controller) {
-        super(timeout, drive, false);
+        super(timeout);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
+        onSubsystem(drive, false);
         this.drive = (RoadRunnerDrive) drive;
         this.at = at;
         TARGET_TAG = targetTag;
@@ -77,9 +78,10 @@ public class AlignToAprilTagTask extends Task {
      * @param controller the PID controller to use for aligning to a target
      */
     public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDFController controller) {
-        super(INFINITE_TIMEOUT, drive, false);
+        super(INFINITE_TIMEOUT);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
+        onSubsystem(drive, false);
         this.drive = (RoadRunnerDrive) drive;
         this.at = at;
         TARGET_TAG = targetTag;
