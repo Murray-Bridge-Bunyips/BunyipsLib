@@ -83,9 +83,8 @@ public class AprilTagPoseEstimator {
             AprilTagMetadata metadata = aprilTag.getMetadata();
             AprilTagPoseFtc camPose = aprilTag.getFtcPose();
 
-            VectorF tagPos = Objects.requireNonNull(metadata.fieldPosition);
-            Orientation tagOri = Objects.requireNonNull(metadata.fieldOrientation)
-                    .toOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
+            VectorF tagPos = metadata.fieldPosition;
+            Orientation tagOri = metadata.fieldOrientation.toOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
 
             double tagX = tagPos.get(0);
             double tagY = tagPos.get(1);
