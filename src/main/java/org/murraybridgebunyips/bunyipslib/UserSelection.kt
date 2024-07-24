@@ -117,7 +117,7 @@ class UserSelection<T : Any>(
 
         val topBorder = opMode.telemetry.addDS(attentionBorders[0])
         val mainText = opMode.telemetry.addDS(driverStation)
-        val bottomBorder = opMode.telemetry.addDS(attentionBorders[1])
+        val bottomBorder = opMode.telemetry.addDS(attentionBorders[0])
         opMode.telemetry.addDashboard("<small>USR</small>", dashboard)
 
         // Must manually call telemetry push as the BOM may not be handling them
@@ -138,11 +138,11 @@ class UserSelection<T : Any>(
                 timer.reset()
             }
             if (flash) {
-                topBorder.setValue(attentionBorders[0])
-                bottomBorder.setValue(attentionBorders[0])
-            } else {
                 topBorder.setValue(attentionBorders[1])
                 bottomBorder.setValue(attentionBorders[1])
+            } else {
+                topBorder.setValue(attentionBorders[0])
+                bottomBorder.setValue(attentionBorders[0])
             }
             // Updates will be handled by the main telemetry loop, the initial call was to ensure the options did
             // eventually make their way there in some quantity
