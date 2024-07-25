@@ -168,14 +168,14 @@ public class TelemetryMenu {
         aPrev = a;
         bPrev = b;
 
-        String menu = getString(children);
+        String menu = buildMenu(children);
 
         // Add it to telemetry
         telemetry.addLine(menu);
     }
 
     @NonNull
-    private String getString(ArrayList<Element> children) {
+    private String buildMenu(ArrayList<Element> children) {
         // Start building the text display.
         StringBuilder builder = new StringBuilder();
         // First, we add the static directions for gamepad operation
