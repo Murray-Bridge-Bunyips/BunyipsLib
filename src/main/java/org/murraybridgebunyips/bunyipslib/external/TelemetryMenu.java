@@ -28,6 +28,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.function.BooleanSupplier;
 
 /**
  * Utility for creating interactive menus through {@link Telemetry}.
@@ -44,8 +45,8 @@ public class TelemetryMenu {
     private boolean dpadDnPrev;
     private boolean dpadRightPrev;
     private boolean dpadLeftPrev;
-    private boolean xPrev;
-    private boolean lbPrev;
+    private boolean aPrev;
+    private boolean bPrev;
     private int selectedIdx = 0;
 
     /**
@@ -76,8 +77,8 @@ public class TelemetryMenu {
         boolean dpadDn = gamepad.dpad_down;
         boolean dpadRight = gamepad.dpad_right;
         boolean dpadLeft = gamepad.dpad_left;
-        boolean x = gamepad.x;
-        boolean lb = gamepad.left_bumper;
+        boolean a = gamepad.a;
+        boolean b = gamepad.b;
 
         // Figure out who our children our at this level
         // and figure out which item is currently highlighted
@@ -113,7 +114,7 @@ public class TelemetryMenu {
         }
 
         // Select: either enter submenu or input to option
-        else if (x && !xPrev) // rising edge
+        else if (a && !aPrev) // rising edge
         {
             // Select up element
             if (currentSelection instanceof SpecialUpElement) {
@@ -147,7 +148,7 @@ public class TelemetryMenu {
         }
 
         // Go up a level
-        else if (lb && !lbPrev) {
+        else if (b && !bPrev) {
             // We can only go up if we're not at the root level
             if (currentLevel != root) {
                 // Restore selection pointer to where it was before
@@ -164,8 +165,8 @@ public class TelemetryMenu {
         dpadDnPrev = dpadDn;
         dpadRightPrev = dpadRight;
         dpadLeftPrev = dpadLeft;
-        xPrev = x;
-        lbPrev = lb;
+        aPrev = a;
+        bPrev = b;
 
         String menu = getString(children);
 
@@ -180,9 +181,9 @@ public class TelemetryMenu {
         // First, we add the static directions for gamepad operation
         builder.append("<font color='#119af5' face=monospace>");
         builder.append("Navigate items.....dpad up/down\n")
-                .append("Select.............X\n")
+                .append("Up one level.......B\n")
                 .append("Edit option........dpad left/right\n")
-                .append("Up one level.......left bumper\n");
+                .append("Select.............A\n");
         builder.append("</font>");
         builder.append("\n");
 
@@ -251,6 +252,7 @@ public class TelemetryMenu {
          *
          * @param child the child element to add
          */
+        @SuppressWarnings("ClassEscapesDefinedScope")
         public void addChild(Element child) {
             child.setParent(this);
             children.add(child);
@@ -261,6 +263,7 @@ public class TelemetryMenu {
          *
          * @param childrenElems the children to add
          */
+        @SuppressWarnings("ClassEscapesDefinedScope")
         public void addChildren(Element[] childrenElems) {
             for (Element e : childrenElems) {
                 e.setParent(this);
@@ -285,7 +288,7 @@ public class TelemetryMenu {
         /**
          * Override this to get notified when the element is clicked
          */
-        void onClick() {
+        protected void onClick() {
         }
 
         /**
@@ -423,19 +426,36 @@ public class TelemetryMenu {
         }
     }
 
-    static class BooleanOption extends OptionElement {
+    /**
+     * A menu item backed by a boolean that can be adjusted by the user.
+     */
+    public static class BooleanOption extends OptionElement implements BooleanSupplier {
         private final String name;
         private boolean val;
 
         private String customTrue;
         private String customFalse;
 
-        BooleanOption(String name, boolean def) {
+        /**
+         * Create a new BooleanOption.
+         *
+         * @param name the name of this option
+         * @param def  default value
+         */
+        public BooleanOption(String name, boolean def) {
             this.name = name;
             val = def;
         }
 
-        BooleanOption(String name, boolean def, String customTrue, String customFalse) {
+        /**
+         * Create a new BooleanOption.
+         *
+         * @param name        the name of this option
+         * @param def         default value
+         * @param customTrue  the value instead of "true" to display when this option is selected
+         * @param customFalse the value instead of "false" to display when this option is selected
+         */
+        public BooleanOption(String name, boolean def, String customTrue, String customFalse) {
             this(name, def);
             this.customTrue = customTrue;
             this.customFalse = customFalse;
@@ -469,7 +489,13 @@ public class TelemetryMenu {
             return String.format("%s: <font color='#e37c07' face=monospace>%s</font>", name, valStr);
         }
 
-        public boolean getValue() {
+        /**
+         * Gets the state of this boolean menu item.
+         *
+         * @return a result whether this item is selected
+         */
+        @Override
+        public boolean getAsBoolean() {
             return val;
         }
     }
@@ -505,7 +531,7 @@ public class TelemetryMenu {
             this.name = name;
         }
 
-        abstract void onClick();
+        protected abstract void onClick();
 
         @Override
         protected String getDisplayText() {
@@ -514,9 +540,9 @@ public class TelemetryMenu {
     }
 
     /**
-     * A child component of a menu.
+     * A generic child component that has a parent and a backing string.
      */
-    public abstract static class Element {
+    private abstract static class Element {
         private MenuElement parent;
 
         protected void setParent(MenuElement parent) {
