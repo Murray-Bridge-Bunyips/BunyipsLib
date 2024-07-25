@@ -83,12 +83,12 @@ public class AprilTagPoseEstimator implements Runnable {
      * If you do not call this method, your camera will be assumed to be at the center of the robot, facing forward.
      * Note that the rotation offset is only used when paired with the heading estimator (see {@link #setHeadingEstimate}).
      *
-     * @param leftFromCenter    the lateral (x) distance from the center of the robot to the camera, extending outwards LEFT looking top down with your robot facing forward
      * @param forwardFromCenter the forward (y) distance from the center of the robot to the camera, extending outwards FORWARD looking top down with your robot facing forward
+     * @param leftFromCenter    the lateral (x) distance from the center of the robot to the camera, extending outwards LEFT looking top down with your robot facing forward
      * @param rotationOnRobot   the angle at which, increasing ANTI-CLOCKWISE, your camera is pointing relative to your robot facing forward
      * @return this
      */
-    public AprilTagPoseEstimator setCameraOffset(Measure<Distance> leftFromCenter, Measure<Distance> forwardFromCenter, Measure<Angle> rotationOnRobot) {
+    public AprilTagPoseEstimator setCameraOffset(Measure<Distance> forwardFromCenter, Measure<Distance> leftFromCenter, Measure<Angle> rotationOnRobot) {
         // Convert to native units
         offset = new Pose2d(
                 forwardFromCenter.in(Inches),
@@ -150,7 +150,7 @@ public class AprilTagPoseEstimator implements Runnable {
             if (updateHeading) {
                 // Rotate 90 degrees (pi/2 rads) to match unit circle proportions due to a rotation mismatch as corrected
                 // in the vector calculation above
-                heading = Math.PI / 2.0 + tagRotation - Math.toRadians(camPose.yaw) + offset.getHeading();
+                heading = Math.PI / 2.0 + tagRotation - Math.toRadians(camPose.yaw) - offset.getHeading();
             }
             Pose2d estimatedPose = new Pose2d(pos.getX(), pos.getY(), heading);
 
