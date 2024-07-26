@@ -89,11 +89,7 @@ public interface RoadRunner {
      * @return The converted pose
      */
     default Pose2d unitPose(Pose2d pose, Distance distanceUnit, Angle angleUnit) {
-        return new Pose2d(
-                Inches.convertFrom(pose.getX(), distanceUnit),
-                Inches.convertFrom(pose.getY(), distanceUnit),
-                Radians.convertFrom(pose.getHeading(), angleUnit)
-        );
+        return unitPose(pose, distanceUnit, angleUnit, 1);
     }
 
     /**
@@ -106,9 +102,42 @@ public interface RoadRunner {
      * @return The converted vector
      */
     default Vector2d unitVec(Vector2d vector, Distance unit) {
+        return unitVec(vector, unit, 1);
+    }
+
+    /**
+     * Convert a Pose2d of specified units to inches and radians.
+     * Convenient for having unit-defined poses that need to be of the same unit of default RoadRunner poses, such
+     * as adding vectors for relative movement.
+     *
+     * @param pose           The pose to convert
+     * @param distanceUnit   The unit of the pose's distance
+     * @param angleUnit      The unit of the pose's angle
+     * @param scalarDistMult The vector scalar, in the unit of distanceUnit.
+     * @return The converted pose
+     */
+    default Pose2d unitPose(Pose2d pose, Distance distanceUnit, Angle angleUnit, double scalarDistMult) {
+        return new Pose2d(
+                Inches.convertFrom(pose.getX() * scalarDistMult, distanceUnit),
+                Inches.convertFrom(pose.getY() * scalarDistMult, distanceUnit),
+                Radians.convertFrom(pose.getHeading(), angleUnit)
+        );
+    }
+
+    /**
+     * Convert a Vector2d of specified units to inches and radians.
+     * Convenient for having unit-defined poses that need to be of the same unit of default RoadRunner poses, such
+     * as adding vectors for relative movement.
+     *
+     * @param vector         The vector to convert
+     * @param unit           The unit of the vector
+     * @param scalarDistMult The vector scalar, in the unit of the unit parameter.
+     * @return The converted vector
+     */
+    default Vector2d unitVec(Vector2d vector, Distance unit, double scalarDistMult) {
         return new Vector2d(
-                Inches.convertFrom(vector.getX(), unit),
-                Inches.convertFrom(vector.getY(), unit)
+                Inches.convertFrom(vector.getX() * scalarDistMult, unit),
+                Inches.convertFrom(vector.getY() * scalarDistMult, unit)
         );
     }
 
@@ -192,9 +221,36 @@ public interface RoadRunner {
      * @return Builder for the trajectory
      */
     default RoadRunnerTrajectoryTaskBuilder makeTrajectory(Pose2d startPoseInchRad) {
+        return makeTrajectory(startPoseInchRad, false);
+    }
+
+    /**
+     * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
+     *
+     * @param startPoseInchRad Starting pose of the trajectory to be built starting at (in, in, rad). This pose will consequently used as the next implicit pose.
+     * @param mirrorPoseRef    Whether to mirror this starting pose if used in a {@code mirrorToRef}. This is disabled by default to account for global coordinate systems.
+     * @return Builder for the trajectory
+     */
+    default RoadRunnerTrajectoryTaskBuilder makeTrajectory(Pose2d startPoseInchRad, boolean mirrorPoseRef) {
         // noinspection rawtypes
         TrajectorySequenceBuilder builder = getDrive().trajectorySequenceBuilder(startPoseInchRad);
-        return new RoadRunnerTrajectoryTaskBuilder(getDrive(), startPoseInchRad, builder.getBaseVelConstraint(), builder.getBaseAccelConstraint(), builder.getBaseTurnConstraintMaxAngVel(), builder.getBaseTurnConstraintMaxAngAccel());
+        return new RoadRunnerTrajectoryTaskBuilder(getDrive(), startPoseInchRad, builder.getBaseVelConstraint(), builder.getBaseAccelConstraint(), builder.getBaseTurnConstraintMaxAngVel(), builder.getBaseTurnConstraintMaxAngAccel(), mirrorPoseRef);
+    }
+
+    /**
+     * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
+     *
+     * @param startPose     Starting pose of the trajectory to be built starting at. This pose will consequently used as the next implicit pose.
+     * @param inUnit        The unit of the end pose vector (will be converted to inches)
+     * @param angleUnit     The unit of the end pose heading (will be converted to radians)
+     * @param mirrorPoseRef Whether to mirror this starting pose if used in a {@code mirrorToRef}. This is disabled by default to account for global coordinate systems.
+     * @return Builder for the trajectory
+     */
+    default RoadRunnerTrajectoryTaskBuilder makeTrajectory(Pose2d startPose, Distance inUnit, Angle angleUnit, boolean mirrorPoseRef) {
+        double x = Inches.convertFrom(startPose.getX(), inUnit);
+        double y = Inches.convertFrom(startPose.getY(), inUnit);
+        double r = Radians.convertFrom(startPose.getHeading(), angleUnit);
+        return makeTrajectory(new Pose2d(x, y, r), mirrorPoseRef);
     }
 
     /**
@@ -206,10 +262,30 @@ public interface RoadRunner {
      * @return Builder for the trajectory
      */
     default RoadRunnerTrajectoryTaskBuilder makeTrajectory(Pose2d startPose, Distance inUnit, Angle angleUnit) {
-        double x = Inches.convertFrom(startPose.getX(), inUnit);
-        double y = Inches.convertFrom(startPose.getY(), inUnit);
-        double r = Radians.convertFrom(startPose.getHeading(), angleUnit);
-        return makeTrajectory(new Pose2d(x, y, r));
+        return makeTrajectory(startPose, inUnit, angleUnit, false);
+    }
+
+    /**
+     * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
+     * Without arguments, the start pose will use the current pose estimate of the drive *or* the last spliced pose as the starting
+     * pose of the trajectory. If there is no buffered spliced pose, the current pose estimate will be used.
+     *
+     * @param mirrorPoseRef Whether to mirror the implicit starting pose if used in a {@code mirrorToRef}. This is disabled by default to account for global coordinate systems.
+     * @return Builder for the trajectory
+     * @see #makeTrajectory(Pose2d)
+     */
+    default RoadRunnerTrajectoryTaskBuilder makeTrajectory(boolean mirrorPoseRef) {
+        // If we're using an implicit start pose in the presence of a lastKnownPosition, it is likely the case that
+        // we don't want to use the lastKnownPosition as the implicit pose, so we'll reset the pose info here
+        Pose2d dp = getDrive().getPoseEstimate();
+        Pose2d lastKnown = Storage.memory().lastKnownPosition;
+        if (lastKnown != null && splicedPose.isNull() && dp.epsilonEquals(lastKnown))
+            resetPoseInfo();
+        dp = getDrive().getPoseEstimate();
+        Pose2d implicitPose = splicedPose.isNotNull() ? splicedPose.get() : dp;
+        // noinspection rawtypes
+        TrajectorySequenceBuilder builder = getDrive().trajectorySequenceBuilder(implicitPose);
+        return new RoadRunnerTrajectoryTaskBuilder(getDrive(), implicitPose, builder.getBaseVelConstraint(), builder.getBaseAccelConstraint(), builder.getBaseTurnConstraintMaxAngVel(), builder.getBaseTurnConstraintMaxAngAccel(), mirrorPoseRef);
     }
 
     /**
@@ -221,17 +297,7 @@ public interface RoadRunner {
      * @see #makeTrajectory(Pose2d)
      */
     default RoadRunnerTrajectoryTaskBuilder makeTrajectory() {
-        // If we're using an implicit start pose in the presence of a lastKnownPosition, it is likely the case that
-        // we don't want to use the lastKnownPosition as the implicit pose, so we'll reset the pose info here
-        Pose2d dp = getDrive().getPoseEstimate();
-        Pose2d lastKnown = Storage.memory().lastKnownPosition;
-        if (lastKnown != null && splicedPose.isNull() && dp.epsilonEquals(lastKnown))
-            resetPoseInfo();
-        dp = getDrive().getPoseEstimate();
-        Pose2d implicitPose = splicedPose.isNotNull() ? splicedPose.get() : dp;
-        // noinspection rawtypes
-        TrajectorySequenceBuilder builder = getDrive().trajectorySequenceBuilder(implicitPose);
-        return new RoadRunnerTrajectoryTaskBuilder(getDrive(), implicitPose, builder.getBaseVelConstraint(), builder.getBaseAccelConstraint(), builder.getBaseTurnConstraintMaxAngVel(), builder.getBaseTurnConstraintMaxAngAccel());
+        return makeTrajectory(false);
     }
 
     /**
@@ -277,10 +343,12 @@ public interface RoadRunner {
          * @param baseAccelConstraint           Base acceleration constraint (in/s^2)
          * @param baseTurnConstraintMaxAngVel   Base turn constraint max angular velocity (rad/s)
          * @param baseTurnConstraintMaxAngAccel Base turn constraint max angular acceleration (rad/s^2)
+         * @param mirrorPoseRef                 Whether to mirror the startPose if used in a {@link #mirrorToRef}.
          */
-        public RoadRunnerTrajectoryTaskBuilder(RoadRunnerDrive drive, Pose2d startPose, Double startTangent, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel) {
+        public RoadRunnerTrajectoryTaskBuilder(RoadRunnerDrive drive, Pose2d startPose, Double startTangent, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel, boolean mirrorPoseRef) {
             super(startPose, startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
-            mirroredBuilder = new TrajectorySequenceBuilder<>(splicedPose.isNotNull() ? mirror(Objects.requireNonNull(splicedPose.get())) : mirror(startPose), -startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
+            Pose2d pose = splicedPose.isNotNull() ? Objects.requireNonNull(splicedPose.get()) : startPose;
+            mirroredBuilder = new TrajectorySequenceBuilder<>(mirrorPoseRef ? mirror(pose) : pose, -startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
             this.drive = drive;
         }
 
@@ -293,10 +361,12 @@ public interface RoadRunner {
          * @param baseAccelConstraint           Base acceleration constraint
          * @param baseTurnConstraintMaxAngVel   Base turn constraint max angular velocity
          * @param baseTurnConstraintMaxAngAccel Base turn constraint max angular acceleration
+         * @param mirrorPoseRef                 Whether to mirror the startPose if used in a {@link #mirrorToRef}.
          */
-        public RoadRunnerTrajectoryTaskBuilder(RoadRunnerDrive drive, Pose2d startPose, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel) {
+        public RoadRunnerTrajectoryTaskBuilder(RoadRunnerDrive drive, Pose2d startPose, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel, boolean mirrorPoseRef) {
             super(startPose, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
-            mirroredBuilder = new TrajectorySequenceBuilder<>(splicedPose.isNotNull() ? mirror(Objects.requireNonNull(splicedPose.get())) : mirror(startPose), baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
+            Pose2d pose = splicedPose.isNotNull() ? Objects.requireNonNull(splicedPose.get()) : startPose;
+            mirroredBuilder = new TrajectorySequenceBuilder<>(mirrorPoseRef ? mirror(pose) : pose, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
             this.drive = drive;
         }
 
@@ -789,6 +859,11 @@ public interface RoadRunner {
          * Mirror a {@link TrajectorySequence} into the given {@link Reference}, which will effectively "flip" over the y-axis from the center of the field.
          * This method is useful for trajectories that need to be run in the opposite direction, such as a Red Left trajectory
          * being flipped to a Blue Right trajectory.
+         * <p>
+         * NOTE: The Starting Pose (builder parameter) is <b>NOT</b> flipped with using mirrorToRef() by default.
+         * This is to allow global coordinate systems to work properly. If you wish to mirror the Starting Pose,
+         * you must pass an additional argument of {@code true} to {@link #makeTrajectory()}, which will flip the starting
+         * pose.
          *
          * @param out Reference to mirror the trajectory to - this will be mirrored upon a build call
          * @return Builder,
@@ -804,7 +879,7 @@ public interface RoadRunner {
          * but will still accept task settings and construction.
          * <p>
          * By default, with no extra boolean parameter, this method will also set the Pose Estimate of the drive to
-         * the start pose of the sequence immediately. Pass in false to disable this behavior.
+         * the start pose of the sequence immediately. Pass in false to disable this behaviour.
          * <p>
          * Example usage:
          * {@code
