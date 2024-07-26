@@ -920,6 +920,9 @@ public interface RoadRunner {
         /**
          * Build the trajectory sequence (and mirrored sequence) without creating a task.
          * This method is useful if you are not running an {@link AutonomousBunyipsOpMode}.
+         * <p>
+         * Note that building the trajectory itself not update any implicit poses for further calls.
+         * See {@link #buildTask()}/{@link #addTask()} for this behaviour.
          *
          * @return The built trajectory sequence from the builder, with no task being created or added.
          * If there is an {@link #runSequence(TrajectorySequence) override sequence}, that will be returned instead.
