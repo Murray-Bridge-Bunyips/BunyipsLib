@@ -44,9 +44,11 @@ import java.util.Objects;
  */
 public interface RoadRunner {
     /**
-     * Default timeout for all RoadRunner tasks, if not explicitly mentioned.
+     * Whether timeouts for built tasks should be force-set to no timeout. By default tasks are set to the trajectory
+     * duration but some systems do not want this restriction, therefore this exists to set that behaviour.
+     * You can call this directly to set it. It is auto-reset at the start of every BunyipsOpMode.
      */
-    Measure<Time> DEFAULT_TIMEOUT = INFINITE_TIMEOUT;
+    Reference<Boolean> noTimeouts = Reference.of(false);
     /**
      * Stores last spliced pose.
      */
@@ -57,6 +59,7 @@ public interface RoadRunner {
      */
     static void resetForOpMode() {
         splicedPose.clear();
+        noTimeouts.set(false);
     }
 
     /**
@@ -88,7 +91,7 @@ public interface RoadRunner {
      * @param angleUnit    The unit of the pose's angle
      * @return The converted pose
      */
-    default Pose2d unitPose(Pose2d pose, Distance distanceUnit, Angle angleUnit) {
+    static Pose2d unitPose(Pose2d pose, Distance distanceUnit, Angle angleUnit) {
         return unitPose(pose, distanceUnit, angleUnit, 1);
     }
 
@@ -101,7 +104,7 @@ public interface RoadRunner {
      * @param unit   The unit of the vector
      * @return The converted vector
      */
-    default Vector2d unitVec(Vector2d vector, Distance unit) {
+    static Vector2d unitVec(Vector2d vector, Distance unit) {
         return unitVec(vector, unit, 1);
     }
 
@@ -116,7 +119,7 @@ public interface RoadRunner {
      * @param scalarDistMult The vector scalar, in the unit of distanceUnit.
      * @return The converted pose
      */
-    default Pose2d unitPose(Pose2d pose, Distance distanceUnit, Angle angleUnit, double scalarDistMult) {
+    static Pose2d unitPose(Pose2d pose, Distance distanceUnit, Angle angleUnit, double scalarDistMult) {
         return new Pose2d(
                 Inches.convertFrom(pose.getX() * scalarDistMult, distanceUnit),
                 Inches.convertFrom(pose.getY() * scalarDistMult, distanceUnit),
@@ -134,11 +137,31 @@ public interface RoadRunner {
      * @param scalarDistMult The vector scalar, in the unit of the unit parameter.
      * @return The converted vector
      */
-    default Vector2d unitVec(Vector2d vector, Distance unit, double scalarDistMult) {
+    static Vector2d unitVec(Vector2d vector, Distance unit, double scalarDistMult) {
         return new Vector2d(
                 Inches.convertFrom(vector.getX() * scalarDistMult, unit),
                 Inches.convertFrom(vector.getY() * scalarDistMult, unit)
         );
+    }
+
+    /**
+     * Mirror a global pose across the alliance plane. This negates the heading and y components.
+     *
+     * @param pose the pose to mirror
+     * @return the mirrored pose
+     */
+    static Pose2d mirror(Pose2d pose) {
+        return new Pose2d(pose.getX(), -pose.getY(), -pose.getHeading());
+    }
+
+    /**
+     * Mirror a global vector across the alliance plane. This negates the y component.
+     *
+     * @param vector the vector to mirror
+     * @return the mirrored vector
+     */
+    static Vector2d mirror(Vector2d vector) {
+        return new Vector2d(vector.getX(), -vector.getY());
     }
 
     /**
@@ -328,7 +351,7 @@ public interface RoadRunner {
         private final RoadRunnerDrive drive;
         private double mult = 1;
         private TrajectorySequence overrideSequence;
-        private Measure<Time> timeout = DEFAULT_TIMEOUT;
+        private Measure<Time> timeout = null;
         private PriorityLevel priority = PriorityLevel.NORMAL;
         private Reference<TrajectorySequence> mirroredTrajectory = null;
         private String name = null;
@@ -368,14 +391,6 @@ public interface RoadRunner {
             Pose2d pose = splicedPose.isNotNull() ? Objects.requireNonNull(splicedPose.get()) : startPose;
             mirroredBuilder = new TrajectorySequenceBuilder<>(mirrorPoseRef ? mirror(pose) : pose, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
             this.drive = drive;
-        }
-
-        private Pose2d mirror(Pose2d pose) {
-            return new Pose2d(pose.getX(), -pose.getY(), -pose.getHeading());
-        }
-
-        private Vector2d mirror(Vector2d vector) {
-            return new Vector2d(vector.getX(), -vector.getY());
         }
 
         /**
@@ -964,10 +979,15 @@ public interface RoadRunner {
          */
         public RoadRunnerTask buildTask(boolean useEndAsNextImplicitPose) {
             TrajectorySequence sequence = build();
-            RoadRunnerTask task;
-            task = new RoadRunnerTask(timeout, drive, sequence);
-            if (timeout.magnitude() != 0.0)
+            // Timeout is auto-set to the trajectory duration
+            RoadRunnerTask task = new RoadRunnerTask(INFINITE_TIMEOUT, drive, sequence);
+            if (Boolean.TRUE.equals(noTimeouts.get())) {
+                // Global OpMode setting takes priority
+                task.withTimeout(INFINITE_TIMEOUT);
+            } else if (timeout != null) {
+                // Override with the user's timeout if they want it
                 task.withTimeout(timeout);
+            }
             task.withName(name);
             if (useEndAsNextImplicitPose)
                 splicedPose.set(sequence.end());
