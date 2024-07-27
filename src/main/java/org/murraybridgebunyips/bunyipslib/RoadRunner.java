@@ -63,25 +63,6 @@ public interface RoadRunner {
     }
 
     /**
-     * Get the drive instance reference to be used for RoadRunner trajectories.
-     * <b>Do NOT instantiate a new drive instance here, use the reference from your subsystems in your OpMode.</b>
-     * (e.g. {@code return drive;}) instead of ({@code return new MecanumDrive(...);})
-     *
-     * @return Drive instance reference
-     */
-    @NonNull
-    RoadRunnerDrive getDrive();
-
-    /**
-     * Reset pose info back to default.
-     */
-    default void resetPoseInfo() {
-        resetForOpMode();
-        Storage.memory().lastKnownPosition = null;
-        getDrive().setPoseEstimate(new Pose2d());
-    }
-
-    /**
      * Convert a Pose2d of specified units to inches and radians.
      * Convenient for having unit-defined poses that need to be of the same unit of default RoadRunner poses, such
      * as adding vectors for relative movement.
@@ -165,6 +146,25 @@ public interface RoadRunner {
     }
 
     /**
+     * Get the drive instance reference to be used for RoadRunner trajectories.
+     * <b>Do NOT instantiate a new drive instance here, use the reference from your subsystems in your OpMode.</b>
+     * (e.g. {@code return drive;}) instead of ({@code return new MecanumDrive(...);})
+     *
+     * @return Drive instance reference
+     */
+    @NonNull
+    RoadRunnerDrive getDrive();
+
+    /**
+     * Reset pose info back to default.
+     */
+    default void resetPoseInfo() {
+        resetForOpMode();
+        Storage.memory().lastKnownPosition = null;
+        getDrive().setPoseEstimate(new Pose2d());
+    }
+
+    /**
      * Make a translation velocity constraint.
      *
      * @param translation The translation velocity
@@ -236,6 +236,11 @@ public interface RoadRunner {
         double r = Radians.convertFrom(poseEstimate.getHeading(), angleUnit);
         setPose(new Pose2d(x, y, r));
     }
+
+    // Unfortunately, we need so many overrides for makeTrajectory as there are different unit constructions plus an additional parameter
+    // to whether this pose should be mirrored if used in a mirrorToRef. We can't ask for this information later as we need it now, so
+    // this is our best solution. Fortunately, the builder can defer this in a nice sequence of .disableMirroring().enableMirroring(),
+    // but at least this extra parameter gives us the option to control the mirroring of every different path segment.
 
     /**
      * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
@@ -349,6 +354,7 @@ public interface RoadRunner {
     final class RoadRunnerTrajectoryTaskBuilder extends TrajectorySequenceBuilder<RoadRunnerTrajectoryTaskBuilder> {
         private final TrajectorySequenceBuilder<RoadRunnerTrajectoryTaskBuilder> mirroredBuilder;
         private final RoadRunnerDrive drive;
+        private boolean mirroring = true;
         private double mult = 1;
         private TrajectorySequence overrideSequence;
         private Measure<Time> timeout = null;
@@ -371,7 +377,7 @@ public interface RoadRunner {
         public RoadRunnerTrajectoryTaskBuilder(RoadRunnerDrive drive, Pose2d startPose, Double startTangent, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel, boolean mirrorPoseRef) {
             super(startPose, startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
             Pose2d pose = splicedPose.isNotNull() ? Objects.requireNonNull(splicedPose.get()) : startPose;
-            mirroredBuilder = new TrajectorySequenceBuilder<>(mirrorPoseRef ? mirror(pose) : pose, -startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
+            mirroredBuilder = new TrajectorySequenceBuilder<>(mirrorPoseRef ? internalMirror(pose) : pose, -startTangent, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
             this.drive = drive;
         }
 
@@ -389,8 +395,45 @@ public interface RoadRunner {
         public RoadRunnerTrajectoryTaskBuilder(RoadRunnerDrive drive, Pose2d startPose, TrajectoryVelocityConstraint baseVelConstraint, TrajectoryAccelerationConstraint baseAccelConstraint, double baseTurnConstraintMaxAngVel, double baseTurnConstraintMaxAngAccel, boolean mirrorPoseRef) {
             super(startPose, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
             Pose2d pose = splicedPose.isNotNull() ? Objects.requireNonNull(splicedPose.get()) : startPose;
-            mirroredBuilder = new TrajectorySequenceBuilder<>(mirrorPoseRef ? mirror(pose) : pose, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
+            mirroredBuilder = new TrajectorySequenceBuilder<>(mirrorPoseRef ? internalMirror(pose) : pose, baseVelConstraint, baseAccelConstraint, baseTurnConstraintMaxAngVel, baseTurnConstraintMaxAngAccel);
             this.drive = drive;
+        }
+
+        private Pose2d internalMirror(Pose2d pose) {
+            if (!mirroring) return pose;
+            return mirror(pose);
+        }
+
+        private Vector2d internalMirror(Vector2d vector) {
+            if (!mirroring) return vector;
+            return mirror(vector);
+        }
+
+        /**
+         * Turn off ref mirroring for the following builder instructions.
+         * <p>
+         * This is useful when you want to temporarily rely on a global field coordinate, instead of having it flip
+         * in the mirrored trajectory. This disabling is done automatically in the constructor and can be enabled with a parameter, whereas actual segments
+         * are enabled to be mirrored and can be temporarily disabled through this method.
+         *
+         * @return The builder
+         * @see #enableMirroring()
+         */
+        public RoadRunnerTrajectoryTaskBuilder disableMirroring() {
+            mirroring = false;
+            return this;
+        }
+
+        /**
+         * Turn ref mirroring on for the following builder instructions. This reverses {@link #disableMirroring()}.
+         * Note that mirroring for trajectory segments is enabled by default.
+         *
+         * @return The builder
+         * @see #disableMirroring()
+         */
+        public RoadRunnerTrajectoryTaskBuilder enableMirroring() {
+            mirroring = true;
+            return this;
         }
 
         /**
@@ -421,7 +464,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             endPositionInches = endPositionInches.times(mult);
-            mirroredBuilder.lineTo(mirror(endPositionInches), velConstraint, accelConstraint);
+            mirroredBuilder.lineTo(internalMirror(endPositionInches), velConstraint, accelConstraint);
             return super.lineTo(endPositionInches, velConstraint, accelConstraint);
         }
 
@@ -439,7 +482,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             endPositionInches = endPositionInches.times(mult);
-            mirroredBuilder.lineToConstantHeading(mirror(endPositionInches), velConstraint, accelConstraint);
+            mirroredBuilder.lineToConstantHeading(internalMirror(endPositionInches), velConstraint, accelConstraint);
             return super.lineToConstantHeading(endPositionInches, velConstraint, accelConstraint);
         }
 
@@ -457,7 +500,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             endPoseInchRad = new Pose2d(endPoseInchRad.vec().times(mult), endPoseInchRad.getHeading());
-            mirroredBuilder.lineToLinearHeading(mirror(endPoseInchRad), velConstraint, accelConstraint);
+            mirroredBuilder.lineToLinearHeading(internalMirror(endPoseInchRad), velConstraint, accelConstraint);
             return super.lineToLinearHeading(endPoseInchRad, velConstraint, accelConstraint);
         }
 
@@ -475,7 +518,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             endPoseInchRad = new Pose2d(endPoseInchRad.vec().times(mult), endPoseInchRad.getHeading());
-            mirroredBuilder.lineToSplineHeading(mirror(endPoseInchRad), velConstraint, accelConstraint);
+            mirroredBuilder.lineToSplineHeading(internalMirror(endPoseInchRad), velConstraint, accelConstraint);
             return super.lineToSplineHeading(endPoseInchRad, velConstraint, accelConstraint);
         }
 
@@ -493,7 +536,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             endPositionInches = endPositionInches.times(mult);
-            mirroredBuilder.strafeTo(mirror(endPositionInches), velConstraint, accelConstraint);
+            mirroredBuilder.strafeTo(internalMirror(endPositionInches), velConstraint, accelConstraint);
             return super.strafeTo(endPositionInches, velConstraint, accelConstraint);
         }
 
@@ -547,7 +590,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             inches *= mult;
-            mirroredBuilder.strafeLeft(-inches, velConstraint, accelConstraint);
+            mirroredBuilder.strafeLeft(inches * (mirroring ? -1 : 1), velConstraint, accelConstraint);
             return super.strafeLeft(inches, velConstraint, accelConstraint);
         }
 
@@ -565,7 +608,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             inches *= mult;
-            mirroredBuilder.strafeRight(-inches, velConstraint, accelConstraint);
+            mirroredBuilder.strafeRight(inches * (mirroring ? -1 : 1), velConstraint, accelConstraint);
             return super.strafeRight(inches, velConstraint, accelConstraint);
         }
 
@@ -585,7 +628,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             endPositionInches = endPositionInches.times(mult);
-            mirroredBuilder.splineTo(mirror(endPositionInches), -endHeadingRad, velConstraint, accelConstraint);
+            mirroredBuilder.splineTo(internalMirror(endPositionInches), endHeadingRad * (mirroring ? -1 : 1), velConstraint, accelConstraint);
             return super.splineTo(endPositionInches, endHeadingRad, velConstraint, accelConstraint);
         }
 
@@ -605,7 +648,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             endPositionInches = endPositionInches.times(mult);
-            mirroredBuilder.splineToConstantHeading(mirror(endPositionInches), -endHeadingRad, velConstraint, accelConstraint);
+            mirroredBuilder.splineToConstantHeading(internalMirror(endPositionInches), endHeadingRad * (mirroring ? -1 : 1), velConstraint, accelConstraint);
             return super.splineToConstantHeading(endPositionInches, endHeadingRad, velConstraint, accelConstraint);
         }
 
@@ -625,7 +668,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             endPoseInchRad = endPoseInchRad.times(mult);
-            mirroredBuilder.splineToLinearHeading(mirror(endPoseInchRad), -endHeadingRad, velConstraint, accelConstraint);
+            mirroredBuilder.splineToLinearHeading(internalMirror(endPoseInchRad), endHeadingRad * (mirroring ? -1 : 1), velConstraint, accelConstraint);
             return super.splineToLinearHeading(endPoseInchRad, endHeadingRad, velConstraint, accelConstraint);
         }
 
@@ -645,7 +688,7 @@ public interface RoadRunner {
                 TrajectoryAccelerationConstraint accelConstraint
         ) {
             endPoseInchRad = new Pose2d(endPoseInchRad.vec().times(mult), endPoseInchRad.getHeading());
-            mirroredBuilder.splineToSplineHeading(mirror(endPoseInchRad), -endPoseInchRad.getHeading(), velConstraint, accelConstraint);
+            mirroredBuilder.splineToSplineHeading(internalMirror(endPoseInchRad), endPoseInchRad.getHeading() * (mirroring ? -1 : 1), velConstraint, accelConstraint);
             return super.splineToSplineHeading(endPoseInchRad, endHeadingRad, velConstraint, accelConstraint);
         }
 
@@ -656,7 +699,7 @@ public interface RoadRunner {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder setTangent(double tangent) {
-            mirroredBuilder.setTangent(tangent);
+            mirroredBuilder.setTangent(tangent * (mirroring ? -1 : 1));
             return super.setTangent(tangent);
         }
 
@@ -780,7 +823,7 @@ public interface RoadRunner {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder addSpatialMarker(Vector2d pointInches, MarkerCallback callback) {
-            mirroredBuilder.addSpatialMarker(mirror(pointInches), callback);
+            mirroredBuilder.addSpatialMarker(internalMirror(pointInches), callback);
             return super.addSpatialMarker(pointInches, callback);
         }
 
@@ -805,7 +848,7 @@ public interface RoadRunner {
          * @return The builder
          */
         public RoadRunnerTrajectoryTaskBuilder turn(double radians, double maxAngVel, double maxAngAccel) {
-            mirroredBuilder.turn(-radians, maxAngVel, maxAngAccel);
+            mirroredBuilder.turn(radians * (mirroring ? -1 : 1), maxAngVel, maxAngAccel);
             return super.turn(radians, maxAngVel, maxAngAccel);
         }
 
@@ -822,6 +865,7 @@ public interface RoadRunner {
 
         /**
          * Add a trajectory to the sequence.
+         * Note that {@link #mirrorToRef} will not mirror this trajectory as it is already built and cannot be modified.
          *
          * @param trajectory The trajectory to add
          * @return The builder
