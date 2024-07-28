@@ -38,7 +38,7 @@ public class DriveToPoseTask extends Task {
     private double MAX_ROTATION_SPEED = 1.0;
 
     private Measure<Angle> headingTolerance = Degrees.of(2);
-    private Measure<Distance> vectorTolerance = Centimeters.of(5);
+    private Measure<Distance> vectorTolerance = Centimeters.of(2);
 
     /**
      * Run the Drive To Pose Task on a drive subsystem.

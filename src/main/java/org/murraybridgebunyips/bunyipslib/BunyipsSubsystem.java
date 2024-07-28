@@ -153,8 +153,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final void cancelCurrentTask() {
         if (shouldRun && currentTask != defaultTask) {
-            Dbg.warn(getClass(), "Task % running on % was force cancelled and reverted to the default task.", currentTask, name);
-            opMode.telemetry.log(getClass(), html().color("yellow", "current task force cancelled: ").text("check logcat for more info."));
+            Dbg.logv(getClass(), "Task % running on % was force cancelled and reverted to the default task.", currentTask, name);
             currentTask.finishNow();
             currentTask = defaultTask;
         }
