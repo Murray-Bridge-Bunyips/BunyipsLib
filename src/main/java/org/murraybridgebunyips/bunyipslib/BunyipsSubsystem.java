@@ -171,7 +171,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (currentTask == null || currentTask.isFinished()) {
             if (currentTask == null) {
                 Dbg.logv(getClass(), "%Subsystem awake.", isDefaultName() ? "" : "(" + name + ") ");
-                opMode.telemetry.log(getClass(), html().color("green", "enabled. ").text("check logcat for more info."));
+                opMode.telemetry.log(getClass(), html().color("green", "awake. ").small("check logcat for more info."));
                 onEnable();
             } else {
                 // Task changes are repetitive to log, will just leave the DS with the check logcat message
