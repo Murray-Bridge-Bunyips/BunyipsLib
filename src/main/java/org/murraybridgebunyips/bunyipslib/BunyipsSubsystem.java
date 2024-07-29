@@ -119,7 +119,6 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (!shouldRun) {
             assertionFailed = true;
             Dbg.error(getClass(), "%Subsystem has been disabled as assertParamsNotNull() failed.", isDefaultName() ? "" : "(" + name + ") ");
-            opMode.telemetry.log(getClass(), html().color("red", "disabled: ").text("check logcat for more info."));
             onDisable();
         }
         return shouldRun;
@@ -132,7 +131,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (!shouldRun) return;
         shouldRun = false;
         Dbg.logv(getClass(), "%Subsystem disabled via disable() call.", isDefaultName() ? "" : "(" + name + ") ");
-        opMode.telemetry.log(getClass(), html().color("yellow", "disabled: ").text("check logcat for more info."));
+        opMode.telemetry.log(getClass(), html().color("yellow", "disabled: ").small("check logcat for more info."));
         onDisable();
     }
 
@@ -144,7 +143,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (shouldRun || assertionFailed) return;
         shouldRun = true;
         Dbg.logv(getClass(), "%Subsystem enabled via enable() call.", isDefaultName() ? "" : "(" + name + ") ");
-        opMode.telemetry.log(getClass(), html().color("green", "enabled. ").text("check logcat for more info."));
+        opMode.telemetry.log(getClass(), html().color("green", "enabled: ").small("check logcat for more info."));
         onEnable();
     }
 
@@ -171,7 +170,6 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (currentTask == null || currentTask.isFinished()) {
             if (currentTask == null) {
                 Dbg.logv(getClass(), "%Subsystem awake.", isDefaultName() ? "" : "(" + name + ") ");
-                opMode.telemetry.log(getClass(), html().color("green", "awake. ").small("check logcat for more info."));
                 onEnable();
             } else {
                 // Task changes are repetitive to log, will just leave the DS with the check logcat message
