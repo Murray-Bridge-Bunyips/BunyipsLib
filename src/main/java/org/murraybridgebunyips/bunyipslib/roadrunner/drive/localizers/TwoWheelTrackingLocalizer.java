@@ -66,7 +66,7 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
 
         this.parallelDeadwheel = parallelDeadwheel;
         this.perpendicularDeadwheel = perpendicularDeadwheel;
-        
+
         xMul = coefficients.X_MULTIPLIER;
         yMul = coefficients.Y_MULTIPLIER;
     }
