@@ -8,6 +8,16 @@
 
 ##### A powerful all-in-one library for FTC used by the Murray Bridge High School Student Robotics Club.
 
+<br>
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/75408bde-ccba-408d-a4f9-3969af3b9ec5">
+    <br>
+    Two <b>BunyipsLib-powered</b> robots scoring in a <i>CENTERSTAGE (2023-2024 season)</i> autonomous.
+    <br>
+    See: <a href="https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/blob/703ab81345e168eca18ca137d2a8fcae4c716899/TeamCode/GLaDOS/src/main/java/org/murraybridgebunyips/glados/autonomous/l5/GLaDOSUltimatePreloadLeftPark.java">Left (15215)</a> OpMode, <a href="https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/blob/703ab81345e168eca18ca137d2a8fcae4c716899/TeamCode/Wheatley/src/main/java/org/murraybridgebunyips/wheatley/autonomous/arm/WheatleyLeftClawAuto.java">Right (22407)</a> (<a href="https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/blob/703ab81345e168eca18ca137d2a8fcae4c716899/TeamCode/Wheatley/src/main/java/org/murraybridgebunyips/wheatley/autonomous/arm/WheatleyRightClawAuto.java">variant shown</a>) OpMode
+</div>
+<br>
+    
 BunyipsLib was originally a collection of common functions that our FTC teams used in competition.
 It has since evolved into a full-fledged library that is used by all of our teams. It is designed to
 provide useful development utilities in making robot code, offering efficient common modules and
