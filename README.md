@@ -31,7 +31,8 @@ to be
 the one-stop shop for all of our teams' needs. It is designed to be easy to use, and to integrate
 the latest and greatest features from the FTC SDK and other libraries.
 
-BunyipsLib is in active and continually experimental development, expect bugs and to keep up to
+>[!IMPORTANT]
+>BunyipsLib is in active and continually experimental development, expect bugs and to keep up to
 date!
 
 ## Features
@@ -348,11 +349,12 @@ BunyipsLib will provide the tools to get the job done quickly, no matter the ski
 experience, or understanding. Reusability between robots is an essential design element
 of BunyipsLib, to get ideas implemented faster and to write effective code.
 
-See the [examples](./src/main/java/org/murraybridgebunyips/bunyipslib/example) for getting
-familiar with BunyipsLib.  
+>[!TIP]
+>Consult our [wiki](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/wiki/) for more information and how to install BunyipsLib.
+
 We use BunyipsLib ourselves in both Kotlin and Java for our own
 robots, see [BunyipsFTC](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/) for more examples.
 
 ___
-Consult our [wiki](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/wiki/) for more information regarding installing and writing OpModes with BunyipsLib.
+
 ###### BunyipsLib. Copyright (c) 2024 Lucas Bubner, MBHS Student Robotics Club, under the MIT License.
