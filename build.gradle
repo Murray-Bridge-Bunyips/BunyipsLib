@@ -60,7 +60,18 @@ android {
 tasks.dokkaHtml.configure {
     suppressInheritedMembers.set(true)
     outputDirectory.set(file("./docs"))
-    moduleVersion.set(project.version + "-dev")
+    moduleVersion.set(project.version + "-dev-" + getBuildTime())
+
+    dokkaSourceSets {
+        configureEach {
+            jdkVersion.set(8)
+            includeNonPublic.set(true)
+            perPackageOption {
+                matchingRegex.set("org\\.murraybridgebunyips\\.bunyipslib\\.example\\..*")
+                suppress.set(true)
+            }
+        }
+    }
 }
 
 tasks.withType(DokkaTask.class).configureEach {
