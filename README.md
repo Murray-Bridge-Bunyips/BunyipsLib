@@ -353,7 +353,6 @@ familiar with BunyipsLib.
 We use BunyipsLib ourselves in both Kotlin and Java for our own
 robots, see [BunyipsFTC](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/) for more examples.
 
-Consult our [wiki](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/wiki/) for more information regarding installing and writing OpModes with BunyipsLib.
 ___
-
-###### BunyipsLib. Copyright (c) 2024 Lucas Bubner, MBHS Student Robotics Club, under the MIT License.<br><br>External libraries implemented/dependencies to BunyipsLib include [RoadRunner](https://github.com/acmerobotics/road-runner/tree/423c9554c97ecac249b8d07eff43235496b22f39) v0.5, WPILib's [WPIUnits](https://github.com/wpilibsuite/allwpilib/tree/0c822b45ab49b201455417d135474fc2f7b00f86/wpiunits/src/main/java/edu/wpi/first/units), [FtcDashboard](https://github.com/acmerobotics/ftc-dashboard), and [FTCLib](https://github.com/FTCLib/FTCLib)'s utilities such as PID/FF controllers and lookup tables. These library features are copyright of their respective owners.<br><br>I am not responsible for any failed autonomous, broken servos or nuclear warfare that result after the usage of BunyipsLib.<br>Test and understand your code thoroughly.
+Consult our [wiki](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/wiki/) for more information regarding installing and writing OpModes with BunyipsLib.
+###### BunyipsLib. Copyright (c) 2024 Lucas Bubner, MBHS Student Robotics Club, under the MIT License.
