@@ -6,7 +6,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Murray-Bridge-Bunyips/BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/pulse/monthly)
 [![CodeFactor](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib/badge)](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib)<br>
 
-##### A powerful all-in-one library for FTC used by the Murray Bridge High School Student Robotics Club.
+##### A powerful all-in-one library for FTC used by the Murray Bridge High School Student Robotics Club.<br>[Check out our new Wiki!](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/wiki)
 
 <br>
 <div align="center">
