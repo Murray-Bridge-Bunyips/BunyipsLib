@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Builder</title>
+    <link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../../index.html">
+                            BunyipsLib
+                    </a>
+            </div>
+            <div class="library-version">
+3.5.0-dev            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="BunyipsLib::org.murraybridgebunyips.bunyipslib.roadrunner.drive/DriveConstants.Builder///PointingToDeclaration//-1598058967">
+  <div class="breadcrumbs"><a href="../../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../../index.html">org.murraybridgebunyips.bunyipslib.roadrunner.drive</a><span class="delimiter">/</span><a href="../index.html">DriveConstants</a><span class="delimiter">/</span><span class="current">Builder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Builder</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">Builder</a></div><p class="paragraph">Builder class to assist in making DriveConstants.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1870738688%2FConstructors%2F-1598058967" anchor-label="Builder" id="1870738688%2FConstructors%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-builder.html"><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1870738688%2FConstructors%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Begin building a new DriveConstants object.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="1845501165%2FFunctions%2F-1598058967" anchor-label="build" id="1845501165%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="build.html"><span><span>build</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1845501165%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="build.html"><span class="token function">build</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../index.html">DriveConstants</a></div><div class="brief ">Finalise your configuration.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1850481676%2FFunctions%2F-1598058967" anchor-label="setGearRatio" id="-1850481676%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-gear-ratio.html"><span>set</span><wbr></wbr><span>Gear</span><wbr></wbr><span><span>Ratio</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1850481676%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-gear-ratio.html"><span class="token function">setGearRatio</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">gearRatio<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the gear ratio of the drive motors</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1545603314%2FFunctions%2F-1598058967" anchor-label="setKA" id="1545603314%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-k-a.html"><span>set</span><wbr></wbr><span><span>KA</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1545603314%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-k-a.html"><span class="token function">setKA</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">kA<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the kA feedforward gain for the velocity PID.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1037235799%2FFunctions%2F-1598058967" anchor-label="setKStatic" id="1037235799%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-k-static.html"><span>set</span><wbr></wbr><span><span>KStatic</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1037235799%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-k-static.html"><span class="token function">setKStatic</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">kStatic<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the kStatic feedforward gain for the velocity PID.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2011871683%2FFunctions%2F-1598058967" anchor-label="setKV" id="-2011871683%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-k-v.html"><span>set</span><wbr></wbr><span><span>KV</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2011871683%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-k-v.html"><span class="token function">setKV</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">kV<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the kV feedforward gain for the velocity PID.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1965006174%2FFunctions%2F-1598058967" anchor-label="setMaxAccel" id="1965006174%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-max-accel.html"><span>set</span><wbr></wbr><span>Max</span><wbr></wbr><span><span>Accel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1965006174%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-max-accel.html"><span class="token function">setMaxAccel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">maxAccel<span class="token operator">: </span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the maximum acceleration of the robot.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1903269494%2FFunctions%2F-1598058967" anchor-label="setMaxAngAccel" id="-1903269494%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-max-ang-accel.html"><span>set</span><wbr></wbr><span>Max</span><wbr></wbr><span>Ang</span><wbr></wbr><span><span>Accel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1903269494%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-max-ang-accel.html"><span class="token function">setMaxAngAccel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">maxAngAccel<span class="token operator">: </span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the maximum angular acceleration of the robot.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1488706646%2FFunctions%2F-1598058967" anchor-label="setMaxAngVel" id="-1488706646%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-max-ang-vel.html"><span>set</span><wbr></wbr><span>Max</span><wbr></wbr><span>Ang</span><wbr></wbr><span><span>Vel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1488706646%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-max-ang-vel.html"><span class="token function">setMaxAngVel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">maxAngVel<span class="token operator">: </span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the maximum angular velocity of the robot.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-137075811%2FFunctions%2F-1598058967" anchor-label="setMaxRPM" id="-137075811%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-max-r-p-m.html"><span>set</span><wbr></wbr><span>Max</span><wbr></wbr><span><span>RPM</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-137075811%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-max-r-p-m.html"><span class="token function">setMaxRPM</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">maxRPM<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the maximum RPM of the motor.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-22537686%2FFunctions%2F-1598058967" anchor-label="setMaxVel" id="-22537686%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-max-vel.html"><span>set</span><wbr></wbr><span>Max</span><wbr></wbr><span><span>Vel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-22537686%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-max-vel.html"><span class="token function">setMaxVel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">maxVel<span class="token operator">: </span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the maximum velocity of the robot.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="885114689%2FFunctions%2F-1598058967" anchor-label="setMotorVeloPID" id="885114689%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-motor-velo-p-i-d.html"><span>set</span><wbr></wbr><span>Motor</span><wbr></wbr><span>Velo</span><wbr></wbr><span><span>PID</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="885114689%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-motor-velo-p-i-d.html"><span class="token function">setMotorVeloPID</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">motorVeloPID<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/PIDFCoefficients///PointingToDeclaration/">PIDFCoefficients</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the motor velocity PID coefficients.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1664288764%2FFunctions%2F-1598058967" anchor-label="setRunUsingEncoder" id="1664288764%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-run-using-encoder.html"><span>set</span><wbr></wbr><span>Run</span><wbr></wbr><span>Using</span><wbr></wbr><span><span>Encoder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1664288764%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-run-using-encoder.html"><span class="token function">setRunUsingEncoder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">runUsingEncoder<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set whether to run using the encoder.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-786369964%2FFunctions%2F-1598058967" anchor-label="setTicksPerRev" id="-786369964%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-ticks-per-rev.html"><span>set</span><wbr></wbr><span>Ticks</span><wbr></wbr><span>Per</span><wbr></wbr><span><span>Rev</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-786369964%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-ticks-per-rev.html"><span class="token function">setTicksPerRev</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">ticksPerRev<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the number of ticks per revolution of the motor's output shaft.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1204855573%2FFunctions%2F-1598058967" anchor-label="setTrackWidth" id="1204855573%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-track-width.html"><span>set</span><wbr></wbr><span>Track</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1204855573%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-track-width.html"><span class="token function">setTrackWidth</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">trackWidth<span class="token operator">: </span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the track width of the robot.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1815177695%2FFunctions%2F-1598058967" anchor-label="setWheelRadius" id="1815177695%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-wheel-radius.html"><span>set</span><wbr></wbr><span>Wheel</span><wbr></wbr><span><span>Radius</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1815177695%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-wheel-radius.html"><span class="token function">setWheelRadius</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">wheelRadius<span class="token operator">: </span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">DriveConstants.Builder</a></div><div class="brief ">Set the wheel radius of the drive motors.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

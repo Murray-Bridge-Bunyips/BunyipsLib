@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>RoadRunner</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            BunyipsLib
+                    </a>
+            </div>
+            <div class="library-version">
+3.5.0-dev            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="BunyipsLib::org.murraybridgebunyips.bunyipslib/RoadRunner///PointingToDeclaration//-1598058967">
+  <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib</a><span class="delimiter">/</span><span class="current">RoadRunner</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Road</span><wbr></wbr><span><span>Runner</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">RoadRunner</a></div><p class="paragraph">RoadRunner utility interface for autonomous OpModes. Implement this interface in a <a href="../-autonomous-bunyips-op-mode/index.html">AutonomousBunyipsOpMode</a>. Do not override any of the default methods in this interface, as they are used for RoadRunner task scheduling. </p><p class="paragraph"> Previously named RoadRunnerAutonomousBunyipsOpMode (RRABOM, nickname &quot;Rabone&quot;). </p><p class="paragraph"><i>This interface may also be used in a normal </i><a href="../-bunyips-op-mode/index.html"><i>BunyipsOpMode</i></a><i>, however the </i><code class="italic lang-kotlin"><i>addTask()</i></code><i> builder method will not work as it requires the presence of </i><a href="../-autonomous-bunyips-op-mode/index.html"><i>AutonomousBunyipsOpMode</i></a><i>.</i></p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-autonomous-bunyips-op-mode/index.html"><span>Autonomous</span><wbr></wbr><span>Bunyips</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Mode</span></span></a></div></span></div><div></div></div></div></div><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../../org.murraybridgebunyips.bunyipslib.example.examplerobot.autonomous/-example-road-runner-autonomous/index.html">ExampleRoadRunnerAutonomous</a></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-1856678486%2FClasslikes%2F-1598058967" anchor-label="PriorityLevel" id="-1856678486%2FClasslikes%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-priority-level/index.html"><span>Priority</span><wbr></wbr><span><span>Level</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1856678486%2FClasslikes%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-priority-level/index.html">PriorityLevel</a></div><div class="brief ">Priority representation for building tasks.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1566942005%2FClasslikes%2F-1598058967" anchor-label="RoadRunnerTrajectoryTaskBuilder" id="-1566942005%2FClasslikes%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-road-runner-trajectory-task-builder/index.html"><span>Road</span><wbr></wbr><span>Runner</span><wbr></wbr><span>Trajectory</span><wbr></wbr><span>Task</span><wbr></wbr><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1566942005%2FClasslikes%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="-road-runner-trajectory-task-builder/index.html">RoadRunnerTrajectoryTaskBuilder</a> : <a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence/-trajectory-sequence-builder/index.html">TrajectorySequenceBuilder</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence/-trajectory-sequence-builder/index.html">T</a><span class="token operator">&gt; </span></div><div class="brief ">Builder class for a trajectory and task sequence.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1985187216%2FProperties%2F-1598058967" anchor-label="noTimeouts" id="-1985187216%2FProperties%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="no-timeouts.html"><span>no</span><wbr></wbr><span><span>Timeouts</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1985187216%2FProperties%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="no-timeouts.html">noTimeouts</a><span class="token operator">: </span><a href="../-reference/index.html">Reference</a><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/java/lang/Boolean.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief ">Whether timeouts for built tasks should be force-set to no timeout.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1350215966%2FProperties%2F-1598058967" anchor-label="splicedPose" id="1350215966%2FProperties%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="spliced-pose.html"><span>spliced</span><wbr></wbr><span><span>Pose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1350215966%2FProperties%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="spliced-pose.html">splicedPose</a><span class="token operator">: </span><a href="../-reference/index.html">Reference</a><span class="token operator">&lt;</span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token operator">&gt;</span></div><div class="brief ">Stores last spliced pose.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="1141012557%2FFunctions%2F-1598058967" anchor-label="atAcceleration" id="1141012557%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="at-acceleration.html"><span>at</span><wbr></wbr><span><span>Acceleration</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1141012557%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="at-acceleration.html"><span class="token function">atAcceleration</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">acceleration<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">unit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.trajectory.constraints/TrajectoryAccelerationConstraint///PointingToDeclaration/">TrajectoryAccelerationConstraint</span></div><div class="brief ">Make a translation acceleration constraint.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="749341203%2FFunctions%2F-1598058967" anchor-label="atAngularVelocity" id="749341203%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="at-angular-velocity.html"><span>at</span><wbr></wbr><span>Angular</span><wbr></wbr><span><span>Velocity</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="749341203%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="at-angular-velocity.html"><span class="token function">atAngularVelocity</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">rotation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">unit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.trajectory.constraints/TrajectoryVelocityConstraint///PointingToDeclaration/">TrajectoryVelocityConstraint</span></div><div class="brief ">Make an angular velocity constraint.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="620638646%2FFunctions%2F-1598058967" anchor-label="atVelocities" id="620638646%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="at-velocities.html"><span>at</span><wbr></wbr><span><span>Velocities</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="620638646%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="at-velocities.html"><span class="token function">atVelocities</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">translation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">translationUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">rotation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">rotationUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.trajectory.constraints/TrajectoryVelocityConstraint///PointingToDeclaration/">TrajectoryVelocityConstraint</span></div><div class="brief ">Make a translation and angular velocity constraint.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="840115379%2FFunctions%2F-1598058967" anchor-label="atVelocity" id="840115379%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="at-velocity.html"><span>at</span><wbr></wbr><span><span>Velocity</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="840115379%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="at-velocity.html"><span class="token function">atVelocity</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">translation<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">unit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.trajectory.constraints/TrajectoryVelocityConstraint///PointingToDeclaration/">TrajectoryVelocityConstraint</span></div><div class="brief ">Make a translation velocity constraint.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-31334577%2FFunctions%2F-1598058967" anchor-label="getDrive" id="-31334577%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-drive.html"><span>get</span><wbr></wbr><span><span>Drive</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-31334577%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-drive.html"><span class="token function">getDrive</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive/-road-runner-drive/index.html">RoadRunnerDrive</a></div><div class="brief ">Get the drive instance reference to be used for RoadRunner trajectories.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1958125100%2FFunctions%2F-1598058967" anchor-label="makeTrajectory" id="1958125100%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="make-trajectory.html"><span>make</span><wbr></wbr><span><span>Trajectory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1958125100%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="make-trajectory.html"><span class="token function">makeTrajectory</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-road-runner-trajectory-task-builder/index.html">RoadRunner.RoadRunnerTrajectoryTaskBuilder</a></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="make-trajectory.html"><span class="token function">makeTrajectory</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mirrorPoseRef<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-road-runner-trajectory-task-builder/index.html">RoadRunner.RoadRunnerTrajectoryTaskBuilder</a></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="make-trajectory.html"><span class="token function">makeTrajectory</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">startPoseInchRad<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-road-runner-trajectory-task-builder/index.html">RoadRunner.RoadRunnerTrajectoryTaskBuilder</a></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="make-trajectory.html"><span class="token function">makeTrajectory</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">startPoseInchRad<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">mirrorPoseRef<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-road-runner-trajectory-task-builder/index.html">RoadRunner.RoadRunnerTrajectoryTaskBuilder</a></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="make-trajectory.html"><span class="token function">makeTrajectory</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">startPose<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">inUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token punctuation">, </span></span><span class="parameter ">angleUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-road-runner-trajectory-task-builder/index.html">RoadRunner.RoadRunnerTrajectoryTaskBuilder</a></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="make-trajectory.html"><span class="token function">makeTrajectory</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">startPose<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">inUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token punctuation">, </span></span><span class="parameter ">angleUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token punctuation">, </span></span><span class="parameter ">mirrorPoseRef<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-road-runner-trajectory-task-builder/index.html">RoadRunner.RoadRunnerTrajectoryTaskBuilder</a></div><div class="brief ">Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-361449204%2FFunctions%2F-1598058967" anchor-label="mirror" id="-361449204%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="mirror.html"><span><span>mirror</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-361449204%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="mirror.html"><span class="token function">mirror</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pose<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span></div><div class="brief ">Mirror a global pose across the alliance plane.</div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="mirror.html"><span class="token function">mirror</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">vector<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Vector2d///PointingToDeclaration/">Vector2d</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Vector2d///PointingToDeclaration/">Vector2d</span></div><div class="brief ">Mirror a global vector across the alliance plane.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2038798043%2FFunctions%2F-1598058967" anchor-label="resetForOpMode" id="-2038798043%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reset-for-op-mode.html"><span>reset</span><wbr></wbr><span>For</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2038798043%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="reset-for-op-mode.html"><span class="token function">resetForOpMode</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Reset fields for an OpMode.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1274294025%2FFunctions%2F-1598058967" anchor-label="resetPoseInfo" id="1274294025%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reset-pose-info.html"><span>reset</span><wbr></wbr><span>Pose</span><wbr></wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1274294025%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="reset-pose-info.html"><span class="token function">resetPoseInfo</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Reset pose info back to default.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-115564612%2FFunctions%2F-1598058967" anchor-label="setPose" id="-115564612%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-pose.html"><span>set</span><wbr></wbr><span><span>Pose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-115564612%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-pose.html"><span class="token function">setPose</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">poseEstimateInchRad<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-pose.html"><span class="token function">setPose</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">poseEstimate<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">inUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token punctuation">, </span></span><span class="parameter ">angleUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Set the current pose estimate of the drive.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="470870460%2FFunctions%2F-1598058967" anchor-label="unitPose" id="470870460%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unit-pose.html"><span>unit</span><wbr></wbr><span><span>Pose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="470870460%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="unit-pose.html"><span class="token function">unitPose</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pose<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">distanceUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token punctuation">, </span></span><span class="parameter ">angleUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="unit-pose.html"><span class="token function">unitPose</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pose<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">distanceUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token punctuation">, </span></span><span class="parameter ">angleUnit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token punctuation">, </span></span><span class="parameter ">scalarDistMult<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span></div><div class="brief ">Convert a Pose2d of specified units to inches and radians.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="136648194%2FFunctions%2F-1598058967" anchor-label="unitVec" id="136648194%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unit-vec.html"><span>unit</span><wbr></wbr><span><span>Vec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="136648194%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="unit-vec.html"><span class="token function">unitVec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">vector<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">, </span></span><span class="parameter ">unit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Vector2d///PointingToDeclaration/">Vector2d</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="unit-vec.html"><span class="token function">unitVec</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">vector<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">, </span></span><span class="parameter ">unit<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token punctuation">, </span></span><span class="parameter ">scalarDistMult<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Vector2d///PointingToDeclaration/">Vector2d</span></div><div class="brief ">Convert a Vector2d of specified units to inches and radians.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

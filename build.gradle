@@ -1,8 +1,15 @@
 // BunyipsLib Gradle configuration
 
+import org.jetbrains.dokka.gradle.DokkaTask
+
 plugins {
     id 'com.android.library' apply false
+    id 'org.jetbrains.dokka'
 }
+
+//dependencies {
+//    dokkaHtmlPlugin 'org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20'
+//}
 
 def getCommit = { ->
     try {
@@ -49,3 +56,19 @@ android {
     }
     namespace = 'org.murraybridgebunyips.bunyipslib'
 }
+
+tasks.dokkaHtml.configure {
+    suppressInheritedMembers.set(true)
+    outputDirectory.set(file("./docs"))
+    moduleVersion.set(project.version + "-dev")
+}
+
+tasks.withType(DokkaTask.class).configureEach {
+    String dokkaBaseConfiguration = """
+    {
+      "footerMessage": "© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club"
+    }
+    """
+    pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase": dokkaBaseConfiguration])
+}
+

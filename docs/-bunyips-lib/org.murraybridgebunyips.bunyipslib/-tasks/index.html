@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Tasks</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            BunyipsLib
+                    </a>
+            </div>
+            <div class="library-version">
+3.5.0-dev            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="BunyipsLib::org.murraybridgebunyips.bunyipslib/Tasks///PointingToDeclaration//-1598058967">
+  <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib</a><span class="delimiter">/</span><span class="current">Tasks</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Tasks</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Tasks</a></div><p class="paragraph">Utility class for running <a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a> instances from an environment that does not have a task scheduler. This is useful for OpModes that are not using a command-based structure, such as the base <a href="../-bunyips-op-mode/index.html">BunyipsOpMode</a>, but still needs support to run tasks on subsystems that only return Tasks. This class simplifies the task run process to a more intermediate &quot;register and run&quot; system. Do note it is recommended to use a more integrated system such as the <a href="../-scheduler/index.html">Scheduler</a>, which is integrated into <a href="../-command-based-bunyips-op-mode/index.html">CommandBasedBunyipsOpMode</a>. </p><p class="paragraph"> This class will allow you to simply pass a task instance that you wish to run (with run conditions being managed at your own discretion), where continuous calls to <code class="lang-kotlin">runRepeatedly()</code> will execute the task continually, resetting it if it is done. This behaviour is similar to how the <code class="lang-kotlin">run()</code> call works in the <a href="../-scheduler/index.html">Scheduler</a>, however, this comes with the guarantee that a task will only execute any time it is being actively told to do so. </p><p class="paragraph"> If you simply wish to run tasks with limited instance management, instantiating them directly in <a href="register.html">register</a> and running them can be accomplished with an index, as done in the run/runRepeatedly overloads. This limits your ability to manage/reset tasks, but is useful for simpler control loops. </p><p class="paragraph"> This class is used maximally where you will manage the instances of the tasks you retrieve from your subsystems/methods, to allow you finer-grain control over your tasks and their reset/runtime methods. Do note however it may be more worthwhile migrating to a command-based structure such as the <a href="../-scheduler/index.html">Scheduler</a> or <a href="../-command-based-bunyips-op-mode/index.html">CommandBasedBunyipsOpMode</a>. This pattern is useful for the standard run method that will execute one start-to-finish cycle of a task, with the added benefit that a task will only iterate when being told to do so by methods in this utility. </p><p class="paragraph"> Example usage: </p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">
+    // init-phase, index-based registration
+    Tasks.register(arm.homeTask(), claw.openTask(), ...);
+    // active phase
+    if (condition) {
+      Tasks.run(0); // runs arm.homeTask() one iteration, if it is finished it will no-op forever
+      Tasks.runRepeatedly(1); // runs claw.openTask(), if it is finished it will be auto-reset and can run again
+    }
+</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">
+    // init-phase, instance-based registration
+    Task homeTask = arm.homeTask();
+    Task openTask = claw.openTask();
+    Tasks.register(homeTask, openTask);
+    // active phase
+    if (condition) {
+        Tasks.run(homeTask); // runs arm.homeTask() one iteration, if it is finished it will no-op until a reset
+        Tasks.run(1); // index-based from above still works, the only difference with this approach is that
+                      // you have additional control over your tasks.
+    }
+    // reset can be accomplished as with any task, allowing run calls to work again
+    if (... &amp;&amp; homeTask.isFinished()) homeTask.reset();
+</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-scheduler/index.html"><span><span>Scheduler</span></span></a></div></span></div><div></div></div></div><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-command-based-bunyips-op-mode/index.html"><span>Command</span><wbr></wbr><span>Based</span><wbr></wbr><span>Bunyips</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Mode</span></span></a></div></span></div><div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="213886075%2FFunctions%2F-1598058967" anchor-label="register" id="213886075%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="register.html"><span><span>register</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="213886075%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="register.html"><span class="token function">register</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>tasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Register a series of tasks that can be executed at any time within the run methods.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2087663868%2FFunctions%2F-1598058967" anchor-label="run" id="-2087663868%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="run.html"><span><span>run</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2087663868%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="run.html"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">registeredIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="run.html"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">task<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Run a single robot task iteration, where further calls will no-op if the task is finished.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1704518290%2FFunctions%2F-1598058967" anchor-label="runRepeatedly" id="1704518290%2FFunctions%2F-1598058967" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="run-repeatedly.html"><span>run</span><wbr></wbr><span><span>Repeatedly</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1704518290%2FFunctions%2F-1598058967"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="run-repeatedly.html"><span class="token function">runRepeatedly</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">registeredIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="run-repeatedly.html"><span class="token function">runRepeatedly</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">task<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Run a single robot task iteration, auto-resetting the task if it finishes.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
