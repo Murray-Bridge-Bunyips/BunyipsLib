@@ -59,6 +59,6 @@
     if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', initHandlers);
     else initHandlers();
 
-    // ToDo: Add `unobserve` if dokka will be SPA-like:
+    // Add `unobserve` if dokka will be SPA-like:
     //       https://github.com/w3c/csswg-drafts/issues/5155
 })();
