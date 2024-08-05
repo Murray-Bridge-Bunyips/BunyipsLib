@@ -1,5 +1,6 @@
 // BunyipsLib Gradle configuration
 
+import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
@@ -7,15 +8,22 @@ plugins {
     id 'org.jetbrains.dokka'
 }
 
+// Kotlin-as-Java exposes Kotlin public fields strangely and makes it misleading
+// so we'll choose not to use this plugin although it would be preferred. Better to keep things
+// accurate and consistent.
 //dependencies {
 //    dokkaHtmlPlugin 'org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20'
 //}
 
-def getCommit = { ->
+def getCommit = { boolean suppressDirty = false ->
     try {
         def stdout = new ByteArrayOutputStream()
         exec {
-            commandLine 'git', 'describe', '--always', '--dirty'
+            if (suppressDirty) {
+                commandLine 'git', 'describe', '--always'
+            } else {
+                commandLine 'git', 'describe', '--always', '--dirty'
+            }
             standardOutput = stdout
         }
         return stdout.toString().trim()
@@ -58,14 +66,20 @@ android {
 }
 
 tasks.dokkaHtml.configure {
-    suppressInheritedMembers.set(true)
     outputDirectory.set(file("./docs"))
-    moduleVersion.set(project.version + "-dev-" + getBuildTime())
+    moduleVersion.set("v" + project.version + "-master-" + getCommit(true))
 
     dokkaSourceSets {
         configureEach {
+            displayName.set("BunyipsLib")
             jdkVersion.set(8)
-            includeNonPublic.set(true)
+            documentedVisibilities.set(
+                    [
+                            DokkaConfiguration.Visibility.PUBLIC,
+                            DokkaConfiguration.Visibility.PROTECTED,
+                    ]
+            )
+            reportUndocumented.set(true)
             perPackageOption {
                 matchingRegex.set("org\\.murraybridgebunyips\\.bunyipslib\\.example\\..*")
                 suppress.set(true)
@@ -77,6 +91,8 @@ tasks.dokkaHtml.configure {
 tasks.withType(DokkaTask.class).configureEach {
     String dokkaBaseConfiguration = """
     {
+      "customAssets": ["${file("docs/custom/logo-icon.svg")}"],
+      "separateInheritedMembers": true,
       "footerMessage": "© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club"
     }
     """
