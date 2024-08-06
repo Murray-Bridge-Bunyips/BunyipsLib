@@ -67,7 +67,7 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
         super(constants.kV, constants.kA, constants.kStatic, constants.TRACK_WIDTH, constants.TRACK_WIDTH, coefficients.LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(coefficients.TRANSLATIONAL_PID, coefficients.TRANSLATIONAL_PID, coefficients.HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                constants.admissibleError.first, constants.admissibleError.second);
 
         VEL_CONSTRAINT = getVelocityConstraint(constants.MAX_VEL, constants.MAX_ANG_VEL, constants.TRACK_WIDTH);
         ACCEL_CONSTRAINT = getAccelerationConstraint(constants.MAX_ACCEL);
