@@ -33,7 +33,7 @@ public class CartesianFieldCentricMecanumDrive extends CartesianMecanumDrive {
      * @param backRight                 the back right motor
      * @param imu                       the IMU to use
      * @param invalidatePreviousHeading whether to invalidate the previous heading of the IMU
-     * @param startingDirection         the starting direction of the robot
+     * @param startingDirection         the starting direction of the robot relative to the field-centric origin
      */
     public CartesianFieldCentricMecanumDrive(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, IMU imu, boolean invalidatePreviousHeading, Direction startingDirection) {
         super(frontLeft, frontRight, backLeft, backRight);
@@ -66,7 +66,7 @@ public class CartesianFieldCentricMecanumDrive extends CartesianMecanumDrive {
      */
     @Override
     public CartesianFieldCentricMecanumDrive setSpeedXYR(double x, double y, double r) {
-        double botHeading = Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) - offsetDeg);
+        double botHeading = Math.toRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) + offsetDeg);
 
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
