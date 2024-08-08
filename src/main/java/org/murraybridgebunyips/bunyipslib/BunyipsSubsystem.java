@@ -30,9 +30,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     // Kept protected for legacy purposes where BunyipsSubsystems would reference name
     protected String name = getClass().getSimpleName();
 
-    private Task currentTask;
-    private Task defaultTask = new IdleTask();
-    private boolean shouldRun = true;
+    private volatile Task currentTask;
+    private volatile Task defaultTask = new IdleTask();
+    private volatile boolean shouldRun = true;
+    @Nullable
+    private String threadName = null;
     private boolean assertionFailed = false;
 
     protected BunyipsSubsystem() {
@@ -66,7 +68,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     @NonNull
     public final String toVerboseString() {
-        return formatString("%% (%) <=> %", assertionFailed ? "[error] " : "", name, shouldRun ? "enabled" : "disabled", getCurrentTask());
+        return formatString("%%% (%) <=> %", assertionFailed ? "[error] " : "", threadName != null ? "[async]" : "", name, shouldRun ? "enabled" : "disabled", getCurrentTask());
     }
 
     /**
@@ -275,7 +277,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * Alternatively all subsystems that were instantiated can be statically updated via {@link #updateAll()}.
      */
     public final void update() {
-        if (!shouldRun) return;
+        if (!shouldRun || threadName != null) return;
+        internalUpdate();
+    }
+
+    private void internalUpdate() {
         Task task = getCurrentTask();
         if (task != null) {
             if (task == defaultTask && defaultTask.pollFinished()) {
@@ -297,6 +303,29 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         }
         // This should be the only place where periodic() is called for this subsystem
         Exceptions.runUserMethod(this::periodic, opMode);
+    }
+
+    /**
+     * Call to delegate all updates of this subsystem to a thread that will begin execution on this method call.
+     * <b>WARNING: You must ensure you know what you're doing before you multi-thread.</b>
+     * <p>
+     * Improper usage of threading subsystems will result in unexpected and potentially dangerous robot behaviour.
+     * Ensure you know the consequences of multithreading, especially over hardware on a Robot Controller.
+     * <p>
+     * When this subsystem is being multi-threaded, manual calls to {@link #update()} will be ignored.
+     */
+    public final void startThread() {
+        threadName = formatString("Async-%-%", getClass().getSimpleName(), name);
+        Threads.startLoop(this::internalUpdate, threadName);
+    }
+
+    /**
+     * Call to stop delegating updates of this subsystem to a thread. This reverses {@link #startThread()} and no-ops
+     * if the subsystem update thread is not running.
+     */
+    public final void stopThread() {
+        Threads.stop(threadName);
+        threadName = null;
     }
 
     /**

@@ -57,6 +57,7 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
         this.backLeft = backLeft;
         this.frontRight = frontRight;
         this.backRight = backRight;
+        setToBrake();
     }
 
     // Setters for the prioritisation of the drive system

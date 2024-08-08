@@ -8,10 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
@@ -71,8 +68,9 @@ public class IMUOp extends BunyipsSubsystem {
 
     @NonNull
     private YawDomain domain = YawDomain.SIGNED;
-    private volatile Measure<Angle> lastYaw;
     private Measure<Angle> yawOffset = Degrees.zero();
+    private double angleSumDeg;
+    private double lastYawDeg;
 
     /**
      * Wrap an IMU to use in IMUOp.
@@ -92,6 +90,8 @@ public class IMUOp extends BunyipsSubsystem {
      * Unlike yaw, pitch and roll are always relative to gravity, and never need to be reset.
      */
     public void resetYaw() {
+        angleSumDeg = 0;
+        lastYawDeg = 0;
         imu.resetYaw();
     }
 
@@ -106,7 +106,7 @@ public class IMUOp extends BunyipsSubsystem {
 
     /**
      * Sets the domain range of what the {@link #yaw} field will return. By default, this is set to the expected
-     * behaviour of [-180, 180] degrees, but can be adjusted here to one of the {@link YawDomain} options.
+     * behaviour of [-180, 180) degrees, but can be adjusted here to one of the {@link YawDomain} options.
      *
      * @param newDomain the new domain of the {@link #yaw} property
      */
@@ -141,35 +141,27 @@ public class IMUOp extends BunyipsSubsystem {
         AngularVelocity angleVels = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
         lastAcquisitionTimeNanos = System.nanoTime();
 
-        yaw = Degrees.of(angles.getYaw(AngleUnit.DEGREES)).plus(yawOffset);
-        switch (domain) {
-            case UNSIGNED:
-            case UNRESTRICTED:
-                Measure<Angle> curr = yaw;
-                Measure<Angle> delta = curr.minus(lastYaw);
-                // Detects if there is a sudden 180 turn which means we have turned more than the 180
-                // degree threshold. Adds 360 to additively inverse the value and give us a proper delta
-                if (delta.in(Degrees) < -180) {
-                    delta = delta.plus(Degrees.of(360));
-                } else if (delta.in(Degrees) >= 180) {
-                    delta = delta.minus(Degrees.of(360));
-                }
-                yaw = curr.plus(delta);
-                lastYaw = curr;
-                // Wrap to [0, 360] if required
-                if (domain == YawDomain.UNSIGNED) {
-                    Measure<Angle> restrictedAngle = yaw;
-                    if (restrictedAngle.in(Degrees) >= 360) {
-                        restrictedAngle = restrictedAngle.minus(Degrees.of(360));
-                    } else if (restrictedAngle.in(Degrees) < 0) {
-                        restrictedAngle = restrictedAngle.plus(Degrees.of(360));
-                    }
-                    yaw = restrictedAngle;
-                }
-                break;
+        double yawDeg = angles.getYaw(AngleUnit.DEGREES);
+        double yawDelta = yawDeg - lastYawDeg;
+        if (Math.abs(yawDelta) >= 180) {
+            // IMU returns angles in signed form, need to undo this as we'll clamp this value ourselves
+            yawDelta = -Math.signum(yawDelta) * (360 - Math.abs(yawDelta));
+        }
+        lastYawDeg = yawDeg;
+
+        angleSumDeg += yawDelta;
+        Measure<Angle> totalYaw = Degrees.of(angleSumDeg);
+
+        if (domain == YawDomain.SIGNED) {
+            yaw = Mathf.angleModulus(totalYaw);
+        } else if (domain == YawDomain.UNSIGNED) {
+            yaw = Mathf.normaliseAngle(totalYaw);
+        } else {
+            // Unrestricted domain
+            yaw = totalYaw;
         }
 
-        // These fields are also bound by the [-180, 180] degree domain but can be converted with Mathf utilities.
+        // These fields are also bound by the [-180, 180) degree domain but can be converted with Mathf utilities.
         // IMUOp provides a built in utility for the yaw, as it is a common use case and usually you wouldn't need
         // to use these fields in a different domain.
         pitch = Degrees.of(angles.getPitch(AngleUnit.DEGREES));
@@ -186,11 +178,11 @@ public class IMUOp extends BunyipsSubsystem {
      */
     public enum YawDomain {
         /**
-         * Default behaviour. Angle is wrapped between [-180, 180] degrees, or [-π, π] radians.
+         * Default behaviour. Angle is wrapped between [-180, 180) degrees, or [-π, π) radians.
          */
         SIGNED,
         /**
-         * Angle is wrapped between [0, 360] degrees, or [0, 2π] radians.
+         * Angle is wrapped between [0, 360) degrees, or [0, 2π) radians.
          */
         UNSIGNED,
         /**
