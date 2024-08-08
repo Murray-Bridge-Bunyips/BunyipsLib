@@ -8,6 +8,8 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.IdleTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
@@ -307,20 +309,23 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
 
     /**
      * Call to delegate all updates of this subsystem to a thread that will begin execution on this method call.
-     * <b>WARNING: You must ensure you know what you're doing before you multi-thread.</b>
+     * <b>WARNING: You must ensure you know what you're doing before you multithread.</b>
      * <p>
      * Improper usage of threading subsystems will result in unexpected and potentially dangerous robot behaviour.
      * Ensure you know the consequences of multithreading, especially over hardware on a Robot Controller.
      * <p>
-     * When this subsystem is being multi-threaded, manual calls to {@link #update()} will be ignored.
+     * When this subsystem is being multithreaded, manual calls to {@link #update()} will be ignored.
+     *
+     * @param loopSleepDuration the duration to sleep the external thread by after every iteration
      */
-    public final void startThread() {
-        threadName = formatString("Async-%-%", getClass().getSimpleName(), name);
-        Threads.startLoop(this::internalUpdate, threadName);
+    public final void startThread(Measure<Time> loopSleepDuration) {
+        if (threadName != null) return;
+        threadName = formatString("Async-%-%-%", getClass().getSimpleName(), name, hashCode());
+        Threads.startLoop(this::internalUpdate, threadName, loopSleepDuration);
     }
 
     /**
-     * Call to stop delegating updates of this subsystem to a thread. This reverses {@link #startThread()} and no-ops
+     * Call to stop delegating updates of this subsystem to a thread. This reverses {@link #startThread} and no-ops
      * if the subsystem update thread is not running.
      */
     public final void stopThread() {
