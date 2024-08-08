@@ -321,7 +321,7 @@ public class DriveConstants {
          * Set the admissible error for the PIDVA controller for trajectory following. Usually, you won't have
          * to call this method, as the default error is adequate.
          *
-         * @param admissibleError admissible/satisfactory pose error at the end of each move (default 0.5in 5deg)
+         * @param admissibleError   admissible/satisfactory pose error at the end of each move (default 0.5in 5deg)
          * @param admissibleTimeout max time to wait for the error to be admissible (default 0.5 sec)
          * @return this
          */
