@@ -91,6 +91,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         return drive.getConstants();
     }
 
+    public MecanumCoefficients getCoefficients() {
+        return drive.getCoefficients();
+    }
+
     /**
      * For continuity, keep setSpeedUsingController for setting drive speeds.
      * Internally runs setWeightedDrivePower() and converts the controller input to a robot Pose2d.
