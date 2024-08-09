@@ -16,11 +16,16 @@ import java.util.function.Supplier;
 
 /**
  * Gamepad drive for all holonomic drivetrains which will use a vector-based approach to drive.
- * This task is designed to be used as a default task, other tasks will override it.
+ * This task is designed to be used as a default/standard-priority task, other tasks will override it.
  * <p>
- * Compared to {@link HolonomicDriveTask}, this task will generate a vector for the robot to follow, rather than
- * setting the powers directly from the gamepad inputs. This allows for more predictable and consistent driving,
- * as the robot will always follow the same vector for a given input (self-correcting TeleOp).
+ * Compared to {@link HolonomicDriveTask}, this task will constantly track the (x,y,r) pose of the robot, rather than
+ * setting the powers directly from the gamepad inputs. When the individual inputs for these poses are zero, this task will
+ * take a snapshot of the values they were at, using PID controllers to attempt to stay in place.
+ * This allows for more predictable and consistent driving, as the robot will only accept movement when told to do so,
+ * ensuring that all movements of the robot can only be achieved via the controller.
+ * <p>
+ * This system can be comparable to one of a drone, where releasing the sticks and allowing it to hover will hold position
+ * and resist external forces. This locking nature has been implemented across all three axes.
  * <p>
  * A RoadRunner drive is required for this class, as it will require the use of the pose estimate system and other
  * coefficients such as your PID. Therefore, the only supported class this task will work for is {@link MecanumDrive}.
