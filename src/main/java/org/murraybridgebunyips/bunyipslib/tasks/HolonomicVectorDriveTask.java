@@ -1,7 +1,9 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
+
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -9,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import org.murraybridgebunyips.bunyipslib.drive.MecanumDrive;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
+import org.murraybridgebunyips.bunyipslib.external.units.Angle;
+import org.murraybridgebunyips.bunyipslib.external.units.Distance;
+import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 
 import java.util.function.BooleanSupplier;
@@ -47,6 +52,9 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     private double yLock;
     private double rLock;
 
+    // Default admissible error of 2 inches and 1 degree
+    private Pose2d toleranceInchRad = new Pose2d(2, 2, Math.toRadians(1));
+
     /**
      * Constructor for HolonomicVectorDriveTask.
      *
@@ -83,6 +91,29 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      */
     public HolonomicVectorDriveTask(Gamepad driver, @NotNull MecanumDrive mecanumDrive, BooleanSupplier fieldCentricEnabled) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, mecanumDrive, fieldCentricEnabled);
+    }
+
+    /**
+     * Set the minimum pose error when in self-holding mode to activate correction for.
+     *
+     * @param inchRad a pose in inches and radians that represents the admissible error for robot auto-correction
+     * @return this
+     */
+    public HolonomicVectorDriveTask withTolerance(Pose2d inchRad) {
+        toleranceInchRad = inchRad;
+        return this;
+    }
+
+    /**
+     * Set the minimum pose error when in self-holding mode to activate correction for.
+     *
+     * @param poseX x (forward) admissible error
+     * @param poseY y (strafe) admissible error
+     * @param poseR r (heading) admissible error
+     * @return this
+     */
+    public HolonomicVectorDriveTask withTolerance(Measure<Distance> poseX, Measure<Distance> poseY, Measure<Angle> poseR) {
+        return withTolerance(new Pose2d(poseX.in(Inches), poseY.in(Inches), poseR.in(Radians)));
     }
 
     @Override
@@ -125,10 +156,10 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         }
 
         // Calculate error from current pose to target pose.
-        // If we are not locked, the error will be 0.
-        double xLockedError = xLock == 0 ? 0 : xLock - current.getX();
-        double yLockedError = yLock == 0 ? 0 : yLock - current.getY();
-        double rLockedError = rLock == 0 ? 0 : rLock - current.getHeading();
+        // If we are not locked, the error will be 0, and our error should clamp to zero if it's under the threshold
+        double xLockedError = xLock == 0 || xLock - current.getX() < toleranceInchRad.getX() ? 0 : xLock - current.getX();
+        double yLockedError = yLock == 0 || yLock - current.getY() < toleranceInchRad.getY() ? 0 : yLock - current.getY();
+        double rLockedError = rLock == 0 || rLock - current.getHeading() < toleranceInchRad.getHeading() ? 0 : rLock - current.getHeading();
 
         // Rotate error to robot's coordinate frame
         double cos = Math.cos(current.getHeading());
@@ -141,17 +172,11 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         if (Mathf.isNear(Math.abs(angle), Math.PI, 0.1))
             angle = -Math.PI * Math.signum(rLockedError);
 
-        // TODO: Add vector and heading bounds so the PID controllers can have some tolerances
-        // As for power clamps I don't think they're needed and we can just use the direct power from PID.
-        // The upcoming GainScheduler/controller system should better integrate these types of controller-based limits.
-
-        drive.setDriveSignal(
-                new DriveSignal(
-                        new Pose2d(
-                                xLock != 0 ? -xController.calculate(twistedXError) : userX,
-                                yLock != 0 ? -yController.calculate(twistedYError) : userY,
-                                rLock != 0 ? -rController.calculate(angle) : userR
-                        )
+        drive.setWeightedDrivePower(
+                new Pose2d(
+                        xLock != 0 ? -xController.calculate(twistedXError) : userX,
+                        yLock != 0 ? -yController.calculate(twistedYError) : userY,
+                        rLock != 0 ? -rController.calculate(angle) : userR
                 )
         );
     }
