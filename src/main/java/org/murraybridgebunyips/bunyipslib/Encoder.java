@@ -67,7 +67,7 @@ public class Encoder {
 
     /**
      * @return the estimated acceleration of the motor in ticks per second squared. this method will internally
-     *         call {@link #getRawVelocity()} to update the velocity information which is required.
+     * call {@link #getRawVelocity()} to update the velocity information which is required.
      */
     public double getAcceleration() {
         getRawVelocity();
@@ -93,8 +93,8 @@ public class Encoder {
      * Gets the current encoder velocity while also correcting for velocity overflow
      * (REV hardware limitation workaround)
      *
-     * @see #getRawVelocity()
      * @return the corrected velocity
+     * @see #getRawVelocity()
      */
     public double getCorrectedVelocity() {
         double real = getRawVelocity();

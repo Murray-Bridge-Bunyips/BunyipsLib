@@ -21,10 +21,6 @@ public class BlinkinLights extends BunyipsSubsystem {
         lights.setPattern(defaultPattern);
     }
 
-    public void setPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
-        currentPattern = pattern;
-    }
-
     public Task setPatternForTask(Measure<Time> duration, RevBlinkinLedDriver.BlinkinPattern pattern) {
         return new RunForTask(duration, () -> currentPattern = pattern, this::resetPattern)
                 .onSubsystem(this, true)
@@ -33,6 +29,10 @@ public class BlinkinLights extends BunyipsSubsystem {
 
     public RevBlinkinLedDriver.BlinkinPattern getPattern() {
         return currentPattern;
+    }
+
+    public void setPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
+        currentPattern = pattern;
     }
 
     public void resetPattern() {

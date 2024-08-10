@@ -1,6 +1,6 @@
 package org.murraybridgebunyips.bunyipslib;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
@@ -21,8 +21,8 @@ public class DcMotorRamping extends DcMotorImplEx implements RampingFunction {
      *
      * @param motor the DcMotor object to wrap. By default, the ramping function is enabled.
      */
-    public DcMotorRamping(DcMotor motor) {
-        super(motor.getController(), motor.getPortNumber());
+    public DcMotorRamping(DcMotorEx motor) {
+        super(motor.getController(), motor.getPortNumber(), motor.getDirection(), motor.getMotorType());
     }
 
     /**
@@ -33,7 +33,7 @@ public class DcMotorRamping extends DcMotorImplEx implements RampingFunction {
      * @param smoothTime the time it takes for the motor to reach the target power level
      * @param maxDelta   the maximum change in power level per second
      */
-    public DcMotorRamping(DcMotor motor, Measure<Time> smoothTime, double maxDelta) {
+    public DcMotorRamping(DcMotorEx motor, Measure<Time> smoothTime, double maxDelta) {
         super(motor.getController(), motor.getPortNumber());
         v.setRampingParameters(smoothTime, maxDelta);
     }
