@@ -31,7 +31,6 @@ public class Motor extends DcMotorImplEx {
     private SystemController rtpController;
     private SystemController rueController;
     private DcMotor.RunMode mode = RunMode.RUN_WITHOUT_ENCODER;
-    private boolean overflowCorrection;
 
     /**
      * Wrap a DcMotor to use in the Motor class.
@@ -50,7 +49,7 @@ public class Motor extends DcMotorImplEx {
      * Call to use encoder overflow (exceeding 32767 ticks/sec) correction on {@link #getVelocity()}.
      */
     public void useEncoderOverflowCorrection() {
-        overflowCorrection = true;
+        encoder.useEncoderOverflowCorrection();
     }
 
     /**
@@ -112,6 +111,15 @@ public class Motor extends DcMotorImplEx {
     }
 
     /**
+     * Get the encoder attached to this motor.
+     *
+     * @return the encoder object that is used for encoder readings on this motor
+     */
+    public Encoder getEncoder() {
+        return encoder;
+    }
+
+    /**
      * @return the estimated acceleration of this motor.
      */
     public double getAcceleration() {
@@ -131,9 +139,7 @@ public class Motor extends DcMotorImplEx {
      */
     @Override
     public double getVelocity() {
-        if (overflowCorrection)
-            return encoder.getCorrectedVelocity();
-        return encoder.getRawVelocity();
+        return encoder.getVelocity();
     }
 
     /**

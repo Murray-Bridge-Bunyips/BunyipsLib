@@ -2,6 +2,13 @@ package org.murraybridgebunyips.bunyipslib.external;
 
 /**
  * Marker interface that represents a control algorithm (PID, feedforward, etc).
+ * <p>
+ * This interface may not always represent the same behaviour in different contexts, such as open-loop and closed
+ * loop control. Therefore, it is important to validate which controllers are being used within a control system
+ * as the protection of type-safety may cause an invalid controller to be used against one that expects a certain
+ * type of response the controller is not able to provide.
+ *
+ * @author Lucas Bubner, 2024
  */
 public interface SystemController {
     /**

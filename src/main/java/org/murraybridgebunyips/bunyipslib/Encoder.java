@@ -15,6 +15,7 @@ public class Encoder {
     private int resetVal, lastPosition;
     private DcMotorSimple.Direction direction;
     private double lastTimestamp, veloEstimate, accel, lastVelo;
+    private boolean overflowCorrection;
 
     /**
      * The encoder object for the motor.
@@ -32,6 +33,13 @@ public class Encoder {
         veloEstimate = 0;
         direction = DcMotorSimple.Direction.FORWARD;
         lastTimestamp = System.nanoTime() / 1.0E9;
+    }
+
+    /**
+     * Call to use encoder overflow (exceeding 32767 ticks/sec) correction on {@link #getVelocity()}.
+     */
+    public void useEncoderOverflowCorrection() {
+        overflowCorrection = true;
     }
 
     /**
@@ -72,6 +80,14 @@ public class Encoder {
     public double getAcceleration() {
         getRawVelocity();
         return accel;
+    }
+
+    /**
+     * @return the velocity of the motor, will correct for overflow if told to do so
+     * by {@link #useEncoderOverflowCorrection()}.
+     */
+    public double getVelocity() {
+        return overflowCorrection ? getCorrectedVelocity() : getRawVelocity();
     }
 
     /**
