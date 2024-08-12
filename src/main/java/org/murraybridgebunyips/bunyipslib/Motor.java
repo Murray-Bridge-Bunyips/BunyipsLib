@@ -120,7 +120,7 @@ public class Motor extends DcMotorImplEx {
     }
 
     /**
-     * @return the estimated acceleration of this motor.
+     * @return the estimated acceleration of this motor. Ticks per second.
      */
     public double getAcceleration() {
         return encoder.getAcceleration();
@@ -135,7 +135,7 @@ public class Motor extends DcMotorImplEx {
     }
 
     /**
-     * @return the current velocity of this motor as specified by your settings
+     * @return the current velocity of this motor as specified by your settings. Ticks per second.
      */
     @Override
     public double getVelocity() {

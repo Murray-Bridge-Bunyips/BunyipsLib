@@ -15,8 +15,8 @@ public class BlinkinLights extends BunyipsSubsystem {
 
     private RevBlinkinLedDriver.BlinkinPattern currentPattern;
 
-    public BlinkinLights(RevBlinkinLedDriver light, RevBlinkinLedDriver.BlinkinPattern defaultPattern) {
-        lights = light;
+    public BlinkinLights(RevBlinkinLedDriver lights, RevBlinkinLedDriver.BlinkinPattern defaultPattern) {
+        this.lights = lights;
         this.defaultPattern = defaultPattern;
         currentPattern = defaultPattern;
 
