@@ -5,20 +5,22 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
+import org.murraybridgebunyips.bunyipslib.tasks.IdleTask;
 import org.murraybridgebunyips.bunyipslib.tasks.RunForTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 public class BlinkinLights extends BunyipsSubsystem {
     private final RevBlinkinLedDriver lights;
     private final RevBlinkinLedDriver.BlinkinPattern defaultPattern;
+
     private RevBlinkinLedDriver.BlinkinPattern currentPattern;
 
-    public BlinkinLights(RevBlinkinLedDriver light, RevBlinkinLedDriver.BlinkinPattern defaultBlinkPattern) {
+    public BlinkinLights(RevBlinkinLedDriver light, RevBlinkinLedDriver.BlinkinPattern defaultPattern) {
         lights = light;
-        defaultPattern = defaultBlinkPattern;
-        currentPattern = defaultBlinkPattern;
+        this.defaultPattern = defaultPattern;
+        currentPattern = defaultPattern;
 
-        lights.setPattern(defaultPattern);
+        lights.setPattern(this.defaultPattern);
     }
 
     public Task setPatternForTask(Measure<Time> duration, RevBlinkinLedDriver.BlinkinPattern pattern) {
@@ -32,14 +34,17 @@ public class BlinkinLights extends BunyipsSubsystem {
     }
 
     public void setPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
-        currentPattern = pattern;
+        if (getCurrentTask() instanceof IdleTask)
+            currentPattern = pattern;
     }
 
     public void resetPattern() {
-        currentPattern = defaultPattern;
+        if (getCurrentTask() instanceof IdleTask)
+            currentPattern = defaultPattern;
     }
 
     public void turnOff() {
+        cancelCurrentTask();
         currentPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
     }
 
@@ -55,7 +60,7 @@ public class BlinkinLights extends BunyipsSubsystem {
 
     @Override
     protected void periodic() {
-        opMode.telemetry.add("Current Pattern:" + currentPattern.name());
+        opMode.telemetry.add("%: Pattern->%", name, currentPattern.name()).color("gray");
         lights.setPattern(currentPattern);
     }
 }
