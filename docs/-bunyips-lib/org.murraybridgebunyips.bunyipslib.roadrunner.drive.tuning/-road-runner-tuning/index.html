@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>RoadRunnerTuning</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+<link href="../../../images/logo-icon.svg">
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            BunyipsLib
+                    </a>
+            </div>
+            <div class="library-version">
+v3.5.0-master-72fd238            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="BunyipsLib::org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning/RoadRunnerTuning///PointingToDeclaration//-325384828">
+  <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning</a><span class="delimiter">/</span><span class="current">RoadRunnerTuning</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Road</span><wbr></wbr><span>Runner</span><wbr></wbr><span><span>Tuning</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="index.html">RoadRunnerTuning</a> : <span data-unresolved-link="com.qualcomm.robotcore.eventloop.opmode/LinearOpMode///PointingToDeclaration/">LinearOpMode</span></div><p class="paragraph">Utility OpMode you will extend to enable an OpMode to tune your RoadRunner coefficients and parameters. This uses Telemetry to show a menu of tuning options, with static fields being adjusted here, essentially collecting all RoadRunner tuning into one OpMode. You may choose to run the OpModes yourself as they consume the instances you provide, but using this class makes it more straightforward and has built-in dashboard tuning. It is not recommended you run the tuning OpModes yourself, and instead run them using this class. </p><p class="paragraph"> To use this class, extend it, supply an appropriately configured instance of your base RoadRunnerDrive (not the BunyipsLib version), and ensure the localizer you wish to use has been set for it. Then, treat is like a normal OpMode (<span data-unresolved-link="com.qualcomm.robotcore.eventloop.opmode/TeleOp///PointingToDeclaration/">TeleOp</span> annotation). You can adjust all the constants used in testing via FtcDashboard under RoadRunnerTuning. </p><p class="paragraph"> Telemetry is mirrored between FtcDashboard and the Driver Station using a <a href="../../org.murraybridgebunyips.bunyipslib/-dual-telemetry/index.html">DualTelemetry</a> instance, the same used in <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a>. It is not required that a Driver Station be active for tuning. </p><p class="paragraph"> To look at details of a tuning process, you can find them attached to the classes under the ./opmodes package, and by applying the tuning process for RoadRunner v0.5.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1797634954%2FConstructors%2F-325384828" anchor-label="RoadRunnerTuning" id="1797634954%2FConstructors%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-road-runner-tuning.html"><span>Road</span><wbr></wbr><span>Runner</span><wbr></wbr><span><span>Tuning</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1797634954%2FConstructors%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-998735955%2FProperties%2F-325384828" anchor-label="AutomaticFeedforwardTuner" id="-998735955%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-automatic-feedforward-tuner.html"><span>Automatic</span><wbr></wbr><span>Feedforward</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-998735955%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-automatic-feedforward-tuner.html">AutomaticFeedforwardTuner</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-automatic-feedforward-tuner/index.html">AutomaticFeedforwardTuner</a></div><div class="brief ">Feedforward coefficient automated calculation to get a general idea of the FF coefficients, not fully accurate.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1542883170%2FProperties%2F-325384828" anchor-label="BackAndForth" id="1542883170%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-back-and-forth.html"><span>Back</span><wbr></wbr><span>And</span><wbr></wbr><span><span>Forth</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1542883170%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-back-and-forth.html">BackAndForth</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-back-and-forth/index.html">BackAndForth</a></div><div class="brief ">Follower PID test (moves forward and backward forever).</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-219156491%2FProperties%2F-325384828" anchor-label="DriveVelocityPIDTuner" id="-219156491%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-drive-velocity-p-i-d-tuner.html"><span>Drive</span><wbr></wbr><span>Velocity</span><wbr></wbr><span><span>PIDTuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-219156491%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-drive-velocity-p-i-d-tuner.html">DriveVelocityPIDTuner</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-drive-velocity-p-i-d-tuner/index.html">DriveVelocityPIDTuner</a></div><div class="brief ">PID tuner for velocity mode (note: not recommended to use velocity PID).</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1495993058%2FProperties%2F-325384828" anchor-label="FollowerPIDTuner" id="1495993058%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-follower-p-i-d-tuner.html"><span>Follower</span><wbr></wbr><span><span>PIDTuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1495993058%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-follower-p-i-d-tuner.html">FollowerPIDTuner</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-follower-p-i-d-tuner/index.html">FollowerPIDTuner</a></div><div class="brief ">Follower PID test (moves in a square forever).</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-669836092%2FProperties%2F-325384828" anchor-label="LocalizationTest" id="-669836092%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-localization-test.html"><span>Localization</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-669836092%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-localization-test.html">LocalizationTest</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-localization-test/index.html">LocalizationTest</a></div><div class="brief ">General drive capabilities, to test field localization and odometry pod tracking.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="825321878%2FProperties%2F-325384828" anchor-label="ManualFeedforwardTuner" id="825321878%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-manual-feedforward-tuner.html"><span>Manual</span><wbr></wbr><span>Feedforward</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="825321878%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-manual-feedforward-tuner.html">ManualFeedforwardTuner</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-manual-feedforward-tuner/index.html">ManualFeedforwardTuner</a></div><div class="brief ">Most important tuning procedure to tune precise feedforward coefficients.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1358263199%2FProperties%2F-325384828" anchor-label="MaxAngularVeloTuner" id="-1358263199%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-max-angular-velo-tuner.html"><span>Max</span><wbr></wbr><span>Angular</span><wbr></wbr><span>Velo</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1358263199%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-max-angular-velo-tuner.html">MaxAngularVeloTuner</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-max-angular-velo-tuner/index.html">MaxAngularVeloTuner</a></div><div class="brief ">Determines maximum angular velocity of the robot.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1483863626%2FProperties%2F-325384828" anchor-label="MaxVelocityTuner" id="-1483863626%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-max-velocity-tuner.html"><span>Max</span><wbr></wbr><span>Velocity</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1483863626%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-max-velocity-tuner.html">MaxVelocityTuner</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-max-velocity-tuner/index.html">MaxVelocityTuner</a></div><div class="brief ">Determines maximum velocity of the robot.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1575536316%2FProperties%2F-325384828" anchor-label="MotorDirectionDebugger" id="-1575536316%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-motor-direction-debugger.html"><span>Motor</span><wbr></wbr><span>Direction</span><wbr></wbr><span><span>Debugger</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1575536316%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-motor-direction-debugger.html">MotorDirectionDebugger</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-motor-direction-debugger/index.html">MotorDirectionDebugger</a></div><div class="brief ">Debug mode to determine which motors on a four-wheel setup are attached where.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1615348748%2FProperties%2F-325384828" anchor-label="SplineTest" id="1615348748%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-spline-test.html"><span>Spline</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1615348748%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-spline-test.html">SplineTest</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-spline-test/index.html">SplineTest</a></div><div class="brief ">Final test of coefficients with an advanced spline path.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1594719118%2FProperties%2F-325384828" anchor-label="StrafeTest" id="1594719118%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-strafe-test.html"><span>Strafe</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1594719118%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-strafe-test.html">StrafeTest</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-strafe-test/index.html">StrafeTest</a></div><div class="brief ">Strafing test to verify y direction localization.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1742452477%2FProperties%2F-325384828" anchor-label="StraightTest" id="-1742452477%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-straight-test.html"><span>Straight</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1742452477%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-straight-test.html">StraightTest</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-straight-test/index.html">StraightTest</a></div><div class="brief ">Forward test to verify x direction localization.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1871731163%2FProperties%2F-325384828" anchor-label="TrackingWheelForwardOffsetTuner" id="-1871731163%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tracking-wheel-forward-offset-tuner.html"><span>Tracking</span><wbr></wbr><span>Wheel</span><wbr></wbr><span>Forward</span><wbr></wbr><span>Offset</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1871731163%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-tracking-wheel-forward-offset-tuner.html">TrackingWheelForwardOffsetTuner</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-tracking-wheel-forward-offset-tuner/index.html">TrackingWheelForwardOffsetTuner</a></div><div class="brief ">For three-wheel odometry, tuner to find the forward offset coefficient.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="23551511%2FProperties%2F-325384828" anchor-label="TrackingWheelLateralOffsetTuner" id="23551511%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tracking-wheel-lateral-offset-tuner.html"><span>Tracking</span><wbr></wbr><span>Wheel</span><wbr></wbr><span>Lateral</span><wbr></wbr><span>Offset</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="23551511%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-tracking-wheel-lateral-offset-tuner.html">TrackingWheelLateralOffsetTuner</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-tracking-wheel-lateral-distance-tuner/index.html">TrackingWheelLateralDistanceTuner</a></div><div class="brief ">For three-wheel odometry, tuner to find the lateral offset coefficient.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-697325588%2FProperties%2F-325384828" anchor-label="TrackWidthTuner" id="-697325588%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-track-width-tuner.html"><span>Track</span><wbr></wbr><span>Width</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-697325588%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-track-width-tuner.html">TrackWidthTuner</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-track-width-tuner/index.html">TrackWidthTuner</a></div><div class="brief ">Tuner to find the effective track width coefficient.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2132316320%2FProperties%2F-325384828" anchor-label="TurnTest" id="-2132316320%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-turn-test.html"><span>Turn</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2132316320%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-turn-test.html">TurnTest</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/-turn-test/index.html">TurnTest</a></div><div class="brief ">Rotation test to verify z-axis localization.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Inherited properties</h2>
+        <div class="table"><a data-name="1533398127%2FProperties%2F-325384828" anchor-label="gamepad1" id="1533398127%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1533398127%2FProperties%2F-325384828"><span><span>gamepad1</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1533398127%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="index.html#1533398127%2FProperties%2F-325384828">gamepad1</a><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/Gamepad///PointingToDeclaration/">Gamepad</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1564417934%2FProperties%2F-325384828" anchor-label="gamepad2" id="1564417934%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1564417934%2FProperties%2F-325384828"><span><span>gamepad2</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1564417934%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="index.html#1564417934%2FProperties%2F-325384828">gamepad2</a><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/Gamepad///PointingToDeclaration/">Gamepad</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1397214969%2FProperties%2F-325384828" anchor-label="hardwareMap" id="-1397214969%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-1397214969%2FProperties%2F-325384828"><span>hardware</span><wbr></wbr><span><span>Map</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1397214969%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-1397214969%2FProperties%2F-325384828">hardwareMap</a><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/HardwareMap///PointingToDeclaration/">HardwareMap</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1892877380%2FProperties%2F-325384828" anchor-label="isStarted" id="1892877380%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1892877380%2FProperties%2F-325384828"><span>is</span><wbr></wbr><span><span>Started</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1892877380%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1892877380%2FProperties%2F-325384828">isStarted</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-681153211%2FProperties%2F-325384828" anchor-label="MS_BEFORE_FORCE_STOP_AFTER_STOP_REQUESTED" id="-681153211%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-681153211%2FProperties%2F-325384828"><span><span>MS_BEFORE_FORCE_STOP_AFTER_STOP_REQUESTED</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-681153211%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-681153211%2FProperties%2F-325384828">MS_BEFORE_FORCE_STOP_AFTER_STOP_REQUESTED</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">900</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1483349743%2FProperties%2F-325384828" anchor-label="msStuckDetectInit" id="1483349743%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1483349743%2FProperties%2F-325384828"><span>ms</span><wbr></wbr><span>Stuck</span><wbr></wbr><span>Detect</span><wbr></wbr><span><span>Init</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1483349743%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1483349743%2FProperties%2F-325384828">msStuckDetectInit</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-553001045%2FProperties%2F-325384828" anchor-label="msStuckDetectInitLoop" id="-553001045%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-553001045%2FProperties%2F-325384828"><span>ms</span><wbr></wbr><span>Stuck</span><wbr></wbr><span>Detect</span><wbr></wbr><span>Init</span><wbr></wbr><span><span>Loop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-553001045%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-553001045%2FProperties%2F-325384828">msStuckDetectInitLoop</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="363588571%2FProperties%2F-325384828" anchor-label="msStuckDetectLoop" id="363588571%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#363588571%2FProperties%2F-325384828"><span>ms</span><wbr></wbr><span>Stuck</span><wbr></wbr><span>Detect</span><wbr></wbr><span><span>Loop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="363588571%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#363588571%2FProperties%2F-325384828">msStuckDetectLoop</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="427944857%2FProperties%2F-325384828" anchor-label="msStuckDetectStart" id="427944857%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#427944857%2FProperties%2F-325384828"><span>ms</span><wbr></wbr><span>Stuck</span><wbr></wbr><span>Detect</span><wbr></wbr><span><span>Start</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="427944857%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#427944857%2FProperties%2F-325384828">msStuckDetectStart</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-409341632%2FProperties%2F-325384828" anchor-label="msStuckDetectStop" id="-409341632%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-409341632%2FProperties%2F-325384828"><span>ms</span><wbr></wbr><span>Stuck</span><wbr></wbr><span>Detect</span><wbr></wbr><span><span>Stop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-409341632%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-409341632%2FProperties%2F-325384828">msStuckDetectStop</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1097975490%2FProperties%2F-325384828" anchor-label="telemetry" id="1097975490%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1097975490%2FProperties%2F-325384828"><span><span>telemetry</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1097975490%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="index.html#1097975490%2FProperties%2F-325384828">telemetry</a><span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external/Telemetry///PointingToDeclaration/">Telemetry</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-591827947%2FProperties%2F-325384828" anchor-label="time" id="-591827947%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-591827947%2FProperties%2F-325384828"><span><span>time</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-591827947%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-591827947%2FProperties%2F-325384828">time</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="534681724%2FFunctions%2F-325384828" anchor-label="getBaseRoadRunnerDrive" id="534681724%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-base-road-runner-drive.html"><span>get</span><wbr></wbr><span>Base</span><wbr></wbr><span>Road</span><wbr></wbr><span>Runner</span><wbr></wbr><span><span>Drive</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="534681724%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">protected </span><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="get-base-road-runner-drive.html"><span class="token function">getBaseRoadRunnerDrive</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive/-road-runner-drive/index.html">RoadRunnerDrive</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="995558332%2FFunctions%2F-325384828" anchor-label="runOpMode" id="995558332%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="run-op-mode.html"><span>run</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="995558332%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="run-op-mode.html"><span class="token function">runOpMode</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Inherited functions</h2>
+        <div class="table"><a data-name="503260448%2FFunctions%2F-325384828" anchor-label="getRuntime" id="503260448%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#503260448%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>Runtime</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="503260448%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#503260448%2FFunctions%2F-325384828"><span class="token function">getRuntime</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-945285709%2FFunctions%2F-325384828" anchor-label="idle" id="-945285709%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-945285709%2FFunctions%2F-325384828"><span><span>idle</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-945285709%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-945285709%2FFunctions%2F-325384828"><span class="token function">idle</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1617228809%2FFunctions%2F-325384828" anchor-label="init" id="-1617228809%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-1617228809%2FFunctions%2F-325384828"><span><span>init</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1617228809%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-1617228809%2FFunctions%2F-325384828"><span class="token function">init</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-493667936%2FFunctions%2F-325384828" anchor-label="init_loop" id="-493667936%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-493667936%2FFunctions%2F-325384828"><span><span>init_loop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-493667936%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-493667936%2FFunctions%2F-325384828"><span class="token function">init_loop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="832637297%2FFunctions%2F-325384828" anchor-label="internalPostInitLoop" id="832637297%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#832637297%2FFunctions%2F-325384828"><span>internal</span><wbr></wbr><span>Post</span><wbr></wbr><span>Init</span><wbr></wbr><span><span>Loop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="832637297%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#832637297%2FFunctions%2F-325384828"><span class="token function">internalPostInitLoop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-180688735%2FFunctions%2F-325384828" anchor-label="internalPostLoop" id="-180688735%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-180688735%2FFunctions%2F-325384828"><span>internal</span><wbr></wbr><span>Post</span><wbr></wbr><span><span>Loop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-180688735%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-180688735%2FFunctions%2F-325384828"><span class="token function">internalPostLoop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="958221314%2FFunctions%2F-325384828" anchor-label="internalPreInit" id="958221314%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#958221314%2FFunctions%2F-325384828"><span>internal</span><wbr></wbr><span>Pre</span><wbr></wbr><span><span>Init</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="958221314%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#958221314%2FFunctions%2F-325384828"><span class="token function">internalPreInit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="949931346%2FFunctions%2F-325384828" anchor-label="internalUpdateTelemetryNow" id="949931346%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#949931346%2FFunctions%2F-325384828"><span>internal</span><wbr></wbr><span>Update</span><wbr></wbr><span>Telemetry</span><wbr></wbr><span><span>Now</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="949931346%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#949931346%2FFunctions%2F-325384828"><span class="token function">internalUpdateTelemetryNow</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">telemetry<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.robocol/TelemetryMessage///PointingToDeclaration/">TelemetryMessage</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="157279217%2FFunctions%2F-325384828" anchor-label="isStopRequested" id="157279217%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#157279217%2FFunctions%2F-325384828"><span>is</span><wbr></wbr><span>Stop</span><wbr></wbr><span><span>Requested</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="157279217%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#157279217%2FFunctions%2F-325384828"><span class="token function">isStopRequested</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1557977315%2FFunctions%2F-325384828" anchor-label="loop" id="1557977315%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1557977315%2FFunctions%2F-325384828"><span><span>loop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1557977315%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1557977315%2FFunctions%2F-325384828"><span class="token function">loop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1015161614%2FFunctions%2F-325384828" anchor-label="opModeInInit" id="1015161614%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1015161614%2FFunctions%2F-325384828"><span>op</span><wbr></wbr><span>Mode</span><wbr></wbr><span>In</span><wbr></wbr><span><span>Init</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1015161614%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1015161614%2FFunctions%2F-325384828"><span class="token function">opModeInInit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-911330061%2FFunctions%2F-325384828" anchor-label="opModeIsActive" id="-911330061%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-911330061%2FFunctions%2F-325384828"><span>op</span><wbr></wbr><span>Mode</span><wbr></wbr><span>Is</span><wbr></wbr><span><span>Active</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-911330061%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-911330061%2FFunctions%2F-325384828"><span class="token function">opModeIsActive</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-765560122%2FFunctions%2F-325384828" anchor-label="requestOpModeStop" id="-765560122%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-765560122%2FFunctions%2F-325384828"><span>request</span><wbr></wbr><span>Op</span><wbr></wbr><span>Mode</span><wbr></wbr><span><span>Stop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-765560122%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-765560122%2FFunctions%2F-325384828"><span class="token function">requestOpModeStop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1757147609%2FFunctions%2F-325384828" anchor-label="resetRuntime" id="1757147609%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1757147609%2FFunctions%2F-325384828"><span>reset</span><wbr></wbr><span><span>Runtime</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1757147609%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1757147609%2FFunctions%2F-325384828"><span class="token function">resetRuntime</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1872548672%2FFunctions%2F-325384828" anchor-label="sleep" id="1872548672%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1872548672%2FFunctions%2F-325384828"><span><span>sleep</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1872548672%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1872548672%2FFunctions%2F-325384828"><span class="token function">sleep</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">milliseconds<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1200709743%2FFunctions%2F-325384828" anchor-label="start" id="-1200709743%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-1200709743%2FFunctions%2F-325384828"><span><span>start</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1200709743%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-1200709743%2FFunctions%2F-325384828"><span class="token function">start</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="841039173%2FFunctions%2F-325384828" anchor-label="stop" id="841039173%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#841039173%2FFunctions%2F-325384828"><span><span>stop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="841039173%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#841039173%2FFunctions%2F-325384828"><span class="token function">stop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-167858447%2FFunctions%2F-325384828" anchor-label="terminateOpModeNow" id="-167858447%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-167858447%2FFunctions%2F-325384828"><span>terminate</span><wbr></wbr><span>Op</span><wbr></wbr><span>Mode</span><wbr></wbr><span><span>Now</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-167858447%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#-167858447%2FFunctions%2F-325384828"><span class="token function">terminateOpModeNow</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1080474565%2FFunctions%2F-325384828" anchor-label="updateTelemetry" id="1080474565%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1080474565%2FFunctions%2F-325384828"><span>update</span><wbr></wbr><span><span>Telemetry</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1080474565%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#1080474565%2FFunctions%2F-325384828"><span class="token function">updateTelemetry</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">telemetry<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external/Telemetry///PointingToDeclaration/">Telemetry</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="246695705%2FFunctions%2F-325384828" anchor-label="waitForStart" id="246695705%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#246695705%2FFunctions%2F-325384828"><span>wait</span><wbr></wbr><span>For</span><wbr></wbr><span><span>Start</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="246695705%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.vision/-colour-tuner/index.html#246695705%2FFunctions%2F-325384828"><span class="token function">waitForStart</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

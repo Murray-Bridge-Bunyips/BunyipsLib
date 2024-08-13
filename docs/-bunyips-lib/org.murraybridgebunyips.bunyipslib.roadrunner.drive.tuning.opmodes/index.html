@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes</title>
+    <link href="../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+<link href="../../images/logo-icon.svg">
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../index.html">
+                            BunyipsLib
+                    </a>
+            </div>
+            <div class="library-version">
+v3.5.0-master-72fd238            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="package" id="content" pageIds="BunyipsLib::org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes////PointingToDeclaration//-325384828">
+  <div class="breadcrumbs"><a href="../../index.html">BunyipsLib</a><span class="delimiter">/</span><span class="current">org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="182253710%2FClasslikes%2F-325384828" anchor-label="AutomaticFeedforwardTuner" id="182253710%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-automatic-feedforward-tuner/index.html"><span>Automatic</span><wbr></wbr><span>Feedforward</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="182253710%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-automatic-feedforward-tuner/index.html">AutomaticFeedforwardTuner</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">Op mode for computing kV, kStatic, and kA from various drive routines.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-300644791%2FClasslikes%2F-325384828" anchor-label="BackAndForth" id="-300644791%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-back-and-forth/index.html"><span>Back</span><wbr></wbr><span>And</span><wbr></wbr><span><span>Forth</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-300644791%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-back-and-forth/index.html">BackAndForth</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">Op mode for preliminary tuning of the follower PID coefficients (located in the drive base classes).</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1477793962%2FClasslikes%2F-325384828" anchor-label="DriveVelocityPIDTuner" id="-1477793962%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-drive-velocity-p-i-d-tuner/index.html"><span>Drive</span><wbr></wbr><span>Velocity</span><wbr></wbr><span><span>PIDTuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1477793962%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-drive-velocity-p-i-d-tuner/index.html">DriveVelocityPIDTuner</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This routine is designed to tune the PID coefficients used by the REV Expansion Hubs for closed- loop velocity control.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="588748873%2FClasslikes%2F-325384828" anchor-label="FollowerPIDTuner" id="588748873%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-follower-p-i-d-tuner/index.html"><span>Follower</span><wbr></wbr><span><span>PIDTuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="588748873%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-follower-p-i-d-tuner/index.html">FollowerPIDTuner</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">Op mode for preliminary tuning of the follower PID coefficients (located in the drive base classes).</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1577080277%2FClasslikes%2F-325384828" anchor-label="LocalizationTest" id="-1577080277%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-localization-test/index.html"><span>Localization</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1577080277%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-localization-test/index.html">LocalizationTest</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This is a simple teleop routine for testing localization.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1185106755%2FClasslikes%2F-325384828" anchor-label="ManualFeedforwardTuner" id="-1185106755%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-manual-feedforward-tuner/index.html"><span>Manual</span><wbr></wbr><span>Feedforward</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1185106755%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-manual-feedforward-tuner/index.html">ManualFeedforwardTuner</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This routine is designed to tune the open-loop feedforward coefficients.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-299132158%2FClasslikes%2F-325384828" anchor-label="MaxAngularVeloTuner" id="-299132158%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-max-angular-velo-tuner/index.html"><span>Max</span><wbr></wbr><span>Angular</span><wbr></wbr><span>Velo</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-299132158%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-max-angular-velo-tuner/index.html">MaxAngularVeloTuner</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This routine is designed to calculate the maximum angular velocity your bot can achieve under load.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1903859485%2FClasslikes%2F-325384828" anchor-label="MaxVelocityTuner" id="1903859485%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-max-velocity-tuner/index.html"><span>Max</span><wbr></wbr><span>Velocity</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1903859485%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-max-velocity-tuner/index.html">MaxVelocityTuner</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This routine is designed to calculate the maximum velocity your bot can achieve under load.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="709002347%2FClasslikes%2F-325384828" anchor-label="MotorDirectionDebugger" id="709002347%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-motor-direction-debugger/index.html"><span>Motor</span><wbr></wbr><span>Direction</span><wbr></wbr><span><span>Debugger</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="709002347%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-motor-direction-debugger/index.html">MotorDirectionDebugger</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This is a simple teleop routine for debugging your motor configuration.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="497337267%2FClasslikes%2F-325384828" anchor-label="SplineTest" id="497337267%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-spline-test/index.html"><span>Spline</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="497337267%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-spline-test/index.html">SplineTest</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This is an example of a more complex path to really test the tuning.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="476707637%2FClasslikes%2F-325384828" anchor-label="StrafeTest" id="476707637%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-strafe-test/index.html"><span>Strafe</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="476707637%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-strafe-test/index.html">StrafeTest</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This is a simple routine to test translational drive capabilities.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="708986858%2FClasslikes%2F-325384828" anchor-label="StraightTest" id="708986858%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-straight-test/index.html"><span>Straight</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="708986858%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-straight-test/index.html">StraightTest</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This is a simple routine to test translational drive capabilities.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1376855738%2FClasslikes%2F-325384828" anchor-label="TrackingWheelForwardOffsetTuner" id="-1376855738%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tracking-wheel-forward-offset-tuner/index.html"><span>Tracking</span><wbr></wbr><span>Wheel</span><wbr></wbr><span>Forward</span><wbr></wbr><span>Offset</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1376855738%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-tracking-wheel-forward-offset-tuner/index.html">TrackingWheelForwardOffsetTuner</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This routine determines the effective forward offset for the lateral tracking wheel.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="535455130%2FClasslikes%2F-325384828" anchor-label="TrackingWheelLateralDistanceTuner" id="535455130%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tracking-wheel-lateral-distance-tuner/index.html"><span>Tracking</span><wbr></wbr><span>Wheel</span><wbr></wbr><span>Lateral</span><wbr></wbr><span>Distance</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="535455130%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-tracking-wheel-lateral-distance-tuner/index.html">TrackingWheelLateralDistanceTuner</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">Opmode designed to assist the user in tuning the `StandardTrackingWheelLocalizer`'s LATERAL_DISTANCE value.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-950545139%2FClasslikes%2F-325384828" anchor-label="TrackWidthTuner" id="-950545139%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-track-width-tuner/index.html"><span>Track</span><wbr></wbr><span>Width</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-950545139%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-track-width-tuner/index.html">TrackWidthTuner</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This routine determines the effective track width.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1688969159%2FClasslikes%2F-325384828" anchor-label="TurnTest" id="1688969159%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-turn-test/index.html"><span>Turn</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1688969159%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-turn-test/index.html">TurnTest</a> : <a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><div class="brief ">This is a simple routine to test turning capabilities.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v3.5.0-master-c1ef0b8            </div>
+v3.5.0-master-72fd238            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,7 +66,7 @@ v3.5.0-master-c1ef0b8            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib.subsystems</a><span class="delimiter">/</span><span class="current">IMUOp</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>IMUOp</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">IMUOp</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">imu<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/IMU///PointingToDeclaration/">IMU</span></span></span><span class="token punctuation">)</span> : <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a></div><p class="paragraph">IMUOperation custom common class for internal IMUs</p><p class="paragraph">This class is used to abstract the IMU reading and provide a more human-friendly reading, serving as a wrapper for the internal IMU class. RoadRunner uses the direct IMU class, so this class is only for use in other situations such as reading the IMU for other tasks.</p><p class="paragraph">This code has been updated to use the new SDK v8.1 specification on 03/06/2023.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2022</p></span></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">IMUOp</a> : <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a></div><p class="paragraph">IMU utility class that will wrap an Inertial Measurement Unit to provide data and automatic updates of the IMU angles as part of a subsystem. This subsystem has no meaningful <a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a> to schedule. </p><p class="paragraph"> This class, alike the old IMUOp also supports different readings of IMU measurement, such as an unrestricted domain on heading reads, while also being able to provide IMU units in terms of WPIUnits. </p><p class="paragraph"> Angles from this class are intrinsic. Read more in the <span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/YawPitchRollAngles///PointingToDeclaration/">YawPitchRollAngles</span> and <span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/Orientation///PointingToDeclaration/">Orientation</span> classes.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -83,7 +83,26 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">imu<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/IMU///PointingToDeclaration/">IMU</span></span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">imu<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/IMU///PointingToDeclaration/">IMU</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Wrap an IMU to use in IMUOp.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-77943615%2FClasslikes%2F-325384828" anchor-label="YawDomain" id="-77943615%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-yaw-domain/index.html"><span>Yaw</span><wbr></wbr><span><span>Domain</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-77943615%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">enum </span><a href="-yaw-domain/index.html">YawDomain</a></div><div class="brief ">The various modes that the <a href="yaw.html">yaw</a> field can represent the current robot yaw as.</div></div></div>
                 </div>
               </div>
             </div>
@@ -92,77 +111,17 @@ v3.5.0-master-c1ef0b8            </div>
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="">Properties</h2>
-        <div class="table"><a data-name="435065627%2FProperties%2F-325384828" anchor-label="capture" id="435065627%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="274882718%2FProperties%2F-325384828" anchor-label="lastAcquisitionTimeNanos" id="274882718%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="capture.html"><span><span>capture</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="435065627%2FProperties%2F-325384828"></span>
+                  <div><a href="last-acquisition-time-nanos.html"><span>last</span><wbr></wbr><span>Acquisition</span><wbr></wbr><span>Time</span><wbr></wbr><span><span>Nanos</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="274882718%2FProperties%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="capture.html">capture</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get the current PrecisionDrive IMU capture reading from the internal IMU.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1494766104%2FProperties%2F-325384828" anchor-label="currentAngles" id="-1494766104%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="current-angles.html"><span>current</span><wbr></wbr><span><span>Angles</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1494766104%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-volatile/index.html"><span class="token annotation builtin">Volatile</span></a></div></div><span class="token keyword">var </span><a href="current-angles.html">currentAngles</a><span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/Orientation///PointingToDeclaration/">Orientation</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get the current IMU reading from the internal IMU.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1270237461%2FProperties%2F-325384828" anchor-label="currentVelocity" id="-1270237461%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="current-velocity.html"><span>current</span><wbr></wbr><span><span>Velocity</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1270237461%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-volatile/index.html"><span class="token annotation builtin">Volatile</span></a></div></div><span class="token keyword">var </span><a href="current-velocity.html">currentVelocity</a><span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/AngularVelocity///PointingToDeclaration/">AngularVelocity</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get the current IMU velocity reading from the internal IMU.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1275635679%2FProperties%2F-325384828" anchor-label="heading" id="1275635679%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="heading.html"><span><span>heading</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1275635679%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="heading.html">heading</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Get the current heading reading from the internal IMU, with support for absolute degree readings Instead of using signed -180, 180 readings, this will return a degree within -inf to +inf</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1501712934%2FProperties%2F-325384828" anchor-label="offset" id="1501712934%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="offset.html"><span><span>offset</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1501712934%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="offset.html">offset</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Offset the IMU reading for field-centric navigation Must be an polar angle: v E 0, 360, will be converted to a signed -180, 180 angle</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">open </span><span class="token keyword">var </span><a href="last-acquisition-time-nanos.html">lastAcquisitionTimeNanos</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Long.html">Long</a></div><div class="brief ">Last acquisition of data from the IMU by IMUOp.</div></div></div>
                 </div>
               </div>
             </div>
@@ -177,37 +136,22 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="pitch.html">pitch</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Get the current pitch reading from the internal IMU</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword">var </span><a href="pitch.html">pitch</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></div><div class="brief ">Last read pitch of the IMU.</div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-200623519%2FProperties%2F-325384828" anchor-label="pitchRate" id="-200623519%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-234582340%2FProperties%2F-325384828" anchor-label="pitchVel" id="-234582340%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="pitch-rate.html"><span>pitch</span><wbr></wbr><span><span>Rate</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-200623519%2FProperties%2F-325384828"></span>
+                  <div><a href="pitch-vel.html"><span>pitch</span><wbr></wbr><span><span>Vel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-234582340%2FProperties%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="pitch-rate.html">pitchRate</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Get X rotation rate (pitch rate) from the internal IMU</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-942845473%2FProperties%2F-325384828" anchor-label="rawHeading" id="-942845473%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="raw-heading.html"><span>raw</span><wbr></wbr><span><span>Heading</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-942845473%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="raw-heading.html">rawHeading</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Get the current signed -180, 180 yaw reading from the internal IMU</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword">var </span><a href="pitch-vel.html">pitchVel</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div><div class="brief ">Last read pitch velocity of the IMU.</div></div></div>
                 </div>
               </div>
             </div>
@@ -222,37 +166,67 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="roll.html">roll</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Get the current roll reading from the internal IMU</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword">var </span><a href="roll.html">roll</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></div><div class="brief ">Last read roll of the IMU.</div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1735544836%2FProperties%2F-325384828" anchor-label="rollRate" id="-1735544836%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-422643263%2FProperties%2F-325384828" anchor-label="rollVel" id="-422643263%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="roll-rate.html"><span>roll</span><wbr></wbr><span><span>Rate</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1735544836%2FProperties%2F-325384828"></span>
+                  <div><a href="roll-vel.html"><span>roll</span><wbr></wbr><span><span>Vel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-422643263%2FProperties%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="roll-rate.html">rollRate</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Get Y rotation rate (roll rate) from the internal IMU</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword">var </span><a href="roll-vel.html">rollVel</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div><div class="brief ">Last read roll velocity of the IMU.</div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1143779324%2FProperties%2F-325384828" anchor-label="turnRate" id="1143779324%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="1636747794%2FProperties%2F-325384828" anchor-label="yaw" id="1636747794%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="turn-rate.html"><span>turn</span><wbr></wbr><span><span>Rate</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1143779324%2FProperties%2F-325384828"></span>
+                  <div><a href="yaw.html"><span><span>yaw</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1636747794%2FProperties%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">var </span><a href="turn-rate.html">turnRate</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Get Z rotation rate (heading rate) from the internal IMU</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword">var </span><a href="yaw.html">yaw</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></div><div class="brief ">Last read yaw (heading) of the IMU.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="157205759%2FProperties%2F-325384828" anchor-label="yawOffset" id="157205759%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="yaw-offset.html"><span>yaw</span><wbr></wbr><span><span>Offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="157205759%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="yaw-offset.html">yawOffset</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1894741909%2FProperties%2F-325384828" anchor-label="yawVel" id="-1894741909%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="yaw-vel.html"><span>yaw</span><wbr></wbr><span><span>Vel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1894741909%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword">var </span><a href="yaw-vel.html">yawVel</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-velocity/index.html">Velocity</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div><div class="brief ">Last read yaw velocity of the IMU.</div></div></div>
                 </div>
               </div>
             </div>
@@ -261,7 +235,22 @@ v3.5.0-master-c1ef0b8            </div>
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="">Inherited properties</h2>
-        <div class="table"><a data-name="-1642278007%2FProperties%2F-325384828" anchor-label="name" id="-1642278007%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="-731753720%2FProperties%2F-325384828" anchor-label="currentTask" id="-731753720%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/current-task.html"><span>current</span><wbr></wbr><span><span>Task</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-731753720%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/current-task.html">currentTask</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1642278007%2FProperties%2F-325384828" anchor-label="name" id="-1642278007%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -271,7 +260,7 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">var </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/name.html">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/name.html">name</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -295,17 +284,17 @@ v3.5.0-master-c1ef0b8            </div>
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="">Functions</h2>
-        <div class="table"><a data-name="761692981%2FFunctions%2F-325384828" anchor-label="getRPrecisionSpeed" id="761692981%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="-1751649380%2FFunctions%2F-325384828" anchor-label="getYawDomain" id="-1751649380%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="get-r-precision-speed.html"><span>get</span><wbr></wbr><span>RPrecision</span><wbr></wbr><span><span>Speed</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="761692981%2FFunctions%2F-325384828"></span>
+                  <div><a href="get-yaw-domain.html"><span>get</span><wbr></wbr><span>Yaw</span><wbr></wbr><span><span>Domain</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1751649380%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-r-precision-speed.html"><span class="token function">getRPrecisionSpeed</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">originalSpeed<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">tolerance<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Query motor alignment speed for ROTATIONAL speed through PrecisionDrive</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-yaw-domain.html"><span class="token function">getYawDomain</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-yaw-domain/index.html">IMUOp.YawDomain</a></div><div class="brief ">Gets the current yaw domain, which is the domain this IMU is reporting <a href="yaw.html">yaw</a> at.</div></div></div>
                 </div>
               </div>
             </div>
@@ -320,52 +309,37 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="periodic.html"><span class="token function">periodic</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Update the latest state in the IMU to current data</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="periodic.html"><span class="token function">periodic</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">To be updated periodically on every hardware loop.</div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-680702142%2FFunctions%2F-325384828" anchor-label="resetCapture" id="-680702142%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-1431850567%2FFunctions%2F-325384828" anchor-label="resetYaw" id="-1431850567%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="reset-capture.html"><span>reset</span><wbr></wbr><span><span>Capture</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-680702142%2FFunctions%2F-325384828"></span>
+                  <div><a href="reset-yaw.html"><span>reset</span><wbr></wbr><span><span>Yaw</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1431850567%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="reset-capture.html"><span class="token function">resetCapture</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">IMUOp</a></div><div class="brief "><p class="paragraph">Stop and reset PrecisionDrive IMU alignment algorithm</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="reset-yaw.html"><span class="token function">resetYaw</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Resets the robot's yaw angle to 0.</div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="159867910%2FFunctions%2F-325384828" anchor-label="resetHeading" id="159867910%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="280087849%2FFunctions%2F-325384828" anchor-label="setYawDomain" id="280087849%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="reset-heading.html"><span>reset</span><wbr></wbr><span><span>Heading</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="159867910%2FFunctions%2F-325384828"></span>
+                  <div><a href="set-yaw-domain.html"><span>set</span><wbr></wbr><span>Yaw</span><wbr></wbr><span><span>Domain</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="280087849%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="reset-heading.html"><span class="token function">resetHeading</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">IMUOp</a></div><div class="brief "><p class="paragraph">Reset all heading measurements, offsets, and internal measurements to default 0.0</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1708594603%2FFunctions%2F-325384828" anchor-label="startCapture" id="-1708594603%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="start-capture.html"><span>start</span><wbr></wbr><span><span>Capture</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1708594603%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="start-capture.html"><span class="token function">startCapture</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">IMUOp</a></div><div class="brief "><p class="paragraph">Start PrecisionDrive IMU alignment algorithm and capture the original angle</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-yaw-domain.html"><span class="token function">setYawDomain</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">newDomain<span class="token operator">: </span><a href="-yaw-domain/index.html">IMUOp.YawDomain</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the domain range of what the <a href="yaw.html">yaw</a> field will return.</div></div></div>
                 </div>
               </div>
             </div>
@@ -374,17 +348,17 @@ v3.5.0-master-c1ef0b8            </div>
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="">Inherited functions</h2>
-        <div class="table"><a data-name="754554153%2FFunctions%2F-325384828" anchor-label="assertParamsNotNull" id="754554153%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="1294735535%2FFunctions%2F-325384828" anchor-label="assertParamsNotNull" id="1294735535%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="index.html#754554153%2FFunctions%2F-325384828"><span>assert</span><wbr></wbr><span>Params</span><wbr></wbr><span>Not</span><wbr></wbr><span><span>Null</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="754554153%2FFunctions%2F-325384828"></span>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/assert-params-not-null.html"><span>assert</span><wbr></wbr><span>Params</span><wbr></wbr><span>Not</span><wbr></wbr><span><span>Null</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1294735535%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="index.html#754554153%2FFunctions%2F-325384828"><span class="token function">assertParamsNotNull</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">vararg </span>parameters<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Utility function to run NullSafety.assertComponentArgs() on the given parameters, usually on the motors/hardware/critical objects passed into the constructor. If this check fails, your subsystem will automatically disable the update() method from calling to prevent exceptions, no-oping the subsystem. A COM_FAULT will be added to telemetry, and exceptions from this class will be muted.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/assert-params-not-null.html"><span class="token function">assertParamsNotNull</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">parameters<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief ">Utility function to run NullSafety.assertComponentArgs() on the given parameters, usually on the motors/hardware/critical objects passed into the constructor.</div></div></div>
                 </div>
               </div>
             </div>
@@ -399,7 +373,7 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/cancel-current-task.html"><span class="token function">cancelCurrentTask</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Cancel the current task immediately and return to the default task, if available.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/cancel-current-task.html"><span class="token function">cancelCurrentTask</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Cancel the current task immediately and return to the default task, if available.</div></div></div>
                 </div>
               </div>
             </div>
@@ -414,7 +388,7 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/disable.html"><span class="token function">disable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Prevent a subsystem from running.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/disable.html"><span class="token function">disable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Prevent a subsystem from running.</div></div></div>
                 </div>
               </div>
             </div>
@@ -429,22 +403,7 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/enable.html"><span class="token function">enable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Re-enable a subsystem if it was previously disabled via a disable() call. This method will no-op if the assertion from assertParamsNotNull() failed.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="698367628%2FFunctions%2F-325384828" anchor-label="getCurrentTask" id="698367628%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="index.html#698367628%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Current</span><wbr></wbr><span><span>Task</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="698367628%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">fun </span><a href="index.html#698367628%2FFunctions%2F-325384828"><span class="token function">getCurrentTask</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Get the current task for this subsystem. If the current task is null or finished, the default task will be returned.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/enable.html"><span class="token function">enable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Re-enable a subsystem if it was previously disabled via a disable() call.</div></div></div>
                 </div>
               </div>
             </div>
@@ -474,7 +433,7 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/is-idle.html"><span class="token function">isIdle</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Determine if the subsystem is idle, meaning an IdleTask is running.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/is-idle.html"><span class="token function">isIdle</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief ">Determine if the subsystem is idle, meaning an IdleTask is running.</div></div></div>
                 </div>
               </div>
             </div>
@@ -489,7 +448,7 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/on-disable.html"><span class="token function">onDisable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">User callback that runs once when this subsystem is disabled by a call to <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/disable.html">disable</a> or by an assertion failure. Note that this method may run where asserted parameters are null, so be sure to check for null safety in this method if necessary.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/on-disable.html"><span class="token function">onDisable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">User callback that runs once when this subsystem is disabled by a call to <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/disable.html">disable</a> or by an assertion failure.</div></div></div>
                 </div>
               </div>
             </div>
@@ -504,22 +463,7 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/on-enable.html"><span class="token function">onEnable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">User callback that runs once when this subsystem is enabled by a call to <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/enable.html">enable</a> or the first active call to <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/periodic.html">periodic</a>.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-961660747%2FFunctions%2F-325384828" anchor-label="setCurrentTask" id="-961660747%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="index.html#-961660747%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Current</span><wbr></wbr><span><span>Task</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-961660747%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-961660747%2FFunctions%2F-325384828"><span class="token function">setCurrentTask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">newTask<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Set the current task to the given task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/on-enable.html"><span class="token function">onEnable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">User callback that runs once when this subsystem is enabled by a call to <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/enable.html">enable</a> or the first active call to <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/periodic.html">periodic</a>.</div></div></div>
                 </div>
               </div>
             </div>
@@ -528,13 +472,13 @@ v3.5.0-master-c1ef0b8            </div>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="index.html#-1905163907%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Default</span><wbr></wbr><span><span>Task</span></span></a></div>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/set-default-task.html"><span>set</span><wbr></wbr><span>Default</span><wbr></wbr><span><span>Task</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1905163907%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-1905163907%2FFunctions%2F-325384828"><span class="token function">setDefaultTask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">defaultTask<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set the default task for this subsystem, which will be run when no other task is running.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/set-default-task.html"><span class="token function">setDefaultTask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">defaultTask<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Set the default task for this subsystem, which will be run when no other task is running.</div></div></div>
                 </div>
               </div>
             </div>
@@ -543,13 +487,43 @@ v3.5.0-master-c1ef0b8            </div>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="index.html#1763660271%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>High</span><wbr></wbr><span>Priority</span><wbr></wbr><span>Current</span><wbr></wbr><span><span>Task</span></span></a></div>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/set-high-priority-current-task.html"><span>set</span><wbr></wbr><span>High</span><wbr></wbr><span>Priority</span><wbr></wbr><span>Current</span><wbr></wbr><span><span>Task</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1763660271%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#1763660271%2FFunctions%2F-325384828"><span class="token function">setHighPriorityCurrentTask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">currentTask<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set the current task to the given task, overriding any current task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/set-high-priority-current-task.html"><span class="token function">setHighPriorityCurrentTask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">currentTask<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Set the current task to the given task, overriding any current task.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="201651857%2FFunctions%2F-325384828" anchor-label="startThread" id="201651857%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/start-thread.html"><span>start</span><wbr></wbr><span><span>Thread</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="201651857%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/start-thread.html"><span class="token function">startThread</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">loopSleepDuration<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Call to delegate all updates of this subsystem to a thread that will begin execution on this method call.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1597847368%2FFunctions%2F-325384828" anchor-label="stopThread" id="1597847368%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/stop-thread.html"><span>stop</span><wbr></wbr><span><span>Thread</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1597847368%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/stop-thread.html"><span class="token function">stopThread</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Call to stop delegating updates of this subsystem to a thread.</div></div></div>
                 </div>
               </div>
             </div>
@@ -564,7 +538,7 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">override </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/to-string.html"><span class="token function">toString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/to-string.html"><span class="token function">toString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -579,7 +553,7 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/to-verbose-string.html"><span class="token function">toVerboseString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/to-verbose-string.html"><span class="token function">toVerboseString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -594,22 +568,37 @@ v3.5.0-master-c1ef0b8            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/update.html"><span class="token function">update</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Update the subsystem and run the current task, if tasks are not set up this will just call <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/periodic.html">periodic</a>. This method should be called if you are running this subsystem manually, otherwise it will be called by the <a href="../../org.murraybridgebunyips.bunyipslib/-scheduler/index.html">Scheduler</a> or by <a href="../../org.murraybridgebunyips.bunyipslib/-autonomous-bunyips-op-mode/index.html">AutonomousBunyipsOpMode</a>. Alternatively all subsystems that were instantiated can be statically updated via <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/update-all.html">updateAll</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/update.html"><span class="token function">update</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Update the subsystem and run the current task, if tasks are not set up this will just call <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/periodic.html">periodic</a>.</div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="318692609%2FFunctions%2F-325384828" anchor-label="withName" id="318692609%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="1014587662%2FFunctions%2F-325384828" anchor-label="updateAll" id="1014587662%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="index.html#318692609%2FFunctions%2F-325384828"><span>with</span><wbr></wbr><span><span>Name</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="318692609%2FFunctions%2F-325384828"></span>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/update-all.html"><span>update</span><wbr></wbr><span><span>All</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1014587662%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="index.html#318692609%2FFunctions%2F-325384828">T</a><span class="token operator"> : </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a><span class="token operator">&gt; </span><a href="index.html#318692609%2FFunctions%2F-325384828"><span class="token function">withName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>subsystemName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html#318692609%2FFunctions%2F-325384828">T</a></div><div class="brief "><p class="paragraph">Set the name of this subsystem that will be used in telemetry and references.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/update-all.html"><span class="token function">updateAll</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Update all instances of BunyipsSubsystem that has been constructed since the last clearing.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-888995618%2FFunctions%2F-325384828" anchor-label="withName" id="-888995618%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/with-name.html"><span>with</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-888995618%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/with-name.html">T</a><span class="token operator"> : </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a><span class="token operator">?</span><span class="token operator">&gt; </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/with-name.html"><span class="token function">withName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>subsystemName<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/with-name.html">T</a></div><div class="brief ">Set the name of this subsystem that will be used in telemetry and references.</div></div></div>
                 </div>
               </div>
             </div>

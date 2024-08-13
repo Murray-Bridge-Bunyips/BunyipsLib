@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>TrackingWheelLateralDistanceTuner</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+<link href="../../../images/logo-icon.svg">
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            BunyipsLib
+                    </a>
+            </div>
+            <div class="library-version">
+v3.5.0-master-72fd238            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="BunyipsLib::org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes/TrackingWheelLateralDistanceTuner///PointingToDeclaration//-325384828">
+  <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.opmodes</a><span class="delimiter">/</span><span class="current">TrackingWheelLateralDistanceTuner</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Tracking</span><wbr></wbr><span>Wheel</span><wbr></wbr><span>Lateral</span><wbr></wbr><span>Distance</span><wbr></wbr><span><span>Tuner</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">TrackingWheelLateralDistanceTuner</a> : <a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt; </span></div><p class="paragraph">Opmode designed to assist the user in tuning the `StandardTrackingWheelLocalizer`'s LATERAL_DISTANCE value. The LATERAL_DISTANCE is the center-to-center distance of the parallel wheels. </p><p class="paragraph"> Tuning Routine: </p><p class="paragraph"> 1. Set the LATERAL_DISTANCE value in StandardTrackingWheelLocalizer.java to the physical measured value. This need only be an estimated value as you will be tuning it anyways. </p><p class="paragraph"> 2. Make a mark on the bot (with a piece of tape or sharpie or however you wish) and make an similar mark right below the indicator on your bot. This will be your reference point to ensure you've turned exactly 360°. </p><p class="paragraph"> 3. Although not entirely necessary, having the bot's pose being drawn in dashbooard does help identify discrepancies in the LATERAL_DISTANCE value. To access the dashboard, connect your computer to the RC's WiFi network. In your browser, navigate to https://192.168.49.1:8080/dash if you're using the RC phone or https://192.168.43.1:8080/dash if you are using the Control Hub. Ensure the field is showing (select the field view in top right of the page). </p><p class="paragraph"> 4. Press play to begin the tuning routine. </p><p class="paragraph"> 5. Use the right joystick on gamepad 1 to turn the bot counterclockwise. </p><p class="paragraph"> 6. Spin the bot 10 times, counterclockwise. Make sure to keep track of these turns. </p><p class="paragraph"> 7. Once the bot has finished spinning 10 times, press A to finishing the routine. The indicators on the bot and on the ground you created earlier should be lined up. </p><p class="paragraph"> 8. Your effective LATERAL_DISTANCE will be given. Stick this value into your StandardTrackingWheelLocalizer.java class. </p><p class="paragraph"> 9. If this value is incorrect, run the routine again while adjusting the LATERAL_DISTANCE value yourself. Read the heading output and follow the advice stated in the note below to manually nudge the values yourself. </p><p class="paragraph"> Note: It helps to pay attention to how the pose on the field is drawn in dashboard. A blue circle with a line from the circumference to the center should be present, representing the bot. The line indicates forward. If your LATERAL_DISTANCE value is tuned currently, the pose drawn in dashboard should keep track with the pose of your actual bot. If the drawn bot turns slower than the actual bot, the LATERAL_DISTANCE should be decreased. If the drawn bot turns faster than the actual bot, the LATERAL_DISTANCE should be increased. </p><p class="paragraph"> If your drawn bot oscillates around a point in dashboard, don't worry. This is because the position of the perpendicular wheel isn't perfectly set and causes a discrepancy in the effective center of rotation. You can ignore this effect. The center of rotation will be offset slightly but your heading will still be fine. This does not affect your overall tracking precision. The heading should still line up.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="509041059%2FConstructors%2F-325384828" anchor-label="TrackingWheelLateralDistanceTuner" id="509041059%2FConstructors%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-tracking-wheel-lateral-distance-tuner.html"><span>Tracking</span><wbr></wbr><span>Wheel</span><wbr></wbr><span>Lateral</span><wbr></wbr><span>Distance</span><wbr></wbr><span><span>Tuner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="509041059%2FConstructors%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1852491160%2FProperties%2F-325384828" anchor-label="NUM_TURNS" id="1852491160%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-n-u-m_-t-u-r-n-s.html"><span><span>NUM_TURNS</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1852491160%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-n-u-m_-t-u-r-n-s.html">NUM_TURNS</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief ">The number of turns to make during the tuning routine.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="1957888712%2FFunctions%2F-325384828" anchor-label="accept" id="1957888712%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="accept.html"><span><span>accept</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1957888712%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="accept.html"><span class="token function">accept</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">opMode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.eventloop.opmode/LinearOpMode///PointingToDeclaration/">LinearOpMode</span><span class="token punctuation">, </span></span><span class="parameter ">telemetry<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-dual-telemetry/index.html">DualTelemetry</a><span class="token punctuation">, </span></span><span class="parameter ">drive<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive/-road-runner-drive/index.html">RoadRunnerDrive</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Performs this operation on the given arguments.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Inherited functions</h2>
+        <div class="table"><a data-name="1620942977%2FFunctions%2F-325384828" anchor-label="andThen" id="1620942977%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/and-then.html"><span>and</span><wbr></wbr><span><span>Then</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1620942977%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/and-then.html"><span class="token function">andThen</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">after<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><span class="token keyword">in </span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><span class="token keyword">in </span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><span class="token keyword">in </span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">TriConsumer</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T1</a><span class="token punctuation">, </span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T2</a><span class="token punctuation">, </span><a href="../../org.murraybridgebunyips.bunyipslib/-tri-consumer/index.html">T3</a><span class="token operator">&gt;</span></div><div class="brief ">Returns a composed <code class="lang-kotlin">TriConsumer</code> that performs, in sequence, this operation followed by the <code class="lang-kotlin">after</code> operation.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

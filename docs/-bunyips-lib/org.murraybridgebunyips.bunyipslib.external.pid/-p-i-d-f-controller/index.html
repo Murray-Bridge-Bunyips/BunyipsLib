@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v3.5.0-master-c1ef0b8            </div>
+v3.5.0-master-72fd238            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,7 +66,7 @@ v3.5.0-master-c1ef0b8            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib.external.pid</a><span class="delimiter">/</span><span class="current">PIDFController</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>PIDFController</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">PIDFController</a></div><p class="paragraph">This is a PID controller (https://en.wikipedia.org/wiki/PID_controller) for your robot. Internally, it performs all the calculations for you. You need to tune your values to the appropriate amounts in order to properly utilize these calculations. </p><p class="paragraph"> The equation we will use is: u(t) = kP * e(t) + kI * int(0,t)[e(t')dt'] + kD * e'(t) + kF where e(t) = r(t) - y(t) and r(t) is the setpoint and y(t) is the measured value. If we consider e(t) the positional error, then int(0,t)[e(t')dt'] is the total error and e'(t) is the velocity error. <a href="https://github.com/FTCLib/FTCLib/blob/cedc52cee1bb549324c1ca5059c5feec3c054902/core/src/main/java/com/arcrobotics/ftclib/controller/PIDFController.java">Source</a></p><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-p-i-d-controller/index.html">PIDController</a></div></span></div><div></div></div></div></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">PIDFController</a> : <a href="../../org.murraybridgebunyips.bunyipslib.external/-system-controller/index.html">SystemController</a></div><p class="paragraph">This is a PID controller (https://en.wikipedia.org/wiki/PID_controller) for your robot. Internally, it performs all the calculations for you. You need to tune your values to the appropriate amounts in order to properly utilize these calculations. </p><p class="paragraph"> The equation we will use is: u(t) = kP * e(t) + kI * int(0,t)[e(t')dt'] + kD * e'(t) + kF where e(t) = r(t) - y(t) and r(t) is the setpoint and y(t) is the measured value. If we consider e(t) the positional error, then int(0,t)[e(t')dt'] is the total error and e'(t) is the velocity error. <a href="https://github.com/FTCLib/FTCLib/blob/cedc52cee1bb549324c1ca5059c5feec3c054902/core/src/main/java/com/arcrobotics/ftclib/controller/PIDFController.java">Source</a></p><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-p-i-d-controller/index.html">PIDController</a></div></span></div><div></div></div></div></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -302,6 +302,21 @@ v3.5.0-master-c1ef0b8            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="reset.html"><span class="token function">reset</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Resets the PIDF controller.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="273370227%2FFunctions%2F-325384828" anchor-label="setCoefficients" id="273370227%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-coefficients.html"><span>set</span><wbr></wbr><span><span>Coefficients</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="273370227%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-coefficients.html"><span class="token function">setCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">coeffs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the coefficients for this controller.</div></div></div>
                 </div>
               </div>
             </div>
