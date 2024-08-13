@@ -34,11 +34,11 @@ import java.util.Collections;
  * <pre>
  * {@code
  *     // init-phase, index-based registration
- *     Tasks.register(arm.tasks.home(), claw.openTask(), ...);
+ *     Tasks.register(arm.tasks.home(), claw.tasks.open(), ...);
  *     // active phase
  *     if (condition) {
  *       Tasks.run(0); // runs arm.tasks.home() one iteration, if it is finished it will no-op forever
- *       Tasks.runRepeatedly(1); // runs claw.openTask(), if it is finished it will be auto-reset and can run again
+ *       Tasks.runRepeatedly(1); // runs claw.tasks.open(), if it is finished it will be auto-reset and can run again
  *     }
  * }
  * </pre>
@@ -46,7 +46,7 @@ import java.util.Collections;
  * {@code
  *     // init-phase, instance-based registration
  *     Task homeTask = arm.tasks.home();
- *     Task openTask = claw.openTask();
+ *     Task openTask = claw.tasks.open();
  *     Tasks.register(homeTask, openTask);
  *     // active phase
  *     if (condition) {

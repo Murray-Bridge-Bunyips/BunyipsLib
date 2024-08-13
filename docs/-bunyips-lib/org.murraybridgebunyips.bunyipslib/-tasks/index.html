@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v3.5.0-master-72fd238            </div>
+v3.5.0-master-c572cd5            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -68,16 +68,16 @@ v3.5.0-master-72fd238            </div>
     <h1 class="cover"><span><span>Tasks</span></span></h1>
     <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Tasks</a></div><p class="paragraph">Utility class for running <a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a> instances from an environment that does not have a task scheduler. This is useful for OpModes that are not using a command-based structure, such as the base <a href="../-bunyips-op-mode/index.html">BunyipsOpMode</a>, but still needs support to run tasks on subsystems that only return Tasks. This class simplifies the task run process to a more intermediate &quot;register and run&quot; system. Do note it is recommended to use a more integrated system such as the <a href="../-scheduler/index.html">Scheduler</a>, which is integrated into <a href="../-command-based-bunyips-op-mode/index.html">CommandBasedBunyipsOpMode</a>. </p><p class="paragraph"> This class will allow you to simply pass a task instance that you wish to run (with run conditions being managed at your own discretion), where continuous calls to <code class="lang-kotlin">runRepeatedly()</code> will execute the task continually, resetting it if it is done. This behaviour is similar to how the <code class="lang-kotlin">run()</code> call works in the <a href="../-scheduler/index.html">Scheduler</a>, however, this comes with the guarantee that a task will only execute any time it is being actively told to do so. </p><p class="paragraph"> If you simply wish to run tasks with limited instance management, instantiating them directly in <a href="register.html">register</a> and running them can be accomplished with an index, as done in the run/runRepeatedly overloads. This limits your ability to manage/reset tasks, but is useful for simpler control loops. </p><p class="paragraph"> This class is used maximally where you will manage the instances of the tasks you retrieve from your subsystems/methods, to allow you finer-grain control over your tasks and their reset/runtime methods. Do note however it may be more worthwhile migrating to a command-based structure such as the <a href="../-scheduler/index.html">Scheduler</a> or <a href="../-command-based-bunyips-op-mode/index.html">CommandBasedBunyipsOpMode</a>. This pattern is useful for the standard run method that will execute one start-to-finish cycle of a task, with the added benefit that a task will only iterate when being told to do so by methods in this utility. </p><p class="paragraph"> Example usage: </p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">
     // init-phase, index-based registration
-    Tasks.register(arm.tasks.home(), claw.openTask(), ...);
+    Tasks.register(arm.tasks.home(), claw.tasks.open(), ...);
     // active phase
     if (condition) {
       Tasks.run(0); // runs arm.tasks.home() one iteration, if it is finished it will no-op forever
-      Tasks.runRepeatedly(1); // runs claw.openTask(), if it is finished it will be auto-reset and can run again
+      Tasks.runRepeatedly(1); // runs claw.tasks.open(), if it is finished it will be auto-reset and can run again
     }
 </code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">
     // init-phase, instance-based registration
     Task homeTask = arm.tasks.home();
-    Task openTask = claw.openTask();
+    Task openTask = claw.tasks.open();
     Tasks.register(homeTask, openTask);
     // active phase
     if (condition) {
