@@ -37,6 +37,11 @@ public class VelocityFFController implements SystemController {
     }
 
     @Override
+    public double[] getCoefficients() {
+        return new double[]{pid.getP(), pid.getI(), pid.getD(), ff.getS(), ff.getV(), ff.getA()};
+    }
+
+    @Override
     public void setCoefficients(double... coeffs) {
         if (coeffs.length != 6) {
             throw new IllegalArgumentException("expected 6 arguments, got " + coeffs.length);

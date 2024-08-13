@@ -300,6 +300,11 @@ public class ProfiledPIDController implements SystemController {
     }
 
     @Override
+    public double[] getCoefficients() {
+        return new double[]{getP(), getI(), getD()};
+    }
+
+    @Override
     public void setCoefficients(double... coeffs) {
         controller.setCoefficients(coeffs);
     }

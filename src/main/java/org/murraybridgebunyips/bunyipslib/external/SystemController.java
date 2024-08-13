@@ -12,7 +12,17 @@ package org.murraybridgebunyips.bunyipslib.external;
  */
 public interface SystemController {
     /**
+     * Gets the current coefficients for this controller.
+     * The return of this method is expected to be in the same order and length as the set method.
+     *
+     * @return an array of coefficients for this controller
+     */
+    double[] getCoefficients();
+
+    /**
      * Sets the coefficients for this controller.
+     * The order of the coefficients is expected to be the same as the return of the get method,
+     * specified internally by the controller.
      *
      * @param coeffs a list of coefficients to set this controller to
      */

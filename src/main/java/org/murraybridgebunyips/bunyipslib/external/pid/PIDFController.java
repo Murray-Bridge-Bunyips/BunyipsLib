@@ -134,6 +134,7 @@ public class PIDFController implements SystemController {
     /**
      * @return the PIDF coefficients
      */
+    @Override
     public double[] getCoefficients() {
         return new double[]{kP, kI, kD, kF};
     }

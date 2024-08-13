@@ -170,6 +170,11 @@ public class ElevatorFeedforward implements SystemController {
     }
 
     @Override
+    public double[] getCoefficients() {
+        return new double[]{kS, kG, kV, kA};
+    }
+
+    @Override
     public void setCoefficients(double... coeffs) {
         if (coeffs.length != 4) {
             throw new IllegalArgumentException("expected 4 coefficients, got " + coeffs.length);

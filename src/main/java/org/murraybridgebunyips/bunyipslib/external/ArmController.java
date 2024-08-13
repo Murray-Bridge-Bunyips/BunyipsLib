@@ -43,6 +43,11 @@ public class ArmController implements SystemController {
     }
 
     @Override
+    public double[] getCoefficients() {
+        return new double[]{pid.getP(), pid.getI(), pid.getD(), ff.getS(), ff.getCos(), ff.getV(), ff.getA()};
+    }
+
+    @Override
     public void setCoefficients(double... coeffs) {
         if (coeffs.length != 7) {
             throw new IllegalArgumentException("expected 7 coefficients, got " + coeffs.length);

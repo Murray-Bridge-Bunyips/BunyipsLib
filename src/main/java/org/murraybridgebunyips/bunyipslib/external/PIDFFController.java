@@ -33,6 +33,18 @@ public class PIDFFController implements SystemController {
     }
 
     @Override
+    public double[] getCoefficients() {
+        double[] ffCoeffs = ff.getCoefficients();
+        double[] pidCoeffs = pid.getCoefficients();
+
+        double[] coeffs = new double[ffCoeffs.length + pidCoeffs.length];
+        System.arraycopy(pidCoeffs, 0, coeffs, 0, pidCoeffs.length);
+        System.arraycopy(ffCoeffs, 0, coeffs, pidCoeffs.length, ffCoeffs.length);
+
+        return coeffs;
+    }
+
+    @Override
     public void setCoefficients(double... coeffs) {
         if (coeffs.length < 3) {
             throw new IllegalArgumentException("expected >=3 arguments, got " + coeffs.length);
