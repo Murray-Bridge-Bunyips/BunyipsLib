@@ -301,11 +301,4 @@ public interface RoadRunnerDrive {
      * @param drivePower the robot-centric pose to apply to the drive
      */
     void setDrivePower(Pose2d drivePower);
-
-    /**
-     * Set a drive power with axial weights and in a field-centric frame of reference.
-     *
-     * @param pose the robot-centric pose to apply to the drive, will be rotated to be field-centric internally
-     */
-    void setWeightedDrivePowerFieldCentric(Pose2d pose);
 }

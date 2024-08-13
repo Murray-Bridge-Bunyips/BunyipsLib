@@ -247,23 +247,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     @Override
-    public void setWeightedDrivePowerFieldCentric(Pose2d pose) {
-        drive.setWeightedDrivePowerFieldCentric(pose);
-    }
-
-    /**
-     * Set the speed of the robot using field centric drive using a gamepad.
-     *
-     * @param x The x speed.
-     * @param y The y speed.
-     * @param r The rotation speed.
-     * @see #setWeightedDrivePowerFieldCentric(Pose2d)
-     */
-    public void setSpeedUsingControllerFieldCentric(double x, double y, double r) {
-        setWeightedDrivePowerFieldCentric(Controls.makeRobotPose(x, y, r));
-    }
-
-    @Override
     public void setMode(DcMotor.RunMode runMode) {
         drive.setMode(runMode);
     }

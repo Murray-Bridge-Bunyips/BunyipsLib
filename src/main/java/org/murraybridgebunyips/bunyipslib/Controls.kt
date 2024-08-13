@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.qualcomm.robotcore.hardware.Gamepad
 
 /**
@@ -188,6 +189,22 @@ enum class Controls {
         @JvmStatic
         fun makeCartesianPose(x: Double, y: Double, r: Double): Pose2d {
             return Pose2d(x, -y, r)
+        }
+
+        /**
+         * Convert the gamepad translation values to a robot vector.
+         */
+        @JvmStatic
+        fun makeRobotVector(x: Double, y: Double): Vector2d {
+            return Cartesian.toVector(x, -y)
+        }
+
+        /**
+         * Convert the gamepad translation values to a Cartesian vector.
+         */
+        @JvmStatic
+        fun makeCartesianVector(x: Double, y: Double): Vector2d {
+            return Vector2d(x, -y)
         }
 
         /**

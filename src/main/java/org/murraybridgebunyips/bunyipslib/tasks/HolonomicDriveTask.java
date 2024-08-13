@@ -1,9 +1,15 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.jetbrains.annotations.NotNull;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
+import org.murraybridgebunyips.bunyipslib.Cartesian;
+import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.drive.CartesianMecanumDrive;
 import org.murraybridgebunyips.bunyipslib.drive.MecanumDrive;
@@ -66,7 +72,11 @@ public class HolonomicDriveTask extends ForeverTask {
     protected void periodic() {
         if (drive instanceof MecanumDrive) {
             if (fieldCentricEnabled.getAsBoolean()) {
-                ((MecanumDrive) drive).setSpeedUsingControllerFieldCentric(x.get(), y.get(), r.get());
+                Vector2d cVec = Controls.makeCartesianVector(x.get(), y.get());
+                ((MecanumDrive) drive).setWeightedDrivePower(new Pose2d(
+                        Cartesian.toVector(Cartesian.rotate(cVec, Radians.of(((MecanumDrive) drive).getExternalHeading()).negate())),
+                        -r.get()
+                ));
             } else {
                 ((MecanumDrive) drive).setSpeedUsingController(x.get(), y.get(), r.get());
             }

@@ -13,6 +13,7 @@ import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 /**
  * Wrapper class for a {@link DcMotor} that uses custom control algorithms to operate {@link RunMode#RUN_USING_ENCODER}
@@ -53,6 +54,13 @@ public class Motor extends DcMotorImplEx {
     }
 
     /**
+     * @return the currently set RUN_TO_POSITION system controller
+     */
+    public Optional<SystemController> getRunToPositionController() {
+        return Optional.ofNullable(rtpController);
+    }
+
+    /**
      * Set a system controller to use for {@link RunMode#RUN_TO_POSITION}.
      * <p>
      * The coefficients of this controller can be modified through {@link #scheduleRunToPositionGains()}.
@@ -61,6 +69,26 @@ public class Motor extends DcMotorImplEx {
      */
     public void setRunToPositionController(SystemController controller) {
         rtpController = controller;
+        if (rtpController instanceof PIDFController)
+            ((PIDFController) rtpController).setTolerance(super.getTargetPositionTolerance());
+    }
+
+    /**
+     * @return the currently set RUN_USING_ENCODER system controller
+     */
+    public Optional<SystemController> getRunUsingEncoderController() {
+        return Optional.ofNullable(rueController);
+    }
+
+    /**
+     * Set a system controller to use for {@link RunMode#RUN_USING_ENCODER}.
+     * <p>
+     * The coefficients of this controller can be modified through {@link #scheduleRunUsingEncoderGains()}.
+     *
+     * @param controller the controller to use, recommended to use a velocity controller (PID+FF) such as VelocityFF.
+     */
+    public void setRunUsingEncoderController(SystemController controller) {
+        rueController = controller;
     }
 
     /**
@@ -89,17 +117,6 @@ public class Motor extends DcMotorImplEx {
     public GainScheduling scheduleRunUsingEncoderGains() {
         rueGains.clear();
         return new GainScheduling(RunMode.RUN_USING_ENCODER);
-    }
-
-    /**
-     * Set a system controller to use for {@link RunMode#RUN_USING_ENCODER}.
-     * <p>
-     * The coefficients of this controller can be modified through {@link #scheduleRunUsingEncoderGains()}.
-     *
-     * @param controller the controller to use, recommended to use a velocity controller (PID+FF) such as VelocityFF.
-     */
-    public void setRunUsingEncoderController(SystemController controller) {
-        rueController = controller;
     }
 
     /**
@@ -237,13 +254,13 @@ public class Motor extends DcMotorImplEx {
      */
     @Override
     public void setPower(double power) {
-        // TODO: currently not working, needs testing
         switch (mode) {
             case RUN_TO_POSITION:
                 if (rtpController == null) {
                     PIDFCoefficients coeffs = getPIDFCoefficients(RunMode.RUN_TO_POSITION);
                     Dbg.warn("[%] No RUN_TO_POSITION controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. Please set your own controller.", getDeviceName(), coeffs);
                     rtpController = new PIDFController(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
+                    ((PIDFController) rtpController).setTolerance(super.getTargetPositionTolerance());
                 }
                 if (!rtpGains.isEmpty())
                     rtpController.setCoefficients(rtpGains.stream().mapToDouble((g) -> g.get(getCurrentPosition())).toArray());
@@ -262,6 +279,11 @@ public class Motor extends DcMotorImplEx {
                     rueController.setCoefficients(rueGains.stream().mapToDouble((g) -> g.get(getCurrentPosition())).toArray());
                 // In RUN_USING_ENCODER, the controller is expected to take in the encoder velocity and target power,
                 // which usually consists internally of a PID and feedforward controller.
+                if (power == 0) {
+                    // We need an immediate stop if there's no power/velo requested
+                    super.setPower(0);
+                    return;
+                }
                 super.setPower(rueController.calculate(getVelocity(), power));
                 break;
             case RUN_WITHOUT_ENCODER:

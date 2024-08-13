@@ -157,9 +157,9 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
         // Calculate error from current pose to target pose.
         // If we are not locked, the error will be 0, and our error should clamp to zero if it's under the threshold
-        double xLockedError = xLock == 0 || xLock - current.getX() < toleranceInchRad.getX() ? 0 : xLock - current.getX();
-        double yLockedError = yLock == 0 || yLock - current.getY() < toleranceInchRad.getY() ? 0 : yLock - current.getY();
-        double rLockedError = rLock == 0 || rLock - current.getHeading() < toleranceInchRad.getHeading() ? 0 : rLock - current.getHeading();
+        double xLockedError = xLock == 0 || Mathf.isNear(xLock, current.getX(), toleranceInchRad.getX()) ? 0 : xLock - current.getX();
+        double yLockedError = yLock == 0 || Mathf.isNear(yLock, current.getY(), toleranceInchRad.getY()) ? 0 : yLock - current.getY();
+        double rLockedError = rLock == 0 || Mathf.isNear(rLock, current.getHeading(), toleranceInchRad.getHeading()) ? 0 : rLock - current.getHeading();
 
         // Rotate error to robot's coordinate frame
         double cos = Math.cos(current.getHeading());

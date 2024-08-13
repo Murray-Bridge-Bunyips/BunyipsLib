@@ -54,7 +54,7 @@ public class Encoder {
             lastPosition = currentPosition;
             lastTimestamp = currentTime;
         }
-        return direction == DcMotorSimple.Direction.FORWARD ? 1 : -1 * currentPosition - resetVal;
+        return (direction == DcMotorSimple.Direction.FORWARD ? 1 : -1) * currentPosition - resetVal;
     }
 
     /**

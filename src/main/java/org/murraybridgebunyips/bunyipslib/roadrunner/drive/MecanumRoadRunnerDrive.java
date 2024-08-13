@@ -21,6 +21,8 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.murraybridgebunyips.bunyipslib.DualTelemetry;
+import org.murraybridgebunyips.bunyipslib.EmergencyStop;
+import org.murraybridgebunyips.bunyipslib.Motor;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequence;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceRunner;
@@ -93,10 +95,6 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
             motor.setMotorType(motorConfigurationType);
-        }
-
-        if (constants.RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -205,6 +203,11 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
     public void update() {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+        if (constants.RUN_USING_ENCODER && signal != null) {
+            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        } else {
+            setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
         if (signal != null) setDriveSignal(signal);
     }
 
@@ -231,7 +234,12 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
         );
 
         for (DcMotorEx motor : motors) {
-            motor.setPIDFCoefficients(runMode, compensatedCoefficients);
+            if (motor instanceof Motor && runMode == DcMotor.RunMode.RUN_USING_ENCODER) {
+                if (!((Motor) motor).getRunUsingEncoderController().isPresent())
+                    throw new EmergencyStop("A configured motor is a Motor instance using RoadRunner and Velocity PID. You need to set your own controller to use via setRunUsingEncoderController() in your config.");
+            } else {
+                motor.setPIDFCoefficients(runMode, compensatedCoefficients);
+            }
         }
     }
 
@@ -298,18 +306,6 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
     @Override
     public Double getExternalHeadingVelocity() {
         return imu != null ? imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate : 0.0;
-    }
-
-    @Override
-    public void setWeightedDrivePowerFieldCentric(Pose2d pose) {
-        double heading = getExternalHeading();
-        double sin = Math.sin(heading);
-        double cos = Math.cos(heading);
-        setWeightedDrivePower(new Pose2d(
-                pose.getY() * sin + pose.getX() * cos,
-                pose.getY() * cos - pose.getX() * sin,
-                pose.getHeading()
-        ));
     }
 
     @Override

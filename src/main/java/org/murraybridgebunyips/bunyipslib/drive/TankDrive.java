@@ -236,11 +236,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         instance.setDrivePower(drivePower);
     }
 
-    @Override
-    public void setWeightedDrivePowerFieldCentric(Pose2d pose) {
-        instance.setWeightedDrivePowerFieldCentric(pose);
-    }
-
     /**
      * Set the speed of the drive using the controller input.
      *
@@ -251,19 +246,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     public TankDrive setSpeedUsingController(double x, double y, double r) {
         setWeightedDrivePower(Controls.makeRobotPose(x, y, r));
-        return this;
-    }
-
-    /**
-     * Set the speed of the drive using the controller input, field centric.
-     *
-     * @param x The x value of the controller input
-     * @param y The y value of the controller input
-     * @param r The r value of the controller input
-     * @return The TankDrive instance
-     */
-    public TankDrive setSpeedUsingControllerFieldCentric(double x, double y, double r) {
-        setWeightedDrivePowerFieldCentric(Controls.makeRobotPose(x, y, r));
         return this;
     }
 

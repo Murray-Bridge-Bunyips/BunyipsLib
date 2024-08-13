@@ -204,6 +204,20 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
         return this;
     }
 
+    /**
+     * Set the drive system mode.
+     *
+     * @param mode new mode
+     * @return this
+     */
+    public CartesianMecanumDrive setMode(DcMotor.RunMode mode) {
+        backLeft.setMode(mode);
+        backRight.setMode(mode);
+        frontLeft.setMode(mode);
+        frontRight.setMode(mode);
+        return this;
+    }
+
     private CartesianMecanumDrive rotationalUpdate() {
         // Calculate translational speeds
         double[] translationValues = {
@@ -263,4 +277,3 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
         ROTATIONAL
     }
 }
-
