@@ -181,7 +181,11 @@ object EncoderTicks {
             if (motor !is Motor) {
                 throw IllegalStateException("Motor attached to this generator is not a Motor instance. Acceleration information is not available.")
             }
-            return wheelDiameter?.let { toDistance(motor.acceleration.toInt(), ticksPerRevolution, it, reduction).per(Second).per(Second) }
+            return wheelDiameter?.let {
+                toDistance(motor.acceleration.toInt(), ticksPerRevolution, it, reduction).per(
+                    Second
+                ).per(Second)
+            }
         }
 
         /**

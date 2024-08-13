@@ -33,7 +33,7 @@ import java.util.function.Supplier;
      * Create a new IntrinsicMecanumLocalizer.
      *
      * @param driveInput the robot pose input (x forward, y left, heading anticlockwise) of the drive
-     * @param drive the drive instance (assumed to be Mecanum/conforms to Mecanum equations)
+     * @param drive      the drive instance (assumed to be Mecanum/conforms to Mecanum equations)
      */
     public IntrinsicMecanumLocalizer(Supplier<Pose2d> driveInput, RoadRunnerDrive drive) {
         input = driveInput;
