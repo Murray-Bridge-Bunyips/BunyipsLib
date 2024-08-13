@@ -404,11 +404,11 @@ public class HoldableActuator extends BunyipsSubsystem {
         /**
          * Run the actuator for a certain amount of time.
          *
-         * @param p    the power to run at
          * @param time the time to run for
+         * @param p    the power to run at
          * @return a task to run the actuator
          */
-        public Task runFor(double p, Measure<Time> time) {
+        public Task runFor(Measure<Time> time, double p) {
             return new Task(time) {
                 @Override
                 public void init() {
