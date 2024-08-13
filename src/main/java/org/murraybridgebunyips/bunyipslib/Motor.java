@@ -237,6 +237,7 @@ public class Motor extends DcMotorImplEx {
      */
     @Override
     public void setPower(double power) {
+        // TODO: currently not working, needs testing
         switch (mode) {
             case RUN_TO_POSITION:
                 if (rtpController == null) {

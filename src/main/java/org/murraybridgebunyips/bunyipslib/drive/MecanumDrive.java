@@ -60,6 +60,15 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         updatePoseFromMemory();
     }
 
+//    public MecanumDrive useFallbackLocalizer() {
+//        return this;
+//    }
+//
+//    public MecanumDrive useFallbackLocalizer(Localizer fallback) {
+//        // TODO: part of SwitchableLocalizer, may need to reconsider Localizers for drives as they are common
+//        return this;
+//    }
+
     /**
      * Reset the IMU's yaw to 0.
      */
