@@ -2,6 +2,8 @@ package org.murraybridgebunyips.bunyipslib;
 
 import androidx.annotation.NonNull;
 
+import org.apache.commons.math3.exception.OutOfRangeException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,10 +15,10 @@ import java.util.List;
  * <a href="https://github.com/FTCLib/FTCLib/blob/master/core/src/main/java/com/arcrobotics/ftclib/util/InterpLUT.java">Source</a>
  */
 public class InterpolatedLookupTable {
-
     private List<Double> mX = new ArrayList<>();
     private List<Double> mY = new ArrayList<>();
     private List<Double> mM = new ArrayList<>();
+    private boolean built;
 
     /**
      * Creates a new instance of InterpolatedLookupTable to add values to.
@@ -37,7 +39,6 @@ public class InterpolatedLookupTable {
 
     /**
      * Creates a monotone cubic spline from a given set of control points.
-     *
      * <p>
      * The spline is guaranteed to pass through each control point exactly. Moreover, assuming the control points are
      * monotonic (Y is non-decreasing or non-increasing) then the interpolated values will also be monotonic.
@@ -94,6 +95,44 @@ public class InterpolatedLookupTable {
         mX = x;
         mY = y;
         mM = Arrays.asList(m);
+
+        built = true;
+    }
+
+    /**
+     * Check if a given input will be out of range by this LUT.
+     *
+     * @param input the value to check
+     * @return 1 if the input is too large, -1 if it is too small, 0 if it is within bounds.
+     */
+    public int testOutOfRange(double input) {
+        if (!built)
+            throw new IllegalStateException("This InterpolatedLookupTable has not been built yet.");
+        if (input <= mX.get(0)) {
+            return -1;
+        }
+        if (input >= mX.get(mX.size() - 1)) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * @return the minimum domain value from this LUT.
+     */
+    public double getMin() {
+        if (!built)
+            throw new IllegalStateException("This InterpolatedLookupTable has not been built yet.");
+        return get(mX.get(0) + 1.0e-6);
+    }
+
+    /**
+     * @return the maximum domain value from this LUT.
+     */
+    public double getMax() {
+        if (!built)
+            throw new IllegalStateException("This InterpolatedLookupTable has not been built yet.");
+        return get(mX.get(mX.size() - 1) - 1.0e-6);
     }
 
     /**
@@ -101,18 +140,19 @@ public class InterpolatedLookupTable {
      *
      * @param input The X value.
      * @return The interpolated Y = f(X) value.
+     * @throws OutOfRangeException if the input is outside of the domain available by this lookup table
      */
-    public double get(double input) {
+    public double get(double input) throws OutOfRangeException {
+        if (!built)
+            throw new IllegalStateException("This InterpolatedLookupTable has not been built yet.");
+
         // Handle the boundary cases.
         int n = mX.size();
         if (Double.isNaN(input)) {
             return input;
         }
-        if (input <= mX.get(0)) {
-            throw new IllegalArgumentException("User requested value outside of bounds of LUT. Bounds are: " + mX.get(0).toString() + " to " + mX.get(n - 1).toString() + ". Value provided was: " + input);
-        }
-        if (input >= mX.get(n - 1)) {
-            throw new IllegalArgumentException("User requested value outside of bounds of LUT. Bounds are: " + mX.get(0).toString() + " to " + mX.get(n - 1).toString() + ". Value provided was: " + input);
+        if (input <= mX.get(0) || input >= mX.get(n - 1)) {
+            throw new OutOfRangeException(input, mX.get(0), mX.get(n - 1));
         }
 
         // Find the index 'i' of the last point with smaller X.
@@ -136,6 +176,9 @@ public class InterpolatedLookupTable {
     @NonNull
     @Override
     public String toString() {
+        if (!built)
+            throw new IllegalStateException("This InterpolatedLookupTable has not been built yet.");
+
         StringBuilder str = new StringBuilder();
         int n = mX.size();
         str.append("[");

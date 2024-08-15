@@ -31,6 +31,9 @@ import java.util.List;
  * This is the standard TankDrive class for modern BunyipsLib robots.
  * This is a component for the RoadRunner Tank Drive, integrating RoadRunner and BunyipsLib to be used
  * as a BunyipsSubsystem. As such, this allows for integrated trajectory and pose management.
+ * <p>
+ * Note: If you'd like to use deadwheel configurations, you can set them yourself by instantiating your own localizer
+ * and setting it via {@link #setLocalizer(Localizer)}. Pose estimate data is discarded when switching a localizer.
  *
  * @author Lucas Bubner, 2023
  */

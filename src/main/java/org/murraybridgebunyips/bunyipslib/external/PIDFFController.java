@@ -23,13 +23,13 @@ public class PIDFFController implements SystemController {
      * Construct a new PIDFFController.
      *
      * @param pid     the PID controller to use
-     * @param encoder the encoder to retrieve velocity/acceleration information from
      * @param ff      the kV/kA feedforward to use
+     * @param encoder the encoder to retrieve velocity/acceleration information from
      */
-    public PIDFFController(PIDController pid, Encoder encoder, SystemController ff) {
+    public PIDFFController(PIDController pid, SystemController ff, Encoder encoder) {
         this.pid = pid;
-        this.encoder = encoder;
         this.ff = ff;
+        this.encoder = encoder;
     }
 
     @Override

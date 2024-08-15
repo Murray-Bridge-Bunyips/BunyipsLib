@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.DriveConstants;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.MecanumCoefficients;
-import org.murraybridgebunyips.bunyipslib.roadrunner.drive.localizers.ThreeWheelLocalizer;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.localizers.TwoWheelLocalizer;
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.Deadwheel;
 
@@ -46,7 +45,7 @@ public class DualDeadwheelMecanumDrive extends MecanumDrive {
      * @return this
      */
     public DualDeadwheelMecanumDrive enableOverflowCompensation() {
-        ThreeWheelLocalizer localizer = (ThreeWheelLocalizer) getLocalizer();
+        TwoWheelLocalizer localizer = (TwoWheelLocalizer) getLocalizer();
         if (localizer != null)
             localizer.enableOverflowCompensation();
         return this;

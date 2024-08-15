@@ -1,9 +1,12 @@
 package org.murraybridgebunyips.bunyipslib;
 
+import static org.murraybridgebunyips.bunyipslib.Text.formatString;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.murraybridgebunyips.bunyipslib.external.SystemController;
@@ -63,7 +66,15 @@ public class Motor extends DcMotorImplEx {
     /**
      * Set a system controller to use for {@link RunMode#RUN_TO_POSITION}.
      * <p>
-     * The coefficients of this controller can be modified through {@link #scheduleRunToPositionGains()}.
+     * The coefficients of this controller can be gain scheduled through {@link #scheduleRunToPositionGains()}.
+     * Otherwise, you can adjust the coefficients directly on the controller instance and they will be respected, unless
+     * a gain scheduler is set for this controller.
+     * <p>
+     * Note that when using a motor with this class, the PIDF coefficients attached to the motor itself will be used only
+     * if a controller is not specified, and will only take a <b>snapshot at runtime</b> of these values to populate
+     * a controller, making a fallback default PID controller to use. The SDK PIDF values are otherwise ignored.
+     * Falling back on a default controller will also push a robot global warning as it is highly dangerous
+     * to use the stock PIDF values in this context. Set your own controller using this method.
      *
      * @param controller the controller to use, recommended to use a closed-loop controller such as PID
      */
@@ -83,7 +94,15 @@ public class Motor extends DcMotorImplEx {
     /**
      * Set a system controller to use for {@link RunMode#RUN_USING_ENCODER}.
      * <p>
-     * The coefficients of this controller can be modified through {@link #scheduleRunUsingEncoderGains()}.
+     * The coefficients of this controller can be gain scheduled through {@link #scheduleRunUsingEncoderGains()}.
+     * Otherwise, you can adjust the coefficients directly on the controller instance and they will be respected, unless
+     * a gain scheduler is set for this controller.
+     * <p>
+     * Note that when using a motor with this class, the PIDF coefficients attached to the motor itself will be used only
+     * if a controller is not specified, and will only take a <b>snapshot at runtime</b> of these values to populate
+     * a controller, making a fallback default VelocityFF controller to use. The SDK PIDF values are otherwise ignored.
+     * Falling back on a default controller will also push a robot global warning as it is highly dangerous
+     * to use the stock PIDF values in this context. Set your own controller using this method.
      *
      * @param controller the controller to use, recommended to use a velocity controller (PID+FF) such as VelocityFF.
      */
@@ -94,11 +113,7 @@ public class Motor extends DcMotorImplEx {
     /**
      * Call to build a list of encoder tick positions where you want your {@link RunMode#RUN_TO_POSITION} system controller
      * gains to be. When this builder is built with {@code build()}, it will interpolate between each value to provide a
-     * continuous PID range that will be used when {@link #setPower(double)} is called.
-     * <p>
-     * Note that when using a motor with this class, the PID coefficients attached to the motor itself will be used only
-     * if another controller is not specified, and will only take a <b>snapshot at runtime</b> of these values to populate
-     * this controller.
+     * continuous range of coefficients that will be used when {@link #setPower(double)} is called.
      *
      * @return a builder to specify encoder tick positions to gains of your {@link RunMode#RUN_TO_POSITION} controller
      */
@@ -247,8 +262,18 @@ public class Motor extends DcMotorImplEx {
         throw new UnsupportedOperationException("Unsupported on a BunyipsLib motor object. Use RUN_USING_ENCODER and setPower().");
     }
 
+    private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
+        int curr = getCurrentPosition();
+        int res = lut.testOutOfRange(curr);
+        if (res == 0) return lut.get(curr);
+        return res == -1 ? lut.getMin() : lut.getMax();
+    }
+
     /**
-     * Update system controllers and propagate new power levels to the motor. Should be called frequently.
+     * Update system controllers and propagate new power levels to the motor.
+     * <p>
+     * Note: <b>This method needs to be called periodically (as part of the active loop)
+     * in order to update the system controllers that respond to dynamic conditions.</b>
      *
      * @param power the new power level of the motor, a value in the interval [-1.0, 1.0]
      */
@@ -258,12 +283,14 @@ public class Motor extends DcMotorImplEx {
             case RUN_TO_POSITION:
                 if (rtpController == null) {
                     PIDFCoefficients coeffs = getPIDFCoefficients(RunMode.RUN_TO_POSITION);
-                    Dbg.warn("[%] No RUN_TO_POSITION controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. Please set your own controller.", getDeviceName(), coeffs);
+                    String msg = formatString("[% on port %] No RUN_TO_POSITION controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. You must set your own controller through setRunToPositionController().", getDeviceName(), getPortNumber(), coeffs);
+                    Dbg.error(msg);
+                    RobotLog.addGlobalWarningMessage(msg);
                     rtpController = new PIDFController(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
                     ((PIDFController) rtpController).setTolerance(super.getTargetPositionTolerance());
                 }
                 if (!rtpGains.isEmpty())
-                    rtpController.setCoefficients(rtpGains.stream().mapToDouble((g) -> g.get(getCurrentPosition())).toArray());
+                    rtpController.setCoefficients(rtpGains.stream().mapToDouble(this::getClampedInterpolatedGain).toArray());
                 // In a RUN_TO_POSITION context, the controller is used for error correction, which will multiply the
                 // allowed power by the user against the encoder error by your (usually PID) controller.
                 super.setPower(Math.abs(power) * rtpController.calculate(getCurrentPosition(), getTargetPosition()));
@@ -271,12 +298,14 @@ public class Motor extends DcMotorImplEx {
             case RUN_USING_ENCODER:
                 if (rueController == null) {
                     PIDFCoefficients coeffs = getPIDFCoefficients(RunMode.RUN_USING_ENCODER);
-                    Dbg.warn("[%] No RUN_USING_ENCODER controller was specified. This motor will be using the default PIDF coefficients to create a fallback PID and static FF controller with values from %. Please set your own controller.", getDeviceName(), coeffs);
+                    String msg = formatString("[% on port %] No RUN_USING_ENCODER controller was specified. This motor will be using the default PIDF coefficients to create a fallback PID and static FF controller with values from %. You must set your own controller through setRunUsingEncoderController().", getDeviceName(), getPortNumber(), coeffs);
+                    Dbg.error(msg);
+                    RobotLog.addGlobalWarningMessage(msg);
                     PIDController pid = new PIDController(coeffs.p, coeffs.i, coeffs.d);
                     rueController = new VelocityFFController(pid, new SimpleMotorFeedforward(coeffs.f, 0, 0), encoder::getAcceleration, 1.0, motorType.getAchieveableMaxTicksPerSecond());
                 }
                 if (!rueGains.isEmpty())
-                    rueController.setCoefficients(rueGains.stream().mapToDouble((g) -> g.get(getCurrentPosition())).toArray());
+                    rueController.setCoefficients(rueGains.stream().mapToDouble(this::getClampedInterpolatedGain).toArray());
                 // In RUN_USING_ENCODER, the controller is expected to take in the encoder velocity and target power,
                 // which usually consists internally of a PID and feedforward controller.
                 if (power == 0) {
@@ -310,6 +339,11 @@ public class Motor extends DcMotorImplEx {
          * This should be used with known values, such as knowing for 0 ticks the gains should be 1,0,0, etc.
          * <p>
          * The more positions that are added to this builder, the more accurate your final gain scheduling model will be.
+         * <p>
+         * Note that the maximum domain that interpolated gains scheduling will be available for is limited by the min/max values
+         * you supply in this builder. Your controller will clamp to the boundary if the encoder is out of the function domain.
+         * <p>
+         * Multiple calls to construct this builder will discard old gain scheduling.
          *
          * @param positionTicks the position in encoder ticks that the system controller coefficients should be
          * @param coeffs        the coefficients at encoder ticks position

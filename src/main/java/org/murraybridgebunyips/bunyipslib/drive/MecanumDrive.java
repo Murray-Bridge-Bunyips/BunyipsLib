@@ -60,13 +60,36 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         updatePoseFromMemory();
     }
 
-//    public MecanumDrive useFallbackLocalizer() {
-//        return this;
+//    /**
+//     * Call to use the MecanumLocalizer as a backup localizer alongside the current localizer. Note if you are already
+//     * using a MecanumLocalizer (default), this will duplicate your localizers and there isn't a point of calling this method.
+//     * This localizer can be switched/tested as part of the SwitchableLocalizer.
+//     *
+//     * @return the SwitchableLocalizer
+//     */
+//    public SwitchableLocalizer useFallbackLocalizer() {
+//        Pose2d curr = drive.getPoseEstimate();
+//        SwitchableLocalizer localizer = new SwitchableLocalizer(
+//                drive.getLocalizer(),
+//                new com.acmerobotics.roadrunner.drive.MecanumDrive.MecanumLocalizer(drive, true)
+//        );
+//        setLocalizer(localizer);
+//        drive.setPoseEstimate(curr);
+//        return localizer;
 //    }
 //
-//    public MecanumDrive useFallbackLocalizer(Localizer fallback) {
-//        // TODO: part of SwitchableLocalizer, may need to reconsider Localizers for drives as they are common
-//        return this;
+//    /**
+//     * Call to set a fallback localizer that can be switched/tested to as part of the SwitchableLocalizer.
+//     *
+//     * @param fallback the backup localizer
+//     * @return the SwitchableLocalizer
+//     */
+//    public SwitchableLocalizer useFallbackLocalizer(Localizer fallback) {
+//        Pose2d curr = drive.getPoseEstimate();
+//        SwitchableLocalizer localizer = new SwitchableLocalizer(drive.getLocalizer(), fallback);
+//        setLocalizer(localizer);
+//        drive.setPoseEstimate(curr);
+//        return localizer;
 //    }
 
     /**
