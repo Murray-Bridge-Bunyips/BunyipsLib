@@ -229,8 +229,19 @@ public interface RoadRunnerDrive {
      */
     List<Double> getWheelVelocities();
 
-    // Must be implemented manually due to different numbers of motors
-    // void setMotorPowers(...);
+    /**
+     * @return the motor powers of the drive
+     */
+    double[] getMotorPowers();
+
+    /**
+     * Set the motor powers for each motor on this drive.
+     *
+     * @param powers the motor powers to set
+     */
+    // Inherited method from RoadRunner must be implemented manually due to different numbers of motors in any drive,
+    // but we can still generalise here where drive instances will alias this and check the vararg length
+    void setMotorPowers(double... powers);
 
     /**
      * @return the current heading as dictated by an external source (gyro, etc)

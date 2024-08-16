@@ -68,6 +68,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         assertParamsNotNull(constants, coefficients, imu, frontLeft, frontRight, backLeft, backRight);
         instance = new TankRoadRunnerDrive(opMode.telemetry, constants, coefficients, opMode.hardwareMap.voltageSensor, imu, frontLeft, frontRight, backLeft, backRight);
         benji = new Watchdog(() -> {
+            if (opMode.isStopRequested()) return;
             Dbg.log(getClass(), "Direct drive updates have been disabled as it has been longer than 200ms since the last call to update().");
             updates = false;
             instance.stop();
@@ -212,6 +213,17 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     @Override
     public List<Double> getWheelVelocities() {
         return instance.getWheelVelocities();
+    }
+
+    @Override
+    public double[] getMotorPowers() {
+        return instance.getMotorPowers();
+    }
+
+    @Override
+    public void setMotorPowers(double... powers) {
+        if (isDisabled() || !updates) return;
+        instance.setMotorPowers(powers);
     }
 
     @Override

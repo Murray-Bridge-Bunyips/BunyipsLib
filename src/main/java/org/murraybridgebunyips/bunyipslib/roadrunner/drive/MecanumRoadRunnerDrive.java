@@ -290,6 +290,22 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
         return wheelVelocities;
     }
 
+    public double[] getMotorPowers() {
+        double[] powers = new double[4];
+        for (int i = 0; i < 4; i++) {
+            powers[i] = motors.get(i).getPower();
+        }
+        return powers;
+    }
+
+    @Override
+    public void setMotorPowers(double... powers) {
+        if (powers.length != 4) {
+            throw new IllegalArgumentException("Invalid number of powers passed");
+        }
+        setMotorPowers(powers[0], powers[1], powers[2], powers[3]);
+    }
+
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
         leftFront.setPower(v);

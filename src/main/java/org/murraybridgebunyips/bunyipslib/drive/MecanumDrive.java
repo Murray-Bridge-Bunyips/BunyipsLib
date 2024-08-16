@@ -71,6 +71,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         assertParamsNotNull(constants, mecanumCoefficients, voltageSensor, imu, fl, fr, bl, br);
         drive = new MecanumRoadRunnerDrive(opMode.telemetry, constants, mecanumCoefficients, voltageSensor, imu, fl, fr, bl, br);
         benji = new Watchdog(() -> {
+            if (opMode.isStopRequested()) return;
             Dbg.log(getClass(), "Direct drive updates have been disabled as it has been longer than 200ms since the last call to update().");
             updates = false;
             drive.stop();
@@ -189,19 +190,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     @Override
     public void setExternalHeading(double value) {
         drive.setExternalHeading(value);
-    }
-
-    /**
-     * Set the raw motor powers for the drive.
-     *
-     * @param v  The power for the front left motor.
-     * @param v1 The power for the front right motor.
-     * @param v2 The power for the back left motor.
-     * @param v3 The power for the back right motor.
-     */
-    public void setPowers(double v, double v1, double v2, double v3) {
-        if (isDisabled() || !updates) return;
-        drive.setMotorPowers(v, v1, v2, v3);
     }
 
     @Override
@@ -335,6 +323,17 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     @Override
+    public double[] getMotorPowers() {
+        return drive.getMotorPowers();
+    }
+
+    @Override
+    public void setMotorPowers(double... powers) {
+        if (isDisabled() || !updates) return;
+        drive.setMotorPowers(powers);
+    }
+
+    @Override
     public double getRawExternalHeading() {
         return drive.getRawExternalHeading();
     }
@@ -349,10 +348,12 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         return drive.getLocalizer();
     }
 
+    @Override
     public void setLocalizer(Localizer localizer) {
         drive.setLocalizer(localizer);
     }
 
+    @Override
     public void cancelTrajectory() {
         drive.cancelTrajectory();
     }

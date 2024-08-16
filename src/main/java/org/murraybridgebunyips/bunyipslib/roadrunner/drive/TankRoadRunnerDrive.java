@@ -306,6 +306,24 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
     }
 
     @Override
+    public double[] getMotorPowers() {
+        double[] powers = new double[2];
+        for (int i = 0; i < 2; i++) {
+            powers[0] = leftMotors.get(i).getPower();
+            powers[1] = rightMotors.get(i).getPower();
+        }
+        return powers;
+    }
+
+    @Override
+    public void setMotorPowers(double... powers) {
+        if (powers.length != 2) {
+            throw new IllegalArgumentException("Tank drive requires 2 motor powers");
+        }
+        setMotorPowers(powers[0], powers[1]);
+    }
+
+    @Override
     public void setMotorPowers(double v, double v1) {
         for (DcMotorEx leftMotor : leftMotors) {
             leftMotor.setPower(v);
