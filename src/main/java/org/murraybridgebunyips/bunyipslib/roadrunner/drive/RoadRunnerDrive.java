@@ -75,7 +75,7 @@ public interface RoadRunnerDrive {
     TrajectorySequenceRunner getTrajectorySequenceRunner();
 
     /**
-     * Stop the drive.
+     * Stop the drive immediately.
      */
     void stop();
 

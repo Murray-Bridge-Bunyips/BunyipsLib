@@ -49,14 +49,14 @@ public class SwitchableLocalizer implements Localizer {
     }
 
     /**
-     * Switch to the main localizer for all pose data.
+     * Switch to the main localizer for all pose data. Note that pose data is not shared between localizers.
      */
     public void switchToMain() {
         USING_FALLBACK_LOCALIZER = false;
     }
 
     /**
-     * Switch to the backup localizer for all pose data.
+     * Switch to the backup localizer for all pose data. Note that pose data is not shared between localizers.
      */
     public void switchToFallback() {
         USING_FALLBACK_LOCALIZER = true;
@@ -81,7 +81,8 @@ public class SwitchableLocalizer implements Localizer {
 
     @Override
     public void update() {
-        // Update all localizers regardless
+        // Update all localizers regardless, these localizers will supply their own pose estimates and
+        // should not mix together.
         main.update();
         fallback.update();
 
@@ -126,6 +127,7 @@ public class SwitchableLocalizer implements Localizer {
 
                 @Override
                 protected void periodic() {
+                    main.update();
                     if (opMode.gamepad1.left_bumper) {
                         forwardCheck = false;
                         strafeCheck = false;
@@ -181,7 +183,7 @@ public class SwitchableLocalizer implements Localizer {
         /**
          * Tests the main localizer and falls back to the fallback localizer if the user wishes to fail the test.
          *
-         * @return a task to test the localizer manually using human judgement, will propagate result when the task is done
+         * @return a task to test the localizer manually using human judgement, will propagate result on user input
          */
         public Task manualTestMainLocalizer() {
             return new Task() {
@@ -197,6 +199,7 @@ public class SwitchableLocalizer implements Localizer {
 
                 @Override
                 protected void periodic() {
+                    main.update();
                     if (opMode.gamepad1.left_bumper) {
                         USING_FALLBACK_LOCALIZER = true;
                         opMode.telemetry.log("<font color='yellow'>Localizer test failed. Falling back to backup localizer.</font>");
@@ -215,6 +218,11 @@ public class SwitchableLocalizer implements Localizer {
                             "gamepad1.right_bumper to pass the test. Pass the test if the below values are increasing properly.</font>\n" +
                             "Raw: " + curr + "\n" +
                             "Error (rotated): " + capture.minus(Cartesian.rotate(Cartesian.fromPose(curr).vec(), Radians.of(curr.getHeading()).negate())));
+                }
+
+                @Override
+                protected void onFinish() {
+                    telemetry.setRetained(false);
                 }
 
                 @Override

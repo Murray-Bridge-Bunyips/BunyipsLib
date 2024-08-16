@@ -69,6 +69,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void waitForIdle() {
+        if (isDisabled()) return;
         instance.waitForIdle();
     }
 
@@ -100,31 +101,37 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void turnAsync(double angle) {
+        if (isDisabled()) return;
         instance.turnAsync(angle);
     }
 
     @Override
     public void turn(double angle) {
+        if (isDisabled()) return;
         instance.turn(angle);
     }
 
     @Override
     public void followTrajectoryAsync(Trajectory trajectory) {
+        if (isDisabled()) return;
         instance.followTrajectoryAsync(trajectory);
     }
 
     @Override
     public void followTrajectory(Trajectory trajectory) {
+        if (isDisabled()) return;
         instance.followTrajectory(trajectory);
     }
 
     @Override
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
+        if (isDisabled()) return;
         instance.followTrajectorySequenceAsync(trajectorySequence);
     }
 
     @Override
     public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
+        if (isDisabled()) return;
         instance.followTrajectorySequence(trajectorySequence);
     }
 
@@ -166,6 +173,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void setWeightedDrivePower(Pose2d drivePower) {
+        if (isDisabled()) return;
         instance.setWeightedDrivePower(drivePower);
     }
 
@@ -231,11 +239,13 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void setDriveSignal(DriveSignal driveSignal) {
+        if (isDisabled()) return;
         instance.setDriveSignal(driveSignal);
     }
 
     @Override
     public void setDrivePower(Pose2d drivePower) {
+        if (isDisabled()) return;
         instance.setDrivePower(drivePower);
     }
 

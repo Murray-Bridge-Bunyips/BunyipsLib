@@ -104,6 +104,13 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     }
 
     /**
+     * @return whether this subsystem has been commanded to disable and should not execute any stateful updates
+     */
+    public final boolean isDisabled() {
+        return !shouldRun;
+    }
+
+    /**
      * Utility function to run NullSafety.assertComponentArgs() on the given parameters, usually on
      * the motors/hardware/critical objects passed into the constructor. If this check fails, your subsystem
      * will automatically disable the update() method from calling to prevent exceptions, no-oping

@@ -116,6 +116,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     public void waitForIdle() {
+        if (isDisabled()) return;
         drive.waitForIdle();
     }
 
@@ -138,7 +139,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @return this
      */
     public MecanumDrive setSpeedUsingController(double x, double y, double r) {
-        drive.setWeightedDrivePower(Controls.makeRobotPose(x, y, r));
+        setWeightedDrivePower(Controls.makeRobotPose(x, y, r));
         return this;
     }
 
@@ -176,6 +177,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param v3 The power for the back right motor.
      */
     public void setPowers(double v, double v1, double v2, double v3) {
+        if (isDisabled()) return;
         drive.setMotorPowers(v, v1, v2, v3);
     }
 
@@ -202,31 +204,37 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void turnAsync(double angle) {
+        if (isDisabled()) return;
         drive.turnAsync(angle);
     }
 
     @Override
     public void turn(double angle) {
+        if (isDisabled()) return;
         drive.turn(angle);
     }
 
     @Override
     public void followTrajectoryAsync(Trajectory trajectory) {
+        if (isDisabled()) return;
         drive.followTrajectoryAsync(trajectory);
     }
 
     @Override
     public void followTrajectory(Trajectory trajectory) {
+        if (isDisabled()) return;
         drive.followTrajectory(trajectory);
     }
 
     @Override
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
+        if (isDisabled()) return;
         drive.followTrajectorySequenceAsync(trajectorySequence);
     }
 
     @Override
     public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
+        if (isDisabled()) return;
         drive.followTrajectorySequence(trajectorySequence);
     }
 
@@ -262,11 +270,13 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void setDriveSignal(DriveSignal driveSignal) {
+        if (isDisabled()) return;
         drive.setDriveSignal(driveSignal);
     }
 
     @Override
     public void setDrivePower(Pose2d drivePower) {
+        if (isDisabled()) return;
         drive.setDrivePower(drivePower);
     }
 
@@ -287,6 +297,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void setWeightedDrivePower(Pose2d drivePower) {
+        if (isDisabled()) return;
         drive.setWeightedDrivePower(drivePower);
     }
 
