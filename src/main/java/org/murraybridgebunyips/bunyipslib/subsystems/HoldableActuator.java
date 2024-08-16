@@ -367,6 +367,11 @@ public class HoldableActuator extends BunyipsSubsystem {
         motor.setPower(Mathf.clamp(motorPower, LOWER_POWER, UPPER_POWER));
     }
 
+    @Override
+    protected void onDisable() {
+        motor.setPower(0);
+    }
+
     private enum Mode {
         AUTO,
         HOMING,

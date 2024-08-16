@@ -103,9 +103,7 @@ public class BlinkinLights extends BunyipsSubsystem {
          * @return a task to set the pattern for a duration
          */
         public Task setPatternFor(Measure<Time> duration, RevBlinkinLedDriver.BlinkinPattern pattern) {
-            return new RunForTask(duration, () -> {
-                if (getCurrentTask() instanceof IdleTask) currentPattern = pattern;
-            }, BlinkinLights.this::resetPattern)
+            return new RunForTask(duration, () -> currentPattern = pattern, () -> currentPattern = defaultPattern)
                     .onSubsystem(BlinkinLights.this, true)
                     .withName("Lights:" + pattern.name());
         }
