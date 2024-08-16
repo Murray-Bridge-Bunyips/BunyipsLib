@@ -94,6 +94,33 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     }
 
     /**
+     * Set the translational PID coefficients. By default it is set to your drive coefficients PID.
+     *
+     * @param kp proportional
+     * @param ki integral
+     * @param kd derivative
+     * @return this
+     */
+    public HolonomicVectorDriveTask withTranslationalPID(double kp, double ki, double kd) {
+        xController.setPID(kp, ki, kd);
+        yController.setPID(kp, ki, kd);
+        return this;
+    }
+
+    /**
+     * Set the rotational PID coefficients. By default it is set to your drive coefficients PID.
+     *
+     * @param kp proportional
+     * @param ki integral
+     * @param kd derivative
+     * @return this
+     */
+    public HolonomicVectorDriveTask withRotationalPID(double kp, double ki, double kd) {
+        rController.setPID(kp, ki, kd);
+        return this;
+    }
+
+    /**
      * Set the minimum pose error when in self-holding mode to activate correction for.
      *
      * @param inchRad a pose in inches and radians that represents the admissible error for robot auto-correction

@@ -762,7 +762,7 @@ class DualTelemetry @JvmOverloads constructor(
          */
         override fun setValue(value: Any?): Item? {
             this.value = value.toString()
-            return item?.setValue(build())
+            return item?.setValue(::build)
         }
 
         /**

@@ -23,6 +23,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.DriveConstants;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.MecanumCoefficients;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.MecanumRoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
+import org.murraybridgebunyips.bunyipslib.roadrunner.drive.localizers.SwitchableLocalizer;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequence;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceRunner;
@@ -32,8 +33,8 @@ import java.util.List;
 /**
  * This is the standard MecanumDrive class for modern BunyipsLib robots.
  * This is a component for the RoadRunner Mecanum Drive, integrating RoadRunner and BunyipsLib to be used
- * as a BunyipsSubsystem. As such, this allows for integrated trajectory and pose management,
- * as well as the ability to use Field Centric Drive as a native method.
+ * as a BunyipsSubsystem. As such, this allows for integrated trajectory and pose management, while using
+ * features from BunyipsLib including Task and subsystem-based allocations.
  *
  * @author Lucas Bubner, 2023
  */
@@ -60,37 +61,37 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         updatePoseFromMemory();
     }
 
-//    /**
-//     * Call to use the MecanumLocalizer as a backup localizer alongside the current localizer. Note if you are already
-//     * using a MecanumLocalizer (default), this will duplicate your localizers and there isn't a point of calling this method.
-//     * This localizer can be switched/tested as part of the SwitchableLocalizer.
-//     *
-//     * @return the SwitchableLocalizer
-//     */
-//    public SwitchableLocalizer useFallbackLocalizer() {
-//        Pose2d curr = drive.getPoseEstimate();
-//        SwitchableLocalizer localizer = new SwitchableLocalizer(
-//                drive.getLocalizer(),
-//                new com.acmerobotics.roadrunner.drive.MecanumDrive.MecanumLocalizer(drive, true)
-//        );
-//        setLocalizer(localizer);
-//        drive.setPoseEstimate(curr);
-//        return localizer;
-//    }
-//
-//    /**
-//     * Call to set a fallback localizer that can be switched/tested to as part of the SwitchableLocalizer.
-//     *
-//     * @param fallback the backup localizer
-//     * @return the SwitchableLocalizer
-//     */
-//    public SwitchableLocalizer useFallbackLocalizer(Localizer fallback) {
-//        Pose2d curr = drive.getPoseEstimate();
-//        SwitchableLocalizer localizer = new SwitchableLocalizer(drive.getLocalizer(), fallback);
-//        setLocalizer(localizer);
-//        drive.setPoseEstimate(curr);
-//        return localizer;
-//    }
+    /**
+     * Call to use the MecanumLocalizer as a backup localizer alongside the current localizer. Note if you are already
+     * using a MecanumLocalizer (default), this will duplicate your localizers and there isn't a point of calling this method.
+     * This localizer can be switched/tested as part of the SwitchableLocalizer.
+     *
+     * @return the SwitchableLocalizer
+     */
+    public SwitchableLocalizer useFallbackLocalizer() {
+        Pose2d curr = drive.getPoseEstimate();
+        SwitchableLocalizer localizer = new SwitchableLocalizer(
+                drive.getLocalizer(),
+                new com.acmerobotics.roadrunner.drive.MecanumDrive.MecanumLocalizer(drive, true)
+        );
+        setLocalizer(localizer);
+        drive.setPoseEstimate(curr);
+        return localizer;
+    }
+
+    /**
+     * Call to set a fallback localizer that can be switched/tested to as part of the SwitchableLocalizer.
+     *
+     * @param fallback the backup localizer
+     * @return the SwitchableLocalizer
+     */
+    public SwitchableLocalizer useFallbackLocalizer(Localizer fallback) {
+        Pose2d curr = drive.getPoseEstimate();
+        SwitchableLocalizer localizer = new SwitchableLocalizer(drive.getLocalizer(), fallback);
+        setLocalizer(localizer);
+        drive.setPoseEstimate(curr);
+        return localizer;
+    }
 
     /**
      * Reset the IMU's yaw to 0.
