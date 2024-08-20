@@ -2,13 +2,14 @@ package org.murraybridgebunyips.bunyipslib.external;
 
 import org.murraybridgebunyips.bunyipslib.external.ff.SimpleMotorFeedforward;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
+import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
 
 import java.util.function.DoubleSupplier;
 
 /**
  * A generic velocity controller with PID and feedforward components.
  */
-public class VelocityFFController implements SystemController {
+public class VelocityFFController implements SystemController, PIDF {
     private final PIDController pid;
     private final SimpleMotorFeedforward ff;
 
@@ -60,5 +61,10 @@ public class VelocityFFController implements SystemController {
     @Override
     public void reset() {
         pid.reset();
+    }
+
+    @Override
+    public PIDFController getPIDFController() {
+        return pid;
     }
 }

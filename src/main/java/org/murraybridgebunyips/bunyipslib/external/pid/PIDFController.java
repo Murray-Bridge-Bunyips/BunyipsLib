@@ -2,6 +2,7 @@ package org.murraybridgebunyips.bunyipslib.external.pid;
 
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.SystemController;
 
 /**
@@ -17,7 +18,7 @@ import org.murraybridgebunyips.bunyipslib.external.SystemController;
  * int(0,t)[e(t')dt'] is the total error and e'(t) is the velocity error.
  * <a href="https://github.com/FTCLib/FTCLib/blob/cedc52cee1bb549324c1ca5059c5feec3c054902/core/src/main/java/com/arcrobotics/ftclib/controller/PIDFController.java">Source</a>
  */
-public class PIDFController implements SystemController {
+public class PIDFController implements SystemController, PIDF {
     private double kP, kI, kD, kF;
     private double setPoint;
     private double measuredValue;
@@ -334,5 +335,10 @@ public class PIDFController implements SystemController {
 
     public double getPeriod() {
         return period;
+    }
+
+    @Override
+    public PIDFController getPIDFController() {
+        return this;
     }
 }

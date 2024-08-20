@@ -2,6 +2,7 @@ package org.murraybridgebunyips.bunyipslib.external;
 
 import org.murraybridgebunyips.bunyipslib.Encoder;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
+import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
 
 import java.util.Arrays;
 
@@ -14,7 +15,7 @@ import java.util.Arrays;
  * @author Lucas Bubner, 2024
  * @see ArmController
  */
-public class PIDFFController implements SystemController {
+public class PIDFFController implements SystemController, PIDF {
     private final PIDController pid;
     private final Encoder encoder;
     private final SystemController ff;
@@ -62,5 +63,10 @@ public class PIDFFController implements SystemController {
     public void reset() {
         pid.reset();
         ff.reset();
+    }
+
+    @Override
+    public PIDFController getPIDFController() {
+        return pid;
     }
 }

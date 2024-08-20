@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.SystemController;
 import org.murraybridgebunyips.bunyipslib.external.VelocityFFController;
 import org.murraybridgebunyips.bunyipslib.external.ff.SimpleMotorFeedforward;
@@ -213,8 +214,8 @@ public class Motor extends DcMotorImplEx {
     @Override
     public int getTargetPositionTolerance() {
         // Built-in support for PIDF as it is the most common use case for RTP
-        if (rtpController != null && rtpController instanceof PIDFController) {
-            return (int) Math.ceil(((PIDFController) rtpController).getTolerance()[0]);
+        if (rtpController != null && rtpController instanceof PIDF) {
+            return (int) Math.ceil(((PIDF) rtpController).getPIDFController().getTolerance()[0]);
         }
         throw new UnsupportedOperationException("Can't access target position information on the currently used RTP controller. It may be the case that this controller is open-loop, or not a PID controller, as any tolerance configuration should be modified by your controller, not by this method.");
     }
@@ -229,8 +230,8 @@ public class Motor extends DcMotorImplEx {
     @Deprecated
     @Override
     public void setTargetPositionTolerance(int tolerance) {
-        if (rtpController != null && rtpController instanceof PIDFController) {
-            ((PIDFController) rtpController).setTolerance(tolerance);
+        if (rtpController != null && rtpController instanceof PIDF) {
+            ((PIDF) rtpController).getPIDFController().setTolerance(tolerance);
         }
         throw new UnsupportedOperationException("Can't access target position information on the currently used RTP controller. It may be the case that this controller is open-loop, or not a PID controller, as any tolerance configuration should be modified by your controller, not by this method.");
     }
@@ -245,8 +246,8 @@ public class Motor extends DcMotorImplEx {
     @Deprecated
     @Override
     public boolean isBusy() {
-        if (rtpController != null && rtpController instanceof PIDFController) {
-            return mode == RunMode.RUN_TO_POSITION && !((PIDFController) rtpController).atSetPoint();
+        if (rtpController != null && rtpController instanceof PIDF) {
+            return mode == RunMode.RUN_TO_POSITION && !((PIDF) rtpController).getPIDFController().atSetPoint();
         }
         throw new UnsupportedOperationException("Can't access target position information on the currently used RTP controller. It may be the case that this controller is open-loop, or not a PID controller, as any tolerance configuration should be modified by your controller, not by this method.");
     }

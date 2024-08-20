@@ -3,6 +3,7 @@ package org.murraybridgebunyips.bunyipslib.external;
 import org.murraybridgebunyips.bunyipslib.EncoderTicks;
 import org.murraybridgebunyips.bunyipslib.external.ff.ArmFeedforward;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
+import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Velocity;
@@ -18,7 +19,7 @@ import java.util.function.Supplier;
  * @see EncoderTicks
  * @see PIDFFController
  */
-public class ArmController implements SystemController {
+public class ArmController implements SystemController, PIDF {
     private final PIDController pid;
     private final ArmFeedforward ff;
     private final Supplier<Measure<Angle>> setPointAngleProvider;
@@ -64,5 +65,10 @@ public class ArmController implements SystemController {
     @Override
     public void reset() {
         pid.reset();
+    }
+
+    @Override
+    public PIDFController getPIDFController() {
+        return pid;
     }
 }

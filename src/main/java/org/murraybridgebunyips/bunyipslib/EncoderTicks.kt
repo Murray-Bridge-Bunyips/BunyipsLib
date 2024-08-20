@@ -99,8 +99,8 @@ object EncoderTicks {
         motor: DcMotorEx,
         reduction: Double = 1.0,
         wheelDiameter: Measure<Distance>? = null
-    ): EncoderTickGenerator {
-        return EncoderTickGenerator(motor, motor.motorType.ticksPerRev.toInt(), reduction, wheelDiameter)
+    ): Generator {
+        return Generator(motor, motor.motorType.ticksPerRev.toInt(), reduction, wheelDiameter)
     }
 
     /**
@@ -119,14 +119,14 @@ object EncoderTicks {
         ticksPerRevolution: Int,
         reduction: Double = 1.0,
         wheelDiameter: Measure<Distance>? = null
-    ): EncoderTickGenerator {
-        return EncoderTickGenerator(motor, ticksPerRevolution, reduction, wheelDiameter)
+    ): Generator {
+        return Generator(motor, ticksPerRevolution, reduction, wheelDiameter)
     }
 
     /**
      * Dynamic generator for encoder tick conversions based on a motor.
      */
-    class EncoderTickGenerator(
+    class Generator(
         private val motor: DcMotorEx,
         private val ticksPerRevolution: Int,
         private val reduction: Double,
