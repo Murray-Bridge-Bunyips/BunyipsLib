@@ -87,8 +87,8 @@ public class Motor extends DcMotorImplEx {
      */
     public void setRunToPositionController(SystemController controller) {
         rtpController = controller;
-        if (rtpController instanceof PIDFController)
-            ((PIDFController) rtpController).setTolerance(super.getTargetPositionTolerance());
+        if (rtpController instanceof PIDF)
+            ((PIDF) rtpController).getPIDFController().setTolerance(super.getTargetPositionTolerance());
     }
 
     /**
