@@ -1,17 +1,22 @@
 package org.murraybridgebunyips.bunyipslib;
 
 import static org.murraybridgebunyips.bunyipslib.Text.formatString;
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
+
+import android.util.Pair;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.apache.commons.math3.exception.OutOfRangeException;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
+import org.murraybridgebunyips.bunyipslib.external.PIDFFController;
 import org.murraybridgebunyips.bunyipslib.external.SystemController;
-import org.murraybridgebunyips.bunyipslib.external.VelocityFFController;
 import org.murraybridgebunyips.bunyipslib.external.ff.SimpleMotorFeedforward;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
@@ -35,6 +40,7 @@ public class Motor extends DcMotorImplEx {
     private final Encoder encoder;
     private SystemController rtpController;
     private SystemController rueController;
+    private Pair<Double, Double> rueInfo = null;
     private DcMotor.RunMode mode = RunMode.RUN_WITHOUT_ENCODER;
 
     /**
@@ -105,10 +111,16 @@ public class Motor extends DcMotorImplEx {
      * Falling back on a default controller will also push a robot global warning as it is highly dangerous
      * to use the stock PIDF values in this context. Set your own controller using this method.
      *
-     * @param controller the controller to use, recommended to use a velocity controller (PID+FF) such as VelocityFF.
+     * @param controller the controller to use, recommended to use a PIDFF controller.
+     * @param bufferFraction fractional value for velocity control, must be in (0, 1].
+     * @param maxAchievableTicksPerSecond your motor's spec for how many ticks/sec it can reach
      */
-    public void setRunUsingEncoderController(SystemController controller) {
+    public void setRunUsingEncoderController(SystemController controller, double bufferFraction, double maxAchievableTicksPerSecond) {
+        if (bufferFraction <= 0 || bufferFraction > 1) {
+            throw new OutOfRangeException(bufferFraction, 0, 1);
+        }
         rueController = controller;
+        rueInfo = new Pair<>(bufferFraction, maxAchievableTicksPerSecond);
     }
 
     /**
@@ -176,14 +188,19 @@ public class Motor extends DcMotorImplEx {
     }
 
     /**
-     * This method is not supported.
+     * Switches the motor to velocity control and tries to set the ticks/sec target.
      *
-     * @inheritDoc
+     * @param vel  the desired ticks per second
      */
-    @Deprecated
     @Override
     public void setVelocity(double vel) {
-        throw new UnsupportedOperationException("Unsupported on a BunyipsLib motor object. Use RUN_USING_ENCODER and setPower().");
+        // vel = buff * max * power
+        // vel / (buff * max) = power
+        if (rueInfo == null || rueInfo.first == null || rueInfo.second == null) {
+            throw new IllegalStateException("RUN_USING_ENCODER controller not set up yet, cannot set velocity without setting the controller!");
+        }
+        setMode(RunMode.RUN_USING_ENCODER);
+        setPower(vel / (rueInfo.first * rueInfo.second));
     }
 
     /**
@@ -253,14 +270,16 @@ public class Motor extends DcMotorImplEx {
     }
 
     /**
-     * This method is not supported.
+     * Switches the motor to velocity control and tries to set the angular velocity of the motor based on the intrinsic
+     * {@link MotorConfigurationType} configuration.
      *
-     * @inheritDoc
+     * @param vel   the desired angular rate, in units per second
+     * @param unit  the units in which angularRate is expressed
      */
-    @Deprecated
     @Override
     public void setVelocity(double vel, AngleUnit unit) {
-        throw new UnsupportedOperationException("Unsupported on a BunyipsLib motor object. Use RUN_USING_ENCODER and setPower().");
+        // Will assume no reduction, the user can scale the velocity on their own terms
+        setVelocity(EncoderTicks.fromAngle(Radians.of(unit.toRadians(vel)), (int) motorType.getTicksPerRev(), 1));
     }
 
     private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
@@ -303,18 +322,25 @@ public class Motor extends DcMotorImplEx {
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
                     PIDController pid = new PIDController(coeffs.p, coeffs.i, coeffs.d);
-                    rueController = new VelocityFFController(pid, new SimpleMotorFeedforward(coeffs.f, 0, 0), encoder::getAcceleration, 1.0, motorType.getAchieveableMaxTicksPerSecond());
+                    rueController = new PIDFFController(pid, new SimpleMotorFeedforward(coeffs.f, 0, 0), encoder);
+                    rueInfo = new Pair<>(1.0, motorType.getAchieveableMaxTicksPerSecond());
                 }
                 if (!rueGains.isEmpty())
                     rueController.setCoefficients(rueGains.stream().mapToDouble(this::getClampedInterpolatedGain).toArray());
-                // In RUN_USING_ENCODER, the controller is expected to take in the encoder velocity and target power,
+                if (rueInfo == null || rueInfo.first == null || rueInfo.second == null)
+                    throw new EmergencyStop("Invalid motor information configuration passed for RUN_USING_ENCODER.");
+                // In RUN_USING_ENCODER, the controller is expected to take in the current velocity and target velocity,
                 // which usually consists internally of a PID and feedforward controller.
                 if (power == 0) {
                     // We need an immediate stop if there's no power/velo requested
                     super.setPower(0);
                     return;
                 }
-                super.setPower(rueController.calculate(getVelocity(), power));
+                double targetVel = rueInfo.first * rueInfo.second * power;
+                double output = rueController instanceof PIDFFController
+                        ? ((PIDFFController) rueController).calculateVelo(getVelocity(), targetVel)
+                        : rueController.calculate(getVelocity(), targetVel);
+                super.setPower(output / rueInfo.second);
                 break;
             case RUN_WITHOUT_ENCODER:
                 super.setPower(power);

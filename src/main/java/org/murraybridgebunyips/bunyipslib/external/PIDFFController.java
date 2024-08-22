@@ -1,13 +1,15 @@
 package org.murraybridgebunyips.bunyipslib.external;
 
 import org.murraybridgebunyips.bunyipslib.Encoder;
+import org.murraybridgebunyips.bunyipslib.Motor;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
 
 import java.util.Arrays;
 
 /**
- * A composite controller to use for PID/FF controls (with kV/kA calculated components) for error calculation.
+ * A composite controller to use for PID+FF controls (with kV/kA calculated components). This controller is compatible
+ * with any error-correction need, including RUN_TO_POSIITON and RUN_USING_ENCODER modes in {@link Motor}.
  * <p>
  * To use an ArmFeedforward, consider using the {@link ArmController}, which will properly integrate the cosine of
  * the arm position as part of your feedforward during a RUN_TO_POSITION.
@@ -57,6 +59,18 @@ public class PIDFFController implements SystemController, PIDF {
     @Override
     public double calculate(double current, double target) {
         return pid.calculate(current, target) + ff.calculate(encoder.getVelocity(), encoder.getAcceleration());
+    }
+
+    /**
+     * Alternative calculate method where the feedforward component will be assumed to be a velocity, allowing
+     * your feedforward to react faster. This is internally called in {@link Motor} via a type check.
+     *
+     * @param currentVelo current velocity
+     * @param targetVelo target velocity, will be used instead of the encoder velocity for feedforward
+     * @return calculated controller output
+     */
+    public double calculateVelo(double currentVelo, double targetVelo) {
+        return pid.calculate(currentVelo, targetVelo) + ff.calculate(targetVelo, encoder.getAcceleration());
     }
 
     @Override
