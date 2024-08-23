@@ -279,7 +279,11 @@ public class Motor extends DcMotorImplEx {
     @Override
     public void setVelocity(double vel, AngleUnit unit) {
         // Will assume no reduction, the user can scale the velocity on their own terms
-        setVelocity(EncoderTicks.fromAngle(Radians.of(unit.toRadians(vel)), (int) motorType.getTicksPerRev(), 1));
+        double tpr = motorType.getTicksPerRev();
+        if (tpr <= 0) {
+            throw new IllegalStateException(formatString("The Ticks Per Revolution attribute has not been set for this motor (% on port %). You will have to clone the current motorType, set the ticksPerRev, and set the new motorType to the cloned copy.", getDeviceName(), getPortNumber()));
+        }
+        setVelocity(EncoderTicks.fromAngle(Radians.of(unit.toRadians(vel)), (int) tpr, 1));
     }
 
     private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
