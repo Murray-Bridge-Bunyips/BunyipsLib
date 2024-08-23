@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.apache.commons.math3.exception.OutOfRangeException;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.PIDFFController;
 import org.murraybridgebunyips.bunyipslib.external.SystemController;
@@ -278,12 +279,13 @@ public class Motor extends DcMotorImplEx {
      */
     @Override
     public void setVelocity(double vel, AngleUnit unit) {
-        // Will assume no reduction, the user can scale the velocity on their own terms
         double tpr = motorType.getTicksPerRev();
         if (tpr <= 0) {
             throw new IllegalStateException(formatString("The Ticks Per Revolution attribute has not been set for this motor (% on port %). You will have to clone the current motorType, set the ticksPerRev, and set the new motorType to the cloned copy.", getDeviceName(), getPortNumber()));
         }
-        setVelocity(EncoderTicks.fromAngle(Radians.of(unit.toRadians(vel)), (int) tpr, 1));
+        double radsPerSec = UnnormalizedAngleUnit.RADIANS.fromUnit(unit.getUnnormalized(), vel);
+        // Will assume no reduction, the user can scale the velocity on their own terms
+        setVelocity(EncoderTicks.fromAngle(Radians.of(radsPerSec), (int) tpr, 1));
     }
 
     private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
