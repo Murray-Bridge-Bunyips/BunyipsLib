@@ -7,6 +7,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.TankRoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.tuning.RoadRunnerTuning;
 
+import java.util.Arrays;
+
 /**
  * Example of how to use the RoadRunner tuning clas.
  * You will simply need to extend RoadRunnerTuning and the selection for tuning procedure will be selected at runtime.
@@ -34,10 +36,11 @@ public class ExampleRoadRunnerTuning extends RoadRunnerTuning {
         // This OpMode will refuse to work if you pass in the wrong drive class. This is to ensure the absolute base classes
         // from RoadRunner are working for you before BunyipsLib starts to abstract these systems.
 
-        // You can choose to pass null for the telemetry field, it is not required (the OpMode will handle it for you)
+        // You can choose to pass null for the telemetry field, it is not required (the OpMode will handle it for you).
+        // This field can be omitted entirely through a constructor overload.
         TankRoadRunnerDrive drive = new TankRoadRunnerDrive(
                 null, config.driveConstants, config.coefficients, hardwareMap.voltageSensor,
-                config.imu, config.leftFrontMotor, config.rightFrontMotor, config.leftBackMotor, config.rightBackMotor);
+                config.imu, Arrays.asList(config.leftFrontMotor, config.leftBackMotor), Arrays.asList(config.rightBackMotor, config.rightFrontMotor));
 
         // Set a localizer here if you have one (or it will use the default)
 //        drive.setLocalizer(new TwoWheelTrackingLocalizer(ROBOT_CONFIG.localizerCoefficients, ROBOT_CONFIG.parallelEncoder, ROBOT_CONFIG.perpendicularEncoder, drive));

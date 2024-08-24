@@ -80,8 +80,8 @@ class DualTelemetry @JvmOverloads constructor(
     var logBracketColor = "white"
 
     /**
-     * The low speed at which the loop timer will go yellow in the overhead telemetry to alert the user of slow
-     * looping times.
+     * The time threshold at which the frequency segment will display yellow in the overhead telemetry to alert the user of slow
+     * looping times. Note that after [RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT], the loop timer will display red regardless.
      */
     var loopSpeedSlowAlert: Measure<Time> = Milliseconds.of(60.0)
 
@@ -321,7 +321,9 @@ class DualTelemetry @JvmOverloads constructor(
                 overheadStatus.append("?ms")
             }
         } else {
-            if (loopTime > loopSpeedSlowAlert.inUnit(Milliseconds)) {
+            if (loopTime >= RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.inUnit(Milliseconds)) {
+                overheadStatus.append("<font color='red'>").append(loopTime).append("ms</font>")
+            } else if (loopTime >= loopSpeedSlowAlert.inUnit(Milliseconds)) {
                 overheadStatus.append("<font color='yellow'>").append(loopTime).append("ms</font>")
             } else {
                 overheadStatus.append(loopTime).append("ms")

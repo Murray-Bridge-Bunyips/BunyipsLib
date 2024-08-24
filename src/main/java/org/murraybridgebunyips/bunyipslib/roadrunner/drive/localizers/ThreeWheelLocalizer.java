@@ -11,6 +11,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.Deadwheel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,7 +40,19 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
     private boolean usingOverflowCompensation;
 
     /**
-     * Create a new StandardTrackingWheelLocalizer with coefficients, encoders, and last encoder positions and velocities.
+     * Create a new ThreeWheelLocalizer with coefficients and encoders. Omits last known encoder value parameters.
+     *
+     * @param coefficients   The coefficients for the localizer
+     * @param leftDeadwheel  The left encoder
+     * @param rightDeadwheel The right encoder
+     * @param frontDeadwheel The front encoder
+     */
+    public ThreeWheelLocalizer(ThreeWheelLocalizer.Coefficients coefficients, Deadwheel leftDeadwheel, Deadwheel rightDeadwheel, Deadwheel frontDeadwheel) {
+        this(coefficients, leftDeadwheel, rightDeadwheel, frontDeadwheel, new ArrayList<>(), new ArrayList<>());
+    }
+
+    /**
+     * Create a new ThreeWheelLocalizer with coefficients, encoders, and last encoder positions and velocities.
      *
      * @param coefficients             The coefficients for the localizer
      * @param leftDeadwheel            The left encoder

@@ -15,6 +15,8 @@ import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
 import org.murraybridgebunyips.bunyipslib.example.examplerobot.components.ExampleConfig;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 
+import java.util.Arrays;
+
 /**
  * Example RoadRunner autonomous OpMode for a robot with a tank drive.
  */
@@ -30,7 +32,7 @@ public class ExampleRoadRunnerAutonomous extends AutonomousBunyipsOpMode impleme
     protected void onInitialise() {
         config.init();
         // Configure your systems as normal...
-        drive = new TankDrive(config.driveConstants, config.coefficients, config.imu, config.leftFrontMotor, config.rightFrontMotor, config.leftBackMotor, config.rightBackMotor);
+        drive = new TankDrive(config.driveConstants, config.coefficients, config.imu, Arrays.asList(config.leftFrontMotor, config.leftBackMotor), Arrays.asList(config.rightBackMotor, config.rightFrontMotor));
     }
 
     @Override

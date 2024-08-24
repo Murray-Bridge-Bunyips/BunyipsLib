@@ -66,7 +66,7 @@ public class PIDFFController implements SystemController, PIDF {
      * your feedforward to react faster. This is internally called in {@link Motor} via a type check.
      *
      * @param currentVelo current velocity
-     * @param targetVelo target velocity, will be used instead of the encoder velocity for feedforward
+     * @param targetVelo  target velocity, will be used instead of the encoder velocity for feedforward
      * @return calculated controller output
      */
     public double calculateVelo(double currentVelo, double targetVelo) {

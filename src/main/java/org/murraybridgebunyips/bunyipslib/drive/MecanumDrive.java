@@ -3,6 +3,9 @@ package org.murraybridgebunyips.bunyipslib.drive;
 import static org.murraybridgebunyips.bunyipslib.Text.round;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Centimeters;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Milliseconds;
+
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -11,15 +14,14 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.system.Watchdog;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.Dbg;
+import org.murraybridgebunyips.bunyipslib.RoadRunner;
 import org.murraybridgebunyips.bunyipslib.Storage;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.DriveConstants;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.MecanumCoefficients;
@@ -40,11 +42,11 @@ import java.util.concurrent.TimeUnit;
  * features from BunyipsLib including Task and subsystem-based allocations.
  * <p>
  * This class has an integrated safety watchdog to ensure that the drive stops and locks if no updates are being
- * supplied for more than 200ms. This is to prevent a runaway robot in case of a software bug or other issues, as
+ * supplied. This is to prevent a runaway robot in case of a software bug or other issues, as
  * the methods attached to this class, such as {@code setSpeedUsingController()} and {@code setWeightedDrivePower()} will
  * propagate instantly on the drive motors. This is the only type of subsystem that has this feature as it wraps
  * around a RoadRunner drive. Other subsystems follow this safety by default as their methods only propagate hardware
- * when the subsystem is updated.
+ * when the subsystem is updated. This timeout can be changed as it is a constant in {@link RoadRunner}.
  *
  * @author Lucas Bubner, 2023
  */
@@ -58,24 +60,23 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     /**
      * Constructor for the MecanumDrive class.
      *
-     * @param constants           The drive constants for the robot.
-     * @param mecanumCoefficients The coefficients for the mecanum drive.
-     * @param voltageSensor       The voltage sensor for the robot from hardwareMap.
-     * @param imu                 The IMU for the robot.
-     * @param fl                  The front left motor.
-     * @param fr                  The front right motor.
-     * @param bl                  The back left motor.
-     * @param br                  The back right motor.
+     * @param constants    The drive constants for the robot.
+     * @param coefficients The MecanumCoefficients for the drive.
+     * @param imu          The IMU for the robot. Can be set to null if you are using three-wheel odometry.
+     * @param fl           The front left motor.
+     * @param fr           The front right motor.
+     * @param bl           The back left motor.
+     * @param br           The back right motor.
      */
-    public MecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, HardwareMap.DeviceMapping<VoltageSensor> voltageSensor, IMU imu, DcMotorEx fl, DcMotorEx fr, DcMotorEx bl, DcMotorEx br) {
-        assertParamsNotNull(constants, mecanumCoefficients, voltageSensor, imu, fl, fr, bl, br);
-        drive = new MecanumRoadRunnerDrive(opMode.telemetry, constants, mecanumCoefficients, voltageSensor, imu, fl, fr, bl, br);
+    public MecanumDrive(DriveConstants constants, MecanumCoefficients coefficients, @Nullable IMU imu, DcMotorEx fl, DcMotorEx fr, DcMotorEx bl, DcMotorEx br) {
+        assertParamsNotNull(constants, coefficients, imu, fl, fr, bl, br);
+        drive = new MecanumRoadRunnerDrive(opMode.telemetry, constants, coefficients, opMode.hardwareMap.voltageSensor, imu, fl, fr, bl, br);
         benji = new Watchdog(() -> {
             if (opMode.isStopRequested()) return;
-            Dbg.log(getClass(), "Direct drive updates have been disabled as it has been longer than 200ms since the last call to update().");
+            Dbg.warn(getClass(), "Stateful drive updates have been disabled as it has been longer than %ms since the last call to update().", RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds));
             updates = false;
             drive.stop();
-        }, 100, 200, TimeUnit.MILLISECONDS);
+        }, 100, (long) RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds), TimeUnit.MILLISECONDS);
         this.imu = imu;
         updatePoseFromMemory();
     }

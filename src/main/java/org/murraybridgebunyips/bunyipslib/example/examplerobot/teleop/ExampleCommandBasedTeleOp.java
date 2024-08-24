@@ -11,6 +11,8 @@ import org.murraybridgebunyips.bunyipslib.tasks.ContinuousTask;
 import org.murraybridgebunyips.bunyipslib.tasks.DifferentialDriveTask;
 import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 
+import java.util.Arrays;
+
 /**
  * Example command-based teleop
  *
@@ -37,7 +39,7 @@ public class ExampleCommandBasedTeleOp extends BunyipsOpMode {
     protected void onInit() {
         scheduler = new Scheduler();
         config.init();
-        drive = new TankDrive(config.driveConstants, config.coefficients, config.imu, config.leftFrontMotor, config.leftBackMotor, config.leftBackMotor, config.rightBackMotor);
+        drive = new TankDrive(config.driveConstants, config.coefficients, config.imu, Arrays.asList(config.leftFrontMotor, config.leftBackMotor), Arrays.asList(config.rightBackMotor, config.rightFrontMotor));
 
         // The scheduler must be initialised with all subsystems that will be used in the OpMode.
         // This is because the scheduler will be responsible for running the subsystems, and will

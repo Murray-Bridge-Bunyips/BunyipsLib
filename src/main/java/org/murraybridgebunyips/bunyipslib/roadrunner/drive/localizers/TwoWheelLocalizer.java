@@ -52,7 +52,7 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
     private boolean usingOverflowCompensation;
 
     /**
-     * Create a new TwoWheelTrackingLocalizer
+     * Create a new TwoWheelLocalizer.
      *
      * @param coefficients           The coefficients to use
      * @param parallelDeadwheel      The parallel encoder

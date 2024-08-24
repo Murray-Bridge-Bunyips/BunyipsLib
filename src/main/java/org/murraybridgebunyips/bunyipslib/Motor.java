@@ -112,8 +112,8 @@ public class Motor extends DcMotorImplEx {
      * Falling back on a default controller will also push a robot global warning as it is highly dangerous
      * to use the stock PIDF values in this context. Set your own controller using this method.
      *
-     * @param controller the controller to use, recommended to use a PIDFF controller.
-     * @param bufferFraction fractional value for velocity control, must be in (0, 1].
+     * @param controller                  the controller to use, recommended to use a PIDFF controller.
+     * @param bufferFraction              fractional value for velocity control, must be in (0, 1].
      * @param maxAchievableTicksPerSecond your motor's spec for how many ticks/sec it can reach
      */
     public void setRunUsingEncoderController(SystemController controller, double bufferFraction, double maxAchievableTicksPerSecond) {
@@ -191,7 +191,7 @@ public class Motor extends DcMotorImplEx {
     /**
      * Switches the motor to velocity control and tries to set the ticks/sec target.
      *
-     * @param vel  the desired ticks per second
+     * @param vel the desired ticks per second
      */
     @Override
     public void setVelocity(double vel) {
@@ -274,8 +274,8 @@ public class Motor extends DcMotorImplEx {
      * Switches the motor to velocity control and tries to set the angular velocity of the motor based on the intrinsic
      * {@link MotorConfigurationType} configuration.
      *
-     * @param vel   the desired angular rate, in units per second
-     * @param unit  the units in which angularRate is expressed
+     * @param vel  the desired angular rate, in units per second
+     * @param unit the units in which angularRate is expressed
      */
     @Override
     public void setVelocity(double vel, AngleUnit unit) {

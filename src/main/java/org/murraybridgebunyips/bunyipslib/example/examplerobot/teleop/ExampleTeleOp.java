@@ -5,6 +5,8 @@ import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
 import org.murraybridgebunyips.bunyipslib.example.examplerobot.components.ExampleConfig;
 
+import java.util.Arrays;
+
 /**
  * Introduction to using BunyipsOpMode as the top-level component for a robot OpMode.
  */
@@ -29,7 +31,7 @@ public class ExampleTeleOp extends BunyipsOpMode {
         config.init();
 
         // Initialise all your components! e.g.
-        drive = new TankDrive(config.driveConstants, config.coefficients, config.imu, config.leftFrontMotor, config.leftBackMotor, config.leftBackMotor, config.rightBackMotor);
+        drive = new TankDrive(config.driveConstants, config.coefficients, config.imu, Arrays.asList(config.leftFrontMotor, config.leftBackMotor), Arrays.asList(config.rightBackMotor, config.rightFrontMotor));
     }
 
     @Override

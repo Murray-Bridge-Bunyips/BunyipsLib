@@ -20,9 +20,12 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
+import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.DualTelemetry;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.Motor;
+import org.murraybridgebunyips.bunyipslib.drive.MecanumDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequence;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceRunner;
@@ -32,13 +35,17 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * RoadRunner Mecanum drive hardware implementation for REV hardware.
- * Reworked to use builder parameters for multiple robot configurations.
+ * RoadRunner implementation for a 4-wheel Mecanum drive on REV hardware.
+ * <p>
+ * This class directly extends the base {@code SampleMecanumDrive} found in the RoadRunner v0.5 quickstart,
+ * and is wrapped to be a {@link BunyipsSubsystem} via {@link MecanumDrive}. Use the {@link MecanumDrive} class
+ * to use this drive in a {@link BunyipsOpMode}. This class requires you pass in an instance of {@link DriveConstants},
+ * which has been adapted to allow multiple configurations for any drive.
  */
 public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive implements RoadRunnerDrive {
     private final DriveConstants constants;
-    private final TrajectoryVelocityConstraint VEL_CONSTRAINT;
-    private final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT;
+    private final TrajectoryVelocityConstraint velConstraint;
+    private final TrajectoryAccelerationConstraint accelConstraint;
     private final TrajectorySequenceRunner trajectorySequenceRunner;
     private final TrajectoryFollower follower;
     private final DcMotorEx leftFront;
@@ -51,6 +58,22 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
     private final List<Integer> lastEncPositions = new ArrayList<>();
     private final List<Integer> lastEncVels = new ArrayList<>();
     private MecanumCoefficients coefficients;
+
+    /**
+     * Constructor for the MecanumRoadRunnerDrive class. Omits optional {@link DualTelemetry} parameter.
+     *
+     * @param constants     The drive constants for the robot.
+     * @param coefficients  The coefficients for the mecanum drive.
+     * @param voltageSensor The voltage sensor mapping ({@code hardwareMap.voltageSensor})
+     * @param imu           The IMU for the robot. May be nullable if you are using three-wheel odometry.
+     * @param fl            The front left motor.
+     * @param fr            The front right motor.
+     * @param bl            The back left motor.
+     * @param br            The back right motor.
+     */
+    public MecanumRoadRunnerDrive(DriveConstants constants, MecanumCoefficients coefficients, HardwareMap.DeviceMapping<VoltageSensor> voltageSensor, @Nullable IMU imu, DcMotorEx fl, DcMotorEx fr, DcMotorEx bl, DcMotorEx br) {
+        this(null, constants, coefficients, voltageSensor, imu, fl, fr, bl, br);
+    }
 
     /**
      * Constructor for the MecanumRoadRunnerDrive class.
@@ -71,8 +94,8 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
         follower = new HolonomicPIDVAFollower(coefficients.TRANSLATIONAL_PID, coefficients.TRANSLATIONAL_PID, coefficients.HEADING_PID,
                 constants.admissibleError.first, constants.admissibleError.second);
 
-        VEL_CONSTRAINT = getVelocityConstraint(constants.MAX_VEL, constants.MAX_ANG_VEL, constants.TRACK_WIDTH);
-        ACCEL_CONSTRAINT = getAccelerationConstraint(constants.MAX_ACCEL);
+        velConstraint = getVelocityConstraint(constants.MAX_VEL, constants.MAX_ANG_VEL, constants.TRACK_WIDTH);
+        accelConstraint = getAccelerationConstraint(constants.MAX_ACCEL);
 
         batteryVoltageSensor = voltageSensor.iterator().next();
 
@@ -131,27 +154,27 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
 
     @Override
     public void stop() {
-        setWeightedDrivePower(new Pose2d(0, 0, 0));
+        cancelTrajectory();
         setMotorPowers(0, 0, 0, 0);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
-        return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+        return new TrajectoryBuilder(startPose, velConstraint, accelConstraint);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
-        return new TrajectoryBuilder(startPose, reversed, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+        return new TrajectoryBuilder(startPose, reversed, velConstraint, accelConstraint);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
-        return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
+        return new TrajectoryBuilder(startPose, startHeading, velConstraint, accelConstraint);
     }
 
     @SuppressWarnings("rawtypes")
     public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
         return new TrajectorySequenceBuilder(
                 startPose,
-                VEL_CONSTRAINT, ACCEL_CONSTRAINT,
+                velConstraint, accelConstraint,
                 constants.MAX_ANG_VEL, constants.MAX_ANG_ACCEL
         );
     }

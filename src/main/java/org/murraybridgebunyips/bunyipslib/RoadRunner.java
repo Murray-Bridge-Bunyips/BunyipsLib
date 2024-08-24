@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib;
 
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Milliseconds;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 import static org.murraybridgebunyips.bunyipslib.tasks.bases.Task.INFINITE_TIMEOUT;
 
@@ -30,19 +31,35 @@ import org.murraybridgebunyips.bunyipslib.tasks.groups.TaskGroup;
 import java.util.Objects;
 
 /**
- * RoadRunner utility interface for autonomous OpModes. Implement this interface in a {@link AutonomousBunyipsOpMode}.
+ * RoadRunner utility interface for OpModes, providing simpler trajectory building processes.
  * Do not override any of the default methods in this interface, as they are used for RoadRunner task scheduling.
  * <p>
  * Previously named RoadRunnerAutonomousBunyipsOpMode (RRABOM, nickname "Rabone").
  * <p>
- * <i>This interface may also be used in a normal {@link BunyipsOpMode}, however the {@code addTask()} builder method
- * will not work as it requires the presence of {@link AutonomousBunyipsOpMode}.</i>
+ * <i>This interface can be used in any OpMode base variant, however the {@code addTask()} builder method
+ * requires the presence of {@link AutonomousBunyipsOpMode}.</i>
  *
  * @author Lucas Bubner, 2024
  * @noinspection InterfaceMayBeAnnotatedFunctional
  * @see AutonomousBunyipsOpMode
  */
 public interface RoadRunner {
+    /**
+     * The timeout value used for the RoadRunner drive update watchdog to disengage the drive if an update
+     * call has not been registered after this timeout.
+     * <p>
+     * This can also generally be used as a threshold for looping speed that is dangerous for robot operation.
+     * Too slow of a loop speed is extremely dangerous especially for the drive subsystem, as it has the ability to
+     * cause severe damage from lack of control.
+     * <p>
+     * A drive will use this timeout to ensure that the drive stops and locks if no updates are being
+     * supplied after this amount of time has passed. This is to prevent a runaway robot in case of a software bug
+     * or other issues, as most methods attached to RoadRunner drive classes will propagate instantly on the drive motors.
+     * The drive is also the most volatile subsystem. These drives are the only type of subsystem that has this feature
+     * as it wraps around a RoadRunner drive. Other subsystems follow this safety by default as their methods only
+     * propagate hardware when the subsystem is updated. This timeout is defined here.
+     */
+    Measure<Time> DRIVE_UPDATE_SAFETY_TIMEOUT = Milliseconds.of(200);
     /**
      * Whether timeouts for built tasks should be force-set to no timeout. By default tasks are set to the trajectory
      * duration but some systems do not want this restriction, therefore this exists to set that behaviour.
