@@ -214,6 +214,16 @@ public class Motor extends DcMotorImplEx {
     }
 
     /**
+     * Get the custom set mode for this Motor. Note that this will not reflect the actual SDK mode of the motor,
+     * which is always set to {@link RunMode#RUN_WITHOUT_ENCODER}, but rather the equivalent mode this motor
+     * is currently running in.
+     */
+    @Override
+    public DcMotor.RunMode getMode() {
+        return mode;
+    }
+
+    /**
      * Modified version of {@code setMode} where the modes will never actually be propagated to the motors, and instead
      * managed internally by the modified {@link #setPower(double)} method. The actual motor object will always be in
      * {@link RunMode#RUN_WITHOUT_ENCODER}.
