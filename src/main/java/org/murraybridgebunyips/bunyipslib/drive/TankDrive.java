@@ -124,7 +124,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void turnAsync(double angle) {
-        if (isDisabled() || !updates) return;
         instance.turnAsync(angle);
     }
 
@@ -136,7 +135,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void followTrajectoryAsync(Trajectory trajectory) {
-        if (isDisabled() || !updates) return;
         instance.followTrajectoryAsync(trajectory);
     }
 
@@ -148,7 +146,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
-        if (isDisabled() || !updates) return;
         instance.followTrajectorySequenceAsync(trajectorySequence);
     }
 

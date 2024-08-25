@@ -216,7 +216,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void turnAsync(double angle) {
-        if (isDisabled() || !updates) return;
         drive.turnAsync(angle);
     }
 
@@ -228,7 +227,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void followTrajectoryAsync(Trajectory trajectory) {
-        if (isDisabled() || !updates) return;
         drive.followTrajectoryAsync(trajectory);
     }
 
@@ -240,7 +238,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
-        if (isDisabled() || !updates) return;
         drive.followTrajectorySequenceAsync(trajectorySequence);
     }
 
