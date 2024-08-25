@@ -49,6 +49,15 @@ public class Motor extends DcMotorImplEx {
      *
      * @param motor the DcMotor from hardwareMap to use.
      */
+    public Motor(DcMotor motor) {
+        this((DcMotorEx) motor);
+    }
+
+    /**
+     * Wrap a DcMotor to use in the Motor class.
+     *
+     * @param motor the DcMotor from hardwareMap to use.
+     */
     public Motor(DcMotorEx motor) {
         super(motor.getController(), motor.getPortNumber(), motor.getDirection(), motor.getMotorType());
         // The actual motor should *always* be running in RUN_WITHOUT_ENCODER

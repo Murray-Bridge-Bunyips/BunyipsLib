@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.murraybridgebunyips.bunyipslib.cameras.CameraType;
 import org.murraybridgebunyips.bunyipslib.vision.Processor;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.opencv.core.Mat;
@@ -30,18 +29,8 @@ public class AprilTag extends Processor<AprilTagData> {
     private volatile Object atCtx;
 
     /**
-     * Will use the provided camera calibration
-     *
-     * @param camInfo CameraType instance with the camera calibration
-     */
-    public AprilTag(CameraType camInfo) {
-        instance = makeBuilderWithCommonSettings()
-                .setLensIntrinsics(camInfo.getFx(), camInfo.getFy(), camInfo.getCx(), camInfo.getCy())
-                .build();
-    }
-
-    /**
-     * Will rely on the SDK to provide camera intrinsics
+     * Construct a new AprilTag processor.
+     * Will rely on the SDK and the teamwebcamcalibrations.xml file to provide camera intrinsics for this overload.
      */
     public AprilTag() {
         instance = makeBuilderWithCommonSettings().build();
@@ -49,26 +38,13 @@ public class AprilTag extends Processor<AprilTagData> {
 
     /**
      * Create an AprilTag instance with the additional builder settings as provided.
-     * Will rely on the SDK to provide camera intrinsics for this overload.
+     * Will rely on the SDK and the teamwebcamcalibrations.xml file to provide camera intrinsics for this overload,
+     * though you can set your own camera intrinsics using the builder settings.
      *
      * @param customBuilderSettings additional settings that will be attached to the builder
      */
     public AprilTag(Function<AprilTagProcessor.Builder, AprilTagProcessor.Builder> customBuilderSettings) {
         instance = customBuilderSettings.apply(makeBuilderWithCommonSettings()).build();
-    }
-
-    /**
-     * Create an AprilTag instance with the additional builder settings as provided.
-     * Will use the provided camera calibration.
-     *
-     * @param customBuilderSettings additional settings that will be attached to the builder
-     * @param camInfo               CameraType instance with the camera calibration
-     */
-    public AprilTag(Function<AprilTagProcessor.Builder, AprilTagProcessor.Builder> customBuilderSettings, CameraType camInfo) {
-        instance = customBuilderSettings.apply(
-                makeBuilderWithCommonSettings()
-                        .setLensIntrinsics(camInfo.getFx(), camInfo.getFy(), camInfo.getCx(), camInfo.getCy())
-        ).build();
     }
 
     private AprilTagProcessor.Builder makeBuilderWithCommonSettings() {

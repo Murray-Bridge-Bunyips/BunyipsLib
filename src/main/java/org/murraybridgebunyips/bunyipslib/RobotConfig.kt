@@ -85,7 +85,7 @@ abstract class RobotConfig {
         return this
     }
 
-    private val dcMotorCastable = listOf(Deadwheel::class.java, DcMotorRamping::class.java, Motor::class.java)
+    private val dcMotorCastable = listOf(Deadwheel::class.java, Ramping.DcMotor::class.java, Motor::class.java)
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : HardwareDevice> getAndDynamicCast(name: String, device: Class<T>): T? {
