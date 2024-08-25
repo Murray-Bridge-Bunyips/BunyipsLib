@@ -549,36 +549,6 @@ public class Scheduler extends BunyipsComponent {
         }
 
         /**
-         * Run a task when the condition is met, debouncing the task from running more than once the condition is met.
-         * This method can only be called once per ConditionalTask.
-         * If you do not mention timing control, this task will be run immediately when the condition is met,
-         * ending when the task ends.
-         *
-         * @param task The task to run.
-         * @return Current builder for additional task parameters
-         * @deprecated Renamed to {@link #runOnce}
-         */
-        @Deprecated
-        public ConditionalTask runDebounced(Task task) {
-            return runOnce(task);
-        }
-
-        /**
-         * Implicitly make a new RunTask to run once the condition is met, debouncing the task from running more than once the condition is met.
-         * This method can only be called once per ConditionalTask.
-         * If you do not mention timing control, this task will be run immediately when the condition is met,
-         * ending immediately as it is an RunTask.
-         *
-         * @param runnable The code to run
-         * @return Current builder for additional task parameters
-         * @deprecated Renamed to {@link #runOnce}
-         */
-        @Deprecated
-        public ConditionalTask runDebounced(Runnable runnable) {
-            return runOnce(runnable);
-        }
-
-        /**
          * Queue a task when the condition is met, debouncing the task from queueing more than once the condition is met.
          * This effectively does the same as {@link #run}, however only a single queue is permitted per rising edge.
          * <p>

@@ -75,6 +75,17 @@ class DualTelemetry @JvmOverloads constructor(
     var overheadSubtitle = ""
 
     /**
+     * The caption value separator used for automatic splitting of the caption and value for FtcDashboard parsing.
+     * This value is also used when calling the aliased but legacy [addData] method (preferred to use [add]).
+     *
+     * This separator will ensure telemetry that can be added under their own data tags can be done via
+     * the dashboard for better logging and graph view operations. (e.g. "Item: Value") will be interpreted as its own
+     * item under the Item caption on FtcDashboard. The actual SDK caption-value separator is not affected by this
+     * property, and these captions should always be an empty string as captions are not used in DualTelemetry.
+     */
+    var dashboardCaptionValueAutoSeparator = ": "
+
+    /**
      * The color of the brackets in log messages, useful for distinguishing between different timer phases.
      */
     var logBracketColor = "white"
@@ -97,10 +108,6 @@ class DualTelemetry @JvmOverloads constructor(
         opMode.telemetry.log().displayOrder = Telemetry.Log.DisplayOrder.OLDEST_FIRST
         opMode.telemetry.captionValueSeparator = ""
         opMode.telemetry.log().capacity = TELEMETRY_LOG_LINE_LIMIT
-        telemetryQueue = 0
-        synchronized(dashboardItems) {
-            dashboardItems.clear()
-        }
         // Separate log from telemetry on the DS with an empty line
         opMode.telemetry.log().add("")
         if (infoString != null) {
@@ -126,8 +133,10 @@ class DualTelemetry @JvmOverloads constructor(
 
     /**
      * Add data to the telemetry object for the Driver Station and FtcDashboard, with integrated formatting.
+     * Note that using a separator element (defined by [dashboardCaptionValueAutoSeparator], default ": ") in your formatted string
+     * will split this to an item for FtcDashboard automagically, replicating what [addDashboard] would do.
      * @param format An object string to add to telemetry
-     * @param args The objects to format into the object format string
+     * @param args The objects to format into the object format string via [Text.formatString]
      * @return The telemetry item added to the Driver Station, null if the send failed from overflow
      */
     fun add(format: Any, vararg args: Any?): HtmlItem {
@@ -143,9 +152,34 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     /**
+     * Add data to the telemetry object for the Driver Station and FtcDashboard, with integrated formatting.
+     * This is an alias for [add], with downcasting to a normal telemetry item. This will be automagically formatted
+     * for FtcDashboard.
+     * @param caption Caption before appended separator ([dashboardCaptionValueAutoSeparator])
+     * @param format Format string to append after separator ([dashboardCaptionValueAutoSeparator])
+     * @param args Objects to format into the format string via [Text.formatString]
+     * @return The telemetry item added to the Driver Station, null if the send failed from overflow
+     */
+    override fun addData(caption: String, format: String, vararg args: Any): Item {
+        return add(caption + dashboardCaptionValueAutoSeparator + format, args)
+    }
+
+    /**
+     * Add data to the telemetry object for the Driver Station and FtcDashboard, with integrated formatting.
+     * This is an alias for [add], with downcasting to a normal telemetry item. This will be automagically formatted
+     * for FtcDashboard.
+     * @param caption Caption before appended separator ([dashboardCaptionValueAutoSeparator])
+     * @param value Value to append after separator ([dashboardCaptionValueAutoSeparator])
+     * @return The telemetry item added to the Driver Station, null if the send failed from overflow
+     */
+    override fun addData(caption: String, value: Any): Item {
+        return add(caption + dashboardCaptionValueAutoSeparator + value)
+    }
+
+    /**
      * Add a data to the telemetry object for the Driver Station and FtcDashboard, with integrated formatting.
      * @param format An object string to add to telemetry
-     * @param args The objects to format into the object format string
+     * @param args The objects to format into the object format string via [Text.formatString]
      * @return The telemetry item added to the Driver Station
      */
     fun addRetained(format: Any, vararg args: Any?): HtmlItem {
@@ -210,24 +244,6 @@ class DualTelemetry @JvmOverloads constructor(
      */
     fun remove(items: List<Item>): Boolean {
         return remove(*items.toTypedArray())
-    }
-
-    /**
-     * Remove entries from the Driver Station telemetry object.
-     * @param items The items to remove from the DS telemetry object
-     */
-    @Deprecated("This method has been renamed", ReplaceWith("remove(items)"))
-    fun removeRetained(vararg items: Item): Boolean {
-        return remove(*items)
-    }
-
-    /**
-     * Remove entries from the Driver Station telemetry object.
-     * @param items The items to remove from the DS telemetry object
-     */
-    @Deprecated("This method has been renamed", ReplaceWith("remove(items)"))
-    fun removeRetained(items: List<Item>): Boolean {
-        return remove(items)
     }
 
     /**
@@ -352,26 +368,36 @@ class DualTelemetry @JvmOverloads constructor(
             val padding = 3
             dashboardItems.forEach { pair ->
                 val (type, ref) = pair
+                val currentRef = ref.require()
+                val (userTag, value) = let {
+                    val parts = currentRef.split(dashboardCaptionValueAutoSeparator, limit = 2)
+                    if (parts.size == 2) {
+                        Pair(parts[0].trim(), parts[1].trim())
+                    } else {
+                        Pair(null, parts[0].trim())
+                    }
+                }
                 when (type) {
                     ItemType.TELEMETRY -> packet.put(
-                        "DS${String.format("%0${padding}d", t++)}",
-                        ref.get()
+                        if (!userTag.isNullOrBlank()) userTag else "DS${String.format("%0${padding}d", t++)}",
+                        value
                     )
 
                     ItemType.RETAINED_TELEMETRY -> packet.put(
-                        "RT${String.format("%0${padding}d", r++)}",
-                        ref.get()
+                        if (!userTag.isNullOrBlank()) userTag else "RT${String.format("%0${padding}d", r++)}",
+                        value
                     )
 
                     ItemType.LOG -> {
-                        if (ref.get().equals(infoString)) {
+                        if (value == infoString) {
                             // BunyipsLib info, this is an always log and will always
                             // be the first log in the list as it is added at the start
                             // of the init cycle
-                            packet.put("INFO", ref.get())
+                            packet.put("INFO", value)
                             return@forEach
                         }
-                        packet.put("LOG${String.format("%0${padding}d", l++)}", ref.get())
+                        // Log items should never be updated so we will use the raw and full value
+                        packet.put("LOG${String.format("%0${padding}d", l++)}", currentRef)
                     }
                 }
             }
@@ -389,6 +415,28 @@ class DualTelemetry @JvmOverloads constructor(
         }
 
         return retVal
+    }
+
+    /**
+     * Get the current caption value separator.
+     *
+     * Note: This value will not represent the actual DS caption value separator, which is always set to an empty
+     * string with DualTelemetry, but it will be the separator used with FtcDashboard for automatic telemetry caption/value
+     * splitting and legacy addData calls.
+     */
+    override fun getCaptionValueSeparator(): String {
+        return dashboardCaptionValueAutoSeparator
+    }
+
+    /**
+     * Set the current caption value separator.
+     *
+     * Note: This value will not represent the actual DS caption value separator, which is always set to an empty
+     * string with DualTelemetry, but it will be the separator used with FtcDashboard for automatic telemetry caption/value
+     * splitting and legacy addData calls.
+     */
+    override fun setCaptionValueSeparator(dashboardCaptionValueAutoSeparator: String) {
+        this.dashboardCaptionValueAutoSeparator = dashboardCaptionValueAutoSeparator
     }
 
     /**
@@ -476,23 +524,16 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     /**
-     * Get the current caption value separator for the Driver Station. This should always be an empty string as
-     * DualTelemetry does not use captions.
-     */
-    override fun getCaptionValueSeparator(): String {
-        return opMode.telemetry.captionValueSeparator
-    }
-
-    /**
-     * Get the current display format for the Driver Station.
+     * Set the current display format for the Driver Station.
+     * By default this is already set to HTML formatting, and it is recommended to leave this as-is.
      */
     override fun setDisplayFormat(displayFormat: DisplayFormat) {
         opMode.telemetry.setDisplayFormat(displayFormat)
     }
 
     /**
-     * Uses HTML to alter the way text is displayed on the Driver Station.
-     * Wraps a telemetry item displayed on the DS.
+     * Wraps a telemetry item displayed on the DS/FtcDashboard.
+     * Uses HTML to alter the way text is displayed based on wrapper utilities.
      *
      * @author Lachlan Paul, 2024
      */
@@ -722,7 +763,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "Captions are not used with DualTelemetry and should always be an empty string.",
-            ReplaceWith("")
+            ReplaceWith("\"\""),
+            level = DeprecationLevel.ERROR
         )
         override fun getCaption(): String? {
             return item?.caption
@@ -736,8 +778,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "Captions are not used with DualTelemetry and should always be left as an empty string",
+            replaceWith = ReplaceWith(""),
             level = DeprecationLevel.ERROR,
-            replaceWith = ReplaceWith("")
         )
         override fun setCaption(caption: String): Item? {
             return item?.setCaption(caption)
@@ -819,8 +861,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
-            level = DeprecationLevel.ERROR,
-            replaceWith = ReplaceWith("")
+            replaceWith = ReplaceWith("/* split data into seperate items or use a single item with newlines */"),
+            level = DeprecationLevel.ERROR
         )
         override fun addData(caption: String, format: String, vararg args: Any): Item? {
             return item?.addData(caption, format, args)
@@ -832,8 +874,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
-            level = DeprecationLevel.ERROR,
-            replaceWith = ReplaceWith("")
+            replaceWith = ReplaceWith("/* split data into seperate items or use a single item with newlines */"),
+            level = DeprecationLevel.ERROR
         )
         override fun addData(caption: String, value: Any): Item? {
             return item?.addData(caption, value)
@@ -845,8 +887,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
-            level = DeprecationLevel.ERROR,
-            replaceWith = ReplaceWith("")
+            replaceWith = ReplaceWith("/* split data into seperate items or use a single item with newlines */"),
+            level = DeprecationLevel.ERROR
         )
         override fun <T : Any> addData(caption: String, valueProducer: Func<T>): Item? {
             return item?.addData(caption, valueProducer)
@@ -858,8 +900,8 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @Deprecated(
             "This method is not used with DualTelemetry. Split data into separate items or use a single item value with a newline.",
-            level = DeprecationLevel.ERROR,
-            replaceWith = ReplaceWith("")
+            replaceWith = ReplaceWith("/* split data into seperate items or use a single item with newlines */"),
+            level = DeprecationLevel.ERROR
         )
         override fun <T : Any> addData(caption: String, format: String, valueProducer: Func<T>): Item? {
             return item?.addData(caption, format, valueProducer)
@@ -903,21 +945,9 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     @Suppress("KDocMissingDocumentation")
-    @Deprecated("Captions are not used with DualTelemetry", replaceWith = ReplaceWith("add(caption + format, args)"))
-    override fun addData(caption: String, format: String, vararg args: Any): Item {
-        return add(caption + format, args)
-    }
-
-    @Suppress("KDocMissingDocumentation")
-    @Deprecated("Captions are not used with DualTelemetry", replaceWith = ReplaceWith("add(caption + value)"))
-    override fun addData(caption: String, value: Any): Item {
-        return add(caption + value)
-    }
-
-    @Suppress("KDocMissingDocumentation")
     @Deprecated(
-        "Captions and function providers are not used with DualTelemetry",
-        replaceWith = ReplaceWith("add(caption) // Use polling loop and fstring for provider")
+        "Function providers are not used via DualTelemetry. Use a polling loop which the current value of the provider, or hook an add() call to telemetry actions.",
+        replaceWith = ReplaceWith("add(caption, valueProvider.value())")
     )
     override fun <T : Any> addData(caption: String, valueProducer: Func<T>): Item {
         return add(caption, valueProducer.value())
@@ -925,8 +955,8 @@ class DualTelemetry @JvmOverloads constructor(
 
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
-        "Captions and function providers are not used with DualTelemetry",
-        replaceWith = ReplaceWith("add(caption + format) // Use polling loop and fstring for provider")
+        "Function providers are not used via DualTelemetry. Use a polling loop which the current value of the provider.",
+        replaceWith = ReplaceWith("add(caption, valueProvider.value())")
     )
     override fun <T : Any> addData(caption: String, format: String, valueProducer: Func<T>): Item {
         return add(caption + format, valueProducer.value())
@@ -934,7 +964,7 @@ class DualTelemetry @JvmOverloads constructor(
 
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
-        "The telemetry line system is not used with DualTelemetry",
+        "The telemetry line system is not used with DualTelemetry. This will always return null.",
         replaceWith = ReplaceWith("add(format, args)"),
         level = DeprecationLevel.ERROR
     )
@@ -945,7 +975,7 @@ class DualTelemetry @JvmOverloads constructor(
 
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
-        "The telemetry line system is not used with DualTelemetry",
+        "The telemetry line system is not used with DualTelemetry. This will always return null.",
         replaceWith = ReplaceWith("add(format, args)"),
         level = DeprecationLevel.ERROR
     )
@@ -956,7 +986,7 @@ class DualTelemetry @JvmOverloads constructor(
 
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
-        "The telemetry line system is not used with DualTelemetry",
+        "The telemetry line system is not used with DualTelemetry. This will always return false.",
         replaceWith = ReplaceWith("add(format, args)"),
         level = DeprecationLevel.ERROR
     )
@@ -966,8 +996,8 @@ class DualTelemetry @JvmOverloads constructor(
 
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
-        "The telemetry line system is not used with DualTelemetry",
-        replaceWith = ReplaceWith("add(format, args)")
+        "The telemetry line system is not used with DualTelemetry.",
+        replaceWith = ReplaceWith("")
     )
     override fun getItemSeparator(): String {
         return opMode.telemetry.itemSeparator
@@ -975,18 +1005,12 @@ class DualTelemetry @JvmOverloads constructor(
 
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
-        "The telemetry line system is not used with DualTelemetry",
-        replaceWith = ReplaceWith("add(format, args)"),
+        "The telemetry line system is not used with DualTelemetry.",
+        replaceWith = ReplaceWith(""),
         level = DeprecationLevel.ERROR
     )
     override fun setItemSeparator(itemSeparator: String) {
         opMode.telemetry.itemSeparator = itemSeparator
-    }
-
-    @Suppress("KDocMissingDocumentation")
-    @Deprecated("Captions are not used with DualTelemetry and should always be left as an empty string")
-    override fun setCaptionValueSeparator(captionValueSeparator: String) {
-        opMode.telemetry.captionValueSeparator = captionValueSeparator
     }
 
     @Suppress("KDocMissingDocumentation")

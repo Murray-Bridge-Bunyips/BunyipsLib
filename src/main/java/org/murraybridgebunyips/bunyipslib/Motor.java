@@ -227,6 +227,8 @@ public class Motor extends DcMotorImplEx {
      * you are downcasting in which this will assume you are using a PID controller.
      *
      * @inheritDoc
+     * @deprecated the RUN_TO_POSITION controller should be accessed directly coming from this Motor instance via {@link #getRunToPositionController()},
+     * as this method context is not from a DcMotor downcast.
      */
     @Deprecated
     @Override
@@ -244,6 +246,8 @@ public class Motor extends DcMotorImplEx {
      * you are downcasting in which this will assume you are using a PID controller.
      *
      * @inheritDoc
+     * @deprecated the RUN_TO_POSITION controller should be accessed directly coming from this Motor instance via {@link #getRunToPositionController()},
+     * as this method context is not from a DcMotor downcast.
      */
     @Deprecated
     @Override
@@ -260,6 +264,8 @@ public class Motor extends DcMotorImplEx {
      * you are downcasting in which this will assume you are using a PID controller.
      *
      * @inheritDoc
+     * @deprecated the RUN_TO_POSITION controller should be accessed directly coming from this Motor instance via {@link #getRunToPositionController()},
+     * as this method context is not from a DcMotor downcast.
      */
     @Deprecated
     @Override

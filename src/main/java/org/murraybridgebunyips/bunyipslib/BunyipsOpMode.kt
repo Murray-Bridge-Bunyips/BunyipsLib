@@ -1,7 +1,6 @@
 package org.murraybridgebunyips.bunyipslib
 
 import android.graphics.Color
-import com.acmerobotics.dashboard.canvas.Canvas
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.Blinker
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -13,7 +12,6 @@ import com.qualcomm.robotcore.hardware.ServoController
 import com.qualcomm.robotcore.util.RobotLog
 import com.qualcomm.robotcore.util.ThreadPool
 import com.qualcomm.robotcore.util.Version
-import org.firstinspires.ftc.robotcore.external.Telemetry.Item
 import org.murraybridgebunyips.bunyipslib.external.units.Measure
 import org.murraybridgebunyips.bunyipslib.external.units.Time
 import org.murraybridgebunyips.bunyipslib.external.units.Units.*
@@ -505,123 +503,6 @@ abstract class BunyipsOpMode : BOMInternal() {
      */
     protected fun onActiveLoop(vararg runnables: Runnable) {
         this.runnables.addAll(runnables)
-    }
-
-    // These telemetry methods exist for continuity as they used to be the primary way to use telemetry in BunyipsLib,
-    // but have since moved to the DualTelemetry class. These methods are now simply aliases to the new methods.
-    // These methods will be removed in a future release.
-
-    /**
-     * Update and push queued [telemetry] to the Driver Station and FtcDashboard.
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.update()"))
-    fun pushTelemetry() {
-        telemetry.update()
-    }
-
-    /**
-     * Add any additional telemetry to the FtcDashboard [telemetry] packet.
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.addDashboard(...)"))
-    fun addDashboardTelemetry(key: String, value: Any?) {
-        telemetry.addDashboard(key, value)
-    }
-
-    /**
-     * Add any field overlay data to the FtcDashboard [telemetry] packet.
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.dashboardFieldOverlay()"))
-    fun dashboardFieldOverlay(): Canvas {
-        return telemetry.dashboardFieldOverlay()
-    }
-
-    /**
-     * Add data to the [telemetry] object, with integrated formatting.
-     * @param format An object string to add to telemetry
-     * @param args The objects to format into the object format string
-     * @return The telemetry [Item] added to the Driver Station, null if the send failed from overflow
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.add(...)"))
-    fun addTelemetry(format: Any, vararg args: Any?): DualTelemetry.HtmlItem {
-        return telemetry.add(format, *args)
-    }
-
-    /**
-     * Add a data to the [telemetry] object, with integrated formatting.
-     * @param format An object string to add to telemetry
-     * @param args The objects to format into the object format string
-     * @return The telemetry [Item] added to the Driver Station
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.addRetained(...)"))
-    fun addRetainedTelemetry(format: Any, vararg args: Any?): DualTelemetry.HtmlItem {
-        return telemetry.addRetained(format, *args)
-    }
-
-    /**
-     * Remove retained entries from the [telemetry] object.
-     * @param items The items to remove from the telemetry object
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.remove(...)"))
-    fun removeRetainedTelemetry(vararg items: Item): Boolean {
-        return telemetry.remove(*items)
-    }
-
-    /**
-     * Remove retained entries from the [telemetry] object.
-     * @param items The items to remove from the telemetry object
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.remove(...)"))
-    fun removeRetainedTelemetry(items: List<Item>): Boolean {
-        return telemetry.remove(*items.toTypedArray())
-    }
-
-    /**
-     * Log a message to the [telemetry] log, with integrated formatting.
-     * @param format An object string to add to telemetry
-     * @param args The objects to format into the object format string
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.log(...)"))
-    fun log(format: Any, vararg args: Any?) {
-        telemetry.log(format, *args)
-    }
-
-    /**
-     * Log a message to the [telemetry] log, with integrated formatting.
-     * @param obj Class where this log was called (name will be prepended to message)
-     * @param format An object string to add to telemetry
-     * @param args The objects to format into the object format string
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.log(...)"))
-    fun log(obj: Class<*>, format: Any, vararg args: Any?) {
-        telemetry.log(obj, format, *args)
-    }
-
-    /**
-     * Log a message into the [telemetry] log
-     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
-     * @param format An object string to add to telemetry
-     * @param args The objects to format into the object format string
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.log(...)"))
-    fun log(stck: StackTraceElement, format: Any, vararg args: Any?) {
-        telemetry.log(stck, format, *args)
-    }
-
-    /**
-     * Reset [telemetry] data, including retention and FtcDashboard
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.clearAll()"))
-    fun resetTelemetry() {
-        telemetry.clearAll()
-    }
-
-    /**
-     * Clear [telemetry] on the Driver Station, not including retention.
-     * This method is automatically called every hardware cycle.
-     */
-    @Deprecated("This is an alias method scheduled for deletion", ReplaceWith("telemetry.clear()"))
-    fun clearTelemetry() {
-        telemetry.clear()
     }
 
     /**

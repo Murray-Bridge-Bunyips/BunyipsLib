@@ -265,7 +265,7 @@ object Dbg {
     @JvmStatic
     @Deprecated(
         "This method is for temporary debugging only.",
-        replaceWith = ReplaceWith("remove debug statement before committing")
+        replaceWith = ReplaceWith("")
     )
     fun logTmp(stck: StackTraceElement, format: Any, vararg args: Any?) {
         log(stck, format, *args)
@@ -282,7 +282,7 @@ object Dbg {
     @JvmStatic
     @Deprecated(
         "This method is for temporary debugging only.",
-        replaceWith = ReplaceWith("remove debug statement before committing")
+        replaceWith = ReplaceWith("")
     )
     fun logTmp(obj: Class<*>, format: Any, vararg args: Any?) {
         log(obj, format, *args)
@@ -298,7 +298,7 @@ object Dbg {
     @JvmStatic
     @Deprecated(
         "This method is for temporary debugging only.",
-        replaceWith = ReplaceWith("remove debug statement before committing")
+        replaceWith = ReplaceWith("")
     )
     fun logTmp(format: Any, vararg args: Any?) {
         log(format, *args)
