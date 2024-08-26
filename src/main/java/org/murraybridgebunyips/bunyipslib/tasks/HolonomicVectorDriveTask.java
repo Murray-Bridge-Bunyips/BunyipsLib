@@ -1,11 +1,14 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Milliseconds;
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.jetbrains.annotations.NotNull;
 import org.murraybridgebunyips.bunyipslib.drive.MecanumDrive;
@@ -14,6 +17,7 @@ import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 
 import java.util.function.BooleanSupplier;
@@ -48,12 +52,14 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     private final PIDController yController;
     private final PIDController rController;
 
-    private double xLock;
-    private double yLock;
-    private double rLock;
+    private final ElapsedTime xLocker = new ElapsedTime();
+    private final ElapsedTime yLocker = new ElapsedTime();
+    private final ElapsedTime rLocker = new ElapsedTime();
+    private double xLock, yLock, rLock;
 
-    // Default admissible error of 2 inches and 1 degree
+    // Default admissible error of 2 inches and 1 degree, waiting 500ms for the pose to stabilise
     private Pose2d toleranceInchRad = new Pose2d(2, 2, Math.toRadians(1));
+    private Measure<Time> lockingTimeout = Milliseconds.of(500);
 
     /**
      * Constructor for HolonomicVectorDriveTask.
@@ -132,6 +138,19 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     }
 
     /**
+     * Set the pose stabilisation timeout before locking the pose vectors for correction.
+     * This timeout applies individually for all axes.
+     *
+     * @param lockTimeout the time to wait when an axis magnitude is zero before locking, higher
+     *                    values will yield more stable poses, but slower time to lock
+     * @return this
+     */
+    public HolonomicVectorDriveTask withStabilisationTimeout(Measure<Time> lockTimeout) {
+        lockingTimeout = lockTimeout;
+        return this;
+    }
+
+    /**
      * Set the minimum pose error when in self-holding mode to activate correction for.
      *
      * @param poseX x (forward) admissible error
@@ -141,6 +160,13 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      */
     public HolonomicVectorDriveTask withTolerance(Measure<Distance> poseX, Measure<Distance> poseY, Measure<Angle> poseR) {
         return withTolerance(new Pose2d(poseX.in(Inches), poseY.in(Inches), poseR.in(Radians)));
+    }
+
+    @Override
+    protected void init() {
+        xLocker.reset();
+        yLocker.reset();
+        rLocker.reset();
     }
 
     @Override
@@ -162,24 +188,27 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         }
 
         // Rising edge detections for pose locking
-        if (userX == 0 && xLock == 0) {
+        if (userX == 0 && xLock == 0 && xLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
             xLock = current.getX();
             // We also reset the controllers as the integral term may be incorrect due to a new target
             xController.reset();
         } else if (userX != 0) {
             xLock = 0;
+            xLocker.reset();
         }
-        if (userY == 0 && yLock == 0) {
+        if (userY == 0 && yLock == 0 && yLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
             yLock = current.getY();
             yController.reset();
         } else if (userY != 0) {
             yLock = 0;
+            yLocker.reset();
         }
-        if (userR == 0 && rLock == 0) {
+        if (userR == 0 && rLock == 0 && rLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
             rLock = current.getHeading();
             rController.reset();
         } else if (userR != 0) {
             rLock = 0;
+            rLocker.reset();
         }
 
         // Calculate error from current pose to target pose.
