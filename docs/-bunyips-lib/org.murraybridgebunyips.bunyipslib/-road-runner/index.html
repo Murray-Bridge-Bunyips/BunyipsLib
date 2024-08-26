@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v3.5.0-master-9833cfc0            </div>
+v3.5.0-master-862e8aa1            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,7 +66,7 @@ v3.5.0-master-9833cfc0            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib</a><span class="delimiter">/</span><span class="current">RoadRunner</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Road</span><wbr></wbr><span><span>Runner</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">RoadRunner</a></div><p class="paragraph">RoadRunner utility interface for autonomous OpModes. Implement this interface in a <a href="../-autonomous-bunyips-op-mode/index.html">AutonomousBunyipsOpMode</a>. Do not override any of the default methods in this interface, as they are used for RoadRunner task scheduling. </p><p class="paragraph"> Previously named RoadRunnerAutonomousBunyipsOpMode (RRABOM, nickname &quot;Rabone&quot;). </p><p class="paragraph"><i>This interface may also be used in a normal </i><a href="../-bunyips-op-mode/index.html"><i>BunyipsOpMode</i></a><i>, however the </i><code class="italic lang-kotlin"><i>addTask()</i></code><i> builder method will not work as it requires the presence of </i><a href="../-autonomous-bunyips-op-mode/index.html"><i>AutonomousBunyipsOpMode</i></a><i>.</i></p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-autonomous-bunyips-op-mode/index.html"><span>Autonomous</span><wbr></wbr><span>Bunyips</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Mode</span></span></a></div></span></div><div></div></div></div></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">RoadRunner</a></div><p class="paragraph">RoadRunner utility interface for OpModes, providing simpler trajectory building processes. Do not override any of the default methods in this interface, as they are used for RoadRunner task scheduling. </p><p class="paragraph"> Previously named RoadRunnerAutonomousBunyipsOpMode (RRABOM, nickname &quot;Rabone&quot;). </p><p class="paragraph"><i>This interface can be used in any OpMode base variant, however the </i><code class="italic lang-kotlin"><i>addTask()</i></code><i> builder method requires the presence of </i><a href="../-autonomous-bunyips-op-mode/index.html"><i>AutonomousBunyipsOpMode</i></a><i>.</i></p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-autonomous-bunyips-op-mode/index.html"><span>Autonomous</span><wbr></wbr><span>Bunyips</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Mode</span></span></a></div></span></div><div></div></div></div></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -107,7 +107,22 @@ v3.5.0-master-9833cfc0            </div>
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="">Properties</h2>
-        <div class="table"><a data-name="-1985187216%2FProperties%2F-325384828" anchor-label="noTimeouts" id="-1985187216%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="1124268226%2FProperties%2F-325384828" anchor-label="DRIVE_UPDATE_SAFETY_TIMEOUT" id="1124268226%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-d-r-i-v-e_-u-p-d-a-t-e_-s-a-f-e-t-y_-t-i-m-e-o-u-t.html"><span><span>DRIVE_UPDATE_SAFETY_TIMEOUT</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1124268226%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="-d-r-i-v-e_-u-p-d-a-t-e_-s-a-f-e-t-y_-t-i-m-e-o-u-t.html">DRIVE_UPDATE_SAFETY_TIMEOUT</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></div><div class="brief ">The timeout value used for the RoadRunner drive update watchdog to disengage the drive if an update call has not been registered after this timeout.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1985187216%2FProperties%2F-325384828" anchor-label="noTimeouts" id="-1985187216%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
