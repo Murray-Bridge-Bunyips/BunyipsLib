@@ -7,6 +7,7 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -28,8 +29,8 @@ import java.util.function.Supplier;
  * This task is designed to be used as a default/standard-priority task, other tasks will override it.
  * <p>
  * Compared to {@link HolonomicDriveTask}, this task will constantly track the (x,y,r) pose of the robot, rather than
- * setting the powers directly from the gamepad inputs. When the individual inputs for these poses are zero, this task will
- * take a snapshot of the values they were at, using PID controllers to attempt to stay in place.
+ * setting the powers directly from the gamepad inputs. When the translational/rotational components for these poses
+ * are zero, this task will take a snapshot of the values they were at, using PID controllers to attempt to stay in place.
  * This allows for more predictable and consistent driving, as the robot will only accept movement when told to do so,
  * ensuring that all movements of the robot can only be achieved via the controller.
  * <p>
@@ -52,21 +53,21 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     private final PIDController yController;
     private final PIDController rController;
 
-    private final ElapsedTime xLocker = new ElapsedTime();
-    private final ElapsedTime yLocker = new ElapsedTime();
-    private final ElapsedTime rLocker = new ElapsedTime();
-    private double xLock, yLock, rLock;
+    private final ElapsedTime vectorLocker = new ElapsedTime();
+    private final ElapsedTime headingLocker = new ElapsedTime();
+    private Vector2d vectorLock = null;
+    private Double headingLock = null;
 
-    // Default admissible error of 2 inches and 1 degree, waiting 500ms for the pose to stabilise
+    // Default admissible error of 2 inches and 1 degree, waiting 300ms for the pose to stabilise
     private Pose2d toleranceInchRad = new Pose2d(2, 2, Math.toRadians(1));
-    private Measure<Time> lockingTimeout = Milliseconds.of(500);
+    private Measure<Time> lockingTimeout = Milliseconds.of(300);
 
     /**
      * Constructor for HolonomicVectorDriveTask.
      *
-     * @param xSupplier           The supplier for the x-axis input
-     * @param ySupplier           The supplier for the y-axis input, <i>note that this will be inverted</i>
-     * @param rSupplier           The supplier for the rotation input
+     * @param xSupplier           The supplier for the Cartesian x-axis input
+     * @param ySupplier           The supplier for the Cartesian y-axis input, <i>note that this will be inverted</i>
+     * @param rSupplier           The supplier for the clockwise rotation input
      * @param mecanumDrive        The MecanumDrive to use
      * @param fieldCentricEnabled A BooleanSupplier that returns whether field centric drive is enabled
      */
@@ -139,7 +140,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
     /**
      * Set the pose stabilisation timeout before locking the pose vectors for correction.
-     * This timeout applies individually for all axes.
+     * This timeout applies for vector locking and heading locking individually.
      *
      * @param lockTimeout the time to wait when an axis magnitude is zero before locking, higher
      *                    values will yield more stable poses, but slower time to lock
@@ -164,9 +165,8 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
     @Override
     protected void init() {
-        xLocker.reset();
-        yLocker.reset();
-        rLocker.reset();
+        vectorLocker.reset();
+        headingLocker.reset();
     }
 
     @Override
@@ -179,47 +179,41 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         double userY = -x.get();
         double userR = -r.get();
 
+        double cos = Math.cos(current.getHeading());
+        double sin = Math.sin(current.getHeading());
+
         if (fieldCentricEnabled.getAsBoolean()) {
             // Field-centric inputs that will be rotated before any processing
-            double botHeading = drive.getExternalHeading();
             double tempX = userX;
-            userX = userY * Math.sin(botHeading) + userX * Math.cos(botHeading);
-            userY = userY * Math.cos(botHeading) - tempX * Math.sin(botHeading);
+            userX = userY * sin + userX * cos;
+            userY = userY * cos - tempX * sin;
         }
 
         // Rising edge detections for pose locking
-        if (userX == 0 && xLock == 0 && xLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
-            xLock = current.getX();
+        if (userX == 0 && userY == 0 && vectorLock == null && vectorLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
+            vectorLock = current.vec();
             // We also reset the controllers as the integral term may be incorrect due to a new target
             xController.reset();
-        } else if (userX != 0) {
-            xLock = 0;
-            xLocker.reset();
-        }
-        if (userY == 0 && yLock == 0 && yLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
-            yLock = current.getY();
             yController.reset();
-        } else if (userY != 0) {
-            yLock = 0;
-            yLocker.reset();
+        } else if (userX != 0 || userY != 0) {
+            vectorLock = null;
+            vectorLocker.reset();
         }
-        if (userR == 0 && rLock == 0 && rLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
-            rLock = current.getHeading();
+        if (userR == 0 && headingLock == null && headingLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
+            headingLock = current.getHeading();
             rController.reset();
         } else if (userR != 0) {
-            rLock = 0;
-            rLocker.reset();
+            headingLock = null;
+            headingLocker.reset();
         }
 
         // Calculate error from current pose to target pose.
         // If we are not locked, the error will be 0, and our error should clamp to zero if it's under the threshold
-        double xLockedError = xLock == 0 || Mathf.isNear(xLock, current.getX(), toleranceInchRad.getX()) ? 0 : xLock - current.getX();
-        double yLockedError = yLock == 0 || Mathf.isNear(yLock, current.getY(), toleranceInchRad.getY()) ? 0 : yLock - current.getY();
-        double rLockedError = rLock == 0 || Mathf.isNear(rLock, current.getHeading(), toleranceInchRad.getHeading()) ? 0 : rLock - current.getHeading();
+        double xLockedError = vectorLock == null || Mathf.isNear(vectorLock.getX(), current.getX(), toleranceInchRad.getX()) ? 0 : vectorLock.getX() - current.getX();
+        double yLockedError = vectorLock == null || Mathf.isNear(vectorLock.getY(), current.getY(), toleranceInchRad.getY()) ? 0 : vectorLock.getY() - current.getY();
+        double rLockedError = headingLock == null || Mathf.isNear(headingLock, current.getHeading(), toleranceInchRad.getHeading()) ? 0 : headingLock - current.getHeading();
 
         // Rotate error to robot's coordinate frame
-        double cos = Math.cos(current.getHeading());
-        double sin = Math.sin(current.getHeading());
         double twistedXError = xLockedError * cos + yLockedError * sin;
         double twistedYError = -xLockedError * sin + yLockedError * cos;
 
@@ -230,9 +224,9 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
         drive.setWeightedDrivePower(
                 new Pose2d(
-                        xLock != 0 ? -xController.calculate(twistedXError) : userX,
-                        yLock != 0 ? -yController.calculate(twistedYError) : userY,
-                        rLock != 0 ? -rController.calculate(angle) : userR
+                        vectorLock != null ? -xController.calculate(twistedXError) : userX,
+                        vectorLock != null ? -yController.calculate(twistedYError) : userY,
+                        headingLock != null ? -rController.calculate(angle) : userR
                 )
         );
     }
