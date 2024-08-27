@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v3.5.0-master-862e8aa1            </div>
+v3.5.0-master-5d131e08            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,7 +66,7 @@ v3.5.0-master-862e8aa1            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib.tasks</a><span class="delimiter">/</span><span class="current">HolonomicVectorDriveTask</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Holonomic</span><wbr></wbr><span>Vector</span><wbr></wbr><span>Drive</span><wbr></wbr><span><span>Task</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">HolonomicVectorDriveTask</a> : <a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-forever-task/index.html">ForeverTask</a></div><p class="paragraph">Gamepad drive for all holonomic drivetrains which will use a vector-based approach to drive. This task is designed to be used as a default/standard-priority task, other tasks will override it. </p><p class="paragraph"> Compared to <a href="../-holonomic-drive-task/index.html">HolonomicDriveTask</a>, this task will constantly track the (x,y,r) pose of the robot, rather than setting the powers directly from the gamepad inputs. When the individual inputs for these poses are zero, this task will take a snapshot of the values they were at, using PID controllers to attempt to stay in place. This allows for more predictable and consistent driving, as the robot will only accept movement when told to do so, ensuring that all movements of the robot can only be achieved via the controller. </p><p class="paragraph"> This system can be comparable to one of a drone, where releasing the sticks and allowing it to hover will hold position and resist external forces. This locking nature has been implemented across all three axes. </p><p class="paragraph"> A RoadRunner drive is required for this class, as it will require the use of the pose estimate system and other coefficients such as your PID. Therefore, the only supported class this task will work for is <a href="../../org.murraybridgebunyips.bunyipslib.drive/-mecanum-drive/index.html">MecanumDrive</a>.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">HolonomicVectorDriveTask</a> : <a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-forever-task/index.html">ForeverTask</a></div><p class="paragraph">Gamepad drive for all holonomic drivetrains which will use a vector-based approach to drive. This task is designed to be used as a default/standard-priority task, other tasks will override it. </p><p class="paragraph"> Compared to <a href="../-holonomic-drive-task/index.html">HolonomicDriveTask</a>, this task will constantly track the (x,y,r) pose of the robot, rather than setting the powers directly from the gamepad inputs. When the translational/rotational components for these poses are zero, this task will take a snapshot of the values they were at, using PID controllers to attempt to stay in place. This allows for more predictable and consistent driving, as the robot will only accept movement when told to do so, ensuring that all movements of the robot can only be achieved via the controller. </p><p class="paragraph"> This system can be comparable to one of a drone, where releasing the sticks and allowing it to hover will hold position and resist external forces. This locking nature has been implemented on the vector (translation) and heading components. Note that user input overrides all, where the x or y inputs will both unlock both translational axes to avoid corrections that could be dangerous. This caveat means that this task will make no effort to try and correct translational deviation when the robot is being commanded. </p><p class="paragraph"> A RoadRunner drive is required for this class, as it will require the use of the pose estimate system and other coefficients such as your PID. Therefore, the only supported class this task will work for is <a href="../../org.murraybridgebunyips.bunyipslib.drive/-mecanum-drive/index.html">MecanumDrive</a>.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -171,7 +171,22 @@ v3.5.0-master-862e8aa1            </div>
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="">Functions</h2>
-        <div class="table"><a data-name="310454257%2FFunctions%2F-325384828" anchor-label="onFinish" id="310454257%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="-834696461%2FFunctions%2F-325384828" anchor-label="init" id="-834696461%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="init.html"><span><span>init</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-834696461%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="init.html"><span class="token function">init</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Define code to run once, when the task is started.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="310454257%2FFunctions%2F-325384828" anchor-label="onFinish" id="310454257%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -201,6 +216,36 @@ v3.5.0-master-862e8aa1            </div>
               </div>
             </div>
           </div>
+<a data-name="-21210579%2FFunctions%2F-325384828" anchor-label="setHeadingTarget" id="-21210579%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-heading-target.html"><span>set</span><wbr></wbr><span>Heading</span><wbr></wbr><span><span>Target</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-21210579%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-heading-target.html"><span class="token function">setHeadingTarget</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">heading<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Set a manual heading that this task should lock to, much as if the robot were rotated to this position and is to try and hold rotation.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2125602202%2FFunctions%2F-325384828" anchor-label="setVectorTarget" id="-2125602202%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-vector-target.html"><span>set</span><wbr></wbr><span>Vector</span><wbr></wbr><span><span>Target</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2125602202%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-vector-target.html"><span class="token function">setVectorTarget</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">forwardX<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">strafeY<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Set a manual target that this task should lock to, much as if the robot was moved here and is to try and hold position here.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="2137048458%2FFunctions%2F-325384828" anchor-label="withRotationalPID" id="2137048458%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
@@ -212,6 +257,21 @@ v3.5.0-master-862e8aa1            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="with-rotational-p-i-d.html"><span class="token function">withRotationalPID</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">kp<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">ki<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">kd<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">HolonomicVectorDriveTask</a></div><div class="brief ">Set the rotational PID coefficients.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1618006871%2FFunctions%2F-325384828" anchor-label="withStabilisationTimeout" id="-1618006871%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-stabilisation-timeout.html"><span>with</span><wbr></wbr><span>Stabilisation</span><wbr></wbr><span><span>Timeout</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1618006871%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="with-stabilisation-timeout.html"><span class="token function">withStabilisationTimeout</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">lockTimeout<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">HolonomicVectorDriveTask</a></div><div class="brief ">Set the pose stabilisation timeout before locking the pose vectors for correction.</div></div></div>
                 </div>
               </div>
             </div>
@@ -321,21 +381,6 @@ v3.5.0-master-862e8aa1            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/has-dependency.html"><span class="token function">hasDependency</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Return whether this task has elected a dependency on a subsystem or not.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1151911244%2FFunctions%2F-325384828" anchor-label="init" id="-1151911244%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/init.html"><span><span>init</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1151911244%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/init.html"><span class="token function">init</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Define code to run once, when the task is started. Override to implement.</p></div></div></div>
                 </div>
               </div>
             </div>
