@@ -35,7 +35,9 @@ import java.util.function.Supplier;
  * ensuring that all movements of the robot can only be achieved via the controller.
  * <p>
  * This system can be comparable to one of a drone, where releasing the sticks and allowing it to hover will hold position
- * and resist external forces. This locking nature has been implemented across all three axes.
+ * and resist external forces. This locking nature has been implemented on the vector (translation) and heading components.
+ * Note that user input overrides all, where the x or y inputs will both unlock both translational axes to avoid corrections that could be dangerous.
+ * This caveat means that this task will make no effort to try and correct translational deviation when the robot is being commanded.
  * <p>
  * A RoadRunner drive is required for this class, as it will require the use of the pose estimate system and other
  * coefficients such as your PID. Therefore, the only supported class this task will work for is {@link MecanumDrive}.
