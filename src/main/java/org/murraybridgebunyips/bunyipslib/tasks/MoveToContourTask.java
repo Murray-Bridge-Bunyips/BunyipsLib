@@ -158,11 +158,6 @@ public class MoveToContourTask extends Task {
     }
 
     @Override
-    protected void onFinish() {
-//        drive.setSpeedUsingController(0, 0, 0);
-    }
-
-    @Override
     protected boolean isTaskFinished() {
         return x == null && hasCalculated && translationController.atSetPoint() && rotationController.atSetPoint();
     }

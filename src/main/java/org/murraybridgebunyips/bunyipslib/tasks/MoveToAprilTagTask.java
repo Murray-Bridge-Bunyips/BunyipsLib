@@ -254,11 +254,6 @@ public class MoveToAprilTagTask extends Task {
     }
 
     @Override
-    protected void onFinish() {
-//        drive.setSpeedUsingController(0, 0, 0);
-    }
-
-    @Override
     protected boolean isTaskFinished() {
         return x == null && Math.abs(rangeError) < AUTO_FINISH_ERROR_TOLERANCE && Math.abs(yawError) < AUTO_FINISH_ERROR_TOLERANCE && Math.abs(headingError) < AUTO_FINISH_ERROR_TOLERANCE;
     }
