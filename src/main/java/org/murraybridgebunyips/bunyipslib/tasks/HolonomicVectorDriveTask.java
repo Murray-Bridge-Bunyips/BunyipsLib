@@ -182,7 +182,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      * simply tells the task to respect this value as the locking value.
      *
      * @param forwardX Forward X component of the locking vector
-     * @param strafeY Strafe Y component of the locking vector
+     * @param strafeY  Strafe Y component of the locking vector
      */
     public void setVectorTarget(Measure<Distance> forwardX, Measure<Distance> strafeY) {
         vectorLock = new Vector2d(forwardX.in(Inches), strafeY.in(Inches));
@@ -197,6 +197,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     @Override
     protected void periodic() {
         Pose2d current = drive.getPoseEstimate();
+
         // Create a new pose based off the user input, which will be the offset from the current pose.
         // Must rotate by 90 degrees (y, -x), then flip y as it is inverted. Rotation must also be inverted as it
         // must be positive anticlockwise.

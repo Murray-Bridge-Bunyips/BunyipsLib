@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.apache.commons.math3.exception.OutOfRangeException;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.PIDFFController;
 import org.murraybridgebunyips.bunyipslib.external.SystemController;
@@ -39,6 +40,7 @@ public class Motor extends DcMotorImplEx {
     private final ArrayList<InterpolatedLookupTable> rtpGains = new ArrayList<>();
     private final ArrayList<InterpolatedLookupTable> rueGains = new ArrayList<>();
     private final Encoder encoder;
+    private double maxMagnitude = 1;
     private SystemController rtpController;
     private SystemController rueController;
     private Pair<Double, Double> rueInfo = null;
@@ -313,11 +315,17 @@ public class Motor extends DcMotorImplEx {
         setVelocity(EncoderTicks.fromAngle(Radians.of(radsPerSec), (int) tpr, 1));
     }
 
-    private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
-        int curr = getCurrentPosition();
-        int res = lut.testOutOfRange(curr);
-        if (res == 0) return lut.get(curr);
-        return res == -1 ? lut.getMin() : lut.getMax();
+    /**
+     * Sets the maximum power magnitude (applies for both negative and positive powers) this motor can run at.
+     * This will ensure all calls to {@link #setPower} will never exceed the maximum boundary as defined by this function.
+     * <p>
+     * Note: Further calls to {@link #setPower} that exceed the new domain will be scaled (for example, if the max power
+     * was defined as 0.8, {@code setPower(1)} will set the motor power to 0.8 in {@code RUN_WITHOUT_ENCODER} mode)
+     *
+     * @param magnitude maximum absolute magnitude of {@link #setPower}, default of 1.0 (SDK), applies bidirectionally
+     */
+    public void setMaxPower(double magnitude) {
+        maxMagnitude = Math.min(1, Math.abs(magnitude));
     }
 
     /**
@@ -326,10 +334,12 @@ public class Motor extends DcMotorImplEx {
      * Note: <b>This method needs to be called periodically (as part of the active loop)
      * in order to update the system controllers that respond to dynamic conditions.</b>
      *
-     * @param power the new power level of the motor, a value in the interval [-1.0, 1.0]
+     * @param power the new power level of the motor, a value in the interval [-1.0, 1.0];
+     *              this value is scaled by {@link #setMaxPower}, if used.
      */
     @Override
     public void setPower(double power) {
+        double magnitude = 0;
         switch (mode) {
             case RUN_TO_POSITION:
                 if (rtpController == null) {
@@ -344,7 +354,7 @@ public class Motor extends DcMotorImplEx {
                     rtpController.setCoefficients(rtpGains.stream().mapToDouble(this::getClampedInterpolatedGain).toArray());
                 // In a RUN_TO_POSITION context, the controller is used for error correction, which will multiply the
                 // allowed power by the user against the encoder error by your (usually PID) controller.
-                super.setPower(Math.abs(power) * rtpController.calculate(getCurrentPosition(), getTargetPosition()));
+                magnitude = Math.abs(power) * rtpController.calculate(getCurrentPosition(), getTargetPosition());
                 break;
             case RUN_USING_ENCODER:
                 if (rueController == null) {
@@ -364,19 +374,29 @@ public class Motor extends DcMotorImplEx {
                 // which usually consists internally of a PID and feedforward controller.
                 if (power == 0) {
                     // We need an immediate stop if there's no power/velo requested
-                    super.setPower(0);
-                    return;
+                    magnitude = 0;
+                    break;
                 }
                 double targetVel = rueInfo.first * rueInfo.second * power;
                 double output = rueController instanceof PIDFFController
                         ? ((PIDFFController) rueController).calculateVelo(getVelocity(), targetVel)
                         : rueController.calculate(getVelocity(), targetVel);
-                super.setPower(output / rueInfo.second);
+                magnitude = output / rueInfo.second;
                 break;
             case RUN_WITHOUT_ENCODER:
-                super.setPower(power);
+                magnitude = power;
                 break;
         }
+        // Clamp and rescale depending on the maximum magnitude
+        magnitude = Mathf.clamp(magnitude, -1, 1);
+        super.setPower(Mathf.scale(Mathf.clamp(magnitude, -1, 1), -1, 1, -maxMagnitude, maxMagnitude));
+    }
+
+    private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
+        int curr = getCurrentPosition();
+        int res = lut.testOutOfRange(curr);
+        if (res == 0) return lut.get(curr);
+        return res == -1 ? lut.getMin() : lut.getMax();
     }
 
     /**
