@@ -163,6 +163,29 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         return withTolerance(new Pose2d(poseX.in(Inches), poseY.in(Inches), poseR.in(Radians)));
     }
 
+    /**
+     * Set a manual heading that this task should lock to, much as if the robot were rotated to this position
+     * and is to try and hold rotation. Note that user input will override this lock, this
+     * simply tells the task to respect this value as the locking value.
+     *
+     * @param heading the angle to rotate to, will be wrapped from [0, 2pi]
+     */
+    public void setHeadingTarget(Measure<Angle> heading) {
+        headingLock = Mathf.normaliseAngle(heading).in(Radians);
+    }
+
+    /**
+     * Set a manual target that this task should lock to, much as if the robot was moved here
+     * and is to try and hold position here. Note that user input will override this lock, this
+     * simply tells the task to respect this value as the locking value.
+     *
+     * @param forwardX Forward X component of the locking vector
+     * @param strafeY Strafe Y component of the locking vector
+     */
+    public void setVectorTarget(Measure<Distance> forwardX, Measure<Distance> strafeY) {
+        vectorLock = new Vector2d(forwardX.in(Inches), strafeY.in(Inches));
+    }
+
     @Override
     protected void init() {
         vectorLocker.reset();
