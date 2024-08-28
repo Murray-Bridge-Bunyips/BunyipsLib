@@ -1,6 +1,11 @@
 package org.murraybridgebunyips.bunyipslib;
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 
 import java.util.function.BooleanSupplier;
 
@@ -19,27 +24,28 @@ import java.util.function.BooleanSupplier;
  *
  * @author Lucas Bubner, 2023
  * @see Threads
+ * @since 1.0.0-pre
  */
 public class While {
     private final BooleanSupplier condition;
     private final Runnable runThis;
     private final Runnable callback;
-    private double timeoutSeconds;
+    private Measure<Time> timeout;
     private ElapsedTime timer;
 
     private volatile boolean evalLatch;
 
     /**
-     * @param condition      The condition or function to evaluate as an exit. Return false to exit the loop.
-     * @param runThis        The function to run on each loop iteration.
-     * @param callback       The callback to run once [condition] is met.
-     * @param timeoutSeconds Optional timeout in seconds. If the timeout is reached, the loop will exit.
+     * @param condition The condition or function to evaluate as an exit. Return false to exit the loop.
+     * @param runThis   The function to run on each loop iteration.
+     * @param callback  The callback to run once [condition] is met.
+     * @param timeout   Optional timeout. If the timeout is reached, the loop will exit.
      */
-    public While(BooleanSupplier condition, Runnable runThis, Runnable callback, double timeoutSeconds) {
+    public While(BooleanSupplier condition, Runnable runThis, Runnable callback, Measure<Time> timeout) {
         this.condition = condition;
         this.runThis = runThis;
         this.callback = callback;
-        this.timeoutSeconds = timeoutSeconds;
+        this.timeout = timeout;
         timer = null;
         evalLatch = false;
     }
@@ -47,8 +53,8 @@ public class While {
     /**
      * Set a new timeout for the loop dynamically.
      */
-    public void setTimeout(double timeoutSeconds) {
-        this.timeoutSeconds = timeoutSeconds;
+    public void setTimeout(Measure<Time> timeout) {
+        this.timeout = timeout;
     }
 
     /**
@@ -80,7 +86,7 @@ public class While {
             timer = new ElapsedTime();
         }
 
-        if (condition.getAsBoolean() && timer.seconds() < timeoutSeconds) {
+        if (condition.getAsBoolean() && timer.nanoseconds() < timeout.in(Nanoseconds)) {
             runThis.run();
             return true;
         }
