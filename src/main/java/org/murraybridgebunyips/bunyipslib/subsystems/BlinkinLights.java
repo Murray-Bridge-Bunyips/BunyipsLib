@@ -14,6 +14,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  *
  * @author Lachlan Paul, 2024
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 public class BlinkinLights extends BunyipsSubsystem {
     /**

@@ -6,6 +6,8 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.OnceTask;
  * A task to run a callback before immediately completing.
  * <p>
  * {@code new RunTask(() -> telemetry.add("Hello world"));}
+ *
+ * @since 1.0.0-pre
  */
 public class RunTask extends OnceTask {
     private final Runnable callback;

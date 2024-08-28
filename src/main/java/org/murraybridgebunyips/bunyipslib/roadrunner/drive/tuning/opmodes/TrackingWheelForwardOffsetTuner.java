@@ -32,6 +32,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.localizers.ThreeWheel
  * forward offset is then added onto the current forward offset to produce an overall estimate
  * for the forward offset. You can run this procedure as many times as necessary until a
  * satisfactory result is produced.
+ *
+ * @since 4.0.0
  */
 public class TrackingWheelForwardOffsetTuner implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

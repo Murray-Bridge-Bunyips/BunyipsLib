@@ -19,6 +19,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Measure;
  * and perfectly models a <a href="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Unit_circle_angles_color.svg/1024px-Unit_circle_angles_color.svg.png">Unit Circle</a>.
  *
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 public final class Cartesian {
     private Cartesian() {

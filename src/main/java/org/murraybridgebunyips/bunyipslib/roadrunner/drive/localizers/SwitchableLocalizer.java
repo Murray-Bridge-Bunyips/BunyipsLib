@@ -20,6 +20,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * localizer to kick in if the self-test fails.
  *
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 @Config
 public class SwitchableLocalizer implements Localizer {

@@ -12,6 +12,8 @@ package org.murraybridgebunyips.bunyipslib.external.units;
  *
  * <p>Actual units (such as {@link Units#Watts} and {@link Units#Horsepower}) can be found in the
  * {@link Units} class.
+ *
+ * @since 1.0.0-pre
  */
 public class Power extends Unit<Power> {
     Power(Power baseUnit, double baseUnitEquivalent, String name, String symbol) {

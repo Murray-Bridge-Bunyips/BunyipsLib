@@ -14,6 +14,7 @@ import java.util.List;
  * Text and string manipulation utilities.
  *
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 public final class Text {
     private Text() {

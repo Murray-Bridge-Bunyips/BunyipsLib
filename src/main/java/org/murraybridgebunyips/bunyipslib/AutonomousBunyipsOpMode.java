@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Lachlan Paul, 2023
  * @see RoadRunner
  * @see BunyipsOpMode
+ * @since 1.0.0-pre
  */
 public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     // Used for tasks that have no timeout to generate a "estimate to OpMode completion" metric

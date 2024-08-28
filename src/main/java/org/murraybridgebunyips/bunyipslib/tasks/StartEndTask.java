@@ -8,6 +8,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * Define a callback to run when this task is started, and when it is finished. Optionally mention a timeout.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class StartEndTask extends Task {
     private final Runnable onStart;

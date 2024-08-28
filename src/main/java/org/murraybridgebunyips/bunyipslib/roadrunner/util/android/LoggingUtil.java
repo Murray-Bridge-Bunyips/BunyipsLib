@@ -10,6 +10,8 @@ import java.util.Objects;
 
 /**
  * Utility functions for log files.
+ *
+ * @since 1.0.0-pre
  */
 public final class LoggingUtil {
     /**

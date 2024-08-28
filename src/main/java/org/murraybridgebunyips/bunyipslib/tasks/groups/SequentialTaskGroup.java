@@ -6,6 +6,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * A group of tasks that runs one after the other, until they are all finished.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class SequentialTaskGroup extends TaskGroup {
     private int taskIndex;

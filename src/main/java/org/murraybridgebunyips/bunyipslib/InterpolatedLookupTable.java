@@ -13,6 +13,8 @@ import java.util.List;
  * <p>
  * Utility from FTCLib
  * <a href="https://github.com/FTCLib/FTCLib/blob/master/core/src/main/java/com/arcrobotics/ftclib/util/InterpLUT.java">Source</a>
+ *
+ * @since 1.0.0-pre
  */
 public class InterpolatedLookupTable {
     private List<Double> mX = new ArrayList<>();

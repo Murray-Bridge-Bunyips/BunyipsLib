@@ -4,6 +4,8 @@ import org.murraybridgebunyips.bunyipslib.vision.processors.ColourThreshold;
 
 /**
  * Utility construction for pixel detectors.
+ *
+ * @since 1.0.0-pre
  */
 public final class Pixels {
     private Pixels() {

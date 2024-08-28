@@ -22,6 +22,7 @@ import java.util.HashSet;
  *
  * @author Lucas Bubner, 2024
  * @see Scheduler
+ * @since 1.0.0-pre
  */
 public abstract class BunyipsSubsystem extends BunyipsComponent {
     private static final HashSet<BunyipsSubsystem> instances = new HashSet<>();

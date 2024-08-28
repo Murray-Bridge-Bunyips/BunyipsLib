@@ -7,6 +7,8 @@ import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 
 /**
  * Universal OpMode to test BunyipsOpMode functionality
+ *
+ * @since 1.0.0-pre
  */
 @TeleOp(name = "BunyipsOpMode", group = "BunyipsLib")
 @Disabled

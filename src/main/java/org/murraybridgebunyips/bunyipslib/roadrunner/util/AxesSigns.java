@@ -2,6 +2,8 @@ package org.murraybridgebunyips.bunyipslib.roadrunner.util;
 
 /**
  * IMU axes signs in the order XYZ (after remapping).
+ *
+ * @since 1.0.0-pre
  */
 public enum AxesSigns {
     /**

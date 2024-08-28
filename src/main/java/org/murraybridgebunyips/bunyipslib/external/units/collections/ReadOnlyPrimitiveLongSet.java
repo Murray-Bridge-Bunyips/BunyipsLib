@@ -14,6 +14,8 @@ import java.util.stream.LongStream;
 
 /**
  * A read-only set of unique primitive {@code long} values.
+ *
+ * @since 1.0.0-pre
  */
 public class ReadOnlyPrimitiveLongSet implements Iterable<Long> {
     private final long[] values;

@@ -10,6 +10,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task
 
 /**
  * Relay a message in telemetry for a specific amount of time.
+ * @since 1.0.0-pre
  */
 class MessageTask(time: Measure<Time>, private val message: String) : Task(time) {
     private var item: Item? = null

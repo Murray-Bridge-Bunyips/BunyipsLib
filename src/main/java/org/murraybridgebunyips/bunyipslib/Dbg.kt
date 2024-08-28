@@ -36,7 +36,8 @@ import org.murraybridgebunyips.bunyipslib.Text.getCallingUserCodeFunction
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
 
 /**
- * Provide utility methods for debug logging
+ * Provides utility methods for debug logging.
+ * @since 1.0.0-pre
  */
 object Dbg {
     /**

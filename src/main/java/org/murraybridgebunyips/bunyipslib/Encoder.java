@@ -7,6 +7,8 @@ import java.util.function.Supplier;
 /**
  * Represents a motor or external encoder that takes in suppliers of position and velocity to calculate motor ticks.
  * The velocity methods of this class have been adjusted to include acceleration and corrected velocity receivers.
+ *
+ * @since 4.0.0
  */
 public class Encoder {
     private static final int CPS_STEP = 0x10000;

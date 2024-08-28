@@ -17,6 +17,8 @@ import java.util.Objects;
  * Upon pressing start, your bot will turn at max power for RUNTIME_SECONDS seconds.
  * <p>
  * Further fine tuning of MAX_ANG_VEL may be desired.
+ *
+ * @since 4.0.0
  */
 public class MaxAngularVeloTuner implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

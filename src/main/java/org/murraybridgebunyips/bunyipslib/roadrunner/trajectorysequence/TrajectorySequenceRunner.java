@@ -32,6 +32,8 @@ import java.util.List;
 
 /**
  * RoadRunner trajectory sequence runner.
+ *
+ * @since 1.0.0-pre
  */
 @Config
 public class TrajectorySequenceRunner {

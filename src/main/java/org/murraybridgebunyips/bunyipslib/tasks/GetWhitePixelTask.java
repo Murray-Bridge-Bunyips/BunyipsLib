@@ -15,6 +15,7 @@ import java.util.List;
  * FTC 2023-2024 CENTERSTAGE
  *
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  * @deprecated Tensorflow Object Detection has been marked as deprecated in SDK version v9.2, scheduled for deletion
  * in major version v10.0. This class will be removed once TFOD is removed from the SDK, at the start of the
  * 2024-2025 season. This is also a CENTERSTAGE specific task, and while the other tasks related to season

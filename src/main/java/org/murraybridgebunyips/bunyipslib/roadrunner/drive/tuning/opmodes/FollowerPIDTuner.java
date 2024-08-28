@@ -23,6 +23,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.Trajecto
  * If you are using TankDrive, you should be tuning AXIAL_PID, CROSS_TRACK_PID, and HEADING_PID.
  * <p>
  * These coefficients can be tuned live in dashboard.
+ *
+ * @since 4.0.0
  */
 public class FollowerPIDTuner implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

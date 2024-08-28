@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareDevice;
 /**
  * Wraps a motor instance to provide corrected velocity counts and allow reversing independently of the corresponding
  * slot's motor direction
+ *
+ * @since 1.0.0-pre
  */
 public class Deadwheel implements HardwareDevice {
     private static final int CPS_STEP = 0x10000;

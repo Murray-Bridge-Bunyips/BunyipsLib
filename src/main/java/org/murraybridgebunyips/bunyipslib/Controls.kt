@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.hardware.Gamepad
 /**
  * Utility class for the different button and analog controls on the gamepad.
  * Used for adding additional abstraction to the current gamepad control system, used across BunyipsLib.
+ *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 @Suppress("KDocMissingDocumentation")
 enum class Controls {

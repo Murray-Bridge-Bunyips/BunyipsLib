@@ -13,6 +13,7 @@ import java.util.Collection;
  * of autoboxed Long objects like would be used for a {@code Map<Long, V>}.
  *
  * @param <V> the type of the values stored in the map
+ * @since 1.0.0-pre
  */
 public class LongToObjectHashMap<V> {
     private static final int INITIAL_SIZE = 0;

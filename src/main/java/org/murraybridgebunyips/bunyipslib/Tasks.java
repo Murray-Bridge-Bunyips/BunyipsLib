@@ -62,6 +62,7 @@ import java.util.Collections;
  * @author Lucas Bubner, 2024
  * @see Scheduler
  * @see CommandBasedBunyipsOpMode
+ * @since 4.0.0
  */
 public final class Tasks {
     private static final ArrayList<Task> registeredTasks = new ArrayList<>();

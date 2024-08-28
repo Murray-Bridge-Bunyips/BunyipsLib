@@ -30,6 +30,7 @@ import java.util.List;
  * Global filesystem and volatile storage utilities for robot operation.
  *
  * @author Lucas Bubner, 2024
+ * @since 3.2.0
  */
 public final class Storage {
     private static Memory memory = null;

@@ -5,6 +5,7 @@ package org.murraybridgebunyips.bunyipslib;
  * This allows injection of the OpMode into the component, and provides a common base for all components.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public abstract class BunyipsComponent {
     // Since the OpMode is static, this means ** ALL components MUST be instantiated in the init phase ** , and not

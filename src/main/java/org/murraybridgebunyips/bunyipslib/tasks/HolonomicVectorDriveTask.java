@@ -43,6 +43,7 @@ import java.util.function.Supplier;
  * coefficients such as your PID. Therefore, the only supported class this task will work for is {@link MecanumDrive}.
  *
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 public class HolonomicVectorDriveTask extends ForeverTask {
     private final MecanumDrive drive;

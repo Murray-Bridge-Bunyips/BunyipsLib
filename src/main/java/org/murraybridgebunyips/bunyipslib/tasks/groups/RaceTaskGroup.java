@@ -7,6 +7,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * Once a single task is finished, all other tasks are cancelled.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class RaceTaskGroup extends TaskGroup {
     /**

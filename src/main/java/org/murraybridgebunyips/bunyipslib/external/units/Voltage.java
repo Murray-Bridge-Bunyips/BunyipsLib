@@ -14,6 +14,8 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Watts;
  *
  * <p>Actual units (such as {@link Units#Volts} and {@link Units#Millivolts}) can be found in the
  * {@link Units} class.
+ *
+ * @since 1.0.0-pre
  */
 public class Voltage extends Unit<Voltage> {
     /**

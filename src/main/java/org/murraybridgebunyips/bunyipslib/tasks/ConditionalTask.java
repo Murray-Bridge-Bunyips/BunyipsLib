@@ -8,6 +8,7 @@ import java.util.function.BooleanSupplier;
  * Two tasks that run based on a dynamically evaluated condition.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class ConditionalTask extends Task {
     private final Task trueTask;

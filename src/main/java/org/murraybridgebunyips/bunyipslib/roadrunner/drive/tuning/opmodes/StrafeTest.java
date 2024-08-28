@@ -10,6 +10,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 
 /**
  * This is a simple routine to test translational drive capabilities.
+ *
+ * @since 4.0.0
  */
 public class StrafeTest implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

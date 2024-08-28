@@ -41,6 +41,8 @@ import java.util.List;
  * and is wrapped to be a {@link BunyipsSubsystem} via {@link MecanumDrive}. Use the {@link MecanumDrive} class
  * to use this drive in a {@link BunyipsOpMode}. This class requires you pass in an instance of {@link DriveConstants},
  * which has been adapted to allow multiple configurations for any drive.
+ *
+ * @since 1.0.0-pre
  */
 public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive implements RoadRunnerDrive {
     private final DriveConstants constants;

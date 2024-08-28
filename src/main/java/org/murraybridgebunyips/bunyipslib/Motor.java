@@ -34,6 +34,7 @@ import java.util.Optional;
  * providing faster, predictable control systems.
  *
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 public class Motor extends DcMotorImplEx {
     private final ArrayList<InterpolatedLookupTable> rtpGains = new ArrayList<>();

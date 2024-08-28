@@ -11,6 +11,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 
 /**
  * This is an example of a more complex path to really test the tuning.
+ *
+ * @since 4.0.0
  */
 public class SplineTest implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     @Override

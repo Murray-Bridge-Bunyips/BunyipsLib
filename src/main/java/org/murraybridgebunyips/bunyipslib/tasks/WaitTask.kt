@@ -8,6 +8,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task
 
 /**
  * Task to wait for a specific amount of time.
+ * @since 1.0.0-pre
  */
 class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = true) : Task(time) {
     constructor(time: Measure<Time>) : this(time, true)

@@ -17,6 +17,7 @@ import java.util.Objects;
  * #make(UnitConstructorFunction)}.
  *
  * @param <U> the type of the unit
+ * @since 1.0.0-pre
  */
 public final class UnitBuilder<U extends Unit<U>> {
     private final U base;

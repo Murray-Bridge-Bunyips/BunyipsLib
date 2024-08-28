@@ -10,6 +10,7 @@ import java.util.function.Consumer;
  *
  * @param <V> the type of the reference
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class Reference<V> {
     @Nullable

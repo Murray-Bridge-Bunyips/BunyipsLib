@@ -10,6 +10,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * Multi-purpose index-based table with increment and decrement functionality.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class IndexedTable extends BunyipsSubsystem {
     /**

@@ -12,6 +12,8 @@ package org.murraybridgebunyips.bunyipslib.external.units;
  *
  * <p>Actual units (such as {@link Units#Degrees} and {@link Units#Radians}) can be found in the
  * {@link Units} class.
+ *
+ * @since 1.0.0-pre
  */
 // Technically, angles are unitless dimensions
 // eg Mass * Distance * Velocity<Angle> is equivalent to (Mass * Distance) / Time - otherwise known

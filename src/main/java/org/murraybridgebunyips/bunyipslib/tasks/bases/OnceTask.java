@@ -4,6 +4,8 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Millisecon
 
 /**
  * A task that runs once and then immediately completes.
+ *
+ * @since 1.0.0-pre
  */
 public abstract class OnceTask extends Task {
     protected OnceTask() {

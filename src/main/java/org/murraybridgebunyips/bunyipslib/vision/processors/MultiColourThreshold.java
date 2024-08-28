@@ -22,6 +22,7 @@ import java.util.ArrayList;
  *
  * @author Lucas Bubner, 2024
  * @see ColourThreshold
+ * @since 1.0.0-pre
  */
 @Config
 public class MultiColourThreshold extends Processor<ContourData> {

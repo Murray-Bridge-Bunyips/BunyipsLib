@@ -23,6 +23,7 @@ import java.util.function.DoubleSupplier;
  * Task to align to a contour using the vision system.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 @Config
 public class AlignToContourTask extends Task {

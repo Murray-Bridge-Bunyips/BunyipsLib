@@ -48,6 +48,7 @@ import java.util.concurrent.TimeUnit;
  * when the subsystem is updated. This timeout can be changed as it is a constant in {@link RoadRunner}.
  *
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final MecanumRoadRunnerDrive drive;

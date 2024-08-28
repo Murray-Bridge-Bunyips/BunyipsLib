@@ -18,6 +18,9 @@ import java.util.function.Consumer
  * ```
  *     config.init(this);
  * ```
+ *
+ * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 abstract class RobotConfig {
     /**

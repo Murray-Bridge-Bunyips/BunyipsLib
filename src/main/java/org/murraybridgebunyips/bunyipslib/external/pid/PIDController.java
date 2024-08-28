@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
 /**
  * A PIDF controller with no feedforward.
  * <a href="https://github.com/FTCLib/FTCLib/blob/cedc52cee1bb549324c1ca5059c5feec3c054902/core/src/main/java/com/arcrobotics/ftclib/controller/PIDController.java">Source</a>
+ *
+ * @since 1.0.0-pre
  */
 public class PIDController extends PIDFController {
     /**

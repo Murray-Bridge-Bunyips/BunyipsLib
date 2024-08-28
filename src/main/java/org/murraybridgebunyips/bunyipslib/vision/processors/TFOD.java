@@ -19,6 +19,7 @@ import java.util.List;
  * Extension wrapper for TFOD to interop with the Vision system
  *
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  * @deprecated Tensorflow Object Detection has been marked as deprecated in SDK version v9.2, scheduled for deletion
  * in major version v10.0. This class will be archived once TFOD is removed from the SDK, at the start of the
  * 2024-2025 season.

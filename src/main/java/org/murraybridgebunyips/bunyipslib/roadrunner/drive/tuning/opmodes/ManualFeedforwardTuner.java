@@ -32,6 +32,8 @@ import java.util.Objects;
  * Pressing Y/Δ (Xbox/PS4) will pause the tuning process and enter driver override, allowing the
  * user to reset the position of the bot in the event that it drifts off the path.<br>
  * Pressing B/O (Xbox/PS4) will cede control back to the tuning process.
+ *
+ * @since 4.0.0
  */
 public class ManualFeedforwardTuner implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

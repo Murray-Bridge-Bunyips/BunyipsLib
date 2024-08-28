@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * A segment of a trajectory sequence that is a single turn.
+ *
+ * @since 1.0.0-pre
  */
 public final class TurnSegment extends SequenceSegment {
     private final double totalRotation;

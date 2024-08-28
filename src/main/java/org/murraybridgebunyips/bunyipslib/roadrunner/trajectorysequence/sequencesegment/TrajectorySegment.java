@@ -6,6 +6,8 @@ import java.util.Collections;
 
 /**
  * A segment of a trajectory sequence that is a single trajectory.
+ *
+ * @since 1.0.0-pre
  */
 public final class TrajectorySegment extends SequenceSegment {
     private final Trajectory trajectory;

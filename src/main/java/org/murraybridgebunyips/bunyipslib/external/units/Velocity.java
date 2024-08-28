@@ -20,6 +20,7 @@ import java.util.Objects;
  * {@link Units} class.
  *
  * @param <D> the distance unit, such as {@link Angle} or {@link Distance}
+ * @since 1.0.0-pre
  */
 public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
     /**

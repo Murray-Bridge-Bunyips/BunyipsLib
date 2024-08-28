@@ -14,6 +14,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Velocity
  * Utility class for converting between SI units and encoder ticks.
  *
  * @author Lucas Bubner, 2024
+ * @since 3.0.0
  */
 object EncoderTicks {
     /**

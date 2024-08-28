@@ -22,6 +22,7 @@ import java.util.List;
  * Colour thresholding processor for a colour space, used to find colour contours in an image.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 @Config
 public abstract class ColourThreshold extends Processor<ContourData> {

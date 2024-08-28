@@ -8,6 +8,9 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 /**
  * Control a set of two servos together.
+ *
+ * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 public class DualServos extends BunyipsSubsystem {
     /**

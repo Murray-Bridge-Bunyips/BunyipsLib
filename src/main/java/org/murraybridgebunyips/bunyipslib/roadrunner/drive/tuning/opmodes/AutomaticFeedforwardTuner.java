@@ -26,6 +26,8 @@ import java.util.List;
  * 3. Accelerate the robot (apply constant power) and record the encoder counts.<br>
  * 4. Adjust the encoder data based on the velocity tuning data and find kA with another linear
  * regression.
+ *
+ * @since 4.0.0
  */
 public class AutomaticFeedforwardTuner implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

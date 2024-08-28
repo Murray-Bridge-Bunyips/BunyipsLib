@@ -12,6 +12,8 @@ package org.murraybridgebunyips.bunyipslib.external.units;
  *
  * <p>Actual units (such as {@link Units#Joules} and {@link Units#Kilojoules}) can be found in the
  * {@link Units} class.
+ *
+ * @since 1.0.0-pre
  */
 public class Energy extends Unit<Energy> {
     Energy(

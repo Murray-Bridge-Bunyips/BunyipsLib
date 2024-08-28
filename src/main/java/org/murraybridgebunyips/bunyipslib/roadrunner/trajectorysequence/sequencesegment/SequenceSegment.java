@@ -8,6 +8,8 @@ import java.util.List;
 
 /**
  * A segment of a trajectory sequence.
+ *
+ * @since 1.0.0-pre
  */
 public abstract class SequenceSegment {
     private final double duration;

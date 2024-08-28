@@ -15,6 +15,8 @@ import java.io.InputStream;
 
 /**
  * Set of utilities for loading trajectories from assets (the plugin save location).
+ *
+ * @since 1.0.0-pre
  */
 public final class AssetsTrajectoryManager {
 

@@ -17,6 +17,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
  * Utility methods for RoadRunner velocity and acceleration constraints.
  *
  * @author Lucas Bubner, 2024
+ * @since 2.0.0
  */
 public final class Limit {
     private Limit() {

@@ -25,6 +25,7 @@ import kotlin.math.roundToInt
  * This is used internally by [BunyipsOpMode] to be accessible by the overridden `telemetry` field.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 @Config
 class DualTelemetry @JvmOverloads constructor(

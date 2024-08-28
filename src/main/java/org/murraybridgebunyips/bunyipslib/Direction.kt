@@ -13,6 +13,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Units.Radians
  * +X is forward, +Y is left, +heading is anticlockwise.
  * Migrated to use RoadRunner vectors 13/11/2023.
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 @Suppress("KDocMissingDocumentation")
 enum class Direction(

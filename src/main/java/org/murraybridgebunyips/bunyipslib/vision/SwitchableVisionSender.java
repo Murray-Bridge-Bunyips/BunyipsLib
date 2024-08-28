@@ -28,6 +28,7 @@ import java.util.Objects;
  * not using the Threads utility/methods attached to Vision.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 @SuppressWarnings("rawtypes")
 @Config

@@ -15,6 +15,7 @@ import java.util.Objects;
  * Units#Meters}) can be found in the {@link Units} class.
  *
  * @param <U> the self type, e.g. {@code class SomeUnit extends Unit<SomeUnit>}
+ * @since 1.0.0-pre
  */
 public class Unit<U extends Unit<U>> {
     private final UnaryFunction toBaseConverter;

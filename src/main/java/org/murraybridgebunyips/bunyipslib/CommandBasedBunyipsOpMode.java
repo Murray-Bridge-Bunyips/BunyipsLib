@@ -15,6 +15,7 @@ import java.util.function.BooleanSupplier;
  *
  * @author Lucas Bubner, 2024
  * @see BunyipsOpMode
+ * @since 1.0.0-pre
  */
 public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     @NonNull

@@ -14,6 +14,8 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Watts;
  *
  * <p>Actual units (such as {@link Units#Amps} and {@link Units#Milliamps}) can be found in the
  * {@link Units} class.
+ *
+ * @since 1.0.0-pre
  */
 public class Current extends Unit<Current> {
     /**

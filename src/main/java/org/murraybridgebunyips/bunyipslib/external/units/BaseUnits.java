@@ -6,6 +6,8 @@ package org.murraybridgebunyips.bunyipslib.external.units;
 
 /**
  * The base units of measure.
+ *
+ * @since 1.0.0-pre
  */
 public final class BaseUnits {
     /**

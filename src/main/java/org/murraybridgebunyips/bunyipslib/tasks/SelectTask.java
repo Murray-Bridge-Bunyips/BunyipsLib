@@ -9,6 +9,7 @@ import java.util.function.Supplier;
  * Select a task to run based on a hashmap of states and a supplier of states.
  *
  * @param <T> the type of the state
+ * @since 1.0.0-pre
  */
 public class SelectTask<T> extends Task {
     private final Supplier<T> stateSupplier;

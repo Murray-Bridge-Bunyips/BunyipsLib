@@ -22,6 +22,7 @@ import java.util.Locale;
  *
  * @author Lucas Bubner, 2023
  * @see MecanumDrive
+ * @since 1.0.0-pre
  */
 public class CartesianMecanumDrive extends BunyipsSubsystem {
     // Fields left public for legacy reasons

@@ -16,11 +16,12 @@ import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Velocity;
 
 /**
- * Constants shared between multiple drive types.
- * Reworked to use a builder for multiple robot configurations.
+ * RoadRunner constants that define robot intrinsics for use with any RoadRunner drive.
+ * These constants are constructed per robot with a builder pattern.
+ *
+ * @since 1.0.0-pre
  */
 public class DriveConstants {
-
     /*
      * These are motor constants that should be listed online for your motors.
      */

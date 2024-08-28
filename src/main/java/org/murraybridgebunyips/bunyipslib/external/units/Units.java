@@ -6,7 +6,10 @@ package org.murraybridgebunyips.bunyipslib.external.units;
 
 import java.util.Locale;
 
-/** Contains a set of predefined units. */
+/**
+ * Contains and exposes a set of predefined units.
+ * @since 1.0.0-pre
+ */
 public final class Units {
     private Units() {
         // Prevent instantiation

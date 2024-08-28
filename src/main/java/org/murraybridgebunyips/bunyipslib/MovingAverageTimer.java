@@ -13,6 +13,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Time;
  * <a href="https://github.com/Paladins-of-St-Pauls/GameChangers/blob/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/paladins/utils/MovingAverageTimer.java">Source</a>
  *
  * @author Shaun, 11/06/2017
+ * @since 1.0.0-pre
  */
 public class MovingAverageTimer {
     // A ring buffer is used to keep track of a moving average

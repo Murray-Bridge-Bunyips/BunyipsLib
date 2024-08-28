@@ -7,6 +7,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * A task that will auto-reset and repeat itself after it is completed.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class RepeatTask extends ForeverTask {
     private final Task task;

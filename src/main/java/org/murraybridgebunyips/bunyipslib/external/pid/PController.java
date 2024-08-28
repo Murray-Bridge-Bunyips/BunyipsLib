@@ -3,6 +3,8 @@ package org.murraybridgebunyips.bunyipslib.external.pid;
 /**
  * A PIDF controller with no feedforward, integral, or derivative.
  * <a href="https://github.com/FTCLib/FTCLib/blob/feature-new-pure-pursuit/core/src/main/java/com/arcrobotics/ftclib/controller/PController.java">Source</a>
+ *
+ * @since 1.0.0-pre
  */
 public class PController extends PDController {
     /**

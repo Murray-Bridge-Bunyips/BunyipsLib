@@ -17,6 +17,8 @@ import java.util.List;
 
 /**
  * Dual tracking wheel localizer implementation.
+ *
+ * @since 4.0.0
  */
 /*
  * Tracking wheel localizer implementation assuming the standard configuration:

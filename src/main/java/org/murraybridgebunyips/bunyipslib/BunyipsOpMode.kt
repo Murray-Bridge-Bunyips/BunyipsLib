@@ -36,6 +36,7 @@ import kotlin.math.abs
  * @see CommandBasedBunyipsOpMode
  * @see AutonomousBunyipsOpMode
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 abstract class BunyipsOpMode : BOMInternal() {
     /**

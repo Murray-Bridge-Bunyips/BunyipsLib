@@ -24,6 +24,7 @@ import java.util.Objects;
  * internal state of things like sensors
  *
  * @param <U> the type of the unit of measure
+ * @since 1.0.0-pre
  */
 public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
     private double magnitudeVal;

@@ -7,6 +7,8 @@ import java.util.List;
 
 /**
  * A segment of a trajectory sequence that is a single wait.
+ *
+ * @since 1.0.0-pre
  */
 public final class WaitSegment extends SequenceSegment {
     /**

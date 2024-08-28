@@ -8,6 +8,8 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * A task to run for a timeout.
  * <p>
  * {@code new RunForTask(5, arm::spin, () -> { // optional finish callback });}
+ *
+ * @since 1.0.0-pre
  */
 public class RunForTask extends Task {
     private final Runnable callback;

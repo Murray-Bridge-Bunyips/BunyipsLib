@@ -17,6 +17,7 @@ import java.util.Objects;
  *
  * @param <A> the type of the first unit in the result
  * @param <B> the type of the second unit in the result
+ * @since 1.0.0-pre
  */
 public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>> {
     @SuppressWarnings("rawtypes")

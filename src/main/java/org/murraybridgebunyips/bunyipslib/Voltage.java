@@ -30,17 +30,20 @@
 package org.murraybridgebunyips.bunyipslib;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 /**
- * Utility class for getting the robot voltage from the hardware map
+ * Utility class for getting the robot voltage from the {@link HardwareMap}.
+ *
+ * @since 1.0.0-pre
  */
 public final class Voltage {
     private Voltage() {
     }
 
     /**
-     * Poll the hardware map for the robot voltage
+     * Poll the hardware map for the robot voltage.
      *
      * @param opMode the opmode
      * @return the robot voltage

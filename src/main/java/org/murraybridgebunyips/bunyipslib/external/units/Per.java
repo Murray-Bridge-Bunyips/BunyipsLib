@@ -17,6 +17,7 @@ import java.util.Objects;
  *
  * @param <N> the type of the numerator unit
  * @param <D> the type of the denominator unit
+ * @since 1.0.0-pre
  */
 public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
     /**

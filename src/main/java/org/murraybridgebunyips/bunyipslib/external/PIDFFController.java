@@ -16,6 +16,7 @@ import java.util.Arrays;
  *
  * @author Lucas Bubner, 2024
  * @see ArmController
+ * @since 4.0.0
  */
 public class PIDFFController implements SystemController, PIDF {
     private final PIDController pid;

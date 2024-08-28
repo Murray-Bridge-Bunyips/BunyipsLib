@@ -27,6 +27,7 @@ import java.util.ArrayList;
  * Combines an AprilTag processor and RoadRunner drive to supply updates in pose estimation.
  *
  * @author Lucas Bubner, 2024
+ * @since 3.2.0
  */
 public class AprilTagPoseEstimator implements Runnable {
     private final AprilTag processor;

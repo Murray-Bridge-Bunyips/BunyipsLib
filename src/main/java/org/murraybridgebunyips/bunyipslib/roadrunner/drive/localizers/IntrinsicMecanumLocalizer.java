@@ -25,6 +25,7 @@ import java.util.function.Supplier;
  * for a Mecanum drivetrain, and should only be used in an absolute dire situation where all your encoders don't work.
  *
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 public class IntrinsicMecanumLocalizer implements Localizer {
     private final Coefficients coefficients;

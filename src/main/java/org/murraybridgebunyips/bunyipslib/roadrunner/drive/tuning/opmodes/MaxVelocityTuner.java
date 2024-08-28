@@ -20,6 +20,8 @@ import java.util.Objects;
  * Upon pressing start, your bot will run at max power for RUNTIME_SECONDS seconds.
  * <p>
  * Further fine tuning of kF may be desired.
+ *
+ * @since 4.0.0
  */
 public class MaxVelocityTuner implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

@@ -27,6 +27,7 @@ import java.util.Optional
  * - Tasks
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 abstract class Task(
     /**

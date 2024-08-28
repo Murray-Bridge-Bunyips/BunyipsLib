@@ -11,6 +11,8 @@ import org.opencv.core.Scalar;
  * Yellow pixel processor.
  * These values may not be tuned for your specific camera, lighting, or field conditions, and are tuned
  * based on our own testing. You may need to adjust these values to get the best results for your own robot.
+ *
+ * @since 1.0.0-pre
  */
 @Config
 public class YellowPixel extends ColourThreshold {

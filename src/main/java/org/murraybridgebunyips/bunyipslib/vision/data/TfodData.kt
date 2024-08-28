@@ -2,7 +2,9 @@ package org.murraybridgebunyips.bunyipslib.vision.data
 
 /**
  * Utility data structure for TensorFlow Object Detections.
+ * @since 1.0.0-pre
  */
+@Deprecated("To be archived in BunyipsLib v4.0.0")
 data class TfodData(
     /**
      * Label of the detected object.

@@ -6,6 +6,8 @@ package org.murraybridgebunyips.bunyipslib.external.units;
 
 /**
  * A type of unit that corresponds to raw values and not any physical dimension, such as percentage.
+ *
+ * @since 1.0.0-pre
  */
 public class Dimensionless extends Unit<Dimensionless> {
     /**

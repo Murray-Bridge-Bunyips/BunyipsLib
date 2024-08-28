@@ -23,6 +23,7 @@ import java.util.function.Function;
  * This is an extension wrapper for the SDK-provided AprilTagProcessor to interop with the Vision system.
  *
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 public class AprilTag extends Processor<AprilTagData> {
     private final AprilTagProcessor instance;

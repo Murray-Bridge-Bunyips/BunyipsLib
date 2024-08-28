@@ -10,6 +10,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * May be more intuitive to use this alias in some cases.
  *
  * @see Cannon
+ * @since 1.0.0-pre
  */
 public class Switch extends Cannon {
     /**

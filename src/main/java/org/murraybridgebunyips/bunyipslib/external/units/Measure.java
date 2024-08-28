@@ -11,6 +11,7 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
  * measures with the same <i>unit</i> and <i>magnitude</i> are effectively equivalent objects.
  *
  * @param <U> the unit type of the measure
+ * @since 1.0.0-pre
  */
 public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
     /**

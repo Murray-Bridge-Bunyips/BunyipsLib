@@ -11,6 +11,7 @@ import java.util.TreeMap;
  *
  * @param <T> the input type
  * @param <R> the output type
+ * @since 1.0.0-pre
  */
 public class LookupTable<T extends Number, R> extends TreeMap<T, R> {
 

@@ -12,6 +12,8 @@ package org.murraybridgebunyips.bunyipslib.external.units;
  *
  * <p>Actual units (such as {@link Units#Seconds} and {@link Units#Milliseconds}) can be found in
  * the {@link Units} class.
+ *
+ * @since 1.0.0-pre
  */
 public class Time extends Unit<Time> {
     /**

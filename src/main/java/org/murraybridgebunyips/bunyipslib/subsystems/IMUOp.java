@@ -29,6 +29,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * Angles from this class are intrinsic. Read more in the {@link YawPitchRollAngles} and {@link Orientation} classes.
  *
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 public class IMUOp extends BunyipsSubsystem {
     private final IMU imu;

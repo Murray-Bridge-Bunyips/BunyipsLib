@@ -45,6 +45,8 @@ import java.util.Objects;
  * `calculate()` and to determine when the profile has completed via
  * `isFinished()`.
  * <a href="https://github.com/FTCLib/FTCLib/blob/1c8995d09413b406e0f4aff238ea4edc2bb860c4/core/src/main/java/com/arcrobotics/ftclib/trajectory/TrapezoidProfile.java">Source</a>
+ *
+ * @since 3.5.0
  */
 public class TrapezoidProfile {
     // The direction of the profile, either 1 for forwards or -1 for inverted

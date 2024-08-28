@@ -18,6 +18,7 @@ import java.util.function.Predicate;
  *
  * @author Lucas Bubner, 2024
  * @see BunyipsOpMode
+ * @since 1.0.0-pre
  */
 public class Controller extends Gamepad {
     /**

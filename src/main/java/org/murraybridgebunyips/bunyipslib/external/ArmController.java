@@ -18,6 +18,7 @@ import java.util.function.Supplier;
  * @author Lucas Bubner, 2024
  * @see EncoderTicks
  * @see PIDFFController
+ * @since 4.0.0
  */
 public class ArmController implements SystemController, PIDF {
     private final PIDController pid;

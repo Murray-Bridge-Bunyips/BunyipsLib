@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
  * adjusted to use WPIUnits and custom classes.
  *
  * @see Math
+ * @since 1.0.0-pre
  */
 public final class Mathf {
     private Mathf() {

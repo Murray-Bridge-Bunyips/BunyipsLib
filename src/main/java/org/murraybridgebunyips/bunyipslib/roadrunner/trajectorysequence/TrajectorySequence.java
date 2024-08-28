@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * A sequence of trajectory segments.
+ *
+ * @since 1.0.0-pre
  */
 public class TrajectorySequence {
     private final List<SequenceSegment> sequenceList;

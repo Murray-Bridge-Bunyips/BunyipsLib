@@ -14,6 +14,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  *
  * @author Lachlan Paul, 2023
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 public class Cannon extends BunyipsSubsystem {
     /**

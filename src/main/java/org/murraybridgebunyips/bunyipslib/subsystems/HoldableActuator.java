@@ -30,6 +30,7 @@ import java.util.function.DoubleSupplier;
  * but will hold its position when the input is released.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class HoldableActuator extends BunyipsSubsystem {
     /**

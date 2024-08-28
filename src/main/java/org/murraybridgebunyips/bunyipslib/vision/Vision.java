@@ -35,9 +35,10 @@ import java.util.stream.Collectors;
  * as processing is on another thread and updates are managed at the discretion of the VisionPortal.
  * Once set up, Vision will automatically manage the camera stream and defined processor updates.
  * All you will need to do is collect the data from the processors and use it in your OpMode. The
- * update() method in this subsystem will simply add telemetry of the VisionPortal's status.
+ * {@code update()} method in this subsystem will simply add telemetry of the VisionPortal's status.
  *
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 @Config
 public class Vision extends BunyipsSubsystem {

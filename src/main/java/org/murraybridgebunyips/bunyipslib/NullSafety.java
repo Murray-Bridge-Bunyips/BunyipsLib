@@ -9,6 +9,7 @@ import java.util.List;
  *
  * @author Lucas Bubner, 2023
  * @see Exceptions
+ * @since 1.0.0-pre
  */
 public final class NullSafety {
 

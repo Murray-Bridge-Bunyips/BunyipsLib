@@ -21,6 +21,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
  * The buttons are mapped to match the wheels spatially if you
  * were to rotate the gamepad 45deg°. x/square is the front left
  * and each button corresponds to the wheel as you go clockwise
+ *
+ * @since 4.0.0
  */
 public class MotorDirectionDebugger implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
  * Reset OpMode to clear any BunyipsOpMode-set robot controller lights.
  *
  * @author Lucas Bubner, 2024
+ * @since 3.4.0
  */
 public final class ResetRobotControllerLights {
     private static boolean suppress = false;

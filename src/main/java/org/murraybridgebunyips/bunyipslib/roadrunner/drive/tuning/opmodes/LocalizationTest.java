@@ -15,6 +15,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
  * <p>
  * The goal of this exercise is to ascertain whether the localizer has been configured properly (note: the pure
  * encoder localizer heading may be significantly off if the track width has not been tuned).
+ *
+ * @since 4.0.0
  */
 public class LocalizationTest implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     @Override

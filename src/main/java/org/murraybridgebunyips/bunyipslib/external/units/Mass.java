@@ -12,6 +12,8 @@ package org.murraybridgebunyips.bunyipslib.external.units;
  *
  * <p>Actual units (such as {@link Units#Grams} and {@link Units#Pounds}) can be found in the {@link
  * Units} class.
+ *
+ * @since 1.0.0-pre
  */
 public class Mass extends Unit<Mass> {
     /**

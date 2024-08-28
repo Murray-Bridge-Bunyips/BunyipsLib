@@ -2,6 +2,8 @@ package org.murraybridgebunyips.bunyipslib.roadrunner.util;
 
 /**
  * A direction for an axis to be remapped to
+ *
+ * @since 1.0.0-pre
  */
 public enum AxisDirection {
     /**

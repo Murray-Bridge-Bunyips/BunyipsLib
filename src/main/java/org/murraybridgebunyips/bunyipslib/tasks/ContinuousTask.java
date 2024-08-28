@@ -6,6 +6,8 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
  * A task to run continuously and will never finish.
  * <p>
  * {@code new ContinuousTask(() -> telemetry.add("I will run forever"));}
+ *
+ * @since 1.0.0-pre
  */
 public class ContinuousTask extends ForeverTask {
     private final Runnable callback;

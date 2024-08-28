@@ -11,6 +11,7 @@ import org.murraybridgebunyips.bunyipslib.Storage;
  * Reset OpMode to clear static memory fields for last known position/alliance.
  *
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 public final class ResetLastKnowns {
     private static boolean suppress = false;

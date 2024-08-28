@@ -6,6 +6,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * A group of tasks that runs all at once, until they are all finished.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class ParallelTaskGroup extends TaskGroup {
     /**

@@ -34,6 +34,7 @@ import fi.iki.elonen.NanoHTTPD;
  * Logs RoadRunner data to a file for later analysis.
  *
  * @noinspection ALL
+ * @since 1.0.0-pre
  */
 public final class LogFiles {
     private static final File ROOT =

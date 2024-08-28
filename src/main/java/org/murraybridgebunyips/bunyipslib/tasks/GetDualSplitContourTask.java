@@ -24,8 +24,8 @@ import org.murraybridgebunyips.bunyipslib.vision.processors.ColourThreshold;
  * <p>
  * This task will return a {@link Direction} on what side of the camera the contour is visible on, or {@link Direction#ZERO}.
  *
- * @since 4.0.0
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 public class GetDualSplitContourTask extends ForeverTask {
     private final ElapsedTime lockoutTimer = new ElapsedTime();
@@ -80,8 +80,8 @@ public class GetDualSplitContourTask extends ForeverTask {
      * {@link #getPosition()} with custom mappings for the camera left, right, and none detections.
      * This is a polyfill for the legacy (renamed) GetTriPositionContourTask to not rewrite logical branches.
      *
-     * @param camLeft the direction to return if the contour is on the left side of the camera
-     * @param camRight the direction to return if the contour is on the right side of the camera
+     * @param camLeft     the direction to return if the contour is on the left side of the camera
+     * @param camRight    the direction to return if the contour is on the right side of the camera
      * @param noDetection the direction to return if there are no contours on the camera for
      *                    minimum {@link #withNoDetectionPersistenceTime} time
      * @return the mapped direction
@@ -93,7 +93,7 @@ public class GetDualSplitContourTask extends ForeverTask {
 
     /**
      * @return the position of the contour as seen by the camera, can either be {@link Direction#LEFT}, {@link Direction#RIGHT},
-     *         or {@link Direction#ZERO}.
+     * or {@link Direction#ZERO}.
      */
     @NonNull
     public Direction getPosition() {

@@ -51,6 +51,7 @@ import java.util.Objects;
  * and by applying the tuning process for RoadRunner v0.5.
  *
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 @Config
 public abstract class RoadRunnerTuning extends LinearOpMode {

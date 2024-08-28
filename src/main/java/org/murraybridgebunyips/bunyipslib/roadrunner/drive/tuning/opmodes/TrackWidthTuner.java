@@ -21,6 +21,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
  * this procedure a few times and averages the values for additional accuracy.
  * <p>
  * Note: a relatively accurate track width estimate is important or else the angular constraints will be thrown off.
+ *
+ * @since 4.0.0
  */
 public class TrackWidthTuner implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

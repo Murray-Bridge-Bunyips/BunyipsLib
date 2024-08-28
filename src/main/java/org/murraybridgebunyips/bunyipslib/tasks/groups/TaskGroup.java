@@ -25,6 +25,7 @@ import java.util.HashSet;
  * try to take commands from multiple tasks at once, overriding each other and causing unpredictable behaviour.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public abstract class TaskGroup extends Task {
     protected final ArrayList<Task> tasks = new ArrayList<>();

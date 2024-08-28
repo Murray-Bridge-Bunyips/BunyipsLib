@@ -3,10 +3,11 @@ package org.murraybridgebunyips.bunyipslib.roadrunner.drive;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 
 /**
- * Constants for RoadRunner tank drive.
- * Reworked to use a builder for multiple robot configurations.
+ * Tank drive coefficients that define robot amplitudes for a Tank drivetrain.
+ * These constants are constructed per robot with a builder pattern.
  *
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 public class TankCoefficients {
     /**

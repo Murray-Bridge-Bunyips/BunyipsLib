@@ -5,6 +5,7 @@ import org.opencv.core.Rect
 
 /**
  * Data class for storing contour data.
+ * @since 1.0.0-pre
  */
 data class ContourData(
     /**

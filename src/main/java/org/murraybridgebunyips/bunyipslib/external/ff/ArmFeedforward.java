@@ -22,6 +22,8 @@ import org.murraybridgebunyips.bunyipslib.external.units.Voltage;
  * A helper class that computes feedforward outputs for a simple arm (modeled as a motor
  * acting against the force of gravity on a beam suspended at an angle), adjusted to use WPIUnits for unit assertion.
  * <a href="https://github.com/FTCLib/FTCLib/blob/1c8995d09413b406e0f4aff238ea4edc2bb860c4/core/src/main/java/com/arcrobotics/ftclib/controller/wpilibcontroller/ArmFeedforward.java">Source</a>
+ *
+ * @since 3.5.0
  */
 public class ArmFeedforward implements SystemController {
     private double kS;

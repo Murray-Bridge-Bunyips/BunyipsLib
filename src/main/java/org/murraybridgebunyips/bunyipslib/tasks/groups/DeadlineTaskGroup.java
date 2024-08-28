@@ -8,6 +8,7 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
  * The task that will be the decider for the deadline is the first task passed as an argument.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class DeadlineTaskGroup extends TaskGroup {
     /**

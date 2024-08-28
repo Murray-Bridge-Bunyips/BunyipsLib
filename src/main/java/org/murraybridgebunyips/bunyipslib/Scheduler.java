@@ -24,6 +24,7 @@ import java.util.function.Predicate;
  *
  * @author Lucas Bubner, 2024
  * @see CommandBasedBunyipsOpMode
+ * @since 1.0.0-pre
  */
 public class Scheduler extends BunyipsComponent {
     private static final ArrayList<String> reports = new ArrayList<>();

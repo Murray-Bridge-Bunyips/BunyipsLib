@@ -24,6 +24,7 @@ import java.util.function.Supplier;
  * to know where to run, since these allocations are done at construction.
  *
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 public class DynamicTask extends Task {
     private static final String UNCONSTRUCTED_NAME = "Pending construction (dyn)";

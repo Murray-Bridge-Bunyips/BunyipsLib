@@ -17,6 +17,8 @@ import org.murraybridgebunyips.bunyipslib.external.SystemController;
  * measured value. If we consider e(t) the positional error, then
  * int(0,t)[e(t')dt'] is the total error and e'(t) is the velocity error.
  * <a href="https://github.com/FTCLib/FTCLib/blob/cedc52cee1bb549324c1ca5059c5feec3c054902/core/src/main/java/com/arcrobotics/ftclib/controller/PIDFController.java">Source</a>
+ *
+ * @since 1.0.0-pre
  */
 public class PIDFController implements SystemController, PIDF {
     private double kP, kI, kD, kF;

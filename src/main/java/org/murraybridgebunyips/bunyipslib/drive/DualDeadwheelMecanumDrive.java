@@ -14,6 +14,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.util.Deadwheel;
  *
  * @author Lucas Bubner, 2023
  * @see MecanumDrive
+ * @since 1.0.0-pre
  */
 public class DualDeadwheelMecanumDrive extends MecanumDrive {
     /**

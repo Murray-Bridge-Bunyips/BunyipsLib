@@ -26,6 +26,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
  * <p>
  * This opmode is designed as a convenient, coarse tuning for the follower PID coefficients. It
  * is recommended that you use the FollowerPIDTuner opmode for further fine tuning.
+ *
+ * @since 4.0.0
  */
 public class BackAndForth implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

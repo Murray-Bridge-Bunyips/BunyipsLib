@@ -17,6 +17,7 @@ import java.util.function.DoubleSupplier;
  * A collection of ramping functions and values for smoothing out deltas over time.
  *
  * @author Lucas Bubner, 2024
+ * @since 3.2.0
  */
 public interface Ramping {
     /**
@@ -57,6 +58,7 @@ public interface Ramping {
      * SmoothDamp implementation for a {@code double} value.
      *
      * @author Lucas Bubner, 2024
+     * @since 3.2.0
      */
     class Value implements Ramping {
         private final ElapsedTime timer = new ElapsedTime();
@@ -158,6 +160,7 @@ public interface Ramping {
      * Uses a supplier for the current value, based on a target set by the loop.
      *
      * @author Lucas Bubner, 2024
+     * @since 3.2.0
      */
     class Supplier implements Ramping {
         private final Value v = new Value();
@@ -256,6 +259,7 @@ public interface Ramping {
      * This class is designed to be downcasted to the SDK DcMotor type.
      *
      * @author Lucas Bubner, 2024
+     * @since 3.0.0
      */
     class DcMotor extends DcMotorImpl implements Ramping {
         private final Supplier v = new Supplier(this::getPower);

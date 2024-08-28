@@ -14,6 +14,8 @@ import org.murraybridgebunyips.bunyipslib.external.TrapezoidProfile;
 /**
  * Implements a PID control loop whose setpoint is constrained by a trapezoid profile.
  * <a href="https://github.com/FTCLib/FTCLib/blob/1c8995d09413b406e0f4aff238ea4edc2bb860c4/core/src/main/java/com/arcrobotics/ftclib/controller/wpilibcontroller/ProfiledPIDController.java">Source</a>
+ *
+ * @since 3.5.0
  */
 public class ProfiledPIDController implements SystemController, PIDF {
     private final PIDController controller;

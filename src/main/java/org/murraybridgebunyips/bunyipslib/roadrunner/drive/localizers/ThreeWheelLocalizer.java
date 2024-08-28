@@ -17,6 +17,8 @@ import java.util.List;
 
 /**
  * Standard 3 tracking wheel localizer implementation.
+ *
+ * @since 4.0.0
  */
 /*
  *    /--------------\

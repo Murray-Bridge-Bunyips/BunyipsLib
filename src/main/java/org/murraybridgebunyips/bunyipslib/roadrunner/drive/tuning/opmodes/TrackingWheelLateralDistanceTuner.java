@@ -61,6 +61,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.localizers.ThreeWheel
  * effective center of rotation. You can ignore this effect. The center of rotation will be offset
  * slightly but your heading will still be fine. This does not affect your overall tracking
  * precision. The heading should still line up.
+ *
+ * @since 4.0.0
  */
 public class TrackingWheelLateralDistanceTuner implements TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive> {
     /**

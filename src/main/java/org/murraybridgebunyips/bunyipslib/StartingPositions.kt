@@ -5,6 +5,9 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 /**
  * Enum for determining where the robot is starting on the field. This can be used to determine
  * which autonomous path to take.
+ *
+ * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 enum class StartingPositions(
     /**

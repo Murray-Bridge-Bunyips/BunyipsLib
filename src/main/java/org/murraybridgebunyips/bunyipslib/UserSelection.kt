@@ -54,6 +54,7 @@ import java.util.function.Consumer
  *
  * @param opmodes Modes to map to buttons. Will be casted to strings for display and return back in type `T`.
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 class UserSelection<T : Any>(
     /**

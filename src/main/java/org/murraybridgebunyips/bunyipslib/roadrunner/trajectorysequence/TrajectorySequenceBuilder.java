@@ -25,6 +25,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 
+import org.murraybridgebunyips.bunyipslib.RoadRunner;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
@@ -42,9 +43,11 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * RoadRunner Trajectory Builder
+ * RoadRunner trajectory sequence builder.
+ * See {@link RoadRunner}.
  *
- * @param <T> The type of the subclass (used for fluent builder pattern)
+ * @param <T> The type of the subclass (used for derived builder patterns to return this)
+ * @since 1.0.0-pre
  */
 @SuppressWarnings("unchecked")
 public class TrajectorySequenceBuilder<T extends TrajectorySequenceBuilder<T>> {

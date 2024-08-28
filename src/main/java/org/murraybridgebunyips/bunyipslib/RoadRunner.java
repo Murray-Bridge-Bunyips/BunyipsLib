@@ -42,6 +42,7 @@ import java.util.Objects;
  * @author Lucas Bubner, 2024
  * @noinspection InterfaceMayBeAnnotatedFunctional
  * @see AutonomousBunyipsOpMode
+ * @since 1.0.0-pre
  */
 public interface RoadRunner {
     /**

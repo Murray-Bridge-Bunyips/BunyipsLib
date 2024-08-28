@@ -14,6 +14,7 @@ import java.util.function.Consumer
  * while providing full logging in both Logcat and the Driver Station.
  *
  * @see NullSafety
+ * @since 1.0.0-pre
  */
 @Config
 object Exceptions {

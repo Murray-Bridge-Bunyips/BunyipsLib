@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * @author Lucas Bubner, 2024
  * @noinspection unused
  * @see BunyipsOpMode
+ * @since 1.0.0-pre
  */
 public class BOMInternal extends LinearOpMode {
     // Override fields that will be supplemented by BunyipsOpMode

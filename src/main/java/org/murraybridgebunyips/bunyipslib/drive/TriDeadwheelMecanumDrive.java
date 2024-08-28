@@ -18,6 +18,7 @@ import java.util.List;
  *
  * @author Lucas Bubner, 2023
  * @see MecanumDrive
+ * @since 1.0.0-pre
  */
 public class TriDeadwheelMecanumDrive extends MecanumDrive {
     /**

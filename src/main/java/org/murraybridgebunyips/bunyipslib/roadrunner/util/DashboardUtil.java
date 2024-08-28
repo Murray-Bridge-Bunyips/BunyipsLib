@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * Set of helper functions for drawing Road Runner paths and trajectories on dashboard canvases.
+ *
+ * @since 1.0.0-pre
  */
 public final class DashboardUtil {
     private static final double DEFAULT_RESOLUTION = 2.0; // distance units; presumed inches

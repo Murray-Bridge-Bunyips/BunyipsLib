@@ -8,6 +8,7 @@ import java.util.Optional
 
 /**
  * Utility data structure for AprilTag Detections.
+ * @since 1.0.0-pre
  */
 data class AprilTagData(
     /**

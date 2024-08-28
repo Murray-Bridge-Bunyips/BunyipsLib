@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @param <T> the type of VisionData to be processed
  * @author Lucas Bubner, 2023
+ * @since 1.0.0-pre
  */
 public abstract class Processor<T extends VisionData> implements VisionProcessor, CameraStreamSource {
     /**

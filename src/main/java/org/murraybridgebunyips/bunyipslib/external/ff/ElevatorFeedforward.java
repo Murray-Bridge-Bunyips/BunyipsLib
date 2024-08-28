@@ -13,6 +13,8 @@ import org.murraybridgebunyips.bunyipslib.external.SystemController;
  * A helper class that computes feedforward outputs for a simple elevator (modeled as a motor
  * acting against the force of gravity). Units of this class are determined by the inputs to the gains.
  * <a href="https://github.com/FTCLib/FTCLib/blob/1c8995d09413b406e0f4aff238ea4edc2bb860c4/core/src/main/java/com/arcrobotics/ftclib/controller/wpilibcontroller/ElevatorFeedforward.java">Source</a>
+ *
+ * @since 3.5.0
  */
 public class ElevatorFeedforward implements SystemController {
     private double kS;

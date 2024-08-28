@@ -35,6 +35,7 @@ import java.util.function.BooleanSupplier;
  * <a href="https://github.com/OpenFTC/Extracted-RC/blob/b585e5988f9e32a7a80df65f510f5e354903bb94/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples/UtilityOctoQuadConfigMenu.java#L296">Source (extracted from FtcRobotController v9.2)</a>
  *
  * @author OpenFTC, 2023
+ * @since 4.0.0
  */
 public class TelemetryMenu {
     private final MenuElement root;

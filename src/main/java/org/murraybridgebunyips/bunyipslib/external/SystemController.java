@@ -9,6 +9,7 @@ package org.murraybridgebunyips.bunyipslib.external;
  * type of response the controller is not able to provide.
  *
  * @author Lucas Bubner, 2024
+ * @since 4.0.0
  */
 public interface SystemController {
     /**

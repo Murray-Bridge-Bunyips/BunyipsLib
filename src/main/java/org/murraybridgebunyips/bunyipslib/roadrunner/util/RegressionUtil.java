@@ -14,6 +14,8 @@ import java.util.List;
 
 /**
  * Various regression utilities.
+ *
+ * @since 1.0.0-pre
  */
 public final class RegressionUtil {
 

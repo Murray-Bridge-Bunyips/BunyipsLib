@@ -10,6 +10,7 @@ import java.util.function.BooleanSupplier;
  * A task that waits until a condition is true before finishing.
  *
  * @author Lucas Bubner, 2024
+ * @since 1.0.0-pre
  */
 public class WaitUntilTask extends Task {
     private final BooleanSupplier condition;

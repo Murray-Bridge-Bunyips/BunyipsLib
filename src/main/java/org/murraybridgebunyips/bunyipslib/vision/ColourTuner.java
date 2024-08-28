@@ -25,6 +25,7 @@ import org.opencv.core.Scalar;
  * offered by ColourTuner, not the processor (as it will be overridden and controlled by the controllers)
  *
  * @author Lucas Bubner, 2024
+ * @since 3.4.0
  */
 @Config
 public abstract class ColourTuner extends BunyipsOpMode {

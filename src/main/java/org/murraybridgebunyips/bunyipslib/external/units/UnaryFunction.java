@@ -12,6 +12,8 @@ import java.util.Objects;
  * representation. Temperature units, in particular, typically have an offset from a value in Kelvin
  * and may have a multiplication factor added in, which means that units cannot always be
  * represented as simple ratios of their base units.
+ *
+ * @since 1.0.0-pre
  */
 @FunctionalInterface
 public interface UnaryFunction {
