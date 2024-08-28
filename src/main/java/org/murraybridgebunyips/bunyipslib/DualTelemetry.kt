@@ -161,7 +161,7 @@ class DualTelemetry @JvmOverloads constructor(
      * @return The telemetry item added to the Driver Station, null if the send failed from overflow
      */
     override fun addData(caption: String, format: String, vararg args: Any): Item {
-        return add(caption + dashboardCaptionValueAutoSeparator + format, args)
+        return add(caption + dashboardCaptionValueAutoSeparator + format, *args)
     }
 
     /**
@@ -865,7 +865,7 @@ class DualTelemetry @JvmOverloads constructor(
             level = DeprecationLevel.ERROR
         )
         override fun addData(caption: String, format: String, vararg args: Any): Item? {
-            return item?.addData(caption, format, args)
+            return item?.addData(caption, format, *args)
         }
 
         /**
