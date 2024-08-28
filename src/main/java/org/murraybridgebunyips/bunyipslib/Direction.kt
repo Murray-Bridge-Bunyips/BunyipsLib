@@ -11,7 +11,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Units.Radians
  * The origin of these vectors face the X axis, for continuity.
  *
  * +X is forward, +Y is left, +heading is anticlockwise.
- * Migrated to use Pose2d from RoadRunner 13/11/2023.
+ * Migrated to use RoadRunner vectors 13/11/2023.
  * @author Lucas Bubner, 2023
  */
 @Suppress("KDocMissingDocumentation")
