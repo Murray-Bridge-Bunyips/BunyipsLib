@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib.roadrunner.util;
 
 import com.acmerobotics.roadrunner.util.NanoClock;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
@@ -25,8 +26,8 @@ public class Deadwheel implements HardwareDevice {
      * @param motor the motor to wrap
      * @param clock the clock to use
      */
-    public Deadwheel(DcMotorEx motor, NanoClock clock) {
-        this.motor = motor;
+    public Deadwheel(DcMotor motor, NanoClock clock) {
+        this.motor = (DcMotorEx) motor;
         this.clock = clock;
 
         direction = Direction.FORWARD;
@@ -41,7 +42,7 @@ public class Deadwheel implements HardwareDevice {
      *
      * @param motor the motor to wrap
      */
-    public Deadwheel(DcMotorEx motor) {
+    public Deadwheel(DcMotor motor) {
         this(motor, NanoClock.system());
     }
 

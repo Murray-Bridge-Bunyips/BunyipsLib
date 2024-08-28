@@ -1,5 +1,6 @@
 package org.murraybridgebunyips.bunyipslib
 
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.murraybridgebunyips.bunyipslib.external.units.Angle
 import org.murraybridgebunyips.bunyipslib.external.units.Distance
@@ -96,7 +97,7 @@ object EncoderTicks {
     @JvmStatic
     @JvmOverloads
     fun createGenerator(
-        motor: DcMotorEx,
+        motor: DcMotor,
         reduction: Double = 1.0,
         wheelDiameter: Measure<Distance>? = null
     ): Generator {
@@ -115,7 +116,7 @@ object EncoderTicks {
     @JvmStatic
     @JvmOverloads
     fun createGenerator(
-        motor: DcMotorEx,
+        motor: DcMotor,
         ticksPerRevolution: Int,
         reduction: Double = 1.0,
         wheelDiameter: Measure<Distance>? = null
@@ -127,23 +128,25 @@ object EncoderTicks {
      * Dynamic generator for encoder tick conversions based on a motor.
      */
     class Generator(
-        private val motor: DcMotorEx,
+        motor: DcMotor,
         private val ticksPerRevolution: Int,
         private val reduction: Double,
         private val wheelDiameter: Measure<Distance>?
     ) {
+        private val motorEx: DcMotorEx = motor as DcMotorEx
+
         /**
          * Get the current encoder ticks in an angle.
          */
         fun getAngle(): Measure<Angle> {
-            return toAngle(motor.currentPosition, ticksPerRevolution, reduction)
+            return toAngle(motorEx.currentPosition, ticksPerRevolution, reduction)
         }
 
         /**
          * Get the angular velocity of the encoder.
          */
         fun getAngularVelocity(): Measure<Velocity<Angle>> {
-            return toAngle(motor.velocity.toInt(), ticksPerRevolution, reduction).per(Second)
+            return toAngle(motorEx.velocity.toInt(), ticksPerRevolution, reduction).per(Second)
         }
 
         /**
@@ -151,10 +154,10 @@ object EncoderTicks {
          * Note that the motor attached to this generator *must* be an instance of [Motor], or an exception will be thrown.
          */
         fun getAngularAcceleration(): Measure<Velocity<Velocity<Angle>>> {
-            if (motor !is Motor) {
+            if (motorEx !is Motor) {
                 throw IllegalStateException("Motor attached to this generator is not a Motor instance. Acceleration information is not available.")
             }
-            return toAngle(motor.acceleration.toInt(), ticksPerRevolution, reduction).per(Second).per(Second)
+            return toAngle(motorEx.acceleration.toInt(), ticksPerRevolution, reduction).per(Second).per(Second)
         }
 
         /**
@@ -162,7 +165,7 @@ object EncoderTicks {
          * @return the distance, else null if the wheel diameter is not provided.
          */
         fun getDistance(): Measure<Distance>? {
-            return wheelDiameter?.let { toDistance(motor.currentPosition, ticksPerRevolution, it, reduction) }
+            return wheelDiameter?.let { toDistance(motorEx.currentPosition, ticksPerRevolution, it, reduction) }
         }
 
         /**
@@ -170,7 +173,7 @@ object EncoderTicks {
          * @return the distance, else null if the wheel diameter is not provided.
          */
         fun getVelocity(): Measure<Distance>? {
-            return wheelDiameter?.let { toDistance(motor.velocity.toInt(), ticksPerRevolution, it, reduction) }
+            return wheelDiameter?.let { toDistance(motorEx.velocity.toInt(), ticksPerRevolution, it, reduction) }
         }
 
         /**
@@ -178,11 +181,11 @@ object EncoderTicks {
          * Note that the motor attached to this generator *must* be an instance of [Motor], or an exception will be thrown.
          */
         fun getAcceleration(): Measure<Velocity<Velocity<Distance>>>? {
-            if (motor !is Motor) {
+            if (motorEx !is Motor) {
                 throw IllegalStateException("Motor attached to this generator is not a Motor instance. Acceleration information is not available.")
             }
             return wheelDiameter?.let {
-                toDistance(motor.acceleration.toInt(), ticksPerRevolution, it, reduction).per(
+                toDistance(motorEx.acceleration.toInt(), ticksPerRevolution, it, reduction).per(
                     Second
                 ).per(Second)
             }

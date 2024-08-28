@@ -6,7 +6,6 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 import android.util.Pair;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
@@ -52,15 +51,6 @@ public class Motor extends DcMotorImplEx {
      * @param motor the DcMotor from hardwareMap to use.
      */
     public Motor(DcMotor motor) {
-        this((DcMotorEx) motor);
-    }
-
-    /**
-     * Wrap a DcMotor to use in the Motor class.
-     *
-     * @param motor the DcMotor from hardwareMap to use.
-     */
-    public Motor(DcMotorEx motor) {
         super(motor.getController(), motor.getPortNumber(), motor.getDirection(), motor.getMotorType());
         // The actual motor should *always* be running in RUN_WITHOUT_ENCODER
         super.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

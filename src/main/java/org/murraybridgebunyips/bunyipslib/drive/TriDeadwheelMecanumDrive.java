@@ -2,7 +2,7 @@ package org.murraybridgebunyips.bunyipslib.drive;
 
 import androidx.annotation.Nullable;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.DriveConstants;
@@ -37,7 +37,7 @@ public class TriDeadwheelMecanumDrive extends MecanumDrive {
      * @param lastTrackingEncPositions The last tracking encoder positions
      * @param lastTrackingEncVels      The last tracking encoder velocities
      */
-    public TriDeadwheelMecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, @Nullable IMU imu, DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight, ThreeWheelLocalizer.Coefficients localizerCoefficients, Deadwheel enc_left, Deadwheel enc_right, Deadwheel enc_x, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
+    public TriDeadwheelMecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, @Nullable IMU imu, DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, ThreeWheelLocalizer.Coefficients localizerCoefficients, Deadwheel enc_left, Deadwheel enc_right, Deadwheel enc_x, List<Integer> lastTrackingEncPositions, List<Integer> lastTrackingEncVels) {
         super(constants, mecanumCoefficients, imu, frontLeft, frontRight, backLeft, backRight);
         if (!assertParamsNotNull(localizerCoefficients, enc_left, enc_right, enc_x, lastTrackingEncPositions, lastTrackingEncVels))
             return;
@@ -60,7 +60,7 @@ public class TriDeadwheelMecanumDrive extends MecanumDrive {
      * @param enc_right             The right y encoder
      * @param enc_x                 The x encoder
      */
-    public TriDeadwheelMecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, IMU imu, DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight, ThreeWheelLocalizer.Coefficients localizerCoefficients, Deadwheel enc_left, Deadwheel enc_right, Deadwheel enc_x) {
+    public TriDeadwheelMecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, IMU imu, DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, ThreeWheelLocalizer.Coefficients localizerCoefficients, Deadwheel enc_left, Deadwheel enc_right, Deadwheel enc_x) {
         super(constants, mecanumCoefficients, imu, frontLeft, frontRight, backLeft, backRight);
         if (!assertParamsNotNull(localizerCoefficients, enc_left, enc_right, enc_x)) return;
         setLocalizer(new ThreeWheelLocalizer(localizerCoefficients, enc_left, enc_right, enc_x));

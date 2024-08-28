@@ -1,6 +1,6 @@
 package org.murraybridgebunyips.bunyipslib.drive;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.DriveConstants;
@@ -30,7 +30,7 @@ public class DualDeadwheelMecanumDrive extends MecanumDrive {
      * @param parallel              the parallel deadwheel encoder
      * @param perpendicular         the perpendicular deadwheel encoder
      */
-    public DualDeadwheelMecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, IMU imu, DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight, TwoWheelLocalizer.Coefficients localizerCoefficients, Deadwheel parallel, Deadwheel perpendicular) {
+    public DualDeadwheelMecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, IMU imu, DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, TwoWheelLocalizer.Coefficients localizerCoefficients, Deadwheel parallel, Deadwheel perpendicular) {
         super(constants, mecanumCoefficients, imu, frontLeft, frontRight, backLeft, backRight);
         if (!assertParamsNotNull(localizerCoefficients, parallel, perpendicular)) return;
         setLocalizer(new TwoWheelLocalizer(localizerCoefficients, parallel, perpendicular, this));

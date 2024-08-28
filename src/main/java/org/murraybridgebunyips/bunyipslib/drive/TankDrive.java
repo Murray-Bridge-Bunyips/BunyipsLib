@@ -13,7 +13,6 @@ import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -68,7 +67,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param leftMotors   The motors on the left side of the robot (e.g. {@code Arrays.asList(fl, bl)})
      * @param rightMotors  The motors on the right side of the robot (e.g. {@code Arrays.asList(fr, br)})
      */
-    public TankDrive(DriveConstants constants, TankCoefficients coefficients, @Nullable IMU imu, List<DcMotorEx> leftMotors, List<DcMotorEx> rightMotors) {
+    public TankDrive(DriveConstants constants, TankCoefficients coefficients, @Nullable IMU imu, List<DcMotor> leftMotors, List<DcMotor> rightMotors) {
         assertParamsNotNull(constants, coefficients, imu, leftMotors, rightMotors);
         instance = new TankRoadRunnerDrive(opMode.telemetry, constants, coefficients, opMode.hardwareMap.voltageSensor, imu, leftMotors, rightMotors);
         benji = new Watchdog(() -> {
