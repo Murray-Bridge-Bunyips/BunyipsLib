@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v3.5.0-master-5d131e08            </div>
+v3.5.0-master-4015aec3            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -75,7 +75,7 @@ TrapezoidProfile.State previousProfiledReference =
 TrapezoidProfile profile =
   new TrapezoidProfile(constraints, unprofiledReference, previousProfiledReference);
 previousProfiledReference = profile.calculate(timeSincePreviousUpdate);
-</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">where `unprofiledReference` is free to change between calls. Note that when the unprofiled reference is within the constraints, `calculate()` returns the unprofiled reference unchanged. </p><p class="paragraph">Otherwise, a timer can be started to provide monotonic values for `calculate()` and to determine when the profile has completed via `isFinished()`. <a href="https://github.com/FTCLib/FTCLib/blob/1c8995d09413b406e0f4aff238ea4edc2bb860c4/core/src/main/java/com/arcrobotics/ftclib/trajectory/TrapezoidProfile.java">Source</a></p></div></div>
+</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">where `unprofiledReference` is free to change between calls. Note that when the unprofiled reference is within the constraints, `calculate()` returns the unprofiled reference unchanged. </p><p class="paragraph">Otherwise, a timer can be started to provide monotonic values for `calculate()` and to determine when the profile has completed via `isFinished()`. <a href="https://github.com/FTCLib/FTCLib/blob/1c8995d09413b406e0f4aff238ea4edc2bb860c4/core/src/main/java/com/arcrobotics/ftclib/trajectory/TrapezoidProfile.java">Source</a></p><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">3.5.0</p></span></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
