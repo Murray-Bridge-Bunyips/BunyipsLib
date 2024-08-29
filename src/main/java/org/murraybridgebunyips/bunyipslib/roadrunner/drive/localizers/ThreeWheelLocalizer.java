@@ -71,6 +71,8 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
         ));
 
         this.coefficients = coefficients;
+        if (this.coefficients.USE_CORRECTED_COUNTS)
+            enableOverflowCompensation();
 
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
@@ -155,25 +157,25 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
      */
     public static class Coefficients {
         /**
-         * Ticks per revolution of the tracking wheel encoder.
+         * Ticks per revolution of the tracking wheel encoders.
          */
         public double TICKS_PER_REV;
         /**
-         * Radius of the tracking wheel.
+         * Radius of the tracking wheels in inches.
          */
-        public double WHEEL_RADIUS = 2; // in
+        public double WHEEL_RADIUS = 2;
         /**
-         * Gear ratio of the tracking wheel.
+         * Gear ratio of the tracking wheels. Calculated as {@code output (wheel) speed / input (encoder) speed}.
          */
-        public double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
+        public double GEAR_RATIO = 1;
         /**
          * Inches of lateral distance between the left and right wheels.
          */
-        public double LATERAL_DISTANCE = 10; // in; distance between the left and right wheels
+        public double LATERAL_DISTANCE = 10;
         /**
          * Forward offset of the lateral wheel to the center of rotation.
          */
-        public double FORWARD_OFFSET = 4; // in; offset of the lateral wheel
+        public double FORWARD_OFFSET = 4;
         /**
          * Multiplicative scale of the ticks from the x (forward) axis.
          */
@@ -182,12 +184,15 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
          * Multiplicative scale of the ticks from the y (strafe) axis.
          */
         public double Y_MULTIPLIER = 1;
+        /**
+         * Whether to use corrected overflow counts if the TPS exceeds 32767.
+         */
+        public boolean USE_CORRECTED_COUNTS = false;
 
         /**
          * Utility builder for creating new coefficients.
          */
         public static class Builder {
-
             private final ThreeWheelLocalizer.Coefficients trackingWheelCoefficients;
 
             /**
@@ -249,6 +254,17 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
              */
             public Builder setForwardOffset(Measure<Distance> forwardOffset) {
                 trackingWheelCoefficients.FORWARD_OFFSET = forwardOffset.in(Inches);
+                return this;
+            }
+
+            /**
+             * Set overflow compensation to be used on the localizer.
+             *
+             * @param correctEncoderCounts whether to use overflow compensation
+             * @return The builder
+             */
+            public Builder setOverflowCompensation(boolean correctEncoderCounts) {
+                trackingWheelCoefficients.USE_CORRECTED_COUNTS = correctEncoderCounts;
                 return this;
             }
 

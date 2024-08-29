@@ -69,6 +69,8 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
 
         this.drive = drive;
         this.coefficients = coefficients;
+        if (this.coefficients.USE_CORRECTED_COUNTS)
+            enableOverflowCompensation();
 
         this.parallelDeadwheel = parallelDeadwheel;
         this.perpendicularDeadwheel = perpendicularDeadwheel;
@@ -139,33 +141,31 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
      */
     public static class Coefficients {
         /**
-         * The number of ticks per revolution of the encoder
+         * The number of ticks per revolution of the encoders
          */
         public double TICKS_PER_REV;
         /**
-         * The radius of the tracking wheel in inches
+         * The radius of the tracking wheels in inches
          */
-        public double WHEEL_RADIUS = 2; // in
+        public double WHEEL_RADIUS = 2;
         /**
-         * The gear ratio of the tracking wheel, (output wheel speed / input encoder speed)
+         * Gear ratio of the tracking wheels. Calculated as {@code output (wheel) speed / input (encoder) speed}.
          */
-        public double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
-
+        public double GEAR_RATIO = 1;
         /**
-         * Position in the forward direction of the parallel wheel in inches
+         * Position in the forward direction of the parallel wheels in inches
          */
-        public double PARALLEL_X; // X is the up and down direction
+        public double PARALLEL_X;
         /**
-         * Position in the strafe direction of the parallel wheel in inches
+         * Position in the strafe direction of the parallel wheels in inches
          */
-        public double PARALLEL_Y; // Y is the strafe direction
-
+        public double PARALLEL_Y;
         /**
-         * Position in the forward direction of the perpendicular wheel in inches
+         * Position in the forward direction of the perpendicular wheels in inches
          */
         public double PERPENDICULAR_X;
         /**
-         * Position in the strafe direction of the perpendicular wheel in inches
+         * Position in the strafe direction of the perpendicular wheels in inches
          */
         public double PERPENDICULAR_Y;
         /**
@@ -176,12 +176,15 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
          * Multiplicative scale of the ticks from the y (strafe) axis.
          */
         public double Y_MULTIPLIER = 1;
+        /**
+         * Whether to use corrected overflow counts if the TPS exceeds 32767.
+         */
+        public boolean USE_CORRECTED_COUNTS = false;
 
         /**
          * Utility class for building TwoWheelLocalizer.Coefficients
          */
         public static class Builder {
-
             private final TwoWheelLocalizer.Coefficients twoWheelTrackingCoefficients;
 
             /**
@@ -225,7 +228,7 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
             }
 
             /**
-             * Set the position of the parallel wheel in the forward direction.
+             * Set the position of the parallel wheel in the forward direction. +x forward.
              *
              * @param parallelX The position of the parallel wheel in the forward direction from the center of rotation
              * @return The builder
@@ -236,7 +239,7 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
             }
 
             /**
-             * Set the position of the parallel wheel in the strafe direction.
+             * Set the position of the parallel wheel in the strafe direction. +y left.
              *
              * @param parallelY The position of the parallel wheel in the strafe direction from the center of rotation
              * @return The builder
@@ -247,7 +250,7 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
             }
 
             /**
-             * Set the position of the perpendicular wheel in the forward direction.
+             * Set the position of the perpendicular wheel in the forward direction. +x forward.
              *
              * @param perpendicularX The position of the perpendicular wheel in the forward direction from the center of rotation
              * @return The builder
@@ -258,7 +261,7 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
             }
 
             /**
-             * Set the position of the perpendicular wheel in the strafe direction.
+             * Set the position of the perpendicular wheel in the strafe direction. +y left.
              *
              * @param perpendicularY The position of the perpendicular wheel in the strafe direction from the center of rotation
              * @return The builder
@@ -269,7 +272,18 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
             }
 
             /**
-             * Set the forward (x) multiplier for the ticks reported by the forward deadwheels.
+             * Set overflow compensation to be used on the localizer.
+             *
+             * @param correctEncoderCounts whether to use overflow compensation
+             * @return The builder
+             */
+            public Builder setOverflowCompensation(boolean correctEncoderCounts) {
+                twoWheelTrackingCoefficients.USE_CORRECTED_COUNTS = correctEncoderCounts;
+                return this;
+            }
+
+            /**
+             * Set the forward (x) multiplier for the ticks reported by the forward deadwheel.
              *
              * @param forwardMul the multiplier
              * @return The builder
