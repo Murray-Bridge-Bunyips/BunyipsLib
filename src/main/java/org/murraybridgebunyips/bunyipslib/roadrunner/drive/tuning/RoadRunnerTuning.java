@@ -183,6 +183,7 @@ public abstract class RoadRunnerTuning extends LinearOpMode {
 
         // Defer the OpMode to the tuning OpMode now, it is confirmed to be safe to cast
         out.setOpModeStatus(html().bold(selection[0].getClass().getSimpleName()).toString());
+        out.update();
         ((TriConsumer<LinearOpMode, DualTelemetry, RoadRunnerDrive>) selection[0])
                 .accept(this, out, drive);
     }
