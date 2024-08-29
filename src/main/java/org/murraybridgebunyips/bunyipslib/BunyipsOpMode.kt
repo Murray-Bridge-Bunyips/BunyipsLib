@@ -293,7 +293,9 @@ abstract class BunyipsOpMode : BOMInternal() {
                     // Run the user's init task, if it isn't null
                     initTask?.run()
                     // Run until onInitLoop returns true, and the initTask is done, or the OpMode is continued
-                    if (onInitLoop() && (initTask == null || initTask !is Task || (initTask as Task).pollFinished())) break
+                    // If the initTask is a Runnable, then we need to keep running
+                    if (onInitLoop() && (initTask == null || (initTask is Task && (initTask as Task).pollFinished())))
+                        break
                 } catch (e: Exception) {
                     ok = false
                     telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
