@@ -26,6 +26,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.DriveConstants;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.TankCoefficients;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.TankRoadRunnerDrive;
+import org.murraybridgebunyips.bunyipslib.roadrunner.drive.localizers.SwitchableLocalizer;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequence;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceRunner;
@@ -54,7 +55,7 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0-pre
  */
 public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
-    private final TankRoadRunnerDrive instance;
+    private final TankRoadRunnerDrive drive;
 
     private final Watchdog benji;
     private volatile boolean updates;
@@ -70,102 +71,134 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     public TankDrive(DriveConstants constants, TankCoefficients coefficients, @Nullable IMU imu, List<DcMotor> leftMotors, List<DcMotor> rightMotors) {
         assertParamsNotNull(constants, coefficients, imu, leftMotors, rightMotors);
-        instance = new TankRoadRunnerDrive(opMode.telemetry, constants, coefficients, opMode.hardwareMap.voltageSensor, imu, leftMotors, rightMotors);
+        drive = new TankRoadRunnerDrive(opMode.telemetry, constants, coefficients, opMode.hardwareMap.voltageSensor, imu, leftMotors, rightMotors);
         benji = new Watchdog(() -> {
             if (opMode.isStopRequested()) return;
             Dbg.warn(getClass(), "Stateful drive updates have been disabled as it has been longer than %ms since the last call to update().", RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds));
             updates = false;
-            instance.stop();
+            drive.stop();
         }, 100, (long) RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds), TimeUnit.MILLISECONDS);
         updatePoseFromMemory();
     }
 
+    /**
+     * Call to use the TankLocalizer as a backup localizer alongside the current localizer. Note if you are already
+     * using a TankLocalizer (default), this will duplicate your localizers and there isn't a point of calling this method.
+     * This localizer can be switched/tested as part of the SwitchableLocalizer.
+     *
+     * @return the SwitchableLocalizer
+     */
+    public SwitchableLocalizer useFallbackLocalizer() {
+        Pose2d curr = drive.getPoseEstimate();
+        SwitchableLocalizer localizer = new SwitchableLocalizer(
+                drive.getLocalizer(),
+                new com.acmerobotics.roadrunner.drive.TankDrive.TankLocalizer(drive, true)
+        );
+        setLocalizer(localizer);
+        drive.setPoseEstimate(curr);
+        return localizer;
+    }
+
+    /**
+     * Call to set a fallback localizer that can be switched/tested to as part of the SwitchableLocalizer.
+     *
+     * @param fallback the backup localizer
+     * @return the SwitchableLocalizer
+     */
+    public SwitchableLocalizer useFallbackLocalizer(Localizer fallback) {
+        Pose2d curr = drive.getPoseEstimate();
+        SwitchableLocalizer localizer = new SwitchableLocalizer(drive.getLocalizer(), fallback);
+        setLocalizer(localizer);
+        drive.setPoseEstimate(curr);
+        return localizer;
+    }
+
     @Override
     public TrajectorySequenceRunner getTrajectorySequenceRunner() {
-        return instance.getTrajectorySequenceRunner();
+        return drive.getTrajectorySequenceRunner();
     }
 
     @Override
     public void stop() {
-        instance.stop();
+        drive.stop();
     }
 
     @Override
     public void waitForIdle() {
         if (isDisabled() || !updates) return;
-        instance.waitForIdle();
+        drive.waitForIdle();
     }
 
     @Override
     public DriveConstants getConstants() {
-        return instance.getConstants();
+        return drive.getConstants();
     }
 
     @Override
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
-        return instance.trajectoryBuilder(startPose);
+        return drive.trajectoryBuilder(startPose);
     }
 
     @Override
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
-        return instance.trajectoryBuilder(startPose, reversed);
+        return drive.trajectoryBuilder(startPose, reversed);
     }
 
     @Override
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
-        return instance.trajectoryBuilder(startPose, startHeading);
+        return drive.trajectoryBuilder(startPose, startHeading);
     }
 
     @Override
     @SuppressWarnings("rawtypes")
     public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
-        return instance.trajectorySequenceBuilder(startPose);
+        return drive.trajectorySequenceBuilder(startPose);
     }
 
     @Override
     public void turnAsync(double angle) {
-        instance.turnAsync(angle);
+        drive.turnAsync(angle);
     }
 
     @Override
     public void turn(double angle) {
         if (isDisabled() || !updates) return;
-        instance.turn(angle);
+        drive.turn(angle);
     }
 
     @Override
     public void followTrajectoryAsync(Trajectory trajectory) {
-        instance.followTrajectoryAsync(trajectory);
+        drive.followTrajectoryAsync(trajectory);
     }
 
     @Override
     public void followTrajectory(Trajectory trajectory) {
         if (isDisabled() || !updates) return;
-        instance.followTrajectory(trajectory);
+        drive.followTrajectory(trajectory);
     }
 
     @Override
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
-        instance.followTrajectorySequenceAsync(trajectorySequence);
+        drive.followTrajectorySequenceAsync(trajectorySequence);
     }
 
     @Override
     public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
         if (isDisabled() || !updates) return;
-        instance.followTrajectorySequence(trajectorySequence);
+        drive.followTrajectorySequence(trajectorySequence);
     }
 
     @Override
     public Pose2d getLastError() {
-        return instance.getLastError();
+        return drive.getLastError();
     }
 
     @Override
     protected void periodic() {
         opMode.telemetry.add("Localizer: X:%cm Y:%cm %deg",
-                round(Centimeters.convertFrom(instance.getPoseEstimate().getX(), Inches), 1),
-                round(Centimeters.convertFrom(instance.getPoseEstimate().getY(), Inches), 1),
-                round(Math.toDegrees(instance.getPoseEstimate().getHeading()), 1)).color("gray");
+                round(Centimeters.convertFrom(drive.getPoseEstimate().getX(), Inches), 1),
+                round(Centimeters.convertFrom(drive.getPoseEstimate().getY(), Inches), 1),
+                round(Math.toDegrees(drive.getPoseEstimate().getHeading()), 1)).color("gray");
 
         // Required to ensure that update() is being called before scheduling any motor updates,
         // using a watchdog to ensure that an update is occurring at least every 200ms.
@@ -176,117 +209,117 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             benji.start();
         benji.stroke();
 
-        instance.update();
-        Storage.memory().lastKnownPosition = instance.getPoseEstimate();
+        drive.update();
+        Storage.memory().lastKnownPosition = drive.getPoseEstimate();
     }
 
     @Override
     public boolean isBusy() {
-        return instance.isBusy();
+        return drive.isBusy();
     }
 
     @Override
     public void setMode(DcMotor.RunMode runMode) {
-        instance.setMode(runMode);
+        drive.setMode(runMode);
     }
 
     @Override
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
-        instance.setZeroPowerBehavior(zeroPowerBehavior);
+        drive.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
     @Override
     public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
-        instance.setPIDFCoefficients(runMode, coefficients);
+        drive.setPIDFCoefficients(runMode, coefficients);
     }
 
     @Override
     public void setWeightedDrivePower(Pose2d drivePower) {
         if (isDisabled() || !updates) return;
-        instance.setWeightedDrivePower(drivePower);
+        drive.setWeightedDrivePower(drivePower);
     }
 
     @Override
     public List<Double> getWheelPositions() {
-        return instance.getWheelPositions();
+        return drive.getWheelPositions();
     }
 
     @Override
     public List<Double> getWheelVelocities() {
-        return instance.getWheelVelocities();
+        return drive.getWheelVelocities();
     }
 
     @Override
     public double[] getMotorPowers() {
-        return instance.getMotorPowers();
+        return drive.getMotorPowers();
     }
 
     @Override
     public void setMotorPowers(double... powers) {
         if (isDisabled() || !updates) return;
-        instance.setMotorPowers(powers);
+        drive.setMotorPowers(powers);
     }
 
     @Override
     public double getRawExternalHeading() {
-        return instance.getRawExternalHeading();
+        return drive.getRawExternalHeading();
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return instance.getExternalHeadingVelocity();
+        return drive.getExternalHeadingVelocity();
     }
 
     @Override
     public Localizer getLocalizer() {
-        return instance.getLocalizer();
+        return drive.getLocalizer();
     }
 
     @Override
     public void setLocalizer(Localizer localizer) {
-        instance.setLocalizer(localizer);
+        drive.setLocalizer(localizer);
     }
 
     @Override
     public double getExternalHeading() {
-        return instance.getExternalHeading();
+        return drive.getExternalHeading();
     }
 
     @Override
     public void setExternalHeading(double value) {
-        instance.setExternalHeading(value);
+        drive.setExternalHeading(value);
     }
 
     @Override
     public Pose2d getPoseEstimate() {
-        return instance.getPoseEstimate();
+        return drive.getPoseEstimate();
     }
 
     @Override
     public void setPoseEstimate(Pose2d value) {
-        instance.setPoseEstimate(value);
+        drive.setPoseEstimate(value);
     }
 
     @Override
     public Pose2d getPoseVelocity() {
-        return instance.getPoseVelocity();
+        return drive.getPoseVelocity();
     }
 
     @Override
     public void updatePoseEstimate() {
-        instance.updatePoseEstimate();
+        drive.updatePoseEstimate();
     }
 
     @Override
     public void setDriveSignal(DriveSignal driveSignal) {
         if (isDisabled() || !updates) return;
-        instance.setDriveSignal(driveSignal);
+        drive.setDriveSignal(driveSignal);
     }
 
     @Override
     public void setDrivePower(Pose2d drivePower) {
         if (isDisabled() || !updates) return;
-        instance.setDrivePower(drivePower);
+        drive.setDrivePower(drivePower);
     }
 
     /**
@@ -304,6 +337,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     public void cancelTrajectory() {
-        instance.cancelTrajectory();
+        drive.cancelTrajectory();
     }
 }
