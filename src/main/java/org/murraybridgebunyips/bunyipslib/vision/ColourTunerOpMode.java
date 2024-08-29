@@ -28,7 +28,7 @@ import org.opencv.core.Scalar;
  * @since 3.4.0
  */
 @Config
-public abstract class ColourTuner extends BunyipsOpMode {
+public abstract class ColourTunerOpMode extends BunyipsOpMode {
     /**
      * The scalars used for the current processor.
      */

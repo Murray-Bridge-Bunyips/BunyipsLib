@@ -54,7 +54,7 @@ import java.util.Objects;
  * @since 4.0.0
  */
 @Config
-public abstract class RoadRunnerTuning extends LinearOpMode {
+public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     // Tuning procedures are exposed as public static fields so FtcDashboard can change internally public properties,
     // with documentation of their operation being attached to their actual classes, not these instances.
     // These tests are ordered in the general tuning process order, minus LocalizationTest which is usually run whenever.
