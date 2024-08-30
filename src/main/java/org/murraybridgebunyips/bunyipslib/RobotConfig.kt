@@ -40,7 +40,8 @@ abstract class RobotConfig {
      * @param opMode the OpMode instance - usually the `this` object when at the root OpMode.
      * @return the instance of the RobotConfig
      */
-    fun init(opMode: OpMode): RobotConfig {
+    @Suppress("UNCHECKED_CAST")
+    fun <T : RobotConfig> init(opMode: OpMode): T {
         Storage.memory().hardwareErrors.clear()
         Storage.memory().unusableComponents.clear()
         this.hardwareMap = opMode.hardwareMap
@@ -64,7 +65,7 @@ abstract class RobotConfig {
                 opMode.telemetry.log().add("error: '$error' was not found in the current saved configuration.")
             }
         }
-        return this
+        return this as T
     }
 
     /**
@@ -77,15 +78,14 @@ abstract class RobotConfig {
      * @see init(opMode: OpMode)
      * @return the instance of the RobotConfig
      */
-    fun init(): RobotConfig {
+    fun <T : RobotConfig> init(): T {
         try {
             // Access the singleton associated with a BunyipsOpMode, if we're not running one Kotlin
             // will throw a UninitializedPropertyAccessException, so we can tell the user off here.
-            init(BunyipsOpMode.instance)
+            return init(BunyipsOpMode.instance)
         } catch (e: UninitializedPropertyAccessException) {
             throw UnsupportedOperationException("Argument-less RobotConfig.init() method is only supported in a BunyipsOpMode. Use RobotConfig.init(opMode) instead.")
         }
-        return this
     }
 
     private val dcMotorCastable = listOf(Deadwheel::class.java, Ramping.DcMotor::class.java, Motor::class.java)
