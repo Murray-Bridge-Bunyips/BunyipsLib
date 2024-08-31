@@ -32,7 +32,7 @@ object Exceptions {
      * @see runUserMethod for single method executions of exception-prone user code
      */
     @JvmStatic
-    fun handle(e: Exception, stderr: Consumer<String>) {
+    fun handle(e: Throwable, stderr: Consumer<String>?) {
         Dbg.error("Exception caught! Stacktrace:")
         Dbg.sendStacktrace(e)
         val sw = StringWriter()
@@ -48,15 +48,15 @@ object Exceptions {
                 }
             }
         }
-        stderr.accept("<font color='red'><b>exception caught! &lt;${e.localizedMessage}&gt;</b></font>")
+        stderr?.accept("<font color='red'><b>exception caught! &lt;${e.localizedMessage}&gt;</b></font>")
         if (e.cause != null) {
-            stderr.accept("caused by: ${e.cause}")
+            stderr?.accept("caused by: ${e.cause}")
         }
         if (stack.length > MAX_DS_STACKTRACE_CHARS) {
             stack = stack.substring(0, MAX_DS_STACKTRACE_CHARS - 4)
             stack += " ..."
         }
-        stderr.accept("<small>$stack</small>")
+        stderr?.accept("<small>$stack</small>")
         if (e is InterruptedException) {
             Dbg.error("Interrupted exception called, raising to superclass...")
             // FTC SDK must handle this
