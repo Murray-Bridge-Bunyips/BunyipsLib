@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.murraybridgebunyips.bunyipslib.external.units.Angle
 import org.murraybridgebunyips.bunyipslib.external.units.Distance
 import org.murraybridgebunyips.bunyipslib.external.units.Measure
-import org.murraybridgebunyips.bunyipslib.external.units.Units.Degrees
-import org.murraybridgebunyips.bunyipslib.external.units.Units.Meters
+import org.murraybridgebunyips.bunyipslib.external.units.Units.Revolutions
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Second
 import org.murraybridgebunyips.bunyipslib.external.units.Velocity
+import kotlin.math.roundToInt
 
 /**
  * Utility class for converting between SI units and encoder ticks.
@@ -27,8 +27,7 @@ object EncoderTicks {
      */
     @JvmStatic
     fun toAngle(ticks: Int, ticksPerRevolution: Int, reduction: Double): Measure<Angle> {
-        // Equation: ticks / ticksPerRevolution * 360 * reduction = angle (in degrees)
-        return Degrees.of(ticks.toDouble() / ticksPerRevolution.toDouble() * 360.0).times(reduction)
+        return Revolutions.of(ticks.toDouble() / ticksPerRevolution.toDouble()).times(reduction)
     }
 
     /**
@@ -41,8 +40,8 @@ object EncoderTicks {
      */
     @JvmStatic
     fun fromAngle(angle: Measure<Angle>, ticksPerRevolution: Int, reduction: Double): Int {
-        // Equation: angle (in degrees) / 360 * ticksPerRevolution * reduction = ticks
-        return ((angle.inUnit(Degrees) / 360.0 * ticksPerRevolution.toDouble()) * reduction).toInt()
+        // Equation: angle (in revolutions) * ticksPerRevolution * reduction = ticks
+        return (angle.inUnit(Revolutions) * ticksPerRevolution.toDouble() * reduction).roundToInt()
     }
 
     /**
@@ -61,8 +60,11 @@ object EncoderTicks {
         wheelDiameter: Measure<Distance>,
         reduction: Double
     ): Measure<Distance> {
-        // Equation: circumference (2*pi*r_m) * (encoder ticks / ticksPerRevolution) = distance (in meters)
-        return wheelDiameter.times(Math.PI).times(ticks.toDouble() / ticksPerRevolution.toDouble()).times(reduction)
+        // Equation: circumference (2*pi*r_m) * (encoder ticks / ticksPerRevolution) = distance
+        return wheelDiameter
+            .times(Math.PI)
+            .times(ticks.toDouble() / ticksPerRevolution.toDouble())
+            .times(reduction)
     }
 
     /**
@@ -82,7 +84,12 @@ object EncoderTicks {
         reduction: Double
     ): Int {
         // Equation: distance * ticksPerRevolution / circumference (2*pi*r_m) = ticks
-        return ((distance.inUnit(Meters) * ticksPerRevolution.toDouble() / (wheelDiameter.inUnit(Meters) * Math.PI)) * reduction).toInt()
+        return distance
+            .times(ticksPerRevolution.toDouble())
+            .divide(wheelDiameter.times(Math.PI))
+            .times(reduction)
+            .magnitude()
+            .roundToInt()
     }
 
     /**
@@ -102,7 +109,7 @@ object EncoderTicks {
         reduction: Double = 1.0,
         wheelDiameter: Measure<Distance>? = null
     ): Generator {
-        return Generator(motor, motor.motorType.ticksPerRev.toInt(), reduction, wheelDiameter)
+        return Generator(motor, motor.motorType.ticksPerRev.roundToInt(), reduction, wheelDiameter)
     }
 
     /**
@@ -147,7 +154,7 @@ object EncoderTicks {
          * Get the angular velocity of the encoder.
          */
         fun getAngularVelocity(): Measure<Velocity<Angle>> {
-            return toAngle(motorEx.velocity.toInt(), ticksPerRevolution, reduction).per(Second)
+            return toAngle(motorEx.velocity.roundToInt(), ticksPerRevolution, reduction).per(Second)
         }
 
         /**
@@ -158,7 +165,7 @@ object EncoderTicks {
             if (motorEx !is Motor) {
                 throw IllegalStateException("Motor attached to this generator is not a Motor instance. Acceleration information is not available.")
             }
-            return toAngle(motorEx.acceleration.toInt(), ticksPerRevolution, reduction).per(Second).per(Second)
+            return toAngle(motorEx.acceleration.roundToInt(), ticksPerRevolution, reduction).per(Second).per(Second)
         }
 
         /**
@@ -174,7 +181,7 @@ object EncoderTicks {
          * @return the distance, else null if the wheel diameter is not provided.
          */
         fun getVelocity(): Measure<Distance>? {
-            return wheelDiameter?.let { toDistance(motorEx.velocity.toInt(), ticksPerRevolution, it, reduction) }
+            return wheelDiameter?.let { toDistance(motorEx.velocity.roundToInt(), ticksPerRevolution, it, reduction) }
         }
 
         /**
@@ -186,9 +193,8 @@ object EncoderTicks {
                 throw IllegalStateException("Motor attached to this generator is not a Motor instance. Acceleration information is not available.")
             }
             return wheelDiameter?.let {
-                toDistance(motorEx.acceleration.toInt(), ticksPerRevolution, it, reduction).per(
-                    Second
-                ).per(Second)
+                toDistance(motorEx.acceleration.roundToInt(), ticksPerRevolution, it, reduction)
+                    .per(Second).per(Second)
             }
         }
 
