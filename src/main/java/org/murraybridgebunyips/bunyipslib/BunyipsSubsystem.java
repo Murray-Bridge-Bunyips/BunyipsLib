@@ -323,6 +323,21 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * Ensure you know the consequences of multithreading, especially over hardware on a Robot Controller.
      * <p>
      * When this subsystem is being multithreaded, manual calls to {@link #update()} will be ignored.
+     * <p>
+     * The thread will run at full speed as-is.
+     */
+    public final void startThread() {
+        startThread(Seconds.zero());
+    }
+
+    /**
+     * Call to delegate all updates of this subsystem to a thread that will begin execution on this method call.
+     * <b>WARNING: You must ensure you know what you're doing before you multithread.</b>
+     * <p>
+     * Improper usage of threading subsystems will result in unexpected and potentially dangerous robot behaviour.
+     * Ensure you know the consequences of multithreading, especially over hardware on a Robot Controller.
+     * <p>
+     * When this subsystem is being multithreaded, manual calls to {@link #update()} will be ignored.
      *
      * @param loopSleepDuration the duration to sleep the external thread by after every iteration
      */

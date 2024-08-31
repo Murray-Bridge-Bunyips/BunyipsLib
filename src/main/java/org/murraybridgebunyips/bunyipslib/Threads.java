@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib;
 
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Milliseconds;
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
@@ -38,6 +39,15 @@ public final class Threads {
     }
 
     /**
+     * Start a new thread with the given task. The thread name will be defined by the class of the Runnable.
+     *
+     * @param task the runnable task to run on the new thread
+     */
+    public static void start(Runnable task) {
+        start(task, task.getClass().getSimpleName());
+    }
+
+    /**
      * Start a new thread with the given infinite loop task.
      * This thread will auto end when the task is interrupted.
      *
@@ -65,12 +75,14 @@ public final class Threads {
     }
 
     /**
-     * Start a new thread with the given task. The thread name will be defined by the class of the Runnable.
+     * Start a new thread with the given infinite loop task.
+     * This thread will auto end when the task is interrupted.
      *
-     * @param task the runnable task to run on the new thread
+     * @param task              the infinite loop task to run on the new thread
+     * @param name              the name of the thread to access it later and to log as
      */
-    public static void start(Runnable task) {
-        start(task, task.getClass().getSimpleName());
+    public static void startLoop(Runnable task, String name) {
+        startLoop(task, name, Seconds.zero());
     }
 
     /**
@@ -82,6 +94,16 @@ public final class Threads {
      */
     public static void startLoop(Runnable task, Measure<Time> loopSleepDuration) {
         startLoop(task, task.getClass().getSimpleName(), loopSleepDuration);
+    }
+
+    /**
+     * Start a new thread with the given infinite loop task.
+     * This thread will auto end when the task is interrupted, with a name defined by the class of the Runnable.
+     *
+     * @param task              the infinite loop task to run on the new thread
+     */
+    public static void startLoop(Runnable task) {
+        startLoop(task, task.getClass().getSimpleName(), Seconds.zero());
     }
 
     /**

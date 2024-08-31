@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.external.units.Velocity;
 
 /**
@@ -232,13 +233,26 @@ public class IMUEx implements IMU, Runnable {
      * Call to delegate the manual data updating of the IMU to a thread managed by {@link Threads}.
      * Manual calls to {@link #run()} will be ignored as they will be dispatched by the thread.
      * This mirrors behaviour found in a {@link BunyipsSubsystem}.
+     * <p>
+     * The thread will run at full speed as-is.
      */
     public void startThread() {
+        startThread(Seconds.zero());
+    }
+
+    /**
+     * Call to delegate the manual data updating of the IMU to a thread managed by {@link Threads}.
+     * Manual calls to {@link #run()} will be ignored as they will be dispatched by the thread.
+     * This mirrors behaviour found in a {@link BunyipsSubsystem}.
+     *
+     * @param loopSleepDuration the duration to sleep this thread after every loop to save resources
+     */
+    public void startThread(Measure<Time> loopSleepDuration) {
         if (threadName != null) return;
         // Run at least once to ensure last acquired time is updated
         internalUpdate();
         threadName = "IMUEx-Threaded-" + hashCode();
-        Threads.startLoop(this::internalUpdate, threadName, Seconds.zero());
+        Threads.startLoop(this::internalUpdate, threadName, loopSleepDuration);
     }
 
     /**
