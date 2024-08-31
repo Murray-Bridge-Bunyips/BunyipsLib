@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.IMU
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.Deadwheel
 import java.util.function.Consumer
 
@@ -99,6 +100,11 @@ abstract class RobotConfig {
                 val motor = hardwareMap.get(DcMotor::class.java, name)
                 return it.getConstructor(DcMotor::class.java).newInstance(motor) as T
             }
+        }
+        // IMUEx is a drop-in replacement for IMU and can be fetched here too
+        if (IMUEx::class.java.isAssignableFrom(device)) {
+            val imu = hardwareMap.get(IMU::class.java, name)
+            return IMUEx(imu) as T
         }
         return hardwareMap.get(device, name)
     }

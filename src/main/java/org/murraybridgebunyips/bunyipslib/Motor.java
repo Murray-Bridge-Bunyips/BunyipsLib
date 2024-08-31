@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 /**
- * Wrapper class for a {@link DcMotor} that uses custom control algorithms to operate {@link RunMode#RUN_USING_ENCODER}
+ * Drop-in replacement for a {@link DcMotor} that uses custom control algorithms to operate {@link RunMode#RUN_USING_ENCODER}
  * and {@link RunMode#RUN_TO_POSITION} modes. Internally integrates a gain scheduler to allow for more precise
  * system coefficients against gravity and other external forces.
  * <p>
