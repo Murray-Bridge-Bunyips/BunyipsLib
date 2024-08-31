@@ -30,10 +30,16 @@ public final class Threads {
      * @param name the name of the thread to access it later and to log as
      */
     public static void start(Runnable task, String name) {
-        Dbg.logd(Threads.class, "starting new thread: % ...", name);
-        Thread thread = new Thread(task);
+        Thread thread = new Thread(() -> {
+            try {
+                task.run();
+            } finally {
+                Dbg.logd(Threads.class, "thread '%(%)' completed.", name, Thread.currentThread().hashCode());
+            }
+        });
         thread.setName(name);
         thread.setUncaughtExceptionHandler(exceptionHandler);
+        Dbg.logd(Threads.class, "starting new thread: %(%) ...", name, thread.hashCode());
         thread.start();
         threads.put(task.hashCode(), thread);
     }
@@ -56,20 +62,25 @@ public final class Threads {
      * @param loopSleepDuration the duration to sleep this thread after every loop to save resources
      */
     public static void startLoop(Runnable task, String name, Measure<Time> loopSleepDuration) {
-        Dbg.logd(Threads.class, "starting new loop thread: % at % ms interval ...", name, loopSleepDuration.in(Milliseconds));
+        long magMillis = (long) Math.abs(loopSleepDuration.in(Milliseconds));
         Thread thread = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                task.run();
-                try {
-                    //noinspection BusyWait
-                    Thread.sleep((long) Math.abs(loopSleepDuration.in(Milliseconds)));
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    task.run();
+                    try {
+                        //noinspection BusyWait
+                        Thread.sleep(magMillis);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
+            } finally {
+                Dbg.logd(Threads.class, "thread '%(%)' completed.", name, Thread.currentThread().hashCode());
             }
         });
         thread.setName(name);
         thread.setUncaughtExceptionHandler(exceptionHandler);
+        Dbg.logd(Threads.class, "starting new loop thread: %(%) %...", name, thread.hashCode(), magMillis != 0 ? "at a " + magMillis + " ms interval " : "");
         thread.start();
         threads.put(task.hashCode(), thread);
     }
@@ -78,8 +89,8 @@ public final class Threads {
      * Start a new thread with the given infinite loop task.
      * This thread will auto end when the task is interrupted.
      *
-     * @param task              the infinite loop task to run on the new thread
-     * @param name              the name of the thread to access it later and to log as
+     * @param task the infinite loop task to run on the new thread
+     * @param name the name of the thread to access it later and to log as
      */
     public static void startLoop(Runnable task, String name) {
         startLoop(task, name, Seconds.zero());
@@ -100,7 +111,7 @@ public final class Threads {
      * Start a new thread with the given infinite loop task.
      * This thread will auto end when the task is interrupted, with a name defined by the class of the Runnable.
      *
-     * @param task              the infinite loop task to run on the new thread
+     * @param task the infinite loop task to run on the new thread
      */
     public static void startLoop(Runnable task) {
         startLoop(task, task.getClass().getSimpleName(), Seconds.zero());
@@ -114,7 +125,8 @@ public final class Threads {
      */
     public static void stopAll() {
         for (Thread thread : threads.values()) {
-            Dbg.logd(Threads.class, "stopping thread: % ...", thread.getName());
+            if (!thread.isAlive()) continue;
+            Dbg.logd(Threads.class, "stopping thread: %(%) ...", thread.getName(), thread.hashCode());
             thread.interrupt();
         }
         threads.clear();
@@ -154,7 +166,8 @@ public final class Threads {
     public static void stop(Runnable task) {
         Thread thread = threads.get(task.hashCode());
         if (thread != null) {
-            Dbg.logd(Threads.class, "stopping thread: % ...", thread.getName());
+            if (!thread.isAlive()) return;
+            Dbg.logd(Threads.class, "stopping thread: %(%) ...", thread.getName(), thread.hashCode());
             thread.interrupt();
             threads.remove(task.hashCode());
         } else {
@@ -170,7 +183,8 @@ public final class Threads {
     public static void stop(String task) {
         for (Thread thread : threads.values()) {
             if (thread.getName().equals(task)) {
-                Dbg.logd(Threads.class, "stopping thread: % ...", thread.getName());
+                if (!thread.isAlive()) return;
+                Dbg.logd(Threads.class, "stopping thread: %(%) ...", thread.getName(), thread.hashCode());
                 thread.interrupt();
                 threads.remove(thread.hashCode());
                 return;
@@ -249,15 +263,16 @@ public final class Threads {
     public static void waitFor(Runnable task, boolean interrupt) {
         Thread thread = threads.get(task.hashCode());
         if (thread != null) {
+            if (!thread.isAlive()) return;
             if (interrupt) {
-                Dbg.logd(Threads.class, "stopping thread: % ...", task.getClass().getSimpleName());
+                Dbg.logd(Threads.class, "stopping thread: %(%) ...", thread.getName(), thread.hashCode());
                 thread.interrupt();
             }
             try {
-                Dbg.logd(Threads.class, "waiting for thread: % ...", task.getClass().getSimpleName());
+                Dbg.logd(Threads.class, "waiting for thread: %(%) ...", thread.getName(), thread.hashCode());
                 thread.join();
             } catch (InterruptedException e) {
-                Dbg.error(Threads.class, "thread '%' was interrupted while waiting.", task.getClass().getSimpleName());
+                Thread.currentThread().interrupt();
             }
         } else {
             Dbg.warn(Threads.class, "tried to wait for a task '%' that is not being managed by Threads.", task.getClass().getSimpleName());
