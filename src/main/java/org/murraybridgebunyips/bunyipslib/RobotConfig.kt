@@ -24,6 +24,8 @@ import java.util.function.Consumer
  * @since 1.0.0-pre
  */
 abstract class RobotConfig {
+    private var hasInitCalled = false
+
     /**
      * OpMode supplied hardwareMap instance.
      */
@@ -37,11 +39,13 @@ abstract class RobotConfig {
 
     /**
      * Uses the HardwareMap to fetch HardwareDevices and assign instances from `onRuntime`.
-     * Should be called as the first line in your init cycle.
+     * Should be called as the first line in your init cycle. This method can only be executed once.
      * @param opMode the OpMode instance - usually the `this` object when at the root OpMode.
      * @return the instance of the RobotConfig
      */
     fun init(opMode: OpMode): RobotConfig {
+        if (hasInitCalled)
+            throw IllegalStateException("RobotConfig instance was already initialised.")
         Storage.memory().hardwareErrors.clear()
         Storage.memory().unusableComponents.clear()
         this.hardwareMap = opMode.hardwareMap
@@ -66,6 +70,7 @@ abstract class RobotConfig {
                 opMode.telemetry.log().add("error: '$error' was not found in the current saved configuration.")
             }
         }
+        hasInitCalled = true
         return this
     }
 

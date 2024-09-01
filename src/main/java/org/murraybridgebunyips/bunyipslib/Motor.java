@@ -292,16 +292,16 @@ public class Motor extends DcMotorImplEx {
      * Switches the motor to velocity control and tries to set the angular velocity of the motor based on the intrinsic
      * {@link MotorConfigurationType} configuration.
      *
-     * @param vel  the desired angular rate, in units per second
-     * @param unit the units in which angularRate is expressed
+     * @param angVel the desired angular rate, in units per second
+     * @param unit   the units in which angVel is expressed
      */
     @Override
-    public void setVelocity(double vel, AngleUnit unit) {
+    public void setVelocity(double angVel, AngleUnit unit) {
         double tpr = motorType.getTicksPerRev();
         if (tpr <= 0) {
             throw new IllegalStateException(formatString("The Ticks Per Revolution attribute has not been set for this motor (% on port %). You will have to clone the current motorType, set the ticksPerRev, and set the new motorType to the cloned copy.", getDeviceName(), getPortNumber()));
         }
-        double radsPerSec = UnnormalizedAngleUnit.RADIANS.fromUnit(unit.getUnnormalized(), vel);
+        double radsPerSec = UnnormalizedAngleUnit.RADIANS.fromUnit(unit.getUnnormalized(), angVel);
         // Will assume no reduction, the user can scale the velocity on their own terms
         setVelocity(EncoderTicks.fromAngle(Radians.of(radsPerSec), (int) tpr, 1));
     }
