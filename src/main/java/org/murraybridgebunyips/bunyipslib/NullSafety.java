@@ -49,21 +49,24 @@ public final class NullSafety {
      * Telemetry will be added to a BunyipsOpMode if it is running.
      *
      * @param componentName    name of the subsystem
-     * @param excludeClassName the class name that should be attempted to be suppressed from caught errors (experimental)
+     * @param excludeClassName the class name that should be attempted to be suppressed from caught errors (experimental as this will
+     *                         suppress all class name instances, note that this suppression does not apply to Logcat so debugging is not affected)
      * @param objs             Objects to check for null
      * @return Whether the component is safe to instantiate
      */
     public static boolean assertComponentArgs(String componentName, String excludeClassName, Object... objs) {
+        // We do not check now for the presence of excludeClassName in unusableComponents, since the same classes
+        // can be used for different subsystems. We don't want every HoldableActuator to not work because one failed.
         for (Object o : objs) {
             if (o == null) {
                 if (BunyipsOpMode.isRunning()) {
                     BunyipsOpMode opMode = BunyipsOpMode.getInstance();
-                    opMode.telemetry.addRetained("<font color='red'><b>! COM_FAULT</b></font>: %", componentName);
-                    opMode.telemetry.log("<font color='yellow'><b>warning!</b> % was disabled due to a null assertion fault.</font>", componentName);
+                    opMode.telemetry.addRetained("<font color='red'><b>! SUBSYSTEM FAULT</b></font>: %", componentName);
+                    opMode.telemetry.log("<font color='yellow'><b>warning!</b> <i>%</i> failed a null self-check and was auto disabled.</font>", componentName);
                 }
                 Dbg.warn(getCallingUserCodeFunction(), "Null object passed to % failed assertion, adding to unusable components...", componentName);
-                if (!Storage.memory().unusableComponents.contains(excludeClassName))
-                    Storage.memory().unusableComponents.add(excludeClassName);
+                Storage.memory().unusableComponents.add(excludeClassName);
+                return false;
             }
         }
         return true;

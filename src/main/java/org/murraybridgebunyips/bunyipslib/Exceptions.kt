@@ -40,7 +40,7 @@ object Exceptions {
         var stack = sw.toString()
         if (e is NullPointerException) {
             for (component in Storage.memory().unusableComponents) {
-                if (stack.contains(component)) {
+                if (stack.contains(component, ignoreCase = true)) {
                     // This error is caused by a null component, which is handled by NullSafety
                     // As such, we can swallow it from appearing on the Driver Station
                     // Logcat will still receive this log, so we can just early exit.

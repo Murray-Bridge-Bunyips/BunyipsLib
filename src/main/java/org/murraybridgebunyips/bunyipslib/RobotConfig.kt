@@ -63,10 +63,10 @@ abstract class RobotConfig {
         }
         for (error in Storage.memory().hardwareErrors) {
             if (opMode is BunyipsOpMode) {
-                opMode.t.addRetained("<font color='red'><b>! MISSING_DEVICE</b></font>: $error")
+                opMode.t.addRetained("<font color='red'><b>! MISSING DEVICE</b></font>: $error")
                 opMode.t.addRetained("<font color='red'>error:</font> <i>$error</i> was not found in the current saved configuration.")
             } else {
-                opMode.telemetry.addData("", "! MISSING_DEVICE: $error").setRetained(true)
+                opMode.telemetry.addData("", "! MISSING DEVICE: $error").setRetained(true)
                 opMode.telemetry.log().add("error: '$error' was not found in the current saved configuration.")
             }
         }

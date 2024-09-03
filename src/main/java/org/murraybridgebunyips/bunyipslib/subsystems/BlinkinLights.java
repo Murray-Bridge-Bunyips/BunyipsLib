@@ -38,6 +38,7 @@ public class BlinkinLights extends BunyipsSubsystem {
         this.defaultPattern = defaultPattern;
         currentPattern = defaultPattern;
 
+        if (!assertParamsNotNull(lights)) return;
         lights.setPattern(this.defaultPattern);
     }
 
