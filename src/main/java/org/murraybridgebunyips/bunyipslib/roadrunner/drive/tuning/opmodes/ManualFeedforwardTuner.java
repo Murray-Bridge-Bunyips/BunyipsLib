@@ -87,8 +87,7 @@ public class ManualFeedforwardTuner implements TriConsumer<LinearOpMode, DualTel
         double profileStart = clock.seconds();
 
         while (!opMode.isStopRequested()) {
-            telemetry.addDS("You must access FtcDashboard to use this tuning OpMode.");
-            telemetry.addDashboard("mode", mode);
+            telemetry.addData("mode", mode);
 
             switch (mode) {
                 case TUNING_MODE:
@@ -118,9 +117,9 @@ public class ManualFeedforwardTuner implements TriConsumer<LinearOpMode, DualTel
                     double currentVelo = poseVelo.getX();
 
                     // update telemetry
-                    telemetry.addDashboard("targetVelocity", motionState.getV());
-                    telemetry.addDashboard("measuredVelocity", currentVelo);
-                    telemetry.addDashboard("error", motionState.getV() - currentVelo);
+                    telemetry.addData("targetVelocity", motionState.getV());
+                    telemetry.addData("measuredVelocity", currentVelo);
+                    telemetry.addData("error", motionState.getV() - currentVelo);
                     break;
                 case DRIVER_MODE:
                     if (opMode.gamepad1.b) {

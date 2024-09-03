@@ -174,7 +174,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
         while (selection[0] == null && opModeInInit()) {
             menu.loop(gamepad1);
-            out.add("Select an option above to run tuning for using gamepad1. Restart the OpMode to pick a different mode.");
+            out.add("Select an option above to run tuning for using <font face='monospace'>gamepad1</font>. Restart the OpMode to pick a different mode.");
             out.update();
         }
 

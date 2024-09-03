@@ -85,8 +85,7 @@ public class DriveVelocityPIDTuner implements TriConsumer<LinearOpMode, DualTele
         double profileStart = clock.seconds();
 
         while (!opMode.isStopRequested()) {
-            telemetry.addDS("You must access FtcDashboard to use this tuning OpMode.");
-            telemetry.addDashboard("mode", mode);
+            telemetry.addData("mode", mode);
 
             switch (mode) {
                 case TUNING_MODE:
@@ -112,10 +111,10 @@ public class DriveVelocityPIDTuner implements TriConsumer<LinearOpMode, DualTele
                     List<Double> velocities = drive.getWheelVelocities();
 
                     // update telemetry
-                    telemetry.addDashboard("targetVelocity", motionState.getV());
+                    telemetry.addData("targetVelocity", motionState.getV());
                     for (int i = 0; i < velocities.size(); i++) {
-                        telemetry.addDashboard("measuredVelocity" + i, velocities.get(i));
-                        telemetry.addDashboard(
+                        telemetry.addData("measuredVelocity" + i, velocities.get(i));
+                        telemetry.addData(
                                 "error" + i,
                                 motionState.getV() - velocities.get(i)
                         );
