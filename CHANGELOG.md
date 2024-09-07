@@ -1,6 +1,274 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v4.0.0 (2024-09-08)
+Major INTO THE DEEP season release.
+### Breaking changes
+<i>Note! BunyipsLib v4.0.0 has many breaking changes that consolidate the codebase; please review every item carefully if migrating.</i>
+- SDK v10.0 related deprecations
+  - The BunyipsLib SDK version has been bumped from v9.2 to v10.0 for usability in the INTO THE DEEP season
+  - TFOD-related subsystems have been archived following their removal in the SDK
+    - This includes deprecated in v3.5.0 classes `TFOD` and `TfodData`
+    - The SDK no longer offers TFOD; future vision integrations are expected to use OpenCV, which is integrated into BunyipsLib through the `Processor` pipelines.
+- BunyipsLib removal of v3.5.0 deprecations
+  - Previously deprecated methods have been removed, which include `BunyipsOpMode` methods such as `addTelemetry()`, `log()`, and other telemetry-related methods.
+    - To access telemetry, use the standard `telemetry` object which integrates as a `DualTelemetry` object. All methods that were removed from `BunyipsOpMode` is equivalently available through the `telemetry` object
+  - `DualTelemetry.removeRetained()` (alias for `remove()`) has been removed
+  - `Scheduler.ConditionalTask.runDebounced()` (alias for `runOnce()`) has been removed
+- The subsystem convention for `Task` exposure has been updated
+  - *All tasks* exposed on `BunyipsSubsystem`s, including the built-in defaults now expose their tasks as part of an inner class with a public final field called `tasks`
+  - This was to separate tasks from standard operations instead of having tasks be intermixed between operations
+  - An example of the new system is the `HoldableActuator.homeTask()` being refactored to `HoldableActuator.tasks.home()`
+  - Future BunyipsLib subsystems will continue to follow this standard
+- Examples directory removed
+  - To be replaced by the Wiki at https://github.com/Murray-Bridge-Bunyips/BunyipsLib/wiki
+- `CameraType` implementation and classes removed
+  - Camera intrinsics should be defined via the SDK's built-in tools, such as the teamwebcamcalibrations.xml file or by directly injecting camera intrinsics using the new construction patterns
+  - This extends to the `AprilTag` processor, which is the primary use case for these intrinsics
+- `RampingValue`, `RampingFunction`, `RampingSupplier`, and `DcMotorRamping` have all been compressed into a single interface for brevity
+  - New interface name is `Ramping`, and is the equivalent of `RampingFunction` with implementations for `Ramping.Value`, `Ramping.Supplier`, and `Ramping.DcMotor`
+  - The `setMaxDelta` method has also been renamed to `setMaxRampingDelta`
+  - `Ramping.DcMotor` now only extends `DcMotor`, instead of extending `DcMotorEx`
+- Vision systems updated to support multi-camera configurations
+  - This includes `Processor` now carrying a copy of the camera dimensions, as multiple cameras may use different resolutions
+  - Static camera dimensions now work based on a default value, unless defined by the user on construction of `Vision`. These dimensions are carried with the Vision instance for all processors to carry a copy of these dimensions
+  - To access camera dimensions from a processor, instead of accessing the static constant from `Vision`, access `getCameraDimensions()`. Note that this will be null if this processor is not attached to a Vision instance (and therefore is not streaming on a camera so we can't get dimensions)
+- `addSubsystems()` of `CommandBunyipsOpMode` and `AutonomousBunyipsOpMode` has been removed
+  - Subsystems are now implicitly registered through a static array, therefore if you construct a subsystem, it will be added automatically
+  - If you wish to use a special set of subsystems, you can opt to using the `useSubsystems()` method
+- Integrated methods for Field-Centric driving have been removed
+  - These systems were inconsistent between each drive in BunyipsLib, and have been removed
+  - Drive tasks such as `HolonomicDriveTask` allow for a supplier to indicate when field-centric drive should be enabled, which will continue to work by doing the calculations internally
+  - Other implementations of field-centric drives are left as an exercise for the user
+- `Task` system was reorganised for brevity
+  - This includes the removal of abstract extensions of `Task` such as the `NoTimeoutTask`, where this can simply be done now by extending `Task` with no timeout parameter
+  - The `RobotTask` interface was removed as this does not have usefulness with the evolved `Task` system
+    - Frequently this lead to classes that did support `RobotTask` to perform instance checks and cast to `Task`, where this degraded code cleanliness for no reason
+    - Tasks now extend the built-in `Runnable`, so previous implementations that used `RobotTask` only now are represented by the default type of Runnable
+    - `BunyipsOpMode` now supports taking in a `Runnable` to use as the init-task which will run indefinitely during init unless it is a `Task` that has reported as finished
+  - These reorganisations emphasise the idea that a `Task` is simply a `Runnable` with a timeout and finish condition
+- Task subsystem dependencies have been reorganised to use a method `onSubsystem()`
+  - This replaces the need for tasks to make both non-subsystem and subsystem dependant tasks, and now exists as a builder-like method
+  - Parameter argument orders remain consistent with the (subsystem, override) signature
+  - Tasks to run on subsystems should now be constructed like so: `new MyTask(...).onSubsystem(subsystem, false)` instead of passing args directly into the constructor
+  - Consequently, all BunyipsLib tasks have been simplified not to have dual (dependant/non-dependant) constructors
+- `AprilTagPoseEstimator` now implements `Runnable`, the `update()` method is now `run()` of Runnable
+- Major refactor of RoadRunner tuning processes
+  - RoadRunner tuning has been inconsistent since the initial addition of it into BunyipsLib
+  - This system is mixed with the new `RoadRunnerTuningOpMode` class, see below in Additions
+  - All RoadRunner tuning OpModes themselves are now TriConsumers that can be run on demand, but it is recommended to use the dynamic `RoadRunnerTuningOpMode`
+  - Old code that would extend these OpModes should resort to extending the singular `RoadRunnerTuningOpMode`
+- Removed `DEFAULT_TIMEOUT` field from `RoadRunner` interface (Use `Task.INFINITE_TIMEOUT`)
+  - `RoadRunnerTask` will still continue to have a task timeout equal to the trajectory duration by default
+- The `RoadRunner` interface now consolidates mirrored poses when using `makeTrajectory()`
+  - Pose refs that are mirrored now use a parameter on the constructor if this pose should be mirrored in a ref
+  - This was created as pose refs used in the constructor are often global pose estimates that should not be flipped
+  - Note that builders will not use a mirrored pose ref for the constructor argument to `makeTrajectory()`
+  - Review the documentation regarding these behaviours via the JavaDoc to ensure compatibility
+- The `IMUOp` subsystem has been redesigned from the ground-up as a `HardwareDevice` replacement
+  - The new replacement is called `IMUEx`
+  - The old `IMUOp` did not serve much purpose as it would wrap values that could be obtained easily from the universal IMU
+  - The new class now focuses on implementing the universal `IMU` interface to continually retrieve values and update public volatile fields
+  - This can be integrated with subsystem-like integrations such as multithreading
+  - `IMUEx` now comes with a Yaw Domain that can be set, to allow readings of heading to be in one of three modes:
+    - Signed (default, -180 degrees to +180 degrees exclusive)
+    - Unsigned (0 degrees to 360 degrees exclusive)
+    - Unrestricted (-inf to +inf)
+    - Note these domains only apply to the public fields, the internal `IMU` interface methods that expect signed values will use signed values
+  - These field units are supplied as WPIUnits, to simplify unit conversion and to integrate nicely with other BunyipsLib components
+  - `IMUEx` also implements the `IMU` Universal Interface, so it can be used in place of other IMUs and hardware devices at the config level
+- `CartesianFieldCentricMecanumDrive` has been redesigned to not rely on another subsystem (old `IMUOp`) and now takes in an instance of the universal `IMU`
+  - Construction now should be as simple as passing in the IMU from HardwareMap
+- `GetTriPositionContourTask` has been renamed to `GetDualSplitContourTask` which fundamentally restructures the idea of the task
+  - Instead of assuming the conditions of where a camera is facing, the new refactored common task will now simply report on which half of the camera the largest contour is (`Direction.LEFT`, `Direction.RIGHT`, or `Direction.ZERO`)
+  - A convenience method `getMappedPosition` now exists to provide the legacy functionality by mapping camera position reports to other directions (such as the assumption of position this task originally was for)
+- The RoadRunner localizers and coefficients have been renamed and refactored for brevity
+  - TwoWheelTrackingLocalizer has been renamed to `TwoWheelLocalizer`
+  - TwoWheelTrackingLocalzierCoefficients has been integrated into the inner class `TwoWheelLocalizer.Coefficients`
+  - ThreeWheelTrackingLocalizer has been renamed to `ThreeWheelLocalizer`
+  - ThreeWheelTrackingLocalzierCoefficients has been integrated into the inner class `ThreeWheelLocalizer.Coefficients`
+- `HoldableActuator.tasks.runFor` has been switched to (timeout, power) from (power, timeout) for consistency between other time-based methods throughout BunyipsLib
+- Gains for the WPILib-ported feedforward controllers have switched to getters instead of exposing public final fields
+- `setPowers()` of `MecanumDrive` has been standardised back to `setMotorPowers()` (new override) as found in the wrapped instance and across all RoadRunner drives for consistency
+- Renamed `EncoderTicks.EncoderTickGenerator` to `EncoderTicks.Generator` for brevity
+- BunyipsLib RoadRunner drive constructors no longer take in instances of `voltageSensor`, as these can be inferred internally like how `DualTelemetry` is internally injected
+  - These constructors are now more concise than they used to be
+- Tank RoadRunner drives now no longer conform to the 4-wheel only specification and now support the intended list of left and right motors
+  - This was an oversight that was present in the `SampleTankDrive` of the RoadRunner quickstart, but was incorrectly implemented
+  - Any 2+ tank wheel configuration can now be used with these tank drives
+- Removed `GetSignalTask` for being too specific and useless in the scope of BunyipsLib
+- `NullSafety.assertComponentArgs()` constructor has changed instead of accepting classes it will accept a component name, a class name to exclude, and the objects to check, which can now distinguish between differently named subsystems (experimental, actual uses of this util are provided by the integrated subsystem assertions on construction)
+- Switched to using WPIUnits for the `While` class timeout
+- Standardise names for abstract OpMode extensions, renaming the following classes
+  - ColourTuner to `ColourTunerOpMode`
+  - PathRecorder to `PathRecorderOpMode`
+  - New `RoadRunnerTuningOpMode`
+  - These names match abstract OpMode conventions, such as BunyipsOpMode, AutonomousBunyipsOpMode, CommandBasedBunyipsOpMode, etc.
+- `RoadRunner` base drives now replace the (optional) instances of `BunyipsOpMode` for `DualTelemetry`
+  - This is still a nullable field, and new constructors exist that omit this term if desired
+  - The telemetry fields are simply for dashboard reporting of robot position, so the original implementation using `BunyipsOpMode` was not required
+- `AprilTagData` has been updated, using `Optional` instances for ftcPose, metadata, and rawPose
+  - These fields collapse the previous x, y, and other nullable coordinates for an AprilTag detection, as null checks were tedious
+  - `AprilTagData` now integrates the data classes from the FTC SDK itself as part of this data class, instead of unpacking them as previously done
+  - Utility method `isInLibrary()` will check for null against these optional instances now, as they will only be present if they are in the AprilTag library attached to the AprilTag processor
+- `UserSelection` now is a `BunyipsComponent`, and therefore no longer needs BunyipsOpMode injection (a legacy BunyipsLib paradigm)
+  - This was a late migration after the static OpMode singleton, and is now reflected in `UserSelection` for consistency
+  - The constructor parameters have therefore been reduced from 3 to 2, the `this` parameter is not required
+- `unitPose`, `unitVec` and `mirror` are now static methods of the `RoadRunner` interface
+- `RoadRunnerDrive` now defines vararg-length getMotorPowers() and setMotorPowers() methods, where previously these overrides would be implemented at a per-class basis
+- This makes RoadRunner drives more consistent with their interfaces
+- `Storage.memory().unusableComponents` is now a `HashSet` rather than a `List`
+### Non-breaking changes
+- `DualTelemetry` now smartly parses telemetry captions based on the presence of an automatic separator string
+  - Instead of telemetry objects getting stuck as DS001 etc, if the messages are formatted correctly they will be added and updated as their own items
+  - The default automatic dashboard caption value separator is `: `
+  - BunyipsLib telemetry already follows the `Caption: Value` format, meaning FtcDashboard telemetry should be more organised and should be easier to graph and log
+  - The pre-existing caption value separator methods have been revamped to change and get this separator, as well as the public property
+  - This separator does not impact the real telemetry caption value separator, which should be an empty string with `DualTelemetry`
+- Undeprecated `DualTelemetry.addData` methods to instead work similar to `add()` but with using the automatic separator string as mentioned above to ensure separation
+- Improved `HoldableActuator` homing task to check for the bottom limit switch before starting the task
+- `Processor` for Vision can now be delegated, useful for composite processors that recursively use processors internally
+- All subsystems now have a `name` property, as many subsystems would internally reference a name property
+  - The name property is protected to match the legacy implementations of the name system
+  - Public access to get the name property is achieved via the `toString()` call
+    - The new `toVerboseString()` method (similar to `Task`) will give the legacy extended behaviour when calling `toString()` on a subsystem in previous versions
+  - Public access to set the name property is achieved via `withName()` which will return `this` (matches common legacy implementations)
+  - New method `isDefaultName()` for checks between the default name (`getClass().getSimpleName()`) and a custom name
+- `AprilTagPoseEstimator` now has a heading estimate mode, where heading information from the pose estimator will also be used as part of the pose estimate
+- `RoadRunnerTask` now only cancels the current trajectory on task finish if it has been interrupted
+- `AutonomousBunyipsOpMode` `addTaskAtIndex` will no longer throw an exception if the index is greater than the task list size
+  - The task will be appended to the end of the task list instead
+  - Negative indices will still throw an exception
+- `AutonomousBunyipsOpMode` and `Scheduler` now updates subsystems before executing tasks, allowing subsystems to have run at least once before accepting tasks
+- Debugging improvements through telemetry on subsystem disables and Logcat warnings for peculiar states
+- The Inertial Measurement Unit is now nullable in all Mecanum RoadRunner drives
+  - This is because Three Wheel odometry does not rely on the IMU, therefore the proper null safety exists now and you can simply pass null into the parameter
+- The Colour Tuner OpMode scalars can now be tuned via FtcDashboard (previously impossible as it would override scalar values)
+  - This is accomplished by changing the scalars of the ColourTunerOpMode object in the dashboard
+- `CartesianMecanumDrive` now auto-sets the motors to `ZeroPowerBehavior.BRAKE` on construction
+- `RunForTask` can now take in an extra argument for a callback to run after the task is completed
+- Normalised all constructors that take in an instance of `DcMotorEx` to take in `DcMotor` instead and upcast internally
+- `ThreeWheelLocalizer` constructor has been given more overloads to be more brief in specifying last known positions
+- Multi-threading methods exposed in the `Threads` utility have been improved to provide better logging and more method overloads
+- The formulae used in `EncoderTicks` have been optimised to reduce approximation inaccuracy
+- Exception handling now extends to threads run via the `Threads` utility in the same way main thread exceptions would be logged to the DS and Logcat
+- `RobotConfig` init() method will now throw an exception if called more than once, as `HardwareMap` calls are expensive and not required more than once
+- Changed init-phase telemetry fault error messages to be more explanative
+### Bug fixes
+- Added improved robot safety features, primarily with RoadRunner drives
+  - A watchdog now observes all BunyipsLib RoadRunner drive instances and auto-locks them if they have not had a call to `update()` recently
+  - This watchdog timeout is a constant (`RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT`), set by default to 500ms
+  - `DualTelemetry` now displays a red timer that overrides the yellow slow loop timer when the safety watchdog is in range of triggering
+  - The drive subsystems are special in the regards that hardware can propagate outside of `update()`, most `RoadRunnerDrive` methods propagating instantly on the hardware
+  - This timeout is to ensure the subsystem is actually enabled before allowing calls to these methods, which has not been the case previously (a disabled subsystem should never respond to commands)
+  - The drive is also the most volatile subsystem, where loop times of >500ms could make the robot dangerously unresponsive
+- Fixed a buffer parse error in `Controller` related to the SDK gamepad; the controller should now natively copy over the gamepad ID and other state without unexpected behaviour
+- The `RoadRunnerDrive` `stop()` method implementations now cancel trajectories as well
+- `AlignToContourTask`, `MoveToContourTask` and `AlignToAprilTagTask` now do not end their Autonomous tasks unless they have seen a contour/AprilTag first
+- Fixed a rotation matrix flaw in `AprilTagPoseEstimator` where tags that were not 90 degrees offset to the field did not rotate the robot with the tag
+- Fixed a bug where RoadRunner pose data was not being transferred between OpModes due to switching localizers clearing pose data
+- Improve race condition telemetry of `UserSelection`
+- Fixed a telemetry bug where the target and current positions of `HoldableActuator` in AUTO mode were flipped
+- FtcDashboard now uses full size tags for logging improvement
+- `MecanumDrive` now lets you access MecanumCoefficients attached to the drive via `getCoefficients()`
+- `BunyipsOpMode` now early returns if a stop was requested on initialisation
+- Improve `Cartesian` utility class docs from being confusing
+- RoadRunner drives now properly switch the drive mode when using Velocity PID when it needs it and when it doesn't
+- Fixed a bug in `DualTelemetry` where `setValue` calls to a `HtmlItem` would not build the reference but the value
+- Fixed a potential runaway motor when `HoldableActuator` subsystems were disabled
+- Fixed a double reference `get()` error in the `DualTelemetry` update method for log messages
+- `RobotConfig` now error handles the `onRuntime()` method for `BunyipsOpMode`
+- Fixed a bug where `NullSafety.assertComponentArgs()` would never return false
+- Fixed a bug where an exception could be thrown during the init-phase although guarded by `assertParamsNotNull()` internally
+### Additions
+- The `Motor` class, an abstraction around the DC motor that is a drop-in replacement to the SDK approach for `RUN_USING_ENCODER` and `RUN_TO_POSITION` modes
+  - The `Motor` class extends the `DcMotorEx` implementation, wrapping a motor entirely and can be obtained directly from `RobotConfig`
+  - This wrapper allows you to set your own `SystemController`s to use for `RUN_USING_ENCODER` and `RUN_TO_POSITION`, which will be updated and applied on every `setPower` call to your motor
+  - This **bypasses the SDK** and allows you to run your own custom PID which is orders of magnitude faster to run via this class
+  - In the SDK, the built-in modes only run at 20Hz, which is a major limitation that makes the controllers sluggish
+  - `Motor` is designed to be downcasted to `DcMotor` in any implementation while still providing abstraction over the system controllers
+  - This class functions as close as possible to the original DcMotor, where the operation of this class is the same as how it would be done with a stock `DcMotor`. Migration should be near instant.
+  - These system controllers have built-in gain scheduling support, using an `InterpolatedLookupTable` to schedule gains based on internal encoder positions while interpolating between known gain setpoints
+  - The actual commanded mode of motors running in this class is set to `RUN_WITHOUT_ENCODER`, but the internal and exposed mode will be managed internally by `Motor`, allowing maximum speed and accuracy from your system controllers
+  - Additional features allow configurations at the motor level, including max power and faster encoder resets
+  - Review the new documentation about this wrapper for the full capabilities of what this class can do
+- Alongside `Motor`, the `SystemController` and `PIDF` interfaces has been added to provide common ground for a system control algorithm such as PID or feedforward
+  - This interface is implemented across all system controllers and can be used to manage coefficients without necessarily knowing about the controller underneath
+- New `ArmController` system controller, which internally composes a PID controller and the WPILib `ArmFeedforward` to provide robust controls for arms suspended on beams at angles
+- New `PIDFFController` system controller, which internally composes a PID controller and the WPILib `SimpleMotorFeedforward`
+- New `HolonomicVectorDriveTask`, a variant of the `HolonomicDriveTask` that will use pose locking to improve TeleOp capability
+  - This task will take a snapshot of the current position after a short duration when the user input translation or rotation components are released
+  - The task will automatically use PID controllers defined by you to hold that current position snapshot and resist forces
+  - Note that this will not solve issues such as translational drift, there are other solutions to this issue, although it will attempt to tackle rotational drift
+  - This system can be comparable to one of a drone, where releasing the sticks and allowing it to hover will hold position and resist external forces
+  - You may also choose to set your own locking positions that will cause the robot to move to that position in real-time
+    - This is most useful with heading, for example, allowing you to bind a button to rotate towards the front of the field or to lock rotation forwards
+- `TelemetryMenu`, which is a component that allows you to construct gamepad-interactable menus through any telemetry receiver (extracted from SDK v9.2, creator OpenFTC)
+- `RoadRunnerTuningOpMode` abstract class, which uses a `TelemetryMenu` to provide dynamic selection of tuning mode at runtime
+  - `gamepad1` will be used to select which tuning routine from the v0.5 RoadRunner tuning process to use
+  -  This makes having to rebuild the code not required in order to perform multiple RoadRunner tuning tests, which dramatically decreases tuning time from waiting
+  - To use this, extend `RoadRunnerTuningOpMode` and supply a base `RoadRunnerDrive`
+  - Once annotated with `@TeleOp` and run, the telemetry will provide a menu to pick a tuning OpMode
+  - FtcDashboard tuning adjustments have been neatly compacted under the `RoadRunnerTuningOpMode` tab and in their own sub-branches
+  - All RoadRunner tuning OpModes have improved their declaration of units to FtcDashboard
+- `IntrinsicMecanumLocalizer` RoadRunner localizer, which is an emergency time-drive equivalent localizer that guesses the position of a Mecanum-drive robot based on the power supplied to the wheels
+  - This is useful for an emergency situation where no other localizers will work (including the default)
+  - The coefficients for this localizer must be tuned empirically
+- `SwitchableLocalizer` RoadRunner localizer, which is a composite localizer that allows for dynamic switching between two localizers via self-test tasks or by the static field attached to the class
+  - This allows for testing of deadwheels to be performed before an OpMode, allowing you to switch to a backup if desired through automatic or manual testing via telemetry
+  - RoadRunner drive classes now have `useFallbackLocalizer` methods for mentioning which fallback localizer should be used with this drive, returning the SwitchableLocalizer instance for you to run a test task
+  - SwitchableLocalizer is not a subsystem, but exposes tasks via the BunyipsSubsystem convention (`tasks` public field)
+- `BlinkinLights` subsystem, which is a subsystem for the REV Blinkin Lights LED driver
+  - Integrates with the `Task` system to queue lighting effects for durations
+- `Processor` has new virtual methods `onAttach()` and `onRunning()` for processors to hook these Vision events
+- `SwitchableVisionSender` now supports streaming across cameras, adjustable with the static index to mention which vision instance to use. Note that this index will only work if the instance itself has called `startPreview()`. Methods such as `setPreview()` will auto-set the index to the current vision instance, therefore not breaking old use cases of `SwitchableVisionSender`
+- The Dokka documentation tool is now used with BunyipsLib. All clones of BunyipsLib can access the HTML docs in the docs/ directory, or they may be accessed at our link https://murray-bridge-bunyips.github.io/BunyipsLib/
+  - Alongside Dokka, BunyipsLib has had a documentation update and all JavaDoc/KDoc should be more robust compared to previous versions
+  - This includes `@since` declarations that will exist on all BunyipsLib classes, `v1.0.0-pre` indicating that this class was originally implemented before BunyipsLib had a semver
+  - More debug logging has been added to Logcat for various components throughout BunyipsLib
+  - A GitHub wiki will contribute to where example code and information will exist for BunyipsLib hereon, alongside JavaDoc
+- New `DynamicTask`, which is a task wrapper that will construct an inner task when the wrapper begins running (runtime construction)
+  - This is the equivalent of the WPILib `DeferredCommand`
+  - Useful for tasks that can only be evaluated when the OpMode starts, such as pre-game vision tracking
+- Subsystems are now constructed with implicit registration, you can access all currently constructed subsystems via static `BunyipsSubsystem.getInstances()`, or you can conveniently update all constructed subsystem through `BunyipsSubsystem.updateAll()`
+- `Storage` has a new memory field `lastKnownAlliance`, which is set either by the user or automatically via a `UserSelection` instance that uses values in `StartingPositions`
+- As there are many fields within BunyipsLib that are static, `Storage` provides a static method `resetAllStaticFieldsForOpMode()` for non-BunyipsOpModes to reset fields. This is done automatically in BunyipsOpMode.
+- `Tasks` utility which is a utility to run `Task` instances through a iterative lifecycle
+  - This util was created as many of BunyipsLib core subsystem features are now tasks, and this utility bridges the gap to allow iterative (non-command-based) OpModes to run tasks
+  - Read the docs for more information on how to use this class
+- `AprilTag` has alternate constructors which allow you to add custom builder instructions from user code, rather than relying on the BunyipsLib defaults only
+- `AprilTagPoseEstimator` has a `setCameraOffset()` method, where you can set a robot-to-camera offset that will be used to further the accuracy of the AprilTag pose estimator
+- New `Task` virtual method `onInterrupt()` which will be called if the task is finished but the finish condition has not been met (e.g. ended via `finish()` or `finishNow()`)
+- New Reset Last Known Positions built-in OpMode that will reset the last known Storage Memory values for last known pose and alliance
+- `RoadRunner` trajectory task builder `setScale()` method, which will multiplicatively scale distances in further builder instructions
+- `RoadRunner` `unitPose` and `unitVec` methods now have scalar multiplier overload parameters to mention a multiplier for the original inches
+- New `noTimeouts` Reference type is exposed on the `RoadRunner` interface to not set the future built `RoadRunnerTask` timeouts to the end of the trajectory time
+- `Exceptions` now has a utility method `runUserMethod` which is used internally to execute volatile user methods with exception catching
+- `RoadRunner` has a new builder parameter `setRefMirroring()` which can toggle the state of pose ref mirroring (which is similar to the new implementation of how a builder parameter will set mirroring for the constructor parameter)
+- Two and three-wheel localizers now have an X encoder multiplier and Y encoder multiplier that can be empirically tuned to increase accuracy
+  - These multipliers are in the RoadRunner quickstart but didn't make it into BunyipsLib until now
+- `DriveConstants` has a new RoadRunner constant for admissible error and timeout via `setAdmissibleError`
+  - This directly connects to the PIDVA controller used when working with trajectory following, and can be adjusted to your liking
+  - The default parameters are usually sufficient and do not need any method calls to use
+  - This can be paired with the `noTimeouts` `RoadRunner` field for tasks
+- Subsystems can now be run asynchronously via `startThread` and `stopThread`
+  - These are experimental options that allow you to run this subsystem on another thread, but take due care as hardware calls on other threads are dangerous and looked down upon in FTC
+  - In any case, if you do choose to multithread, the created threads will be managed by the `Threads` utility
+- `Encoder` class, which can be used to represent an encoder with built-in support for velocity overflow correction and acceleration calculations
+  - This class is used internally by `Motor`
+- `TriConsumer` interface, which is the `BiConsumer` but with three arguments (used internally for RoadRunner tuning modes)
+- `EncoderTicks` now has methods for retrieving motor angular/translational velocity and acceleration (accel in `Motor` class only) via the `EncoderTicks.Generator`
+- `Cartesian` utility class now has a `rotate()` method to allow simpler application of rotation matrices
+  - RoadRunner has this built-in to `Vector2d` via `rotated()`
+- `Controls` now allows the creation of robot/Cartesian vectors as well as poses
+- Tracking wheel localizer coefficients now have a `setOverflowCompensation()` method to set whether their encoders should be using velocity overflow correction
+  - This makes overflow compensation options interpret at a config-level instead of needing to define them at the OpMode-level
+- `CartesianMecanumDrive` now has a `setMode()` method to set the mode of all motors on the drive
+- `InterpolatedLookupTable` now has error-safety methods such as `testOutOfRange` and clamped outputs with `getMin()` and `getMax()`
+  - This lookup table will now throw OutOfRangeExceptions if `get()` is called with a value outside of the function domain
+  - The lookup table also now has early catches for null references on tables that are not built yet, which will not auto-build but alert the user more elegantly
+- `BunyipsSubsystem` now has an `isDisabled()` boolean check method to allow users to see if a subsystem is currently disabled
+
 ## v3.5.0 (2024-07-12)
 Migration to SDK v9.2, integration of new external control systems, some bug fixes and stability improvements.
 ### Breaking changes
