@@ -535,6 +535,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         for (Object selectableOpMode : selectableOpModes) {
             if (selectableOpMode instanceof Reference<?>) {
                 opModes.add((Reference<?>) selectableOpMode);
+            } else if (selectableOpMode instanceof StartingConfiguration.Builder.PrebuiltPosition) {
+                // Preemptive catch for non-built StartingConfigurations which are a common use case
+                // No point in throwing errors for the little stuff we can solve here now
+                opModes.add(new Reference<>(((StartingConfiguration.Builder.PrebuiltPosition) selectableOpMode).build()));
             } else {
                 opModes.add(new Reference<>(selectableOpMode));
             }

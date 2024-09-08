@@ -176,6 +176,18 @@ public final class Text {
     }
 
     /**
+     * Removes HTML from a string.
+     *
+     * @param htmlString the string with HTML
+     * @return string with tags and {@code &nbsp;} removed
+     */
+    public static String removeHtml(String htmlString) {
+        return htmlString
+                .replaceAll("<.*?>", "")
+                .replaceAll("&nbsp;", " ");
+    }
+
+    /**
      * Begin building an HTML string.
      *
      * @return A HtmlBuilder instance

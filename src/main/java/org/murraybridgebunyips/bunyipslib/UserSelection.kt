@@ -107,7 +107,7 @@ class UserSelection<T : Any>(
             driverStation.append(
                 "| %: <b>%</b>\n",
                 button.name,
-                StartingPositions.getHTMLIfAvailable(name),
+                name,
             )
         }
 

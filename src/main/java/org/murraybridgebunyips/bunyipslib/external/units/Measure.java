@@ -429,15 +429,31 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
     }
 
     /**
-     * Returns a string representation of this measurement in a shorthand form. The symbol of the
+     * Returns a string representation of this measurement in a scientific shorthand form. The symbol of the
      * backing unit is used, rather than the full name, and the magnitude is represented in scientific
      * notation.
      *
-     * @return the short form representation of this measurement
+     * @return the scientific shorthand form representation of this measurement
      */
-    default String toShortString() {
+    default String toScientificString() {
         // eg 1.234e+04 V/m (1234 Volt per Meter in long form)
         return String.format("%.3e %s", magnitude(), unit().symbol());
+    }
+
+    /**
+     * Returns a string representation of this measurement in the default form. The symbol of the
+     * backing unit is used, rather than the full name, and the magnitude is represented in full, not in scientific
+     * notation. (Very large values may be represented in scientific notation, however)
+     *
+     * @return the short/default form representation of this measurement
+     */
+    default String toShortString() {
+        // BunyipsLib change: The old short string for most applications did not fit purpose, since all values in FTC
+        // are fairly small quantity and large values are already represented in scientific notation. Short string
+        // now gives the magnitude in full (old method exists in toScientificString()).
+
+        // eg 1234 V/m (1.234e+04 V/m in scientific form)
+        return String.format("%s %s", magnitude(), unit().symbol());
     }
 
     /**
@@ -448,7 +464,7 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @return the long form representation of this measurement
      */
     default String toLongString() {
-        // eg 1234 Volt per Meter (1.234e+04 V/m in short form)
+        // eg 1234 Volt per Meter (1.234e+04 V/m in scientific form)
         return String.format("%s %s", magnitude(), unit().name());
     }
 }
