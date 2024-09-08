@@ -98,6 +98,7 @@ public class IMUEx implements IMU, Runnable {
     private String threadName = null;
     private YawDomain domain = YawDomain.SIGNED;
     private Measure<Angle> yawOffset = Degrees.zero();
+    private double yawDeltaMultiplier = 1;
     private double angleSumDeg;
     private double lastYawDeg;
 
@@ -139,7 +140,7 @@ public class IMUEx implements IMU, Runnable {
                 AngleUnit.DEGREES,
                 // Note: Exposed yaw is controlled by the yaw domain, and may not conform to the requirement as listed by the YawPitchRollAngles class.
                 // Therefore, this is why the yaw property of this specific method will not respect the YawDomain, and instead access
-                // the raw quaternion to generate the instance of YawPitchRollAngles.
+                // the raw quaternion to generate the instance of YawPitchRollAngles. (Yaw offset and multiplier still apply)
                 quaternion.toOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle,
                 pitch.in(Degrees),
                 roll.in(Degrees),
@@ -212,11 +213,21 @@ public class IMUEx implements IMU, Runnable {
     /**
      * Set an offset of the yaw value that will apply for <i>all</i> future yaw reads in this class.
      *
-     * @param yawOffset the yaw offset that will be added to the actual yaw
+     * @param yawOffset the yaw offset that will be added, applies to all IMU-related reads
      */
     public void setYawOffset(Measure<Angle> yawOffset) {
         if (yawOffset == null) return;
         this.yawOffset = yawOffset;
+    }
+
+    /**
+     * Set a multiplicative scale that will be applied to every delta update of the IMU heading. This is similar
+     * to calibrating a dead wheel, where you will supply a ratio between measured/actual values to improve IMU performance.
+     *
+     * @param mul multiplicative scale for yaw readings, applies to all IMU-related reads (default 1)
+     */
+    public void setYawMultiplier(double mul) {
+        yawDeltaMultiplier = mul;
     }
 
     /**
@@ -270,13 +281,6 @@ public class IMUEx implements IMU, Runnable {
         Orientation rawOrientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         AngularVelocity angleVels = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
-        // Add the yaw offset to apply to all sources
-        rawOrientation.thirdAngle += (float) yawOffset.in(Degrees);
-        rawOrientation.thirdAngle = AngleUnit.normalizeDegrees(rawOrientation.thirdAngle);
-
-        lastAcquisitionTimeNanos = rawOrientation.acquisitionTime;
-        quaternion = Quaternion.fromMatrix(rawOrientation.getRotationMatrix(), rawOrientation.acquisitionTime);
-
         double yawDeg = rawOrientation.thirdAngle;
         double yawDelta = yawDeg - lastYawDeg;
         if (Math.abs(yawDelta) >= 180) {
@@ -285,17 +289,25 @@ public class IMUEx implements IMU, Runnable {
         }
         lastYawDeg = yawDeg;
 
-        angleSumDeg += yawDelta;
-        Measure<Angle> totalYaw = Degrees.of(angleSumDeg);
+        angleSumDeg += yawDelta * yawDeltaMultiplier;
+        Measure<Angle> totalYaw = Degrees.of(angleSumDeg).plus(yawOffset);
+        Measure<Angle> signedClamp = Mathf.angleModulus(totalYaw);
 
+        // Only apply YawDomain to the yaw field
         if (domain == YawDomain.SIGNED) {
-            yaw = Mathf.angleModulus(totalYaw);
+            yaw = signedClamp;
         } else if (domain == YawDomain.UNSIGNED) {
             yaw = Mathf.normaliseAngle(totalYaw);
         } else {
             // Unrestricted domain
             yaw = totalYaw;
         }
+
+        // Always apply signed domain to raw orientation (required for yaw multiplier/offset)
+        rawOrientation.thirdAngle = (float) signedClamp.in(Degrees);
+
+        lastAcquisitionTimeNanos = rawOrientation.acquisitionTime;
+        quaternion = Quaternion.fromMatrix(rawOrientation.getRotationMatrix(), rawOrientation.acquisitionTime);
 
         // These fields are also bound by the [-180, 180) degree domain but can be converted with Mathf utilities.
         // IMUEx provides a built in utility for the yaw, as it is a common use case and usually you wouldn't need
