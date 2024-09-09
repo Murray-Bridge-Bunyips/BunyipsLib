@@ -526,7 +526,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *             "GO_SHOOT_AND_PARK",
      *             "SABOTAGE_ALLIANCE"
      *     );
-     *     // Use `StartingPositions.use();` for using the four Robot starting positions
+     *     // See the StartingConfiguration class for advanced builder patterns of robot starting positions,
+     *     // which is the recommended way to define OpModes (OpModes themselves define objectives, not positions)
      * }</pre>
      */
     protected final void setOpModes(@Nullable Object... selectableOpModes) {
