@@ -2,6 +2,7 @@ package org.murraybridgebunyips.bunyipslib
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import org.apache.commons.math3.exception.OutOfRangeException
+import org.apache.commons.math3.exception.util.LocalizedFormats
 import org.murraybridgebunyips.bunyipslib.StartingConfiguration.Alliance.BLUE
 import org.murraybridgebunyips.bunyipslib.StartingConfiguration.Alliance.RED
 import org.murraybridgebunyips.bunyipslib.StartingConfiguration.Origin.LEFT
@@ -13,7 +14,6 @@ import org.murraybridgebunyips.bunyipslib.external.units.Measure
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Degrees
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Feet
 import org.murraybridgebunyips.bunyipslib.external.units.Units.FieldTiles
-import java.util.Locale
 
 /**
  * Revamped implementation of [StartingPositions] which instead uses a builder and poses to determine
@@ -241,7 +241,7 @@ object StartingConfiguration {
          */
         fun tile(tileFromOrigin: Double): PrebuiltPosition {
             if (tileFromOrigin < 0.5 || tileFromOrigin > 6.5)
-                throw OutOfRangeException(tileFromOrigin, 0.5, 6.5)
+                throw OutOfRangeException(LocalizedFormats.OUT_OF_RANGE_SIMPLE, tileFromOrigin, 0.5, 6.5)
             translate(FieldTiles.one().divide(2.0).plus(FieldTiles.one().times(tileFromOrigin - 1)))
             return PrebuiltPosition()
         }

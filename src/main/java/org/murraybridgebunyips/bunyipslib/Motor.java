@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.apache.commons.math3.exception.OutOfRangeException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
@@ -120,7 +121,7 @@ public class Motor extends DcMotorImplEx {
      */
     public void setRunUsingEncoderController(SystemController controller, double bufferFraction, double maxAchievableTicksPerSecond) {
         if (bufferFraction <= 0 || bufferFraction > 1) {
-            throw new OutOfRangeException(bufferFraction, 0, 1);
+            throw new OutOfRangeException(LocalizedFormats.OUT_OF_RANGE_LEFT, bufferFraction, 0, 1);
         }
         rueController = controller;
         rueInfo = new Pair<>(bufferFraction, maxAchievableTicksPerSecond);

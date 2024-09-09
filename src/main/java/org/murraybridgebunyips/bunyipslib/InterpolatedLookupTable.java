@@ -3,6 +3,7 @@ package org.murraybridgebunyips.bunyipslib;
 import androidx.annotation.NonNull;
 
 import org.apache.commons.math3.exception.OutOfRangeException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -153,8 +154,11 @@ public class InterpolatedLookupTable {
         if (Double.isNaN(input)) {
             return input;
         }
-        if (input <= mX.get(0) || input >= mX.get(n - 1)) {
-            throw new OutOfRangeException(input, mX.get(0), mX.get(n - 1));
+        if (input <= mX.get(0)) {
+            throw new OutOfRangeException(LocalizedFormats.NUMBER_TOO_SMALL_BOUND_EXCLUDED, input, mX.get(0), 0);
+        }
+        if (input >= mX.get(n - 1)) {
+            throw new OutOfRangeException(LocalizedFormats.NUMBER_TOO_LARGE_BOUND_EXCLUDED, input, mX.get(n - 1), 0);
         }
 
         // Find the index 'i' of the last point with smaller X.
