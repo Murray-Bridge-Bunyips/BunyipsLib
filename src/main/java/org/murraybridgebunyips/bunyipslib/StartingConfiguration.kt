@@ -11,9 +11,7 @@ import org.murraybridgebunyips.bunyipslib.Text.formatString
 import org.murraybridgebunyips.bunyipslib.external.units.Angle
 import org.murraybridgebunyips.bunyipslib.external.units.Distance
 import org.murraybridgebunyips.bunyipslib.external.units.Measure
-import org.murraybridgebunyips.bunyipslib.external.units.Units.Degrees
-import org.murraybridgebunyips.bunyipslib.external.units.Units.Feet
-import org.murraybridgebunyips.bunyipslib.external.units.Units.FieldTiles
+import org.murraybridgebunyips.bunyipslib.external.units.Units.*
 
 /**
  * Revamped implementation of [StartingPositions] which instead uses a builder and poses to determine
@@ -107,6 +105,21 @@ object StartingConfiguration {
          */
         fun invert(): Position {
             return Position(alliance.invert(), origin.invert(), backwardTranslation, horizontalTranslation, ccwRotation)
+        }
+
+        /**
+         * Return an informative string about this starting configuration.
+         */
+        fun toVerboseString(): String {
+            return formatString(
+                "{alliance=%, origin=%, backwardTranslation=%, horizontalTranslation=%, ccwRotation=%, fieldPose=%}",
+                alliance.name,
+                origin.name,
+                backwardTranslation,
+                horizontalTranslation,
+                ccwRotation,
+                toFieldPose()
+            )
         }
 
         /**
