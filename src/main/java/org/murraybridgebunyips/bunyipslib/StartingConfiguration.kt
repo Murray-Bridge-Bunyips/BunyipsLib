@@ -113,11 +113,12 @@ object StartingConfiguration {
          * Returns a HTML string to represent this starting configuration.
          */
         override fun toString(): String {
+            val lowCaseAlliance = Text.lower(alliance.name)
             return formatString(
                 "On <font color='%'>%</font>, % from % wall%%",
                 if (isRed) "red" else "#3863ff",
-                alliance.name.lowercase(Locale.getDefault())
-                    .replaceFirstChar { it.titlecase(Locale.getDefault()) },
+                Text.upper(lowCaseAlliance.substring(0, 1))
+                        + lowCaseAlliance.substring(1),
                 if (horizontalTranslation.unit().equals(FieldTiles)) {
                     val tileValue = Text.round(horizontalTranslation.inUnit(FieldTiles) + 0.5, 1)
                     // Will want to only display 1 digit if we can for brevity

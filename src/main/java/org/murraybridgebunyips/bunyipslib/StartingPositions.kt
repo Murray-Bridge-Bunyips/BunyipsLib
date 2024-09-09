@@ -132,7 +132,7 @@ enum class StartingPositions(
          * Get the HTML representation of the starting position if available.
          */
         fun getHTMLIfAvailable(startingPosition: Any?): String {
-            return when (use().find { it.toString() == startingPosition.toString() }) {
+            return when (use().find { it == startingPosition }) {
                 STARTING_RED_LEFT -> "<font color='red'>Red</font> Alliance, <i>Left</i>"
                 STARTING_RED_RIGHT -> "<font color='red'>Red</font> Alliance, Right"
                 STARTING_BLUE_LEFT -> "<font color='#3863ff'>Blue</font> Alliance, <i>Left</i>"

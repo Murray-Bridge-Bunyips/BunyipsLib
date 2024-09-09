@@ -688,7 +688,7 @@ public class Scheduler extends BunyipsComponent {
                         .append(handler.state);
             } else {
                 out.append(" when ")
-                        .append(originalRunCondition.toString().replace("org.murraybridgebunyips.bunyipslib.Scheduler", ""))
+                        .append(originalRunCondition.toString().replace(BuildConfig.LIBRARY_PACKAGE_NAME + ".Scheduler", ""))
                         .append(" is true");
             }
             out.append(time.magnitude() > 0 ? " for " + time.in(Seconds) + "s" : "")
