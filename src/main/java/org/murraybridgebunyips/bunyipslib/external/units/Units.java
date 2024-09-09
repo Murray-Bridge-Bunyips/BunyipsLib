@@ -45,7 +45,7 @@ public final class Units {
     public static final Distance Inch = Inches; // Alias
 
     /** ~24 inches, equivalent to 1 FTC Field Tile per unit */
-    public static final Distance FieldTiles = derive(Inches).aggregate(23.6).named("Field Tile").symbol("FT").make();
+    public static final Distance FieldTiles = derive(Inches).aggregate(24).named("Field Tile").symbol("FT").make();
 
     /** ~24 inches, equivalent to 1 FTC Field Tile per unit */
     public static final Distance FieldTile = FieldTiles; // Alias
