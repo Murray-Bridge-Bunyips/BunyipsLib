@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
+import org.apache.commons.math3.exception.NumberIsTooLargeException
 import org.apache.commons.math3.exception.OutOfRangeException
 import org.apache.commons.math3.exception.util.LocalizedFormats
 import org.murraybridgebunyips.bunyipslib.StartingConfiguration.Alliance.BLUE
@@ -11,7 +12,12 @@ import org.murraybridgebunyips.bunyipslib.Text.formatString
 import org.murraybridgebunyips.bunyipslib.external.units.Angle
 import org.murraybridgebunyips.bunyipslib.external.units.Distance
 import org.murraybridgebunyips.bunyipslib.external.units.Measure
-import org.murraybridgebunyips.bunyipslib.external.units.Units.*
+import org.murraybridgebunyips.bunyipslib.external.units.Units.Degrees
+import org.murraybridgebunyips.bunyipslib.external.units.Units.Feet
+import org.murraybridgebunyips.bunyipslib.external.units.Units.FieldTiles
+import org.murraybridgebunyips.bunyipslib.external.units.Units.Inches
+import org.murraybridgebunyips.bunyipslib.external.units.Units.Radians
+import kotlin.math.abs
 
 /**
  * Revamped implementation of [StartingPositions] which instead uses a builder and poses to determine
@@ -57,15 +63,14 @@ object StartingConfiguration {
          * Convert this starting configuration into the FTC Field Coordinate/RoadRunner coordinate system.
          */
         fun toFieldPose(): Pose2d {
-            TODO("Not implemented yet, still need to work out the bugs")
-//            val xZero = alliance.directionMultiplier * -72 * origin.directionMultiplier
-//            val yZero = alliance.directionMultiplier * -60
-//            val rZero = alliance.directionMultiplier * Math.PI / 2;
-//            return Pose2d(
-//                xZero + horizontalTranslation.inUnit(Inches) * origin.directionMultiplier,
-//                yZero - backwardTranslation.inUnit(Inches),
-//                rZero + ccwRotation.inUnit(Radians)
-//            )
+            // Zero to red alliance, left side of the field
+            val xZeroInch = -72.0 * origin.directionMultiplier * alliance.directionMultiplier
+            val yZeroInch = -60.0 * alliance.directionMultiplier
+            return Pose2d(
+                xZeroInch + horizontalTranslation.inUnit(Inches) * origin.directionMultiplier * alliance.directionMultiplier,
+                yZeroInch - backwardTranslation.inUnit(Inches) * alliance.directionMultiplier,
+                alliance.directionMultiplier * Math.PI / 2.0 + ccwRotation.inUnit(Radians)
+            )
         }
 
         /**
@@ -255,7 +260,7 @@ object StartingConfiguration {
         fun tile(tileFromOrigin: Double): PrebuiltPosition {
             if (tileFromOrigin < 0.5 || tileFromOrigin > 6.5)
                 throw OutOfRangeException(LocalizedFormats.OUT_OF_RANGE_SIMPLE, tileFromOrigin, 0.5, 6.5)
-            translate(FieldTiles.one().divide(2.0).plus(FieldTiles.one().times(tileFromOrigin - 1)))
+            translate(FieldTiles.one().divide(2.0).plus(FieldTiles.one().times(tileFromOrigin - 1.0)))
             return PrebuiltPosition()
         }
 
@@ -264,8 +269,9 @@ object StartingConfiguration {
          * This translation is positioned in the vertical center of the field tile, starting from the side of the origin.
          */
         fun translate(translationFromOrigin: Measure<Distance>): PrebuiltPosition {
-            if (translationFromOrigin.inUnit(Feet) > 12)
-                throw IllegalArgumentException("Translation exceeds 12-foot playing field")
+            val mag = abs(translationFromOrigin.inUnit(Feet))
+            if (mag > 12.0)
+                throw NumberIsTooLargeException(mag, 12, true)
             horizontalTranslation = translationFromOrigin
             return PrebuiltPosition()
         }

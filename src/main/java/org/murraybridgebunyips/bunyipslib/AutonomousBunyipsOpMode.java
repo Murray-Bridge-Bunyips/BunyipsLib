@@ -85,7 +85,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         String timeLeft = getApproximateTimeLeft();
         Text.Builder out = Text.builder();
         out.append("[AutonomousBunyipsOpMode] onReady() called | %% task(s) queued%\n",
-                userSelection != null ? "usr: " + selectedOpMode + " | " : "",
+                userSelection != null ? "usr: " + Text.removeHtml(String.valueOf(selectedOpMode)) + " | " : "",
                 taskCount,
                 timeLeft.isEmpty() ? "" : timeLeft + " to complete"
         );
