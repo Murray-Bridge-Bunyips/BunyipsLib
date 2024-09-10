@@ -154,7 +154,7 @@ public class AlignToPointDriveTask extends ForeverTask {
             headingInput = 0;
 
         // Combine the x/y velocity with our derived angular velocity
-        drive.setWeightedDrivePowerRotationPriority(new Pose2d(fieldCentric ? robotFrameInput : fieldFrameInput, headingInput));
+        drive.setRotationPriorityWeightedDrivePower(new Pose2d(fieldCentric ? robotFrameInput : fieldFrameInput, headingInput));
 
         // Draw the target on the field with lines to the target
         opMode.telemetry.dashboardFieldOverlay()

@@ -240,9 +240,9 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     @Override
-    public void setWeightedDrivePowerRotationPriority(Pose2d drivePowerRotationPriority) {
+    public void setRotationPriorityWeightedDrivePower(Pose2d drivePowerRotationPriority) {
         if (isDisabled() || !updates) return;
-        drive.setWeightedDrivePowerRotationPriority(drivePowerRotationPriority);
+        drive.setRotationPriorityWeightedDrivePower(drivePowerRotationPriority);
     }
 
     @Override

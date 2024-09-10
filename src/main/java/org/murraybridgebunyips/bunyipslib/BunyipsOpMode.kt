@@ -405,7 +405,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 robotControllers.forEach { m -> m.clearBulkCache() }
                 try {
                     // Run user-defined active loop
-                    runnables.forEach { it.run() }
+                    runnables.forEach { Exceptions.runUserMethod(it, this) }
                     activeLoop()
                 } catch (e: Exception) {
                     telemetry.overrideStatus = "<font color='red'><b>error</b></font>"

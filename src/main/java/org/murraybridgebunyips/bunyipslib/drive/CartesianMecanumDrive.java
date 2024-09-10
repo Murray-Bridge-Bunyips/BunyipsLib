@@ -61,6 +61,57 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
         setToBrake();
     }
 
+    /**
+     * Calculate Mecanum drive powers with rotational prioritisation.
+     *
+     * @param speedX Cartesian speed in the X direction
+     * @param speedY Cartesian speed in the Y direction
+     * @param speedR Speed of rotation, clockwise positive
+     * @return an array of new motor powers in the order of front left, front right, back left, back right
+     */
+    public static double[] calculateRotationPrioritisedPowers(double speedX, double speedY, double speedR) {
+        // Raw powers for translation and rotation in configuration (front left, front right, back left, back right)
+        double[] translationValues = {
+                speedY + speedX,
+                speedY - speedX,
+                speedY - speedX,
+                speedY + speedX
+        };
+        double[] rotationValues = {
+                -speedR,
+                speedR,
+                -speedR,
+                speedR
+        };
+
+        // Try to find the maximum power possible we can allocate to translation by scaling translation depending
+        // on the desired rotation. This always ensures our rotational velocity will be achieved at the cost of
+        // reduced translational velocity.
+        double scaleFactor = 1.0;
+
+        for (int i = 0; i < 4; i++) {
+            double combinedPower = translationValues[i] + rotationValues[i];
+            // Rescale translation to give more power to rotation if it exceeds motor limits
+            if (Math.abs(combinedPower) > 1) {
+                double availablePower = 1 - Math.min(1, Math.abs(rotationValues[i]));
+                double requiredScale = availablePower / Math.abs(translationValues[i]);
+
+                // Update scaleFactor to the lowest required value to stay within motor limits
+                if (requiredScale < scaleFactor) {
+                    scaleFactor = requiredScale;
+                }
+            }
+        }
+
+        // Apply scaling
+        double frontLeftPower = translationValues[0] * scaleFactor + rotationValues[0];
+        double frontRightPower = translationValues[1] * scaleFactor + rotationValues[1];
+        double backLeftPower = translationValues[2] * scaleFactor + rotationValues[2];
+        double backRightPower = translationValues[3] * scaleFactor + rotationValues[3];
+
+        return new double[]{frontLeftPower, frontRightPower, backLeftPower, backRightPower};
+    }
+
     // Setters for the prioritisation of the drive system
     public CartesianMecanumDrive setPriority(Priority priority) {
         this.priority = priority;
@@ -137,7 +188,11 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
     @Override
     protected void periodic() {
         if (priority == Priority.ROTATIONAL) {
-            rotationalUpdate();
+            double[] powers = calculateRotationPrioritisedPowers(speedX, speedY, speedR);
+            frontLeft.setPower(powers[0]);
+            frontRight.setPower(powers[1]);
+            backLeft.setPower(powers[2]);
+            backRight.setPower(powers[3]);
             opMode.telemetry.add(String.format(Locale.getDefault(), "Rotation-priority Mecanum Drive: Forward: %.2f, Strafe: %.2f, Rotate: %.2f", speedX, speedY, speedR));
             return;
         }
@@ -216,51 +271,6 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
         backRight.setMode(mode);
         frontLeft.setMode(mode);
         frontRight.setMode(mode);
-        return this;
-    }
-
-    private CartesianMecanumDrive rotationalUpdate() {
-        // Calculate translational speeds
-        double[] translationValues = {
-                speedY + speedX,
-                speedY - speedX,
-                speedY - speedX,
-                speedY + speedX
-        };
-
-        double[] rotationValues = {
-                -speedR,
-                speedR,
-                -speedR,
-                speedR
-        };
-
-        double scaleFactor = 1.0;
-        double tmpScale = 1.0;
-
-        // Solve this equation backwards
-        // MotorX = TranslationX * scaleFactor + RotationX
-        // to find scaleFactor that ensures -1 <= MotorX <= 1 and 0 < scaleFactor <= 1
-        for (int i = 0; i < 4; i++) {
-            if (Math.abs(translationValues[i] + rotationValues[i]) > 1) {
-                tmpScale = (1 - rotationValues[i]) / translationValues[i];
-            } else if (translationValues[i] + rotationValues[i] < -1) {
-                tmpScale = (rotationValues[i] - 1) / translationValues[i];
-            }
-            if (tmpScale < scaleFactor) {
-                scaleFactor = tmpScale;
-            }
-        }
-
-        double frontLeftPower = translationValues[0] * scaleFactor + rotationValues[0];
-        double frontRightPower = translationValues[1] * scaleFactor + rotationValues[1];
-        double backLeftPower = translationValues[2] * scaleFactor + rotationValues[2];
-        double backRightPower = translationValues[3] * scaleFactor + rotationValues[3];
-
-        frontLeft.setPower(frontLeftPower);
-        frontRight.setPower(frontRightPower);
-        backLeft.setPower(backLeftPower);
-        backRight.setPower(backRightPower);
         return this;
     }
 

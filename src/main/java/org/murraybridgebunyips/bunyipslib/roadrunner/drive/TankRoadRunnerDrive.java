@@ -313,6 +313,7 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
                     .setStroke("#751000")
                     .strokeLine(
                             current.getX(), current.getY(),
+                            // TODO: rot matrix
                             current.getX() + drivePower.getX() * 24, current.getY() + drivePower.getY() * 24
                     );
         }
@@ -321,8 +322,20 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
     }
 
     @Override
-    public void setWeightedDrivePowerRotationPriority(Pose2d drivePowerRotationPriority) {
-        // TODO
+    public void setRotationPriorityWeightedDrivePower(Pose2d drivePowerRotationPriority) {
+        drivePowerRotationPriority = new Pose2d(
+                drivePowerRotationPriority.getX() * coefficients.VX_WEIGHT,
+                0,
+                drivePowerRotationPriority.getHeading() * coefficients.OMEGA_WEIGHT
+        );
+
+        double remainder = 1 - Math.min(1, Math.abs(drivePowerRotationPriority.getHeading()));
+        drivePowerRotationPriority = new Pose2d(
+                drivePowerRotationPriority.getX() * remainder,
+                0,
+                drivePowerRotationPriority.getHeading()
+        );
+
         setWeightedDrivePower(drivePowerRotationPriority);
     }
 
