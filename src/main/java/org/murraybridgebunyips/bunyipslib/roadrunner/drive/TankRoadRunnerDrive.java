@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -309,12 +310,17 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
         }
 
         if (telemetry != null) {
+            Vector2d directionOfTravel = drivePower.vec()
+                    .rotated(current.getHeading())
+                    // 24 for 1 field tile in inches
+                    .times(24);
             telemetry.dashboardFieldOverlay()
                     .setStroke("#751000")
                     .strokeLine(
-                            current.getX(), current.getY(),
-                            // TODO: rot matrix
-                            current.getX() + drivePower.getX() * 24, current.getY() + drivePower.getY() * 24
+                            current.getX(),
+                            current.getY(),
+                            current.getX() + directionOfTravel.getX(),
+                            current.getY() + directionOfTravel.getY()
                     );
         }
 

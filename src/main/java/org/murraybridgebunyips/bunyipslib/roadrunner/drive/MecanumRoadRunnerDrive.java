@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
@@ -289,12 +290,17 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
         }
 
         if (telemetry != null) {
-            // TODO; rotation matrix
+            Vector2d directionOfTravel = drivePower.vec()
+                    .rotated(current.getHeading())
+                    // 24 for 1 field tile in inches
+                    .times(24);
             telemetry.dashboardFieldOverlay()
                     .setStroke("#751000")
                     .strokeLine(
-                            current.getX(), current.getY(),
-                            current.getX() + drivePower.getX() * 24, current.getY() + drivePower.getY() * 24
+                            current.getX(),
+                            current.getY(),
+                            current.getX() + directionOfTravel.getX(),
+                            current.getY() + directionOfTravel.getY()
                     );
         }
 
