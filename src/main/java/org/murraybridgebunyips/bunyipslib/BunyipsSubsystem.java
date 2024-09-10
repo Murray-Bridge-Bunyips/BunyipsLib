@@ -199,6 +199,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final void setDefaultTask(Task defaultTask) {
         if (defaultTask == null) return;
+        defaultTask.onSubsystem(this, false);
         this.defaultTask = defaultTask;
     }
 

@@ -13,7 +13,7 @@ public class ContinuousTask extends ForeverTask {
     private final Runnable callback;
 
     /**
-     * Subsystem-independent continuous task.
+     * A simple callback to run forever.
      *
      * @param callback the task to run continuously
      */
