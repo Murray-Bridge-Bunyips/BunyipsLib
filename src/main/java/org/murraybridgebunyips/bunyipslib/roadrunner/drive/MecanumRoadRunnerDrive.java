@@ -288,6 +288,7 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
         }
 
         if (telemetry != null) {
+            // TODO; rotation matrix
             telemetry.dashboardFieldOverlay()
                     .setStroke("#751000")
                     .strokeLine(
@@ -297,6 +298,66 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
         }
 
         setDrivePower(drivePower);
+    }
+
+    @Override
+    public void setWeightedDrivePowerRotationPriority(Pose2d drivePowerRotationPriority) {
+        // TODO: needs fixing, WIP
+        if (Math.abs(drivePowerRotationPriority.getX()) + Math.abs(drivePowerRotationPriority.getY())
+                + Math.abs(drivePowerRotationPriority.getHeading()) > 1) {
+            // Re-normalize the powers according to the weights from weighted drive power
+            double denom = coefficients.VX_WEIGHT * Math.abs(drivePowerRotationPriority.getX())
+                    + coefficients.VY_WEIGHT * Math.abs(drivePowerRotationPriority.getY())
+                    + coefficients.OMEGA_WEIGHT * Math.abs(drivePowerRotationPriority.getHeading());
+
+            drivePowerRotationPriority = new Pose2d(
+                    coefficients.VX_WEIGHT * drivePowerRotationPriority.getX(),
+                    coefficients.VY_WEIGHT * drivePowerRotationPriority.getY(),
+                    coefficients.OMEGA_WEIGHT * drivePowerRotationPriority.getHeading()
+            ).div(denom);
+        }
+
+        double speedX = drivePowerRotationPriority.getY();
+        double speedY = drivePowerRotationPriority.getX();
+        double speedR = -drivePowerRotationPriority.getHeading();
+
+        double[] translationValues = {
+                speedY + speedX,
+                speedY - speedX,
+                speedY - speedX,
+                speedY + speedX
+        };
+
+        double[] rotationValues = {
+                -speedR,
+                speedR,
+                -speedR,
+                speedR
+        };
+
+        double scaleFactor = 1.0;
+        double tmpScale = 1.0;
+
+        // Solve this equation backwards
+        // MotorX = TranslationX * scaleFactor + RotationX
+        // to find scaleFactor that ensures -1 <= MotorX <= 1 and 0 < scaleFactor <= 1
+        for (int i = 0; i < 4; i++) {
+            if (Math.abs(translationValues[i] + rotationValues[i]) > 1) {
+                tmpScale = (1 - rotationValues[i]) / translationValues[i];
+            } else if (translationValues[i] + rotationValues[i] < -1) {
+                tmpScale = (rotationValues[i] - 1) / translationValues[i];
+            }
+            if (tmpScale < scaleFactor) {
+                scaleFactor = tmpScale;
+            }
+        }
+
+        double frontLeftPower = translationValues[0] * scaleFactor + rotationValues[0];
+        double frontRightPower = translationValues[1] * scaleFactor + rotationValues[1];
+        double backLeftPower = translationValues[2] * scaleFactor + rotationValues[2];
+        double backRightPower = translationValues[3] * scaleFactor + rotationValues[3];
+
+        setMotorPowers(frontLeftPower, backLeftPower, backRightPower, frontRightPower);
     }
 
     @NonNull

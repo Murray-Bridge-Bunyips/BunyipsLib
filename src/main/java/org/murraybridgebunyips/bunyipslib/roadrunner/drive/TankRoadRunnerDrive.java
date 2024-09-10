@@ -320,6 +320,12 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
         setDrivePower(drivePower);
     }
 
+    @Override
+    public void setWeightedDrivePowerRotationPriority(Pose2d drivePowerRotationPriority) {
+        // TODO
+        setWeightedDrivePower(drivePowerRotationPriority);
+    }
+
     @NonNull
     @Override
     public List<Double> getWheelPositions() {

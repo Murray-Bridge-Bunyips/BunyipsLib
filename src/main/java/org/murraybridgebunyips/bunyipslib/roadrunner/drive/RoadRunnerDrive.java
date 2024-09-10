@@ -221,6 +221,14 @@ public interface RoadRunnerDrive {
     void setWeightedDrivePower(Pose2d drivePower);
 
     /**
+     * Set a drive power with axial weights. Feedforward is not applied.
+     * Rotation component is prioritised in the motor speeds.
+     *
+     * @param drivePowerRotationPriority the robot-centric pose to travel in.
+     */
+    void setWeightedDrivePowerRotationPriority(Pose2d drivePowerRotationPriority);
+
+    /**
      * @return the encoder report of wheel positions
      */
     List<Double> getWheelPositions();
