@@ -35,9 +35,9 @@ public class HolonomicDriveTask extends ForeverTask {
     /**
      * Constructor for HolonomicDriveTask.
      *
-     * @param xSupplier           The supplier for the x-axis input
-     * @param ySupplier           The supplier for the y-axis input, <i>note that this will be inverted</i>
-     * @param rSupplier           The supplier for the rotation input
+     * @param xSupplier           The supplier for the Cartesian x-axis input
+     * @param ySupplier           The supplier for the Cartesian y-axis input, <i>note that this will be inverted</i>
+     * @param rSupplier           The supplier for the CW rotation input
      * @param mecanumDrive        The MecanumDrive to use for driving, must be a MecanumDrive or CartesianMecanumDrive
      * @param fieldCentricEnabled A BooleanSupplier that returns whether field centric drive is enabled,
      *                            this will only work on a MecanumDrive that supports dynamic field-centric
@@ -52,7 +52,7 @@ public class HolonomicDriveTask extends ForeverTask {
         y = ySupplier;
         r = rSupplier;
         this.fieldCentricEnabled = fieldCentricEnabled;
-        withName("Holonomic Drive Control");
+        withName("Holonomic Control");
     }
 
     /**
@@ -71,18 +71,21 @@ public class HolonomicDriveTask extends ForeverTask {
 
     @Override
     protected void periodic() {
+        double xV = x.get(), yV = y.get();
         if (drive instanceof MecanumDrive) {
+            MecanumDrive d = (MecanumDrive) drive;
+            Pose2d current = d.getPoseEstimate();
             if (fieldCentricEnabled.getAsBoolean()) {
-                Vector2d cVec = Controls.makeCartesianVector(x.get(), y.get());
-                ((MecanumDrive) drive).setWeightedDrivePower(new Pose2d(
-                        Cartesian.toVector(Cartesian.rotate(cVec, Radians.of(((MecanumDrive) drive).getExternalHeading()).negate())),
+                Vector2d cVec = Controls.makeCartesianVector(xV, yV);
+                d.setWeightedDrivePower(new Pose2d(
+                        Cartesian.toVector(Cartesian.rotate(cVec, Radians.of(current.getHeading()).negate())),
                         -r.get()
                 ));
             } else {
-                ((MecanumDrive) drive).setSpeedUsingController(x.get(), y.get(), r.get());
+                d.setSpeedUsingController(xV, yV, r.get());
             }
         } else if (drive instanceof CartesianMecanumDrive) {
-            ((CartesianMecanumDrive) drive).setSpeedUsingController(x.get(), y.get(), r.get());
+            ((CartesianMecanumDrive) drive).setSpeedUsingController(xV, yV, r.get());
         }
     }
 

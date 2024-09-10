@@ -81,33 +81,33 @@ public class DriveToPoseTask extends Task {
     /**
      * Set the maximum forward (x) speed (motor power) that the robot can move at.
      *
-     * @param speed The maximum forward speed.
+     * @param speed The maximum forward speed magnitude.
      * @return this
      */
     public DriveToPoseTask withMaxForwardSpeed(double speed) {
-        MAX_FORWARD_SPEED = speed;
+        MAX_FORWARD_SPEED = Math.abs(speed);
         return this;
     }
 
     /**
      * Set the maximum strafe (y) speed (motor power) that the robot can move at.
      *
-     * @param speed The maximum strafe speed.
+     * @param speed The maximum strafe speed magnitude.
      * @return this
      */
     public DriveToPoseTask withMaxStrafeSpeed(double speed) {
-        MAX_STRAFE_SPEED = speed;
+        MAX_STRAFE_SPEED = Math.abs(speed);
         return this;
     }
 
     /**
      * Set the maximum rotation speed (motor power) that the robot can move at.
      *
-     * @param speed The maximum rotation speed.
+     * @param speed The maximum rotation speed magnitude.
      * @return this
      */
     public DriveToPoseTask withMaxRotationSpeed(double speed) {
-        MAX_ROTATION_SPEED = speed;
+        MAX_ROTATION_SPEED = Math.abs(speed);
         return this;
     }
 

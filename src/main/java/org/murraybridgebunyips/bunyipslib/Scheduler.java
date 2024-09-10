@@ -94,7 +94,7 @@ public class Scheduler extends BunyipsComponent {
         if (subsystems.isEmpty())
             Dbg.warn(getClass(), "Caution: No subsystems were added for the Scheduler to update.");
         else
-            Dbg.logv(getClass(), "Added % subsystems to update.", dispatch.length);
+            Dbg.logv(getClass(), "Added % subsystem(s) to update.", dispatch.length);
     }
 
     /**

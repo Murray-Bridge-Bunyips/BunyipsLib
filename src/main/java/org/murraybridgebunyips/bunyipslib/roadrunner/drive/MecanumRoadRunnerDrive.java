@@ -59,6 +59,7 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
     private final VoltageSensor batteryVoltageSensor;
     private final List<Integer> lastEncPositions = new ArrayList<>();
     private final List<Integer> lastEncVels = new ArrayList<>();
+    private final DualTelemetry telemetry;
     private MecanumCoefficients coefficients;
 
     /**
@@ -130,6 +131,7 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
+        this.telemetry = telemetry;
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 telemetry, constants.RUN_USING_ENCODER, follower, coefficients.HEADING_PID, batteryVoltageSensor,
@@ -269,7 +271,7 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
-        Pose2d vel = drivePower;
+        Pose2d current = getPoseEstimate();
 
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
@@ -278,14 +280,23 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
                     + coefficients.VY_WEIGHT * Math.abs(drivePower.getY())
                     + coefficients.OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
 
-            vel = new Pose2d(
+            drivePower = new Pose2d(
                     coefficients.VX_WEIGHT * drivePower.getX(),
                     coefficients.VY_WEIGHT * drivePower.getY(),
                     coefficients.OMEGA_WEIGHT * drivePower.getHeading()
             ).div(denom);
         }
 
-        setDrivePower(vel);
+        if (telemetry != null) {
+            telemetry.dashboardFieldOverlay()
+                    .setStroke("#751000")
+                    .strokeLine(
+                            current.getX(), current.getY(),
+                            current.getX() + drivePower.getX() * 24, current.getY() + drivePower.getY() * 24
+                    );
+        }
+
+        setDrivePower(drivePower);
     }
 
     @NonNull

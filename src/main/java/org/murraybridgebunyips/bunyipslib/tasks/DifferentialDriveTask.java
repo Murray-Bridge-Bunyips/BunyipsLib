@@ -29,7 +29,7 @@ public class DifferentialDriveTask extends ForeverTask {
         this.drive = drive;
         this.gamepad = gamepad;
         onSubsystem(drive, false);
-        withName("Differential Drive Control");
+        withName("Differential Control");
     }
 
     @Override

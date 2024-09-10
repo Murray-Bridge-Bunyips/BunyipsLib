@@ -5,6 +5,7 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Millisecon
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -19,6 +20,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
+import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 
 import java.util.function.BooleanSupplier;
@@ -256,6 +258,18 @@ public class HolonomicVectorDriveTask extends ForeverTask {
                         headingLock != null ? -rController.calculate(angle) : userR
                 )
         );
+
+        if (vectorLock != null) {
+            opMode.telemetry
+                    .dashboardFieldOverlay()
+                    .setStroke("#c91c00")
+                    .strokeLine(current.getX(), current.getY(), vectorLock.getX(), vectorLock.getY());
+        }
+
+        if (headingLock != null) {
+            Canvas c = opMode.telemetry.dashboardFieldOverlay().setStroke("#c91c00");
+            DashboardUtil.drawRobot(c, new Pose2d(current.vec(), headingLock));
+        }
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
@@ -239,7 +240,7 @@ public class MoveToAprilTagTask extends Task {
             return;
         }
 
-        assert target.get().getFtcPose().isPresent();
+        assert target.get().getFtcPose().isPresent() && target.get().getMetadata().isPresent();
         AprilTagPoseFtc camPose = target.get().getFtcPose().get();
         rangeError = (camPose.range - DESIRED_DISTANCE.in(Inches)) * SPEED_GAIN;
         yawError = -camPose.yaw * STRAFE_GAIN;
@@ -252,6 +253,17 @@ public class MoveToAprilTagTask extends Task {
                         Range.clip(headingError, -MAX_AUTO_TURN, MAX_AUTO_TURN)
                 )
         );
+
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        VectorF point = target.get().getMetadata().get().fieldPosition;
+        opMode.telemetry.dashboardFieldOverlay()
+                .setStroke("#dd2c00")
+                .strokeCircle(point.get(0), point.get(1), 2)
+                .setStroke("#b89eff")
+                .strokeLine(point.get(0), point.get(1), poseEstimate.getX(), poseEstimate.getY())
+                .setStroke("#ffce7a")
+                .strokeLine(point.get(0), point.get(1), point.get(0), poseEstimate.getY())
+                .strokeLine(point.get(0), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
     }
 
     @Override
