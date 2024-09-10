@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
+import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
@@ -44,12 +46,15 @@ public class AlignToPointDriveTask extends ForeverTask {
      *
      * @param passThroughPoseX   the pose X power to pass through to the drive
      * @param passThroughPoseY   the pose Y power to pass through to the drive
-     * @param drive              RoadRunner drive instance
+     * @param drive              RoadRunner drive instance, must be a BunyipsSubsystem
      * @param rotationController rotation PID controller to use
      * @param point              the point to align to in field space, will use the drive's pose estimate for current position
      */
     public AlignToPointDriveTask(@Nullable Supplier<Float> passThroughPoseX, @Nullable Supplier<Float> passThroughPoseY, RoadRunnerDrive drive, PIDFController rotationController, Supplier<Vector2d> point) {
         this.drive = drive;
+        if (!(drive instanceof BunyipsSubsystem))
+            throw new EmergencyStop("AlignToPointDriveTask must be used with a BunyipsSubsystem extending drive");
+        onSubsystem((BunyipsSubsystem) drive, false);
         pointSupplier = point;
         controller = rotationController;
         // Default tolerance is too low, will set minimum bound
