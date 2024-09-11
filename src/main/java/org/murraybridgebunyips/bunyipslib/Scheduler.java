@@ -192,8 +192,9 @@ public class Scheduler extends BunyipsComponent {
                 if (task.time.equals(INFINITE_TIMEOUT) || timeoutExceeded) {
                     if (!task.taskToRun.hasDependency()) {
                         if (task.stopCondition.getAsBoolean()) {
-                            // Finish handler will be called below
-                            task.taskToRun.finish();
+                            // Finish now as we should do nothing with this task
+                            task.taskToRun.finishNow();
+                            continue;
                         }
                         // This is a non-command task, run it now as it will not be run by any subsystem
                         task.taskToRun.run();
@@ -269,7 +270,7 @@ public class Scheduler extends BunyipsComponent {
      * <p>
      * In some situations, this method may be functionally equivalent to running a task via the {@code runOnce()} method, however, the difference is
      * that {@code runDebounced()} will perform rising-edge latching on this boolean condition, while {@code runOnce()}
-     * will perform latching on the running state of the task. Therefore, if this debounce is used here in conjunction
+     * will perform latching on the queueing state of the task. Therefore, if this debounce is used here in conjunction
      * with a reasonable {@code inTime()} directive, the task will not run as the condition has debounced and has not been continually sustained.
      * Ensure the latching behaviour is correct for your application.
      *
@@ -562,7 +563,7 @@ public class Scheduler extends BunyipsComponent {
         }
 
         /**
-         * Implicitly make a new RunTask to run once the condition is met, debouncing the task from running more than once the condition is met.
+         * Implicitly make a new RunTask to run once the condition is met, debouncing the task from queueing more than once the condition is met.
          * This effectively will run this code block once when the condition is met at the rising edge.
          * <p>
          * This method can only be called once per ConditionalTask.
