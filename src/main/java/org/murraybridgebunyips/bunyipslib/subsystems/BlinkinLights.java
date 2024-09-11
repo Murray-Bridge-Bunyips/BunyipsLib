@@ -23,8 +23,7 @@ public class BlinkinLights extends BunyipsSubsystem {
     public final Tasks tasks = new Tasks();
 
     private final RevBlinkinLedDriver lights;
-    private final RevBlinkinLedDriver.BlinkinPattern defaultPattern;
-
+    private RevBlinkinLedDriver.BlinkinPattern defaultPattern;
     private RevBlinkinLedDriver.BlinkinPattern currentPattern;
 
     /**
@@ -55,37 +54,71 @@ public class BlinkinLights extends BunyipsSubsystem {
      * Set the current pattern. Will no-op if a task is running on this subsystem.
      *
      * @param pattern the pattern to update to.
+     * @return this
      */
-    public void setPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
+    public BlinkinLights setPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
         if (getCurrentTask() instanceof IdleTask)
             currentPattern = pattern;
+        return this;
+    }
+
+    /**
+     * Get the current default pattern.
+     *
+     * @return currently respected default pattern.
+     */
+    public RevBlinkinLedDriver.BlinkinPattern getDefaultPattern() {
+        return defaultPattern;
+    }
+
+    /**
+     * Set the default pattern. The default pattern is the one this driver uses as a default, and is specified
+     * previously in the constructor. This method will update the current pattern to the new default if the old
+     * default is the current pattern.
+     *
+     * @param defaultPattern the new default pattern
+     * @return this
+     */
+    public BlinkinLights setDefaultPattern(RevBlinkinLedDriver.BlinkinPattern defaultPattern) {
+        if (this.defaultPattern == currentPattern)
+            currentPattern = defaultPattern;
+        this.defaultPattern = defaultPattern;
+        return this;
     }
 
     /**
      * Set the current pattern. Will internally cancel any running task on this subsystem.
      *
      * @param pattern the pattern to update to.
+     * @return this
      */
-    public void forceSetPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
+    public BlinkinLights forceSetPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
         if (!(getCurrentTask() instanceof IdleTask))
             cancelCurrentTask();
         currentPattern = pattern;
+        return this;
     }
 
     /**
      * Reset the pattern back to the default. Will no-op if a task is running on this subsystem.
+     *
+     * @return this
      */
-    public void resetPattern() {
+    public BlinkinLights resetPattern() {
         if (getCurrentTask() instanceof IdleTask)
             currentPattern = defaultPattern;
+        return this;
     }
 
     /**
      * Cancel tasks and turn off the lights. Auto-called on subsystem disable.
+     *
+     * @return this
      */
-    public void turnOff() {
+    public BlinkinLights turnOff() {
         cancelCurrentTask();
         currentPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        return this;
     }
 
     @Override
