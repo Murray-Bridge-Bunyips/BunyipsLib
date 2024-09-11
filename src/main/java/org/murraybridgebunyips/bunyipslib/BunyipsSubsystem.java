@@ -112,10 +112,10 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     }
 
     /**
-     * Utility function to run NullSafety.assertComponentArgs() on the given parameters, usually on
+     * Utility function to run {@code NullSafety.assertComponentArgs()} on the given parameters, usually on
      * the motors/hardware/critical objects passed into the constructor. If this check fails, your subsystem
-     * will automatically disable the update() method from calling to prevent exceptions, no-oping
-     * the subsystem. A COM_FAULT will be added to telemetry, and exceptions from this class will be muted.
+     * will automatically disable the {@code update()} method from calling to prevent exceptions, no-oping
+     * the subsystem. A 'SUBSYSTEM FAULT' will be added to telemetry, and exceptions from this class will be muted.
      *
      * @param parameters constructor parameters for your subsystem that should be checked for null,
      *                   in which case the subsystem should be disabled
@@ -149,7 +149,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
 
     /**
      * Re-enable a subsystem if it was previously disabled via a disable() call.
-     * This method will no-op if the assertion from assertParamsNotNull() failed.
+     * This method will no-op if the assertion from {@link #assertParamsNotNull(Object...)} failed.
      */
     public final void enable() {
         if (shouldRun || assertionFailed) return;
@@ -164,7 +164,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final void cancelCurrentTask() {
         if (shouldRun && currentTask != defaultTask) {
-            Dbg.logv(getClass(), "Task % running on % was force cancelled and reverted to the default task.", currentTask, name);
+            Dbg.logv(getClass(), "%Task changed: %<-%(INT)", isDefaultName() ? "" : "(" + name + ") ", defaultTask, currentTask);
             currentTask.finishNow();
             currentTask = defaultTask;
         }
@@ -184,7 +184,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
                 Dbg.logv(getClass(), "%Subsystem awake.", isDefaultName() ? "" : "(" + name + ") ");
                 onEnable();
             } else {
-                // Task changes are repetitive to log, will just leave the DS with the check logcat message
+                // Task changes are repetitive to telemetry log, will just leave the important messages to there
                 Dbg.logv(getClass(), "%Task changed: %<-%", isDefaultName() ? "" : "(" + name + ") ", defaultTask, currentTask);
             }
             currentTask = defaultTask;

@@ -17,7 +17,8 @@ public class DeadlineTaskGroup extends TaskGroup {
      * @param tasks The tasks to run together
      */
     public DeadlineTaskGroup(Task... tasks) {
-        super(tasks);
+        // Timeout is defined by the very first task
+        super(tasks[0].getTimeout(), tasks);
     }
 
     @Override

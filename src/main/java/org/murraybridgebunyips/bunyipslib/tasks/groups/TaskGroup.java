@@ -12,6 +12,8 @@ import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.Scheduler;
+import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.ArrayList;
@@ -31,11 +33,8 @@ public abstract class TaskGroup extends Task {
     protected final ArrayList<Task> tasks = new ArrayList<>();
     private final HashSet<Task> attachedTasks = new HashSet<>();
 
-    protected TaskGroup(Task... tasks) {
-        // Try to extract the highest timeout to be the timeout of this task group, however if one is infinite
-        // then the group is infinite
-        super(Arrays.stream(tasks).anyMatch(t -> t.getTimeout().magnitude() == 0.0) ? INFINITE_TIMEOUT :
-                Seconds.of(Arrays.stream(tasks).mapToDouble(t -> t.getTimeout().in(Seconds)).max().orElse(0.0)));
+    protected TaskGroup(Measure<Time> maxTimeout, Task... tasks) {
+        super(maxTimeout);
         this.tasks.addAll(Arrays.asList(tasks));
         if (tasks.length == 0) {
             throw new EmergencyStop(getClass().getSimpleName() + " created with no tasks.");
