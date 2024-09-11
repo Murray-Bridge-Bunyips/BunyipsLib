@@ -146,7 +146,8 @@ abstract class BunyipsOpMode : BOMInternal() {
 
     /**
      * Run code in a loop AFTER [onInit] has completed, until start is pressed on the Driver Station
-     * and the init-task ([setInitTask]) is done.
+     * and the init-task ([setInitTask]) is done. The boolean returned by this method will indicate the status
+     * of the imit-loop, if it returns true, the init-loop will finish early.
      *
      * If not implemented and no init-task is defined, the OpMode will continue on as normal and wait for start.
      */
