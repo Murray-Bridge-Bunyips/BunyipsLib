@@ -38,7 +38,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Call to access the driver() method from the Scheduler.
-     * This is the same as calling scheduler().driver().
+     * This is the same as calling {@code scheduler().driver()}.
      *
      * @return a ControllerButtonCreator for the driver controller
      */
@@ -48,7 +48,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Call to access the operator() method from the Scheduler.
-     * This is the same as calling scheduler().operator().
+     * This is the same as calling {@code scheduler().operator()}.
      *
      * @return a ControllerButtonCreator for the operator controller
      */
@@ -58,7 +58,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Call to access the when() scheduler from the Scheduler.
-     * This is the same as calling scheduler().when().
+     * This is the same as calling {@code scheduler().when()}.
      * This is used to create a conditional command based on a boolean supplier.
      *
      * @param condition the condition to be checked
@@ -70,7 +70,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Call to access the whenDebounced() scheduler from the Scheduler.
-     * This is the same as calling scheduler().whenDebounced().
+     * This is the same as calling {@code scheduler().whenDebounced()}.
      * This is used to create a conditional command based on a boolean supplier that is debounced.
      *
      * @param condition the condition to be debounced
@@ -82,7 +82,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Call to access the always() scheduler from the Scheduler.
-     * This is the same as calling scheduler().always().
+     * This is the same as calling {@code scheduler().always()}.
      * This is used to create a command that runs every loop.
      *
      * @return task creation

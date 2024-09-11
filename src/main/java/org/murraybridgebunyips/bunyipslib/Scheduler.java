@@ -275,6 +275,12 @@ public class Scheduler extends BunyipsComponent {
 
     /**
      * Run a task when a condition is met, debouncing the task from running more than once the condition is met.
+     * <p>
+     * In some situations, this method may be functionally equivalent to running a task via the {@code runOnce()} method, however, the difference is
+     * that {@code runDebounced()} will perform rising-edge latching on this boolean condition, while {@code runOnce()}
+     * will perform latching on the running state of the task. Therefore, if this debounce is used here in conjunction
+     * with a reasonable {@code inTime()} directive, the task will not run as the condition has debounced and has not been continually sustained.
+     * Ensure the latching behaviour is correct for your application.
      *
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Timing/stop control for allocation.
