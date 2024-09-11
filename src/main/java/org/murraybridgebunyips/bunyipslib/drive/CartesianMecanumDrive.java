@@ -78,10 +78,10 @@ public class CartesianMecanumDrive extends BunyipsSubsystem {
                 speedY + speedX
         };
         double[] rotationValues = {
-                -speedR,
                 speedR,
                 -speedR,
-                speedR
+                speedR,
+                -speedR
         };
 
         // Try to find the maximum power possible we can allocate to translation by scaling translation depending
