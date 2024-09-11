@@ -12,7 +12,6 @@ import java.util.List;
  * @since 1.0.0-pre
  */
 public final class NullSafety {
-
     private NullSafety() {
     }
 

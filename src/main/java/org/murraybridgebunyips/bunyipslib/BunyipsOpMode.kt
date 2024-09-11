@@ -129,6 +129,7 @@ abstract class BunyipsOpMode : BOMInternal() {
         /**
          * Whether a [BunyipsOpMode] is currently running. This is useful for checking if the OpMode singleton can be accessed
          * without raising an exception due to the field being null.
+         *
          * @return Whether a [BunyipsOpMode] is currently running.
          */
         @JvmStatic
@@ -138,13 +139,15 @@ abstract class BunyipsOpMode : BOMInternal() {
 
     /**
      * Runs upon the pressing of the `INIT` button on the Driver Station.
+     *
      * This is where you should initialise your hardware and other components.
      */
     protected abstract fun onInit()
 
     /**
-     * Run code in a loop AFTER [onInit] has completed, until
-     * start is pressed on the Driver Station and the init-task ([setInitTask]) is done.
+     * Run code in a loop AFTER [onInit] has completed, until start is pressed on the Driver Station
+     * and the init-task ([setInitTask]) is done.
+     *
      * If not implemented and no init-task is defined, the OpMode will continue on as normal and wait for start.
      */
     protected open fun onInitLoop(): Boolean {
@@ -153,7 +156,8 @@ abstract class BunyipsOpMode : BOMInternal() {
 
     /**
      * Allow code to execute once after all initialisation has finished.
-     * Note: this method is always called even if initialisation is cut short by the Driver Station.
+     *
+     * Note: This method is always called even if initialisation is cut short by the Driver Station.
      */
     protected open fun onInitDone() {
         // no-op
@@ -161,6 +165,7 @@ abstract class BunyipsOpMode : BOMInternal() {
 
     /**
      * Perform one time operations after start is pressed.
+     *
      * Unlike [onInitDone], this will only execute once play is hit and not when initialisation is done.
      */
     protected open fun onStart() {
@@ -169,16 +174,20 @@ abstract class BunyipsOpMode : BOMInternal() {
 
     /**
      * Code to run continuously after the `START` button is pressed on the Driver Station.
+     *
      * This method will be called on each hardware cycle, but may not be called if the OpMode is stopped before starting.
      */
     protected abstract fun activeLoop()
 
     /**
      * Perform one time clean-up operations after the [activeLoop] finishes all intentions gracefully.
-     * This method is called after a [finish] or [exit] call, but may not
-     * be called if the OpMode is terminated by an *unhandled fatal* exception/early stop. This method is useful for
-     * ensuring the robot is in a safe state after the OpMode has finished. In an exception-less OpMode,
-     * this method will be called before [onStop].
+     *
+     * This method is called after a [finish] or [exit] call, but may not be called if the OpMode is
+     * terminated by an *unhandled fatal* exception/early stop.
+     *
+     * This method is useful for ensuring the robot is in a safe state after the OpMode has finished.
+     * In an exception-less OpMode, this method will be called before [onStop].
+     *
      * @see onStop
      */
     protected open fun onFinish() {
@@ -187,10 +196,13 @@ abstract class BunyipsOpMode : BOMInternal() {
 
     /**
      * Perform one time clean-up operations as the OpMode is stopping.
+     *
      * This method is called after the OpMode has been requested to stop, and will be the last method
-     * called before the OpMode is terminated, and is *guaranteed* to be called. This method is useful
-     * for releasing resources to prevent memory leaks, as motor controllers will be powered off
+     * called before the OpMode is terminated, and is *guaranteed* to be called.
+     *
+     * This method is useful for releasing resources to prevent memory leaks, as motor controllers will be powered off
      * as the OpMode is ending.
+     *
      * @see onFinish
      */
     protected open fun onStop() {
@@ -199,6 +211,7 @@ abstract class BunyipsOpMode : BOMInternal() {
 
     /**
      * This method is the entry point for the BunyipsLib framework, and is called by the FTC SDK.
+     *
      * @throws InterruptedException If the OpMode is interrupted by the FTC SDK, this exception will be raised.
      */
     @Throws(InterruptedException::class)
@@ -206,7 +219,7 @@ abstract class BunyipsOpMode : BOMInternal() {
         // BunyipsOpMode
         _instance = this
         try {
-            resetFields()
+            Storage.resetAllStaticFieldsForOpMode()
             Dbg.log("=============== BunyipsLib v${BuildConfig.SEMVER} BunyipsOpMode ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME} uid:${BuildConfig.ID} ===============")
             LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap)
             if (!Version.getLibraryVersion().equals(BuildConfig.SDK_VER)) {
@@ -334,14 +347,11 @@ abstract class BunyipsOpMode : BOMInternal() {
                 telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
                 Exceptions.handle(e, telemetry::log)
             }
-
-            // Ready to go.
-            telemetry.opModeStatus = "<font color='green'>ready</font>"
-            timer.update()
-            Dbg.logd("BunyipsOpMode: init cycle completed in ${timer.elapsedTime().inUnit(Seconds)} secs")
-            // DS only telemetry
-            telemetry.addDS("<b>Init <font color='green'>complete</font>. Press play to start.</b>")
-            Dbg.logd("BunyipsOpMode: ready.")
+            // Other related exceptions may have been thrown nested or on threads
+            if (ok && Exceptions.THROWN_EXCEPTIONS.isNotEmpty()) {
+                telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                ok = false
+            }
             robotControllers.forEach { module ->
                 if (ok)
                     module.pattern = listOf(
@@ -352,13 +362,20 @@ abstract class BunyipsOpMode : BOMInternal() {
                     module.setConstant(Color.YELLOW)
             }
 
+            // Ready to go.
+            telemetry.opModeStatus = "<font color='green'>ready</font>"
+            timer.update()
+            Dbg.logd("BunyipsOpMode: init cycle completed in ${timer.elapsedTime().inUnit(Seconds)} secs")
+            telemetry.addDS("<b>Init <font color='green'>complete</font>. Press play to start.</b>")
+            Dbg.logd("BunyipsOpMode: ready.")
+
             // Wait for start
-            do {
+            while (!isStarted && !isStopRequested) {
                 telemetry.update()
                 // Save some CPU cycles
                 sleep(200)
                 idle()
-            } while (!isStarted)
+            }
 
             if (isStopRequested)
                 return
@@ -509,21 +526,14 @@ abstract class BunyipsOpMode : BOMInternal() {
     }
 
     /**
-     * Reset member fields to their default values as the instance may be reused.
-     */
-    private fun resetFields() {
-        operationsCompleted = false
-        operationsPaused = false
-        safeHaltHardwareOnStop = false
-        gamepadExecutor = null
-        Storage.resetAllStaticFieldsForOpMode()
-    }
-
-    /**
      * Call to manually finish the OpMode.
-     * This is a dangerous method, as the OpMode will no longer be able to run any main thread code.
+     *
+     * This is a dangerous method, as the OpMode will end main thread code and optionally disable hardware while still
+     * remaining active on the Driver Station. This allows post-review of telemetry as it is cleared when the OpMode ends.
+     *
      * This method should be called when the OpMode is finished and no longer needs to run, and will
      * put the OpMode in a state where it will not run any more code (including timers & telemetry).
+     *
      * @param safeHaltHardwareOnStop If true (default), all motors/devices will be actively told to stop for the remainder of the OpMode.
      */
     @JvmOverloads
@@ -542,30 +552,33 @@ abstract class BunyipsOpMode : BOMInternal() {
     }
 
     /**
-     * Call to command all motors and sensors on the robot to stop.
-     * This method is continuously called when no OpMode is running, and allows you to do the same while still
-     * in an OpMode (called internally after [finish]).
+     * Dangerous method: Call to command all motors and sensors on the robot to shut down. This is a method
+     * called by the SDK continuously when no OpMode is running. It is also automatically called via [finish].
+     *
+     * Do note [safeHaltHardware] is a one-way operation for some devices that can only be
+     * restored on an OpMode restart. See [stopMotors] to simply set motor powers to zero.
+     *
      * This method will also power down all LynxModules and disable all servos.
      */
     fun safeHaltHardware() {
-        // Set all motor powers to zero, the implementation here will also stop any CRServos
+        // Set all motor powers to zero. The implementation here will also stop any CRServos.
         for (motor in hardwareMap.getAll(DcMotorSimple::class.java)) {
             // Avoid enabling servos if they are already zero power
             if (motor.power != 0.0) motor.power = 0.0
         }
-        // Shut down all LynxModules
+        // Shutdown all Lynx devices, that's all we need to do for these devices
         for (device in hardwareMap.getAll(RobotCoreLynxUsbDevice::class.java)) {
             device.failSafe()
         }
         // Power down the servos
         for (servoController in hardwareMap.getAll(ServoController::class.java)) {
-            if (servoController.manufacturer == HardwareDevice.Manufacturer.Lynx) {
+            if (servoController.manufacturer != HardwareDevice.Manufacturer.Lynx) {
                 servoController.pwmDisable()
             }
         }
         // Set motors to safe state
         for (dcMotor in hardwareMap.getAll(DcMotor::class.java)) {
-            if (dcMotor.manufacturer == HardwareDevice.Manufacturer.Lynx) {
+            if (dcMotor.manufacturer != HardwareDevice.Manufacturer.Lynx) {
                 dcMotor.power = 0.0
                 dcMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
             }
@@ -577,9 +590,26 @@ abstract class BunyipsOpMode : BOMInternal() {
     }
 
     /**
+     * Call to command all moving motors to stop by method of setting their powers to zero.
+     *
+     * A more aggressive/one-way approach to stopping can be done via [safeHaltHardware], which is an
+     * internal SDK method that runs when no OpMode is running and also shuts down servos.
+     */
+    fun stopMotors() {
+        for (motor in hardwareMap.getAll(DcMotorSimple::class.java)) {
+            // Avoid enabling servos if they are already zero power
+            if (motor.power != 0.0) motor.power = 0.0
+            if (motor is DcMotor)
+                motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        }
+    }
+
+    /**
      * Call to temporarily halt all [activeLoop]-related updates from running.
      * Note this will pause the entire [activeLoop], but continue to update timers and telemetry. These events
      * must be handled manually if needed, which include any conditional calls to [resume].
+     *
+     * Ensure hardware state is properly set before halting, as they will no longer receive updates via the main thread.
      */
     fun halt() {
         if (operationsPaused) {

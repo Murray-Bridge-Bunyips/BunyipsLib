@@ -19,6 +19,12 @@ import java.util.function.Consumer
 @Config
 object Exceptions {
     /**
+     * Exceptions thrown since the last reset of this set.
+     */
+    @JvmField
+    val THROWN_EXCEPTIONS = mutableSetOf<Throwable>()
+
+    /**
      * Maximum number of characters to display in the stacktrace on the Driver Station.
      */
     @JvmField
@@ -33,6 +39,7 @@ object Exceptions {
      */
     @JvmStatic
     fun handle(e: Throwable, stderr: Consumer<String>?) {
+        THROWN_EXCEPTIONS.add(e)
         Dbg.error("Exception caught! Stacktrace:")
         Dbg.sendStacktrace(e)
         val sw = StringWriter()

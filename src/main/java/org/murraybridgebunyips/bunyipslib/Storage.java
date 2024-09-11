@@ -45,6 +45,7 @@ public final class Storage {
      */
     public static void resetAllStaticFieldsForOpMode() {
         // All static field resets go here
+        Exceptions.THROWN_EXCEPTIONS.clear();
         RoadRunner.resetForOpMode();
         BunyipsSubsystem.resetForOpMode();
         Tasks.resetForOpMode();
