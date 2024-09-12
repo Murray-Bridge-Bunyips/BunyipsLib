@@ -2,6 +2,7 @@ package org.murraybridgebunyips.bunyipslib;
 
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Milliseconds;
 
+import android.graphics.Color;
 import android.util.Pair;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -142,6 +143,9 @@ public class DebugMode extends BunyipsComponent implements Runnable {
             clearAction();
             return;
         }
+
+        opMode.getRobotControllers()
+                .forEach((controller) -> controller.setConstant(Color.YELLOW));
 
         switch (TriggerAction.values()[max]) {
             case HALT:
