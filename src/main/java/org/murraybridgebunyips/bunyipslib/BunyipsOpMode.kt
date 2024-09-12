@@ -17,6 +17,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Time
 import org.murraybridgebunyips.bunyipslib.external.units.Units.*
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task
+import java.util.Optional
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
@@ -516,6 +517,13 @@ abstract class BunyipsOpMode : BOMInternal() {
     }
 
     /**
+     * Get the currently respected init-task that will run during `dynamic_init`.
+     */
+    fun getInitTask(): Optional<Runnable> {
+        return Optional.ofNullable(initTask)
+    }
+
+    /**
      * Set a task that will run as an init-task. This will run
      * after your [onInit] has completed, allowing you to initialise hardware first.
      * This is an optional method, and runs alongside [onInitLoop].
@@ -526,12 +534,13 @@ abstract class BunyipsOpMode : BOMInternal() {
      * to do anything after the initTask has finished.
      *
      * If you do not define an initTask, then running it during the `dynamic_init` phase will be skipped.
+     * Note that there can only be one init-task set. Consider a task group for multiple operations.
      *
      * @see onInitDone
      */
-    protected fun setInitTask(task: Runnable) {
+    fun setInitTask(task: Runnable) {
         if (initTask != null) {
-            Dbg.warn(javaClass, "Init-task has already been set to %, overriding it with %...", initTask, task)
+            Dbg.warn("BunyipsOpMode: init-task has already been set to %, overriding it with %...", initTask, task)
         }
         initTask = task
     }
@@ -541,10 +550,12 @@ abstract class BunyipsOpMode : BOMInternal() {
      * This is useful for running code that needs to be executed on the main thread, but is not
      * a subsystem or task.
      *
+     * This method is public to allow you to add looping code from [RobotConfig], [Task], and other contexts.
      * This method is called before the [activeLoop] method, and will run the runnables in the order they were added.
      */
-    protected fun onActiveLoop(vararg runnables: Runnable) {
+    fun onActiveLoop(vararg runnables: Runnable) {
         this.runnables.addAll(runnables)
+        Dbg.logv("BunyipsOpMode: added % activeLoop task(s), % task(s) set.", runnables.size, this.runnables.size)
     }
 
     /**
