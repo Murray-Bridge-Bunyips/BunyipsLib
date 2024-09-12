@@ -661,6 +661,11 @@ abstract class BunyipsOpMode : BOMInternal() {
     fun exit() {
         Dbg.logd("BunyipsOpMode: exiting opmode...")
         finish()
+        // This is a rare instance where we know we need to exit the OpMode and we have control over hardware,
+        // so we can try to reset the lights just before we call the stop method.
+        robotControllers.forEach { c ->
+            c.pattern = LynxModule.blinkerPolicy.getIdlePattern(c)
+        }
         requestOpModeStop()
     }
 
