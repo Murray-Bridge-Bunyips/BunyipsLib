@@ -19,6 +19,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
 import kotlin.math.abs
 
 
@@ -109,12 +110,11 @@ abstract class BunyipsOpMode : BOMInternal() {
          * The instance of the current [BunyipsOpMode]. This is set automatically by the [BunyipsOpMode] lifecycle.
          * This can be used instead of dependency injection to access the current OpMode, as it is a singleton.
          *
-         * `BunyipsComponent` and `Task` internally use this to grant access to the current OpMode through
-         * the `opMode` property. As such, you must ensure all `Task`s and `BunyipsComponent`s are instantiated during runtime,
-         * (such as during [onInit]), otherwise this property will be null.
+         * `BunyipsComponent` (and derivatives `Task`, `BunyipsSubsystem`, etc) internally use this to grant access
+         * to the current BunyipsOpMode through the `opMode` property.
          *
          * If you choose to access the current OpMode through this property, you must ensure that the OpMode
-         * is actively running, otherwise this property will be null and you will raise an exception.
+         * is actively running, otherwise this property will be null and you will raise a full-crashing exception.
          *
          * @throws UninitializedPropertyAccessException If a [BunyipsOpMode] is not running, this exception will be raised.
          * @return The instance of the current [BunyipsOpMode].
@@ -124,7 +124,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // If Kotlin throws an UninitializedPropertyAccessException, it will crash the DS and require a full
             // restart, so we will handle this exception ourselves and supply a more informative message.
             get() = _instance
-                ?: throw UninitializedPropertyAccessException("Attempted to access a BunyipsOpMode that is not running, this may be due to a task or subsystem being instantiated in the constructor or member fields. All subsystems and tasks must be instantiated during runtime, such as in onInit().")
+                ?: throw UninitializedPropertyAccessException("Attempted to access a BunyipsOpMode that is not running, this may be due to a derived BunyipsComponent class attempting to be instantiated outside the environment of an active BunyipsOpMode.")
 
         /**
          * Whether a [BunyipsOpMode] is currently running. This is useful for checking if the OpMode singleton can be accessed
@@ -135,6 +135,27 @@ abstract class BunyipsOpMode : BOMInternal() {
         @JvmStatic
         val isRunning: Boolean
             get() = _instance != null
+
+        /**
+         * Run the supplied callback if a [BunyipsOpMode] is currently running. This chains an internal call to [BunyipsOpMode]
+         * with a lambda supplied with the non-null instance of [BunyipsOpMode].
+         *
+         * The consumer will no-op if a [BunyipsOpMode] is not running.
+         */
+        @JvmStatic
+        fun ifRunning(opModeConsumer: Consumer<BunyipsOpMode>) {
+            if (isRunning)
+                opModeConsumer.accept(instance)
+        }
+    }
+
+    init {
+        // Early assign an instance of BunyipsOpMode to allow member field access of the derived class
+        // to access references to the OpMode. We re-assign this value in runBunyipsOpMode() for paranoia to ensure
+        // a fully constructed instance is available. Usually, we don't need to get the instance of the derived class,
+        // so leaking the instance here is fine.
+        @Suppress("LeakingThis")
+        _instance = this
     }
 
     /**
