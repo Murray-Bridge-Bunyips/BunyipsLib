@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib;
 
 import static org.murraybridgebunyips.bunyipslib.Text.formatString;
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
 import android.util.Pair;
@@ -22,6 +23,8 @@ import org.murraybridgebunyips.bunyipslib.external.SystemController;
 import org.murraybridgebunyips.bunyipslib.external.ff.SimpleMotorFeedforward;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
+import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -46,6 +49,10 @@ public class Motor extends DcMotorImplEx {
     private SystemController rueController;
     private Pair<Double, Double> rueInfo = null;
     private DcMotor.RunMode mode = RunMode.RUN_WITHOUT_ENCODER;
+    private double powerDeltaTolerance = 0;
+    private double lastPower = 0;
+    private long refreshRateNanos = 0;
+    private long lastUpdate = 0;
 
     /**
      * Wrap a DcMotor to use in the Motor class.
@@ -58,6 +65,27 @@ public class Motor extends DcMotorImplEx {
         super.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         encoder = new Encoder(super::getCurrentPosition, super::getVelocity);
         setTargetPosition(getCurrentPosition());
+    }
+
+    /**
+     * Set the delta in power required to propagate a hardware write.
+     * A commanded power of 0 to the motor will ignore this threshold for safety.
+     *
+     * @param magnitude absolute magnitude of delta in power, 0/default will disable
+     */
+    public void setPowerDeltaThreshold(double magnitude) {
+        powerDeltaTolerance = Math.abs(magnitude);
+    }
+
+    /**
+     * Set the refresh rate of the motor that will be a minimum time between hardware writes.
+     * Consistent calls to {@link #setPower(double)} is required for this refresh rate to be effective.
+     * A commanded power of 0 to the motor will ignore this refresh rate for safety.
+     *
+     * @param refreshRate the refresh rate interval, <=0/default will disable
+     */
+    public void setPowerRefreshRate(Measure<Time> refreshRate) {
+        refreshRateNanos = (long) refreshRate.in(Nanoseconds);
     }
 
     /**
@@ -323,8 +351,8 @@ public class Motor extends DcMotorImplEx {
     /**
      * Update system controllers and propagate new power levels to the motor.
      * <p>
-     * Note: <b>This method needs to be called periodically (as part of the active loop)
-     * in order to update the system controllers that respond to dynamic conditions.</b>
+     * Note: <b>This method must be called periodically (as part of the active loop)
+     * in order to update the system controllers and timers that respond to dynamic conditions.</b>
      *
      * @param power the new power level of the motor, a value in the interval [-1.0, 1.0];
      *              this value is scaled by {@link #setMaxPower}, if used.
@@ -380,8 +408,23 @@ public class Motor extends DcMotorImplEx {
                 break;
         }
         // Clamp and rescale depending on the maximum magnitude
-        magnitude = Mathf.clamp(magnitude, -1, 1);
-        super.setPower(Mathf.scale(Mathf.clamp(magnitude, -1, 1), -1, 1, -maxMagnitude, maxMagnitude));
+        magnitude = Mathf.scale(Mathf.clamp(magnitude, -1, 1), -1, 1, -maxMagnitude, maxMagnitude);
+        if (magnitude != 0) {
+            // Can check refresh rate and apply cache for a non-zero power.
+            // We early return down here next to the actual hardware write to ensure the PID controllers
+            // still update (PID controllers don't take up the loop times)
+            if (refreshRateNanos > 0 && Math.abs(lastUpdate - System.nanoTime()) < refreshRateNanos) {
+                return;
+            }
+            if (powerDeltaTolerance != 0 && Math.abs(lastPower - power) < powerDeltaTolerance) {
+                return;
+            }
+        }
+        // Always update last powers to keep the system in sync
+        lastUpdate = System.nanoTime();
+        lastPower = power;
+        // Write to the hardware
+        super.setPower(magnitude);
     }
 
     private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
