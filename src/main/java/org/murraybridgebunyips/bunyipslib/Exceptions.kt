@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib
 
 import com.acmerobotics.dashboard.config.Config
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.ForceStopException
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.function.Consumer
@@ -64,8 +65,8 @@ object Exceptions {
             stack += " ..."
         }
         stderr?.accept("<small>$stack</small>")
-        if (e is InterruptedException) {
-            Dbg.error("Interrupted exception called, raising to superclass...")
+        if (e is InterruptedException || e is ForceStopException) {
+            Dbg.error("Interrupt exception called, raising to superclass...")
             // FTC SDK must handle this
             throw e
         }

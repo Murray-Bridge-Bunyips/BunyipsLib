@@ -34,6 +34,7 @@ public class DebugMode extends BunyipsComponent implements Runnable {
 
     private final ArrayList<Pair<BooleanSupplier, TriggerAction>> actions = new ArrayList<>();
     private final ArrayList<Watchdog> watchdogs = new ArrayList<>();
+    private boolean hasResetWatchdogs = false;
     private int max = -1;
 
     /**
@@ -127,6 +128,14 @@ public class DebugMode extends BunyipsComponent implements Runnable {
 
     @Override
     public void run() {
+        if (!hasResetWatchdogs) {
+            watchdogs.forEach((d) -> {
+                d.euthanize();
+                d.start();
+            });
+            hasResetWatchdogs = true;
+        }
+
         boolean hasTriggered = false;
         for (Pair<BooleanSupplier, TriggerAction> actionPair : actions) {
             if (actionPair.first.getAsBoolean()) {
