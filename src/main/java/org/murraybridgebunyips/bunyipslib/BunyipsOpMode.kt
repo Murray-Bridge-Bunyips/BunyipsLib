@@ -585,13 +585,13 @@ abstract class BunyipsOpMode : BOMInternal() {
     }
 
     /**
-     * Dangerous method: Call to command all motors and sensors on the robot to shut down. This is a method
+     * Dangerous method: Call to command all motors and servos on the robot to shut down. This is a method
      * called by the SDK continuously when no OpMode is running. It is also automatically called via [finish].
      *
-     * Do note [safeHaltHardware] is a one-way operation for some devices that can only be
-     * restored on an OpMode restart. See [stopMotors] to simply set motor powers to zero.
+     * Do note [safeHaltHardware] may be an operation for some devices that can only be restored on an OpMode
+     * restart or by re-enabling the devices manually. See [stopMotors] to simply set motor powers to zero.
      *
-     * This method will also power down all LynxModules and disable all servos.
+     * This method internally powers down motors, LynxModules, servos, and light sensors.
      */
     fun safeHaltHardware() {
         // Set all motor powers to zero. The implementation here will also stop any CRServos.
@@ -623,9 +623,10 @@ abstract class BunyipsOpMode : BOMInternal() {
     }
 
     /**
-     * Call to command all moving motors to stop by method of setting their powers to zero.
+     * Call to command all moving motors/CRServos to stop by method of setting their powers to zero.
+     * This does not impact normal servos.
      *
-     * A more aggressive/one-way approach to stopping can be done via [safeHaltHardware], which is an
+     * A more aggressive/full-safe approach to stopping can be done via [safeHaltHardware], which is an
      * internal SDK method that runs when no OpMode is running and also shuts down servos.
      */
     fun stopMotors() {
