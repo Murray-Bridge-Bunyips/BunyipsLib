@@ -161,7 +161,7 @@ class DualTelemetry @JvmOverloads constructor(
      * @param args Objects to format into the format string via [Text.formatString]
      * @return The telemetry item added to the Driver Station, null if the send failed from overflow
      */
-    override fun addData(caption: String, format: String, vararg args: Any): Item {
+    override fun addData(caption: String, format: String, vararg args: Any?): Item {
         return add(caption + dashboardCaptionValueAutoSeparator + format, *args)
     }
 
@@ -173,7 +173,7 @@ class DualTelemetry @JvmOverloads constructor(
      * @param value Value to append after separator ([dashboardCaptionValueAutoSeparator])
      * @return The telemetry item added to the Driver Station, null if the send failed from overflow
      */
-    override fun addData(caption: String, value: Any): Item {
+    override fun addData(caption: String, value: Any?): Item {
         return add(caption + dashboardCaptionValueAutoSeparator + value)
     }
 
