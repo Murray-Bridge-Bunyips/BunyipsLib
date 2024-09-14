@@ -1,8 +1,12 @@
 package org.murraybridgebunyips.bunyipslib;
 
+import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.NumberIsTooLargeException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.murraybridgebunyips.bunyipslib.external.units.UnaryFunction;
+
+import java.util.Arrays;
+import java.util.function.DoubleSupplier;
 
 /**
  * A collection of data filters for smoothing out sensor data.
@@ -57,6 +61,45 @@ public final class Filter {
                 lastValue = gain * lastValue + (1 - gain) * input;
             }
             return lastValue;
+        }
+    }
+
+    /**
+     * Fuses weighted data inputs together to return a weighted fused average.
+     */
+    public static class WeightedFusion implements DoubleSupplier {
+        private final DoubleSupplier[] inputs;
+        private final double[] weights;
+
+        /**
+         * Construct a filter that fuses two weighted inputs together.
+         * <p>
+         * Note: {@code inputs.length == weights.length}
+         *
+         * @param inputs array of input suppliers, such as sensor inputs
+         * @param weights mapping of parametric [0,1] multiplicative weights to apply to the sensor inputs,
+         *                an example is if you have 2 inputs, and you trust them equally, setting both weights
+         *                to 0.5 will make them equally important.
+         */
+        public WeightedFusion(DoubleSupplier[] inputs, double[] weights) {
+            if (inputs.length != weights.length)
+                throw new DimensionMismatchException(weights.length, inputs.length);
+            this.inputs = inputs;
+            this.weights = weights;
+        }
+
+        /**
+         * Calculate a fused weighted average of the inputs.
+         *
+         * @return weighted average of the supplied inputs and weights
+         */
+        @Override
+        public double getAsDouble() {
+            double weighedSum = 0;
+            for (int i = 0; i < inputs.length; i++) {
+                weighedSum += weights[i] * inputs[i].getAsDouble();
+            }
+            return weighedSum / Arrays.stream(weights).sum();
         }
     }
 }
