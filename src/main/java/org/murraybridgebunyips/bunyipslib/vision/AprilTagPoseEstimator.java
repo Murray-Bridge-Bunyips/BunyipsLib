@@ -189,7 +189,6 @@ public class AprilTagPoseEstimator implements Runnable {
             pos = pos.minus(cameraRobotOffset.vec().rotated(tagRotation + Math.PI / 2));
 
             // Only set the heading if the user wants it, which we can do fairly simply if they want that too
-            // Future: Can integrate pose info with a Kalman filter to filter out inaccurate results
             double heading = poseEstimate.getHeading();
             if (updateHeading) {
                 // Rotate 90 degrees (pi/2 rads) to match unit circle proportions due to a rotation mismatch as corrected
