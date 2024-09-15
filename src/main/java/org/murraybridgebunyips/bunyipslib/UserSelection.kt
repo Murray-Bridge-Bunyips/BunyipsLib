@@ -86,6 +86,7 @@ class UserSelection<T : Any>(
     override fun run() {
         if (opmodes.isEmpty()) {
             Exceptions.runUserMethod({ callback.accept(null) }, opMode)
+            return
         }
 
         val buttons: HashMap<T, Controls> = Controls.mapArgs(opmodes)
