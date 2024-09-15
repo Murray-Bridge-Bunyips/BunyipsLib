@@ -68,30 +68,22 @@ public final class Filter {
      * A basic 1D <a href="https://en.wikipedia.org/wiki/Kalman_filter">Kalman filter</a> that estimates state
      * from a model and sensor over time.
      */
-    public static class Kalman implements DoubleSupplier {
+    public static class Kalman {
         /**
          * Number of iterations to take during construction to converge the K gain.
          */
         public static int K_CONVERGE = 2000;
 
-        private final DoubleSupplier modelMeasurement;
-        private final DoubleSupplier sensorMeasurement;
-
         private double kGain;
-        private double x, lu;
+        private double x, lm;
 
         /**
          * Construct a new 1D Kalman filter. K gain is calculated at construction.
          *
-         * @param modelMeasurement  the supplier of model measurements
-         * @param sensorMeasurement continuous sensor input
-         * @param R                 higher values of R put more trust in the model
-         * @param Q                 higher values of Q trusts the sensor more
+         * @param R higher values of R put more trust in the model
+         * @param Q higher values of Q trusts the sensor more
          */
-        public Kalman(DoubleSupplier modelMeasurement, DoubleSupplier sensorMeasurement, double R, double Q) {
-            this.modelMeasurement = modelMeasurement;
-            this.sensorMeasurement = sensorMeasurement;
-
+        public Kalman(double R, double Q) {
             // We should converge K and P to calculate the gain that will be used for the duration of this filter
             kGain = 0;
             double p = 1;
@@ -106,17 +98,19 @@ public final class Filter {
             }
         }
 
-        @Override
-        public double getAsDouble() {
-            double u = modelMeasurement.getAsDouble();
-            double z = sensorMeasurement.getAsDouble();
-
+        /**
+         * Calculate a new Kalman filter estimate.
+         *
+         * @param model  the current reading from the model system
+         * @param sensor the current reading from the sensor
+         * @return Kalman gain compensated output
+         */
+        public double calculate(double model, double sensor) {
             // Since we're only dealing with scalars, we can make a lot of simplifications
             // Therefore filtered x_t=x_{t-1}+K(z_t-x_t)
-            x += u - lu;
-            x += kGain * (z - x);
-            lu = u;
-
+            x += model - lm;
+            x += kGain * (sensor - x);
+            lm = model;
             return x;
         }
     }

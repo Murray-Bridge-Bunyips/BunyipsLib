@@ -2,8 +2,6 @@ package org.murraybridgebunyips.bunyipslib.vision.processors.centerstage;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
-
 import org.murraybridgebunyips.bunyipslib.vision.processors.ColourThreshold;
 import org.opencv.core.Scalar;
 
@@ -14,7 +12,7 @@ import org.opencv.core.Scalar;
  *
  * @since 1.0.0-pre
  */
-@Config
+//@Config
 public class GreenPixel extends ColourThreshold {
     /**
      * Lower clamp for YCrCb

@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.murraybridgebunyips.bunyipslib.Dbg;
+import org.murraybridgebunyips.bunyipslib.Filter;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
@@ -33,9 +34,14 @@ public class AprilTagPoseEstimator implements Runnable {
     private final AprilTag processor;
     private final RoadRunnerDrive drive;
 
-    private Pose2d offset = new Pose2d();
+    private Filter.Kalman xf;
+    private Filter.Kalman yf;
+    private Filter.Kalman rf;
+
+    private Pose2d previousOffset = new Pose2d();
+    private Pose2d cameraRobotOffset = new Pose2d();
     private boolean active = true;
-    private boolean updateHeading;
+    private boolean updateHeading = true;
 
     /**
      * Constructor for AprilTagPoseEstimator.
@@ -52,6 +58,21 @@ public class AprilTagPoseEstimator implements Runnable {
     public AprilTagPoseEstimator(AprilTag processor, RoadRunnerDrive drive) {
         this.processor = processor;
         this.drive = drive;
+        setKalmanGains(4, 1.0e-3);
+    }
+
+    /**
+     * Set the gains used in the Kalman filter for the x, y, and r components.
+     *
+     * @param R higher values of R will put more trust in the odometry
+     * @param Q higher values of Q trusts the AprilTag more
+     * @return this
+     */
+    public AprilTagPoseEstimator setKalmanGains(double R, double Q) {
+        xf = new Filter.Kalman(R, Q);
+        yf = new Filter.Kalman(R, Q);
+        rf = new Filter.Kalman(R, Q);
+        return this;
     }
 
     /**
@@ -66,7 +87,7 @@ public class AprilTagPoseEstimator implements Runnable {
     }
 
     /**
-     * Whether to set the drive pose to the vision estimate with heading information. Default is off.
+     * Whether to set the drive pose to the vision estimate with heading information. Default is ON.
      *
      * @param setHeadingAutomatically whether to also set the heading to the AprilTag estimate or not
      * @return this
@@ -91,7 +112,7 @@ public class AprilTagPoseEstimator implements Runnable {
      */
     public AprilTagPoseEstimator setCameraOffset(Measure<Distance> forwardFromCenter, Measure<Distance> leftFromCenter, Measure<Angle> rotationOnRobot) {
         // Convert to native units
-        offset = new Pose2d(
+        cameraRobotOffset = new Pose2d(
                 forwardFromCenter.in(Inches),
                 leftFromCenter.in(Inches),
                 rotationOnRobot.in(Radians)
@@ -116,7 +137,7 @@ public class AprilTagPoseEstimator implements Runnable {
      */
     public AprilTagPoseEstimator setCameraOffset(Pose2d poseInchRad) {
         // Assumes native units are already present
-        offset = poseInchRad;
+        cameraRobotOffset = poseInchRad;
         return this;
     }
 
@@ -129,6 +150,7 @@ public class AprilTagPoseEstimator implements Runnable {
         if (!active || !processor.isRunning())
             return;
 
+        Pose2d poseEstimate = drive.getPoseEstimate().minus(previousOffset);
         ArrayList<AprilTagData> data = processor.getData();
         if (data.isEmpty())
             return;
@@ -164,23 +186,36 @@ public class AprilTagPoseEstimator implements Runnable {
                     tagY - relativeY
             );
             // Offset as defined by the user to account for the camera not representing true position
-            pos = pos.minus(offset.vec());
+            pos = pos.minus(cameraRobotOffset.vec().rotated(tagRotation));
 
             // Only set the heading if the user wants it, which we can do fairly simply if they want that too
             // Future: Can integrate pose info with a Kalman filter to filter out inaccurate results
-            double heading = drive.getPoseEstimate().getHeading();
+            double heading = poseEstimate.getHeading();
             if (updateHeading) {
                 // Rotate 90 degrees (pi/2 rads) to match unit circle proportions due to a rotation mismatch as corrected
                 // in the vector calculation above
-                heading = Math.PI / 2.0 + tagRotation - Math.toRadians(camPose.yaw) - offset.getHeading();
+                heading = Math.PI / 2.0 + tagRotation - Math.toRadians(camPose.yaw) - cameraRobotOffset.getHeading();
             }
-            Pose2d estimatedPose = new Pose2d(pos.getX(), pos.getY(), heading);
+            Pose2d atPoseEstimate = new Pose2d(pos.getX(), pos.getY(), heading);
+
+            // Apply Kalman filters to the vector components
+            Pose2d kfPose = new Pose2d(
+                    xf.calculate(poseEstimate.getX(), atPoseEstimate.getX()),
+                    yf.calculate(poseEstimate.getY(), atPoseEstimate.getY()),
+                    updateHeading ? rf.calculate(poseEstimate.getHeading(), atPoseEstimate.getHeading()) : poseEstimate.getHeading()
+            );
 
             // Avoid spamming the logs by logging the events that are over an inch away from the current estimate
-            if (drive.getPoseEstimate().vec().distTo(estimatedPose.vec()) >= 1)
-                Dbg.logd(getClass(), "Updated pose based on AprilTag ID#%, %->%", aprilTag.getId(), drive.getPoseEstimate(), estimatedPose);
+            if (poseEstimate.vec().distTo(atPoseEstimate.vec()) >= 1)
+                Dbg.logd(getClass(), "Updated pose based on AprilTag ID#%, %,%->%", aprilTag.getId(), poseEstimate, atPoseEstimate, kfPose);
 
-            drive.setPoseEstimate(estimatedPose);
+            // Use an unmodified pose as the one we actually calculate otherwise we'll oscillate around the target
+            // since the Kalman filter shouldn't be fed it's own data
+            previousOffset = kfPose.minus(poseEstimate);
+
+            // Apply the new pose
+            drive.setPoseEstimate(kfPose);
+
             // Stop searching as we have a new pose
             break;
         }
