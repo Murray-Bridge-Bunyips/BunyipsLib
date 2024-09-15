@@ -83,6 +83,7 @@ public class AprilTag extends Processor<AprilTagData> {
                     Arrays.asList(detection.corners),
                     Optional.ofNullable(detection.metadata),
                     Optional.ofNullable(detection.ftcPose),
+                    Optional.ofNullable(detection.robotPose),
                     Optional.ofNullable(detection.rawPose),
                     detection.frameAcquisitionNanoTime
             ));

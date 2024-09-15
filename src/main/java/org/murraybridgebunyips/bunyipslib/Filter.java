@@ -83,10 +83,10 @@ public final class Filter {
         /**
          * Construct a new 1D Kalman filter. K gain is calculated at construction.
          *
-         * @param modelMeasurement the supplier of model measurements
+         * @param modelMeasurement  the supplier of model measurements
          * @param sensorMeasurement continuous sensor input
-         * @param R higher values of R put more trust in the model
-         * @param Q higher values of Q trusts the sensor more
+         * @param R                 higher values of R put more trust in the model
+         * @param Q                 higher values of Q trusts the sensor more
          */
         public Kalman(DoubleSupplier modelMeasurement, DoubleSupplier sensorMeasurement, double R, double Q) {
             this.modelMeasurement = modelMeasurement;
@@ -133,7 +133,7 @@ public final class Filter {
          * <p>
          * Note: {@code inputs.length == weights.length}
          *
-         * @param inputs array of input suppliers, such as sensor inputs
+         * @param inputs  array of input suppliers, such as sensor inputs
          * @param weights mapping of parametric [0,1] multiplicative weights to apply to the sensor inputs,
          *                an example is if you have 2 inputs, and you trust them equally, setting both weights
          *                to 0.5 will make them equally important.

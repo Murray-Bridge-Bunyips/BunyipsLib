@@ -1,5 +1,6 @@
 package org.murraybridgebunyips.bunyipslib.vision.data
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D
 import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseRaw
@@ -56,6 +57,11 @@ data class AprilTagData(
      * Units from this pose will be in *inches* and *degrees*.
      */
     val ftcPose: Optional<AprilTagPoseFtc>,
+    /**
+     * Robot pose data returned by the pose solver calculated via the robot pose offset (set via the builder).
+     * Optional value may be `null` depending on the used AprilTag Library.
+     */
+    val robotPose: Optional<Pose3D>,
     /**
      * Raw translation vector and orientation matrix returned by the pose solver.
      * Optional value may be `null` depending on the used AprilTag Library.
