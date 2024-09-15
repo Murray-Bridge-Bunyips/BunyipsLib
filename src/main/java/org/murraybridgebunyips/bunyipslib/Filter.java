@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 
 /**
- * A collection of data filters for smoothing out sensor data.
+ * A collection of data filters for smoothing out and fusing sensor data.
  *
  * @author Lucas Bubner, 2024
  */
@@ -61,6 +61,63 @@ public final class Filter {
                 lastValue = gain * lastValue + (1 - gain) * input;
             }
             return lastValue;
+        }
+    }
+
+    /**
+     * A basic 1D <a href="https://en.wikipedia.org/wiki/Kalman_filter">Kalman filter</a> that estimates state
+     * from a model and sensor over time.
+     */
+    public static class Kalman implements DoubleSupplier {
+        /**
+         * Number of iterations to take during construction to converge the K gain.
+         */
+        public static int K_CONVERGE = 2000;
+
+        private final DoubleSupplier modelMeasurement;
+        private final DoubleSupplier sensorMeasurement;
+
+        private double kGain;
+        private double x, lu;
+
+        /**
+         * Construct a new 1D Kalman filter. K gain is calculated at construction.
+         *
+         * @param modelMeasurement the supplier of model measurements
+         * @param sensorMeasurement continuous sensor input
+         * @param R higher values of R put more trust in the model
+         * @param Q higher values of Q trusts the sensor more
+         */
+        public Kalman(DoubleSupplier modelMeasurement, DoubleSupplier sensorMeasurement, double R, double Q) {
+            this.modelMeasurement = modelMeasurement;
+            this.sensorMeasurement = sensorMeasurement;
+
+            // We should converge K and P to calculate the gain that will be used for the duration of this filter
+            kGain = 0;
+            double p = 1;
+            for (int i = 0; i < K_CONVERGE; i++) {
+                // p_t=p_{t-1}+q
+                // where p_{t-1} is supplied from the previous loop
+                p += Q;
+                // k_t=\frac{p_t}{p_t+r}
+                kGain = p / (p + R);
+                // Update uncertainty p_t=(1-K)p_t
+                p = (1 - kGain) * p;
+            }
+        }
+
+        @Override
+        public double getAsDouble() {
+            double u = modelMeasurement.getAsDouble();
+            double z = sensorMeasurement.getAsDouble();
+
+            // Since we're only dealing with scalars, we can make a lot of simplifications
+            // Therefore filtered x_t=x_{t-1}+K(z_t-x_t)
+            x += u - lu;
+            x += kGain * (z - x);
+            lu = u;
+
+            return x;
         }
     }
 
