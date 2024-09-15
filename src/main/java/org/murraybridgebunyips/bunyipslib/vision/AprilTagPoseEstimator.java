@@ -186,7 +186,7 @@ public class AprilTagPoseEstimator implements Runnable {
                     tagY - relativeY
             );
             // Offset as defined by the user to account for the camera not representing true position
-            pos = pos.minus(cameraRobotOffset.vec().rotated(tagRotation));
+            pos = pos.minus(cameraRobotOffset.vec().rotated(tagRotation + Math.PI / 2));
 
             // Only set the heading if the user wants it, which we can do fairly simply if they want that too
             // Future: Can integrate pose info with a Kalman filter to filter out inaccurate results
