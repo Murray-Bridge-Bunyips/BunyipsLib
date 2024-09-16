@@ -105,7 +105,7 @@ public abstract class TaskGroup extends Task {
     @Override
     public final Task onSubsystem(@NonNull BunyipsSubsystem subsystem, boolean override) {
         Dbg.error(getCallingUserCodeFunction(), "Task groups are not designed to be attached to a subsystem, as the internal tasks will be scheduled to subsystems instead.");
-        opMode.telemetry.log(getCallingUserCodeFunction(), html().color("red", "error: ").text("task groups cannot be attached to subsystems!"));
+        opMode.telemetry.log(getCallingUserCodeFunction(), html().color("red", "error: ").text("task groups should not be attached to subsystems!"));
         return this;
     }
 

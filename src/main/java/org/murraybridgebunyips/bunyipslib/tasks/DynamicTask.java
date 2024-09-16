@@ -106,7 +106,7 @@ public class DynamicTask extends Task {
     @Override
     public final Task onSubsystem(@NonNull BunyipsSubsystem subsystem, boolean override) {
         Dbg.error(getCallingUserCodeFunction(), "Dynamic tasks are not designed to be attached to a subsystem, as the internal task will be scheduled to subsystems instead.");
-        opMode.telemetry.log(getCallingUserCodeFunction(), html().color("red", "error: ").text("dynamic tasks cannot be attached to subsystems!"));
+        opMode.telemetry.log(getCallingUserCodeFunction(), html().color("red", "error: ").text("dynamic tasks should not be attached to subsystems!"));
         return this;
     }
 }
