@@ -1,6 +1,98 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v4.1.0 (2024-09-16)
+New features and additions for INTO THE DEEP.
+### Critical bug fixes
+- The `FieldTiles` (`FieldTile`) custom WPIUnits unit has been updated from being defined as 23.6 inches to 24 inches
+  - This change may potentially break previous implementations that relied on the nature of `FieldTile` being 23.6 inches
+  - This unit was supposed to have a magnitude of 24, where the approximation was used by mistake
+- `TaskGroup` timeout calculation has been fixed
+  - Previously, task group timeout calculations were done *all* via the parallel calculation, which takes the highest value and sets it to the group timeout
+  - However, this was short-sighted as other task groups like the sequential task group instead operate on a sum-of-all-timeouts
+  - These incorrectly implemented timeouts have been fixed appropriately for all task groups, via a new super argument for the `TaskGroup` abstraction
+- `Scheduler` `runOnce()` now behaves uniformly between subsystems and independent tasks
+  - Before, `runOnce()` would queue once on a subsystem, and execute once independently
+  - This made inconsistent behaviour between the two due to an internal flaw in the `Scheduler`
+  - Now, `runOnce()` will guarantee one queue of a task from start to finish regardless of environment, putting emphasis on `finishingIf()` to end queued execution
+- `Exceptions` no longer swallows the `ForceStopException` (oops)
+### Non-breaking changes
+- `AprilTagPoseEstimator` now internally uses Kalman filters to fuse odometry and AprilTag readings
+  - The Kalman gains are set to sane defaults and can be customised via `setKalmanGains`
+  - Note! `setHeadingEstimate` now defaults to **true**, as the Kalman filter should now filter out the erratic heading readings
+- `BunyipsComponent` and their derivatives (e.g. `BunyipsSubsystem`, `Task`) can now be constructed in the OpMode member fields
+  - A constructor hook now supplies a partially constructed static reference to a BunyipsOpMode to allow instance calls to be made in the member fields
+  - This partially constructed static instance is reassigned as usual at runtime to preserve normal behaviour
+- The `toShortString()` (`toString()`) method attached to WPIUnits has been updated
+  - Previously `Unit` instances that called `toString()` would provide the string with 3 decimal point scientific notation
+  - This has been changed to simply show the magnitude in full for brevity
+  - Instead of returning `1.234e+04 V/m`, this method will now return `1234 V/m`
+  - This combines `toLongString()` without the full unit name
+  - Previous scientific notation behaviour has been preserved in a new `toScientificString()` method
+- `BunyipsOpMode` now exposes the previously protected methods `onActiveLoop` and `setInitTask` as public to allow static access
+  - This allows you to add `activeLoop` snippets from anywhere, including the `RobotConfig`
+- `toString()` of `StartingPositions` instances now internally call `StartingPositions.getHTMLIfAvailable()` to return an HTML-receiver-friendly output without having to call `getHTMLIfAvailable()` manually
+  - The built-in `name()` method preserves the old behaviour of `toString()`
+- FtcDashboard now shows more overlay data for certain `AlignTo` tasks, including vector powers for drive input
+- Various JavaDoc and debugging statement updates
+- `OnceTask` internal timeout has been increased to 10ms to allow interpretation of summed timeouts to work properly
+- `BunyipsOpMode` `onActiveLoop` now runs all Runnables through the `Exceptions` handler to ensure exceptions do not hamper the rest of the loop
+- Various uses of `PIDFController` in constructors have been replaced with the more relaxed `PIDF` interface to allow for a wider range of controllers
+  - Note that since the coefficients are no longer constant, dynamically adjustable coefficients that were on the task/class level only apply to the underlying PIDF coefficients as they did previously
+  - Other dynamically adjusted coefficients will need to be managed by yourself
+- `BlinkinLights` now has methods for setting the default pattern to other patterns if desired, it is no longer final
+  - To follow subsystem convention, `BlinkinLights` methods now return their instance for builder-like patterns
+- `Task.reset()` now no-ops if the task has already been reset, preventing the multi-fire of `onReset()`
+- `BunyipsOpMode` will now try to reset the RC lights via `exit()` if it can, since it still has access to hardware writes
+- `TelemetryMenu` now spaces options slightly more to allow FtcDashboard users to read the menu easier
+### Bug fixes
+- Hardcoded values of `org.murraybridgebunyips.bunyipslib` have been replaced with the `BuildConfig.LIBRARY_PACKAGE_NAME` constant for cleanliness
+- Modern uses of out-of-range exceptions thrown in BunyipsLib now respect the domain of the bound
+  - Future bounds-checking now uses Apache Math3 utilities, old checks will be left as-is
+- Debugging statement for the `onReady()` call in `AutonomousBunyipsOpMode` now strips HTML from the selected OpMode
+- `setDefaultTask` of `BunyipsSubsystem` now internally calls `onSubsystem(this)` to ensure default tasks are assigned to the current subsystem
+- The `PIDF` interface now extends `SystemController` as they are always used together
+- `BunyipsOpMode` no longer initially sleeps before evaluating the init-loop for the first time
+- Exceptions thrown via `Exceptions` during init will now be recognised and alerted in the `BunyipsOpMode` init-cycle
+- `DualTelemetry.addData` now accepts nullable data parameters to match other instances of adding telemetry data
+- Fix a missing return from an early return in `UserSelection`
+### Additions
+- New `StartingConfiguration` system to assist in robot starting configuration selection
+  - This class has been designed to expand the `StartingPositions` enum following the 2024 season not being limited to simply two tiles per alliance
+  - Instances of a `StartingConfiguration.Position` indicate the exact orientation/rotation/alliance/origin that the programmer has desired, rather than simply being on an alliance and left/right side
+  - Construction of a starting position is done through a builder pattern (e.g. `blueRight().tile(4)`) with options for translation offset and rotation
+  - These new configurations are designed to be used seamlessly with an `AutonomousBunyipsOpMode` through the `setOpModes()` method
+    - The programmer now has a lot more information regarding the starting configuration of the robot, including a `toFieldPose()` method to extract the starting configuration in terms of the FTC Field Coordinate system
+  - Position `toString()` method will return a HTML human-friendly output (for `UserSelection`)
+    - `Red Alliance, Right` from StartingPositions becomes `On Red, Tile #3 from RIGHT wall` in a StartingConfiguration
+  - Documentation and conversion methods have been added to both StartingPositions and the new class
+  - StartingPositions is not planned to be deprecated to preserve backward compatibility
+  - See the corresponding JavaDoc for more information
+- New `Filter` class, which provides data and sensor filters
+  - The newly added filters available through this class are a `LowPass` filter, 1D `Kalman` filter, and `WeightedFusion` filter
+  - The `Kalman` filter is used internally in the `AprilTagPoseEstimator`
+- New `AlignToPointDriveTask`,  which uses a PID controller and feedforward to rotate to a field point as a TeleOp drive task
+- New `DebugMode`, which is a Runnable built via a builder pattern to auto-halt or terminate OpModes based on various conditions
+  - This includes watchdog timeouts, gamepad kill switches, and IMU roll detection
+  - These features were designed for use in a debugging environment to quickly stop the robot if working with experimental code
+- `Motor` now has configuration options for setting a power cache tolerance and power refresh rate
+  - These utilities allow hardware writes to be optimised, but must be used with caution
+  - See `setPowerDeltaThreshold` and `setPowerRefreshRate` of `Motor`
+- `AprilTagData` is now populated with a new field `robotPose` which is new from SDK 10.0
+  - This pose is returned directly from the processor and is calculated via the camera-robot pose provided in the `AprilTag` builder
+- All `RoadRunnerDrive` instances now must include a `setRotationPriorityWeightedDrivePower()` override to run the weighted drive power calculation with rotational priority
+  - Custom implementations of `RoadRunnerDrive` will need to extend this new method and implement it accordingly
+  - `CartesianMecanumDrive` now exposes an internal static method to calculate rotation priority Mecanum poses
+- `IMUEx` now has a `setYawMultiplier()` method, which can be used to set a multiplicative scale for IMU yaw readings
+  - This is similar to the X and Y multipliers attached to tracking wheel localizers
+- `BunyipsOpMode` now has a `stopMotors()` method which serves as a softer alternative to `safeHaltHardware()`
+- `Exceptions` now stores a static list of all exceptions that have been thrown
+  - The reset method for this instance has been appended to `Storage.resetAllStaticFieldsForOpMode()`
+- `BunyipsOpMode` now has a static method `ifRunning()` which will execute the supplied `Consumer<BunyipsOpMode>` if `BunyipsOpMode.isRunning()` is true
+- `BunyipsOpMode` now has a `getInitTask()` method to return an `Optional<Runnable>` of the currently respected init-task
+- `Text.removeHtml()` created to regex out HTML tags and non-breaking spaces from strings
+- `Text.upper()` and `.lower()` created for cross-compatibility reasons in Kotlin, which will uppercase and lowercase strings
+
 ## v4.0.0 (2024-09-08)
 Major INTO THE DEEP season release.
 ### Breaking changes
