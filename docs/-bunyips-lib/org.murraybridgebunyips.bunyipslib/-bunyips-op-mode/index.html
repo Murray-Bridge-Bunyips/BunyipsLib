@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v4.0.0-master-e1b07fec            </div>
+v4.1.0-master-b97a0460            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -369,7 +369,7 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="active-loop.html"><span class="token function">activeLoop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Code to run continuously after the <code class="lang-kotlin">START</code> button is pressed on the Driver Station. This method will be called on each hardware cycle, but may not be called if the OpMode is stopped before starting.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="active-loop.html"><span class="token function">activeLoop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Code to run continuously after the <code class="lang-kotlin">START</code> button is pressed on the Driver Station.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -414,7 +414,22 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">fun </span><a href="finish.html"><span class="token function">finish</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">safeHaltHardwareOnStop<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Call to manually finish the OpMode. This is a dangerous method, as the OpMode will no longer be able to run any main thread code. This method should be called when the OpMode is finished and no longer needs to run, and will put the OpMode in a state where it will not run any more code (including timers & telemetry).</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">fun </span><a href="finish.html"><span class="token function">finish</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">safeHaltHardwareOnStop<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Call to manually finish the OpMode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-932479980%2FFunctions%2F-325384828" anchor-label="getInitTask" id="-932479980%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-init-task.html"><span>get</span><wbr></wbr><span>Init</span><wbr></wbr><span><span>Task</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-932479980%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-init-task.html"><span class="token function">getInitTask</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/Optional.html">Optional</a><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/java/lang/Runnable.html">Runnable</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Get the currently respected init-task that will run during <code class="lang-kotlin">dynamic_init</code>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -444,7 +459,7 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="on-active-loop.html"><span class="token function">onActiveLoop</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">vararg </span>runnables<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Runnable.html">Runnable</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Add a <a href="https://developer.android.com/reference/kotlin/java/lang/Runnable.html">Runnable</a> to the list of runnables to be executed just before the <a href="active-loop.html">activeLoop</a>. This is useful for running code that needs to be executed on the main thread, but is not a subsystem or task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on-active-loop.html"><span class="token function">onActiveLoop</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">vararg </span>runnables<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Runnable.html">Runnable</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Add a <a href="https://developer.android.com/reference/kotlin/java/lang/Runnable.html">Runnable</a> to the list of runnables to be executed just before the <a href="active-loop.html">activeLoop</a>. This is useful for running code that needs to be executed on the main thread, but is not a subsystem or task.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -459,7 +474,7 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="on-finish.html"><span class="token function">onFinish</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Perform one time clean-up operations after the <a href="active-loop.html">activeLoop</a> finishes all intentions gracefully. This method is called after a <a href="finish.html">finish</a> or <a href="exit.html">exit</a> call, but may not be called if the OpMode is terminated by an <i>unhandled fatal</i> exception/early stop. This method is useful for ensuring the robot is in a safe state after the OpMode has finished. In an exception-less OpMode, this method will be called before <a href="on-stop.html">onStop</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="on-finish.html"><span class="token function">onFinish</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Perform one time clean-up operations after the <a href="active-loop.html">activeLoop</a> finishes all intentions gracefully.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -474,7 +489,7 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="on-init.html"><span class="token function">onInit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Runs upon the pressing of the <code class="lang-kotlin">INIT</code> button on the Driver Station. This is where you should initialise your hardware and other components.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="on-init.html"><span class="token function">onInit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Runs upon the pressing of the <code class="lang-kotlin">INIT</code> button on the Driver Station.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -489,7 +504,7 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="on-init-done.html"><span class="token function">onInitDone</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Allow code to execute once after all initialisation has finished. Note: this method is always called even if initialisation is cut short by the Driver Station.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="on-init-done.html"><span class="token function">onInitDone</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Allow code to execute once after all initialisation has finished.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -504,7 +519,7 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="on-init-loop.html"><span class="token function">onInitLoop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Run code in a loop AFTER <a href="on-init.html">onInit</a> has completed, until start is pressed on the Driver Station and the init-task (<a href="set-init-task.html">setInitTask</a>) is done. If not implemented and no init-task is defined, the OpMode will continue on as normal and wait for start.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="on-init-loop.html"><span class="token function">onInitLoop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Run code in a loop AFTER <a href="on-init.html">onInit</a> has completed, until start is pressed on the Driver Station and the init-task (<a href="set-init-task.html">setInitTask</a>) is done. The boolean returned by this method will indicate the status of the imit-loop, if it returns true, the init-loop will finish early.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -519,7 +534,7 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="on-start.html"><span class="token function">onStart</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Perform one time operations after start is pressed. Unlike <a href="on-init-done.html">onInitDone</a>, this will only execute once play is hit and not when initialisation is done.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="on-start.html"><span class="token function">onStart</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Perform one time operations after start is pressed.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -534,7 +549,7 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="on-stop.html"><span class="token function">onStop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Perform one time clean-up operations as the OpMode is stopping. This method is called after the OpMode has been requested to stop, and will be the last method called before the OpMode is terminated, and is <i>guaranteed</i> to be called. This method is useful for releasing resources to prevent memory leaks, as motor controllers will be powered off as the OpMode is ending.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="on-stop.html"><span class="token function">onStop</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Perform one time clean-up operations as the OpMode is stopping.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -579,7 +594,7 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="safe-halt-hardware.html"><span class="token function">safeHaltHardware</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Call to command all motors and sensors on the robot to stop. This method is continuously called when no OpMode is running, and allows you to do the same while still in an OpMode (called internally after <a href="finish.html">finish</a>). This method will also power down all LynxModules and disable all servos.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="safe-halt-hardware.html"><span class="token function">safeHaltHardware</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Dangerous method: Call to command all motors and servos on the robot to shut down. This is a method called by the SDK continuously when no OpMode is running. It is also automatically called via <a href="finish.html">finish</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -594,7 +609,22 @@ v4.0.0-master-e1b07fec            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="set-init-task.html"><span class="token function">setInitTask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">task<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Runnable.html">Runnable</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set a task that will run as an init-task. This will run after your <a href="on-init.html">onInit</a> has completed, allowing you to initialise hardware first. This is an optional method, and runs alongside <a href="on-init-loop.html">onInitLoop</a>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-init-task.html"><span class="token function">setInitTask</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">task<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Runnable.html">Runnable</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Set a task that will run as an init-task. This will run after your <a href="on-init.html">onInit</a> has completed, allowing you to initialise hardware first. This is an optional method, and runs alongside <a href="on-init-loop.html">onInitLoop</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-247703525%2FFunctions%2F-325384828" anchor-label="stopMotors" id="-247703525%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stop-motors.html"><span>stop</span><wbr></wbr><span><span>Motors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-247703525%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="stop-motors.html"><span class="token function">stopMotors</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Call to command all moving motors/CRServos to stop by method of setting their powers to zero. This does not impact normal servos.</p></div></div></div>
                 </div>
               </div>
             </div>

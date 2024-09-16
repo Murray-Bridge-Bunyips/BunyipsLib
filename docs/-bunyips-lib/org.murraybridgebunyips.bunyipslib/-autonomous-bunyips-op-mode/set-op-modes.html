@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v4.0.0-master-e1b07fec            </div>
+v4.1.0-master-b97a0460            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -67,7 +67,7 @@ v4.0.0-master-e1b07fec            </div>
   <div class="cover ">
     <h1 class="cover"><span>set</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Modes</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="set-op-modes.html"><span class="token function">setOpModes</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>selectableOpModes<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="set-op-modes.html"><span class="token function">setOpModes</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>selectableOpModes<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">Call to define your OpModeSelections, if you list any, then the user will be prompted to select an OpMode before the OpMode begins. If you return null, then the user will not be prompted for a selection, and the OpMode will move to task-ready state immediately. </p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="set-op-modes.html"><span class="token function">setOpModes</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>selectableOpModes<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/List.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">Call to define your OpModeSelections, if you list any, then the user will be prompted to select an OpMode before the OpMode begins. If you return null, then the user will not be prompted for a selection, and the OpMode will move to task-ready state immediately. </p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">
     setOpModes(
             &quot;GO_PARK&quot;,
             &quot;GO_SHOOT&quot;,
@@ -75,6 +75,15 @@ v4.0.0-master-e1b07fec            </div>
             &quot;SABOTAGE_ALLIANCE&quot;
     );
     // Use `StartingPositions.use();` for using the four Robot starting positions
+</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><hr><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="set-op-modes.html"><span class="token function">setOpModes</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>selectableOpModes<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><p class="paragraph">Call to define your OpModeSelections, if you list any, then the user will be prompted to select an OpMode before the OpMode begins. If you return null, then the user will not be prompted for a selection, and the OpMode will move to task-ready state immediately. </p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">
+    setOpModes(
+            &quot;GO_PARK&quot;,
+            &quot;GO_SHOOT&quot;,
+            &quot;GO_SHOOT_AND_PARK&quot;,
+            &quot;SABOTAGE_ALLIANCE&quot;
+    );
+    // See the StartingConfiguration class for advanced builder patterns of robot starting positions,
+    // which is the recommended way to define OpModes (OpModes themselves define objectives, not positions)
 </code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
 </div>
       <div class="footer">

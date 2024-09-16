@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v4.0.0-master-e1b07fec            </div>
+v4.1.0-master-b97a0460            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -67,7 +67,7 @@ v4.0.0-master-e1b07fec            </div>
   <div class="cover ">
     <h1 class="cover"><span>safe</span><wbr></wbr><span>Halt</span><wbr></wbr><span><span>Hardware</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="safe-halt-hardware.html"><span class="token function">safeHaltHardware</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Call to command all motors and sensors on the robot to stop. This method is continuously called when no OpMode is running, and allows you to do the same while still in an OpMode (called internally after <a href="finish.html">finish</a>). This method will also power down all LynxModules and disable all servos.</p></div></div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="safe-halt-hardware.html"><span class="token function">safeHaltHardware</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Dangerous method: Call to command all motors and servos on the robot to shut down. This is a method called by the SDK continuously when no OpMode is running. It is also automatically called via <a href="finish.html">finish</a>.</p><p class="paragraph">Do note <a href="safe-halt-hardware.html">safeHaltHardware</a> may be an operation for some devices that can only be restored on an OpMode restart or by re-enabling the devices manually. See <a href="stop-motors.html">stopMotors</a> to simply set motor powers to zero.</p><p class="paragraph">This method internally powers down motors, LynxModules, servos, and light sensors.</p></div></div>
 </div>
       <div class="footer">
         <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
