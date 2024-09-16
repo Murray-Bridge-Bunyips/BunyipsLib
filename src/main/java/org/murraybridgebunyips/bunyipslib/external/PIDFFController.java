@@ -18,7 +18,7 @@ import java.util.Arrays;
  * @see ArmController
  * @since 4.0.0
  */
-public class PIDFFController implements SystemController, PIDF {
+public class PIDFFController implements PIDF {
     private final PIDController pid;
     private final Encoder encoder;
     private final SystemController ff;

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
-import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
+import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
@@ -32,7 +32,7 @@ public class AlignToAprilTagTask extends Task {
     /**
      * PIDF coefficients for the alignment controller.
      */
-    public static PIDFCoefficients PIDF = new PIDFCoefficients();
+    public static PIDFCoefficients coeffs = new PIDFCoefficients();
     /**
      * The target tag to align to. -1 for any tag.
      */
@@ -40,7 +40,7 @@ public class AlignToAprilTagTask extends Task {
 
     private final RoadRunnerDrive drive;
     private final AprilTag at;
-    private final PIDFController controller;
+    private final PIDF controller;
     private DoubleSupplier x;
     private DoubleSupplier y;
     private DoubleSupplier r;
@@ -55,7 +55,7 @@ public class AlignToAprilTagTask extends Task {
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(Measure<Time> timeout, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDFController controller) {
+    public AlignToAprilTagTask(Measure<Time> timeout, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDF controller) {
         super(timeout);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
@@ -64,7 +64,7 @@ public class AlignToAprilTagTask extends Task {
         this.at = at;
         TARGET_TAG = targetTag;
         this.controller = controller;
-        controller.updatePIDF(PIDF);
+        controller.getPIDFController().setPIDF(coeffs);
         withName("Align To AprilTag");
     }
 
@@ -79,7 +79,7 @@ public class AlignToAprilTagTask extends Task {
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDFController controller) {
+    public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDF controller) {
         super(INFINITE_TIMEOUT);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
@@ -91,7 +91,7 @@ public class AlignToAprilTagTask extends Task {
         y = ySupplier;
         r = rSupplier;
         this.controller = controller;
-        controller.updatePIDF(PIDF);
+        controller.getPIDFController().updatePIDF(coeffs);
         withName("Align To AprilTag");
     }
 
@@ -104,7 +104,7 @@ public class AlignToAprilTagTask extends Task {
      * @param targetTag  The tag to align to, -1 for any tag
      * @param controller The PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(Gamepad driver, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDFController controller) {
+    public AlignToAprilTagTask(Gamepad driver, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDF controller) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, at, targetTag, controller);
     }
 
@@ -118,7 +118,7 @@ public class AlignToAprilTagTask extends Task {
     @Override
     protected void periodic() {
         // FtcDashboard live tuning
-        controller.setPIDF(PIDF);
+        controller.getPIDFController().setPIDF(coeffs);
 
         Pose2d pose = new Pose2d();
         if (x != null)
@@ -157,6 +157,6 @@ public class AlignToAprilTagTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return x == null && hasCalculated && controller.atSetPoint();
+        return x == null && hasCalculated && controller.getPIDFController().atSetPoint();
     }
 }

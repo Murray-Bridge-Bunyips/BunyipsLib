@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  * @see PIDFFController
  * @since 4.0.0
  */
-public class ArmController implements SystemController, PIDF {
+public class ArmController implements PIDF {
     private final PIDController pid;
     private final ArmFeedforward ff;
     private final Supplier<Measure<Angle>> setPointAngleProvider;

@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
-import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
+import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
@@ -43,8 +43,8 @@ public class MoveToContourTask extends Task {
 
     private final RoadRunnerDrive drive;
     private final Processor<ContourData> processor;
-    private final PIDFController translationController;
-    private final PIDFController rotationController;
+    private final PIDF translationController;
+    private final PIDF rotationController;
     private boolean hasCalculated;
     private DoubleSupplier x;
     private DoubleSupplier y;
@@ -61,7 +61,7 @@ public class MoveToContourTask extends Task {
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, Processor<ContourData> processor, PIDFController translationController, PIDFController rotationController) {
+    public MoveToContourTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, Processor<ContourData> processor, PIDF translationController, PIDF rotationController) {
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToContourTask must be used with a drivetrain with X forward Pose/IMU info");
         onSubsystem(drive, false);
@@ -72,8 +72,8 @@ public class MoveToContourTask extends Task {
         r = rSupplier;
         this.translationController = translationController;
         this.rotationController = rotationController;
-        translationController.updatePIDF(TRANSLATIONAL_PIDF);
-        rotationController.updatePIDF(ROTATIONAL_PIDF);
+        translationController.getPIDFController().updatePIDF(TRANSLATIONAL_PIDF);
+        rotationController.getPIDFController().updatePIDF(ROTATIONAL_PIDF);
         withName("Move to Contour");
     }
 
@@ -86,7 +86,7 @@ public class MoveToContourTask extends Task {
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(Gamepad driver, BunyipsSubsystem drive, Processor<ContourData> processor, PIDFController translationController, PIDFController rotationController) {
+    public MoveToContourTask(Gamepad driver, BunyipsSubsystem drive, Processor<ContourData> processor, PIDF translationController, PIDF rotationController) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, processor, translationController, rotationController);
     }
 
@@ -99,7 +99,7 @@ public class MoveToContourTask extends Task {
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(Measure<Time> timeout, BunyipsSubsystem drive, Processor<ContourData> processor, PIDFController translationController, PIDFController rotationController) {
+    public MoveToContourTask(Measure<Time> timeout, BunyipsSubsystem drive, Processor<ContourData> processor, PIDF translationController, PIDF rotationController) {
         super(timeout);
         if (!(drive instanceof RoadRunnerDrive))
             throw new EmergencyStop("MoveToContourTask must be used with a drivetrain with X forward Pose/IMU info");
@@ -108,8 +108,8 @@ public class MoveToContourTask extends Task {
         this.processor = processor;
         this.translationController = translationController;
         this.rotationController = rotationController;
-        translationController.updatePIDF(TRANSLATIONAL_PIDF);
-        rotationController.updatePIDF(ROTATIONAL_PIDF);
+        translationController.getPIDFController().updatePIDF(TRANSLATIONAL_PIDF);
+        rotationController.getPIDFController().updatePIDF(ROTATIONAL_PIDF);
         withName("Move to Contour");
     }
 
@@ -134,8 +134,8 @@ public class MoveToContourTask extends Task {
     @Override
     protected void periodic() {
         // FtcDashboard live tuning
-        translationController.setPIDF(TRANSLATIONAL_PIDF);
-        rotationController.setPIDF(ROTATIONAL_PIDF);
+        translationController.getPIDFController().setPIDF(TRANSLATIONAL_PIDF);
+        rotationController.getPIDFController().setPIDF(ROTATIONAL_PIDF);
 
         Pose2d pose = new Pose2d(0, 0, 0);
         if (x != null)
@@ -160,6 +160,6 @@ public class MoveToContourTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return x == null && hasCalculated && translationController.atSetPoint() && rotationController.atSetPoint();
+        return x == null && hasCalculated && translationController.getPIDFController().atSetPoint() && rotationController.getPIDFController().atSetPoint();
     }
 }

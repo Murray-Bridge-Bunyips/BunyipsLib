@@ -8,7 +8,6 @@ import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
  *
  * @since 4.0.0
  */
-@FunctionalInterface
-public interface PIDF {
+public interface PIDF extends SystemController {
     PIDFController getPIDFController();
 }

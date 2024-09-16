@@ -3,7 +3,6 @@ package org.murraybridgebunyips.bunyipslib.external.pid;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
-import org.murraybridgebunyips.bunyipslib.external.SystemController;
 
 /**
  * This is a PID controller (https://en.wikipedia.org/wiki/PID_controller)
@@ -20,7 +19,7 @@ import org.murraybridgebunyips.bunyipslib.external.SystemController;
  *
  * @since 1.0.0-pre
  */
-public class PIDFController implements SystemController, PIDF {
+public class PIDFController implements PIDF {
     private double kP, kI, kD, kF;
     private double setPoint;
     private double measuredValue;

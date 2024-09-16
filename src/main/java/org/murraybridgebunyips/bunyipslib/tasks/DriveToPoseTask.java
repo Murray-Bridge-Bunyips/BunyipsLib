@@ -11,7 +11,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
-import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
+import org.murraybridgebunyips.bunyipslib.external.SystemController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
@@ -30,9 +30,9 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 public class DriveToPoseTask extends Task {
     private final RoadRunnerDrive drive;
     private final Pose2d targetPose;
-    private final PIDFController forwardController;
-    private final PIDFController strafeController;
-    private final PIDFController headingController;
+    private final SystemController forwardController;
+    private final SystemController strafeController;
+    private final SystemController headingController;
 
     private double MAX_FORWARD_SPEED = 1.0;
     private double MAX_STRAFE_SPEED = 1.0;
@@ -47,12 +47,12 @@ public class DriveToPoseTask extends Task {
      * @param timeout           The maximum time the task can run for.
      * @param driveSubsystem    The drive subsystem to run the task on.
      * @param targetPose        The target pose to drive to.
-     * @param forwardController The PID controller for x.
-     * @param strafeController  The PID controller for y.
-     * @param headingController The PID controller for heading.
+     * @param forwardController The system/PID controller for x.
+     * @param strafeController  The system/PID controller for y.
+     * @param headingController The system/PID controller for heading.
      */
     public DriveToPoseTask(@NonNull Measure<Time> timeout, @NonNull BunyipsSubsystem driveSubsystem,
-                           Pose2d targetPose, PIDFController forwardController, PIDFController strafeController, PIDFController headingController) {
+                           Pose2d targetPose, SystemController forwardController, SystemController strafeController, SystemController headingController) {
         super(timeout);
         if (!(driveSubsystem instanceof RoadRunnerDrive))
             throw new IllegalArgumentException("DriveToPoseTask requires a RoadRunnerDrive subsystem");
@@ -140,15 +140,15 @@ public class DriveToPoseTask extends Task {
         double twistedYError = -error.getX() * sin + error.getY() * cos;
 
         // Wrap target angle between -pi and pi for optimal turns
-        double angle = Mathf.inputModulus(error.getHeading(), -Math.PI, Math.PI);
+        double angleError = Mathf.inputModulus(error.getHeading(), -Math.PI, Math.PI);
         // When the angle is near the modulus boundary, lock towards a definitive full rotation to avoid oscillations
-        if (Mathf.isNear(Math.abs(angle), Math.PI, 0.1))
-            angle = -Math.PI * Math.signum(error.getHeading());
+        if (Mathf.isNear(Math.abs(angleError), Math.PI, 0.1))
+            angleError = -Math.PI * Math.signum(error.getHeading());
 
         // Apply PID and twist
-        double forwardPower = -forwardController.calculate(twistedXError);
-        double strafePower = -strafeController.calculate(twistedYError);
-        double headingPower = -headingController.calculate(angle);
+        double forwardPower = -forwardController.calculate(twistedXError, 0);
+        double strafePower = -strafeController.calculate(twistedYError, 0);
+        double headingPower = -headingController.calculate(angleError, 0);
 
         drive.setWeightedDrivePower(
                 new Pose2d(

@@ -8,7 +8,6 @@
 package org.murraybridgebunyips.bunyipslib.external.pid;
 
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
-import org.murraybridgebunyips.bunyipslib.external.SystemController;
 import org.murraybridgebunyips.bunyipslib.external.TrapezoidProfile;
 
 /**
@@ -17,7 +16,7 @@ import org.murraybridgebunyips.bunyipslib.external.TrapezoidProfile;
  *
  * @since 3.5.0
  */
-public class ProfiledPIDController implements SystemController, PIDF {
+public class ProfiledPIDController implements PIDF {
     private final PIDController controller;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State();
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();

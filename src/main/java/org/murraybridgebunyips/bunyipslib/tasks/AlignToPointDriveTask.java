@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
-import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
+import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 
@@ -30,7 +30,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      */
     public static double VECTOR_DELTA_CUTOFF_INCHES = 6;
 
-    private final PIDFController controller;
+    private final PIDF controller;
     private final RoadRunnerDrive drive;
 
     private final Supplier<Float> pX;
@@ -50,7 +50,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      * @param rotationController rotation PID controller to use
      * @param point              the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(@Nullable Supplier<Float> passThroughPoseX, @Nullable Supplier<Float> passThroughPoseY, RoadRunnerDrive drive, PIDFController rotationController, Supplier<Vector2d> point) {
+    public AlignToPointDriveTask(@Nullable Supplier<Float> passThroughPoseX, @Nullable Supplier<Float> passThroughPoseY, RoadRunnerDrive drive, PIDF rotationController, Supplier<Vector2d> point) {
         this.drive = drive;
         if (!(drive instanceof BunyipsSubsystem))
             throw new EmergencyStop("AlignToPointDriveTask must be used with a BunyipsSubsystem extending drive");
@@ -58,7 +58,7 @@ public class AlignToPointDriveTask extends ForeverTask {
         pointSupplier = point;
         controller = rotationController;
         // Default tolerance is too low, will set minimum bound
-        controller.setTolerance(Math.max(Math.toRadians(1), controller.getTolerance()[0]));
+        controller.getPIDFController().setTolerance(Math.max(Math.toRadians(1), controller.getPIDFController().getTolerance()[0]));
         pX = passThroughPoseX;
         pY = passThroughPoseY;
 
@@ -75,7 +75,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      * @param drive                  RoadRunner drive instance
      * @param point                  the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(Gamepad passThroughTranslation, RoadRunnerDrive drive, PIDFController rotationController, Supplier<Vector2d> point) {
+    public AlignToPointDriveTask(Gamepad passThroughTranslation, RoadRunnerDrive drive, PIDF rotationController, Supplier<Vector2d> point) {
         this(() -> -passThroughTranslation.left_stick_y, () -> -passThroughTranslation.left_stick_x, drive, rotationController, point);
     }
 
@@ -89,7 +89,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      * @param rotationController rotation PID controller to use
      * @param point              the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(PIDFController rotationController, Supplier<Vector2d> point) {
+    public AlignToPointDriveTask(PIDF rotationController, Supplier<Vector2d> point) {
         this(null, null, rotationController, point);
     }
 
@@ -139,12 +139,9 @@ public class AlignToPointDriveTask extends ForeverTask {
         // Not technically omega because its power. This is the derivative of atan2
         double thetaFF = -fieldFrameInput.rotated(-Math.PI / 2).dot(difference) / (difference.norm() * difference.norm());
 
-        // Set the target heading for the heading controller to our desired angle
-        controller.setSetPoint(theta);
-
         // Set desired angular velocity to the heading controller output + angular
         // velocity feedforward
-        double headingInput = (controller.calculate(poseEstimate.getHeading())
+        double headingInput = (controller.calculate(poseEstimate.getHeading(), theta)
                 * drive.getConstants().kV + thetaFF)
                 * drive.getConstants().TRACK_WIDTH;
         headingInput = Mathf.clamp(headingInput, -maxRotation, maxRotation);
