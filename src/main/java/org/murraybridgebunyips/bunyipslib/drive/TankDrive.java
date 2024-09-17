@@ -74,7 +74,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         drive = new TankRoadRunnerDrive(opMode.telemetry, constants, coefficients, opMode.hardwareMap.voltageSensor, imu, leftMotors, rightMotors);
         benji = new Watchdog(() -> {
             if (opMode.isStopRequested()) return;
-            Dbg.warn(getClass(), "Stateful drive updates have been disabled as it has been longer than %ms since the last call to update().", RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds));
+            Dbg.logd(getClass(), "Stateful drive updates have been disabled as it has been longer than %ms since the last call to update().", RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds));
             updates = false;
             drive.stop();
         }, 100, (long) RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds), TimeUnit.MILLISECONDS);

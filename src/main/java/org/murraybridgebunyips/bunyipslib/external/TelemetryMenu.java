@@ -195,7 +195,7 @@ public class TelemetryMenu {
         // Now we loop through all the child elements of this level and add them
         for (int i = 0; i < children.size(); i++) {
             // Separator for FtcDashboard which inlines everything
-            builder.append("  ");
+            builder.append("<font color=gray face=monospace>|</font>");
             // If the selection pointer is at this index, put a green dot in the box :)
             if (selectedIdx == i) {
                 builder.append("[<font color=green face=monospace>•</font>] ");
