@@ -245,6 +245,12 @@ public class IMUEx implements IMU, Runnable {
      * Manual calls to {@link #run()} will be ignored as they will be dispatched by the thread.
      * This mirrors behaviour found in a {@link BunyipsSubsystem}.
      * <p>
+     * <b>WARNING:</b> Multi-threading the IMU may not come with any performance gains and can degrade
+     * the performance and reliability of your OpModes due to how I2C calls are propagated.
+     * This method is exposed only for highly advanced operations and opens a wide range of technical
+     * complexity when dealing with hardware threading.
+     * You must ensure you know what you're doing before you multithread.
+     * <p>
      * The thread will run at full speed as-is.
      */
     public void startThread() {
@@ -255,6 +261,12 @@ public class IMUEx implements IMU, Runnable {
      * Call to delegate the manual data updating of the IMU to a thread managed by {@link Threads}.
      * Manual calls to {@link #run()} will be ignored as they will be dispatched by the thread.
      * This mirrors behaviour found in a {@link BunyipsSubsystem}.
+     * <p>
+     * <b>WARNING:</b> Multi-threading the IMU may not come with any performance gains and can degrade
+     * the performance and reliability of your OpModes due to how I2C calls are propagated.
+     * This method is exposed only for highly advanced operations and opens a wide range of technical
+     * complexity when dealing with hardware threading.
+     * You must ensure you know what you're doing before you multithread.
      *
      * @param loopSleepDuration the duration to sleep this thread after every loop to save resources
      */
