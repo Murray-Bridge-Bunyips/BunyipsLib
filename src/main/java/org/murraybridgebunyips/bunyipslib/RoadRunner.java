@@ -250,7 +250,7 @@ public interface RoadRunner {
 
     /**
      * Set the current pose estimate of the drive. This method is useful when parsing the user-selected start
-     * position, so field-relative trajectories can be built.
+     * position, so field-relative trajectories can be built. This method overload composes a {@link #unitPose}.
      *
      * @param poseEstimate The pose estimate to set
      * @param inUnit       The unit of the end pose vector (will be converted to inches)
@@ -270,6 +270,12 @@ public interface RoadRunner {
 
     /**
      * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
+     * <p>
+     * Note that the current pose estimate of the drive is never updated automatically; ensure the starting pose
+     * of your robot is correct.
+     * <p>
+     * Note that the current pose estimate of the drive is never updated automatically; ensure the starting pose
+     * of your robot is correct to ensure proper trajectory following.
      *
      * @param startPoseInchRad Starting pose of the trajectory to be built starting at (in, in, rad). This pose will consequently used as the next implicit pose.
      * @return Builder for the trajectory
@@ -280,6 +286,9 @@ public interface RoadRunner {
 
     /**
      * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
+     * <p>
+     * Note that the current pose estimate of the drive is never updated automatically; ensure the starting pose
+     * of your robot is correct to ensure proper trajectory following.
      *
      * @param startPoseInchRad   Starting pose of the trajectory to be built starting at (in, in, rad). This pose will consequently used as the next implicit pose.
      * @param startPoseMirrorMap The mirror profile to use on this starting pose if used in a {@code mirrorToRef}. This is disabled by default to account for global coordinate systems.
@@ -293,6 +302,9 @@ public interface RoadRunner {
 
     /**
      * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
+     * <p>
+     * Note that the current pose estimate of the drive is never updated automatically; ensure the starting pose
+     * of your robot is correct to ensure proper trajectory following.
      *
      * @param startPose          Starting pose of the trajectory to be built starting at. This pose will consequently used as the next implicit pose.
      * @param inUnit             The unit of the end pose vector (will be converted to inches)
@@ -309,6 +321,9 @@ public interface RoadRunner {
 
     /**
      * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
+     * <p>
+     * Note that the current pose estimate of the drive is never updated automatically; ensure the starting pose
+     * of your robot is correct to ensure proper trajectory following.
      *
      * @param startPose Starting pose of the trajectory to be built starting at. This pose will consequently used as the next implicit pose.
      * @param inUnit    The unit of the end pose vector (will be converted to inches)
@@ -323,6 +338,9 @@ public interface RoadRunner {
      * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
      * Without arguments, the start pose will use the current pose estimate of the drive *or* the last spliced pose as the starting
      * pose of the trajectory. If there is no buffered spliced pose, the current pose estimate will be used.
+     * <p>
+     * Note that the current pose estimate of the drive is never updated automatically; ensure the starting pose
+     * of your robot is correct to ensure proper trajectory following.
      *
      * @param startPoseMirrorMap Whether to mirror the implicit starting pose if used in a {@code mirrorToRef}. This is disabled by default to account for global coordinate systems.
      * @return Builder for the trajectory
@@ -346,6 +364,9 @@ public interface RoadRunner {
      * Use this method to build a new RoadRunner trajectory or to add a RoadRunner trajectory to the task queue.
      * Without arguments, the start pose will use the current pose estimate of the drive *or* the last spliced pose as the starting
      * pose of the trajectory. If there is no buffered spliced pose, the current pose estimate will be used.
+     * <p>
+     * Note that the current pose estimate of the drive is never updated automatically; ensure the starting pose
+     * of your robot is correct to ensure proper trajectory following.
      *
      * @return Builder for the trajectory
      * @see #makeTrajectory(Pose2d)
