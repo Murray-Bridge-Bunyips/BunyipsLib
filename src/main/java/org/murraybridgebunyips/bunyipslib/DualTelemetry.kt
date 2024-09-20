@@ -333,14 +333,16 @@ class DualTelemetry @JvmOverloads constructor(
         overheadStatus.append("<small>T+").append(elapsedTime).append("s | ")
         if (loopTime <= 0.0) {
             if (loopsSec > 0) {
-                overheadStatus.append("$loopsSec l/s")
+                overheadStatus.append("${loopsSec}Hz")
             } else {
                 overheadStatus.append("?ms")
             }
         } else {
-            if (loopTime >= RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.inUnit(Milliseconds)) {
+            // Will let the first two seconds of the OpMode be reserved for heavy initialisation,
+            // to avoid showing loop time warnings when they shouldn't be considered
+            if (opMode.runtime > 2 && loopTime >= RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.inUnit(Milliseconds)) {
                 overheadStatus.append("<font color='red'>").append(loopTime).append("ms</font>")
-            } else if (loopTime >= loopSpeedSlowAlert.inUnit(Milliseconds)) {
+            } else if (opMode.runtime > 2 && loopTime >= loopSpeedSlowAlert.inUnit(Milliseconds)) {
                 overheadStatus.append("<font color='yellow'>").append(loopTime).append("ms</font>")
             } else {
                 overheadStatus.append(loopTime).append("ms")
