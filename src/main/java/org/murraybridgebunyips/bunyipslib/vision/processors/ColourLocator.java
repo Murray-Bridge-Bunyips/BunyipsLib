@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
+import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.murraybridgebunyips.bunyipslib.vision.Processor;
 import org.murraybridgebunyips.bunyipslib.vision.data.ColourBlob;
 import org.opencv.core.Mat;
@@ -36,11 +37,13 @@ public class ColourLocator extends Processor<ColourBlob> {
     /**
      * Construct a new ColourLocator with minimum settings.
      *
-     * @param targetRange    the colour range to filter for
-     * @param generationMode the type of data that will be reported by this processor
+     * @param regionOfInterest the area of interest on which to perform blob detection
+     * @param targetRange      the colour range to filter for
+     * @param generationMode   the type of data that will be reported by this processor
      */
-    public ColourLocator(ColorRange targetRange, ColorBlobLocatorProcessor.ContourMode generationMode) {
+    public ColourLocator(ImageRegion regionOfInterest, ColorRange targetRange, ColorBlobLocatorProcessor.ContourMode generationMode) {
         instance = makeBuilderWithCommonSettings()
+                .setRoi(regionOfInterest)
                 .setTargetColorRange(targetRange)
                 .setContourMode(generationMode)
                 .build();
