@@ -19,9 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Colour thresholding processor for a colour space, used to find colour contours in an image.
+ * Legacy colour thresholding processor for a colour space, used to find colour contours in an image.
+ * This processor was used pre SDK 10.1 to detect contours, and may still be used if desired.
  *
  * @author Lucas Bubner, 2024
+ * @see ColourLocator
+ * @see ColourSensor
  * @since 1.0.0-pre
  */
 @Config

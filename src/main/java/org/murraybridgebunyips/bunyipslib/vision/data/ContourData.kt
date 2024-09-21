@@ -4,7 +4,7 @@ import android.util.Size
 import org.opencv.core.Rect
 
 /**
- * Data class for storing contour data.
+ * Data class for storing contour data from a ColourThreshold.
  * @since 1.0.0-pre
  */
 data class ContourData(

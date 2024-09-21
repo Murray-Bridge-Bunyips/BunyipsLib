@@ -38,18 +38,14 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class Processor<T extends VisionData> implements VisionProcessor, CameraStreamSource {
     /**
-     * List of all vision data detected since the last stateful update
+     * List of all vision data detected since the last stateful update.
+     * Should be updated with the most up-to-date data, as it will be cleared before every update.
      */
     protected final List<T> data = Collections.synchronizedList(new ArrayList<>());
 
-    /**
-     * Bitmap for use with FtcDashboard and Bitmap processing
-     */
     private final AtomicReference<Bitmap> lastFrame =
             new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
-
     private volatile Mat currentFrame = new Mat();
-
     private boolean isFlipped;
     // Camera dimensions are used as a measure to determine if a camera is attached to this processor
     private Size cameraDimensions = null;
@@ -136,12 +132,12 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
     }
 
     /**
-     * Get the attached camera dimensions/resolution.
+     * Get the attached camera dimensions/resolution that this processor is running on.
      *
      * @return the dimensions in pixels of the attached camera instance, or null if there is no attached instance
      */
     @Nullable
-    protected Size getCameraDimensions() {
+    public Size getCameraDimensions() {
         return cameraDimensions;
     }
 
