@@ -67,6 +67,7 @@ public class AprilTagPoseEstimator implements Runnable {
      * @param R higher values of R will put more trust in the odometry
      * @param Q higher values of Q trusts the AprilTag more
      * @return this
+     * @since 4.1.0
      */
     public AprilTagPoseEstimator setKalmanGains(double R, double Q) {
         xf = new Filter.Kalman(R, Q);
