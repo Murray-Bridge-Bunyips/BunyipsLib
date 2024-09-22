@@ -27,7 +27,7 @@ import java.util.function.Function;
  */
 public class AprilTag extends Processor<AprilTagData> {
     private final AprilTagProcessor instance;
-    private volatile Object atCtx;
+    private volatile Object ctx;
 
     /**
      * Construct a new AprilTag processor.
@@ -99,13 +99,13 @@ public class AprilTag extends Processor<AprilTagData> {
 
     @Override
     protected void onProcessFrame(Mat frame, long captureTimeNanos) {
-        atCtx = instance.processFrame(frame, captureTimeNanos);
+        ctx = instance.processFrame(frame, captureTimeNanos);
     }
 
     @Override
     protected void onFrameDraw(Canvas canvas) {
         Size dimensions = getCameraDimensions();
-        if (dimensions == null) return;
-        instance.onDrawFrame(canvas, dimensions.getWidth(), dimensions.getHeight(), 1.0f, 1.0f, atCtx);
+        if (dimensions == null || ctx == null) return;
+        instance.onDrawFrame(canvas, dimensions.getWidth(), dimensions.getHeight(), 1.0f, 1.0f, ctx);
     }
 }

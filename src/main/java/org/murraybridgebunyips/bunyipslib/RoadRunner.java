@@ -395,6 +395,7 @@ public interface RoadRunner {
 
     /**
      * Specifies the unary negation to mirror this trajectory by.
+     *
      * @since 5.0.0
      */
     enum MirrorMap {

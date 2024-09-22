@@ -59,6 +59,7 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
     private final List<DcMotorEx> motors;
     private final IMU imu;
     private final VoltageSensor batteryVoltageSensor;
+    private final DcMotor.RunMode[] modes = {null, null, null, null};
     private final List<Integer> lastEncPositions = new ArrayList<>();
     private final List<Integer> lastEncVels = new ArrayList<>();
     private final DualTelemetry telemetry;
@@ -245,8 +246,10 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
     }
 
     public void setMode(DcMotor.RunMode runMode) {
-        for (DcMotorEx motor : motors) {
-            motor.setMode(runMode);
+        for (int i = 0; i < motors.size(); i++) {
+            if (runMode == modes[i]) continue;
+            motors.get(i).setMode(runMode);
+            modes[i] = runMode;
         }
     }
 

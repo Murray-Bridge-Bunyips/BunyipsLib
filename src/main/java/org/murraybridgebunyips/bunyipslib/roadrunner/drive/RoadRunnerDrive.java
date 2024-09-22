@@ -195,6 +195,8 @@ public interface RoadRunnerDrive {
 
     /**
      * Set the run mode of all motors.
+     * Note that implementations of this method usually cache the last motor mode to no-op when modes are automatically
+     * applied. To ensure the motor mode is retained properly, access this method for setting the motor modes rather than calling the devices manually.
      *
      * @param runMode new run mode to apply to all motors on this drive.
      */

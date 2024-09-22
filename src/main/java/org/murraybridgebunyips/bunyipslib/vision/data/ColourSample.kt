@@ -1,6 +1,5 @@
 package org.murraybridgebunyips.bunyipslib.vision.data
 
-import androidx.annotation.IntRange
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor.Swatch
 
 /**
@@ -16,21 +15,21 @@ data class ColourSample(
     /**
      * The exact numerical value of the dominant colour in the Region of Interest.
      */
-    val rgb: Int
+    val rgb: Int,
+    /**
+     * The exact Red RGB component of the dominant colour within the Region of Interest.
+     */
+    val red: Int,
+    /**
+     * The exact Green RGB component of the dominant colour within the Region of Interest.
+     */
+    val green: Int,
+    /**
+     * The exact Blue RGB component of the dominant colour within the Region of Interest.
+     */
+    val blue: Int
 ) : VisionData() {
-    companion object {
-        /**
-         * Utility to convert an RGB integer to a 3-wide array of R, G, and B components.
-         * See the Android Color class for more conversion details.
-         */
-        @JvmStatic
-        @IntRange(from = 0, to = 255)
-        fun toRGBComponents(rgb: Int): Array<Int> {
-            return arrayOf(
-                (rgb shr 16) and 0xFF,
-                (rgb shr 8) and 0xFF,
-                rgb and 0xFF
-            )
-        }
-    }
+    constructor(closestSwatch: Swatch, rgb: Int) : this(
+        closestSwatch, rgb, (rgb shr 16) and 0xFF, (rgb shr 8) and 0xFF, rgb and 0xFF
+    )
 }

@@ -31,6 +31,9 @@ import java.util.function.Function;
  * @since 5.0.0
  */
 public class ColourLocator extends Processor<ColourBlob> {
+    private static int instances = 0;
+
+    private final int instanceCount = instances++;
     private final ColorBlobLocatorProcessor instance;
     private volatile Object ctx;
 
@@ -56,6 +59,13 @@ public class ColourLocator extends Processor<ColourBlob> {
      */
     public ColourLocator(Function<ColorBlobLocatorProcessor.Builder, ColorBlobLocatorProcessor.Builder> builder) {
         instance = builder.apply(makeBuilderWithCommonSettings()).build();
+    }
+
+    /**
+     * Reset instance count for processor identification.
+     */
+    public static void resetForOpMode() {
+        instances = 0;
     }
 
     private ColorBlobLocatorProcessor.Builder makeBuilderWithCommonSettings() {
@@ -109,7 +119,8 @@ public class ColourLocator extends Processor<ColourBlob> {
     @NonNull
     @Override
     public String toString() {
-        return "colourlocator";
+        // 0-indexed
+        return "colourlocator" + instanceCount;
     }
 
     @Override
@@ -142,7 +153,7 @@ public class ColourLocator extends Processor<ColourBlob> {
     @Override
     protected void onFrameDraw(Canvas canvas) {
         Size dimensions = getCameraDimensions();
-        if (dimensions == null) return;
+        if (dimensions == null || ctx == null) return;
         instance.onDrawFrame(canvas, dimensions.getWidth(), dimensions.getHeight(), 1.0f, 1.0f, ctx);
     }
 }

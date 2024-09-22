@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import org.firstinspires.ftc.robotcore.external.Func
 import org.firstinspires.ftc.robotcore.external.Telemetry
@@ -338,11 +339,11 @@ class DualTelemetry @JvmOverloads constructor(
                 overheadStatus.append("?ms")
             }
         } else {
-            // Will let the first two seconds of the OpMode be reserved for heavy initialisation,
-            // to avoid showing loop time warnings when they shouldn't be considered
-            if (opMode.runtime > 2 && loopTime >= RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.inUnit(Milliseconds)) {
+            // For LinearOpModes we can suppress any alerts during init as this is the heavy phase of the OpMode
+            val noSuppression = opMode !is LinearOpMode || !opMode.opModeInInit()
+            if (noSuppression && loopTime >= RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.inUnit(Milliseconds)) {
                 overheadStatus.append("<font color='red'>").append(loopTime).append("ms</font>")
-            } else if (opMode.runtime > 2 && loopTime >= loopSpeedSlowAlert.inUnit(Milliseconds)) {
+            } else if (noSuppression && loopTime >= loopSpeedSlowAlert.inUnit(Milliseconds)) {
                 overheadStatus.append("<font color='yellow'>").append(loopTime).append("ms</font>")
             } else {
                 overheadStatus.append(loopTime).append("ms")

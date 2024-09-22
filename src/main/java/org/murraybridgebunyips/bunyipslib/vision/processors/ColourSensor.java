@@ -5,6 +5,7 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import org.murraybridgebunyips.bunyipslib.vision.Processor;
@@ -25,6 +26,9 @@ import org.opencv.core.Mat;
  * @since 5.0.0
  */
 public class ColourSensor extends Processor<ColourSample> {
+    private static int instances = 0;
+
+    private final int instanceCount = instances++;
     private final PredominantColorProcessor instance;
     private volatile Object ctx;
 
@@ -42,6 +46,13 @@ public class ColourSensor extends Processor<ColourSample> {
     }
 
     /**
+     * Reset instance count for processor identification.
+     */
+    public static void resetForOpMode() {
+        instances = 0;
+    }
+
+    /**
      * Get the {@link PredominantColorProcessor} instance.
      *
      * @return direct wrapped instance from the SDK
@@ -53,7 +64,8 @@ public class ColourSensor extends Processor<ColourSample> {
     @NonNull
     @Override
     public String toString() {
-        return "coloursensor";
+        // 0-indexed
+        return "coloursensor" + instanceCount;
     }
 
     @Override
@@ -64,6 +76,11 @@ public class ColourSensor extends Processor<ColourSample> {
     }
 
     @Override
+    public void init(int width, int height, CameraCalibration calibration) {
+        instance.init(width, height, calibration);
+    }
+
+    @Override
     protected void onProcessFrame(Mat frame, long captureTimeNanos) {
         ctx = instance.processFrame(frame, captureTimeNanos);
     }
@@ -71,7 +88,7 @@ public class ColourSensor extends Processor<ColourSample> {
     @Override
     protected void onFrameDraw(Canvas canvas) {
         Size dimensions = getCameraDimensions();
-        if (dimensions == null) return;
+        if (dimensions == null || ctx == null) return;
         instance.onDrawFrame(canvas, dimensions.getWidth(), dimensions.getHeight(), 1.0f, 1.0f, ctx);
     }
 }
