@@ -4,7 +4,7 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.robotcore.hardware.DcMotorImpl;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
@@ -261,7 +261,7 @@ public interface Ramping {
      * @author Lucas Bubner, 2024
      * @since 3.0.0
      */
-    class DcMotor extends DcMotorImpl implements Ramping {
+    class DcMotor extends DcMotorImplEx implements Ramping {
         private final Supplier v = new Supplier(this::getPower);
 
         /**
