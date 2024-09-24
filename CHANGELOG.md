@@ -1,6 +1,54 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v5.0.0 (2024-09-24)
+Integration of SDK v10.1 and season-related features.
+### Breaking changes
+- Trajectory mirroring of the `RoadRunner` utility class has been revamped by an enum
+  - Instead of passing a simple boolean state to reflect across the alliance plane, options now exist to mirror symmetrically
+  - The new `MirrorMap` types are now `NONE`, `ALLIANCE_REFLECTION` (default), and `SYMMETRIC_MIRROR`
+  - The symmetric mirror profile was created as the INTO THE DEEP field is symmetric and using global reference frames is important for AprilTag repositioning
+  - All old instances of pose mirroring contexts have been replaced with taking in a parameter of type `MirrorMap`
+- PhotonFTC (v3.0.2-ALPHA) by Eeshwar has been integrated as an included library
+  - Teams may choose not to use Photon by removing the annotation from `BunyipsOpMode` and/or not including the library
+  - Reread and follow the wiki installation instructions to bring in the new integrations, as well as making sure the versions match (for other lib. updates)
+- `Processor` instances no longer take a copy of the frame before sending it to the processing methods
+  - For most cases, this should not change anything; this change was needed to be made for the new SDK v10.1 processors
+  - There should now be less memory overhead for vision processing as a side effect
+  - This is listed as a breaking change as it may affect certain processors
+- Fixed misnamed processor thresholds for all CENTERSTAGE Pixel colour processors, the thresholds were called YCBCR instead of YCRCB
+### Non-breaking changes
+- Various docs updates and migration to the wiki
+- `DualTelemetry` now displays the appropriate unit of `Hz` instead of `l/s` once the loop times are too fast to be represented as milliseconds
+- The slow loop speed warnings of `DualTelemetry` now don't show up during the init-phase when used in a `LinearOpMode` derivative
+  - The init-phase is the heavy processing of the OpMode and loop times don't matter during init
+- `Processor.getCameraDimensions()` is now a public method
+- `Ramping.DcMotor` now extends `DcMotorImplEx` instead of `DcMotorImpl`
+### Bug fixes
+- `RoadRunnerDrive` watchdog timeouts no longer log in warnings but instead debug logs
+- Fixed the separator in `TelemetryMenu`, there is now a gray bar at the start of every menu entry for ease of use on FtcDashboard
+- `RoadRunnerDrive` instances now cache their run mode during the constant `setMode()` calls in the update loop
+  - This reduces redundant invocations of `setMode()`
+  - It is important to only dynamically modify the drivetrain run mode manually through the `RoadRunnerDrive` instance instead of the motors themselves, due to the caching
+### Additions
+- Update to SDK v10.1; the new recommended SDK version is now v10.1
+  - New `ColourLocator` processor that wraps a `ColorBlobLocatorProcessor`
+  - New `ColourSensor` processor that wraps a `PredominantColorProcessor`
+  - Appropriate data classes with filtering methods are `ColourBlob` and `ColourSample`, appropriately
+  - Since these processors are instance-based instead of abstract, their IDs are represented by `coloursensor0`, `coloursensor1`, etc. and `colourlocator0`, `colourlocator1` etc. depending on the number of instances
+    - These IDs are important to know for FtcDashboard switching or processor differentiation
+  - The BunyipsLib integration of these processors makes constant FtcDashboard viewing available and reduces unnecessary canvas overhead
+  - These new processors work the same as the pre-existing `ColourThreshold` and `AprilTag` processors
+  - The legacy `ColourThreshold` and `MultiColourThreshold` will not be deprecated
+### Notes
+- RoadRunner v1.0.0 is not planned for integration
+  - This is because of the ties RoadRunner v0.5.6 has with the path generator, visualiser, and utilities that don't bring any significant value to BunyipsLib upon migration
+  - Command-based features of RoadRunner v1.0.0 are already implemented as part of the `Scheduler` and `Task` system
+  - Time is better spent for BunyipsLib development working on the wiki and new features rather than refactoring old but still useful systems
+- `StartingConfigurations` assumes a square field, where the blue alliance is opposite the red alliance
+  - In the event a future season does have a diamond field (it has not been the case for a while), then an integration may be made to support this
+  - It is not of priority now or for this season, so it is not scheduled for implementation and won't be reconsidered until next season
+
 ## v4.1.0 (2024-09-16)
 New features and additions for INTO THE DEEP.
 ### Critical bug fixes
