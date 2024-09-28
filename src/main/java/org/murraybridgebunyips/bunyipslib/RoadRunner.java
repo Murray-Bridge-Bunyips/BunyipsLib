@@ -30,6 +30,8 @@ import org.murraybridgebunyips.bunyipslib.tasks.groups.TaskGroup;
 
 import java.util.Objects;
 
+import kotlin.UninitializedPropertyAccessException;
+
 /**
  * RoadRunner utility interface for OpModes, providing simpler trajectory building processes.
  * Do not override any of the default methods in this interface, as they are used for RoadRunner task scheduling.
@@ -936,13 +938,15 @@ public interface RoadRunner {
         /**
          * Set a timeout for the trajectory, to be applied to the overhead task running the trajectory.
          * Should be called first, before any other builder methods.
-         * If this method is not called or fed negative values, an infinite timeout will be used.
+         * If this method is not called or fed negative values, a timeout corresponding with
+         * the trajectory length will be used.
          *
          * @param interval Timeout for the trajectory
          * @return trajectory builder
          */
         public RoadRunnerTrajectoryTaskBuilder withTimeout(Measure<Time> interval) {
             if (interval.lt(INFINITE_TIMEOUT)) {
+                timeout = INFINITE_TIMEOUT;
                 return this;
             }
             timeout = interval;
@@ -950,7 +954,7 @@ public interface RoadRunner {
         }
 
         /**
-         * Set the task name of the trajectory to show up in the telemetry.
+         * Set a custom task name of the trajectory to show up in the telemetry.
          *
          * @param taskName Name of the task
          * @return trajectory builder
@@ -961,7 +965,7 @@ public interface RoadRunner {
         }
 
         /**
-         * Set the priority level of the task.
+         * Set the priority level of the task if being added to a {@link AutonomousBunyipsOpMode} via {@link #addTask()}.
          *
          * @param p Priority level
          * @return trajectory builder
@@ -972,14 +976,15 @@ public interface RoadRunner {
         }
 
         /**
-         * Mirror a {@link TrajectorySequence} into the given {@link Reference}, which will effectively "flip" over the y-axis from the center of the field.
+         * Mirror a {@link TrajectorySequence} into the given {@link Reference}, which will effectively "flip" over the y-axis from the center of the field,
+         * or symmetrically as defined in the currently set {@link MirrorMap}.
          * This method is useful for trajectories that need to be run in the opposite direction, such as a Red Left trajectory
          * being flipped to a Blue Right trajectory.
          * <p>
          * NOTE: The Starting Pose (builder parameter) is <b>NOT</b> flipped with using mirrorToRef() by default.
          * This is to allow global coordinate systems to work properly. If you wish to mirror the Starting Pose,
-         * you must pass an additional argument of {@code true} to {@link #makeTrajectory()}, which will flip the starting
-         * pose.
+         * you must pass an additional argument of a {@link MirrorMap} to {@link #makeTrajectory()}, which will flip the starting
+         * pose accordingly.
          *
          * @param out Reference to mirror the trajectory to - this will be mirrored upon a build call
          * @return Builder,
@@ -1100,8 +1105,13 @@ public interface RoadRunner {
          * task queue. This method is useful if you are running this task as a standalone task, and will only
          * work if you are running an {@link AutonomousBunyipsOpMode}. This trajectory will be added to the global
          * poses list, so the next implicitly created trajectory will start from the end of this one.
+         *
+         * @throws UninitializedPropertyAccessException if the task is added outside of an {@link AutonomousBunyipsOpMode}
          */
-        public void addTask() {
+        public void addTask() throws UninitializedPropertyAccessException {
+            if (!BunyipsOpMode.isRunning() || !(BunyipsOpMode.getInstance() instanceof AutonomousBunyipsOpMode)) {
+                throw new UninitializedPropertyAccessException("Cannot call addTask() when there is no running AutonomousBunyipsOpMode!");
+            }
             RoadRunnerTask task = buildTask();
             switch (priority) {
                 case LAST:

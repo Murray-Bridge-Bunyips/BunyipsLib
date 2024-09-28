@@ -102,7 +102,7 @@ abstract class BunyipsOpMode : BOMInternal() {
     private var operationsPaused = false
     private var safeHaltHardwareOnStop = false
 
-    private val runnables = mutableListOf<Runnable>()
+    private val runnables = mutableSetOf<Runnable>()
     private var gamepadExecutor: ExecutorService? = null
     private var initTask: Runnable? = null
 
@@ -127,7 +127,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // If Kotlin throws an UninitializedPropertyAccessException, it will crash the DS and require a full
             // restart, so we will handle this exception ourselves and supply a more informative message.
             get() = _instance
-                ?: throw UninitializedPropertyAccessException("Attempted to access a BunyipsOpMode that is not running, this may be due to a derived BunyipsComponent class attempting to be instantiated outside the environment of an active BunyipsOpMode.")
+                ?: throw UninitializedPropertyAccessException("Attempted to access a BunyipsOpMode that is not running, this may be due to a derived BunyipsComponent class (Task, BunyipsSubsystem, etc.) attempting to be instantiated outside the environment of an active BunyipsOpMode.")
 
         /**
          * Whether a [BunyipsOpMode] is currently running. This is useful for checking if the OpMode singleton can be accessed
@@ -553,11 +553,25 @@ abstract class BunyipsOpMode : BOMInternal() {
      * a subsystem or task.
      *
      * This method is public to allow you to add looping code from [RobotConfig], [Task], and other contexts.
-     * This method is called before the [activeLoop] method, and will run the runnables in the order they were added.
+     * The runnables will run in the in the order they were added, and duplicate Runnable instances will be ignored.
      */
     fun onActiveLoop(vararg runnables: Runnable) {
+        // Using a set to not have multiple instances of the same Runnable
         this.runnables.addAll(runnables)
         Dbg.logv("BunyipsOpMode: added % activeLoop task(s), % task(s) set.", runnables.size, this.runnables.size)
+    }
+
+    /**
+     * Removes a [Runnable] that was added to the active loop via [onActiveLoop].
+     * Calling this method will no-op on runnables that can't be found on the currently attached runnables,
+     * and will stop executing runnables on the active loop that could be found.
+     */
+    fun detachActiveLoopRunnables(vararg attachedRunnables: Runnable) {
+        val oldSize = runnables.size
+        runnables.removeAll(attachedRunnables.toSet())
+        if (runnables.size != oldSize) {
+            Dbg.logv("BunyipsOpMode: removed % activeLoop task(s), % task(s) remain.", oldSize, runnables.size)
+        }
     }
 
     /**

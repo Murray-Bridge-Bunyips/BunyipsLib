@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
+import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.Filter;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
@@ -59,6 +60,11 @@ public class AprilTagPoseEstimator implements Runnable {
         this.processor = processor;
         this.drive = drive;
         setKalmanGains(4, 1.0e-3);
+
+        BunyipsOpMode.ifRunning(opMode -> {
+            opMode.onActiveLoop(this);
+            Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode");
+        });
     }
 
     /**

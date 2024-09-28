@@ -38,6 +38,14 @@ public class DebugMode extends BunyipsComponent implements Runnable {
     private int max = -1;
 
     /**
+     * Enable debug mode.
+     */
+    public DebugMode() {
+        opMode.onActiveLoop(this);
+        Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode");
+    }
+
+    /**
      * Construct a new instance of DebugMode.
      *
      * @return instance of this to use with a builder pattern

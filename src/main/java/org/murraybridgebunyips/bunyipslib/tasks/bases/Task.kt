@@ -26,6 +26,9 @@ import java.util.Optional
  * - BunyipsSubsystem
  * - Tasks
  *
+ * Task extends [BunyipsComponent] to allow for simpler integration with accessing the OpMode, and was a legacy
+ * feature that was kept for the sake of simplicity, more pedantic exception handling, and ease of use.
+ *
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
