@@ -1,16 +1,22 @@
 package org.murraybridgebunyips.bunyipslib;
 
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Degrees;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 import static org.murraybridgebunyips.bunyipslib.tasks.bases.Task.INFINITE_TIMEOUT;
 
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.Path;
 import com.acmerobotics.roadrunner.path.PathBuilder;
 
+import org.murraybridgebunyips.bunyipslib.drive.MecanumDrive;
+import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
+import org.murraybridgebunyips.bunyipslib.external.PIDF;
+import org.murraybridgebunyips.bunyipslib.external.pid.PController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
@@ -22,6 +28,7 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import kotlin.NotImplementedError;
 import kotlin.UninitializedPropertyAccessException;
 
 /**
@@ -46,6 +53,12 @@ public class PurePursuit implements Runnable {
     private final Consumer<Pose2d> power;
     private final Supplier<Pose2d> pose;
 
+    private PIDF p2pX;
+    private PIDF p2pY;
+    private PIDF p2pHeading;
+
+    private Measure<Distance> tolerance;
+    private Measure<Angle> angleTolerance;
     private Measure<Distance> laRadius;
     private Path currentPath = null;
 
@@ -62,6 +75,11 @@ public class PurePursuit implements Runnable {
 
         // Sane defaults
         laRadius = Inches.of(18);
+        p2pX = new PController(6);
+        p2pY = new PController(6);
+        p2pHeading = new PController(3);
+        tolerance = Inches.of(1);
+        angleTolerance = Degrees.of(1);
 
         ATTACHED_TO_BOM_LOOP = BunyipsOpMode.isRunning();
         BunyipsOpMode.ifRunning(opMode -> {
@@ -78,6 +96,91 @@ public class PurePursuit implements Runnable {
      */
     public PurePursuit(RoadRunnerDrive drive) {
         this(drive::setWeightedDrivePower, drive::getPoseEstimate);
+        // We can auto extract PID coefficients from the drive instance if it is a MecanumDrive or TankDrive
+        if (drive instanceof MecanumDrive) {
+            MecanumDrive mecanumDrive = (MecanumDrive) drive;
+            PIDCoefficients xyCoeffs = mecanumDrive.getCoefficients().TRANSLATIONAL_PID;
+            PIDCoefficients rCoeffs = mecanumDrive.getCoefficients().HEADING_PID;
+            p2pX.getPIDFController().setPIDF(xyCoeffs.kP, xyCoeffs.kI, xyCoeffs.kD, 0);
+            p2pY.getPIDFController().setPIDF(xyCoeffs.kP, xyCoeffs.kI, xyCoeffs.kD, 0);
+            p2pHeading.getPIDFController().setPIDF(rCoeffs.kP, rCoeffs.kI, rCoeffs.kD, 0);
+        } else if (drive instanceof TankDrive) {
+            TankDrive tankDrive = (TankDrive) drive;
+            PIDCoefficients xCoeffs = tankDrive.getCoefficients().AXIAL_PID;
+            PIDCoefficients yCoeffs = tankDrive.getCoefficients().CROSS_TRACK_PID;
+            PIDCoefficients rCoeffs = tankDrive.getCoefficients().HEADING_PID;
+            p2pX.getPIDFController().setPIDF(xCoeffs.kP, xCoeffs.kI, xCoeffs.kD, 0);
+            p2pY.getPIDFController().setPIDF(yCoeffs.kP, yCoeffs.kI, yCoeffs.kD, 0);
+            p2pHeading.getPIDFController().setPIDF(rCoeffs.kP, rCoeffs.kI, rCoeffs.kD, 0);
+        }
+    }
+
+    /**
+     * Set the PIDF controller for the robot X axis of the Pure Pursuit controller.
+     *
+     * @param pidf the PIDF controller to use for the X axis
+     * @return this
+     */
+    public PurePursuit withXPIDF(PIDF pidf) {
+        p2pX = pidf;
+        return this;
+    }
+
+    /**
+     * Set the PIDF controller for the robot Y axis of the Pure Pursuit controller.
+     *
+     * @param pidf the PIDF controller to use for the Y axis
+     * @return this
+     */
+    public PurePursuit withYPIDF(PIDF pidf) {
+        p2pY = pidf;
+        return this;
+    }
+
+    /**
+     * Set the PIDF controller for the robot heading of the Pure Pursuit controller.
+     *
+     * @param pidf the PIDF controller to use for the heading
+     * @return this
+     */
+    public PurePursuit withHeadingPIDF(PIDF pidf) {
+        p2pHeading = pidf;
+        return this;
+    }
+
+    /**
+     * Set the distance tolerance that this Pure Pursuit controller will use to determine when to stop following a path.
+     *
+     * @param vectorDistance the distance tolerance for the path position
+     * @return this
+     */
+    public PurePursuit withVectorTolerance(Measure<Distance> vectorDistance) {
+        tolerance = vectorDistance;
+        return this;
+    }
+
+    /**
+     * Set the heading tolerance that this Pure Pursuit controller will use to determine when to stop following a path.
+     *
+     * @param headingDiff the heading tolerance for the path heading
+     * @return this
+     */
+    public PurePursuit withHeadingTolerance(Measure<Angle> headingDiff) {
+        angleTolerance = headingDiff;
+        return this;
+    }
+
+    /**
+     * Set the tolerances that this Pure Pursuit controller will use to determine when to stop following a path.
+     *
+     * @param vectorDistance the distance tolerance for the path position
+     * @param headingDiff the heading tolerance for the path heading
+     * @return this
+     */
+    public PurePursuit withTolerances(Measure<Distance> vectorDistance, Measure<Angle> headingDiff) {
+        tolerance = vectorDistance;
+        angleTolerance = headingDiff;
+        return this;
     }
 
     /**
@@ -128,8 +231,25 @@ public class PurePursuit implements Runnable {
     @Override
     public void run() {
         if (currentPath == null) return;
+        Pose2d poseEstimate = pose.get();
 
-        // TODO
+        Pose2d targetPower = runPurePursuit(poseEstimate);
+        power.accept(targetPower);
+
+        // Path position and heading tolerance finish condition check
+        // TODO: consider this implementation, it does not check for the path itself being finished and may cause
+        //  the robot to get to the "end" and then stop when it has more path to go
+        if (poseEstimate.vec().distTo(currentPath.end().vec()) < tolerance.in(Inches) &&
+                Mathf.isNear(poseEstimate.getHeading(), currentPath.end().getHeading(), angleTolerance.in(Radians))) {
+            // Stop motors and release path
+            power.accept(new Pose2d());
+            currentPath = null;
+        }
+    }
+
+    private Pose2d runPurePursuit(Pose2d currentPose) {
+        // TODO: not implemented
+        throw new NotImplementedError();
     }
 
     /**

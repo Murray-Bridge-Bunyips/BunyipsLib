@@ -113,6 +113,10 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         return localizer;
     }
 
+    public TankCoefficients getCoefficients() {
+        return drive.getCoefficients();
+    }
+
     @Override
     public TrajectorySequenceRunner getTrajectorySequenceRunner() {
         return drive.getTrajectorySequenceRunner();
