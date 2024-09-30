@@ -2,6 +2,8 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 
 import com.acmerobotics.roadrunner.path.Path;
 
+import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
+import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.PurePursuit;
 import org.murraybridgebunyips.bunyipslib.Text;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
@@ -11,6 +13,9 @@ import java.util.function.Supplier;
 /**
  * Task for running Pure Pursuit paths using the BunyipsOpMode Task system.
  * This task is internally used by the {@link PurePursuit.PathMaker} to run the path.
+ * <p>
+ * <b>Note!</b> Unlike the other drive tasks, this task does not automatically attach itself to a {@link BunyipsSubsystem}
+ * on construction, and needs to be done manually via the {@code onSubsystem} method.
  *
  * @author Lucas Bubner, 2024
  * @since 5.1.0
@@ -31,6 +36,8 @@ public class PurePursuitTask extends Task {
         this.runner = runner;
         pathBuilder = () -> path;
         withName(Text.format("Pure Pursuit Path %::%", path.start(), path.end()));
+        // Detach for all future automatic runtime of the runner if we're using a task system
+        opMode.detachActiveLoopRunnables(runner);
     }
 
     /**
@@ -41,8 +48,9 @@ public class PurePursuitTask extends Task {
      */
     public PurePursuitTask(PurePursuit runner, PurePursuit.PathMaker pathMaker) {
         this.runner = runner;
-        pathBuilder = pathMaker::buildPathNow;
+        pathBuilder = pathMaker::buildPath;
         withName("Pure Pursuit Path");
+        opMode.detachActiveLoopRunnables(runner);
     }
 
     @Override
@@ -53,9 +61,7 @@ public class PurePursuitTask extends Task {
 
     @Override
     protected void periodic() {
-        // Shouldn't update twice in one loop if we're attached to a BOM loop
-        if (!runner.ATTACHED_TO_BOM_LOOP)
-            runner.run();
+        runner.run();
     }
 
     @Override

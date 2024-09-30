@@ -4,6 +4,7 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Degrees;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
+import android.util.Pair;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -30,6 +31,28 @@ import java.util.stream.Collectors;
  */
 public final class Mathf {
     private Mathf() {
+    }
+
+    /**
+     * Checks if two values are approximately equal, such that floating point errors are accounted for.
+     *
+     * @param a the first number
+     * @param b the second number
+     * @return whether the two numbers are approximately equal by an epsilon of 1e-6
+     */
+    public static boolean approximatelyEquals(double a, double b) {
+        return Math.abs(a - b) < 1e-6;
+    }
+
+    /**
+     * Checks if two values are approximately equal, such that floating point errors are accounted for.
+     *
+     * @param a the first number
+     * @param b the second number
+     * @return whether the two numbers are approximately equal by an epsilon of 1e-6
+     */
+    public static boolean approximatelyEquals(float a, float b) {
+        return Math.abs(a - b) < 1e-6;
     }
 
     /**
@@ -573,6 +596,59 @@ public final class Mathf {
     }
 
     /**
+     * Find the intersection between a line and a circle.
+     *
+     * @param p1 The first point of the line.
+     * @param p2 The second point of the line.
+     * @param center The position of the center of the circle.
+     * @param radius The radius of the circle.
+     * @return The intersection points.
+     * @throws NoInterceptException If no intercepts are found.
+     */
+    public static Pair<Vector2d, Vector2d> lineCircleIntersection(Vector2d p1, Vector2d p2, Vector2d center, double radius) throws NoInterceptException {
+        double dx = p2.getX() - p1.getX();
+        double dy = p2.getY() - p1.getY();
+        double a = dx * dx + dy * dy;
+        double b = 2 * (dx * (p1.getX() - center.getX()) + dy * (p1.getY() - center.getY()));
+        double c = center.getX() * center.getX() + center.getY() * center.getY() + p1.getX() * p1.getX() + p1.getY() * p1.getY() - 2 * (center.getX() * p1.getX() + center.getY() * p1.getY()) - radius * radius;
+        List<Double> solutions = solveQuadratic(a, b, c);
+        if (solutions.isEmpty()) {
+            throw new NoInterceptException();
+        }
+        double t1 = solutions.get(0);
+        double t2 = solutions.size() == 2 ? solutions.get(1) : t1;
+        return new Pair<>(new Vector2d(p1.getX() + t1 * dx, p1.getY() + t1 * dy), new Vector2d(p1.getX() + t2 * dx, p1.getY() + t2 * dy));
+    }
+
+    /**
+     * Find the intersection between a line segment and a circle.
+     *
+     * @param p1 The first point of the line segment.
+     * @param p2 The second point of the line segment.
+     * @param center The position of the center of the circle.
+     * @param radius The radius of the circle.
+     * @return The intersection points.
+     * @throws NoInterceptException If no intercepts are found.
+     */
+    public static Pair<Vector2d, Vector2d> lineSegmentCircleIntersection(Vector2d p1, Vector2d p2, Vector2d center, double radius) throws NoInterceptException {
+        double dx = p2.getX() - p1.getX();
+        double dy = p2.getY() - p1.getY();
+        double a = dx * dx + dy * dy;
+        double b = 2 * (dx * (p1.getX() - center.getX()) + dy * (p1.getY() - center.getY()));
+        double c = center.getX() * center.getX() + center.getY() * center.getY() + p1.getX() * p1.getX() + p1.getY() * p1.getY() - 2 * (center.getX() * p1.getX() + center.getY() * p1.getY()) - radius * radius;
+        List<Double> solutions = solveQuadratic(a, b, c);
+        if (solutions.isEmpty()) {
+            throw new NoInterceptException();
+        }
+        double t1 = solutions.get(0);
+        double t2 = solutions.size() == 2 ? solutions.get(1) : t1;
+        if ((t1 < 0 || t1 > 1) && (t2 < 0 || t2 > 1)) {
+            throw new NoInterceptException();
+        }
+        return new Pair<>(new Vector2d(p1.getX() + t1 * dx, p1.getY() + t1 * dy), new Vector2d(p1.getX() + t2 * dx, p1.getY() + t2 * dy));
+    }
+
+    /**
      * Find the intersection of two lines.
      *
      * @param p1 The first point of the first line.
@@ -783,9 +859,7 @@ public final class Mathf {
     }
 
     /**
-     * Exception thrown if no intercept of two lines is found.
-     * You should be looking for this exception if you're using {@link #lineIntersection(Vector2d, Vector2d, Vector2d, Vector2d)},
-     * or {@link #lineSegmentIntersection(Vector2d, Vector2d, Vector2d, Vector2d)}.
+     * Exception thrown if no intercept is found when using the intersection methods of this class.
      */
     public static class NoInterceptException extends RuntimeException {
         /**

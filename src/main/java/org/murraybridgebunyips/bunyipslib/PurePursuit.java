@@ -6,12 +6,16 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 import static org.murraybridgebunyips.bunyipslib.tasks.bases.Task.INFINITE_TIMEOUT;
 
+import android.util.Pair;
+import androidx.annotation.NonNull;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.Path;
 import com.acmerobotics.roadrunner.path.PathBuilder;
 
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.murraybridgebunyips.bunyipslib.drive.MecanumDrive;
 import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
@@ -28,11 +32,10 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import kotlin.NotImplementedError;
 import kotlin.UninitializedPropertyAccessException;
 
 /**
- * Component implementation of a Pure Pursuit controller designed for holonomic drivetrains.
+ * Simple implementation of a Pure Pursuit controller designed for holonomic drivetrains.
  * <p>
  * This system uses a series of suppliers and consumers to define odometry and drive power setting via
  * RoadRunner geometry utilities such as {@link Pose2d} along a {@link Path}.
@@ -43,12 +46,25 @@ import kotlin.UninitializedPropertyAccessException;
  * @author Lucas Bubner, 2024
  * @since 5.1.0
  */
+@Config
 public class PurePursuit implements Runnable {
     /**
-     * Internal flag to determine if this Pure Pursuit controller has been auto-attached
-     * to the BunyipsOpMode active loop.
+     * Inches of how close together line segments should be to find the best lookahead point.
      */
-    public final boolean ATTACHED_TO_BOM_LOOP;
+    public static final int SEGMENTATION_APPROXIMATION_STEP = 4;
+    /**
+     * Inches of how close the lookahead point approximations should be to determine the best lookahead point.
+     */
+    public static final int BEST_LOOKAHEAD_POINT_GUESS_STEP = 6;
+    /**
+     * Inches of how close the heading projection approximations should be to determine the closest point on the path.
+     */
+    public static final int HEADING_PROJECTION_GUESS_STEP = 2;
+    /**
+     * Inches of how close the robot should be to the end of the path to stop the Pure Pursuit controller and
+     * to simple move to PID To Point.
+     */
+    public static final int P2P_AT_END_INCHES = 10;
 
     private final Consumer<Pose2d> power;
     private final Supplier<Pose2d> pose;
@@ -81,7 +97,6 @@ public class PurePursuit implements Runnable {
         tolerance = Inches.of(1);
         angleTolerance = Degrees.of(1);
 
-        ATTACHED_TO_BOM_LOOP = BunyipsOpMode.isRunning();
         BunyipsOpMode.ifRunning(opMode -> {
             opMode.onActiveLoop(this);
             Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode.");
@@ -95,7 +110,7 @@ public class PurePursuit implements Runnable {
      *              note that the trajectory system from RoadRunner is not utilised from this drive
      */
     public PurePursuit(RoadRunnerDrive drive) {
-        this(drive::setWeightedDrivePower, drive::getPoseEstimate);
+        this(drive::setRotationPriorityWeightedDrivePower, drive::getPoseEstimate);
         // We can auto extract PID coefficients from the drive instance if it is a MecanumDrive or TankDrive
         if (drive instanceof MecanumDrive) {
             MecanumDrive mecanumDrive = (MecanumDrive) drive;
@@ -155,6 +170,9 @@ public class PurePursuit implements Runnable {
      * @return this
      */
     public PurePursuit withVectorTolerance(Measure<Distance> vectorDistance) {
+        if (vectorDistance.magnitude() <= 0) {
+            throw new NotStrictlyPositiveException(vectorDistance.magnitude());
+        }
         tolerance = vectorDistance;
         return this;
     }
@@ -166,6 +184,9 @@ public class PurePursuit implements Runnable {
      * @return this
      */
     public PurePursuit withHeadingTolerance(Measure<Angle> headingDiff) {
+        if (headingDiff.magnitude() <= 0) {
+            throw new NotStrictlyPositiveException(headingDiff.magnitude());
+        }
         angleTolerance = headingDiff;
         return this;
     }
@@ -178,8 +199,8 @@ public class PurePursuit implements Runnable {
      * @return this
      */
     public PurePursuit withTolerances(Measure<Distance> vectorDistance, Measure<Angle> headingDiff) {
-        tolerance = vectorDistance;
-        angleTolerance = headingDiff;
+        withVectorTolerance(vectorDistance);
+        withHeadingTolerance(headingDiff);
         return this;
     }
 
@@ -190,6 +211,9 @@ public class PurePursuit implements Runnable {
      * @return this
      */
     public PurePursuit withLookaheadRadius(Measure<Distance> lookaheadRadius) {
+        if (lookaheadRadius.magnitude() <= 0) {
+            throw new NotStrictlyPositiveException(lookaheadRadius.magnitude());
+        }
         laRadius = lookaheadRadius;
         return this;
     }
@@ -199,7 +223,7 @@ public class PurePursuit implements Runnable {
      *
      * @param path the path to follow with the current lookahead radius
      */
-    public void followPath(Path path) {
+    public void followPath(@NonNull Path path) {
         currentPath = path;
     }
 
@@ -236,9 +260,9 @@ public class PurePursuit implements Runnable {
         Pose2d targetPower = runPurePursuit(poseEstimate);
         power.accept(targetPower);
 
-        // Path position and heading tolerance finish condition check
-        // TODO: consider this implementation, it does not check for the path itself being finished and may cause
-        //  the robot to get to the "end" and then stop when it has more path to go
+        // Path position and heading tolerance finish condition check, which simply checks for the robot being close
+        // to the end position. This is a simple check that is not perfect but is good enough for most cases, as
+        // paths that go to the same point should probably be split into separate paths.
         if (poseEstimate.vec().distTo(currentPath.end().vec()) < tolerance.in(Inches) &&
                 Mathf.isNear(poseEstimate.getHeading(), currentPath.end().getHeading(), angleTolerance.in(Radians))) {
             // Stop motors and release path
@@ -248,13 +272,63 @@ public class PurePursuit implements Runnable {
     }
 
     private Pose2d runPurePursuit(Pose2d currentPose) {
-        // TODO: not implemented
-        throw new NotImplementedError();
+        Vector2d lookahead = null;
+
+        for (int i = 0; i < currentPath.length(); i += SEGMENTATION_APPROXIMATION_STEP) {
+            // Using a line segment which traces from approximately small segments of the path to find the best lookahead
+            Vector2d start = currentPath.get(i).vec();
+            Vector2d end = currentPath.get(i + SEGMENTATION_APPROXIMATION_STEP).vec();
+            try {
+                // We now apply the lookahead radius to get the 2 solutions from the quadratic
+                Pair<Vector2d, Vector2d> intersections = Mathf.lineSegmentCircleIntersection(
+                        start, end, currentPose.vec(), laRadius.in(Inches)
+                );
+                // We then project the intersections onto the path to get the best lookahead point, as one will
+                // likely be behind the robot (not progressed on the path)
+                double s1 = currentPath.project(intersections.first, BEST_LOOKAHEAD_POINT_GUESS_STEP);
+                double s2 = currentPath.project(intersections.second, BEST_LOOKAHEAD_POINT_GUESS_STEP);
+                // Maximisation of the parameter to get the best lookahead point
+                if (s1 > s2) {
+                    lookahead = intersections.first;
+                } else {
+                    lookahead = intersections.second;
+                }
+                break;
+            } catch (Mathf.NoInterceptException e) {
+                // No intercept, continue to next segment
+            }
+        }
+
+        Pose2d pathProjection = currentPath.get(currentPath.project(currentPose.vec(), HEADING_PROJECTION_GUESS_STEP));
+        if (lookahead == null) {
+            // Travel to the closest projection of the path if the circle has no intercepts anywhere along the path
+            lookahead = pathProjection.vec();
+        }
+
+        // Swap to P2P at the end of the path
+        boolean isCloseToEnd = pathProjection.vec().distTo(currentPath.end().vec()) < P2P_AT_END_INCHES;
+
+        // Rotate vectors to field frame to ensure PID controllers are in the same frame of reference
+        Vector2d rotCurr = currentPose.vec().rotated(-currentPose.getHeading());
+        Vector2d rotLook = isCloseToEnd ? currentPath.end().vec().rotated(-currentPose.getHeading()) : lookahead.rotated(-currentPose.getHeading());
+
+        // Wrap angle between -180 to 180 degrees, heading is calculated by projecting the current
+        // pose onto the path to get the best target that the path is desiring near this point
+        double targetHeading = Mathf.inputModulus(pathProjection.getHeading(), -Math.PI, Math.PI);
+        // The heading at the modulus boundary acts strangely, so we'll just lock it when it gets close
+        if (Mathf.approximatelyEquals(Math.abs(currentPath.end().getHeading()), Math.PI) && isCloseToEnd)
+            targetHeading = Math.PI;
+
+        return new Pose2d(
+                p2pX.calculate(rotCurr.getX(), rotLook.getX()),
+                p2pY.calculate(rotCurr.getY(), rotLook.getY()),
+                p2pHeading.calculate(Mathf.inputModulus(currentPose.getHeading(), -Math.PI, Math.PI), targetHeading)
+        );
     }
 
     /**
      * Start constructing a new Pure Pursuit path that will start from the current drive pose which is captured
-     * when the path is built (may be delegated if not using a {@code now} build method).
+     * when the path is built (may be delegated if not using a task build method).
      *
      * @return the Pure Pursuit path and task builder
      */
@@ -274,7 +348,7 @@ public class PurePursuit implements Runnable {
 
     /**
      * Start constructing a new Pure Pursuit path that will start from the pose supplied by this
-     * pose supplier when the path is built (may be delegated if not using a {@code now} build method).
+     * pose supplier when the path is built (may be delegated if not using a task build method).
      *
      * @param startPose the pose to use as the path starting pose when this path is started
      * @return the Pure Pursuit path and task builder
@@ -285,6 +359,7 @@ public class PurePursuit implements Runnable {
 
     /**
      * Utility construction class for Path instances that can be executed by {@link PurePursuit}.
+     * Pathing generated through this builder must follow continuity.
      */
     public class PathMaker {
         private final ArrayList<Consumer<PathBuilder>> buildInstructions = new ArrayList<>();
@@ -297,6 +372,7 @@ public class PurePursuit implements Runnable {
 
         // Note: This path maker does not support path mirroring like the RoadRunner interface using a MirrorMap,
         // which may be added later if needed. At the moment, it is possible to mirror these paths manually.
+        // Turning may be accomplished via a heading supplied interpolator or through the TurnTask.
 
         /**
          * Create a new PathMaker.
@@ -596,11 +672,12 @@ public class PurePursuit implements Runnable {
         }
 
         /**
-         * Builds the path and returns it.
+         * Builds the path and returns it. This will evaluate the path at the current pose if it is a supplier,
+         * which is equivalent to the path being built at runtime.
          *
          * @return the built path from the instructions
          */
-        public Path buildPathNow() {
+        public Path buildPath() {
             PathBuilder builder = new PathBuilder(startPose.get(), startTangent.get().in(Radians));
             buildInstructions.forEach(instruction -> instruction.accept(builder));
             return builder.build();
@@ -609,6 +686,9 @@ public class PurePursuit implements Runnable {
         /**
          * Build a task that will build and run the path when executed.
          * This is similar to a deferred task but applies to the path construction.
+         * <p>
+         * <b>Note!</b> Unlike the other drive tasks, this task does not automatically attach itself to a {@link BunyipsSubsystem}
+         * on construction, and needs to be done manually via the {@code onSubsystem} method.
          *
          * @return the task that will build and run the path when executed
          */
@@ -621,11 +701,14 @@ public class PurePursuit implements Runnable {
 
         /**
          * Builds the path now and returns a task that will track the path when executed.
+         * <p>
+         * <b>Note!</b> Unlike the other drive tasks, this task does not automatically attach itself to a {@link BunyipsSubsystem}
+         * on construction, and needs to be done manually via the {@code onSubsystem} method.
          *
          * @return the task that will track the built path when executed
          */
         public PurePursuitTask buildTaskNow() {
-            PurePursuitTask task = new PurePursuitTask(PurePursuit.this, buildPathNow());
+            PurePursuitTask task = new PurePursuitTask(PurePursuit.this, buildPath());
             task.withName(name);
             task.withTimeout(timeout);
             return task;
@@ -634,10 +717,13 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a task to the {@link AutonomousBunyipsOpMode} queue that will build and run the path when executed.
          * This is similar to a deferred task but applies to the path construction.
+         * <p>
+         * <b>Note!</b> Unlike the other drive tasks, this task does not automatically attach itself to a {@link BunyipsSubsystem}
+         * on construction, and needs to be done manually via the {@code onSubsystem} method.
          *
          * @throws UninitializedPropertyAccessException if the task is added outside of an {@link AutonomousBunyipsOpMode}
          */
-        public void addTask() throws UninitializedPropertyAccessException {
+        public PurePursuitTask addTask() throws UninitializedPropertyAccessException {
             if (!BunyipsOpMode.isRunning() || !(BunyipsOpMode.getInstance() instanceof AutonomousBunyipsOpMode)) {
                 throw new UninitializedPropertyAccessException("Cannot call addTask() when there is no running AutonomousBunyipsOpMode!");
             }
@@ -653,15 +739,18 @@ public class PurePursuit implements Runnable {
                     ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTaskFirst(task);
                     break;
             }
+            return task;
         }
 
         /**
          * Adds a task to the {@link AutonomousBunyipsOpMode} queue that builds the path now and returns a task that will
          * track the path when executed.
+         * <b>Note!</b> Unlike the other drive tasks, this task does not automatically attach itself to a {@link BunyipsSubsystem}
+         * on construction, and needs to be done manually via the {@code onSubsystem} method.
          *
          * @throws UninitializedPropertyAccessException if the task is added outside of an {@link AutonomousBunyipsOpMode}
          */
-        public void addTaskNow() throws UninitializedPropertyAccessException {
+        public PurePursuitTask addTaskNow() throws UninitializedPropertyAccessException {
             if (!BunyipsOpMode.isRunning() || !(BunyipsOpMode.getInstance() instanceof AutonomousBunyipsOpMode)) {
                 throw new UninitializedPropertyAccessException("Cannot call addTaskNow() when there is no running AutonomousBunyipsOpMode!");
             }
@@ -677,6 +766,7 @@ public class PurePursuit implements Runnable {
                     ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTaskFirst(task);
                     break;
             }
+            return task;
         }
     }
 }
