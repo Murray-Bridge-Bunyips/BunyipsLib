@@ -16,5 +16,6 @@ public abstract class BunyipsComponent {
     // from this class to work properly, reducing the number of gotchas when writing OpModes.
     // This partial construction still doesn't allow conventional subsystems to be instantiated early (as hardwareMap is
     // not available), however, simple tasks that operate on functional interfaces benefit from this behaviour.
+    // TODO: consider nature of BunyipsComponent in all contexts - should Task really crash if its not in a BOM? (should be null instead?)
     protected final BunyipsOpMode opMode = BunyipsOpMode.getInstance();
 }

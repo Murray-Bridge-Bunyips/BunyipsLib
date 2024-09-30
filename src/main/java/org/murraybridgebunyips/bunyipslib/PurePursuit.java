@@ -7,7 +7,9 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 import static org.murraybridgebunyips.bunyipslib.tasks.bases.Task.INFINITE_TIMEOUT;
 
 import android.util.Pair;
+
 import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -82,7 +84,7 @@ public class PurePursuit implements Runnable {
      * Construct a new component to run Pure Pursuit pathing with using your own
      * odometry implementation and drive powers.
      *
-     * @param setDrivePower a consumer that will take in a pose the motors should be commanded to move in during a path execution
+     * @param setDrivePower        a consumer that will take in a pose the motors should be commanded to move in during a path execution
      * @param poseEstimateSupplier a supplier that supplies the current robot pose as per your odometry
      */
     public PurePursuit(Consumer<Pose2d> setDrivePower, Supplier<Pose2d> poseEstimateSupplier) {
@@ -195,7 +197,7 @@ public class PurePursuit implements Runnable {
      * Set the tolerances that this Pure Pursuit controller will use to determine when to stop following a path.
      *
      * @param vectorDistance the distance tolerance for the path position
-     * @param headingDiff the heading tolerance for the path heading
+     * @param headingDiff    the heading tolerance for the path heading
      * @return this
      */
     public PurePursuit withTolerances(Measure<Distance> vectorDistance, Measure<Angle> headingDiff) {
@@ -259,6 +261,8 @@ public class PurePursuit implements Runnable {
 
         Pose2d targetPower = runPurePursuit(poseEstimate);
         power.accept(targetPower);
+
+        // TODO: dashboard drawing integrations
 
         // Path position and heading tolerance finish condition check, which simply checks for the robot being close
         // to the end position. This is a simple check that is not perfect but is good enough for most cases, as
@@ -398,7 +402,7 @@ public class PurePursuit implements Runnable {
          * Run this path with this defined starting tangent.
          *
          * @param tangent the tangent to start with
-         * @param unit the unit of the tangent
+         * @param unit    the unit of the tangent
          * @return this
          */
         public PathMaker withStartTangent(double tangent, Angle unit) {
@@ -410,7 +414,7 @@ public class PurePursuit implements Runnable {
          * Adds a line segment with tangent heading interpolation.
          *
          * @param endPosition the end position
-         * @param unit units of the supplied vector
+         * @param unit        units of the supplied vector
          * @return this
          */
         public PathMaker lineTo(Vector2d endPosition, Distance unit) {
@@ -427,7 +431,7 @@ public class PurePursuit implements Runnable {
          * Adds a line segment with constant heading interpolation.
          *
          * @param endPosition the end position
-         * @param unit units of the supplied vector
+         * @param unit        units of the supplied vector
          * @return this
          */
         public PathMaker lineToConstantHeading(Vector2d endPosition, Distance unit) {
@@ -444,7 +448,7 @@ public class PurePursuit implements Runnable {
          * Adds a strafe segment (i.e., a line segment with constant heading interpolation).
          *
          * @param endPosition the end position
-         * @param unit units of the supplied vector
+         * @param unit        units of the supplied vector
          * @return this
          */
         public PathMaker strafeTo(Vector2d endPosition, Distance unit) {
@@ -460,9 +464,9 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a line segment with linear heading interpolation.
          *
-         * @param endPose the end pose
+         * @param endPose    the end pose
          * @param vectorUnit units of the supplied vector
-         * @param angleUnit units of the supplied angle
+         * @param angleUnit  units of the supplied angle
          * @return this
          */
         public PathMaker lineToLinearHeading(Pose2d endPose, Distance vectorUnit, Angle angleUnit) {
@@ -479,9 +483,9 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a line segment with spline heading interpolation.
          *
-         * @param endPose the end pose
+         * @param endPose    the end pose
          * @param vectorUnit units of the supplied vector
-         * @param angleUnit units of the supplied angle
+         * @param angleUnit  units of the supplied angle
          * @return this
          */
         public PathMaker lineToSplineHeading(Pose2d endPose, Distance vectorUnit, Angle angleUnit) {
@@ -499,7 +503,7 @@ public class PurePursuit implements Runnable {
          * Adds a line straight forward.
          *
          * @param distance the distance to travel forward
-         * @param unit the unit of the distance
+         * @param unit     the unit of the distance
          * @return this
          */
         public PathMaker forward(double distance, Distance unit) {
@@ -513,7 +517,7 @@ public class PurePursuit implements Runnable {
          * Adds a line straight backward.
          *
          * @param distance the distance to travel backward
-         * @param unit the unit of the distance
+         * @param unit     the unit of the distance
          * @return this
          */
         public PathMaker back(double distance, Distance unit) {
@@ -527,7 +531,7 @@ public class PurePursuit implements Runnable {
          * Adds a segment that strafes left in the robot reference frame.
          *
          * @param distance the distance to strafe left
-         * @param unit the unit of the distance
+         * @param unit     the unit of the distance
          * @return this
          */
         public PathMaker strafeLeft(double distance, Distance unit) {
@@ -541,7 +545,7 @@ public class PurePursuit implements Runnable {
          * Adds a segment that strafes right in the robot reference frame.
          *
          * @param distance the distance to strafe right
-         * @param unit the unit of the distance
+         * @param unit     the unit of the distance
          * @return this
          */
         public PathMaker strafeRight(double distance, Distance unit) {
@@ -554,10 +558,10 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a spline segment with tangent heading interpolation.
          *
-         * @param endPosition the end position
+         * @param endPosition  the end position
          * @param distanceUnit units of the supplied vector
-         * @param endTangent the end tangent
-         * @param angleUnit units of the supplied angle
+         * @param endTangent   the end tangent
+         * @param angleUnit    units of the supplied angle
          * @return this
          */
         public PathMaker splineTo(Vector2d endPosition, Distance distanceUnit, double endTangent, Angle angleUnit) {
@@ -573,10 +577,10 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a spline segment with constant heading interpolation.
          *
-         * @param endPosition the end position
+         * @param endPosition  the end position
          * @param distanceUnit units of the supplied vector
-         * @param endTangent the end tangent
-         * @param angleUnit units of the supplied angle
+         * @param endTangent   the end tangent
+         * @param angleUnit    units of the supplied angle
          * @return this
          */
         public PathMaker splineToConstantHeading(Vector2d endPosition, Distance distanceUnit, double endTangent, Angle angleUnit) {
@@ -592,10 +596,10 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a spline segment with linear heading interpolation.
          *
-         * @param endPose the end pose
-         * @param vectorUnit units of the supplied vector in the end pose
-         * @param angleUnit units of the supplied angle in the end pose
-         * @param endTangent the end tangent
+         * @param endPose        the end pose
+         * @param vectorUnit     units of the supplied vector in the end pose
+         * @param angleUnit      units of the supplied angle in the end pose
+         * @param endTangent     the end tangent
          * @param endTangentUnit units of the supplied angle for the end tangent
          * @return this
          */
@@ -613,10 +617,10 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a spline segment with spline heading interpolation.
          *
-         * @param endPose the end pose
-         * @param vectorUnit units of the supplied vector in the end pose
-         * @param angleUnit units of the supplied angle in the end pose
-         * @param endTangent the end tangent
+         * @param endPose        the end pose
+         * @param vectorUnit     units of the supplied vector in the end pose
+         * @param angleUnit      units of the supplied angle in the end pose
+         * @param endTangent     the end tangent
          * @param endTangentUnit units of the supplied angle for the end tangent
          * @return this
          */
@@ -721,6 +725,7 @@ public class PurePursuit implements Runnable {
          * <b>Note!</b> Unlike the other drive tasks, this task does not automatically attach itself to a {@link BunyipsSubsystem}
          * on construction, and needs to be done manually via the {@code onSubsystem} method.
          *
+         * @return the task instance to allow for {@code onSubsystem} chaining
          * @throws UninitializedPropertyAccessException if the task is added outside of an {@link AutonomousBunyipsOpMode}
          */
         public PurePursuitTask addTask() throws UninitializedPropertyAccessException {
@@ -748,6 +753,7 @@ public class PurePursuit implements Runnable {
          * <b>Note!</b> Unlike the other drive tasks, this task does not automatically attach itself to a {@link BunyipsSubsystem}
          * on construction, and needs to be done manually via the {@code onSubsystem} method.
          *
+         * @return the task instance to allow for {@code onSubsystem} chaining
          * @throws UninitializedPropertyAccessException if the task is added outside of an {@link AutonomousBunyipsOpMode}
          */
         public PurePursuitTask addTaskNow() throws UninitializedPropertyAccessException {

@@ -5,6 +5,7 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
 import android.util.Pair;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -41,7 +42,7 @@ public final class Mathf {
      * @return whether the two numbers are approximately equal by an epsilon of 1e-6
      */
     public static boolean approximatelyEquals(double a, double b) {
-        return Math.abs(a - b) < 1e-6;
+        return Math.abs(a - b) < 1.0e-6;
     }
 
     /**
@@ -52,7 +53,7 @@ public final class Mathf {
      * @return whether the two numbers are approximately equal by an epsilon of 1e-6
      */
     public static boolean approximatelyEquals(float a, float b) {
-        return Math.abs(a - b) < 1e-6;
+        return Math.abs(a - b) < 1.0e-6;
     }
 
     /**
@@ -598,8 +599,8 @@ public final class Mathf {
     /**
      * Find the intersection between a line and a circle.
      *
-     * @param p1 The first point of the line.
-     * @param p2 The second point of the line.
+     * @param p1     The first point of the line.
+     * @param p2     The second point of the line.
      * @param center The position of the center of the circle.
      * @param radius The radius of the circle.
      * @return The intersection points.
@@ -623,8 +624,8 @@ public final class Mathf {
     /**
      * Find the intersection between a line segment and a circle.
      *
-     * @param p1 The first point of the line segment.
-     * @param p2 The second point of the line segment.
+     * @param p1     The first point of the line segment.
+     * @param p2     The second point of the line segment.
      * @param center The position of the center of the circle.
      * @param radius The radius of the circle.
      * @return The intersection points.

@@ -2,7 +2,6 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 
 import com.acmerobotics.roadrunner.path.Path;
 
-import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.PurePursuit;
 import org.murraybridgebunyips.bunyipslib.Text;
@@ -30,7 +29,7 @@ public class PurePursuitTask extends Task {
      * Create a new Pure Pursuit task to follow the given constructed path.
      *
      * @param runner the Pure Pursuit runner to use
-     * @param path the path to follow
+     * @param path   the path to follow
      */
     public PurePursuitTask(PurePursuit runner, Path path) {
         this.runner = runner;
@@ -43,7 +42,7 @@ public class PurePursuitTask extends Task {
     /**
      * Create a new Pure Pursuit task that will be constructed when this task is run.
      *
-     * @param runner the Pure Pursuit runner to use
+     * @param runner    the Pure Pursuit runner to use
      * @param pathMaker the path maker to construct the path when this task is run
      */
     public PurePursuitTask(PurePursuit runner, PurePursuit.PathMaker pathMaker) {
