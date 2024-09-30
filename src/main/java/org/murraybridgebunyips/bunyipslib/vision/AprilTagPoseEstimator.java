@@ -63,7 +63,7 @@ public class AprilTagPoseEstimator implements Runnable {
 
         BunyipsOpMode.ifRunning(opMode -> {
             opMode.onActiveLoop(this);
-            Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode");
+            Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode.");
         });
     }
 

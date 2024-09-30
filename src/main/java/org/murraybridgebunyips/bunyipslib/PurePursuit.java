@@ -84,7 +84,7 @@ public class PurePursuit implements Runnable {
         ATTACHED_TO_BOM_LOOP = BunyipsOpMode.isRunning();
         BunyipsOpMode.ifRunning(opMode -> {
             opMode.onActiveLoop(this);
-            Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode");
+            Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode.");
         });
     }
 

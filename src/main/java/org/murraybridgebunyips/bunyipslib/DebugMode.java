@@ -42,7 +42,7 @@ public class DebugMode extends BunyipsComponent implements Runnable {
      */
     public DebugMode() {
         opMode.onActiveLoop(this);
-        Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode");
+        Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode.");
     }
 
     /**
