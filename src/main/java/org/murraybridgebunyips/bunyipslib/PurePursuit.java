@@ -10,7 +10,10 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -28,6 +31,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
+import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
 import org.murraybridgebunyips.bunyipslib.tasks.PurePursuitTask;
 
 import java.util.ArrayList;
@@ -262,7 +266,26 @@ public class PurePursuit implements Runnable {
         Pose2d targetPower = runPurePursuit(poseEstimate);
         power.accept(targetPower);
 
-        // TODO: dashboard drawing integrations
+        BunyipsOpMode opMode = BunyipsOpMode.isRunning() ? BunyipsOpMode.getInstance() : null;
+        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
+        Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
+
+        // Path drawing
+        canvas.setStroke("#7C4DFF");
+        DashboardUtil.drawSampledPath(canvas, currentPath);
+        // Circle at the end of the path
+        Pose2d end = currentPath.end();
+        canvas.setFill("#7C4DFF");
+        canvas.fillCircle(end.getX(), end.getY(), 2);
+        // Lookahead circle
+        canvas.setStroke("#4CAF50");
+        canvas.strokeCircle(poseEstimate.getX(), poseEstimate.getY(), laRadius.in(Inches));
+        // P2P circle
+        canvas.setStroke("#4CAF507A");
+        canvas.strokeCircle(end.getX(), end.getY(), P2P_AT_END_INCHES);
+
+        if (packet != null)
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
         // Path position and heading tolerance finish condition check, which simply checks for the robot being close
         // to the end position. This is a simple check that is not perfect but is good enough for most cases, as

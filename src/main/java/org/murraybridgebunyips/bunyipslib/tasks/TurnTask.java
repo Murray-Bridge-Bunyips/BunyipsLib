@@ -3,6 +3,9 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Degrees;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
@@ -14,6 +17,7 @@ import org.murraybridgebunyips.bunyipslib.external.pid.PController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
+import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.function.Supplier;
@@ -89,8 +93,15 @@ public class TurnTask extends Task {
 
     @Override
     protected void periodic() {
-        // TODO: dashboard drawing integrations
-        powerIn.accept(new Pose2d(0, 0, pidf.calculate(Mathf.inputModulus(poseEstimate.get().getHeading(), -Math.PI, Math.PI), angRad)));
+        Pose2d pose = poseEstimate.get();
+        powerIn.accept(new Pose2d(0, 0, pidf.calculate(Mathf.inputModulus(pose.getHeading(), -Math.PI, Math.PI), angRad)));
+
+        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
+        Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
+        canvas.setStroke("#4CAF50");
+        DashboardUtil.drawRobot(canvas, new Pose2d(pose.vec(), angRad));
+        if (packet != null)
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     @Override
