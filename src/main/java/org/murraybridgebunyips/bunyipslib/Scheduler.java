@@ -144,35 +144,37 @@ public class Scheduler extends BunyipsComponent {
         }
 
         if (!isMuted) {
-            // Task count will account for tasks on subsystems that are not IdleTasks
-            int taskCount = (int) (allocatedTasks.size() + subsystems.size() - subsystems.stream().filter(BunyipsSubsystem::isIdle).count());
-            opMode.telemetry.add("\nManaging % task% (%s, %c) on % subsystem%",
-                    taskCount,
-                    taskCount == 1 ? "" : "s",
-                    allocatedTasks.stream().filter(task -> task.taskToRun.hasDependency()).count() + taskCount - allocatedTasks.size(),
-                    allocatedTasks.stream().filter(task -> !task.taskToRun.hasDependency()).count(),
-                    subsystems.size(),
-                    subsystems.size() == 1 ? "" : "s"
-            );
-            for (String item : reports) {
-                if (item.contains("IdleTask")) continue;
-                opMode.telemetry.add(item);
-            }
-            for (ConditionalTask task : allocatedTasks) {
-                if (task.taskToRun.hasDependency() // Whether the task is never run from the Scheduler (and task reports will come from the reports array)
-                        || task.debouncing // Whether this task will only run once and then proceed to stay as "active" in the telemetry
-                        || task.taskToRun.isMuted() // Whether the task has declared itself as muted
-                        || task.activeSince == -1 // Whether the task is not being run by the Scheduler currently
-                        || !timeExceeded(task)) { // Whether this task has not met timeout requirements
-                    continue;
-                }
-                double deltaTime = round(task.taskToRun.getDeltaTime().in(Seconds), 1);
-                opMode.telemetry.add(
-                        "<small><b>Scheduler</b> (c.) <font color='gray'>|</font> <b>%</b> -> %</small>",
-                        task.taskToRun,
-                        deltaTime == 0.0 ? "active" : deltaTime + "s"
+            opMode(o -> {
+                // Task count will account for tasks on subsystems that are not IdleTasks
+                int taskCount = (int) (allocatedTasks.size() + subsystems.size() - subsystems.stream().filter(BunyipsSubsystem::isIdle).count());
+                o.telemetry.add("\nManaging % task% (%s, %c) on % subsystem%",
+                        taskCount,
+                        taskCount == 1 ? "" : "s",
+                        allocatedTasks.stream().filter(task -> task.taskToRun.hasDependency()).count() + taskCount - allocatedTasks.size(),
+                        allocatedTasks.stream().filter(task -> !task.taskToRun.hasDependency()).count(),
+                        subsystems.size(),
+                        subsystems.size() == 1 ? "" : "s"
                 );
-            }
+                for (String item : reports) {
+                    if (item.contains("IdleTask")) continue;
+                    o.telemetry.add(item);
+                }
+                for (ConditionalTask task : allocatedTasks) {
+                    if (task.taskToRun.hasDependency() // Whether the task is never run from the Scheduler (and task reports will come from the reports array)
+                            || task.debouncing // Whether this task will only run once and then proceed to stay as "active" in the telemetry
+                            || task.taskToRun.isMuted() // Whether the task has declared itself as muted
+                            || task.activeSince == -1 // Whether the task is not being run by the Scheduler currently
+                            || !timeExceeded(task)) { // Whether this task has not met timeout requirements
+                        continue;
+                    }
+                    double deltaTime = round(task.taskToRun.getDeltaTime().in(Seconds), 1);
+                    o.telemetry.add(
+                            "<small><b>Scheduler</b> (c.) <font color='gray'>|</font> <b>%</b> -> %</small>",
+                            task.taskToRun,
+                            deltaTime == 0.0 ? "active" : deltaTime + "s"
+                    );
+                }
+            });
             reports.clear();
         }
 
@@ -243,7 +245,7 @@ public class Scheduler extends BunyipsComponent {
      * @return The controller button trigger creator.
      */
     public ControllerButtonCreator driver() {
-        return new ControllerButtonCreator(opMode.gamepad1);
+        return new ControllerButtonCreator(require(opMode).gamepad1);
     }
 
     /**
@@ -252,7 +254,7 @@ public class Scheduler extends BunyipsComponent {
      * @return The controller button trigger creator.
      */
     public ControllerButtonCreator operator() {
-        return new ControllerButtonCreator(opMode.gamepad2);
+        return new ControllerButtonCreator(require(opMode).gamepad2);
     }
 
     /**

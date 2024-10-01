@@ -98,7 +98,7 @@ public class Cannon extends BunyipsSubsystem {
 
     @Override
     protected void periodic() {
-        opMode.telemetry.add("%: %", name, target == FIRED ? "<font color='red'><b>FIRED</b></font>" : "<font color='green'>READY</font>");
+        opMode(o -> o.telemetry.add("%: %", name, target == FIRED ? "<font color='red'><b>FIRED</b></font>" : "<font color='green'>READY</font>"));
         prolong.setPosition(target);
     }
 

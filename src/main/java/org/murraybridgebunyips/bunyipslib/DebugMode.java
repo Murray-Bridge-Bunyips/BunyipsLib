@@ -41,7 +41,7 @@ public class DebugMode extends BunyipsComponent implements Runnable {
      * Enable debug mode.
      */
     public DebugMode() {
-        opMode.onActiveLoop(this);
+        require(opMode).onActiveLoop(this);
         Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode.");
     }
 
@@ -92,7 +92,7 @@ public class DebugMode extends BunyipsComponent implements Runnable {
      */
     public DebugMode whenGamepadKillSwitch(TriggerAction action) {
         actions.add(new Pair<>(() ->
-                (opMode.gamepad1.back && opMode.gamepad1.start) || (opMode.gamepad2.back && opMode.gamepad2.start),
+                (require(opMode).gamepad1.back && opMode.gamepad1.start) || (opMode.gamepad2.back && opMode.gamepad2.start),
                 action
         ));
         return this;
@@ -161,7 +161,7 @@ public class DebugMode extends BunyipsComponent implements Runnable {
             return;
         }
 
-        opMode.getRobotControllers()
+        require(opMode).getRobotControllers()
                 .forEach((controller) -> controller.setConstant(Color.YELLOW));
 
         switch (TriggerAction.values()[max]) {

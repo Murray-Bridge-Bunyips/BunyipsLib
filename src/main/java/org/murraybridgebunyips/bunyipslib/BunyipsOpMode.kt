@@ -127,7 +127,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // If Kotlin throws an UninitializedPropertyAccessException, it will crash the DS and require a full
             // restart, so we will handle this exception ourselves and supply a more informative message.
             get() = _instance
-                ?: throw UninitializedPropertyAccessException("Attempted to access a BunyipsOpMode that is not running, this may be due to a derived BunyipsComponent class (Task, BunyipsSubsystem, etc.) attempting to be instantiated outside the environment of an active BunyipsOpMode.")
+                ?: throw UninitializedPropertyAccessException("Attempted to access a BunyipsOpMode that is not running! This is due to a BunyipsOpMode.getInstance() call that has been invoked without checking if there is an active BunyipsOpMode running.")
 
         /**
          * Whether a [BunyipsOpMode] is currently running. This is useful for checking if the OpMode singleton can be accessed

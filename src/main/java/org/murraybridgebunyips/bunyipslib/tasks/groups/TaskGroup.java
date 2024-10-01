@@ -58,13 +58,13 @@ public abstract class TaskGroup extends Task {
         String taskGroup = getClass().getSimpleName();
         // Avoid printing the group name if it is the same as the task group name
         if (!groupName.equals(taskGroup)) {
-            opMode.telemetry.log("<font color='gray'>%:</font> % created with % tasks.", groupName, taskGroup, tasks.size());
+            opMode(o -> o.telemetry.log("<font color='gray'>%:</font> % created with % tasks.", groupName, taskGroup, tasks.size()));
         } else {
-            opMode.telemetry.log("<font color='gray'>%:</font> Created with % tasks.", taskGroup, tasks.size());
+            opMode(o -> o.telemetry.log("<font color='gray'>%:</font> Created with % tasks.", taskGroup, tasks.size()));
         }
         // List subtasks
         for (Task task : tasks) {
-            opMode.telemetry.log("&nbsp;&nbsp;-> <font color='gray'>%<i>(t=%)</i></font>", task.toString(), task.getTimeout().magnitude() != 0.0 ? round(task.getTimeout().in(Seconds), 1) + "s" : "∞");
+            opMode(o -> o.telemetry.log("&nbsp;&nbsp;-> <font color='gray'>%<i>(t=%)</i></font>", task.toString(), task.getTimeout().magnitude() != 0.0 ? round(task.getTimeout().in(Seconds), 1) + "s" : "∞"));
         }
     }
 
@@ -105,7 +105,7 @@ public abstract class TaskGroup extends Task {
     @Override
     public final Task onSubsystem(@NonNull BunyipsSubsystem subsystem, boolean override) {
         Dbg.error(getCallingUserCodeFunction(), "Task groups are not designed to be attached to a subsystem, as the internal tasks will be scheduled to subsystems instead.");
-        opMode.telemetry.log(getCallingUserCodeFunction(), html().color("red", "error: ").text("task groups should not be attached to subsystems!"));
+        opMode(o -> o.telemetry.log(getCallingUserCodeFunction(), html().color("red", "error: ").text("task groups should not be attached to subsystems!")));
         return this;
     }
 

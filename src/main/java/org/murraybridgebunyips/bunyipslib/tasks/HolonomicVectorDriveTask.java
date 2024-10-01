@@ -5,7 +5,9 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Millisecon
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -259,17 +261,15 @@ public class HolonomicVectorDriveTask extends ForeverTask {
                 )
         );
 
-        if (vectorLock != null) {
-            opMode.telemetry
-                    .dashboardFieldOverlay()
-                    .setStroke("#c91c00")
-                    .strokeLine(current.getX(), current.getY(), vectorLock.getX(), vectorLock.getY());
-        }
-
-        if (headingLock != null) {
-            Canvas c = opMode.telemetry.dashboardFieldOverlay().setStroke("#c91c00");
-            DashboardUtil.drawRobot(c, new Pose2d(current.vec(), headingLock));
-        }
+        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
+        Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
+        canvas.setStroke("#c91c00");
+        if (vectorLock != null)
+            canvas.strokeLine(current.getX(), current.getY(), vectorLock.getX(), vectorLock.getY());
+        if (headingLock != null)
+            DashboardUtil.drawRobot(canvas, new Pose2d(current.vec(), headingLock));
+        if (packet != null)
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     @Override

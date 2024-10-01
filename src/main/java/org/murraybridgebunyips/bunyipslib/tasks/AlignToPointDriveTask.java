@@ -2,7 +2,10 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -154,13 +157,16 @@ public class AlignToPointDriveTask extends ForeverTask {
         drive.setRotationPriorityWeightedDrivePower(new Pose2d(fieldCentric ? robotFrameInput : fieldFrameInput, headingInput));
 
         // Draw the target on the field with lines to the target
-        opMode.telemetry.dashboardFieldOverlay()
-                .setStroke("#dd2c00")
+        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
+        Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
+        canvas.setStroke("#dd2c00")
                 .strokeCircle(point.getX(), point.getY(), 2)
                 .setStroke("#b89eff")
                 .strokeLine(point.getX(), point.getY(), poseEstimate.getX(), poseEstimate.getY())
                 .setStroke("#ffce7a")
                 .strokeLine(point.getX(), point.getY(), point.getX(), poseEstimate.getY())
                 .strokeLine(point.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
+        if (packet != null)
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 }

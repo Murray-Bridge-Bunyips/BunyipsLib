@@ -85,13 +85,13 @@ public class IndexedTable extends BunyipsSubsystem {
      */
     @Override
     protected void periodic() {
-        opMode.telemetry.add(
+        opMode(o -> o.telemetry.add(
                 "%: % <font color='gray'>(%/%)</font>",
                 name,
                 tableValues[index],
                 index + 1,
                 tableValues.length
-        );
+        ));
     }
 
     /**

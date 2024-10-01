@@ -13,10 +13,13 @@ import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.system.Watchdog;
+import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.Dbg;
@@ -63,6 +66,28 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     /**
      * Create a new TankDrive instance.
      *
+     * @param constants     The drive constants for the robot
+     * @param coefficients  The TankCoefficients for this drive
+     * @param imu           The IMU for the robot. Can be set to null if you are using three-wheel odometry.
+     * @param leftMotors    The motors on the left side of the robot (e.g. {@code Arrays.asList(fl, bl)})
+     * @param rightMotors   The motors on the right side of the robot (e.g. {@code Arrays.asList(fr, br)})
+     * @param voltageSensor The voltage sensor hardware mapping if not using a {@link BunyipsOpMode}.
+     */
+    public TankDrive(DriveConstants constants, TankCoefficients coefficients, @Nullable IMU imu, List<DcMotor> leftMotors, List<DcMotor> rightMotors, HardwareMap.DeviceMapping<VoltageSensor> voltageSensor) {
+        if (!assertParamsNotNull(constants, coefficients, imu, leftMotors, rightMotors, voltageSensor)) return;
+        drive = new TankRoadRunnerDrive(opMode != null ? opMode.telemetry : null, constants, coefficients, voltageSensor, imu, leftMotors, rightMotors);
+        benji = new Watchdog(() -> {
+            if (opMode != null && opMode.isStopRequested()) return;
+            Dbg.logd(getClass(), "Stateful drive updates have been disabled as it has been longer than %ms since the last call to update().", RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds));
+            updates = false;
+            drive.stop();
+        }, 100, (long) RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds), TimeUnit.MILLISECONDS);
+        updatePoseFromMemory();
+    }
+
+    /**
+     * Create a new TankDrive instance for {@link BunyipsOpMode} derivatives.
+     *
      * @param constants    The drive constants for the robot
      * @param coefficients The TankCoefficients for this drive
      * @param imu          The IMU for the robot. Can be set to null if you are using three-wheel odometry.
@@ -70,15 +95,8 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param rightMotors  The motors on the right side of the robot (e.g. {@code Arrays.asList(fr, br)})
      */
     public TankDrive(DriveConstants constants, TankCoefficients coefficients, @Nullable IMU imu, List<DcMotor> leftMotors, List<DcMotor> rightMotors) {
-        if (!assertParamsNotNull(constants, coefficients, imu, leftMotors, rightMotors)) return;
-        drive = new TankRoadRunnerDrive(opMode.telemetry, constants, coefficients, opMode.hardwareMap.voltageSensor, imu, leftMotors, rightMotors);
-        benji = new Watchdog(() -> {
-            if (opMode.isStopRequested()) return;
-            Dbg.logd(getClass(), "Stateful drive updates have been disabled as it has been longer than %ms since the last call to update().", RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds));
-            updates = false;
-            drive.stop();
-        }, 100, (long) RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds), TimeUnit.MILLISECONDS);
-        updatePoseFromMemory();
+        // Can't access opMode field from this constructor, this constructor is only for BunyipsOpMode derivatives
+        this(constants, coefficients, imu, leftMotors, rightMotors, BunyipsOpMode.getInstance().hardwareMap.voltageSensor);
     }
 
     /**
@@ -199,10 +217,10 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     protected void periodic() {
-        opMode.telemetry.add("Localizer: X:%cm Y:%cm %deg",
+        opMode(o -> o.telemetry.add("Localizer: X:%cm Y:%cm %deg",
                 round(Centimeters.convertFrom(drive.getPoseEstimate().getX(), Inches), 1),
                 round(Centimeters.convertFrom(drive.getPoseEstimate().getY(), Inches), 1),
-                round(Math.toDegrees(drive.getPoseEstimate().getHeading()), 1)).color("gray");
+                round(Math.toDegrees(drive.getPoseEstimate().getHeading()), 1)).color("gray"));
 
         // Required to ensure that update() is being called before scheduling any motor updates,
         // using a watchdog to ensure that an update is occurring at least every 200ms.

@@ -92,7 +92,7 @@ class UserSelection<T : Any>(
         val buttons: HashMap<T, Controls> = Controls.mapArgs(opmodes)
 
         // Disable auto clear if it is enabled, we might accidentally clear out static telemetry
-        opMode.telemetry.isAutoClear = false
+        require(opMode).telemetry.isAutoClear = false
 
         val attentionBorders = arrayOf(
             "<b>---------<font color='red'>!!!</font>--------</b>",
@@ -114,19 +114,19 @@ class UserSelection<T : Any>(
 
         driverStation.delete(driverStation.length - 1, driverStation.length)
 
-        val topBorder = opMode.telemetry.addDS(attentionBorders[0])
-        val mainText = opMode.telemetry.addDS(driverStation)
-        val bottomBorder = opMode.telemetry.addDS(attentionBorders[0])
-        opMode.telemetry.addDashboard("<small>USR</small>", dashboard)
+        val topBorder = require(opMode).telemetry.addDS(attentionBorders[0])
+        val mainText = require(opMode).telemetry.addDS(driverStation)
+        val bottomBorder = require(opMode).telemetry.addDS(attentionBorders[0])
+        require(opMode).telemetry.addDashboard("<small>USR</small>", dashboard)
 
         // Must manually call telemetry push as the BOM may not be handling them
         // This will not clear out any other telemetry as auto clear is disabled
-        opMode.telemetry.update()
+        require(opMode).telemetry.update()
 
         var flash = false
-        while (result == null && opMode.opModeInInit() && !Thread.currentThread().isInterrupted) {
+        while (result == null && require(opMode).opModeInInit() && !Thread.currentThread().isInterrupted) {
             for ((str, button) in buttons) {
-                if (Controls.isSelected(opMode.gamepad1, button)) {
+                if (Controls.isSelected(require(opMode).gamepad1, button)) {
                     selectedButton = button
                     result = str
                     break
@@ -150,19 +150,19 @@ class UserSelection<T : Any>(
         val opModeName = result.toString()
 
         if (result == null) {
-            opMode.telemetry.log("<font color='yellow'>No user OpMode selection was made.</font>")
+            require(opMode).telemetry.log("<font color='yellow'>No user OpMode selection was made.</font>")
         } else {
-            opMode.telemetry.log("Running OpMode: <font color='#caabff'>${selectedButton.name} -> <b>$opModeName</b></font>")
+            require(opMode).telemetry.log("Running OpMode: <font color='#caabff'>${selectedButton.name} -> <b>$opModeName</b></font>")
             if (result is StartingPositions) {
                 Storage.memory().lastKnownAlliance = result as StartingPositions
             }
         }
 
-        opMode.telemetry.addDashboard(
+        require(opMode).telemetry.addDashboard(
             "<small>USR</small>",
             if (result == null) "No selection" else "${selectedButton.name} -> $opModeName@T+${
                 round(
-                    opMode.timer.elapsedTime().inUnit(Seconds), 1
+                    require(opMode).timer.elapsedTime().inUnit(Seconds), 1
                 )
             }s"
         )
@@ -171,8 +171,8 @@ class UserSelection<T : Any>(
         // - Sorayya, hijacker of laptops
 
         // Clean up telemetry and reset auto clear
-        opMode.telemetry.remove(topBorder, mainText, bottomBorder)
-        opMode.telemetry.isAutoClear = true
+        require(opMode).telemetry.remove(topBorder, mainText, bottomBorder)
+        require(opMode).telemetry.isAutoClear = true
 
         Exceptions.runUserMethod({ callback.accept(result) }, opMode)
     }

@@ -121,7 +121,7 @@ public class SwitchableLocalizer implements Localizer {
 
                 @Override
                 protected void init() {
-                    telemetry = opMode.telemetry.addRetained("Initialising Localizer Self Test...").bold();
+                    telemetry = require(opMode).telemetry.addRetained("Initialising Localizer Self Test...").bold();
                     Pose2d mainPose = main.getPoseEstimate();
                     capture = Cartesian.rotate(Cartesian.fromPose(mainPose).vec(), Radians.of(mainPose.getHeading()).negate());
                 }
@@ -129,7 +129,7 @@ public class SwitchableLocalizer implements Localizer {
                 @Override
                 protected void periodic() {
                     main.update();
-                    if (opMode.gamepad1.left_bumper) {
+                    if (require(opMode).gamepad1.left_bumper) {
                         forwardCheck = false;
                         strafeCheck = false;
                         finish();
@@ -165,12 +165,12 @@ public class SwitchableLocalizer implements Localizer {
                 protected void onFinish() {
                     telemetry.setRetained(false);
                     if (!forwardCheck || !strafeCheck) {
-                        opMode.telemetry.log("<font color='yellow'>Localizer test failed. Falling back to backup localizer.</font>");
+                        require(opMode).telemetry.log("<font color='yellow'>Localizer test failed. Falling back to backup localizer.</font>");
                         USING_FALLBACK_LOCALIZER = true;
                         return;
                     }
                     USING_FALLBACK_LOCALIZER = false;
-                    opMode.telemetry.log("<font color='green'>Localizer test passed.</font>");
+                    require(opMode).telemetry.log("<font color='green'>Localizer test passed.</font>");
                 }
 
                 @Override
@@ -193,7 +193,7 @@ public class SwitchableLocalizer implements Localizer {
 
                 @Override
                 protected void init() {
-                    telemetry = opMode.telemetry.addRetained("Initialising Localizer Test...").bold();
+                    telemetry = require(opMode).telemetry.addRetained("Initialising Localizer Test...").bold();
                     Pose2d mainPose = main.getPoseEstimate();
                     capture = Cartesian.rotate(Cartesian.fromPose(mainPose).vec(), Radians.of(mainPose.getHeading()).negate());
                 }
@@ -201,7 +201,7 @@ public class SwitchableLocalizer implements Localizer {
                 @Override
                 protected void periodic() {
                     main.update();
-                    if (opMode.gamepad1.left_bumper) {
+                    if (require(opMode).gamepad1.left_bumper) {
                         USING_FALLBACK_LOCALIZER = true;
                         opMode.telemetry.log("<font color='yellow'>Localizer test failed. Falling back to backup localizer.</font>");
                         telemetry.setValue("");

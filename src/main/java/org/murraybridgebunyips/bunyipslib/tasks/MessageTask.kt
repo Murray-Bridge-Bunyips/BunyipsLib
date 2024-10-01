@@ -24,7 +24,7 @@ class MessageTask(time: Measure<Time>, private val message: String) : Task(time)
     }
 
     override fun init() {
-        item = opMode.telemetry.addRetained(buildString()).item
+        item = opMode?.telemetry?.addRetained(buildString())?.item
     }
 
     override fun periodic() {
@@ -37,6 +37,6 @@ class MessageTask(time: Measure<Time>, private val message: String) : Task(time)
 
     override fun onFinish() {
         if (item != null)
-            opMode.telemetry.remove(item!!)
+            require(opMode).telemetry.remove(item!!)
     }
 }

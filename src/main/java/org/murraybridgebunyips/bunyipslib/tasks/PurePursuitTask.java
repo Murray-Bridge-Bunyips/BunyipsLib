@@ -36,7 +36,7 @@ public class PurePursuitTask extends Task {
         pathBuilder = () -> path;
         withName(Text.format("Pure Pursuit Path %::%", path.start(), path.end()));
         // Detach for all future automatic runtime of the runner if we're using a task system
-        opMode.detachActiveLoopRunnables(runner);
+        opMode(o -> o.detachActiveLoopRunnables(runner));
     }
 
     /**
@@ -49,7 +49,7 @@ public class PurePursuitTask extends Task {
         this.runner = runner;
         pathBuilder = pathMaker::buildPath;
         withName("Pure Pursuit Path");
-        opMode.detachActiveLoopRunnables(runner);
+        opMode(o -> o.detachActiveLoopRunnables(runner));
     }
 
     @Override

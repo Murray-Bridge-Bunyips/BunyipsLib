@@ -304,12 +304,12 @@ public class HoldableActuator extends BunyipsSubsystem {
                     break;
                 }
                 motorPower = MOVING_POWER;
-                opMode.telemetry.add("%: <font color='#FF5F1F'>MOVING -> %/% ticks</font> [%rps]", name, motor.getCurrentPosition(), motor.getTargetPosition(), round(DegreesPerSecond.of(motor.getVelocity(AngleUnit.DEGREES)).in(RevolutionsPerSecond), 1));
+                opMode(o -> o.telemetry.add("%: <font color='#FF5F1F'>MOVING -> %/% ticks</font> [%rps]", name, motor.getCurrentPosition(), motor.getTargetPosition(), round(DegreesPerSecond.of(motor.getVelocity(AngleUnit.DEGREES)).in(RevolutionsPerSecond), 1)));
                 break;
             case HOMING:
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 motorPower = -MOVING_POWER;
-                opMode.telemetry.add("%: <font color='yellow'><b>HOMING</b></font> [%rps]", name, round(DegreesPerSecond.of(motor.getVelocity(AngleUnit.DEGREES)).in(RevolutionsPerSecond), 1));
+                opMode(o -> o.telemetry.add("%: <font color='yellow'><b>HOMING</b></font> [%rps]", name, round(DegreesPerSecond.of(motor.getVelocity(AngleUnit.DEGREES)).in(RevolutionsPerSecond), 1)));
                 break;
             case USER:
                 if (userPower == 0.0) {
@@ -326,7 +326,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     motorPower = userPower;
                 }
-                opMode.telemetry.add("%: % at % ticks [%tps]", name, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", motor.getCurrentPosition(), Math.round(motor.getVelocity()));
+                opMode(o -> o.telemetry.add("%: % at % ticks [%tps]", name, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", motor.getCurrentPosition(), Math.round(motor.getVelocity())));
                 break;
         }
 

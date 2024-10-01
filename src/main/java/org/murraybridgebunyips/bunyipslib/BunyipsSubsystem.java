@@ -143,7 +143,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (!shouldRun) return;
         shouldRun = false;
         Dbg.logv(getClass(), "%Subsystem disabled via disable() call.", isDefaultName() ? "" : "(" + name + ") ");
-        opMode.telemetry.log(getClass(), html().color("yellow", "disabled. ").small("check logcat for more info."));
+        opMode(o -> o.telemetry.log(getClass(), html().color("yellow", "disabled. ").small("check logcat for more info.")));
         onDisable();
     }
 
@@ -155,7 +155,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (shouldRun || assertionFailed) return;
         shouldRun = true;
         Dbg.logv(getClass(), "%Subsystem enabled via enable() call.", isDefaultName() ? "" : "(" + name + ") ");
-        opMode.telemetry.log(getClass(), html().color("green", "enabled. ").small("check logcat for more info."));
+        opMode(o -> o.telemetry.log(getClass(), html().color("green", "enabled. ").small("check logcat for more info.")));
         onEnable();
     }
 

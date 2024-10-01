@@ -13,10 +13,13 @@ import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.system.Watchdog;
+import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.Dbg;
@@ -60,6 +63,32 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     /**
      * Constructor for the MecanumDrive class.
      *
+     * @param constants     The drive constants for the robot.
+     * @param coefficients  The MecanumCoefficients for the drive.
+     * @param imu           The IMU for the robot. Can be set to null if you are using three-wheel odometry.
+     * @param fl            The front left motor.
+     * @param fr            The front right motor.
+     * @param bl            The back left motor.
+     * @param br            The back right motor.
+     * @param voltageSensor The voltage sensor hardware mapping if not using a {@link BunyipsOpMode}.
+     */
+    public MecanumDrive(DriveConstants constants, MecanumCoefficients coefficients, @Nullable IMU imu, DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, HardwareMap.DeviceMapping<VoltageSensor> voltageSensor) {
+        if (!assertParamsNotNull(constants, coefficients, imu, fl, fr, bl, br, voltageSensor)) return;
+        // Required opMode reference for hardwareMap.voltageSensor
+        drive = new MecanumRoadRunnerDrive(opMode != null ? opMode.telemetry : null, constants, coefficients, voltageSensor, imu, fl, fr, bl, br);
+        benji = new Watchdog(() -> {
+            if (opMode != null && opMode.isStopRequested()) return;
+            Dbg.logd(getClass(), "Stateful drive updates have been disabled as it has been longer than %ms since the last call to update().", RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds));
+            updates = false;
+            drive.stop();
+        }, 100, (long) RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds), TimeUnit.MILLISECONDS);
+        this.imu = imu;
+        updatePoseFromMemory();
+    }
+
+    /**
+     * Constructor for the MecanumDrive class for {@link BunyipsOpMode} derivatives.
+     *
      * @param constants    The drive constants for the robot.
      * @param coefficients The MecanumCoefficients for the drive.
      * @param imu          The IMU for the robot. Can be set to null if you are using three-wheel odometry.
@@ -69,16 +98,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param br           The back right motor.
      */
     public MecanumDrive(DriveConstants constants, MecanumCoefficients coefficients, @Nullable IMU imu, DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br) {
-        if (!assertParamsNotNull(constants, coefficients, imu, fl, fr, bl, br)) return;
-        drive = new MecanumRoadRunnerDrive(opMode.telemetry, constants, coefficients, opMode.hardwareMap.voltageSensor, imu, fl, fr, bl, br);
-        benji = new Watchdog(() -> {
-            if (opMode.isStopRequested()) return;
-            Dbg.logd(getClass(), "Stateful drive updates have been disabled as it has been longer than %ms since the last call to update().", RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds));
-            updates = false;
-            drive.stop();
-        }, 100, (long) RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.in(Milliseconds), TimeUnit.MILLISECONDS);
-        this.imu = imu;
-        updatePoseFromMemory();
+        // Can't access opMode field from this constructor, this constructor is only for BunyipsOpMode derivatives
+        this(constants, coefficients, imu, fl, fr, bl, br, BunyipsOpMode.getInstance().hardwareMap.voltageSensor);
     }
 
     /**
@@ -165,10 +186,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     protected void periodic() {
-        opMode.telemetry.add("Localizer: X:%cm Y:%cm %deg",
+        opMode(o -> o.telemetry.add("Localizer: X:%cm Y:%cm %deg",
                 round(Centimeters.convertFrom(drive.getPoseEstimate().getX(), Inches), 1),
                 round(Centimeters.convertFrom(drive.getPoseEstimate().getY(), Inches), 1),
-                round(Math.toDegrees(drive.getPoseEstimate().getHeading()), 1)).color("gray");
+                round(Math.toDegrees(drive.getPoseEstimate().getHeading()), 1)).color("gray"));
 
         // Required to ensure that update() is being called before scheduling any motor updates,
         // using a watchdog to ensure that an update is occurring at least every 200ms.

@@ -3,6 +3,7 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -32,6 +33,7 @@ public class GetDualSplitContourTask extends ForeverTask {
     private ColourThreshold colourThreshold;
     private Measure<Time> noDetectionPersistenceTime = Seconds.of(3);
     private volatile Direction position = Direction.ZERO;
+    @Nullable
     private Telemetry.Item item;
 
     /**
@@ -106,7 +108,8 @@ public class GetDualSplitContourTask extends ForeverTask {
 
     @Override
     protected void init() {
-        item = opMode.telemetry.addRetained(buildString()).getItem();
+        if (opMode != null)
+            item = opMode.telemetry.addRetained(buildString()).getItem();
         if (colourThreshold == null)
             return;
         if (!colourThreshold.isRunning())
@@ -124,11 +127,13 @@ public class GetDualSplitContourTask extends ForeverTask {
         } else if (lockoutTimer.seconds() >= noDetectionPersistenceTime.in(Seconds)) {
             position = Direction.ZERO;
         }
-        item.setValue(buildString());
+        if (item != null)
+            item.setValue(buildString());
     }
 
     @Override
     protected void onFinish() {
-        opMode.telemetry.remove(item);
+        if (item != null)
+            require(opMode).telemetry.remove(item);
     }
 }
