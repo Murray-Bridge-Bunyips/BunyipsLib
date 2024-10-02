@@ -78,7 +78,7 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
      * @param constants     The drive constants
      * @param coefficients  The tank coefficients
      * @param voltageSensor The voltage sensor mapping ({@code hardwareMap.voltageSensor})
-     * @param imu           The IMU for the robot. May be nullable if you are using three-wheel odometry.
+     * @param imu           The IMU for the robot.
      * @param leftMotors    The motors on the left side of the robot (e.g. {@code Arrays.asList(fl, bl)})
      * @param rightMotors   The motors on the right side of the robot (e.g. {@code Arrays.asList(fr, br)})
      */
@@ -93,7 +93,7 @@ public class TankRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.TankD
      * @param constants     The drive constants
      * @param coefficients  The tank coefficients
      * @param voltageSensor The voltage sensor mapping ({@code hardwareMap.voltageSensor})
-     * @param imu           The IMU for the robot. May be nullable if you are using three-wheel odometry.
+     * @param imu           The IMU for the robot
      * @param leftMotors    The motors on the left side of the robot (e.g. {@code Arrays.asList(fl, bl)})
      * @param rightMotors   The motors on the right side of the robot (e.g. {@code Arrays.asList(fr, br)})
      */

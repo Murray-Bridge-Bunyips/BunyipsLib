@@ -57,6 +57,7 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
     private final DcMotorEx rightRear;
     private final DcMotorEx rightFront;
     private final List<DcMotorEx> motors;
+    @Nullable
     private final IMU imu;
     private final VoltageSensor batteryVoltageSensor;
     private final DcMotor.RunMode[] modes = {null, null, null, null};
@@ -69,9 +70,9 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
      * Constructor for the MecanumRoadRunnerDrive class. Omits optional {@link DualTelemetry} parameter.
      *
      * @param constants     The drive constants for the robot.
-     * @param coefficients  The coefficients for the mecanum drive.
+     * @param coefficients  The coefficients for the Mecanum drive.
      * @param voltageSensor The voltage sensor mapping ({@code hardwareMap.voltageSensor})
-     * @param imu           The IMU for the robot. May be nullable if you are using three-wheel odometry.
+     * @param imu           The IMU for the robot.
      * @param fl            The front left motor.
      * @param fr            The front right motor.
      * @param bl            The back left motor.
@@ -86,9 +87,9 @@ public class MecanumRoadRunnerDrive extends com.acmerobotics.roadrunner.drive.Me
      *
      * @param telemetry     The (optional) DualTelemetry instance to use for telemetry.
      * @param constants     The drive constants for the robot.
-     * @param coefficients  The coefficients for the mecanum drive.
+     * @param coefficients  The coefficients for the Mecanum drive.
      * @param voltageSensor The voltage sensor for the robot from hardwareMap.
-     * @param imu           The IMU for the robot. May be nullable if you are using three-wheel odometry.
+     * @param imu           The IMU for the robot.
      * @param fl            The front left motor.
      * @param fr            The front right motor.
      * @param bl            The back left motor.

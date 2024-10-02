@@ -68,7 +68,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      *
      * @param constants     The drive constants for the robot
      * @param coefficients  The TankCoefficients for this drive
-     * @param imu           The IMU for the robot. Can be set to null if you are using three-wheel odometry.
+     * @param imu           The IMU for the robot.
      * @param leftMotors    The motors on the left side of the robot (e.g. {@code Arrays.asList(fl, bl)})
      * @param rightMotors   The motors on the right side of the robot (e.g. {@code Arrays.asList(fr, br)})
      * @param voltageSensor The voltage sensor hardware mapping if not using a {@link BunyipsOpMode}.
@@ -90,7 +90,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      *
      * @param constants    The drive constants for the robot
      * @param coefficients The TankCoefficients for this drive
-     * @param imu          The IMU for the robot. Can be set to null if you are using three-wheel odometry.
+     * @param imu          The IMU for the robot.
      * @param leftMotors   The motors on the left side of the robot (e.g. {@code Arrays.asList(fl, bl)})
      * @param rightMotors  The motors on the right side of the robot (e.g. {@code Arrays.asList(fr, br)})
      */

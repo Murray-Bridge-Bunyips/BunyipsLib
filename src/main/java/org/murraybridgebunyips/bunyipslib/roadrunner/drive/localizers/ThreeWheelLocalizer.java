@@ -189,6 +189,8 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
          */
         public boolean USE_CORRECTED_COUNTS = false;
 
+        // TODO: https://github.com/Murray-Bridge-Bunyips/BunyipsLib/issues/56
+
         /**
          * Utility builder for creating new coefficients.
          */

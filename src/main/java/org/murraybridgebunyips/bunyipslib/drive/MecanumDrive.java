@@ -55,6 +55,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private MecanumRoadRunnerDrive drive;
+    @Nullable
     private IMU imu;
 
     private Watchdog benji;
@@ -65,7 +66,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      *
      * @param constants     The drive constants for the robot.
      * @param coefficients  The MecanumCoefficients for the drive.
-     * @param imu           The IMU for the robot. Can be set to null if you are using three-wheel odometry.
+     * @param imu           The IMU for the robot.
      * @param fl            The front left motor.
      * @param fr            The front right motor.
      * @param bl            The back left motor.
@@ -73,8 +74,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param voltageSensor The voltage sensor hardware mapping if not using a {@link BunyipsOpMode}.
      */
     public MecanumDrive(DriveConstants constants, MecanumCoefficients coefficients, @Nullable IMU imu, DcMotor fl, DcMotor fr, DcMotor bl, DcMotor br, HardwareMap.DeviceMapping<VoltageSensor> voltageSensor) {
-        if (!assertParamsNotNull(constants, coefficients, imu, fl, fr, bl, br, voltageSensor)) return;
-        // Required opMode reference for hardwareMap.voltageSensor
+        if (!assertParamsNotNull(constants, coefficients, fl, fr, bl, br, voltageSensor)) return;
         drive = new MecanumRoadRunnerDrive(opMode != null ? opMode.telemetry : null, constants, coefficients, voltageSensor, imu, fl, fr, bl, br);
         benji = new Watchdog(() -> {
             if (opMode != null && opMode.isStopRequested()) return;
@@ -91,7 +91,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      *
      * @param constants    The drive constants for the robot.
      * @param coefficients The MecanumCoefficients for the drive.
-     * @param imu          The IMU for the robot. Can be set to null if you are using three-wheel odometry.
+     * @param imu          The IMU for the robot.
      * @param fl           The front left motor.
      * @param fr           The front right motor.
      * @param bl           The back left motor.
@@ -138,7 +138,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * Reset the IMU's yaw to 0.
      */
     public void resetYaw() {
-        imu.resetYaw();
+        if (imu != null)
+            imu.resetYaw();
         setExternalHeading(0);
     }
 

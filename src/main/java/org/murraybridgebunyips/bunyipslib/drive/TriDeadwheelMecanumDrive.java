@@ -22,11 +22,11 @@ import java.util.List;
  */
 public class TriDeadwheelMecanumDrive extends MecanumDrive {
     /**
-     * Create a new TriDeadwheelMecanumDrive
+     * Create a new TriDeadwheelMecanumDrive.
      *
      * @param constants                The drive constants
      * @param mecanumCoefficients      The mecanum coefficients
-     * @param imu                      The IMU. Recommended to be null in a three-wheel odometry setup.
+     * @param imu                      The IMU
      * @param frontLeft                The front left motor
      * @param frontRight               The front right motor
      * @param backLeft                 The back left motor
@@ -47,11 +47,11 @@ public class TriDeadwheelMecanumDrive extends MecanumDrive {
     }
 
     /**
-     * Create a new TriDeadwheelMecanumDrive
+     * Create a new TriDeadwheelMecanumDrive.
      *
      * @param constants             The drive constants
      * @param mecanumCoefficients   The mecanum coefficients
-     * @param imu                   The IMU. Recommended to be null in a three-wheel odometry setup.
+     * @param imu                   The IMU.
      * @param frontLeft             The front left motor
      * @param frontRight            The front right motor
      * @param backLeft              The back left motor
@@ -61,7 +61,7 @@ public class TriDeadwheelMecanumDrive extends MecanumDrive {
      * @param enc_right             The right y encoder
      * @param enc_x                 The x encoder
      */
-    public TriDeadwheelMecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, IMU imu, DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, ThreeWheelLocalizer.Coefficients localizerCoefficients, Deadwheel enc_left, Deadwheel enc_right, Deadwheel enc_x) {
+    public TriDeadwheelMecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, @Nullable IMU imu, DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, ThreeWheelLocalizer.Coefficients localizerCoefficients, Deadwheel enc_left, Deadwheel enc_right, Deadwheel enc_x) {
         super(constants, mecanumCoefficients, imu, frontLeft, frontRight, backLeft, backRight);
         if (!assertParamsNotNull(localizerCoefficients, enc_left, enc_right, enc_x)) return;
         setLocalizer(new ThreeWheelLocalizer(localizerCoefficients, enc_left, enc_right, enc_x));
