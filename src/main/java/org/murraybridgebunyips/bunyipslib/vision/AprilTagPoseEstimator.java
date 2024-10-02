@@ -47,8 +47,8 @@ public class AprilTagPoseEstimator implements Runnable {
     /**
      * Constructor for AprilTagPoseEstimator.
      * <p>
-     * Note that the option to also update heading based off these readings is disabled by default.
-     * Enable with {@link #setHeadingEstimate}.
+     * Note that the option to also update heading based off these readings is enabled by default.
+     * Disable with {@link #setHeadingEstimate}.
      * <p>
      * Also note that by default, this pose estimator will assume the camera is exactly at the center of the robot, facing forward.
      * Adjust this using {@link #setCameraOffset}.
@@ -65,6 +65,23 @@ public class AprilTagPoseEstimator implements Runnable {
             opMode.onActiveLoop(this);
             Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode.");
         });
+    }
+
+    /**
+     * Create a new AprilTagPoseEstimator runner.
+     * <p>
+     * Note that the option to also update heading based off these readings is enabled by default.
+     * Disable with {@link #setHeadingEstimate}.
+     * <p>
+     * Also note that by default, this pose estimator will assume the camera is exactly at the center of the robot, facing forward.
+     * Adjust this using {@link #setCameraOffset}.
+     *
+     * @param processor AprilTag processor to use for pose estimation, must be attached to Vision and running
+     * @param drive     RoadRunner drive
+     * @return a new AprilTagPoseEstimator instance
+     */
+    public static AprilTagPoseEstimator enable(AprilTag processor, RoadRunnerDrive drive) {
+        return new AprilTagPoseEstimator(processor, drive);
     }
 
     /**
