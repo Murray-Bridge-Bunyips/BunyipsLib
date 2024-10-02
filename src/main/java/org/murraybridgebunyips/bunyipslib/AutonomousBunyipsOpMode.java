@@ -203,7 +203,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Call to disable the automatic stopping of the hardware when the OpMode finishes after no tasks are left.
      * This does not impact the automated stopping of the hardware when the OpMode is requested to stop.
      */
-    public void disableHardwareStopOnFinish() {
+    public final void disableHardwareStopOnFinish() {
         hardwareStopOnFinish = false;
     }
 
@@ -225,12 +225,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Can be called to add custom {@link Task}s in a robot's autonomous
+     * Call to add {@link Task} instances that will be executed sequentially during the active loop.
      *
      * @param newTask task to add to the run queue
      * @param ack     suppress the warning that a task was added manually before onReady
+     * @param <T>     the inherited task type
+     * @return the added task
      */
-    public final void addTask(@NotNull Task newTask, boolean ack) {
+    public final <T extends Task> T addTask(@NotNull T newTask, boolean ack) {
         checkTaskForDependency(newTask);
         if (!safeToAddTasks && !ack) {
             telemetry.log("<font color='gray'>auto:</font> <font color='yellow'>caution!</font> a task was added manually before the onReady callback");
@@ -242,34 +244,41 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             ((TaskGroup) newTask).logCreation();
         taskCount++;
         telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
+        return newTask;
     }
 
     /**
-     * Can be called to add custom {@link Task}s in a robot's autonomous
+     * Call to add {@link Task} instances that will be executed sequentially during the active loop.
      *
      * @param newTask task to add to the run queue
+     * @param <T>     the inherited task type
+     * @return the added task
      */
-    public final void addTask(@NotNull Task newTask) {
-        addTask(newTask, false);
+    public final <T extends Task> T addTask(@NotNull T newTask) {
+        return addTask(newTask, false);
     }
 
     /**
-     * Implicitly construct a new {@link RunTask} and add it to the run queue
+     * Implicitly constructs a new {@link RunTask} to add to the run queue.
      *
      * @param runnable the code to add to the run queue to run once
+     * @return the added {@link RunTask}
      */
-    public final void addTask(@NotNull Runnable runnable) {
-        addTask(new RunTask(runnable));
+    public final RunTask addTask(@NotNull Runnable runnable) {
+        return addTask(new RunTask(runnable));
     }
 
     /**
-     * Implicitly construct a new {@link RunTask} and add it to the run queue with a custom name
+     * Implicitly constructs a new {@link RunTask} to add to the run queue.
      *
      * @param runnable the code to add to the run queue to run once
      * @param name     the name of the task
+     * @return the added {@link RunTask}
      */
-    public final void addTask(@NotNull Runnable runnable, String name) {
-        addTask(new RunTask(runnable).withName(name));
+    public final RunTask addTask(@NotNull Runnable runnable, String name) {
+        RunTask task = new RunTask(runnable);
+        task.withName(name);
+        return addTask(task);
     }
 
     /**
@@ -279,8 +288,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *
      * @param index   the index to insert the task at, starting from 0
      * @param newTask the task to add to the run queue
+     * @param <T>     the inherited task type
+     * @return the added task
      */
-    public final void addTaskAtIndex(int index, @NotNull Task newTask) {
+    public final <T extends Task> T addTaskAtIndex(int index, @NotNull T newTask) {
         checkTaskForDependency(newTask);
         ArrayDeque<Task> tmp = new ArrayDeque<>();
         synchronized (tasks) {
@@ -289,8 +300,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             } else if (index > tasks.size()) {
                 telemetry.log(getClass(), html().color("red", "task index % is out of bounds. task was added to the end."), index);
                 Dbg.error(getClass(), "Task index % out of bounds to insert task, appending task to end...", index);
-                addTaskLast(newTask);
-                return;
+                return addTaskLast(newTask);
             }
             // Deconstruct the queue to insert the new task
             while (tasks.size() > index) {
@@ -307,18 +317,32 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             ((TaskGroup) newTask).logCreation();
         taskCount++;
         telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> inserted %/%", newTask, getTaskTimeout(newTask), index, taskCount);
+        return newTask;
     }
 
     /**
-     * Insert a task at a specific index in the queue. This is useful for adding tasks that should be run
-     * at a specific point in the autonomous sequence. Note that this function immediately produces side effects,
-     * and subsequent calls will not be able to insert tasks at the same index due to the shifting of tasks.
+     * Insert an implicit RunTask at a specific index in the queue.
      *
      * @param index    the index to insert the task at, starting from 0
      * @param runnable the code to add to the run queue to run once
+     * @return the added {@link RunTask}
      */
-    public final void addTaskAtIndex(int index, @NotNull Runnable runnable) {
-        addTaskAtIndex(index, new RunTask(runnable));
+    public final RunTask addTaskAtIndex(int index, @NotNull Runnable runnable) {
+        return addTaskAtIndex(index, new RunTask(runnable));
+    }
+
+    /**
+     * Insert an implicit RunTask at a specific index in the queue.
+     *
+     * @param index    the index to insert the task at, starting from 0
+     * @param runnable the code to add to the run queue to run once
+     * @param name     the name of the task
+     * @return the added {@link RunTask}
+     */
+    public final RunTask addTaskAtIndex(int index, @NotNull Runnable runnable, String name) {
+        RunTask task = new RunTask(runnable);
+        task.withName(name);
+        return addTaskAtIndex(index, task);
     }
 
     /**
@@ -327,13 +351,15 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * being able to add tasks asynchronously with user input in {@link #onReady(Reference, Controls)}.
      *
      * @param newTask task to add to the run queue
+     * @param <T>     the inherited task type
+     * @return the added task
      */
-    public final void addTaskLast(@NotNull Task newTask) {
+    public final <T extends Task> T addTaskLast(@NotNull T newTask) {
         checkTaskForDependency(newTask);
         if (!callbackReceived) {
             postQueue.add(newTask);
             telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> queued end-init %/%", newTask, getTaskTimeout(newTask), postQueue.size(), postQueue.size());
-            return;
+            return newTask;
         }
         synchronized (tasks) {
             tasks.addLast(newTask);
@@ -342,6 +368,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             ((TaskGroup) newTask).logCreation();
         taskCount++;
         telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
+        return newTask;
     }
 
     /**
@@ -350,13 +377,15 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * asynchronously with user input in {@link #onReady(Reference, Controls)}.
      *
      * @param newTask task to add to the run queue
+     * @param <T>     the inherited task type
+     * @return the added task
      */
-    public final void addTaskFirst(@NotNull Task newTask) {
+    public final <T extends Task> T addTaskFirst(@NotNull T newTask) {
         checkTaskForDependency(newTask);
         if (!callbackReceived) {
             preQueue.add(newTask);
             telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> queued end-init 1/%", newTask, getTaskTimeout(newTask), preQueue.size());
-            return;
+            return newTask;
         }
         synchronized (tasks) {
             tasks.addFirst(newTask);
@@ -365,6 +394,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             ((TaskGroup) newTask).logCreation();
         taskCount++;
         telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added 1/%", newTask, getTaskTimeout(newTask), taskCount);
+        return newTask;
     }
 
     private String getTaskTimeout(Task task) {

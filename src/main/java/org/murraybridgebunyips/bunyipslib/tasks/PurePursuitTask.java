@@ -14,7 +14,8 @@ import java.util.function.Supplier;
  * This task is internally used by the {@link PurePursuit.PathMaker} to run the path.
  * <p>
  * <b>Note!</b> Unlike the other drive tasks, this task does not automatically attach itself to a {@link BunyipsSubsystem}
- * on construction, and needs to be done manually via the {@code onSubsystem} method.
+ * on construction, and needs to be done manually via the {@code onSubsystem} method, or can be omitted if there are
+ * no default tasks for the drive during execution (e.g. only action in Autonomous).
  *
  * @author Lucas Bubner, 2024
  * @since 5.1.0
@@ -40,7 +41,7 @@ public class PurePursuitTask extends Task {
     }
 
     /**
-     * Create a new Pure Pursuit task that will be constructed when this task is run.
+     * Create a new deferred Pure Pursuit task with a path to be constructed when this task is run.
      *
      * @param runner    the Pure Pursuit runner to use
      * @param pathMaker the path maker to construct the path when this task is run

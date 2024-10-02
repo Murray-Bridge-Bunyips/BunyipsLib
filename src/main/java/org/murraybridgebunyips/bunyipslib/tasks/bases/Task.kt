@@ -7,7 +7,15 @@ import org.murraybridgebunyips.bunyipslib.external.units.Measure
 import org.murraybridgebunyips.bunyipslib.external.units.Time
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
+import org.murraybridgebunyips.bunyipslib.tasks.RepeatTask
+import org.murraybridgebunyips.bunyipslib.tasks.RunTask
+import org.murraybridgebunyips.bunyipslib.tasks.WaitUntilTask
+import org.murraybridgebunyips.bunyipslib.tasks.groups.DeadlineTaskGroup
+import org.murraybridgebunyips.bunyipslib.tasks.groups.ParallelTaskGroup
+import org.murraybridgebunyips.bunyipslib.tasks.groups.RaceTaskGroup
+import org.murraybridgebunyips.bunyipslib.tasks.groups.SequentialTaskGroup
 import java.util.Optional
+import java.util.function.BooleanSupplier
 
 /**
  * A task, or command is an action that can be performed by a robot. This has been designed
@@ -140,6 +148,82 @@ abstract class Task(
     fun withTimeout(timeout: Measure<Time>): Task {
         this.timeout = timeout
         return this
+    }
+
+    /**
+     * Compose this task into a [RaceTaskGroup] with a [WaitUntilTask] based on this condition.
+     */
+    fun until(condition: BooleanSupplier): RaceTaskGroup {
+        val task = WaitUntilTask(condition)
+        task.withName("$name supervisor")
+        return RaceTaskGroup(this, task)
+    }
+
+    /**
+     * Compose this task into a [SequentialTaskGroup] with the supplied
+     * tasks to run before this one.
+     */
+    fun after(vararg otherTasks: Task): SequentialTaskGroup {
+        return SequentialTaskGroup(*otherTasks, this)
+    }
+
+    /**
+     * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable],
+     * queued to run before this task starts.
+     */
+    fun after(runnable: Runnable): SequentialTaskGroup {
+        val task = RunTask(runnable)
+        task.withName("$name hook")
+        return SequentialTaskGroup(this, task)
+    }
+
+    /**
+     * Compose this task into a [SequentialTaskGroup] with the supplied tasks
+     * to follow after this one.
+     */
+    fun then(vararg otherTasks: Task): SequentialTaskGroup {
+        return SequentialTaskGroup(this, *otherTasks)
+    }
+
+    /**
+     * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable],
+     * queued to run when this task finishes.
+     */
+    fun then(runnable: Runnable): SequentialTaskGroup {
+        val task = RunTask(runnable)
+        task.withName("$name callback")
+        return SequentialTaskGroup(this, task)
+    }
+
+    /**
+     * Compose this task into a [ParallelTaskGroup] with the supplied tasks
+     * to run all of these tasks at once.
+     */
+    fun with(vararg otherTasks: Task): ParallelTaskGroup {
+        return ParallelTaskGroup(this, *otherTasks)
+    }
+
+    /**
+     * Compose this task into a [RaceTaskGroup] with the supplied tasks
+     * to run all of these tasks until one finishes.
+     */
+    fun race(vararg otherTasks: Task): RaceTaskGroup {
+        return RaceTaskGroup(this, *otherTasks)
+    }
+
+    /**
+     * Compose this task into a [DeadlineTaskGroup] with the supplied tasks
+     * to run these extra tasks until this task is done.
+     */
+    fun during(vararg otherTasks: Task): DeadlineTaskGroup {
+        return DeadlineTaskGroup(this, *otherTasks)
+    }
+
+    /**
+     * Wrap this task in a [RepeatTask] where finish conditions are reset immediately.
+     */
+    fun repeatedly(): Task {
+        return RepeatTask(this)
     }
 
     /**

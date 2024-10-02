@@ -26,8 +26,8 @@ import java.util.function.Supplier;
  * A simple task that turns the robot to a specific angle using a PIDF controller.
  *
  * @author Lucas Bubner, 2024
- * @since 5.1.0
  * @see DriveToPoseTask
+ * @since 5.1.0
  */
 public class TurnTask extends Task {
     private final Consumer<Pose2d> powerIn;
