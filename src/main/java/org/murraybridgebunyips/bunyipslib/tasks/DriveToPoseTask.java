@@ -24,7 +24,8 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 /**
- * Drive to a pose using RoadRunner.
+ * Drive to a pose using a RoadRunner localizer and PID-To-Point.
+ * <p>
  * This is useful for pose alignment based on error, rather than using trajectories for planned motion.
  * Designed and tested for Mecanum drivebases as RoadRunner was designed around them.
  *

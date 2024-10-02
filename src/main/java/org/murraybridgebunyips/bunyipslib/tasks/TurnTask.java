@@ -27,6 +27,7 @@ import java.util.function.Supplier;
  *
  * @author Lucas Bubner, 2024
  * @since 5.1.0
+ * @see DriveToPoseTask
  */
 public class TurnTask extends Task {
     private final Consumer<Pose2d> powerIn;
@@ -94,7 +95,8 @@ public class TurnTask extends Task {
     @Override
     protected void periodic() {
         Pose2d pose = poseEstimate.get();
-        powerIn.accept(new Pose2d(0, 0, pidf.calculate(Mathf.inputModulus(pose.getHeading(), -Math.PI, Math.PI), angRad)));
+        double errRad = Mathf.inputModulus(pose.getHeading(), -Math.PI, Math.PI) - angRad;
+        powerIn.accept(new Pose2d(0, 0, pidf.calculate(Mathf.inputModulus(errRad, -Math.PI, Math.PI), 0)));
 
         TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
         Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
