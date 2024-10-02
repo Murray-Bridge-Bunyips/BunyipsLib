@@ -970,7 +970,7 @@ public interface RoadRunner {
          * @param p Priority level
          * @return trajectory builder
          */
-        public RoadRunnerTrajectoryTaskBuilder withPriority(PriorityLevel p) {
+        public RoadRunnerTrajectoryTaskBuilder withPriority(@NonNull PriorityLevel p) {
             priority = p;
             return this;
         }
@@ -1107,22 +1107,21 @@ public interface RoadRunner {
          * poses list, so the next implicitly created trajectory will start from the end of this one.
          *
          * @throws UninitializedPropertyAccessException if the task is added outside of an {@link AutonomousBunyipsOpMode}
+         * @return The added task
          */
-        public void addTask() throws UninitializedPropertyAccessException {
+        public RoadRunnerTask addTask() throws UninitializedPropertyAccessException {
             if (!BunyipsOpMode.isRunning() || !(BunyipsOpMode.getInstance() instanceof AutonomousBunyipsOpMode)) {
                 throw new UninitializedPropertyAccessException("Cannot call addTask() when there is no running AutonomousBunyipsOpMode!");
             }
             RoadRunnerTask task = buildTask();
             switch (priority) {
                 case LAST:
-                    ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTaskLast(task);
-                    break;
-                case NORMAL:
-                    ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTask(task);
-                    break;
+                    return ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTaskLast(task);
                 case FIRST:
-                    ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTaskFirst(task);
-                    break;
+                    return ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTaskFirst(task);
+                case NORMAL:
+                default:
+                    return ((AutonomousBunyipsOpMode) BunyipsOpMode.getInstance()).addTask(task);
             }
         }
     }

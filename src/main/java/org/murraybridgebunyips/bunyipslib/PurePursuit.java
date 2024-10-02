@@ -690,7 +690,7 @@ public class PurePursuit implements Runnable {
          * @param p Priority level
          * @return this
          */
-        public PathMaker withPriority(RoadRunner.PriorityLevel p) {
+        public PathMaker withPriority(@NonNull RoadRunner.PriorityLevel p) {
             // Using the RoadRunner task priority level as it works the same anyways
             priority = p;
             return this;
