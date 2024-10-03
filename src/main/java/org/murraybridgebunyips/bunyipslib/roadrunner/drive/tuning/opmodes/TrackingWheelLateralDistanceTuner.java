@@ -12,13 +12,13 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.drive.localizers.ThreeWheelLocalizer;
 
 /**
- * Opmode designed to assist the user in tuning the `StandardTrackingWheelLocalizer`'s
+ * Opmode designed to assist the user in tuning the `ThreeWheelLocalizer`'s
  * LATERAL_DISTANCE value. The LATERAL_DISTANCE is the center-to-center distance of the parallel
  * wheels.
  * <p>
  * Tuning Routine:
  * <p>
- * 1. Set the LATERAL_DISTANCE value in StandardTrackingWheelLocalizer.java to the physical
+ * 1. Set the LATERAL_DISTANCE value in ThreeWheelLocalizer.java to the physical
  * measured value. This need only be an estimated value as you will be tuning it anyways.
  * <p>
  * 2. Make a mark on the bot (with a piece of tape or sharpie or however you wish) and make an
@@ -42,7 +42,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.localizers.ThreeWheel
  * on the bot and on the ground you created earlier should be lined up.
  * <p>
  * 8. Your effective LATERAL_DISTANCE will be given. Stick this value into your
- * StandardTrackingWheelLocalizer.java class.
+ * ThreeWheelLocalizer.java class.
  * <p>
  * 9. If this value is incorrect, run the routine again while adjusting the LATERAL_DISTANCE value
  * yourself. Read the heading output and follow the advice stated in the note below to manually
@@ -72,12 +72,12 @@ public class TrackingWheelLateralDistanceTuner implements TriConsumer<LinearOpMo
 
     @Override
     public void accept(LinearOpMode opMode, DualTelemetry telemetry, RoadRunnerDrive drive) {
-        // Must set localizer to a StandardTrackingWheelLocalizer, at the moment this will not run
+        // Must set localizer to a ThreeWheelLocalizer, at the moment this will not run
         Localizer localizer = drive.getLocalizer();
 
         if (!(localizer instanceof ThreeWheelLocalizer)) {
-            RobotLog.setGlobalErrorMsg("StandardTrackingWheelLocalizer is not being set in the "
-                    + "drive class. Ensure that \"setLocalizer(new StandardTrackingWheelLocalizer"
+            RobotLog.setGlobalErrorMsg("ThreeWheelLocalizer is not being set in the "
+                    + "drive class. Ensure that \"setLocalizer(new ThreeWheelLocalizer"
                     + "(hardwareMap));\" is called in your drive.");
         }
         assert localizer instanceof ThreeWheelLocalizer;

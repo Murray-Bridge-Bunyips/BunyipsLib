@@ -51,12 +51,12 @@ public class TrackingWheelForwardOffsetTuner implements TriConsumer<LinearOpMode
 
     @Override
     public void accept(LinearOpMode opMode, DualTelemetry telemetry, RoadRunnerDrive drive) {
-        // Must set localizer to a StandardTrackingWheelLocalizer, at the moment this will not run
+        // Must set localizer to a ThreeWheelLocalizer, at the moment this will not run
         Localizer localizer = drive.getLocalizer();
 
         if (!(localizer instanceof ThreeWheelLocalizer)) {
-            RobotLog.setGlobalErrorMsg("StandardTrackingWheelLocalizer is not being set in the "
-                    + "drive class. Ensure that \"setLocalizer(new StandardTrackingWheelLocalizer"
+            RobotLog.setGlobalErrorMsg("ThreeWheelLocalizer is not being set in the "
+                    + "drive class. Ensure that \"setLocalizer(new ThreeWheelLocalizer"
                     + "(...));\" is called somewhere else.");
         }
         assert localizer instanceof ThreeWheelLocalizer;
