@@ -48,7 +48,7 @@ public class Encoder {
      * @return the current position of the encoder
      */
     public int getPosition() {
-        int currentPosition = position.get();
+        int currentPosition = (direction == DcMotorSimple.Direction.FORWARD ? 1 : -1) * position.get();
         if (currentPosition != lastPosition) {
             double currentTime = System.nanoTime() / 1.0E9;
             double dt = currentTime - lastTimestamp;
@@ -56,7 +56,7 @@ public class Encoder {
             lastPosition = currentPosition;
             lastTimestamp = currentTime;
         }
-        return (direction == DcMotorSimple.Direction.FORWARD ? 1 : -1) * currentPosition - resetVal;
+        return currentPosition - resetVal;
     }
 
     /**
@@ -96,7 +96,7 @@ public class Encoder {
      * @return the raw velocity of the motor reported by the encoder, may overflow if ticks/sec exceed 32767/sec
      */
     public double getRawVelocity() {
-        double velo = velocity.get();
+        double velo = (direction == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
         if (velo != lastVelo) {
             double currentTime = System.nanoTime() / 1.0E9;
             double dt = currentTime - lastTimestamp;

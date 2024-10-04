@@ -85,7 +85,9 @@ public class Motor implements DcMotorEx {
         direction = motor.getDirection();
         deviceName = motor.getDeviceName();
         // The actual motor should *always* be running in RUN_WITHOUT_ENCODER
-        controller.setMotorMode(port, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        synchronized (controller) {
+            controller.setMotorMode(port, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
         encoder = new Encoder(() -> controller.getMotorCurrentPosition(port), () -> controller.getMotorVelocity(port));
         setTargetPosition(getCurrentPosition());
     }
@@ -229,10 +231,11 @@ public class Motor implements DcMotorEx {
 
     /**
      * Reset the encoder value without stopping the motor. Will internally be called if the motor is attempted
-     * to be set to {@link DcMotor.RunMode#STOP_AND_RESET_ENCODER}.
+     * to be set to {@link DcMotor.RunMode#STOP_AND_RESET_ENCODER}. The target position will also be reset to 0.
      */
-    public void resetEncoder() {
+    public synchronized void resetEncoder() {
         encoder.reset();
+        setTargetPosition(0);
     }
 
     /**
@@ -247,7 +250,7 @@ public class Motor implements DcMotorEx {
     /**
      * @return the estimated acceleration of this motor. Ticks per second.
      */
-    public double getAcceleration() {
+    public synchronized double getAcceleration() {
         return encoder.getAcceleration();
     }
 
@@ -255,7 +258,7 @@ public class Motor implements DcMotorEx {
      * @return the current position in ticks of this motor, while performing velocity estimation.
      */
     @Override
-    public int getCurrentPosition() {
+    public synchronized int getCurrentPosition() {
         return encoder.getPosition();
     }
 
@@ -263,7 +266,7 @@ public class Motor implements DcMotorEx {
      * @return the current velocity of this motor as specified by your settings, while performing acceleration estimation. Return ticks per second.
      */
     @Override
-    public double getVelocity() {
+    public synchronized double getVelocity() {
         return encoder.getVelocity();
     }
 
@@ -273,7 +276,7 @@ public class Motor implements DcMotorEx {
      * @param vel the desired ticks per second
      */
     @Override
-    public void setVelocity(double vel) {
+    public synchronized void setVelocity(double vel) {
         // vel = buff * max * power
         // vel / (buff * max) = power
         if (rueInfo == null || rueInfo.first == null || rueInfo.second == null) {
@@ -291,7 +294,7 @@ public class Motor implements DcMotorEx {
      * @see #setVelocity(double, AngleUnit)
      */
     @Override
-    public double getVelocity(AngleUnit unit) {
+    public synchronized double getVelocity(AngleUnit unit) {
         Measure<Angle> vel = EncoderTicks.toAngle((int) getVelocity(), (int) getMotorType().getTicksPerRev(), 1);
         return unit == AngleUnit.DEGREES ? vel.in(Degrees) : vel.in(Radians);
     }
@@ -373,7 +376,7 @@ public class Motor implements DcMotorEx {
     /**
      * A shorthand for setting the P coefficient for the {@link DcMotor.RunMode#RUN_TO_POSITION}
      * mode. Note this will either set a new controller if one is not defined, or try to set the PIDF coefficients
-     * on the current controller to this P coefficient.
+     * on the current controller with this P coefficient in place of the old one. Other coefficients will be preserved.
      *
      * @param p proportional
      * @see #setVelocityPIDFCoefficients(double, double, double, double)
@@ -627,7 +630,7 @@ public class Motor implements DcMotorEx {
      * @return the current behavior of the motor were a power level of zero to be applied.
      */
     @Override
-    public ZeroPowerBehavior getZeroPowerBehavior() {
+    public synchronized ZeroPowerBehavior getZeroPowerBehavior() {
         return controller.getMotorZeroPowerBehavior(port);
     }
 
@@ -639,7 +642,7 @@ public class Motor implements DcMotorEx {
      * @see #setPower(double)
      */
     @Override
-    public void setZeroPowerBehavior(ZeroPowerBehavior zeroPowerBehavior) {
+    public synchronized void setZeroPowerBehavior(ZeroPowerBehavior zeroPowerBehavior) {
         controller.setMotorZeroPowerBehavior(port, zeroPowerBehavior);
     }
 
@@ -670,7 +673,7 @@ public class Motor implements DcMotorEx {
      */
     @Deprecated
     @Override
-    public void setPowerFloat() {
+    public synchronized void setPowerFloat() {
         setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
         setPower(0);
     }
@@ -682,8 +685,8 @@ public class Motor implements DcMotorEx {
      * @see #setPowerFloat()
      */
     @Override
-    public boolean getPowerFloat() {
-        return controller.getMotorPowerFloat(port);
+    public synchronized boolean getPowerFloat() {
+        return getZeroPowerBehavior() == ZeroPowerBehavior.FLOAT && getPower() == 0.0;
     }
 
     /**
@@ -693,9 +696,9 @@ public class Motor implements DcMotorEx {
      * @see #setTargetPosition(int)
      */
     @Override
-    public int getTargetPosition() {
+    public synchronized int getTargetPosition() {
         // May as well let the motor controller manage target position, there is nothing interfering with doing so
-        return controller.getMotorTargetPosition(port);
+        return controller.getMotorTargetPosition(port) * (direction == Direction.FORWARD ? 1 : -1);
     }
 
     /**
@@ -721,8 +724,8 @@ public class Motor implements DcMotorEx {
      * @see #isBusy()
      */
     @Override
-    public void setTargetPosition(int position) {
-        controller.setMotorTargetPosition(port, position);
+    public synchronized void setTargetPosition(int position) {
+        controller.setMotorTargetPosition(port, position * (direction == Direction.FORWARD ? 1 : -1));
     }
 
     /**
@@ -792,7 +795,7 @@ public class Motor implements DcMotorEx {
      * @see #getDirection()
      */
     @Override
-    public void setDirection(Direction direction) {
+    public synchronized void setDirection(Direction direction) {
         // The only directional controls we have in the Motor class is the setting of power, the encoder ticks themselves
         // are managed via the Encoder class (they should also be equal so we hook it here)
         encoder.setDirection(direction);
@@ -806,7 +809,7 @@ public class Motor implements DcMotorEx {
      * @see #setPower(double)
      */
     @Override
-    public double getPower() {
+    public synchronized double getPower() {
         return controller.getMotorPower(port);
     }
 
@@ -820,7 +823,7 @@ public class Motor implements DcMotorEx {
      *              this value is scaled by {@link #setMaxPower}, if used.
      */
     @Override
-    public void setPower(double power) {
+    public synchronized void setPower(double power) {
         double magnitude = 0;
         switch (mode) {
             case RUN_TO_POSITION:
@@ -944,8 +947,8 @@ public class Motor implements DcMotorEx {
      */
     @Override
     public void resetDeviceConfigurationForOpMode() {
-        controller.resetDeviceConfigurationForOpMode();
-        direction = Direction.FORWARD;
+        setDirection(Direction.FORWARD);
+        controller.resetDeviceConfigurationForOpMode(port);
     }
 
     /**
