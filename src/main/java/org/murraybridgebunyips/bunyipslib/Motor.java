@@ -204,7 +204,7 @@ public class Motor extends DcMotorImplEx {
     }
 
     /**
-     * @return the current position in ticks of this motor, with velocity estimation.
+     * @return the current position in ticks of this motor, while performing velocity estimation.
      */
     @Override
     public int getCurrentPosition() {
@@ -212,7 +212,7 @@ public class Motor extends DcMotorImplEx {
     }
 
     /**
-     * @return the current velocity of this motor as specified by your settings. Ticks per second.
+     * @return the current velocity of this motor as specified by your settings, while performing acceleration estimation. Return ticks per second.
      */
     @Override
     public double getVelocity() {
@@ -374,7 +374,7 @@ public class Motor extends DcMotorImplEx {
                     rtpController.setCoefficients(rtpGains.stream().mapToDouble(this::getClampedInterpolatedGain).toArray());
                 // In a RUN_TO_POSITION context, the controller is used for error correction, which will multiply the
                 // allowed power by the user against the encoder error by your (usually PID) controller.
-                magnitude = Math.abs(power) * rtpController.calculate(getCurrentPosition(), getTargetPosition());
+                magnitude = Math.abs(power) * Mathf.clamp(rtpController.calculate(getCurrentPosition(), getTargetPosition()), -1, 1);
                 break;
             case RUN_USING_ENCODER:
                 if (rueController == null) {
