@@ -1106,8 +1106,8 @@ public interface RoadRunner {
          * work if you are running an {@link AutonomousBunyipsOpMode}. This trajectory will be added to the global
          * poses list, so the next implicitly created trajectory will start from the end of this one.
          *
-         * @throws UninitializedPropertyAccessException if the task is added outside of an {@link AutonomousBunyipsOpMode}
          * @return The added task
+         * @throws UninitializedPropertyAccessException if the task is added outside of an {@link AutonomousBunyipsOpMode}
          */
         public RoadRunnerTask addTask() throws UninitializedPropertyAccessException {
             if (!BunyipsOpMode.isRunning() || !(BunyipsOpMode.getInstance() instanceof AutonomousBunyipsOpMode)) {
