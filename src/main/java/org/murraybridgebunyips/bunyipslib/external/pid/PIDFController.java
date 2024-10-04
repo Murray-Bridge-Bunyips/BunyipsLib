@@ -2,6 +2,7 @@ package org.murraybridgebunyips.bunyipslib.external.pid;
 
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
 
 /**
@@ -36,6 +37,9 @@ public class PIDFController implements PIDF {
 
     private double lastTimeStamp;
     private double period;
+
+    private double lowerLim = -Double.MAX_VALUE;
+    private double upperLim = Double.MAX_VALUE;
 
     /**
      * The base constructor for the PIDF controller
@@ -100,6 +104,17 @@ public class PIDFController implements PIDF {
     public void setTolerance(double positionTolerance, double velocityTolerance) {
         errorTolerance_p = positionTolerance;
         errorTolerance_v = velocityTolerance;
+    }
+
+    /**
+     * Clamps the maximum output magnitude that can be achieved via {@link #calculate()}.
+     *
+     * @param lower the lower clamp
+     * @param upper the upper clamp
+     */
+    public void setOutputClamps(double lower, double upper) {
+        lowerLim = lower;
+        upperLim = upper;
     }
 
     /**
@@ -242,7 +257,8 @@ public class PIDFController implements PIDF {
         totalError = totalError < minIntegral ? minIntegral : Math.min(maxIntegral, totalError);
 
         // Returns u(t)
-        return kP * errorVal_p + kI * totalError + kD * errorVal_v + kF * setPoint;
+        double ut = kP * errorVal_p + kI * totalError + kD * errorVal_v + kF * setPoint;
+        return Mathf.clamp(ut, lowerLim, upperLim);
     }
 
     /**
