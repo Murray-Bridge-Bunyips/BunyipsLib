@@ -329,6 +329,7 @@ public class PIDFController implements PIDF {
 
     /**
      * Clear the integral term.
+     *
      * @return this
      */
     public PIDFController clearTotalError() {

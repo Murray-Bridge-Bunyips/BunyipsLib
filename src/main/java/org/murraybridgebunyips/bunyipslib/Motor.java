@@ -7,7 +7,6 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
 import android.util.Pair;
 
-import com.qualcomm.robotcore.R;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
@@ -23,7 +22,6 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.PIDFFController;
@@ -51,6 +49,7 @@ import java.util.Optional;
  * @author Lucas Bubner, 2024
  * @since 4.0.0
  */
+@SuppressWarnings("deprecation")
 public class Motor implements DcMotorEx {
     protected final DcMotorControllerEx controller;
     protected final int port;
@@ -59,6 +58,7 @@ public class Motor implements DcMotorEx {
     private final ArrayList<InterpolatedLookupTable> rueGains = new ArrayList<>();
 
     private final Encoder encoder;
+    private final String deviceName;
     protected Direction direction;
     private DcMotor.RunMode mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
     private double maxMagnitude = 1;
@@ -83,6 +83,7 @@ public class Motor implements DcMotorEx {
         controller = (DcMotorControllerEx) motor.getController();
         port = motor.getPortNumber();
         direction = motor.getDirection();
+        deviceName = motor.getDeviceName();
         // The actual motor should *always* be running in RUN_WITHOUT_ENCODER
         controller.setMotorMode(port, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         encoder = new Encoder(() -> controller.getMotorCurrentPosition(port), () -> controller.getMotorVelocity(port));
@@ -302,7 +303,6 @@ public class Motor implements DcMotorEx {
      *
      * @param mode            either {@link DcMotor.RunMode#RUN_USING_ENCODER} or {@link DcMotor.RunMode#RUN_TO_POSITION}
      * @param pidCoefficients the new coefficients to use when in that mode on this motor
-     * @noinspection deprecation
      * @see #getPIDCoefficients(DcMotor.RunMode)
      */
     @Override
@@ -322,7 +322,6 @@ public class Motor implements DcMotorEx {
      *
      * @param mode             either {@link DcMotor.RunMode#RUN_USING_ENCODER} or {@link DcMotor.RunMode#RUN_TO_POSITION}
      * @param pidfCoefficients the new coefficients to use when in that mode on this motor
-     * @noinspection deprecation
      * @see #setVelocityPIDFCoefficients(double, double, double, double)
      * @see #setPositionPIDFCoefficients(double)
      * @see #getPIDFCoefficients(DcMotor.RunMode)
@@ -412,7 +411,6 @@ public class Motor implements DcMotorEx {
      *
      * @param mode either {@link DcMotor.RunMode#RUN_USING_ENCODER} or {@link DcMotor.RunMode#RUN_TO_POSITION}
      * @return the PIDF control coefficients used when running in the indicated mode on this motor
-     * @noinspection deprecation
      * @see #setPIDFCoefficients(DcMotor.RunMode, PIDFCoefficients)
      */
     @Override
@@ -756,7 +754,7 @@ public class Motor implements DcMotorEx {
     public void setVelocity(double angVel, AngleUnit unit) {
         double tpr = getMotorType().getTicksPerRev();
         if (tpr <= 0) {
-            throw new IllegalStateException(formatString("The Ticks Per Revolution attribute has not been set for this motor (% on port %). You will have to clone the current motorType, set the ticksPerRev, and set the new motorType to the cloned copy.", getDeviceName(), port));
+            throw new IllegalStateException(formatString("The Ticks Per Revolution attribute has not been set for this motor (% on port %). You will have to clone the current motorType, set the ticksPerRev, and set the new motorType to the cloned copy.", deviceName, port));
         }
         double radsPerSec = UnnormalizedAngleUnit.RADIANS.fromUnit(unit.getUnnormalized(), angVel);
         // Will assume no reduction, the user can scale the velocity on their own terms
@@ -828,7 +826,7 @@ public class Motor implements DcMotorEx {
             case RUN_TO_POSITION:
                 if (rtpController == null) {
                     PIDFCoefficients coeffs = getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-                    String msg = formatString("[% on port %] No RUN_TO_POSITION controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. You must set your own controller through setRunToPositionController().", getDeviceName(), port, coeffs);
+                    String msg = formatString("[% on port %] No RUN_TO_POSITION controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. You must set your own controller through setRunToPositionController().", deviceName, port, coeffs);
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
                     rtpController = new PIDFController(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
@@ -843,7 +841,7 @@ public class Motor implements DcMotorEx {
             case RUN_USING_ENCODER:
                 if (rueController == null) {
                     PIDFCoefficients coeffs = getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-                    String msg = formatString("[% on port %] No RUN_USING_ENCODER controller was specified. This motor will be using the default PIDF coefficients to create a fallback PID and static FF controller with values from %. You must set your own controller through setRunUsingEncoderController().", getDeviceName(), port, coeffs);
+                    String msg = formatString("[% on port %] No RUN_USING_ENCODER controller was specified. This motor will be using the default PIDF coefficients to create a fallback PID and static FF controller with values from %. You must set your own controller through setRunUsingEncoderController().", deviceName, port, coeffs);
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
                     PIDController pid = new PIDController(coeffs.p, coeffs.i, coeffs.d);
@@ -917,7 +915,7 @@ public class Motor implements DcMotorEx {
      */
     @Override
     public String getDeviceName() {
-        return AppUtil.getDefContext().getString(R.string.configTypeMotor);
+        return deviceName;
     }
 
     /**
