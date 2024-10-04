@@ -39,28 +39,34 @@ public class PIDController extends PIDFController {
      * @param kp The value of kP for the coefficients.
      * @param ki The value of kI for the coefficients.
      * @param kd The value of kD for the coefficients.
+     * @return this
      */
-    public void setPID(double kp, double ki, double kd) {
+    public PIDController setPID(double kp, double ki, double kd) {
         setPIDF(kp, ki, kd, 0);
+        return this;
     }
 
     /**
      * Set the current controller PID coefficients to the given coefficients.
      *
      * @param coefficients the coefficients to set
+     * @return this
      */
-    public void setPID(PIDCoefficients coefficients) {
+    public PIDController setPID(PIDCoefficients coefficients) {
         setPIDF(coefficients.p, coefficients.i, coefficients.d, 0);
+        return this;
     }
 
     /**
      * Update the supplied PID coefficients with the current controller values.
      *
      * @param coefficients the coefficients to update
+     * @return this
      */
-    public void updatePID(PIDCoefficients coefficients) {
+    public PIDController updatePID(PIDCoefficients coefficients) {
         coefficients.p = getP();
         coefficients.i = getI();
         coefficients.d = getD();
+        return this;
     }
 }
