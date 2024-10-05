@@ -493,7 +493,7 @@ public class Motor implements DcMotorEx {
      * @param mode the new current run mode for this motor
      */
     @Override
-    public void setMode(DcMotor.RunMode mode) {
+    public synchronized void setMode(DcMotor.RunMode mode) {
         if (mode == DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
             setPower(0);
             resetEncoder();
@@ -759,7 +759,7 @@ public class Motor implements DcMotorEx {
      * @param unit   the units in which angVel is expressed
      */
     @Override
-    public void setVelocity(double angVel, AngleUnit unit) {
+    public synchronized void setVelocity(double angVel, AngleUnit unit) {
         double tpr = getMotorType().getTicksPerRev();
         if (tpr <= 0) {
             throw new IllegalStateException(formatString("The Ticks Per Revolution attribute has not been set for this motor (% on port %). You will have to clone the current motorType, set the ticksPerRev, and set the new motorType to the cloned copy.", deviceName, port));
