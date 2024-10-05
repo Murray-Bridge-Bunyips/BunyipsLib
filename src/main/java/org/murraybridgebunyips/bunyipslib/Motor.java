@@ -815,7 +815,7 @@ public class Motor implements DcMotorEx {
      */
     @Override
     public synchronized double getPower() {
-        return controller.getMotorPower(port);
+        return controller.getMotorPower(port) * (getOperationalDirection() == Direction.FORWARD ? 1 : -1);
     }
 
     /**
