@@ -14,6 +14,7 @@ public class Encoder {
     private static final int CPS_STEP = 0x10000;
     private final Supplier<Integer> position;
     private final Supplier<Double> velocity;
+    private Filter.LowPass accelFilter = new Filter.LowPass(0.95);
     private int resetVal, lastPosition;
     private DcMotorSimple.Direction direction;
     private double lastTimestamp, veloEstimate, accel, lastVelo;
@@ -92,6 +93,15 @@ public class Encoder {
     }
 
     /**
+     * Set a new Low Pass filter gain for use with acceleration estimation readings.
+     *
+     * @param gain the gain in the interval (0, 1) exclusive; default of 0.95
+     */
+    public void setAccelLowPassGain(double gain) {
+        accelFilter = new Filter.LowPass(gain);
+    }
+
+    /**
      * @return the estimated acceleration of the motor in ticks per second squared. this method will internally
      * call {@link #getRawVelocity()} to update the velocity information which is required.
      */
@@ -113,10 +123,11 @@ public class Encoder {
      */
     public double getRawVelocity() {
         double velo = (getOperationalDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
-        if (velo != lastVelo) {
-            double currentTime = System.nanoTime() / 1.0E9;
-            double dt = currentTime - lastTimestamp;
-            accel = (velo - lastVelo) / dt;
+        double currentTime = System.nanoTime() / 1.0E9;
+        double dt = currentTime - lastTimestamp;
+        // Too small of measurements are incalculable due to floating-point error
+        if (dt > 1.0E-3) {
+            accel = accelFilter.apply((velo - lastVelo) / dt);
             lastVelo = velo;
             lastTimestamp = currentTime;
         }
