@@ -18,6 +18,7 @@ public class Encoder {
     private DcMotorSimple.Direction direction;
     private double lastTimestamp, veloEstimate, accel, lastVelo;
     private boolean overflowCorrection;
+    private Supplier<DcMotorSimple.Direction> directionSupplier;
 
     /**
      * The encoder object for the motor.
@@ -38,6 +39,21 @@ public class Encoder {
     }
 
     /**
+     * Set a supplier that will be used to auto-set encoder direction.
+     *
+     * @param supplier the supplier to use
+     */
+    public void trackDirection(Supplier<DcMotorSimple.Direction> supplier) {
+        directionSupplier = supplier;
+    }
+
+    private DcMotorSimple.Direction getOperationalDirection() {
+        if (directionSupplier != null)
+            direction = directionSupplier.get();
+        return direction;
+    }
+
+    /**
      * Call to use encoder overflow (exceeding 32767 ticks/sec) correction on {@link #getVelocity()}.
      */
     public void useEncoderOverflowCorrection() {
@@ -48,7 +64,7 @@ public class Encoder {
      * @return the current position of the encoder
      */
     public int getPosition() {
-        int currentPosition = (direction == DcMotorSimple.Direction.FORWARD ? 1 : -1) * position.get();
+        int currentPosition = (getOperationalDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * position.get();
         if (currentPosition != lastPosition) {
             double currentTime = System.nanoTime() / 1.0E9;
             double dt = currentTime - lastTimestamp;
@@ -96,7 +112,7 @@ public class Encoder {
      * @return the raw velocity of the motor reported by the encoder, may overflow if ticks/sec exceed 32767/sec
      */
     public double getRawVelocity() {
-        double velo = (direction == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
+        double velo = (getOperationalDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
         if (velo != lastVelo) {
             double currentTime = System.nanoTime() / 1.0E9;
             double dt = currentTime - lastTimestamp;

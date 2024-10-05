@@ -21,6 +21,7 @@ import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
@@ -59,6 +60,7 @@ public class Motor implements DcMotorEx {
 
     private final Encoder encoder;
     private final String deviceName;
+    private final Rotation operationalRotation;
     protected Direction direction;
     private DcMotor.RunMode mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
     private double maxMagnitude = 1;
@@ -86,9 +88,12 @@ public class Motor implements DcMotorEx {
         deviceName = motor.getDeviceName();
         // The actual motor should *always* be running in RUN_WITHOUT_ENCODER
         synchronized (controller) {
+            operationalRotation = controller.getMotorType(port).getOrientation();
             controller.setMotorMode(port, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
         encoder = new Encoder(() -> controller.getMotorCurrentPosition(port), () -> controller.getMotorVelocity(port));
+        encoder.setDirection(getOperationalDirection());
+        encoder.trackDirection(this::getOperationalDirection);
         setTargetPosition(getCurrentPosition());
     }
 
@@ -698,7 +703,7 @@ public class Motor implements DcMotorEx {
     @Override
     public synchronized int getTargetPosition() {
         // May as well let the motor controller manage target position, there is nothing interfering with doing so
-        return controller.getMotorTargetPosition(port) * (direction == Direction.FORWARD ? 1 : -1);
+        return controller.getMotorTargetPosition(port) * (getOperationalDirection() == Direction.FORWARD ? 1 : -1);
     }
 
     /**
@@ -725,7 +730,7 @@ public class Motor implements DcMotorEx {
      */
     @Override
     public synchronized void setTargetPosition(int position) {
-        controller.setMotorTargetPosition(port, position * (direction == Direction.FORWARD ? 1 : -1));
+        controller.setMotorTargetPosition(port, position * (getOperationalDirection() == Direction.FORWARD ? 1 : -1));
     }
 
     /**
@@ -889,7 +894,7 @@ public class Motor implements DcMotorEx {
         lastUpdate = System.nanoTime();
         lastPower = power;
         // Write to the hardware and apply configured direction
-        controller.setMotorPower(port, direction == Direction.FORWARD ? magnitude : -magnitude);
+        controller.setMotorPower(port, getOperationalDirection() == Direction.FORWARD ? magnitude : -magnitude);
     }
 
     private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
@@ -897,6 +902,10 @@ public class Motor implements DcMotorEx {
         int res = lut.testOutOfRange(curr);
         if (res == 0) return lut.get(curr);
         return res == -1 ? lut.getMin() : lut.getMax();
+    }
+
+    private Direction getOperationalDirection() {
+        return operationalRotation == Rotation.CCW ? direction.inverted() : direction;
     }
 
     /**
