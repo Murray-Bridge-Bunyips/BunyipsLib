@@ -32,7 +32,9 @@ import java.util.function.Supplier;
 public class TurnTask extends Task {
     private final Consumer<Pose2d> powerIn;
     private final Supplier<Pose2d> poseEstimate;
-    private final double angRad;
+    private final boolean setDelta;
+    private final double unmodifiedAngRad;
+    private double angRad;
     private PIDF pidf;
     private Measure<Angle> tolerance;
 
@@ -42,10 +44,11 @@ public class TurnTask extends Task {
      * @param drive the RoadRunner drive instance to use, this subsystem will be automatically attached to the task
      *              if it is a {@link BunyipsSubsystem}, note RoadRunner methods are not used in this task and are
      *              only for localisation purposes
-     * @param angle the angle to turn to
+     * @param angle the angle to turn to, if this is a delta angle this will be counter-clockwise
+     * @param delta if this angle is a delta from the current drive rotation at runtime
      */
-    public TurnTask(RoadRunnerDrive drive, Measure<Angle> angle) {
-        this(drive::setWeightedDrivePower, drive::getPoseEstimate, angle);
+    public TurnTask(RoadRunnerDrive drive, Measure<Angle> angle, boolean delta) {
+        this(drive::setWeightedDrivePower, drive::getPoseEstimate, angle, delta);
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive);
     }
@@ -55,15 +58,41 @@ public class TurnTask extends Task {
      *
      * @param powerIn      the consumer to set the power of the robot, can ignore the x and y values if not needed
      * @param poseEstimate the supplier to get the current pose of the robot, can ignore the x and y values if not needed
-     * @param angle        the angle to turn to
+     * @param angle        the angle to turn to, if this is a delta angle this will be counter-clockwise
+     * @param delta        if this angle is a delta from the current drive rotation at runtime
      */
-    public TurnTask(Consumer<Pose2d> powerIn, Supplier<Pose2d> poseEstimate, Measure<Angle> angle) {
+    public TurnTask(Consumer<Pose2d> powerIn, Supplier<Pose2d> poseEstimate, Measure<Angle> angle, boolean delta) {
         this.powerIn = powerIn;
         this.poseEstimate = poseEstimate;
-        angRad = Mathf.angleModulus(angle).in(Radians);
+        setDelta = delta;
+        unmodifiedAngRad = Mathf.angleModulus(angle).in(Radians);
         // Sane defaults
         pidf = new PController(3);
         tolerance = Degrees.of(1);
+    }
+
+
+    /**
+     * Construct a new TurnTask that will turn the robot to the given global angle.
+     *
+     * @param drive the RoadRunner drive instance to use, this subsystem will be automatically attached to the task
+     *              if it is a {@link BunyipsSubsystem}, note RoadRunner methods are not used in this task and are
+     *              only for localisation purposes
+     * @param angle the angle to turn to in a global coordinate frame
+     */
+    public TurnTask(RoadRunnerDrive drive, Measure<Angle> angle) {
+        this(drive, angle, false);
+    }
+
+    /**
+     * Construct a new TurnTask that will turn the robot to the given global angle.
+     *
+     * @param powerIn      the consumer to set the power of the robot, can ignore the x and y values if not needed
+     * @param poseEstimate the supplier to get the current pose of the robot, can ignore the x and y values if not needed
+     * @param angle        the angle to turn to in a global coordinate frame
+     */
+    public TurnTask(Consumer<Pose2d> powerIn, Supplier<Pose2d> poseEstimate, Measure<Angle> angle) {
+        this(powerIn, poseEstimate, angle, false);
     }
 
     /**
@@ -90,6 +119,13 @@ public class TurnTask extends Task {
         }
         this.tolerance = tolerance;
         return this;
+    }
+
+    @Override
+    protected void init() {
+        angRad = setDelta
+                ? Mathf.inputModulus(poseEstimate.get().getHeading() + unmodifiedAngRad, -Math.PI, Math.PI)
+                : unmodifiedAngRad;
     }
 
     @Override
