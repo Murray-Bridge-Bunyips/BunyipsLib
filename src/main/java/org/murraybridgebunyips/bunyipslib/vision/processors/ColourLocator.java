@@ -130,6 +130,9 @@ public class ColourLocator extends Processor<ColourBlob> {
             // Need to wrap for consistency between vision processors,
             // will not bother with unboxing as it has been a bad idea in the past
             data.add(new ColourBlob(
+                    // Camera dimensions are provided optionally and are handled internally only for conversion
+                    // to a ContourData object, which means we don't need to check for null either
+                    getCameraDimensions(),
                     blob.getContour(),
                     Arrays.asList(blob.getContourPoints()),
                     blob.getContourArea(),

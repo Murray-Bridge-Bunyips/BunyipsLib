@@ -1,5 +1,6 @@
 package org.murraybridgebunyips.bunyipslib.vision.data
 
+import android.util.Size
 import com.qualcomm.robotcore.util.SortOrder
 import org.opencv.core.MatOfPoint
 import org.opencv.core.Point
@@ -36,6 +37,42 @@ data class ColourBlob(
      */
     val boxFit: RotatedRect
 ) : VisionData() {
+    private var cameraDimensions: Size? = null
+
+    /**
+     * Alternate constructor that supports the usage of the [toContourData] method, which needs camera dimensions.
+     */
+    constructor(
+        cameraDimensions: Size?,
+        contour: MatOfPoint,
+        contourPoints: List<Point>,
+        contourArea: Int,
+        density: Double,
+        aspectRatio: Double,
+        boxFit: RotatedRect
+    ) : this(contour, contourPoints, contourArea, density, aspectRatio, boxFit) {
+        this.cameraDimensions = cameraDimensions
+    }
+
+    /**
+     * Convert the [ColourBlob] information stored by this instance into [ContourData] information.
+     *
+     * This method is designed for already implemented tasks such as the align/move to contour tasks, which take in
+     * instances of [ContourData]. Therefore, it is possible to convert an entire list of [ColourBlob] readings
+     * into a [ContourData] list with a simple streaming operation:
+     * ```
+     * () -> proc.getData().stream().map(ColourBlob::toContourData).collect(Collectors.toList())
+     * ```
+     * which is optionally allowed to be passed into these tasks as a Supplier.
+     *
+     * @since 5.1.0
+     */
+    fun toContourData(): ContourData {
+        if (cameraDimensions == null)
+            throw IllegalStateException("Camera dimensions for this ColourBlob data instance were not provided on construction, meaning it is not possible to convert this to a ContourData.")
+        return ContourData(cameraDimensions!!, boxFit.boundingRect())
+    }
+
     /**
      * Collection of utility functions found via the Util inner class of ColorBlobLocatorProcessor.
      */
