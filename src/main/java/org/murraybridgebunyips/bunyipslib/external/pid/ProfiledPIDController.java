@@ -45,9 +45,11 @@ public class ProfiledPIDController implements PIDF {
      * @param Kp Proportional coefficient
      * @param Ki Integral coefficient
      * @param Kd Differential coefficient
+     * @return this
      */
-    public void setPID(double Kp, double Ki, double Kd) {
+    public ProfiledPIDController setPID(double Kp, double Ki, double Kd) {
         controller.setPID(Kp, Ki, Kd);
+        return this;
     }
 
     /**
@@ -63,9 +65,11 @@ public class ProfiledPIDController implements PIDF {
      * Sets the proportional coefficient of the PID controller gain.
      *
      * @param Kp proportional coefficient
+     * @return this
      */
-    public void setP(double Kp) {
+    public ProfiledPIDController setP(double Kp) {
         controller.setP(Kp);
+        return this;
     }
 
     /**
@@ -81,9 +85,11 @@ public class ProfiledPIDController implements PIDF {
      * Sets the integral coefficient of the PID controller gain.
      *
      * @param Ki integral coefficient
+     * @return this
      */
-    public void setI(double Ki) {
+    public ProfiledPIDController setI(double Ki) {
         controller.setI(Ki);
+        return this;
     }
 
     /**
@@ -99,9 +105,11 @@ public class ProfiledPIDController implements PIDF {
      * Sets the differential coefficient of the PID controller gain.
      *
      * @param Kd differential coefficient
+     * @return this
      */
-    public void setD(double Kd) {
+    public ProfiledPIDController setD(double Kd) {
         controller.setD(Kd);
+        return this;
     }
 
     /**
@@ -124,18 +132,22 @@ public class ProfiledPIDController implements PIDF {
      * Sets the goal for the ProfiledPIDController.
      *
      * @param goal The desired goal state.
+     * @return this
      */
-    public void setGoal(TrapezoidProfile.State goal) {
+    public ProfiledPIDController setGoal(TrapezoidProfile.State goal) {
         this.goal = goal;
+        return this;
     }
 
     /**
      * Sets the goal for the ProfiledPIDController.
      *
      * @param goal The desired goal position.
+     * @return this
      */
-    public void setGoal(double goal) {
+    public ProfiledPIDController setGoal(double goal) {
         this.goal = new TrapezoidProfile.State(goal, 0);
+        return this;
     }
 
     /**
@@ -153,9 +165,11 @@ public class ProfiledPIDController implements PIDF {
      * Set velocity and acceleration constraints for goal.
      *
      * @param constraints Velocity and acceleration constraints for goal.
+     * @return this
      */
-    public void setConstraints(TrapezoidProfile.Constraints constraints) {
+    public ProfiledPIDController setConstraints(TrapezoidProfile.Constraints constraints) {
         this.constraints = constraints;
+        return this;
     }
 
     /**
@@ -182,9 +196,11 @@ public class ProfiledPIDController implements PIDF {
      * Sets the error which is considered tolerable for use with atSetpoint().
      *
      * @param positionTolerance Position error which is tolerable.
+     * @return this
      */
-    public void setTolerance(double positionTolerance) {
+    public ProfiledPIDController setTolerance(double positionTolerance) {
         setTolerance(positionTolerance, Double.POSITIVE_INFINITY);
+        return this;
     }
 
     /**
@@ -192,9 +208,11 @@ public class ProfiledPIDController implements PIDF {
      *
      * @param positionTolerance Position error which is tolerable.
      * @param velocityTolerance Velocity error which is tolerable.
+     * @return this
      */
-    public void setTolerance(double positionTolerance, double velocityTolerance) {
+    public ProfiledPIDController setTolerance(double positionTolerance, double velocityTolerance) {
         controller.setTolerance(positionTolerance, velocityTolerance);
+        return this;
     }
 
     /**
@@ -267,6 +285,7 @@ public class ProfiledPIDController implements PIDF {
     /**
      * Reset the previous error, the integral term, and disable the controller.
      */
+    @Override
     public void reset() {
         controller.reset();
     }
@@ -275,10 +294,12 @@ public class ProfiledPIDController implements PIDF {
      * Reset the previous error and the integral term.
      *
      * @param measurement The current measured State of the system.
+     * @return this
      */
-    public void reset(TrapezoidProfile.State measurement) {
+    public ProfiledPIDController reset(TrapezoidProfile.State measurement) {
         controller.reset();
         setpoint = measurement;
+        return this;
     }
 
     /**
@@ -286,9 +307,11 @@ public class ProfiledPIDController implements PIDF {
      *
      * @param measuredPosition The current measured position of the system.
      * @param measuredVelocity The current measured velocity of the system.
+     * @return this
      */
-    public void reset(double measuredPosition, double measuredVelocity) {
+    public ProfiledPIDController reset(double measuredPosition, double measuredVelocity) {
         reset(new TrapezoidProfile.State(measuredPosition, measuredVelocity));
+        return this;
     }
 
     /**
@@ -296,9 +319,11 @@ public class ProfiledPIDController implements PIDF {
      *
      * @param measuredPosition The current measured position of the system. The velocity is
      *                         assumed to be zero.
+     * @return this
      */
-    public void reset(double measuredPosition) {
+    public ProfiledPIDController reset(double measuredPosition) {
         reset(measuredPosition, 0.0);
+        return this;
     }
 
     @Override

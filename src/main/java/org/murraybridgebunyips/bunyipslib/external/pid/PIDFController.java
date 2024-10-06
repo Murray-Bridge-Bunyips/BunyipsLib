@@ -341,32 +341,60 @@ public class PIDFController implements PIDF {
         return kP;
     }
 
-    public void setP(double kp) {
+    /**
+     * Set the P coefficient on this controller
+     *
+     * @param kp proportional
+     * @return this
+     */
+    public PIDFController setP(double kp) {
         kP = kp;
+        return this;
     }
 
     public double getI() {
         return kI;
     }
 
-    public void setI(double ki) {
+    /**
+     * Set the I coefficient on this controller
+     *
+     * @param ki integral
+     * @return this
+     */
+    public PIDFController setI(double ki) {
         kI = ki;
+        return this;
     }
 
     public double getD() {
         return kD;
     }
 
-    public void setD(double kd) {
+    /**
+     * Set the D coefficient on this controller
+     *
+     * @param kd derivative
+     * @return this
+     */
+    public PIDFController setD(double kd) {
         kD = kd;
+        return this;
     }
 
     public double getF() {
         return kF;
     }
 
-    public void setF(double kf) {
+    /**
+     * Set the F coefficient on this controller
+     *
+     * @param kf feedforward
+     * @return this
+     */
+    public PIDFController setF(double kf) {
         kF = kf;
+        return this;
     }
 
     public double getPeriod() {
