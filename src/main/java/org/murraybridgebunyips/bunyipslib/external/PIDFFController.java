@@ -2,7 +2,6 @@ package org.murraybridgebunyips.bunyipslib.external;
 
 import org.murraybridgebunyips.bunyipslib.Encoder;
 import org.murraybridgebunyips.bunyipslib.Motor;
-import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
 
 import java.util.Arrays;
@@ -19,7 +18,7 @@ import java.util.Arrays;
  * @since 4.0.0
  */
 public class PIDFFController implements PIDF {
-    private final PIDController pid;
+    private final PIDF pid;
     private final Encoder encoder;
     private final SystemController ff;
 
@@ -30,7 +29,7 @@ public class PIDFFController implements PIDF {
      * @param ff      the kV/kA feedforward to use
      * @param encoder the encoder to retrieve velocity/acceleration information from
      */
-    public PIDFFController(PIDController pid, SystemController ff, Encoder encoder) {
+    public PIDFFController(PIDF pid, SystemController ff, Encoder encoder) {
         this.pid = pid;
         this.ff = ff;
         this.encoder = encoder;
@@ -50,11 +49,11 @@ public class PIDFFController implements PIDF {
 
     @Override
     public void setCoefficients(double... coeffs) {
-        if (coeffs.length < 3) {
-            throw new IllegalArgumentException("expected >=3 arguments, got " + coeffs.length);
+        if (coeffs.length < 4) {
+            throw new IllegalArgumentException("expected >=4 arguments, got " + coeffs.length);
         }
-        pid.setPID(coeffs[0], coeffs[1], coeffs[2]);
-        ff.setCoefficients(Arrays.stream(coeffs).skip(3).toArray());
+        pid.getPIDFController().setPIDF(coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
+        ff.setCoefficients(Arrays.stream(coeffs).skip(4).toArray());
     }
 
     @Override
@@ -82,6 +81,6 @@ public class PIDFFController implements PIDF {
 
     @Override
     public PIDFController getPIDFController() {
-        return pid;
+        return pid.getPIDFController();
     }
 }

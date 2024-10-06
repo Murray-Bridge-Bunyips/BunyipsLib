@@ -2,7 +2,6 @@ package org.murraybridgebunyips.bunyipslib.external;
 
 import org.murraybridgebunyips.bunyipslib.EncoderTicks;
 import org.murraybridgebunyips.bunyipslib.external.ff.ArmFeedforward;
-import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDFController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
@@ -21,7 +20,7 @@ import java.util.function.Supplier;
  * @since 4.0.0
  */
 public class ArmController implements PIDF {
-    private final PIDController pid;
+    private final PIDF pid;
     private final ArmFeedforward ff;
     private final Supplier<Measure<Angle>> setPointAngleProvider;
     private final Supplier<Measure<Velocity<Angle>>> velocityAngleProvider;
@@ -36,7 +35,7 @@ public class ArmController implements PIDF {
      * @param velocityAngleProvider     the angular velocity provider
      * @param accelerationAngleProvider the angular acceleration provider
      */
-    public ArmController(PIDController pid, ArmFeedforward ff, Supplier<Measure<Angle>> setPointAngleProvider, Supplier<Measure<Velocity<Angle>>> velocityAngleProvider, Supplier<Measure<Velocity<Velocity<Angle>>>> accelerationAngleProvider) {
+    public ArmController(PIDF pid, ArmFeedforward ff, Supplier<Measure<Angle>> setPointAngleProvider, Supplier<Measure<Velocity<Angle>>> velocityAngleProvider, Supplier<Measure<Velocity<Velocity<Angle>>>> accelerationAngleProvider) {
         this.pid = pid;
         this.ff = ff;
         this.setPointAngleProvider = setPointAngleProvider;
@@ -46,16 +45,17 @@ public class ArmController implements PIDF {
 
     @Override
     public double[] getCoefficients() {
-        return new double[]{pid.getP(), pid.getI(), pid.getD(), ff.getS(), ff.getCos(), ff.getV(), ff.getA()};
+        PIDFController c = pid.getPIDFController();
+        return new double[]{c.getP(), c.getI(), c.getD(), c.getF(), ff.getS(), ff.getCos(), ff.getV(), ff.getA()};
     }
 
     @Override
     public void setCoefficients(double... coeffs) {
-        if (coeffs.length != 7) {
-            throw new IllegalArgumentException("expected 7 coefficients, got " + coeffs.length);
+        if (coeffs.length != 8) {
+            throw new IllegalArgumentException("expected 8 coefficients, got " + coeffs.length);
         }
-        pid.setPID(coeffs[0], coeffs[1], coeffs[2]);
-        ff.setCoefficients(coeffs[3], coeffs[4], coeffs[5], coeffs[6]);
+        pid.getPIDFController().setPIDF(coeffs[0], coeffs[1], coeffs[2], coeffs[3]);
+        ff.setCoefficients(coeffs[4], coeffs[5], coeffs[6], coeffs[7]);
     }
 
     @Override
@@ -70,6 +70,6 @@ public class ArmController implements PIDF {
 
     @Override
     public PIDFController getPIDFController() {
-        return pid;
+        return pid.getPIDFController();
     }
 }
