@@ -1,14 +1,21 @@
 package org.murraybridgebunyips.bunyipslib.roadrunner.drive.localizers;
 
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.Deadwheel;
 
 import java.util.ArrayList;
@@ -31,6 +38,7 @@ import java.util.List;
  *    \--------------/
  */
 public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
+    private final ElapsedTime imuResetTimer = new ElapsedTime();
     private final ThreeWheelLocalizer.Coefficients coefficients;
     private final Deadwheel leftDeadwheel;
     private final Deadwheel rightDeadwheel;
@@ -39,6 +47,8 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
     private final List<Integer> lastEncVels;
     private final double xMul;
     private final double yMul;
+    @Nullable
+    private IMU imu;
     private boolean usingOverflowCompensation;
 
     /**
@@ -88,6 +98,18 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
     }
 
     /**
+     * Set the IMU that will be used in combination with a IMU relocalization interval.
+     *
+     * @param imu the imu to use, note that not passing an IMU and activating the relocalization interval
+     *            will no-op and propagate a DS warning
+     * @return this
+     */
+    public ThreeWheelLocalizer withRelocalizingIMU(@Nullable IMU imu) {
+        this.imu = imu;
+        return this;
+    }
+
+    /**
      * Enable overflow compensation if your encoders exceed 32767 counts / second.
      *
      * @return this
@@ -114,6 +136,15 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
     @NonNull
     @Override
     public List<Double> getWheelPositions() {
+        if (coefficients.IMU_RELOCALIZATION_INTERVAL != null) {
+            if (imu == null) {
+                RobotLog.setGlobalErrorMsg("[ThreeWheelLocalizer] An IMU relocalization interval was set, however, an IMU has not been supplied to the localizer via withRelocalizingIMU(...)\nPlease set the IMU on the localizer to support IMU relocalization.");
+            } else if (imuResetTimer.seconds() >= coefficients.IMU_RELOCALIZATION_INTERVAL.in(Seconds)) {
+                setPoseEstimate(new Pose2d(getPoseEstimate().vec(), imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
+                imuResetTimer.reset();
+            }
+        }
+
         int leftPos = leftDeadwheel.getCurrentPosition();
         int rightPos = rightDeadwheel.getCurrentPosition();
         int frontPos = frontDeadwheel.getCurrentPosition();
@@ -188,8 +219,12 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
          * Whether to use corrected overflow counts if the TPS exceeds 32767.
          */
         public boolean USE_CORRECTED_COUNTS = false;
-
-        // TODO: https://github.com/Murray-Bridge-Bunyips/BunyipsLib/issues/56
+        /**
+         * The interval between IMU calls to recalculate the heading.
+         * This must be combined with a {@link #withRelocalizingIMU(IMU)} call on the ThreeWheelLocalizer if non-null.
+         */
+        @Nullable
+        public Measure<Time> IMU_RELOCALIZATION_INTERVAL = null;
 
         /**
          * Utility builder for creating new coefficients.
@@ -289,6 +324,21 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
              */
             public Builder setYMultiplier(double strafeMul) {
                 trackingWheelCoefficients.Y_MULTIPLIER = strafeMul;
+                return this;
+            }
+
+            /**
+             * Set the rate at which the IMU will set the pose estimate heading to the IMU reading for
+             * relocalization.
+             * <p>
+             * This must be combined with a {@link #withRelocalizingIMU(IMU)} call on the ThreeWheelLocalizer if active.
+             *
+             * @param interval the interval time. zero/negative time intervals will continuously set the heading,
+             *                 null will disable IMU interaction (default)
+             * @return The builder
+             */
+            public Builder setImuRelocalizationInterval(@Nullable Measure<Time> interval) {
+                trackingWheelCoefficients.IMU_RELOCALIZATION_INTERVAL = interval;
                 return this;
             }
 

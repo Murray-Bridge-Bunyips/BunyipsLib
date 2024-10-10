@@ -42,7 +42,7 @@ public class TriDeadwheelMecanumDrive extends MecanumDrive {
         super(constants, mecanumCoefficients, imu, frontLeft, frontRight, backLeft, backRight);
         if (!assertParamsNotNull(localizerCoefficients, enc_left, enc_right, enc_x, lastTrackingEncPositions, lastTrackingEncVels))
             return;
-        setLocalizer(new ThreeWheelLocalizer(localizerCoefficients, enc_left, enc_right, enc_x, lastTrackingEncPositions, lastTrackingEncVels));
+        setLocalizer(new ThreeWheelLocalizer(localizerCoefficients, enc_left, enc_right, enc_x, lastTrackingEncPositions, lastTrackingEncVels).withRelocalizingIMU(imu));
         updatePoseFromMemory();
     }
 
@@ -64,7 +64,7 @@ public class TriDeadwheelMecanumDrive extends MecanumDrive {
     public TriDeadwheelMecanumDrive(DriveConstants constants, MecanumCoefficients mecanumCoefficients, @Nullable IMU imu, DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight, ThreeWheelLocalizer.Coefficients localizerCoefficients, Deadwheel enc_left, Deadwheel enc_right, Deadwheel enc_x) {
         super(constants, mecanumCoefficients, imu, frontLeft, frontRight, backLeft, backRight);
         if (!assertParamsNotNull(localizerCoefficients, enc_left, enc_right, enc_x)) return;
-        setLocalizer(new ThreeWheelLocalizer(localizerCoefficients, enc_left, enc_right, enc_x));
+        setLocalizer(new ThreeWheelLocalizer(localizerCoefficients, enc_left, enc_right, enc_x).withRelocalizingIMU(imu));
         updatePoseFromMemory();
     }
 
@@ -72,7 +72,9 @@ public class TriDeadwheelMecanumDrive extends MecanumDrive {
      * Enable overflow compensation if your encoders exceed 32767 counts / second.
      *
      * @return this
+     * @deprecated overflow compensation is available as an option in the ThreeWheelLocalizer coefficients
      */
+    @Deprecated
     public TriDeadwheelMecanumDrive enableOverflowCompensation() {
         ThreeWheelLocalizer localizer = (ThreeWheelLocalizer) getLocalizer();
         if (localizer != null)
