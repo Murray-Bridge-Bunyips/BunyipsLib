@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Represents an object reference that may be reassigned.
@@ -12,7 +13,7 @@ import java.util.function.Consumer;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-public class Reference<V> {
+public class Reference<V> implements Supplier<V>, Consumer<V> {
     @Nullable
     private volatile V value;
 
@@ -84,6 +85,16 @@ public class Reference<V> {
      * @param value the new value of the reference
      */
     public void set(@Nullable V value) {
+        this.value = value;
+    }
+
+    /**
+     * Sets the value of the reference.
+     *
+     * @param value the new value of the reference
+     */
+    @Override
+    public void accept(V value) {
         this.value = value;
     }
 
