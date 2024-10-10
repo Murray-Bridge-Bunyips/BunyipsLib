@@ -5,9 +5,6 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Millisecon
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -15,7 +12,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.jetbrains.annotations.NotNull;
-import org.murraybridgebunyips.bunyipslib.drive.MecanumDrive;
+import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
+import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
@@ -25,6 +23,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 
+import java.util.Objects;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -43,14 +42,13 @@ import java.util.function.Supplier;
  * Note that user input overrides all, where the x or y inputs will both unlock both translational axes to avoid corrections that could be dangerous.
  * This caveat means that this task will make no effort to try and correct translational deviation when the robot is being commanded.
  * <p>
- * A RoadRunner drive is required for this class, as it will require the use of the pose estimate system and other
- * coefficients such as your PID. Therefore, the only supported class this task will work for is {@link MecanumDrive}.
+ * A localizer-attached holonomic drive is required for this class, as it will require the use of the pose estimate system.
  *
  * @author Lucas Bubner, 2024
  * @since 4.0.0
  */
 public class HolonomicVectorDriveTask extends ForeverTask {
-    private final MecanumDrive drive;
+    private final Moveable drive;
     private final Supplier<Float> x;
     private final Supplier<Float> y;
     private final Supplier<Float> r;
@@ -75,19 +73,24 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      * @param xSupplier           The supplier for the Cartesian x-axis input
      * @param ySupplier           The supplier for the Cartesian y-axis input, <i>note that this will be inverted</i>
      * @param rSupplier           The supplier for the clockwise rotation input
-     * @param mecanumDrive        The MecanumDrive to use
+     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *                            if possible. A localizer attached is required.
      * @param fieldCentricEnabled A BooleanSupplier that returns whether field centric drive is enabled
      */
-    public HolonomicVectorDriveTask(Supplier<Float> xSupplier, Supplier<Float> ySupplier, Supplier<Float> rSupplier, @NotNull MecanumDrive mecanumDrive, BooleanSupplier fieldCentricEnabled) {
-        onSubsystem(mecanumDrive, false);
-        drive = mecanumDrive;
+    public HolonomicVectorDriveTask(Supplier<Float> xSupplier, Supplier<Float> ySupplier, Supplier<Float> rSupplier, @NotNull Moveable drive, BooleanSupplier fieldCentricEnabled) {
+        if (drive instanceof BunyipsSubsystem)
+            onSubsystem((BunyipsSubsystem) drive, false);
+        this.drive = drive;
         x = xSupplier;
         y = ySupplier;
         r = rSupplier;
         this.fieldCentricEnabled = fieldCentricEnabled;
 
-        PIDCoefficients translationCoeffs = drive.getCoefficients().TRANSLATIONAL_PID;
-        PIDCoefficients rotationCoeffs = drive.getCoefficients().HEADING_PID;
+        // Sane defaults
+        PIDCoefficients translationCoeffs = new PIDCoefficients(0.1, 0, 0);
+        PIDCoefficients rotationCoeffs = new PIDCoefficients(1, 0, 0.0001);
+
         xController = new PIDController(translationCoeffs.kP, translationCoeffs.kI, translationCoeffs.kD);
         yController = new PIDController(translationCoeffs.kP, translationCoeffs.kI, translationCoeffs.kD);
         rController = new PIDController(rotationCoeffs.kP, rotationCoeffs.kI, rotationCoeffs.kD);
@@ -100,11 +103,13 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      * Left stick controls translation, right stick controls rotation.
      *
      * @param driver              The gamepad to use for driving
-     * @param mecanumDrive        The MecanumDrive to use
+     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *                            if possible. A localizer attached is required.
      * @param fieldCentricEnabled A BooleanSupplier that returns whether field centric drive is enabled
      */
-    public HolonomicVectorDriveTask(Gamepad driver, @NotNull MecanumDrive mecanumDrive, BooleanSupplier fieldCentricEnabled) {
-        this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, mecanumDrive, fieldCentricEnabled);
+    public HolonomicVectorDriveTask(Gamepad driver, @NotNull Moveable drive, BooleanSupplier fieldCentricEnabled) {
+        this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, fieldCentricEnabled);
     }
 
     /**
@@ -201,7 +206,8 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
     @Override
     protected void periodic() {
-        Pose2d current = drive.getPoseEstimate();
+        Pose2d current = Objects.requireNonNull(drive.getLocalizer(), "A localizer must be attached to the drive instance in order to use the HolonomicVectorDriveTask!")
+                .getPoseEstimate();
 
         // Create a new pose based off the user input, which will be the offset from the current pose.
         // Must rotate by 90 degrees (y, -x), then flip y as it is inverted. Rotation must also be inverted as it
@@ -253,7 +259,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         if (Mathf.isNear(Math.abs(angle), Math.PI, 0.1))
             angle = -Math.PI * Math.signum(rLockedError);
 
-        drive.setWeightedDrivePower(
+        drive.setPower(
                 new Pose2d(
                         vectorLock != null ? -xController.calculate(twistedXError) : userX,
                         vectorLock != null ? -yController.calculate(twistedYError) : userY,
@@ -261,20 +267,18 @@ public class HolonomicVectorDriveTask extends ForeverTask {
                 )
         );
 
-        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
-        Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
-        canvas.setStroke("#c91c00");
-        if (vectorLock != null)
-            canvas.strokeLine(current.getX(), current.getY(), vectorLock.getX(), vectorLock.getY());
-        if (headingLock != null)
-            DashboardUtil.drawRobot(canvas, new Pose2d(current.vec(), headingLock));
-        if (packet != null)
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        DashboardUtil.useCanvas(canvas -> {
+            canvas.setStroke("#c91c00");
+            if (vectorLock != null)
+                canvas.strokeLine(current.getX(), current.getY(), vectorLock.getX(), vectorLock.getY());
+            if (headingLock != null)
+                DashboardUtil.drawRobot(canvas, new Pose2d(current.vec(), headingLock));
+        });
     }
 
     @Override
     protected void onFinish() {
-        drive.stop();
+        drive.setPower(new Pose2d());
     }
 }
 

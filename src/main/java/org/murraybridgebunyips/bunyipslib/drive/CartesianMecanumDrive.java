@@ -14,6 +14,7 @@ import org.murraybridgebunyips.bunyipslib.Cartesian;
 import org.murraybridgebunyips.bunyipslib.Controls;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
 
 import java.util.Locale;
 
@@ -222,6 +223,13 @@ public class CartesianMecanumDrive extends BunyipsSubsystem implements Moveable 
         frontRight.setPower(frontRightPower);
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
+
+        if (localizer != null) {
+            DashboardUtil.useCanvas(canvas -> {
+                canvas.setStroke("#3F51B5");
+                DashboardUtil.drawRobot(canvas, localizer.getPoseEstimate());
+            });
+        }
 
         opMode(o -> o.telemetry.add(String.format(Locale.getDefault(), "Mecanum Drive: X: %.2f, Y: %.2f, R: %.2f", speedX, speedY, speedR)));
     }

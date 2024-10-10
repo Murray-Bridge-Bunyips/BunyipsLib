@@ -8,10 +8,7 @@ import static org.murraybridgebunyips.bunyipslib.tasks.bases.Task.INFINITE_TIMEO
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -299,42 +296,37 @@ public class PurePursuit implements Runnable {
                 Mathf.clamp(-p2pHeading.calculate(headingError, 0), -1, 1)
         ));
 
-        BunyipsOpMode opMode = BunyipsOpMode.isRunning() ? BunyipsOpMode.getInstance() : null;
-        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
-        Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
-
-        // Path drawing
-        canvas.setStroke("#7C4DFF");
-        DashboardUtil.drawSampledPath(canvas, currentPath);
-        // Circle at the end of the path
-        Pose2d end = currentPath.end();
-        canvas.setFill("#7C4DFF");
-        canvas.fillCircle(end.getX(), end.getY(), 2);
-        // Lookahead
-        canvas.setFill("#4CAF50");
-        canvas.setStroke("#4CAF50");
-        canvas.strokeLine(currentPose.getX(), currentPose.getY(), lookahead.getX(), lookahead.getY());
-        canvas.fillCircle(lookahead.getX(), lookahead.getY(), 1.5);
-        canvas.setStroke("#4CAF507F");
-        canvas.strokeCircle(currentPose.getX(), currentPose.getY(), laRadius.in(Inches));
-        // Lookahead path projection
-        canvas.setStroke("#DD2C0076");
-        canvas.setStrokeWidth(2);
-        canvas.strokeCircle(lookahead.getX(), lookahead.getY(), 4);
-        Vector2d v = lookahead.headingVec().times(4);
-        canvas.strokeLine(
-                lookahead.getX() + v.getX() / 2,
-                lookahead.getY() + v.getY() / 2,
-                lookahead.getX() + v.getX(),
-                lookahead.getY() + v.getY()
-        );
-        canvas.setStrokeWidth(1);
-        // P2P circle
-        canvas.setStroke("#4CAF507A");
-        canvas.strokeCircle(end.getX(), end.getY(), P2P_AT_END_INCHES);
-
-        if (packet != null)
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        DashboardUtil.useCanvas(canvas -> {
+            // Path drawing
+            canvas.setStroke("#7C4DFF");
+            DashboardUtil.drawSampledPath(canvas, currentPath);
+            // Circle at the end of the path
+            Pose2d end = currentPath.end();
+            canvas.setFill("#7C4DFF");
+            canvas.fillCircle(end.getX(), end.getY(), 2);
+            // Lookahead
+            canvas.setFill("#4CAF50");
+            canvas.setStroke("#4CAF50");
+            canvas.strokeLine(currentPose.getX(), currentPose.getY(), lookahead.getX(), lookahead.getY());
+            canvas.fillCircle(lookahead.getX(), lookahead.getY(), 1.5);
+            canvas.setStroke("#4CAF507F");
+            canvas.strokeCircle(currentPose.getX(), currentPose.getY(), laRadius.in(Inches));
+            // Lookahead path projection
+            canvas.setStroke("#DD2C0076");
+            canvas.setStrokeWidth(2);
+            canvas.strokeCircle(lookahead.getX(), lookahead.getY(), 4);
+            Vector2d v = lookahead.headingVec().times(4);
+            canvas.strokeLine(
+                    lookahead.getX() + v.getX() / 2,
+                    lookahead.getY() + v.getY() / 2,
+                    lookahead.getX() + v.getX(),
+                    lookahead.getY() + v.getY()
+            );
+            canvas.setStrokeWidth(1);
+            // P2P circle
+            canvas.setStroke("#4CAF507A");
+            canvas.strokeCircle(end.getX(), end.getY(), P2P_AT_END_INCHES);
+        });
 
         // Path position and heading tolerance finish condition check, which simply checks for the robot being close
         // to the end position. This is a simple check that is not perfect but is good enough for most cases, as

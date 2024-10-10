@@ -1,10 +1,12 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.jetbrains.annotations.NotNull;
+import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
-import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
+import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 
 /**
@@ -16,31 +18,32 @@ import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
  * @since 1.0.0-pre
  */
 public class DifferentialDriveTask extends ForeverTask {
-    private final TankDrive drive;
+    private final Moveable drive;
     private final Gamepad gamepad;
 
     /**
      * Constructs a new DifferentialDriveTask.
      *
      * @param gamepad the gamepad to use
-     * @param drive   the drive to control
+     * @param drive   the drive to control, this task may be attached on this BunyipsSubsystem if applicable
      */
-    public DifferentialDriveTask(Gamepad gamepad, @NotNull TankDrive drive) {
+    public DifferentialDriveTask(Gamepad gamepad, @NotNull Moveable drive) {
         this.drive = drive;
         this.gamepad = gamepad;
-        onSubsystem(drive, false);
+        if (drive instanceof BunyipsSubsystem)
+            onSubsystem((BunyipsSubsystem) drive, false);
         withName("Differential Control");
     }
 
     @Override
     protected void periodic() {
-        drive.setWeightedDrivePower(
+        drive.setPower(
                 Controls.makeRobotPose(gamepad.left_stick_y, 0, gamepad.right_stick_x)
         );
     }
 
     @Override
     protected void onFinish() {
-        drive.stop();
+        drive.setPower(new Pose2d());
     }
 }

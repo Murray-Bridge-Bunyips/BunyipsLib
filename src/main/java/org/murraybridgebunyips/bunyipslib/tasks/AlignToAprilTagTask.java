@@ -1,9 +1,6 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -15,6 +12,7 @@ import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
+import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
@@ -148,17 +146,13 @@ public class AlignToAprilTagTask extends Task {
         Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
         VectorF point = target.get().getMetadata().get().fieldPosition;
 
-        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
-        Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
-        canvas.setStroke("#dd2c00")
+        DashboardUtil.useCanvas(canvas -> canvas.setStroke("#dd2c00")
                 .strokeCircle(point.get(0), point.get(1), 2)
                 .setStroke("#b89eff")
                 .strokeLine(point.get(0), point.get(1), poseEstimate.getX(), poseEstimate.getY())
                 .setStroke("#ffce7a")
                 .strokeLine(point.get(0), point.get(1), point.get(0), poseEstimate.getY())
-                .strokeLine(point.get(0), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
-        if (packet != null)
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+                .strokeLine(point.get(0), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY()));
     }
 
     @Override

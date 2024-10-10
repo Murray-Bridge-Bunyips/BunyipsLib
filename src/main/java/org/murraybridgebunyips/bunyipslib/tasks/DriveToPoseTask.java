@@ -7,9 +7,6 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 
@@ -170,14 +167,12 @@ public class DriveToPoseTask extends Task {
                 )
         );
 
-        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
-        Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
-        canvas.setStroke("#c91c00")
-                .strokeLine(estimatedPose.getX(), estimatedPose.getY(), targetPose.getX(), targetPose.getY());
-        canvas.setStroke("#4CAF50");
-        DashboardUtil.drawRobot(canvas, targetPose);
-        if (packet != null)
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        DashboardUtil.useCanvas(canvas -> {
+            canvas.setStroke("#c91c00")
+                    .strokeLine(estimatedPose.getX(), estimatedPose.getY(), targetPose.getX(), targetPose.getY());
+            canvas.setStroke("#4CAF50");
+            DashboardUtil.drawRobot(canvas, targetPose);
+        });
     }
 
     @Override

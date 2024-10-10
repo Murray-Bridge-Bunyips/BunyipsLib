@@ -3,9 +3,6 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Degrees;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
@@ -135,12 +132,10 @@ public class TurnTask extends Task {
         double errRad = Mathf.inputModulus(pose.getHeading(), -Math.PI, Math.PI) - angRad;
         powerIn.accept(new Pose2d(0, 0, pidf.calculate(Mathf.inputModulus(errRad, -Math.PI, Math.PI), 0)));
 
-        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
-        Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
-        canvas.setStroke("#4CAF50");
-        DashboardUtil.drawRobot(canvas, new Pose2d(pose.vec(), angRad));
-        if (packet != null)
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        DashboardUtil.useCanvas(canvas -> {
+            canvas.setStroke("#4CAF50");
+            DashboardUtil.drawRobot(canvas, new Pose2d(pose.vec(), angRad));
+        });
     }
 
     @Override
