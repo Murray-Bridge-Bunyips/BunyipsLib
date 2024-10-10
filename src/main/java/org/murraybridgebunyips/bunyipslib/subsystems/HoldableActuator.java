@@ -359,8 +359,8 @@ public class HoldableActuator extends BunyipsSubsystem {
             Dbg.warn(getClass(), "%Warning: Both limit switches were pressed at the same time. This indicates an impossible system state.", isDefaultName() ? "" : "(" + name + ") ");
         }
 
-        if ((motor.getCurrentPosition() < MIN_LIMIT && motorPower < 0.0) || (motor.getCurrentPosition() > MAX_LIMIT && motorPower > 0.0)) {
-            // Cancel any tasks that would move the actuator out of bounds
+        if (inputMode != Mode.HOMING && (motor.getCurrentPosition() < MIN_LIMIT && motorPower < 0.0) || (motor.getCurrentPosition() > MAX_LIMIT && motorPower > 0.0)) {
+            // Cancel any tasks that would move the actuator out of bounds by autonomous operation
             inputMode = Mode.USER;
             motorPower = 0.0;
         }
@@ -440,7 +440,8 @@ public class HoldableActuator extends BunyipsSubsystem {
         }
 
         /**
-         * Home the actuator based on encoders against a hard stop or limit switch.
+         * Home the actuator based on encoders against a hard stop or limit switch. This task ignores
+         * the lower and upper limits as defined by this class.
          *
          * @return a task to home the actuator
          */
@@ -494,6 +495,68 @@ public class HoldableActuator extends BunyipsSubsystem {
                     return inputMode != Mode.HOMING || (bottomedOut || velocityZeroed || sustainedOvercurrent);
                 }
             }.onSubsystem(HoldableActuator.this, true).withName("Return To Home");
+        }
+
+        /**
+         * Send the actuator to the top limit, using the constants for homing. This effectively is a
+         * home task, but instead runs in the opposite direction.
+         * <p>
+         * Note: Without an interrupt or top limit switch, this may be a dangerous task to call. Use with care, as
+         * this task is intended for homing operations in the opposite direction instead of simply travelling
+         * to some arbitrary limit while respecting the upper and lower bounds.
+         *
+         * @return a task to ceiling the actuator
+         */
+        public Task ceil() {
+            return new Task(HOMING_TIMEOUT) {
+                private ElapsedTime overcurrentTimer;
+                private double previousAmpAlert;
+                private double zeroHits;
+
+                @Override
+                protected void init() {
+                    previousAmpAlert = motor.getCurrentAlert(CurrentUnit.AMPS);
+                    // Stop now if the switch is already pressed
+                    if (topSwitch != null && topSwitch.isPressed()) {
+                        finishNow();
+                        return;
+                    }
+                    motor.setCurrentAlert(OVERCURRENT.in(Amps), CurrentUnit.AMPS);
+                    zeroHits = 0;
+                    inputMode = Mode.HOMING;
+                }
+
+                @Override
+                protected void periodic() {
+                    if (ZERO_HIT_THRESHOLD <= 0) return;
+                    if (motor.getVelocity() <= 0) {
+                        zeroHits++;
+                    } else {
+                        zeroHits = 0;
+                    }
+                }
+
+                @Override
+                protected void onFinish() {
+                    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    motor.setCurrentAlert(previousAmpAlert, CurrentUnit.AMPS);
+                    inputMode = Mode.USER;
+                }
+
+                @Override
+                protected boolean isTaskFinished() {
+                    boolean toppedOut = topSwitch != null && topSwitch.isPressed();
+                    boolean velocityZeroed = ZERO_HIT_THRESHOLD > 0 && zeroHits >= ZERO_HIT_THRESHOLD;
+                    boolean overCurrent = OVERCURRENT.magnitude() > 0 && motor.isOverCurrent();
+                    if (OVERCURRENT_TIME.magnitude() > 0 && overCurrent && overcurrentTimer == null) {
+                        overcurrentTimer = new ElapsedTime();
+                    } else if (!overCurrent) {
+                        overcurrentTimer = null;
+                    }
+                    boolean sustainedOvercurrent = overcurrentTimer != null && overcurrentTimer.seconds() >= OVERCURRENT_TIME.in(Seconds);
+                    return inputMode != Mode.HOMING || (toppedOut || velocityZeroed || sustainedOvercurrent);
+                }
+            }.onSubsystem(HoldableActuator.this, true).withName("Travel To Ceiling");
         }
 
         /**
