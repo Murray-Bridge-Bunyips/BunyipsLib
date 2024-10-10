@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.murraybridgebunyips.bunyipslib.Storage;
 import org.murraybridgebunyips.bunyipslib.drive.MecanumDrive;
+import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequence;
 import org.murraybridgebunyips.bunyipslib.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
@@ -32,7 +33,7 @@ import java.util.List;
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
  */
-public interface RoadRunnerDrive {
+public interface RoadRunnerDrive extends Moveable {
     /**
      * Set a remembered pose from memory in another OpMode.
      */
@@ -267,9 +268,15 @@ public interface RoadRunnerDrive {
      */
     Double getExternalHeadingVelocity();
 
+    @Override
+    default void setPower(Pose2d directionalPower) {
+        setDrivePower(directionalPower);
+    }
+
     /**
      * @return the localizer in use by this drive
      */
+    @Override
     Localizer getLocalizer();
 
     /**
