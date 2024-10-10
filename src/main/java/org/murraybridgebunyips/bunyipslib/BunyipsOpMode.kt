@@ -1,7 +1,6 @@
 package org.murraybridgebunyips.bunyipslib
 
 import android.graphics.Color
-import com.outoftheboxrobotics.photoncore.Photon
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.Blinker
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -41,8 +40,6 @@ import kotlin.math.abs
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-// FIXME: still broken
-//@Photon
 abstract class BunyipsOpMode : BOMInternal() {
     /**
      * The moving average timer for the OpMode, which is used to calculate time
