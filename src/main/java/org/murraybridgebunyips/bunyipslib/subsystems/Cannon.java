@@ -7,10 +7,13 @@ import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 /**
- * Class for a generic servo switch.
- * A whole new file is technically unnecessary, but we wanted to make a class named Cannon
- * <p></p>
+ * Class for a generic servo switch that may switch between two known states.
+ * A whole new file is technically unnecessary, but we wanted to make a class named Cannon.
+ * <p>
  * "Fire in the hole!"
+ * <p>
+ * This class is deprecated by {@link Switch}, which offers more functionality relating to single-servo subsystems,
+ * allowing movement beyond just two positions.
  *
  * @author Lachlan Paul, 2023
  * @author Lucas Bubner, 2023
