@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.firstinspires.ftc.robotcore.external.function.Consumer;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
+import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.pid.PController;
@@ -20,6 +21,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -41,14 +43,13 @@ public class TurnTask extends Task {
     /**
      * Construct a new TurnTask that will turn the robot to the given angle.
      *
-     * @param drive the RoadRunner drive instance to use, this subsystem will be automatically attached to the task
-     *              if it is a {@link BunyipsSubsystem}, note RoadRunner methods are not used in this task and are
-     *              only for localisation purposes
+     * @param drive the drive instance to use, this subsystem will be automatically attached to the task
+     *              if it is a {@link BunyipsSubsystem}
      * @param angle the angle to turn to, if this is a delta angle this will be counter-clockwise
      * @param delta if this angle is a delta from the current drive rotation at runtime
      */
-    public TurnTask(RoadRunnerDrive drive, Measure<Angle> angle, boolean delta) {
-        this(drive::setWeightedDrivePower, drive::getPoseEstimate, angle, delta);
+    public TurnTask(Moveable drive, Measure<Angle> angle, boolean delta) {
+        this(drive::setPower, Objects.requireNonNull(drive.getLocalizer(), "Drive instance requires a localizer attached to determine heading!")::getPoseEstimate, angle, delta);
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive);
     }

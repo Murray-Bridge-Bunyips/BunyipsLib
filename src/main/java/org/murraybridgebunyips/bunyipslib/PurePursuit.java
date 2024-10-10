@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.murraybridgebunyips.bunyipslib.drive.MecanumDrive;
+import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.drive.TankDrive;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
@@ -34,6 +35,7 @@ import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
 import org.murraybridgebunyips.bunyipslib.tasks.PurePursuitTask;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -115,11 +117,10 @@ public class PurePursuit implements Runnable {
     /**
      * Construct a new component to run Pure Pursuit pathing with.
      *
-     * @param drive the RoadRunner drive instance that will be used for localisation and controlling motors,
-     *              note that the trajectory system from RoadRunner is not utilised from this drive
+     * @param drive the drive instance that will be used for localisation and controlling motors
      */
-    public PurePursuit(RoadRunnerDrive drive) {
-        this(drive::setRotationPriorityWeightedDrivePower, drive::getPoseEstimate);
+    public PurePursuit(Moveable drive) {
+        this(drive::setPower, Objects.requireNonNull(drive.getLocalizer(), "A localizer must be attached to the drive instance in order to follow paths!")::getPoseEstimate);
         // We can auto extract PID coefficients from the drive instance if it is a MecanumDrive or TankDrive
         if (drive instanceof MecanumDrive) {
             MecanumDrive mecanumDrive = (MecanumDrive) drive;

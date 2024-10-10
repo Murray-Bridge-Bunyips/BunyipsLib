@@ -25,6 +25,7 @@ public interface Moveable {
 
     /**
      * Get the currently used localizer attached to this drive instance.
+     * This localizer must respect the Robot Coordinate System.
      *
      * @return the localizer in use, may be null in drives that do not offer a localizer
      */

@@ -11,11 +11,10 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
-import org.murraybridgebunyips.bunyipslib.EmergencyStop;
+import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
-import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
@@ -41,7 +40,7 @@ public class AlignToAprilTagTask extends Task {
      */
     public static int TARGET_TAG = -1;
 
-    private final RoadRunnerDrive drive;
+    private final Moveable drive;
     private final AprilTag at;
     private final PIDF controller;
     private DoubleSupplier x;
@@ -53,17 +52,16 @@ public class AlignToAprilTagTask extends Task {
      * Autonomous constructor.
      *
      * @param timeout    the timeout for the task
-     * @param drive      the drivetrain to use, must be a RoadRunnerDrive
+     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param at         the AprilTag processor to use
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(Measure<Time> timeout, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDF controller) {
+    public AlignToAprilTagTask(Measure<Time> timeout, Moveable drive, AprilTag at, int targetTag, PIDF controller) {
         super(timeout);
-        if (!(drive instanceof RoadRunnerDrive))
-            throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
-        onSubsystem(drive, false);
-        this.drive = (RoadRunnerDrive) drive;
+        if (drive instanceof BunyipsSubsystem)
+            onSubsystem((BunyipsSubsystem) drive, false);
+        this.drive = drive;
         this.at = at;
         TARGET_TAG = targetTag;
         this.controller = controller;
@@ -77,17 +75,16 @@ public class AlignToAprilTagTask extends Task {
      * @param xSupplier  x (strafe) value
      * @param ySupplier  y (forward) value
      * @param rSupplier  r (rotate) value
-     * @param drive      the drivetrain to use, must be a RoadRunnerDrive
+     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param at         the AprilTag processor to use
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDF controller) {
+    public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, Moveable drive, AprilTag at, int targetTag, PIDF controller) {
         super(INFINITE_TIMEOUT);
-        if (!(drive instanceof RoadRunnerDrive))
-            throw new EmergencyStop("AlignToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
-        onSubsystem(drive, false);
-        this.drive = (RoadRunnerDrive) drive;
+        if (drive instanceof BunyipsSubsystem)
+            onSubsystem((BunyipsSubsystem) drive, false);
+        this.drive = drive;
         this.at = at;
         TARGET_TAG = targetTag;
         x = xSupplier;
@@ -102,12 +99,12 @@ public class AlignToAprilTagTask extends Task {
      * Constructor for AlignToAprilTagTask using a default Mecanum binding.
      *
      * @param driver     The gamepad to use for driving
-     * @param drive      The MecanumDrive to use for driving
+     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param at         The AprilTag processor to use
      * @param targetTag  The tag to align to, -1 for any tag
      * @param controller The PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(Gamepad driver, BunyipsSubsystem drive, AprilTag at, int targetTag, PIDF controller) {
+    public AlignToAprilTagTask(Gamepad driver, Moveable drive, AprilTag at, int targetTag, PIDF controller) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, at, targetTag, controller);
     }
 
@@ -132,12 +129,12 @@ public class AlignToAprilTagTask extends Task {
         Optional<AprilTagData> target = data.stream().filter(p -> TARGET_TAG == -1 || p.getId() == TARGET_TAG).findFirst();
 
         if (!target.isPresent() || !target.get().isInLibrary()) {
-            drive.setWeightedDrivePower(pose);
+            drive.setPower(pose);
             return;
         }
 
         assert target.get().getFtcPose().isPresent() && target.get().getMetadata().isPresent();
-        drive.setWeightedDrivePower(
+        drive.setPower(
                 new Pose2d(
                         pose.getX(),
                         pose.getY(),
@@ -146,7 +143,9 @@ public class AlignToAprilTagTask extends Task {
         );
         hasCalculated = true;
 
-        Pose2d poseEstimate = drive.getPoseEstimate();
+        if (drive.getLocalizer() == null)
+            throw new IllegalStateException("A drive localizer must be present to use AlignToAprilTagTask!");
+        Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
         VectorF point = target.get().getMetadata().get().fieldPosition;
 
         TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;

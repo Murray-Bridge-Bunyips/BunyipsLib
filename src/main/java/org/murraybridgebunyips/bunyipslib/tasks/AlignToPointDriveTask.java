@@ -11,17 +11,16 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.EmergencyStop;
+import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
-import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 
 import java.util.function.Supplier;
 
 /**
- * TeleOp drive task to align to a global field coordinate using the RoadRunner localizer and PID.
- * Internally uses a feedforward based on the kV of the RoadRunner drive instance.
+ * TeleOp drive task to align to a global field coordinate using a localizer and PID.
+ * Internally uses a feedforward based the direction of the point.
  *
  * @author Lucas Bubner, 2024
  * @since 4.1.0
@@ -34,7 +33,7 @@ public class AlignToPointDriveTask extends ForeverTask {
     public static double VECTOR_DELTA_CUTOFF_INCHES = 6;
 
     private final PIDF controller;
-    private final RoadRunnerDrive drive;
+    private final Moveable drive;
 
     private final Supplier<Float> pX;
     private final Supplier<Float> pY;
@@ -49,15 +48,14 @@ public class AlignToPointDriveTask extends ForeverTask {
      *
      * @param passThroughPoseX   the pose X power to pass through to the drive
      * @param passThroughPoseY   the pose Y power to pass through to the drive
-     * @param drive              RoadRunner drive instance, must be a BunyipsSubsystem
+     * @param drive              drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      * @param rotationController rotation PID controller to use
      * @param point              the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(@Nullable Supplier<Float> passThroughPoseX, @Nullable Supplier<Float> passThroughPoseY, RoadRunnerDrive drive, PIDF rotationController, Supplier<Vector2d> point) {
+    public AlignToPointDriveTask(@Nullable Supplier<Float> passThroughPoseX, @Nullable Supplier<Float> passThroughPoseY, Moveable drive, PIDF rotationController, Supplier<Vector2d> point) {
         this.drive = drive;
-        if (!(drive instanceof BunyipsSubsystem))
-            throw new EmergencyStop("AlignToPointDriveTask must be used with a BunyipsSubsystem extending drive");
-        onSubsystem((BunyipsSubsystem) drive, false);
+        if (drive instanceof BunyipsSubsystem)
+            onSubsystem((BunyipsSubsystem) drive, false);
         pointSupplier = point;
         controller = rotationController;
         // Default tolerance is too low, will set minimum bound
@@ -75,10 +73,10 @@ public class AlignToPointDriveTask extends ForeverTask {
      *
      * @param passThroughTranslation the controller where the left stick will be used to pass translation pose
      * @param rotationController     rotation PID controller to use
-     * @param drive                  RoadRunner drive instance
+     * @param drive                  drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      * @param point                  the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(Gamepad passThroughTranslation, RoadRunnerDrive drive, PIDF rotationController, Supplier<Vector2d> point) {
+    public AlignToPointDriveTask(Gamepad passThroughTranslation, Moveable drive, PIDF rotationController, Supplier<Vector2d> point) {
         this(() -> -passThroughTranslation.left_stick_y, () -> -passThroughTranslation.left_stick_x, drive, rotationController, point);
     }
 
@@ -87,13 +85,14 @@ public class AlignToPointDriveTask extends ForeverTask {
      * <p>
      * This constructor will not permit active translation while the task is running, but is not recommended since
      * this is a TeleOp task with no end condition. Alternative solutions exist for aligning to a point in Autonomous
-     * (e.g. by method of trajectory, this task is designed for dynamic conditions to continuous alignment).
+     * (e.g. by method of {@link TurnTask}, as this task is designed for dynamic conditions to continuous alignment).
      *
+     * @param drive              drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      * @param rotationController rotation PID controller to use
      * @param point              the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(PIDF rotationController, Supplier<Vector2d> point) {
-        this(null, null, rotationController, point);
+    public AlignToPointDriveTask(Moveable drive, PIDF rotationController, Supplier<Vector2d> point) {
+        this(null, null, drive, rotationController, point);
     }
 
     /**
@@ -121,7 +120,9 @@ public class AlignToPointDriveTask extends ForeverTask {
     @Override
     protected void periodic() {
         // https://github.com/NoahBres/road-runner-quickstart/blob/advanced-examples/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/advanced/TeleOpAlignWithPoint.java
-        Pose2d poseEstimate = drive.getPoseEstimate();
+        if (drive.getLocalizer() == null)
+            throw new IllegalStateException("AlignToPointDriveTask requires a localizer to be attached to the drive system!");
+        Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
         Vector2d point = pointSupplier.get();
         if (!point.epsilonEquals(lastPoint)) {
             // Dynamically update the name of the task to match
@@ -144,17 +145,15 @@ public class AlignToPointDriveTask extends ForeverTask {
 
         // Set desired angular velocity to the heading controller output + angular
         // velocity feedforward
-        double headingInput = (controller.calculate(poseEstimate.getHeading(), theta)
-                * drive.getConstants().kV + thetaFF)
-                * drive.getConstants().TRACK_WIDTH;
+        double headingInput = controller.calculate(poseEstimate.getHeading(), theta) + thetaFF;
         headingInput = Mathf.clamp(headingInput, -maxRotation, maxRotation);
 
         // If we're at a discontinuity, we can't really do much so we should stop rotating
-        if (Double.isNaN(headingInput) || Mathf.isNear(0, drive.getPoseEstimate().vec().distTo(point), VECTOR_DELTA_CUTOFF_INCHES))
+        if (Double.isNaN(headingInput) || Mathf.isNear(0, drive.getLocalizer().getPoseEstimate().vec().distTo(point), VECTOR_DELTA_CUTOFF_INCHES))
             headingInput = 0;
 
         // Combine the x/y velocity with our derived angular velocity
-        drive.setRotationPriorityWeightedDrivePower(new Pose2d(fieldCentric ? robotFrameInput : fieldFrameInput, headingInput));
+        drive.setPower(new Pose2d(fieldCentric ? robotFrameInput : fieldFrameInput, headingInput));
 
         // Draw the target on the field with lines to the target
         TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;

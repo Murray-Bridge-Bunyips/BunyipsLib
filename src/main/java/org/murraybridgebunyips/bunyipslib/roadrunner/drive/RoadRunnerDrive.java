@@ -270,7 +270,7 @@ public interface RoadRunnerDrive extends Moveable {
 
     @Override
     default void setPower(Pose2d directionalPower) {
-        setDrivePower(directionalPower);
+        setWeightedDrivePower(directionalPower);
     }
 
     /**

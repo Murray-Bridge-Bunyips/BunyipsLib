@@ -15,11 +15,10 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
-import org.murraybridgebunyips.bunyipslib.EmergencyStop;
+import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
-import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
@@ -73,7 +72,7 @@ public class MoveToAprilTagTask extends Task {
      */
     public static int TARGET_TAG = -1;
 
-    private final RoadRunnerDrive drive;
+    private final Moveable drive;
     private final AprilTag aprilTag;
     private DoubleSupplier x;
     private DoubleSupplier y;
@@ -87,16 +86,15 @@ public class MoveToAprilTagTask extends Task {
      * Autonomous constructor.
      *
      * @param timeout   the timeout for the task
-     * @param drive     the drivetrain to use, must be a RoadRunnerDrive
+     * @param drive     the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */
-    public MoveToAprilTagTask(Measure<Time> timeout, BunyipsSubsystem drive, AprilTag aprilTag, int targetTag) {
+    public MoveToAprilTagTask(Measure<Time> timeout, Moveable drive, AprilTag aprilTag, int targetTag) {
         super(timeout);
-        if (!(drive instanceof RoadRunnerDrive))
-            throw new EmergencyStop("MoveToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
-        onSubsystem(drive, false);
-        this.drive = (RoadRunnerDrive) drive;
+        if (drive instanceof BunyipsSubsystem)
+            onSubsystem((BunyipsSubsystem) drive, false);
+        this.drive = drive;
         this.aprilTag = aprilTag;
         TARGET_TAG = targetTag;
         withName("Move to AprilTag");
@@ -108,15 +106,14 @@ public class MoveToAprilTagTask extends Task {
      * @param xSupplier x (strafe) value
      * @param ySupplier y (forward) value
      * @param rSupplier r (rotate) value
-     * @param drive     the drivetrain to use, must be a RoadRunnerDrive
+     * @param drive     the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */
-    public MoveToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, BunyipsSubsystem drive, AprilTag aprilTag, int targetTag) {
-        if (!(drive instanceof RoadRunnerDrive))
-            throw new EmergencyStop("MoveToAprilTagTask must be used with a drivetrain with X forward Pose/IMU info");
-        onSubsystem(drive, false);
-        this.drive = (RoadRunnerDrive) drive;
+    public MoveToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, Moveable drive, AprilTag aprilTag, int targetTag) {
+        if (drive instanceof BunyipsSubsystem)
+            onSubsystem((BunyipsSubsystem) drive, false);
+        this.drive = drive;
         this.aprilTag = aprilTag;
         x = xSupplier;
         y = ySupplier;
@@ -129,11 +126,11 @@ public class MoveToAprilTagTask extends Task {
      * TeleOp constructor using a default Mecanum binding.
      *
      * @param gamepad   the gamepad to use for driving
-     * @param drive     the drivetrain to use, must be a RoadRunnerDrive
+     * @param drive     the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */
-    public MoveToAprilTagTask(Gamepad gamepad, BunyipsSubsystem drive, AprilTag aprilTag, int targetTag) {
+    public MoveToAprilTagTask(Gamepad gamepad, Moveable drive, AprilTag aprilTag, int targetTag) {
         this(() -> gamepad.left_stick_x, () -> gamepad.left_stick_y, () -> gamepad.right_stick_x, drive, aprilTag, targetTag);
     }
 
@@ -239,7 +236,7 @@ public class MoveToAprilTagTask extends Task {
 
         Optional<AprilTagData> target = data.stream().filter(p -> TARGET_TAG == -1 || p.getId() == TARGET_TAG).findFirst();
         if (!target.isPresent() || !target.get().isInLibrary()) {
-            drive.setWeightedDrivePower(pose);
+            drive.setPower(pose);
             return;
         }
 
@@ -249,7 +246,7 @@ public class MoveToAprilTagTask extends Task {
         yawError = -camPose.yaw * STRAFE_GAIN;
         headingError = camPose.bearing * TURN_GAIN;
 
-        drive.setWeightedDrivePower(
+        drive.setPower(
                 new Pose2d(
                         Range.clip(rangeError, -MAX_AUTO_SPEED, MAX_AUTO_SPEED),
                         Range.clip(yawError, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE),
@@ -257,7 +254,9 @@ public class MoveToAprilTagTask extends Task {
                 )
         );
 
-        Pose2d poseEstimate = drive.getPoseEstimate();
+        if (drive.getLocalizer() == null)
+            throw new IllegalStateException("A drive localizer must be present to use MoveToAprilTagTask!");
+        Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
         VectorF point = target.get().getMetadata().get().fieldPosition;
 
         TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;

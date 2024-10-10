@@ -5,11 +5,12 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
 
+import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
-import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.Deadwheel;
 
 import java.util.Arrays;
@@ -50,7 +51,7 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
     private final Deadwheel perpendicularDeadwheel;
     private final double xMul;
     private final double yMul;
-    private final RoadRunnerDrive drive;
+    private final Localizer localizer;
     private boolean usingOverflowCompensation;
 
     /**
@@ -59,15 +60,27 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
      * @param coefficients           The coefficients to use
      * @param parallelDeadwheel      The parallel encoder
      * @param perpendicularDeadwheel The perpendicular encoder
-     * @param drive                  The drivetrain
+     * @param drive                  The drivetrain which will be used to obtain heading information from
      */
-    public TwoWheelLocalizer(TwoWheelLocalizer.Coefficients coefficients, Deadwheel parallelDeadwheel, Deadwheel perpendicularDeadwheel, RoadRunnerDrive drive) {
+    public TwoWheelLocalizer(TwoWheelLocalizer.Coefficients coefficients, Deadwheel parallelDeadwheel, Deadwheel perpendicularDeadwheel, Moveable drive) {
+        this(coefficients, parallelDeadwheel, perpendicularDeadwheel, drive.getLocalizer());
+    }
+
+    /**
+     * Create a new TwoWheelLocalizer.
+     *
+     * @param coefficients           The coefficients to use
+     * @param parallelDeadwheel      The parallel encoder
+     * @param perpendicularDeadwheel The perpendicular encoder
+     * @param headingLocalizer       The localizer to use for heading information
+     */
+    public TwoWheelLocalizer(TwoWheelLocalizer.Coefficients coefficients, Deadwheel parallelDeadwheel, Deadwheel perpendicularDeadwheel, Localizer headingLocalizer) {
         super(Arrays.asList(
                 new Pose2d(coefficients.PARALLEL_X, coefficients.PARALLEL_Y, 0),
                 new Pose2d(coefficients.PERPENDICULAR_X, coefficients.PERPENDICULAR_Y, Math.toRadians(90))
         ));
 
-        this.drive = drive;
+        localizer = headingLocalizer;
         this.coefficients = coefficients;
         if (this.coefficients.USE_CORRECTED_COUNTS)
             enableOverflowCompensation();
@@ -105,12 +118,13 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
 
     @Override
     public double getHeading() {
-        return drive.getRawExternalHeading();
+        return localizer.getPoseEstimate().getHeading();
     }
 
     @Override
     public Double getHeadingVelocity() {
-        return drive.getExternalHeadingVelocity();
+        Pose2d velo = localizer.getPoseVelocity();
+        return velo != null ? velo.getHeading() : 0.0;
     }
 
     @NonNull

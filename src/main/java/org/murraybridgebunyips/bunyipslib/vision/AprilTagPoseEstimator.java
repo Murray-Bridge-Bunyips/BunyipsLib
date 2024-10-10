@@ -3,8 +3,11 @@ package org.murraybridgebunyips.bunyipslib.vision;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.localization.Localizer;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -16,14 +19,15 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.Filter;
+import org.murraybridgebunyips.bunyipslib.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
-import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Combines an AprilTag processor and RoadRunner drive to supply updates in pose estimation.
@@ -33,7 +37,7 @@ import java.util.ArrayList;
  */
 public class AprilTagPoseEstimator implements Runnable {
     private final AprilTag processor;
-    private final RoadRunnerDrive drive;
+    private final Localizer localizer;
 
     private Filter.Kalman xf;
     private Filter.Kalman yf;
@@ -54,11 +58,27 @@ public class AprilTagPoseEstimator implements Runnable {
      * Adjust this using {@link #setCameraOffset}.
      *
      * @param processor AprilTag processor to use for pose estimation, must be attached to Vision and running
-     * @param drive     RoadRunner drive
+     * @param drive     the drive localizer to use for pose information
      */
-    public AprilTagPoseEstimator(AprilTag processor, RoadRunnerDrive drive) {
+    public AprilTagPoseEstimator(AprilTag processor, Moveable drive) {
+        this(processor, Objects.requireNonNull(drive.getLocalizer(), "Non-null localizer required to be attached to the drive instance"));
+    }
+
+    /**
+     * Constructor for AprilTagPoseEstimator.
+     * <p>
+     * Note that the option to also update heading based off these readings is enabled by default.
+     * Disable with {@link #setHeadingEstimate}.
+     * <p>
+     * Also note that by default, this pose estimator will assume the camera is exactly at the center of the robot, facing forward.
+     * Adjust this using {@link #setCameraOffset}.
+     *
+     * @param processor AprilTag processor to use for pose estimation, must be attached to Vision and running
+     * @param localizer the localizer to use for pose information
+     */
+    public AprilTagPoseEstimator(AprilTag processor, @NonNull Localizer localizer) {
         this.processor = processor;
-        this.drive = drive;
+        this.localizer = localizer;
         setKalmanGains(4, 1.0e-3);
 
         BunyipsOpMode.ifRunning(opMode -> {
@@ -77,10 +97,27 @@ public class AprilTagPoseEstimator implements Runnable {
      * Adjust this using {@link #setCameraOffset}.
      *
      * @param processor AprilTag processor to use for pose estimation, must be attached to Vision and running
-     * @param drive     RoadRunner drive
+     * @param localizer the localizer to use for pose information
      * @return a new AprilTagPoseEstimator instance
      */
-    public static AprilTagPoseEstimator enable(AprilTag processor, RoadRunnerDrive drive) {
+    public static AprilTagPoseEstimator enable(AprilTag processor, @NonNull Localizer localizer) {
+        return new AprilTagPoseEstimator(processor, localizer);
+    }
+
+    /**
+     * Create a new AprilTagPoseEstimator runner.
+     * <p>
+     * Note that the option to also update heading based off these readings is enabled by default.
+     * Disable with {@link #setHeadingEstimate}.
+     * <p>
+     * Also note that by default, this pose estimator will assume the camera is exactly at the center of the robot, facing forward.
+     * Adjust this using {@link #setCameraOffset}.
+     *
+     * @param processor AprilTag processor to use for pose estimation, must be attached to Vision and running
+     * @param drive     the drive localizer to use for pose information
+     * @return a new AprilTagPoseEstimator instance
+     */
+    public static AprilTagPoseEstimator enable(AprilTag processor, Moveable drive) {
         return new AprilTagPoseEstimator(processor, drive);
     }
 
@@ -174,7 +211,7 @@ public class AprilTagPoseEstimator implements Runnable {
         if (!active || !processor.isRunning())
             return;
 
-        Pose2d poseEstimate = drive.getPoseEstimate().minus(previousOffset);
+        Pose2d poseEstimate = localizer.getPoseEstimate().minus(previousOffset);
         ArrayList<AprilTagData> data = processor.getData();
         if (data.isEmpty())
             return;
@@ -237,7 +274,7 @@ public class AprilTagPoseEstimator implements Runnable {
             previousOffset = kfPose.minus(poseEstimate);
 
             // Apply the new pose
-            drive.setPoseEstimate(kfPose);
+            localizer.setPoseEstimate(kfPose);
 
             // Stop searching as we have a new pose
             break;
