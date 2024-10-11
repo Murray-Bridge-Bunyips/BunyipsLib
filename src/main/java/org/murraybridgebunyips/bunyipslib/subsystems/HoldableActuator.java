@@ -295,6 +295,8 @@ public class HoldableActuator extends BunyipsSubsystem {
     public HoldableActuator enableUserSetpointControl(DoubleSupplier setpointDeltaMultiplier) {
         this.setpointDeltaMultiplier = setpointDeltaMultiplier;
         userControlsSetpoint = true;
+        if (inputMode == Mode.USER_POWER)
+            inputMode = Mode.USER_SETPOINT;
         return this;
     }
 
@@ -359,7 +361,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 opMode(o -> o.telemetry.add("%: % at % ticks [%tps]", name, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", motor.getCurrentPosition(), Math.round(motor.getVelocity())));
                 break;
             case USER_SETPOINT:
-                motor.setTargetPosition((int) Math.round(motor.getCurrentPosition() + userPower * setpointDeltaMultiplier.getAsDouble()));
+                motor.setTargetPosition((int) Math.round(motor.getTargetPosition() + userPower * setpointDeltaMultiplier.getAsDouble()));
                 motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 boolean systemResponse = motor.isBusy();
                 motorPower = systemResponse ? MOVING_POWER : HOLDING_POWER;
