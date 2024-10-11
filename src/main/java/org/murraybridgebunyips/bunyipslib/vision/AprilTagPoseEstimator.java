@@ -20,6 +20,7 @@ import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.Filter;
 import org.murraybridgebunyips.bunyipslib.drive.Moveable;
+import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
@@ -256,13 +257,16 @@ public class AprilTagPoseEstimator implements Runnable {
                 // in the vector calculation above
                 heading = Math.PI / 2.0 + tagRotation - Math.toRadians(camPose.yaw) - cameraRobotOffset.getHeading();
             }
-            Pose2d atPoseEstimate = new Pose2d(pos.getX(), pos.getY(), heading);
+            Pose2d atPoseEstimate = new Pose2d(pos.getX(), pos.getY(), Mathf.inputModulus(heading, 0, 2 * Math.PI));
 
             // Apply Kalman filters to the vector components
             Pose2d kfPose = new Pose2d(
                     xf.calculate(poseEstimate.getX(), atPoseEstimate.getX()),
                     yf.calculate(poseEstimate.getY(), atPoseEstimate.getY()),
-                    updateHeading ? rf.calculate(poseEstimate.getHeading(), atPoseEstimate.getHeading()) : poseEstimate.getHeading()
+                    updateHeading ? rf.calculate(
+                            Mathf.inputModulus(poseEstimate.getHeading(), -Math.PI, Math.PI),
+                            Mathf.inputModulus(atPoseEstimate.getHeading(), -Math.PI, Math.PI)
+                    ) : poseEstimate.getHeading()
             );
 
             // Avoid spamming the logs by logging the events that are over an inch away from the current estimate
