@@ -24,12 +24,12 @@ import java.util.function.Supplier
  */
 class MecanumLocalizer @JvmOverloads constructor(
     private val trackWidthInches: Double,
-    private val wheelBaseInches: Double = trackWidthInches,
-    private val lateralMultiplier: Double = 1.0,
     private val ticksToInches: UnaryFunction,
     private val wheelPositions: Supplier<List<Number>>,
+    private val headingSensor: Pair<Supplier<Double>, Supplier<Double>?>? = null,
     private val wheelVelocities: Supplier<List<Number>>? = null,
-    private val headingSensor: Pair<Supplier<Double>, Supplier<Double>?>? = null
+    private val lateralMultiplier: Double = 1.0,
+    private val wheelBaseInches: Double = trackWidthInches,
 ) : Localizer {
     private var offset: Double = 0.0
     private var _poseEstimate = Pose2d()

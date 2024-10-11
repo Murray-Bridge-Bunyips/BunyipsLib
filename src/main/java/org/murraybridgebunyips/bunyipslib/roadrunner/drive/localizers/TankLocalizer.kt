@@ -23,8 +23,8 @@ class TankLocalizer @JvmOverloads constructor(
     private val trackWidthInches: Double,
     private val ticksToInches: UnaryFunction,
     private val wheelPositions: Supplier<List<Number>>,
+    private val headingSensor: Pair<Supplier<Double>, Supplier<Double>?>? = null,
     private val wheelVelocities: Supplier<List<Number>>? = null,
-    private val headingSensor: Pair<Supplier<Double>, Supplier<Double>?>? = null
 ) : Localizer {
     private var offset: Double = 0.0
     private var _poseEstimate = Pose2d()
