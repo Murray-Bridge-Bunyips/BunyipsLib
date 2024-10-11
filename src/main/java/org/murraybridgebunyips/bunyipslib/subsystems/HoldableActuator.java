@@ -324,6 +324,10 @@ public class HoldableActuator extends BunyipsSubsystem {
 
     @Override
     protected void periodic() {
+        double current = motor.getCurrentPosition();
+        double target = motor.getTargetPosition();
+        double newTarget = -1;
+
         switch (inputMode) {
             case AUTO:
                 // Paranoia safety guard to ensure the motor does not enter RUN_TO_POSITION mode without a target
@@ -335,8 +339,8 @@ public class HoldableActuator extends BunyipsSubsystem {
                     setInputModeToUser();
                     break;
                 }
-                motorPower = MOVING_POWER;
-                opMode(o -> o.telemetry.add("%: <font color='#FF5F1F'>MOVING -> %/% ticks</font> [%tps]", name, motor.getCurrentPosition(), motor.getTargetPosition(), Math.round(motor.getVelocity())));
+                motorPower = MOVING_POWER * Math.signum(target - current);
+                opMode(o -> o.telemetry.add("%: <font color='#FF5F1F'>MOVING -> %/% ticks</font> [%tps]", name, current, target, Math.round(motor.getVelocity())));
                 break;
             case HOMING:
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -347,25 +351,24 @@ public class HoldableActuator extends BunyipsSubsystem {
                 if (userPower == 0.0) {
                     // Hold arm in place
                     if (!userLatch) {
-                        motor.setTargetPosition(motor.getCurrentPosition());
+                        newTarget = current;
                         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         userLatch = true;
                     }
-                    motorPower = HOLDING_POWER;
+                    motorPower = HOLDING_POWER * Math.signum(target - current);
                 } else {
                     userLatch = false;
                     // Move arm in accordance with the user's input
                     motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     motorPower = userPower;
                 }
-                opMode(o -> o.telemetry.add("%: % at % ticks [%tps]", name, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", motor.getCurrentPosition(), Math.round(motor.getVelocity())));
+                opMode(o -> o.telemetry.add("%: % at % ticks [%tps]", name, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", current, Math.round(motor.getVelocity())));
                 break;
             case USER_SETPOINT:
-                motor.setTargetPosition((int) Math.round(motor.getTargetPosition() + userPower * setpointDeltaMultiplier.getAsDouble()));
-                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                newTarget = target + userPower * setpointDeltaMultiplier.getAsDouble();
                 boolean systemResponse = motor.isBusy();
-                motorPower = systemResponse ? MOVING_POWER : HOLDING_POWER;
-                opMode(o -> o.telemetry.add("%: % at % ticks, % error [%tps]", name, !systemResponse ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", motor.getCurrentPosition(), motor.getTargetPosition() - motor.getCurrentPosition(), Math.round(motor.getVelocity())));
+                motorPower = (systemResponse ? MOVING_POWER : HOLDING_POWER) * Math.signum(target - current);
+                opMode(o -> o.telemetry.add("%: % at % ticks, % error [%tps]", name, !systemResponse ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, target - current, Math.round(motor.getVelocity())));
                 break;
         }
 
@@ -374,11 +377,14 @@ public class HoldableActuator extends BunyipsSubsystem {
                 // Cancel and stop any tasks that would move the actuator out of bounds as defined by the limit switch
                 setInputModeToUser();
                 motorPower = 0;
+                if (target < 0)
+                    newTarget = 0;
             }
 
             if (bottomSwitch.isPressed() && !zeroed) {
                 DcMotor.RunMode prev = motor.getMode();
                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                // Must propagate now as we're switching the mode
                 motor.setTargetPosition(0);
                 motor.setMode(prev);
                 // Ensure we only run the reset once every time the switch is pressed
@@ -392,18 +398,24 @@ public class HoldableActuator extends BunyipsSubsystem {
         if (topSwitch != null && topSwitch.isPressed() && motorPower > 0) {
             setInputModeToUser();
             motorPower = 0;
+            if (target > current)
+                newTarget = current;
         }
 
         if (topSwitch != null && bottomSwitch != null && topSwitch.isPressed() && bottomSwitch.isPressed()) {
             Dbg.warn(getClass(), "%Warning: Both limit switches were pressed at the same time. This indicates an impossible system state.", isDefaultName() ? "" : "(" + name + ") ");
         }
 
-        if (inputMode != Mode.HOMING && (motor.getCurrentPosition() < MIN_LIMIT && motorPower < 0.0) || (motor.getCurrentPosition() > MAX_LIMIT && motorPower > 0.0)) {
+        if (inputMode != Mode.HOMING && ((current < MIN_LIMIT && motorPower < 0.0) || (current > MAX_LIMIT && motorPower > 0.0))) {
             // Cancel any tasks that would move the actuator out of bounds by autonomous operation
             setInputModeToUser();
             motorPower = 0.0;
         }
 
+        if (newTarget != -1) {
+            motor.setTargetPosition((int) Math.round(newTarget));
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
         motor.setPower(Mathf.clamp(motorPower, LOWER_POWER, UPPER_POWER));
     }
 
