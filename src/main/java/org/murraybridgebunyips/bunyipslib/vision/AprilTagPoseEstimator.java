@@ -236,10 +236,6 @@ public class AprilTagPoseEstimator implements Runnable {
             double tagY = tagPos.get(1);
             double tagRotation = metadata.distanceUnit.toInches(tagOri.thirdAngle);
             // 2D transformation matrix
-            // x' = x * cos(t) - y * sin(t)
-            // y' = x * sin(t) + y * cos(t)
-            // where t=0 yields (-y, x) for a 90 degree default rotation to accommodate for the 90 degree offset
-            // between RoadRunner pose and the FTC Global Coordinate system.
             double relativeX = camPose.x * Math.cos(tagRotation) - camPose.y * Math.sin(tagRotation);
             double relativeY = camPose.x * Math.sin(tagRotation) + camPose.y * Math.cos(tagRotation);
             // Displacement vector
@@ -257,7 +253,7 @@ public class AprilTagPoseEstimator implements Runnable {
                 // in the vector calculation above
                 heading = Math.PI / 2.0 + tagRotation - Math.toRadians(camPose.yaw) - cameraRobotOffset.getHeading();
             }
-            Pose2d atPoseEstimate = new Pose2d(pos.getX(), pos.getY(), Mathf.inputModulus(heading, 0, 2 * Math.PI));
+            Pose2d atPoseEstimate = new Pose2d(pos.getX(), pos.getY(), Mathf.inputModulus(heading, -Math.PI, Math.PI));
 
             // Apply Kalman filters to the vector components
             Pose2d kfPose = new Pose2d(
@@ -270,7 +266,7 @@ public class AprilTagPoseEstimator implements Runnable {
             );
 
             // Avoid spamming the logs by logging the events that are over an inch away from the current estimate
-            if (poseEstimate.vec().distTo(atPoseEstimate.vec()) >= 1)
+            if (poseEstimate.vec().distTo(kfPose.vec()) >= 1)
                 Dbg.logd(getClass(), "Updated pose based on AprilTag ID#%, %,%->%", aprilTag.getId(), poseEstimate, atPoseEstimate, kfPose);
 
             // Use an unmodified pose as the one we actually calculate otherwise we'll oscillate around the target
