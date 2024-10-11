@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.kinematics.Kinematics
 import com.acmerobotics.roadrunner.kinematics.TankKinematics
 import com.acmerobotics.roadrunner.localization.Localizer
 import com.acmerobotics.roadrunner.util.Angle
-import org.murraybridgebunyips.bunyipslib.Reference
+import org.murraybridgebunyips.bunyipslib.external.Mathf
 import org.murraybridgebunyips.bunyipslib.external.units.UnaryFunction
 import java.util.function.Supplier
 
@@ -16,7 +16,7 @@ import java.util.function.Supplier
  * @param ticksToInches conversion function for all the encoders to convert ticks to inches, see `EncoderTicks.toInches`
  * @param wheelPositions 2-wide list supplier as calculated by the average position of all left and all right wheels
  * @param wheelVelocities optional wheel position deltas or wheel velocities in the sequence of [wheelPositions]
- * @param headingSensor external heading supplier/consumer + external heading velocity supplier, *in radians*
+ * @param headingSensor external heading supplier + external heading velocity supplier, *in radians*
  * @since 5.1.0
  */
 class TankLocalizer @JvmOverloads constructor(
@@ -24,19 +24,16 @@ class TankLocalizer @JvmOverloads constructor(
     private val ticksToInches: UnaryFunction,
     private val wheelPositions: Supplier<List<Number>>,
     private val wheelVelocities: Supplier<List<Number>>? = null,
-    private val headingSensor: Pair<Reference<Double>, Supplier<Double>>? = null
+    private val headingSensor: Pair<Supplier<Double>, Supplier<Double>?>? = null
 ) : Localizer {
-    init {
-        headingSensor?.first?.setIfNotPresent(0.0)
-    }
-
+    private var offset: Double = 0.0
     private var _poseEstimate = Pose2d()
     override var poseEstimate: Pose2d
         get() = _poseEstimate
         set(value) {
             lastWheelPositions = emptyList()
             lastExtHeading = Double.NaN
-            headingSensor?.first?.set(value.heading)
+            offset = value.heading
             _poseEstimate = value
         }
     override var poseVelocity: Pose2d? = null
@@ -46,7 +43,8 @@ class TankLocalizer @JvmOverloads constructor(
 
     override fun update() {
         val wheelPositions = wheelPositions.get().map { ticksToInches.apply(it.toDouble()) }
-        val extHeading = headingSensor?.first?.require() ?: Double.NaN
+        val extHeading = headingSensor?.first?.get()
+            ?.plus(offset)?.let { v -> Mathf.inputModulus(v, 0.0, 2.0 * Math.PI) } ?: Double.NaN
         if (lastWheelPositions.isNotEmpty()) {
             val wheelDeltas = wheelPositions
                 .zip(lastWheelPositions)
@@ -66,13 +64,13 @@ class TankLocalizer @JvmOverloads constructor(
         val wheelVelocities = wheelVelocities?.get()?.map { ticksToInches.apply(it.toDouble()) }
         val extHeadingVel = headingSensor?.second?.get()
         if (wheelVelocities != null) {
-            poseVelocity = TankKinematics.wheelToRobotVelocities(wheelVelocities.map { it }, trackWidthInches)
+            poseVelocity = TankKinematics.wheelToRobotVelocities(wheelVelocities, trackWidthInches)
             if (headingSensor != null && extHeadingVel != null) {
                 poseVelocity = Pose2d(poseVelocity!!.vec(), extHeadingVel)
             }
         }
 
-        lastWheelPositions = wheelPositions.map { it }
+        lastWheelPositions = wheelPositions
         lastExtHeading = extHeading
     }
 }

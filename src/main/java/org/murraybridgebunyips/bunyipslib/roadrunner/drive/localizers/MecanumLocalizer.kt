@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.kinematics.Kinematics
 import com.acmerobotics.roadrunner.kinematics.MecanumKinematics
 import com.acmerobotics.roadrunner.localization.Localizer
 import com.acmerobotics.roadrunner.util.Angle
-import org.murraybridgebunyips.bunyipslib.Reference
+import org.murraybridgebunyips.bunyipslib.external.Mathf
 import org.murraybridgebunyips.bunyipslib.external.units.UnaryFunction
 import java.util.function.Supplier
 
@@ -19,7 +19,7 @@ import java.util.function.Supplier
  * @param ticksToInches conversion function for all the encoders to convert ticks to inches, see `EncoderTicks.toInches`
  * @param wheelPositions raw current positions of all four wheels, in order `frontLeft`, `backLeft`, `backRight`, `frontRight`
  * @param wheelVelocities optional wheel position deltas or raw wheel velocities of all four wheels in the order of [wheelPositions]
- * @param headingSensor external heading supplier/consumer + external heading velocity supplier, *in radians*
+ * @param headingSensor external heading supplier + external heading velocity supplier, *in radians*
  * @since 5.1.0
  */
 class MecanumLocalizer @JvmOverloads constructor(
@@ -29,19 +29,16 @@ class MecanumLocalizer @JvmOverloads constructor(
     private val ticksToInches: UnaryFunction,
     private val wheelPositions: Supplier<List<Number>>,
     private val wheelVelocities: Supplier<List<Number>>? = null,
-    private val headingSensor: Pair<Reference<Double>, Supplier<Double>>? = null
+    private val headingSensor: Pair<Supplier<Double>, Supplier<Double>?>? = null
 ) : Localizer {
-    init {
-        headingSensor?.first?.setIfNotPresent(0.0)
-    }
-
+    private var offset: Double = 0.0
     private var _poseEstimate = Pose2d()
     override var poseEstimate: Pose2d
         get() = _poseEstimate
         set(value) {
             lastWheelPositions = emptyList()
             lastExtHeading = Double.NaN
-            headingSensor?.first?.set(value.heading)
+            offset = value.heading
             _poseEstimate = value
         }
     override var poseVelocity: Pose2d? = null
@@ -51,7 +48,8 @@ class MecanumLocalizer @JvmOverloads constructor(
 
     override fun update() {
         val wheelPositions = wheelPositions.get().map { ticksToInches.apply(it.toDouble()) }
-        val extHeading = headingSensor?.first?.require() ?: Double.NaN
+        val extHeading = headingSensor?.first?.get()
+            ?.plus(offset)?.let { v -> Mathf.inputModulus(v, 0.0, 2.0 * Math.PI) } ?: Double.NaN
         if (lastWheelPositions.isNotEmpty()) {
             val wheelDeltas = wheelPositions
                 .zip(lastWheelPositions)
@@ -77,7 +75,7 @@ class MecanumLocalizer @JvmOverloads constructor(
         val extHeadingVel = headingSensor?.second?.get()
         if (wheelVelocities != null) {
             poseVelocity = MecanumKinematics.wheelToRobotVelocities(
-                wheelVelocities.map { it },
+                wheelVelocities,
                 trackWidthInches,
                 wheelBaseInches,
                 lateralMultiplier
@@ -87,7 +85,7 @@ class MecanumLocalizer @JvmOverloads constructor(
             }
         }
 
-        lastWheelPositions = wheelPositions.map { it }
+        lastWheelPositions = wheelPositions
         lastExtHeading = extHeading
     }
 }
