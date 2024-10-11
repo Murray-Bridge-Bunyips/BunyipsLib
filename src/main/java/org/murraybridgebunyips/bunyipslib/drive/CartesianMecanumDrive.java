@@ -225,6 +225,7 @@ public class CartesianMecanumDrive extends BunyipsSubsystem implements Moveable 
         backRight.setPower(backRightPower);
 
         if (localizer != null) {
+            localizer.update();
             DashboardUtil.useCanvas(canvas -> {
                 canvas.setStroke("#3F51B5");
                 DashboardUtil.drawRobot(canvas, localizer.getPoseEstimate());
