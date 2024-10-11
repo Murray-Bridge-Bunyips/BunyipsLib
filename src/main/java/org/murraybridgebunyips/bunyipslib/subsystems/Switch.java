@@ -96,6 +96,21 @@ public class Switch extends BunyipsSubsystem {
     }
 
     /**
+     * Toggles the switch, moving it to whichever is closest between open and close.
+     */
+    public void toggle() {
+        double pos = servo.getPosition();
+        double distanceToOpen = Math.abs(pos - openPosition);
+        double distanceToClose = Math.abs(pos - closePosition);
+
+        if (distanceToOpen < distanceToClose) {
+            open();
+        } else {
+            close();
+        }
+    }
+
+    /**
      * Set a custom position that is clipped between the closed and open bounds.
      *
      * @param position the position to set to, clipped between open and close
@@ -192,6 +207,17 @@ public class Switch extends BunyipsSubsystem {
             return new RunTask(Switch.this::close)
                     .onSubsystem(Switch.this, true)
                     .withName("Close");
+        }
+
+        /**
+         * Toggle the switch
+         *
+         * @return Toggle switch task
+         */
+        public Task toggle() {
+            return new RunTask(Switch.this::toggle)
+                    .onSubsystem(Switch.this, true)
+                    .withName("Toggle");
         }
 
         /**
