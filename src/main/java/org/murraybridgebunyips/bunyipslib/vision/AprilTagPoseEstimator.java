@@ -28,7 +28,9 @@ import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * Combines an AprilTag processor and RoadRunner drive to supply updates in pose estimation.
@@ -39,6 +41,7 @@ import java.util.Objects;
 public class AprilTagPoseEstimator implements Runnable {
     private final AprilTag processor;
     private final Localizer localizer;
+    private final HashSet<Predicate<AprilTagData>> filters = new HashSet<>();
 
     private Filter.Kalman xf;
     private Filter.Kalman yf;
@@ -138,6 +141,31 @@ public class AprilTagPoseEstimator implements Runnable {
     }
 
     /**
+     * Add a data filter that will apply to the detections of the processor whether to accept processing this tag.
+     *
+     * @param filter the filter to add
+     * @return this
+     * @since 5.1.0
+     */
+    public AprilTagPoseEstimator addDataFilter(Predicate<AprilTagData> filter) {
+        filters.add(filter);
+        return this;
+    }
+
+    /**
+     * Remove a filter instance added in {@link #addDataFilter(Predicate)}
+     *
+     * @param filter the filter to remove
+     * @return this
+     * @since 5.1.0
+     */
+    public AprilTagPoseEstimator removeDataFilter(Predicate<AprilTagData> filter) {
+        if (!filters.remove(filter))
+            Dbg.warn(getClass(), "Unable to remove filter '%', not found.", filter);
+        return this;
+    }
+
+    /**
      * Whether to set the drive pose to the vision estimate. Default is on.
      *
      * @param setPoseAutomatically whether AprilTagPoseEstimator is on
@@ -220,7 +248,7 @@ public class AprilTagPoseEstimator implements Runnable {
         // We will simply rely on the first entry in the list of detected tags that we can use, if any
         for (int i = 0; i < data.size(); i++) {
             AprilTagData aprilTag = data.get(i);
-            if (!aprilTag.isInLibrary()) {
+            if (!aprilTag.isInLibrary() || filters.stream().anyMatch(f -> !f.test(aprilTag))) {
                 // No luck with this ID
                 continue;
             }
