@@ -103,9 +103,9 @@ public class Switch extends BunyipsSubsystem {
         double distanceToOpen = Math.abs(pos - openPosition);
         double distanceToClose = Math.abs(pos - closePosition);
 
-        if (distanceToOpen < distanceToClose) {
+        if (pos == closePosition || distanceToOpen < distanceToClose) {
             open();
-        } else {
+        } else if (pos == openPosition || distanceToClose < distanceToOpen) {
             close();
         }
     }
