@@ -5,6 +5,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseRaw
 import org.opencv.core.Point
+import org.opencv.core.Rect
 import java.util.Optional
 
 /**
@@ -73,6 +74,15 @@ data class AprilTagData(
      */
     val frameAcquisitionNanoTime: Long
 ) : VisionData() {
+    /**
+     * Returns an OpenCV Rect created from the [corners] of this AprilTag detection. This Rect can be used
+     * for operations such as constructing contour boundaries.
+     */
+    fun toRect(): Rect {
+        // Corners are clockwise from top left
+        return Rect(corners[0], corners[2])
+    }
+
     /**
      * Check if this AprilTag has metadata and pose information available, as it is present in the currently used library.
      */

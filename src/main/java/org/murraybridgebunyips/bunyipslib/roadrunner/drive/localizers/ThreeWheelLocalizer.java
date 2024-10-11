@@ -138,7 +138,9 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
     public List<Double> getWheelPositions() {
         if (coefficients.IMU_RELOCALIZATION_INTERVAL != null) {
             if (imu == null) {
-                RobotLog.setGlobalErrorMsg("[ThreeWheelLocalizer] An IMU relocalization interval was set, however, an IMU has not been supplied to the localizer via withRelocalizingIMU(...)\nPlease set the IMU on the localizer to support IMU relocalization.");
+                String warning = "[ThreeWheelLocalizer] An IMU relocalization interval was set, however, an IMU has not been supplied to the localizer via withRelocalizingIMU(...)\nPlease set the IMU on the localizer to support IMU relocalization.";
+                if (!warning.contains(RobotLog.getGlobalWarningMessage().message))
+                    RobotLog.addGlobalWarningMessage(warning);
             } else if (imuResetTimer.seconds() >= coefficients.IMU_RELOCALIZATION_INTERVAL.in(Seconds)) {
                 setPoseEstimate(new Pose2d(getPoseEstimate().vec(), imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
                 imuResetTimer.reset();
