@@ -14,14 +14,14 @@ import static org.murraybridgebunyips.bunyipslib.Text.round;
 
 /**
  * A generic servo controller subsystem that may be used to hold two positions and to control movements in between
- * these setpoints. Includes a built-in delta step configuration that may be used to control servo speed.
+ * these setpoints. This is similar to a {@link DualServos} subsystem but only controls a singular servo.
  *
  * @author Lucas Bubner, 2024
  * @since 5.1.0
  */
 public class Switch extends BunyipsSubsystem {
     /**
-     * Tasks for Cannon.
+     * Tasks for Switch.
      */
     public final Tasks tasks = new Tasks();
 
@@ -39,7 +39,8 @@ public class Switch extends BunyipsSubsystem {
      */
     public Switch(Servo servo, double openPosition, double closePosition) {
         this.servo = servo;
-        // Auto-close servos
+        // Auto-close servo
+        // Note: Updating must be done manually
         target = closePosition;
         withName("Switch");
         setBounds(openPosition, closePosition);
@@ -145,6 +146,13 @@ public class Switch extends BunyipsSubsystem {
      */
     public double getTarget() {
         return target;
+    }
+
+    /**
+     * @return the current servo commanded position
+     */
+    public double getPosition() {
+        return servo.getPosition();
     }
 
     /**

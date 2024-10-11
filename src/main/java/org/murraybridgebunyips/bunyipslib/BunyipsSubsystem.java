@@ -283,6 +283,10 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
 
     /**
      * Update the subsystem and run the current task, if tasks are not set up this will just call {@link #periodic()}.
+     * <p>
+     * The update method is designed to be called to propagate new hardware state, with the design philosophy being that
+     * any method or task may be executed on a subsystem, but hardware operations will *only* occur in the update method.
+     * <p>
      * This method should be called if you are running this subsystem manually, otherwise it will be called by the {@link Scheduler}
      * or by {@link AutonomousBunyipsOpMode}.
      * Alternatively all subsystems that were instantiated can be statically updated via {@link #updateAll()}.

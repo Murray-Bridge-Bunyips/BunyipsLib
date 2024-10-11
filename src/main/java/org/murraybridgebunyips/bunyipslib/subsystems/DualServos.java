@@ -50,9 +50,9 @@ public class DualServos extends BunyipsSubsystem {
         this.right = right;
 
         // Always close on init
+        // Note: Updating must be done manually
         leftServoPosition = leftClosed;
         rightServoPosition = rightClosed;
-        update();
     }
 
     /**
