@@ -15,8 +15,8 @@ import java.util.function.Supplier
  * @param trackWidthInches lateral distance *in inches* between pairs of wheels on different sides of the robot
  * @param ticksToInches conversion function for all the encoders to convert ticks to inches, see `EncoderTicks.toInches`
  * @param wheelPositions 2-wide list supplier as calculated by the average position of all left and all right wheels
- * @param wheelVelocities optional wheel position deltas or wheel velocities in the sequence of [wheelPositions]
  * @param headingSensor external heading supplier + external heading velocity supplier, *in radians*
+ * @param wheelVelocities optional wheel position deltas or wheel velocities in the sequence of [wheelPositions]
  * @since 5.1.0
  */
 class TankLocalizer @JvmOverloads constructor(

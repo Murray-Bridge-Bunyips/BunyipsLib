@@ -13,13 +13,13 @@ import java.util.function.Supplier
  * Default localizer for Mecanum drives based on the drive encoders and (optionally) a heading sensor.
  *
  * @param trackWidthInches lateral distance *in inches* between pairs of wheels on different sides of the robot
- * @param wheelBaseInches distance between pairs of wheels on the same side of the robot *in inches*
- * @param lateralMultiplier multiplicative gain to adjust for systematic, proportional lateral error (gain greater
- *      than 1.0 corresponds to overcompensation).
  * @param ticksToInches conversion function for all the encoders to convert ticks to inches, see `EncoderTicks.toInches`
  * @param wheelPositions raw current positions of all four wheels, in order `frontLeft`, `backLeft`, `backRight`, `frontRight`
- * @param wheelVelocities optional wheel position deltas or raw wheel velocities of all four wheels in the order of [wheelPositions]
  * @param headingSensor external heading supplier + external heading velocity supplier, *in radians*
+ * @param wheelVelocities optional wheel position deltas or raw wheel velocities of all four wheels in the order of [wheelPositions]
+ * @param lateralMultiplier multiplicative gain to adjust for systematic, proportional lateral error (gain greater
+ *      than 1.0 corresponds to overcompensation).
+ * @param wheelBaseInches distance between pairs of wheels on the same side of the robot *in inches*
  * @since 5.1.0
  */
 class MecanumLocalizer @JvmOverloads constructor(
