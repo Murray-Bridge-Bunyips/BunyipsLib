@@ -44,7 +44,7 @@ class TankLocalizer @JvmOverloads constructor(
     override fun update() {
         val wheelPositions = wheelPositions.get().map { ticksToInches.apply(it.toDouble()) }
         val extHeading = headingSensor?.first?.get()
-            ?.plus(offset)?.let { v -> Mathf.inputModulus(v, 0.0, 2.0 * Math.PI) } ?: Double.NaN
+            ?.plus(offset)?.let { v -> Mathf.inputModulus(v, -Math.PI, Math.PI) } ?: Double.NaN
         if (lastWheelPositions.isNotEmpty()) {
             val wheelDeltas = wheelPositions
                 .zip(lastWheelPositions)
