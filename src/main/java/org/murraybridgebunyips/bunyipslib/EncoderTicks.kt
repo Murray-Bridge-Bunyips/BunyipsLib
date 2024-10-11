@@ -18,6 +18,20 @@ import kotlin.math.roundToInt
  */
 object EncoderTicks {
     /**
+     * Converts encoder ticks to inches for use in calculation with a Localizer.
+     *
+     * @param ticks the encoder ticks
+     * @param wheelRadiusInches the wheel radius in inches
+     * @param gearRatio the gear ratio as a division ratio
+     * @param ticksPerRevolution the ticks per revolution of the encoder
+     * @return inches travelled as per circumference
+     */
+    @JvmStatic
+    fun toInches(ticks: Double, wheelRadiusInches: Double, gearRatio: Double, ticksPerRevolution: Double): Double {
+        return wheelRadiusInches * 2 * Math.PI * gearRatio * ticks / ticksPerRevolution
+    }
+
+    /**
      * Convert encoder ticks to an angle.
      *
      * @param ticks The number of encoder ticks.
