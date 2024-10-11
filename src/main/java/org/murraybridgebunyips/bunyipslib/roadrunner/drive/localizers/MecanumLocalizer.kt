@@ -24,8 +24,8 @@ class MecanumLocalizer @JvmOverloads constructor(
     private val trackWidth: Double,
     private val wheelBase: Double = trackWidth,
     private val lateralMultiplier: Double = 1.0,
-    private val wheelPositions: Supplier<List<Double>>,
-    private val wheelVelocities: Supplier<List<Double>>? = null,
+    private val wheelPositions: Supplier<List<Number>>,
+    private val wheelVelocities: Supplier<List<Number>>? = null,
     private val headingSensor: Pair<Reference<Double>, Supplier<Double>>? = null
 ) : Localizer {
     init {
@@ -52,7 +52,7 @@ class MecanumLocalizer @JvmOverloads constructor(
         if (lastWheelPositions.isNotEmpty()) {
             val wheelDeltas = wheelPositions
                 .zip(lastWheelPositions)
-                .map { it.first - it.second }
+                .map { it.first.toDouble() - it.second }
             val robotPoseDelta = MecanumKinematics.wheelToRobotVelocities(
                 wheelDeltas,
                 trackWidth,
@@ -74,7 +74,7 @@ class MecanumLocalizer @JvmOverloads constructor(
         val extHeadingVel = headingSensor?.second?.get()
         if (wheelVelocities != null) {
             poseVelocity = MecanumKinematics.wheelToRobotVelocities(
-                wheelVelocities,
+                wheelVelocities.map { it.toDouble() },
                 trackWidth,
                 wheelBase,
                 lateralMultiplier
@@ -84,7 +84,7 @@ class MecanumLocalizer @JvmOverloads constructor(
             }
         }
 
-        lastWheelPositions = wheelPositions
+        lastWheelPositions = wheelPositions.map { it.toDouble() }
         lastExtHeading = extHeading
     }
 }

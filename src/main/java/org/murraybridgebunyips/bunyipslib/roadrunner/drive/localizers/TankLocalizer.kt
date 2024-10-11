@@ -19,8 +19,8 @@ import java.util.function.Supplier
  */
 class TankLocalizer @JvmOverloads constructor(
     private val trackWidth: Double,
-    private val wheelPositions: Supplier<List<Double>>,
-    private val wheelVelocities: Supplier<List<Double>>? = null,
+    private val wheelPositions: Supplier<List<Number>>,
+    private val wheelVelocities: Supplier<List<Number>>? = null,
     private val headingSensor: Pair<Reference<Double>, Supplier<Double>>? = null
 ) : Localizer {
     init {
@@ -47,7 +47,7 @@ class TankLocalizer @JvmOverloads constructor(
         if (lastWheelPositions.isNotEmpty()) {
             val wheelDeltas = wheelPositions
                 .zip(lastWheelPositions)
-                .map { it.first - it.second }
+                .map { it.first.toDouble() - it.second }
             val robotPoseDelta = TankKinematics.wheelToRobotVelocities(wheelDeltas, trackWidth)
             val finalHeadingDelta = if (headingSensor != null) {
                 Angle.normDelta(extHeading - lastExtHeading)
@@ -63,13 +63,13 @@ class TankLocalizer @JvmOverloads constructor(
         val wheelVelocities = wheelVelocities?.get()
         val extHeadingVel = headingSensor?.second?.get()
         if (wheelVelocities != null) {
-            poseVelocity = TankKinematics.wheelToRobotVelocities(wheelVelocities, trackWidth)
+            poseVelocity = TankKinematics.wheelToRobotVelocities(wheelVelocities.map { it.toDouble() }, trackWidth)
             if (headingSensor != null && extHeadingVel != null) {
                 poseVelocity = Pose2d(poseVelocity!!.vec(), extHeadingVel)
             }
         }
 
-        lastWheelPositions = wheelPositions
+        lastWheelPositions = wheelPositions.map { it.toDouble() }
         lastExtHeading = extHeading
     }
 }
