@@ -25,6 +25,7 @@ public class BlinkinLights extends BunyipsSubsystem {
     private final RevBlinkinLedDriver lights;
     private RevBlinkinLedDriver.BlinkinPattern defaultPattern;
     private RevBlinkinLedDriver.BlinkinPattern currentPattern;
+    private RevBlinkinLedDriver.BlinkinPattern setPattern;
 
     /**
      * Create a new BlinkinLights subsystem.
@@ -134,7 +135,10 @@ public class BlinkinLights extends BunyipsSubsystem {
     @Override
     protected void periodic() {
         opMode(o -> o.telemetry.add("%: Pattern->%", name, currentPattern.name()).color("gray"));
-        lights.setPattern(currentPattern);
+        if (setPattern != currentPattern) {
+            lights.setPattern(currentPattern);
+            setPattern = currentPattern;
+        }
     }
 
     /**
