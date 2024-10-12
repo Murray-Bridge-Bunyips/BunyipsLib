@@ -30,7 +30,6 @@ public class ProfiledServo implements Servo, PwmControl {
 
     @Nullable
     private TrapezoidProfile.Constraints constraints;
-    private TrapezoidProfile.State goal = new TrapezoidProfile.State();
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
     private double lastDt = -1;
 
@@ -180,7 +179,7 @@ public class ProfiledServo implements Servo, PwmControl {
         targetPosition = Mathf.scale(targetPosition, MIN_POSITION, MAX_POSITION, limitPositionMin, limitPositionMax);
 
         if (constraints != null) {
-            goal = new TrapezoidProfile.State(targetPosition, 0);
+            TrapezoidProfile.State goal = new TrapezoidProfile.State(targetPosition, 0);
             TrapezoidProfile profile = new TrapezoidProfile(constraints, goal, setpoint);
             double t = System.nanoTime() / 1.0E9;
             if (lastDt == -1) lastDt = t;
