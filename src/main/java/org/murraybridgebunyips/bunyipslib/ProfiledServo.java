@@ -39,6 +39,15 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
     private long lastUpdate;
 
     /**
+     * Wrap a Servo to use with the ProfiledServo class.
+     *
+     * @param servo the Servo from hardwareMap to use.
+     */
+    public ProfiledServo(Servo servo) {
+        super(servo.getController(), servo.getPortNumber(), servo.getDirection());
+    }
+
+    /**
      * Set the delta in servo position required to propagate a hardware write.
      *
      * @param magnitude absolute magnitude of delta in servo position, 0/default will disable
@@ -72,15 +81,6 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
      */
     public void disableConstraints() {
         constraints = null;
-    }
-
-    /**
-     * Wrap a Servo to use with the ProfiledServo class.
-     *
-     * @param servo the Servo from hardwareMap to use.
-     */
-    public ProfiledServo(Servo servo) {
-        super(servo.getController(), servo.getPortNumber(), servo.getDirection());
     }
 
     /**
@@ -127,17 +127,6 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
     // important for operations, so we won't try to feed the configuration fake data.
 
     /**
-     * Sets the PWM range limits for the servo
-     *
-     * @param range the new PWM range limits for the servo
-     * @see #getPwmRange()
-     */
-    @Override
-    public void setPwmRange(PwmRange range) {
-        ((ServoControllerEx) getController()).setServoPwmRange(getPortNumber(), range);
-    }
-
-    /**
      * Returns the current PWM range limits for the servo
      *
      * @return the current PWM range limits for the servo
@@ -146,6 +135,17 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
     @Override
     public PwmRange getPwmRange() {
         return ((ServoControllerEx) getController()).getServoPwmRange(getPortNumber());
+    }
+
+    /**
+     * Sets the PWM range limits for the servo
+     *
+     * @param range the new PWM range limits for the servo
+     * @see #getPwmRange()
+     */
+    @Override
+    public void setPwmRange(PwmRange range) {
+        ((ServoControllerEx) getController()).setServoPwmRange(getPortNumber(), range);
     }
 
     /**
