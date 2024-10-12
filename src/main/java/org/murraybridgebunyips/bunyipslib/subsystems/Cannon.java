@@ -48,7 +48,6 @@ public class Cannon extends BunyipsSubsystem {
 
         // We assume there will always be something in the reset position for us to hold
         target = RESET;
-        update();
     }
 
     /**
