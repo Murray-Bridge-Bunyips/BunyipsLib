@@ -1,6 +1,146 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v5.1.0 (2024-10-12)
+Several quality-of-life adjustments, bug fixes, and features.
+### Critical bug fixes
+- PhotonFTC has been removed as a default required dependency to BunyipsLib
+  - Due to the state of Photon in alpha, it has been decided for stability to instead define the Photon annotations at the user OpMode level
+  - The BunyipsLib documentation still suggests installing Photon in the deps, but has been removed from `BunyipsOpMode` as it is the base to all OpModes
+  - Since Photon is a one-line addition, this is more sustainable for the time being while stability of Photon improves
+  - This reverts the integration of Photon to <5.0.0
+-  The `Motor` class has been rewritten following a critical bug related to `RUN_TO_POSITION`
+  - This bug would cause motors to sporadically run away from the setpoint when moving in a backward direction
+    - The bug has been identified to exist since BunyipsLib v4.0.0
+  - Previously, the implementation of `Motor` was that it extended `DcMotorImplEx`; however, an internal method which is responsible for setting power was calling `getMode()`, which related to the overridden version in `Motor`
+  - Note that `Motor` forces the actual motor to always run in `RUN_WITHOUT_ENCODER` mode as the hub-level PID controllers should always be disabled
+  - This caused all `setPower` calls to be positive when `RUN_TO_POSITION` was active, as internally the power is taken for an absolute value in the standard `RUN_TO_POSITION` mode
+  - Unfortunately, this would cause all system controllers on `RUN_TO_POSITION` to respond as normal, but just before the command was sent to the motors it was taken for an absolute value, making the controller physically incapable of moving the motor backwards
+  - This bug has been fixed by instead implementing the `DcMotorEx` interface and handling the motor controller manually
+  - As a side effect, the `Motor` class now supports the usage of all `DcMotorEx` methods in some proportion
+### Non-breaking changes
+- `BunyipsComponent` no longer needs to be running in the context of a `BunyipsOpMode`
+  - This makes components that extend `BunyipsComponent` simply a utility instead of a strict requirement
+  - Opens up subsystems, tasks, and all other components to not just `BunyipsOpMode` contexts, oftentimes when these components didn't need a reference to the OpMode anyways
+  - Previous implementations of BunyipsComponent are unaffected, however, the  `opMode` field has been made `@Nullable` which may throw some compiler warnings (as it is now possible for components to exist such that `opMode` is going to be null)
+  - The new `BunyipsComponent` utilities now provide ways to assert behaviour and run code only on `BunyipsOpMode` contexts, such as `require(opMode)` and `opMode(o -> o)` to assert presence and no-op calls
+  - Any custom components may need to be migrated with these new utilities to ensure the compiler does not throw errors
+  - The integrated subsystems have already been migrated and no changes are needed in user space
+- `BunyipsOpMode` active-loop runnables are now part of a `HashSet` rather than an `ArrayList` to prevent duplicates
+- Several components including `DebugMode`, `AprilTagPoseEstimator`, and new runnable components now auto-attach to the `BunyipsOpMode` runnables list if they can on construction
+  - All runnable components also have the convention of a static method called `enable()` for concise construction
+- `Mathf` and `EncoderTicks` utilities now take in the `Number` supertype when taking in arguments
+  - This removes the dual `double`/`float` methods of `Mathf`, and reduces the number of casts that need to be done when working with `EncoderTicks` that are sometimes in `int` or `double` forms
+  - Internally, these `Number` supertypes are all converted to `double`s
+- The `Switch` class has been disconnected from the `Cannon` class
+  - This may cause some unknown method calls if using a `Cannon` method from a previous `Switch` class on migration
+- `Task` composition has been made simpler
+  - `AutonomousBunyipsOpMode` now returns the added task instance when calling `addTask()`
+    - `RoadRunner` does the same for `addTask()`
+  - Tasks can now compose with utility functions attached directly to `Task`
+    - `.until` which composes the current task with a `RaceTaskGroup` and a `WaitUntilTask`
+    - `.after` which composes a task with the current task in a `SequentialTaskGroup`
+    - `.then` which composes the current task with a task in a `SequentialTaskGroup`
+    - `.with` which composes a `ParallelTaskGroup` with all the tasks
+    - `.race` which composes a `RaceTaskGroup` with all the tasks
+    - `.during` which composes a `DeadlineTaskGroup` with the current task being the deadline
+    - `.repeatedly` which wraps the current task in a `RepeatTask`
+  - These integrations make task construction more concise without having to construct groups manually for small operations
+- The `ColourBlob` vision data type from the `ColourLocator` processor can now be converted into `ContourData` instances
+  - This allows tasks like `AlignToContourTask` and `MoveToContourTask` to be used with the new SDK 10.1 processors
+  - To convert all list processor data into a `ContourData` list, a simple map operation can be performed as listed in the documentation for this method
+  - The corresponding contour-based tasks now have alternate constructors for taking in instances of `Supplier<List<ContourData>>` rather than specifying a strict requirement on `Processor<ContourData>`
+- `PIDFController` changes
+  - Following conventions throughout BunyipsLib, `PIDFController` (and derivatives) now have builder-like patterns to allow for more streamlined construction
+  - `PIDFController` also now has a `setOutputClamps` method to control the maximum and minimum results the controller may output
+  - Variants `ArmController` and `PIDFFController` now support instances of the base `PIDF` to be used to allow profiled PID controllers instead of the hardcoded normal PID
+- `Encoder` now pipes acceleration estimation data through a built-in low-pass filter that can be modified via `setAccelLowPassGain(double)`
+- All previous tasks and components that relied on instance of `RoadRunnerDrive` have been abstracted via the new `Moveable` interface
+  - This changes the abstraction level of various tasks and components to be as minimal as possible - RoadRunner is no longer required to use most of the drivebase features in BunyipsLib
+  - Some classes that take in instances of `BunyipsSubsystem` for their drive base have been migrated to `Moveable`, note that auto-attaching the task to a subsystem is still performed internally
+- `Reference` now implements `Supplier` and `Consumer`
+- `DualServos` and `Cannon` no longer auto-calls `update()` on init
+  - This is to consolidate the idea that no hardware writes will occur outside of the user's command, especially as penalties exist for servo movements during the match init-phase
+  - If you wish to preserve the old behaviour, simply call `.update()` in your init method
+### Bug fixes
+- Acceleration information from `Encoder` can no longer be stale and is now updated on every loop with epsilon checks
+- `RoadRunner` `withTimeout` builder parameter now sets the timeout to infinite if a negative timeout is supplied
+- Various outdated docs updates
+- `addTask` of `RoadRunner` now checks for an active instance of `AutonomousBunyipsOpMode` to throw an exception early if it is not initialised
+- `disableHardwareStopOnFinish()` of `AutonomousBunyipsOpMode` is now a final method
+- `Motor` now clamps the `RUN_TO_POSITION` system controller output to -1 and 1 to allow the `setPower` argument to have a direct proportion over the controller
+- `Encoder` now flips the velocity readings depending on the direction, before this would only flip the current position
+- `HoldableActuator` is no longer affected by the user-defined min and max encoder limits when homing
+- The `BlinkinLights` internal `setPattern` call is now cached to prevent spamming Logcat or calling unnecessary code
+  - Do be aware of this if you manually call `setPattern` on the `RevBlinkinLedDriver`
+- `HoldableActuator` update method is now more conservative with hardware calls
+  - Hardware calls are executed at the end of the update method, which prevents multiple calls to `setTargetPosition()` and `setMode()`
+  - The motor power magnitude has also been updated to the proper sign depending on the signum of error to allow bounds checking to work properly
+- Various optimisations for `AprilTagPoseEstimator` to reduce jank
+  - The component now does not spam Logcat as much when seeing an AprilTag to adjust pose
+  - Several modulus operations for heading have been added to reduce problems
+### Additions
+- Pure Pursuit implementation using a parametric look-ahead
+  - Offered as a new component called `PurePursuit` which can generate paths similar to RoadRunner to follow
+  - Uses a parametric look-ahead based on the supplied path instead of a circle-line intersection for simplicity and more precise cornering
+  - This algorithm is a step up from PID-To-Point (DriveToPoseTask) and below RoadRunner
+  - The PurePursuit class has been built around the RoadRunner coordinate systems and should work well with currently implemented tools
+- New HardwareDevice drop-in replacement `ProfiledServo` to allow motion-profiled servos
+  - Similar to the `Motor` class wrapping a `DcMotor`, the `ProfiledServo` class wraps a `Servo`
+  - `ProfiledServo` exposes a new method `setConstraints` which can be used to define a `TrapezoidalProfile` that will be used to motion profile the servo
+  - This allows velocity and acceleration control over the servo, while still conforming to the `Servo` interface for use in any previous code
+  - Additional features from `Motor` including position cache tolerance and refresh rate have also been integrated in the methods `setPositionDeltaThreshold` and `setPositionRefreshRate`
+  - Review the `ProfiledServo` class for more information
+- The `Moveable` interface, which is a common interface for all drive bases
+  - This interface allows drives such as the `CartesianMecanumDrive` to be used in place of RoadRunner drives, often when the features of RoadRunner don't need to be used
+  - Exposes two methods, `@Nullable getLocalizer()` and `setPower(Pose2d)`, which respect the Robot Coordinate System and are implemented by `RoadRunnerDrive` and `CartesianMecanumDrive`
+  - By moving to these interfaces, component flexibility is improved dramatically where localizers can be used without the need for RoadRunner
+  - `CartesianMecanumDrive` can support holding a `Localizer` through `setLocalizer()`, which may be required if a drive instance is passed around as a `Moveable`
+- Ported `MecanumLocalizer` and `TankLocalizer` from RoadRunner
+  - These localizers have no dependencies on the RoadRunner drives, which allows pure functional suppliers to be used for localization
+  - This makes the `Localizer` from RoadRunner a common interface on all drives
+- `EncoderTicks` now has a utility function to convert ticks directly to inches, which is used in the new ported Localizers
+  - This converts a tick reading, wheel radius in inches, gear ratio, and ticks per revolution into inches for use with the Localizers
+- New `TurnTask` which is similar to `DriveToPoseTask` but only requires one PID controller for turning, and does not have a strict dependency on a `RoadRunnerDrive`
+  - Supports either global robot-frame heading targets or heading offsets
+- New `Rect` class which represents two `Vector2d` instances to create an upright rectangle
+  - Based on RoadRunner geometry classes, which allows more advanced uses of vectors
+- New `Field` utility class for FTC fields
+  - Provides a `Rect` which defines the maximum boundary of the field
+  - `Season` enum that has methods `getRestrictedAreas()` and `getAprilTagLibrary()`
+    - The INTO THE DEEP season has been included in this enum and denotes the restrictions of the submersible zone and supporting poles, as well as fetching the relevant AprilTag library from the SDK
+- New `BoundedLocalization` runnable component to provide clamping of pose estimates to within the field
+  - By default, pose estimates can often be in illegal positions, and for odometry that cannot determine these states causes the robot to leave the field
+  - This component runs in the background and ensures the pose is in legal areas, and can be customised with `Rect`s to define spaces the robot cannot go in, including utilities from `Field` for built-in restricted areas
+- `BunyipsOpMode` now has a method to remove runnables from the active-loop runnables list `detachActiveLoopRunnables`
+- `TankDrive` (and the base RoadRunner equivalent) now have a `getCoefficients()` method for `TankCoefficients` similar to `MecanumDrive` for `MecanumCoefficients`
+- `Encoder` now can track a motor direction as set by a functional interface, which allows the state of the `Encoder` to be controlled by an encapsulating component
+- `Switch` subsystem has been revamped
+  - Disconnected from `Cannon`, `Switch` is now able to represent positions that are not limited to simply two positions
+  - This makes `Switch` the single counterpart to `DualServos`, but with more control on bounds with utility methods and toggles
+  - Review the new `Switch` class for more information
+- New `Mathf` utilities
+  - `approximatelyEquals` which uses an epsilon of `1e-6` to check if two decimals are equal
+  - `lineCircleIntersection` and `lineSegmentCircleIntersection` for calculating these intersection points using the quadratic formula
+- `HoldableActuator` new `ceil()` task, which runs a home task in the opposite direction
+- `ThreeWheelLocalizer` instances can now opt into using a periodic IMU reset, which will intermittently use the IMU to relocalise the robot heading
+  - This is useful for correcting drift while not impacting loop times significantly due to I2C reads
+  - To use this feature, an IMU must be passed via `ThreeWheelLocalizer.withRelocalizingIMU(IMU)`, and the `ThreeWheelLocalizer.Coefficients` must define a non-null `setIMURelocalizationInterval(Measure<Time>)`
+  - `TriDeadwheelMecanumDrive` internally calls `withRelocalizingIMU(IMU)` with the IMU parameter
+- `HoldableActuator` now has an optional mode where user input modes will instead follow the setpoint instead of feeding raw power
+  - This can be enabled with `enableUserSetpointControl(DoubleSupplier)`, where the supplier is a multiplicative scale to use in setpoint adjustment (for things such as deltaTime or other math)
+  - This mode will instead adjust the setpoint when a user uses a `setPower()` call, allowing the PID controller to do all the work
+  - It is recommended to use this mode only if the motor used in the `HoldableActuator` is a `Motor` instance, as the stock motor may react too slow
+- New `IMULocalizer`, which implements `Localizer` and can be used in place of a Localizer to simply provide heading information
+  - This is useful for new tasks that may only need heading information (e.g. `TurnTask`) and a main localizer is not implemented
+- `DashboardUtil` has a new `useCanvas(Consumer<Canvas>)` method which will attempt to retrieve a reference to the FtcDashboard canvas via `BunyipsOpMode`, or by creating a new packet under the hood and sending it on completion
+  - This is useful for components to draw on the dashboard from any static context without having to check OpMode state
+- `AprilTagData` now exposes a `toRect()` method to convert the bounding box to a `Rect`
+  - This Rect can be used to construct a `ContourData` or other information as desired
+- `AprilTagPoseEstimator` now supports filters
+  - Can be added via `addDataFilter(Predicate<AprilTagData>)` and will run the `Predicate` on every detected AprilTag's `AprilTagData`
+  - This can be used in combination with `toRect()` to filter results, such as filtering by area (for example, `.addDataFilter(t -> t.toRect().area() > 1000)`)
+
 ## v5.0.0 (2024-09-24)
 Integration of SDK v10.1 and season-related features.
 ### Breaking changes
