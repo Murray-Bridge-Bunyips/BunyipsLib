@@ -339,7 +339,7 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
              *                 null will disable IMU interaction (default)
              * @return The builder
              */
-            public Builder setImuRelocalizationInterval(@Nullable Measure<Time> interval) {
+            public Builder setIMURelocalizationInterval(@Nullable Measure<Time> interval) {
                 trackingWheelCoefficients.IMU_RELOCALIZATION_INTERVAL = interval;
                 return this;
             }
