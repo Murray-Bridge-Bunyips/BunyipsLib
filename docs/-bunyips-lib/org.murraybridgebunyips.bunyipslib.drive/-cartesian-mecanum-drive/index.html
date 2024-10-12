@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v5.0.0-master-940d19a4            </div>
+v5.1.0-master-75a783e6            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,7 +66,7 @@ v5.0.0-master-940d19a4            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib.drive</a><span class="delimiter">/</span><span class="current">CartesianMecanumDrive</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Cartesian</span><wbr></wbr><span>Mecanum</span><wbr></wbr><span><span>Drive</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">CartesianMecanumDrive</a> : <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a></div><p class="paragraph">Class for a Cartesian drive system that uses Mecanum wheels. Includes all the common math done across all Mecanum drive systems. </p><p class="paragraph"> This system is deprecated by RoadRunner, but remains for legacy/non-RoadRunner purposes. Coordinates used in Cartesian drives include a Cartesian speed mapping, where X is the horizontal axis, and Y is the forward axis. This is rotated differently within RoadRunner-derived drive bases.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2023</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">1.0.0-pre</p></span><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-mecanum-drive/index.html"><span>Mecanum</span><wbr></wbr><span><span>Drive</span></span></a></div></span></div><div></div></div></div></div><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-cartesian-field-centric-mecanum-drive/index.html">CartesianFieldCentricMecanumDrive</a></div></span></div><div></div></div></div></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">CartesianMecanumDrive</a> : <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a>, <a href="../-moveable/index.html">Moveable</a></div><p class="paragraph">Class for a Cartesian drive system that uses Mecanum wheels. Includes all the common math done across all Mecanum drive systems. </p><p class="paragraph"> This system is deprecated by RoadRunner, but remains for legacy/non-RoadRunner purposes. Coordinates used in Cartesian drives include a Cartesian speed mapping, where X is the horizontal axis, and Y is the forward axis. This is rotated differently within RoadRunner-derived drive bases.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2023</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">1.0.0-pre</p></span><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-mecanum-drive/index.html"><span>Mecanum</span><wbr></wbr><span><span>Drive</span></span></a></div></span></div><div></div></div></div></div><h4 class="">Inheritors</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-cartesian-field-centric-mecanum-drive/index.html">CartesianFieldCentricMecanumDrive</a></div></span></div><div></div></div></div></div></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -111,7 +111,22 @@ v5.0.0-master-940d19a4            </div>
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="">Properties</h2>
-        <div class="table"><a data-name="817535260%2FProperties%2F-325384828" anchor-label="speedR" id="817535260%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="1618545706%2FProperties%2F-325384828" anchor-label="localizer" id="1618545706%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="localizer.html"><span><span>localizer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1618545706%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">open </span><span class="token keyword">var </span><a href="localizer.html">localizer</a><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.localization/Localizer///PointingToDeclaration/">Localizer</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="817535260%2FProperties%2F-325384828" anchor-label="speedR" id="817535260%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -200,7 +215,7 @@ v5.0.0-master-940d19a4            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">val </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html">opMode</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">protected </span><span class="token keyword">val </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html">opMode</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></div><div class="brief ">Get a reference to the currently running <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a>.</div></div></div>
                 </div>
               </div>
             </div>
@@ -250,6 +265,21 @@ v5.0.0-master-940d19a4            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-mode.html"><span class="token function">setMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">CartesianMecanumDrive</a></div><div class="brief ">Set the drive system mode.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="980189861%2FFunctions%2F-325384828" anchor-label="setPower" id="980189861%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-power.html"><span>set</span><wbr></wbr><span><span>Power</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="980189861%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-power.html"><span class="token function">setPower</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">directionalPower<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Set the current commanded state of the robot in the Robot Coordinate System.</div></div></div>
                 </div>
               </div>
             </div>
@@ -509,6 +539,36 @@ v5.0.0-master-940d19a4            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/on-enable.html"><span class="token function">onEnable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">User callback that runs once when this subsystem is enabled by a call to <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/enable.html">enable</a> or the first active call to <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/periodic.html">periodic</a>.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="597459044%2FFunctions%2F-325384828" anchor-label="opMode" id="597459044%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html"><span>op</span><wbr></wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="597459044%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html"><span class="token function">opMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>ifRunning<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/Consumer.html">Consumer</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Null check consumer for the <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html">opMode</a> field which will no-op the given consumer if an active <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a> is not present (i.e.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-27540731%2FFunctions%2F-325384828" anchor-label="require" id="-27540731%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/require.html"><span><span>require</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-27540731%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/require.html"><span class="token function">require</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>nullableOpMode<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></div><div class="brief ">Null assertion for the <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html">opMode</a> field which throws a <a href="https://developer.android.com/reference/kotlin/java/lang/NullPointerException.html">NullPointerException</a> if an active <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a> is not present (i.e.</div></div></div>
                 </div>
               </div>
             </div>

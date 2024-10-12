@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>PurePursuit</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+<link href="../../../images/logo-icon.svg">
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            BunyipsLib
+                    </a>
+            </div>
+            <div class="library-version">
+v5.1.0-master-75a783e6            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="BunyipsLib::org.murraybridgebunyips.bunyipslib/PurePursuit///PointingToDeclaration//-325384828">
+  <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib</a><span class="delimiter">/</span><span class="current">PurePursuit</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Pure</span><wbr></wbr><span><span>Pursuit</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">PurePursuit</a> : <a href="https://developer.android.com/reference/kotlin/java/lang/Runnable.html">Runnable</a></div><p class="paragraph">A parametric displacement-based implementation of a Pure Pursuit controller designed for holonomic drivetrains. </p><p class="paragraph"> This system uses a series of suppliers and consumers to define odometry and drive power setting via RoadRunner geometry utilities such as <span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span> along a <span data-unresolved-link="com.acmerobotics.roadrunner.path/Path///PointingToDeclaration/">Path</span>. The actual lookahead, despite being usually rooted in a line-circle intersection, is performed by pose projection based on looking ahead on the path by displacement. By using displacement, the lookahead point naturally reduces for complex bends, and centers the process of calculating the lookahead as a simple vector projection. </p><p class="paragraph"> A RoadRunner drive instance is not required to use this class, but since it provides odometry it is designed to support consuming a <a href="../../org.murraybridgebunyips.bunyipslib.roadrunner.drive/-road-runner-drive/index.html">RoadRunnerDrive</a> instance if wanted.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">5.1.0</p></span></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-1907980898%2FConstructors%2F-325384828" anchor-label="PurePursuit" id="-1907980898%2FConstructors%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-pure-pursuit.html"><span>Pure</span><wbr></wbr><span><span>Pursuit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1907980898%2FConstructors%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">setDrivePower<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/Consumer.html">Consumer</a><span class="token operator">&lt;</span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">poseEstimateSupplier<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/Supplier.html">Supplier</a><span class="token operator">&lt;</span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Construct a new component to run Pure Pursuit pathing with using your own odometry implementation and drive powers.</div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">drive<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.drive/-moveable/index.html">Moveable</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Construct a new component to run Pure Pursuit pathing with.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-240565373%2FClasslikes%2F-325384828" anchor-label="PathMaker" id="-240565373%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-path-maker/index.html"><span>Path</span><wbr></wbr><span><span>Maker</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-240565373%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">inner </span><span class="token keyword">class </span><a href="-path-maker/index.html">PathMaker</a></div><div class="brief ">Utility construction class for Path instances that can be executed by <a href="index.html">PurePursuit</a>.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1928944911%2FProperties%2F-325384828" anchor-label="currentPath" id="-1928944911%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-path.html"><span>current</span><wbr></wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1928944911%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="current-path.html">currentPath</a><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.path/Path///PointingToDeclaration/">Path</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1646932632%2FProperties%2F-325384828" anchor-label="P2P_AT_END_INCHES" id="1646932632%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p2-p_-a-t_-e-n-d_-i-n-c-h-e-s.html"><span><span>P2P_AT_END_INCHES</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1646932632%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-p2-p_-a-t_-e-n-d_-i-n-c-h-e-s.html">P2P_AT_END_INCHES</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief ">Inches of how close the robot should be to the end of the path to stop the Pure Pursuit controller and to simple move to PID To Point.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1297969830%2FProperties%2F-325384828" anchor-label="PROJECTION_INTERVAL" id="-1297969830%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-r-o-j-e-c-t-i-o-n_-i-n-t-e-r-v-a-l.html"><span><span>PROJECTION_INTERVAL</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1297969830%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-p-r-o-j-e-c-t-i-o-n_-i-n-t-e-r-v-a-l.html">PROJECTION_INTERVAL</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief ">Inches of how far apart guesses are made along the path for projecting the current robot pose on the path.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2137373157%2FProperties%2F-325384828" anchor-label="PROJECTION_REFRESH_RATE" id="-2137373157%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-r-o-j-e-c-t-i-o-n_-r-e-f-r-e-s-h_-r-a-t-e.html"><span><span>PROJECTION_REFRESH_RATE</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2137373157%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-p-r-o-j-e-c-t-i-o-n_-r-e-f-r-e-s-h_-r-a-t-e.html">PROJECTION_REFRESH_RATE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief ">Milliseconds of the interval the projections are updated.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="681430813%2FFunctions%2F-325384828" anchor-label="clearPath" id="681430813%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-path.html"><span>clear</span><wbr></wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="681430813%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="clear-path.html"><span class="token function">clearPath</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Clear and terminate the currently running path.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1805781307%2FFunctions%2F-325384828" anchor-label="followPath" id="-1805781307%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="follow-path.html"><span>follow</span><wbr></wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1805781307%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="follow-path.html"><span class="token function">followPath</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>path<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.path/Path///PointingToDeclaration/">Path</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Set a path that will be followed during the execution of this Pure Pursuit controller.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="6103272%2FFunctions%2F-325384828" anchor-label="isBusy" id="6103272%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-busy.html"><span>is</span><wbr></wbr><span><span>Busy</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="6103272%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="is-busy.html"><span class="token function">isBusy</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-300187566%2FFunctions%2F-325384828" anchor-label="makePath" id="-300187566%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="make-path.html"><span>make</span><wbr></wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-300187566%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="make-path.html"><span class="token function">makePath</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-path-maker/index.html">PurePursuit.PathMaker</a></div><div class="brief ">Start constructing a new Pure Pursuit path that will start from the current drive pose which is captured when the path is built (may be delegated if not using a task build method).</div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="make-path.html"><span class="token function">makePath</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">staticStartPose<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-path-maker/index.html">PurePursuit.PathMaker</a></div><div class="brief ">Start constructing a new Pure Pursuit path that starts from this static pose.</div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="make-path.html"><span class="token function">makePath</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">startPose<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/Supplier.html">Supplier</a><span class="token operator">&lt;</span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-path-maker/index.html">PurePursuit.PathMaker</a></div><div class="brief ">Start constructing a new Pure Pursuit path that will start from the pose supplied by this pose supplier when the path is built (may be delegated if not using a task build method).</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2139222972%2FFunctions%2F-325384828" anchor-label="run" id="-2139222972%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="run.html"><span><span>run</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2139222972%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="run.html"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Commands an iteration of the Pure Pursuit controller for the current path.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="847280798%2FFunctions%2F-325384828" anchor-label="withHeadingPIDF" id="847280798%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-heading-p-i-d-f.html"><span>with</span><wbr></wbr><span>Heading</span><wbr></wbr><span><span>PIDF</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="847280798%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="with-heading-p-i-d-f.html"><span class="token function">withHeadingPIDF</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pidf<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-p-i-d-f/index.html">PIDF</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PurePursuit</a></div><div class="brief ">Set the PIDF controller for the robot heading of the Pure Pursuit controller.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-376966059%2FFunctions%2F-325384828" anchor-label="withHeadingTolerance" id="-376966059%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-heading-tolerance.html"><span>with</span><wbr></wbr><span>Heading</span><wbr></wbr><span><span>Tolerance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-376966059%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="with-heading-tolerance.html"><span class="token function">withHeadingTolerance</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">headingDiff<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PurePursuit</a></div><div class="brief ">Set the heading tolerance that this Pure Pursuit controller will use to determine when to stop following a path.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="253812178%2FFunctions%2F-325384828" anchor-label="withLookaheadRadius" id="253812178%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-lookahead-radius.html"><span>with</span><wbr></wbr><span>Lookahead</span><wbr></wbr><span><span>Radius</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="253812178%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="with-lookahead-radius.html"><span class="token function">withLookaheadRadius</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">lookaheadRadius<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PurePursuit</a></div><div class="brief ">Set a new lookahead radius that will be used for current and future paths.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2142459162%2FFunctions%2F-325384828" anchor-label="withTolerances" id="-2142459162%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-tolerances.html"><span>with</span><wbr></wbr><span><span>Tolerances</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2142459162%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="with-tolerances.html"><span class="token function">withTolerances</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">vectorDistance<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">headingDiff<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PurePursuit</a></div><div class="brief ">Set the tolerances that this Pure Pursuit controller will use to determine when to stop following a path.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1957130152%2FFunctions%2F-325384828" anchor-label="withVectorTolerance" id="1957130152%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-vector-tolerance.html"><span>with</span><wbr></wbr><span>Vector</span><wbr></wbr><span><span>Tolerance</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1957130152%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="with-vector-tolerance.html"><span class="token function">withVectorTolerance</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">vectorDistance<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PurePursuit</a></div><div class="brief ">Set the distance tolerance that this Pure Pursuit controller will use to determine when to stop following a path.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-118986264%2FFunctions%2F-325384828" anchor-label="withXPIDF" id="-118986264%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-x-p-i-d-f.html"><span>with</span><wbr></wbr><span><span>XPIDF</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-118986264%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="with-x-p-i-d-f.html"><span class="token function">withXPIDF</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pidf<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-p-i-d-f/index.html">PIDF</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PurePursuit</a></div><div class="brief ">Set the PIDF controller for the robot X axis of the Pure Pursuit controller.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="300530567%2FFunctions%2F-325384828" anchor-label="withYPIDF" id="300530567%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-y-p-i-d-f.html"><span>with</span><wbr></wbr><span><span>YPIDF</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="300530567%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="with-y-p-i-d-f.html"><span class="token function">withYPIDF</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pidf<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-p-i-d-f/index.html">PIDF</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PurePursuit</a></div><div class="brief ">Set the PIDF controller for the robot Y axis of the Pure Pursuit controller.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

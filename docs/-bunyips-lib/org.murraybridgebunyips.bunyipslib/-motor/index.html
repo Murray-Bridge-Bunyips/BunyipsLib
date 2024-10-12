@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v5.0.0-master-940d19a4            </div>
+v5.1.0-master-75a783e6            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,7 +66,7 @@ v5.0.0-master-940d19a4            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib</a><span class="delimiter">/</span><span class="current">Motor</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Motor</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">Motor</a> : <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorImplEx///PointingToDeclaration/">DcMotorImplEx</span></div><p class="paragraph">Drop-in replacement for a <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor///PointingToDeclaration/">DcMotor</span> that uses custom control algorithms to operate <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.RUN_USING_ENCODER///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">RUN_USING_ENCODER</span> and <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.RUN_TO_POSITION///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">RUN_TO_POSITION</span> modes. Internally integrates a gain scheduler to allow for more precise system coefficients against gravity and other external forces. </p><p class="paragraph"> This class is designed to be down casted to a DcMotor where used, integrating with the current motor modes while providing faster, predictable control systems.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">4.0.0</p></span></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">Motor</a> : <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorEx///PointingToDeclaration/">DcMotorEx</span></div><p class="paragraph">Drop-in replacement for a <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor///PointingToDeclaration/">DcMotor</span> that uses custom control algorithms to operate <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.RUN_USING_ENCODER///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">RUN_USING_ENCODER</span> and <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.RUN_TO_POSITION///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">RUN_TO_POSITION</span> modes. Internally integrates a gain scheduler to allow for more precise system coefficients against gravity and other external forces. This class effectively wraps an entire DcMotor and regulates all of the operations. </p><p class="paragraph"> This class is designed to be down casted to a DcMotor where used, integrating with the current motor modes while providing faster, predictable control systems.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">4.0.0</p></span></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -111,7 +111,52 @@ v5.0.0-master-940d19a4            </div>
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="">Properties</h2>
-        <div class="table"><a data-name="-24319744%2FProperties%2F-325384828" anchor-label="encoder" id="-24319744%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="1756320866%2FProperties%2F-325384828" anchor-label="controller" id="1756320866%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="controller.html"><span><span>controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1756320866%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">val </span><a href="controller.html">controller</a><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorControllerEx///PointingToDeclaration/">DcMotorControllerEx</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1027976803%2FProperties%2F-325384828" anchor-label="deviceName" id="-1027976803%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="device-name.html"><span>device</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1027976803%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="device-name.html">deviceName</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1226403779%2FProperties%2F-325384828" anchor-label="direction" id="-1226403779%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="direction.html"><span><span>direction</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1226403779%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="direction.html">direction</a><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorSimple.Direction///PointingToDeclaration/">DcMotorSimple.Direction</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-24319744%2FProperties%2F-325384828" anchor-label="encoder" id="-24319744%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -141,81 +186,17 @@ v5.0.0-master-940d19a4            </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div data-togglable="PROPERTY">
-        <h2 class="">Inherited properties</h2>
-        <div class="table"><a data-name="-716458868%2FProperties%2F-325384828" anchor-label="controller" id="-716458868%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-1103634467%2FProperties%2F-325384828" anchor-label="port" id="-1103634467%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-716458868%2FProperties%2F-325384828"><span><span>controller</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-716458868%2FProperties%2F-325384828"></span>
+                  <div><a href="port.html"><span><span>port</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1103634467%2FProperties%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../-ramping/-dc-motor/index.html#-716458868%2FProperties%2F-325384828">controller</a><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorController///PointingToDeclaration/">DcMotorController</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1049133779%2FProperties%2F-325384828" anchor-label="direction" id="1049133779%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#1049133779%2FProperties%2F-325384828"><span><span>direction</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1049133779%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../-ramping/-dc-motor/index.html#1049133779%2FProperties%2F-325384828">direction</a><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorSimple.Direction///PointingToDeclaration/">DcMotorSimple.Direction</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1326201603%2FProperties%2F-325384828" anchor-label="motorType" id="1326201603%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#1326201603%2FProperties%2F-325384828"><span>motor</span><wbr></wbr><span><span>Type</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1326201603%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../-ramping/-dc-motor/index.html#1326201603%2FProperties%2F-325384828">motorType</a><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware.configuration.typecontainers/MotorConfigurationType///PointingToDeclaration/">MotorConfigurationType</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-635316034%2FProperties%2F-325384828" anchor-label="portNumber" id="-635316034%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-635316034%2FProperties%2F-325384828"><span>port</span><wbr></wbr><span><span>Number</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-635316034%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../-ramping/-dc-motor/index.html#-635316034%2FProperties%2F-325384828">portNumber</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1222593844%2FProperties%2F-325384828" anchor-label="targetPositionTolerance" id="-1222593844%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-1222593844%2FProperties%2F-325384828"><span>target</span><wbr></wbr><span>Position</span><wbr></wbr><span><span>Tolerance</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1222593844%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../-ramping/-dc-motor/index.html#-1222593844%2FProperties%2F-325384828">targetPositionTolerance</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">val </span><a href="port.html">port</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -224,7 +205,22 @@ v5.0.0-master-940d19a4            </div>
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="">Functions</h2>
-        <div class="table"><a data-name="1861558630%2FFunctions%2F-325384828" anchor-label="getAcceleration" id="1861558630%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="-1144771740%2FFunctions%2F-325384828" anchor-label="close" id="-1144771740%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="close.html"><span><span>close</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1144771740%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="close.html"><span class="token function">close</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Closes this device</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1861558630%2FFunctions%2F-325384828" anchor-label="getAcceleration" id="1861558630%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -235,6 +231,66 @@ v5.0.0-master-940d19a4            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-acceleration.html"><span class="token function">getAcceleration</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1117740934%2FFunctions%2F-325384828" anchor-label="getConnectionInfo" id="-1117740934%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-connection-info.html"><span>get</span><wbr></wbr><span>Connection</span><wbr></wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1117740934%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-connection-info.html"><span class="token function">getConnectionInfo</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div><div class="brief ">Get connection information about this device in a human readable format</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="322469898%2FFunctions%2F-325384828" anchor-label="getController" id="322469898%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-controller.html"><span>get</span><wbr></wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="322469898%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-controller.html"><span class="token function">getController</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorController///PointingToDeclaration/">DcMotorController</span></div><div class="brief ">Returns the underlying motor controller on which this motor is situated.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2055713042%2FFunctions%2F-325384828" anchor-label="getCurrent" id="-2055713042%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-current.html"><span>get</span><wbr></wbr><span><span>Current</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2055713042%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-current.html"><span class="token function">getCurrent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">unit<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/CurrentUnit///PointingToDeclaration/">CurrentUnit</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief ">Returns the current consumed by this motor.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="484676262%2FFunctions%2F-325384828" anchor-label="getCurrentAlert" id="484676262%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-current-alert.html"><span>get</span><wbr></wbr><span>Current</span><wbr></wbr><span><span>Alert</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="484676262%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-current-alert.html"><span class="token function">getCurrentAlert</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">unit<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/CurrentUnit///PointingToDeclaration/">CurrentUnit</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief ">Returns the current alert for this motor.</div></div></div>
                 </div>
               </div>
             </div>
@@ -250,6 +306,126 @@ v5.0.0-master-940d19a4            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-current-position.html"><span class="token function">getCurrentPosition</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-164278379%2FFunctions%2F-325384828" anchor-label="getDirection" id="-164278379%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-direction.html"><span>get</span><wbr></wbr><span><span>Direction</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-164278379%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-direction.html"><span class="token function">getDirection</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorSimple.Direction///PointingToDeclaration/">DcMotorSimple.Direction</span></div><div class="brief ">Returns the current logical direction in which this motor is set as operating.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-639467723%2FFunctions%2F-325384828" anchor-label="getManufacturer" id="-639467723%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-manufacturer.html"><span>get</span><wbr></wbr><span><span>Manufacturer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-639467723%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-manufacturer.html"><span class="token function">getManufacturer</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/HardwareDevice.Manufacturer///PointingToDeclaration/">HardwareDevice.Manufacturer</span></div><div class="brief ">Returns an indication of the manufacturer of this device.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="112789445%2FFunctions%2F-325384828" anchor-label="getMotorType" id="112789445%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-motor-type.html"><span>get</span><wbr></wbr><span>Motor</span><wbr></wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="112789445%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-motor-type.html"><span class="token function">getMotorType</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware.configuration.typecontainers/MotorConfigurationType///PointingToDeclaration/">MotorConfigurationType</span></div><div class="brief ">Returns the assigned type for this motor.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="164196956%2FFunctions%2F-325384828" anchor-label="getPIDCoefficients" id="164196956%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-p-i-d-coefficients.html"><span>get</span><wbr></wbr><span><span>PIDCoefficients</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="164196956%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-p-i-d-coefficients.html"><span class="token function">getPIDCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/PIDCoefficients///PointingToDeclaration/">PIDCoefficients</span></div><div class="brief ">Returns the PID control coefficients used when running in the indicated mode on this motor.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="807342650%2FFunctions%2F-325384828" anchor-label="getPIDFCoefficients" id="807342650%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-p-i-d-f-coefficients.html"><span>get</span><wbr></wbr><span><span>PIDFCoefficients</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="807342650%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-p-i-d-f-coefficients.html"><span class="token function">getPIDFCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/PIDFCoefficients///PointingToDeclaration/">PIDFCoefficients</span></div><div class="brief ">Returns the PIDF control coefficients used when running in the indicated mode on this motor.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="403612732%2FFunctions%2F-325384828" anchor-label="getPortNumber" id="403612732%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-port-number.html"><span>get</span><wbr></wbr><span>Port</span><wbr></wbr><span><span>Number</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="403612732%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-port-number.html"><span class="token function">getPortNumber</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief ">Returns the port number on the underlying motor controller on which this motor is situated.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2065646671%2FFunctions%2F-325384828" anchor-label="getPower" id="2065646671%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-power.html"><span>get</span><wbr></wbr><span><span>Power</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2065646671%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-power.html"><span class="token function">getPower</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief ">Returns the current configured power level of the motor.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1825171537%2FFunctions%2F-325384828" anchor-label="getPowerFloat" id="-1825171537%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-power-float.html"><span>get</span><wbr></wbr><span>Power</span><wbr></wbr><span><span>Float</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1825171537%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-power-float.html"><span class="token function">getPowerFloat</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief ">Returns whether the motor is currently in a float power level.</div></div></div>
                 </div>
               </div>
             </div>
@@ -284,6 +460,21 @@ v5.0.0-master-940d19a4            </div>
               </div>
             </div>
           </div>
+<a data-name="22190860%2FFunctions%2F-325384828" anchor-label="getTargetPosition" id="22190860%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-target-position.html"><span>get</span><wbr></wbr><span>Target</span><wbr></wbr><span><span>Position</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="22190860%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-target-position.html"><span class="token function">getTargetPosition</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief ">Returns the current target encoder position for this motor.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="1890040321%2FFunctions%2F-325384828" anchor-label="getTargetPositionTolerance" id="1890040321%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
@@ -299,17 +490,47 @@ v5.0.0-master-940d19a4            </div>
               </div>
             </div>
           </div>
-<a data-name="748283945%2FFunctions%2F-325384828" anchor-label="getVelocity" id="748283945%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="1042148387%2FFunctions%2F-325384828" anchor-label="getVelocity" id="1042148387%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="get-velocity.html"><span>get</span><wbr></wbr><span><span>Velocity</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="748283945%2FFunctions%2F-325384828"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1042148387%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-velocity.html"><span class="token function">getVelocity</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-velocity.html"><span class="token function">getVelocity</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><br><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-velocity.html"><span class="token function">getVelocity</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">unit<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/AngleUnit///PointingToDeclaration/">AngleUnit</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief ">Returns the current velocity of the motor, in angular units per second</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="351334940%2FFunctions%2F-325384828" anchor-label="getVersion" id="351334940%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-version.html"><span>get</span><wbr></wbr><span><span>Version</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="351334940%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-version.html"><span class="token function">getVersion</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief ">Version</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2106202469%2FFunctions%2F-325384828" anchor-label="getZeroPowerBehavior" id="2106202469%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-zero-power-behavior.html"><span>get</span><wbr></wbr><span>Zero</span><wbr></wbr><span>Power</span><wbr></wbr><span><span>Behavior</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2106202469%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-zero-power-behavior.html"><span class="token function">getZeroPowerBehavior</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.ZeroPowerBehavior///PointingToDeclaration/">DcMotor.ZeroPowerBehavior</span></div><div class="brief ">Returns the current behavior of the motor were a power level of zero to be applied.</div></div></div>
                 </div>
               </div>
             </div>
@@ -325,6 +546,51 @@ v5.0.0-master-940d19a4            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="is-busy.html"><span class="token function"><strike>isBusy</strike></span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief ">Note that this method will try to access the <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.RUN_TO_POSITION///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">RUN_TO_POSITION</span> controller to access information there.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1130310296%2FFunctions%2F-325384828" anchor-label="isMotorEnabled" id="-1130310296%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-motor-enabled.html"><span>is</span><wbr></wbr><span>Motor</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1130310296%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="is-motor-enabled.html"><span class="token function">isMotorEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief ">Returns whether this motor is energized</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-965728959%2FFunctions%2F-325384828" anchor-label="isOverCurrent" id="-965728959%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-over-current.html"><span>is</span><wbr></wbr><span>Over</span><wbr></wbr><span><span>Current</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-965728959%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="is-over-current.html"><span class="token function">isOverCurrent</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief ">Returns whether the current consumption of this motor exceeds the alert threshold.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-645930624%2FFunctions%2F-325384828" anchor-label="resetDeviceConfigurationForOpMode" id="-645930624%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reset-device-configuration-for-op-mode.html"><span>reset</span><wbr></wbr><span>Device</span><wbr></wbr><span>Configuration</span><wbr></wbr><span>For</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-645930624%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="reset-device-configuration-for-op-mode.html"><span class="token function">resetDeviceConfigurationForOpMode</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Resets the device's configuration to that which is expected at the beginning of an OpMode.</div></div></div>
                 </div>
               </div>
             </div>
@@ -374,6 +640,36 @@ v5.0.0-master-940d19a4            </div>
               </div>
             </div>
           </div>
+<a data-name="-795613328%2FFunctions%2F-325384828" anchor-label="setCurrentAlert" id="-795613328%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-current-alert.html"><span>set</span><wbr></wbr><span>Current</span><wbr></wbr><span><span>Alert</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-795613328%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-current-alert.html"><span class="token function">setCurrentAlert</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">current<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">unit<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/CurrentUnit///PointingToDeclaration/">CurrentUnit</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the current alert for this motor</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1116294179%2FFunctions%2F-325384828" anchor-label="setDirection" id="1116294179%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-direction.html"><span>set</span><wbr></wbr><span><span>Direction</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1116294179%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-direction.html"><span class="token function">setDirection</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">direction<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorSimple.Direction///PointingToDeclaration/">DcMotorSimple.Direction</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the logical direction in which this motor operates.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1830771960%2FFunctions%2F-325384828" anchor-label="setMaxPower" id="-1830771960%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
@@ -385,6 +681,96 @@ v5.0.0-master-940d19a4            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-max-power.html"><span class="token function">setMaxPower</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">magnitude<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the maximum power magnitude (applies for both negative and positive powers) this motor can run at.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1818381063%2FFunctions%2F-325384828" anchor-label="setMotorDisable" id="1818381063%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-motor-disable.html"><span>set</span><wbr></wbr><span>Motor</span><wbr></wbr><span><span>Disable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1818381063%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-motor-disable.html"><span class="token function">setMotorDisable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Individually de-energizes this particular motor</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="700187688%2FFunctions%2F-325384828" anchor-label="setMotorEnable" id="700187688%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-motor-enable.html"><span>set</span><wbr></wbr><span>Motor</span><wbr></wbr><span><span>Enable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="700187688%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-motor-enable.html"><span class="token function">setMotorEnable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Individually energizes this particular motor</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1903380633%2FFunctions%2F-325384828" anchor-label="setMotorType" id="-1903380633%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-motor-type.html"><span>set</span><wbr></wbr><span>Motor</span><wbr></wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1903380633%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-motor-type.html"><span class="token function">setMotorType</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">motorType<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware.configuration.typecontainers/MotorConfigurationType///PointingToDeclaration/">MotorConfigurationType</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the assigned type of this motor.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-404170043%2FFunctions%2F-325384828" anchor-label="setPIDCoefficients" id="-404170043%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-p-i-d-coefficients.html"><span>set</span><wbr></wbr><span><span>PIDCoefficients</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-404170043%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-p-i-d-coefficients.html"><span class="token function">setPIDCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span><span class="token punctuation">, </span></span><span class="parameter ">pidCoefficients<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/PIDCoefficients///PointingToDeclaration/">PIDCoefficients</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the PID control coefficients for one of the PID modes of this motor.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-508060315%2FFunctions%2F-325384828" anchor-label="setPIDFCoefficients" id="-508060315%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-p-i-d-f-coefficients.html"><span>set</span><wbr></wbr><span><span>PIDFCoefficients</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-508060315%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-p-i-d-f-coefficients.html"><span class="token function">setPIDFCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span><span class="token punctuation">, </span></span><span class="parameter ">pidfCoefficients<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/PIDFCoefficients///PointingToDeclaration/">PIDFCoefficients</span></span></span><span class="token punctuation">)</span></div><div class="brief ">This method is a superset enhancement to <a href="set-p-i-d-coefficients.html">setPIDCoefficients</a>.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1259761159%2FFunctions%2F-325384828" anchor-label="setPositionPIDFCoefficients" id="1259761159%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-position-p-i-d-f-coefficients.html"><span>set</span><wbr></wbr><span>Position</span><wbr></wbr><span><span>PIDFCoefficients</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1259761159%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-position-p-i-d-f-coefficients.html"><span class="token function">setPositionPIDFCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief ">A shorthand for setting the P coefficient for the <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.RUN_TO_POSITION///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">RUN_TO_POSITION</span> mode.</div></div></div>
                 </div>
               </div>
             </div>
@@ -419,6 +805,21 @@ v5.0.0-master-940d19a4            </div>
               </div>
             </div>
           </div>
+<a data-name="588607267%2FFunctions%2F-325384828" anchor-label="setPowerFloat" id="588607267%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-power-float.html"><span>set</span><wbr></wbr><span>Power</span><wbr></wbr><span><span>Float</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="588607267%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-power-float.html"><span class="token function"><strike>setPowerFloat</strike></span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Sets the zero power behavior of the motor to <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.ZeroPowerBehavior.FLOAT///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">FLOAT</span>, then applies zero power to that motor.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1771957849%2FFunctions%2F-325384828" anchor-label="setPowerRefreshRate" id="-1771957849%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
@@ -449,17 +850,32 @@ v5.0.0-master-940d19a4            </div>
               </div>
             </div>
           </div>
-<a data-name="553921111%2FFunctions%2F-325384828" anchor-label="setRunUsingEncoderController" id="553921111%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="428499500%2FFunctions%2F-325384828" anchor-label="setRunUsingEncoderController" id="428499500%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="set-run-using-encoder-controller.html"><span>set</span><wbr></wbr><span>Run</span><wbr></wbr><span>Using</span><wbr></wbr><span>Encoder</span><wbr></wbr><span><span>Controller</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="553921111%2FFunctions%2F-325384828"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="428499500%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-run-using-encoder-controller.html"><span class="token function">setRunUsingEncoderController</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">controller<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-system-controller/index.html">SystemController</a><span class="token punctuation">, </span></span><span class="parameter ">bufferFraction<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">maxAchievableTicksPerSecond<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Set a system controller to use for <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.RUN_USING_ENCODER///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">RUN_USING_ENCODER</span>.</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-run-using-encoder-controller.html"><span class="token function">setRunUsingEncoderController</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">controller<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-system-controller/index.html">SystemController</a><span class="token punctuation">, </span></span><span class="parameter ">bufferFraction<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-run-using-encoder-controller.html"><span class="token function">setRunUsingEncoderController</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">controller<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-system-controller/index.html">SystemController</a><span class="token punctuation">, </span></span><span class="parameter ">bufferFraction<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">maxAchievableTicksPerSecond<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Set a system controller to use for <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.RUN_USING_ENCODER///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">RUN_USING_ENCODER</span>.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1693697933%2FFunctions%2F-325384828" anchor-label="setTargetPosition" id="-1693697933%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-target-position.html"><span>set</span><wbr></wbr><span>Target</span><wbr></wbr><span><span>Position</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1693697933%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-target-position.html"><span class="token function">setTargetPosition</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">position<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the desired encoder target position to which the motor should advance or retreat and then actively hold thereat.</div></div></div>
                 </div>
               </div>
             </div>
@@ -494,6 +910,36 @@ v5.0.0-master-940d19a4            </div>
               </div>
             </div>
           </div>
+<a data-name="-268464421%2FFunctions%2F-325384828" anchor-label="setVelocityPIDFCoefficients" id="-268464421%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-velocity-p-i-d-f-coefficients.html"><span>set</span><wbr></wbr><span>Velocity</span><wbr></wbr><span><span>PIDFCoefficients</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-268464421%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-velocity-p-i-d-f-coefficients.html"><span class="token function">setVelocityPIDFCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">i<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">d<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">f<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div><div class="brief ">A shorthand for setting the PIDF coefficients for the <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.RUN_USING_ENCODER///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">RUN_USING_ENCODER</span> mode.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-84364939%2FFunctions%2F-325384828" anchor-label="setZeroPowerBehavior" id="-84364939%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-zero-power-behavior.html"><span>set</span><wbr></wbr><span>Zero</span><wbr></wbr><span>Power</span><wbr></wbr><span><span>Behavior</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-84364939%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="set-zero-power-behavior.html"><span class="token function">setZeroPowerBehavior</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">zeroPowerBehavior<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.ZeroPowerBehavior///PointingToDeclaration/">DcMotor.ZeroPowerBehavior</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets the behavior of the motor when a power level of zero is applied.</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="1600088169%2FFunctions%2F-325384828" anchor-label="useEncoderOverflowCorrection" id="1600088169%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
@@ -504,7 +950,7 @@ v5.0.0-master-940d19a4            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="use-encoder-overflow-correction.html"><span class="token function">useEncoderOverflowCorrection</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Call to use encoder overflow (exceeding 32767 ticks/sec) correction on getVelocity.</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="use-encoder-overflow-correction.html"><span class="token function">useEncoderOverflowCorrection</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Call to use encoder overflow (exceeding 32767 ticks/sec) correction on <a href="get-velocity.html">getVelocity</a>.</div></div></div>
                 </div>
               </div>
             </div>
@@ -513,617 +959,47 @@ v5.0.0-master-940d19a4            </div>
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="">Inherited functions</h2>
-        <div class="table"><a data-name="247207323%2FFunctions%2F-325384828" anchor-label="adjustAngularRate" id="247207323%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="173541243%2FFunctions%2F-325384828" anchor-label="getDeviceName" id="173541243%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#247207323%2FFunctions%2F-325384828"><span>adjust</span><wbr></wbr><span>Angular</span><wbr></wbr><span><span>Rate</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="247207323%2FFunctions%2F-325384828"></span>
+                  <div><a href="index.html#173541243%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Device</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="173541243%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#247207323%2FFunctions%2F-325384828"><span class="token function">adjustAngularRate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">angularRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="index.html#173541243%2FFunctions%2F-325384828"><span class="token function">getDeviceName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-595177821%2FFunctions%2F-325384828" anchor-label="adjustPosition" id="-595177821%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="189174777%2FFunctions%2F-325384828" anchor-label="getMode" id="189174777%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-595177821%2FFunctions%2F-325384828"><span>adjust</span><wbr></wbr><span><span>Position</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-595177821%2FFunctions%2F-325384828"></span>
+                  <div><a href="index.html#189174777%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="189174777%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-595177821%2FFunctions%2F-325384828"><span class="token function">adjustPosition</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">position<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="index.html#189174777%2FFunctions%2F-325384828"><span class="token function">getMode</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-218716405%2FFunctions%2F-325384828" anchor-label="adjustPower" id="-218716405%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="1092182458%2FFunctions%2F-325384828" anchor-label="setMode" id="1092182458%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-218716405%2FFunctions%2F-325384828"><span>adjust</span><wbr></wbr><span><span>Power</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-218716405%2FFunctions%2F-325384828"></span>
+                  <div><a href="index.html#1092182458%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1092182458%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-218716405%2FFunctions%2F-325384828"><span class="token function">adjustPower</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">power<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="608360698%2FFunctions%2F-325384828" anchor-label="close" id="608360698%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#608360698%2FFunctions%2F-325384828"><span><span>close</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="608360698%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#608360698%2FFunctions%2F-325384828"><span class="token function">close</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1526096624%2FFunctions%2F-325384828" anchor-label="getConnectionInfo" id="-1526096624%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-1526096624%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Connection</span><wbr></wbr><span><span>Info</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1526096624%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-1526096624%2FFunctions%2F-325384828"><span class="token function">getConnectionInfo</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1020475296%2FFunctions%2F-325384828" anchor-label="getController" id="1020475296%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#1020475296%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>Controller</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1020475296%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#1020475296%2FFunctions%2F-325384828"><span class="token function">getController</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorController///PointingToDeclaration/">DcMotorController</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-172237231%2FFunctions%2F-325384828" anchor-label="getCurrent" id="-172237231%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-172237231%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>Current</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-172237231%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-172237231%2FFunctions%2F-325384828"><span class="token function">getCurrent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">unit<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/CurrentUnit///PointingToDeclaration/">CurrentUnit</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="208742691%2FFunctions%2F-325384828" anchor-label="getCurrentAlert" id="208742691%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#208742691%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Current</span><wbr></wbr><span><span>Alert</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="208742691%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#208742691%2FFunctions%2F-325384828"><span class="token function">getCurrentAlert</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">unit<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/CurrentUnit///PointingToDeclaration/">CurrentUnit</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1763822373%2FFunctions%2F-325384828" anchor-label="getDeviceName" id="-1763822373%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-1763822373%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Device</span><wbr></wbr><span><span>Name</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1763822373%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-1763822373%2FFunctions%2F-325384828"><span class="token function">getDeviceName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1388688065%2FFunctions%2F-325384828" anchor-label="getDirection" id="-1388688065%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-1388688065%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>Direction</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1388688065%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-1388688065%2FFunctions%2F-325384828"><span class="token function">getDirection</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorSimple.Direction///PointingToDeclaration/">DcMotorSimple.Direction</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="128821579%2FFunctions%2F-325384828" anchor-label="getManufacturer" id="128821579%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#128821579%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>Manufacturer</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="128821579%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#128821579%2FFunctions%2F-325384828"><span class="token function">getManufacturer</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/HardwareDevice.Manufacturer///PointingToDeclaration/">HardwareDevice.Manufacturer</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="751047353%2FFunctions%2F-325384828" anchor-label="getMode" id="751047353%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#751047353%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>Mode</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="751047353%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#751047353%2FFunctions%2F-325384828"><span class="token function">getMode</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1111620241%2FFunctions%2F-325384828" anchor-label="getMotorType" id="-1111620241%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-1111620241%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Motor</span><wbr></wbr><span><span>Type</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1111620241%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-1111620241%2FFunctions%2F-325384828"><span class="token function">getMotorType</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware.configuration.typecontainers/MotorConfigurationType///PointingToDeclaration/">MotorConfigurationType</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-462806577%2FFunctions%2F-325384828" anchor-label="getOperationalDirection" id="-462806577%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-462806577%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Operational</span><wbr></wbr><span><span>Direction</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-462806577%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-462806577%2FFunctions%2F-325384828"><span class="token function">getOperationalDirection</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorSimple.Direction///PointingToDeclaration/">DcMotorSimple.Direction</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1129845951%2FFunctions%2F-325384828" anchor-label="getPIDCoefficients" id="1129845951%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#1129845951%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>PIDCoefficients</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1129845951%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#1129845951%2FFunctions%2F-325384828"><span class="token function">getPIDCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/PIDCoefficients///PointingToDeclaration/">PIDCoefficients</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="677690423%2FFunctions%2F-325384828" anchor-label="getPIDFCoefficients" id="677690423%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#677690423%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>PIDFCoefficients</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="677690423%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#677690423%2FFunctions%2F-325384828"><span class="token function">getPIDFCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/PIDFCoefficients///PointingToDeclaration/">PIDFCoefficients</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1101618130%2FFunctions%2F-325384828" anchor-label="getPortNumber" id="1101618130%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#1101618130%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Port</span><wbr></wbr><span><span>Number</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1101618130%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#1101618130%2FFunctions%2F-325384828"><span class="token function">getPortNumber</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1463179527%2FFunctions%2F-325384828" anchor-label="getPower" id="-1463179527%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-1463179527%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>Power</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1463179527%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-1463179527%2FFunctions%2F-325384828"><span class="token function">getPower</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1127166139%2FFunctions%2F-325384828" anchor-label="getPowerFloat" id="-1127166139%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-1127166139%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Power</span><wbr></wbr><span><span>Float</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1127166139%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-1127166139%2FFunctions%2F-325384828"><span class="token function">getPowerFloat</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-386164830%2FFunctions%2F-325384828" anchor-label="getTargetPosition" id="-386164830%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-386164830%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Target</span><wbr></wbr><span><span>Position</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-386164830%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-386164830%2FFunctions%2F-325384828"><span class="token function">getTargetPosition</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-2121444794%2FFunctions%2F-325384828" anchor-label="getVersion" id="-2121444794%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-2121444794%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>Version</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2121444794%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-2121444794%2FFunctions%2F-325384828"><span class="token function">getVersion</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="129223951%2FFunctions%2F-325384828" anchor-label="getZeroPowerBehavior" id="129223951%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#129223951%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Zero</span><wbr></wbr><span>Power</span><wbr></wbr><span><span>Behavior</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="129223951%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#129223951%2FFunctions%2F-325384828"><span class="token function">getZeroPowerBehavior</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.ZeroPowerBehavior///PointingToDeclaration/">DcMotor.ZeroPowerBehavior</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="876959613%2FFunctions%2F-325384828" anchor-label="internalSetMode" id="876959613%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#876959613%2FFunctions%2F-325384828"><span>internal</span><wbr></wbr><span>Set</span><wbr></wbr><span><span>Mode</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="876959613%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#876959613%2FFunctions%2F-325384828"><span class="token function">internalSetMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-840366953%2FFunctions%2F-325384828" anchor-label="internalSetPower" id="-840366953%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-840366953%2FFunctions%2F-325384828"><span>internal</span><wbr></wbr><span>Set</span><wbr></wbr><span><span>Power</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-840366953%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-840366953%2FFunctions%2F-325384828"><span class="token function">internalSetPower</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">power<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-861094029%2FFunctions%2F-325384828" anchor-label="internalSetTargetPosition" id="-861094029%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-861094029%2FFunctions%2F-325384828"><span>internal</span><wbr></wbr><span>Set</span><wbr></wbr><span>Target</span><wbr></wbr><span><span>Position</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-861094029%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-861094029%2FFunctions%2F-325384828"><span class="token function">internalSetTargetPosition</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">position<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="882955237%2FFunctions%2F-325384828" anchor-label="isMotorEnabled" id="882955237%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#882955237%2FFunctions%2F-325384828"><span>is</span><wbr></wbr><span>Motor</span><wbr></wbr><span><span>Enabled</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="882955237%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#882955237%2FFunctions%2F-325384828"><span class="token function">isMotorEnabled</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="761783076%2FFunctions%2F-325384828" anchor-label="isOverCurrent" id="761783076%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#761783076%2FFunctions%2F-325384828"><span>is</span><wbr></wbr><span>Over</span><wbr></wbr><span><span>Current</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="761783076%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#761783076%2FFunctions%2F-325384828"><span class="token function">isOverCurrent</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-348589546%2FFunctions%2F-325384828" anchor-label="resetDeviceConfigurationForOpMode" id="-348589546%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-348589546%2FFunctions%2F-325384828"><span>reset</span><wbr></wbr><span>Device</span><wbr></wbr><span>Configuration</span><wbr></wbr><span>For</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Mode</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-348589546%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-348589546%2FFunctions%2F-325384828"><span class="token function">resetDeviceConfigurationForOpMode</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1638169171%2FFunctions%2F-325384828" anchor-label="setCurrentAlert" id="1638169171%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#1638169171%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Current</span><wbr></wbr><span><span>Alert</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1638169171%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#1638169171%2FFunctions%2F-325384828"><span class="token function">setCurrentAlert</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">current<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">unit<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.external.navigation/CurrentUnit///PointingToDeclaration/">CurrentUnit</span></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1962850105%2FFunctions%2F-325384828" anchor-label="setDirection" id="1962850105%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#1962850105%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span><span>Direction</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1962850105%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#1962850105%2FFunctions%2F-325384828"><span class="token function">setDirection</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">direction<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotorSimple.Direction///PointingToDeclaration/">DcMotorSimple.Direction</span></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="497126138%2FFunctions%2F-325384828" anchor-label="setMode" id="497126138%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#497126138%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span><span>Mode</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="497126138%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#497126138%2FFunctions%2F-325384828"><span class="token function">setMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-194896854%2FFunctions%2F-325384828" anchor-label="setMotorDisable" id="-194896854%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-194896854%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Motor</span><wbr></wbr><span><span>Disable</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-194896854%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-194896854%2FFunctions%2F-325384828"><span class="token function">setMotorDisable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1581514075%2FFunctions%2F-325384828" anchor-label="setMotorEnable" id="-1581514075%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-1581514075%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Motor</span><wbr></wbr><span><span>Enable</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1581514075%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-1581514075%2FFunctions%2F-325384828"><span class="token function">setMotorEnable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="551634301%2FFunctions%2F-325384828" anchor-label="setMotorType" id="551634301%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#551634301%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Motor</span><wbr></wbr><span><span>Type</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="551634301%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#551634301%2FFunctions%2F-325384828"><span class="token function">setMotorType</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">motorType<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware.configuration.typecontainers/MotorConfigurationType///PointingToDeclaration/">MotorConfigurationType</span></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1931610920%2FFunctions%2F-325384828" anchor-label="setPIDCoefficients" id="1931610920%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#1931610920%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span><span>PIDCoefficients</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1931610920%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#1931610920%2FFunctions%2F-325384828"><span class="token function">setPIDCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span><span class="token punctuation">, </span></span><span class="parameter ">pidCoefficients<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/PIDCoefficients///PointingToDeclaration/">PIDCoefficients</span></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-2090450680%2FFunctions%2F-325384828" anchor-label="setPIDFCoefficients" id="-2090450680%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-2090450680%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span><span>PIDFCoefficients</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2090450680%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-2090450680%2FFunctions%2F-325384828"><span class="token function">setPIDFCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">mode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span><span class="token punctuation">, </span></span><span class="parameter ">pidfCoefficients<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/PIDFCoefficients///PointingToDeclaration/">PIDFCoefficients</span></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1452319638%2FFunctions%2F-325384828" anchor-label="setPositionPIDFCoefficients" id="-1452319638%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-1452319638%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Position</span><wbr></wbr><span><span>PIDFCoefficients</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1452319638%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-1452319638%2FFunctions%2F-325384828"><span class="token function">setPositionPIDFCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1286612665%2FFunctions%2F-325384828" anchor-label="setPowerFloat" id="1286612665%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#1286612665%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Power</span><wbr></wbr><span><span>Float</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1286612665%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#1286612665%2FFunctions%2F-325384828"><span class="token function">setPowerFloat</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="624290845%2FFunctions%2F-325384828" anchor-label="setTargetPosition" id="624290845%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#624290845%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Target</span><wbr></wbr><span><span>Position</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="624290845%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#624290845%2FFunctions%2F-325384828"><span class="token function">setTargetPosition</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">position<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-773944232%2FFunctions%2F-325384828" anchor-label="setVelocityPIDFCoefficients" id="-773944232%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-773944232%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Velocity</span><wbr></wbr><span><span>PIDFCoefficients</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-773944232%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-773944232%2FFunctions%2F-325384828"><span class="token function">setVelocityPIDFCoefficients</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">i<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">d<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">f<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1047807733%2FFunctions%2F-325384828" anchor-label="setZeroPowerBehavior" id="-1047807733%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../-ramping/-dc-motor/index.html#-1047807733%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Zero</span><wbr></wbr><span>Power</span><wbr></wbr><span><span>Behavior</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1047807733%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-ramping/-dc-motor/index.html#-1047807733%2FFunctions%2F-325384828"><span class="token function">setZeroPowerBehavior</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">zeroPowerBehavior<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.ZeroPowerBehavior///PointingToDeclaration/">DcMotor.ZeroPowerBehavior</span></span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="index.html#1092182458%2FFunctions%2F-325384828"><span class="token function">setMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode///PointingToDeclaration/">DcMotor.RunMode</span></span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>

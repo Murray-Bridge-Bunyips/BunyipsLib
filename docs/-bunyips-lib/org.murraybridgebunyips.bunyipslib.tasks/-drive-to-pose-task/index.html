@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v5.0.0-master-940d19a4            </div>
+v5.1.0-master-75a783e6            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,24 +66,24 @@ v5.0.0-master-940d19a4            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">org.murraybridgebunyips.bunyipslib.tasks</a><span class="delimiter">/</span><span class="current">DriveToPoseTask</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Drive</span><wbr></wbr><span>To</span><wbr></wbr><span>Pose</span><wbr></wbr><span><span>Task</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">DriveToPoseTask</a> : <a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></div><p class="paragraph">Drive to a pose using RoadRunner. This is useful for pose alignment based on error, rather than using trajectories for planned motion. Designed and tested for Mecanum drivebases as RoadRunner was designed around them.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">3.3.0</p></span></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">DriveToPoseTask</a> : <a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></div><p class="paragraph">Drive to a pose using a localizer and PID-To-Point. </p><p class="paragraph"> This is useful for pose alignment based on error, rather than using trajectories for planned motion. Designed and tested for Mecanum drivebases as RoadRunner was designed around them.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">3.3.0</p></span></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="CONSTRUCTOR">
         <h2 class="">Constructors</h2>
-        <div class="table"><a data-name="-115802595%2FConstructors%2F-325384828" anchor-label="DriveToPoseTask" id="-115802595%2FConstructors%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="-938336341%2FConstructors%2F-325384828" anchor-label="DriveToPoseTask" id="-938336341%2FConstructors%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-drive-to-pose-task.html"><span>Drive</span><wbr></wbr><span>To</span><wbr></wbr><span>Pose</span><wbr></wbr><span><span>Task</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-115802595%2FConstructors%2F-325384828"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-938336341%2FConstructors%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>timeout<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>driveSubsystem<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a><span class="token punctuation">, </span></span><span class="parameter ">targetPose<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">forwardController<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-system-controller/index.html">SystemController</a><span class="token punctuation">, </span></span><span class="parameter ">strafeController<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-system-controller/index.html">SystemController</a><span class="token punctuation">, </span></span><span class="parameter ">headingController<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-system-controller/index.html">SystemController</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Run the Drive To Pose Task on a drive subsystem.</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>timeout<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>driveInstance<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.drive/-moveable/index.html">Moveable</a><span class="token punctuation">, </span></span><span class="parameter ">targetPose<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.geometry/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">forwardController<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-system-controller/index.html">SystemController</a><span class="token punctuation">, </span></span><span class="parameter ">strafeController<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-system-controller/index.html">SystemController</a><span class="token punctuation">, </span></span><span class="parameter ">headingController<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external/-system-controller/index.html">SystemController</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Run the Drive To Pose Task on a drive instance.</div></div></div>
                 </div>
               </div>
             </div>
@@ -96,13 +96,13 @@ v5.0.0-master-940d19a4            </div>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#1634108586%2FProperties%2F-325384828"><span><span>Companion</span></span></a></div>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#1634108586%2FProperties%2F-325384828"><span><span>Companion</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1634108586%2FProperties%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#1634108586%2FProperties%2F-325384828">Companion</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/-companion/index.html">Task.Companion</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#1634108586%2FProperties%2F-325384828">Companion</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/-companion/index.html">Task.Companion</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -111,13 +111,13 @@ v5.0.0-master-940d19a4            </div>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#245127662%2FProperties%2F-325384828"><span><span>INFINITE_TIMEOUT</span></span></a></div>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#245127662%2FProperties%2F-325384828"><span><span>INFINITE_TIMEOUT</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="245127662%2FProperties%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#245127662%2FProperties%2F-325384828">INFINITE_TIMEOUT</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Timeout value for an infinite task that will run forever.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#245127662%2FProperties%2F-325384828">INFINITE_TIMEOUT</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Timeout value for an infinite task that will run forever.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -132,7 +132,7 @@ v5.0.0-master-940d19a4            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">val </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html">opMode</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">protected </span><span class="token keyword">val </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html">opMode</a><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></div><div class="brief ">Get a reference to the currently running <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a>.</div></div></div>
                 </div>
               </div>
             </div>
@@ -325,7 +325,37 @@ v5.0.0-master-940d19a4            </div>
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="">Inherited functions</h2>
-        <div class="table"><a data-name="217847505%2FFunctions%2F-325384828" anchor-label="finish" id="217847505%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="-2034690079%2FFunctions%2F-325384828" anchor-label="after" id="-2034690079%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-2034690079%2FFunctions%2F-325384828"><span><span>after</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2034690079%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-2034690079%2FFunctions%2F-325384828"><span class="token function">after</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a> with the supplied tasks to run before this one.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2133452854%2FFunctions%2F-325384828" anchor-label="during" id="-2133452854%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-2133452854%2FFunctions%2F-325384828"><span><span>during</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2133452854%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-2133452854%2FFunctions%2F-325384828"><span class="token function">during</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-deadline-task-group/index.html">DeadlineTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-deadline-task-group/index.html">DeadlineTaskGroup</a> with the supplied tasks to run these extra tasks until this task is done.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="217847505%2FFunctions%2F-325384828" anchor-label="finish" id="217847505%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -359,13 +389,13 @@ v5.0.0-master-940d19a4            </div>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#-154142283%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Delta</span><wbr></wbr><span><span>Time</span></span></a></div>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-154142283%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Delta</span><wbr></wbr><span><span>Time</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-154142283%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#-154142283%2FFunctions%2F-325384828"><span class="token function">getDeltaTime</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Time in seconds since the task was started.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-154142283%2FFunctions%2F-325384828"><span class="token function">getDeltaTime</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Time in seconds since the task was started.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -494,13 +524,28 @@ v5.0.0-master-940d19a4            </div>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#-341202094%2FFunctions%2F-325384828"><span>on</span><wbr></wbr><span><span>Subsystem</span></span></a></div>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-deadline-task-group/index.html#-341202094%2FFunctions%2F-325384828"><span>on</span><wbr></wbr><span><span>Subsystem</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-341202094%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#-341202094%2FFunctions%2F-325384828"><span class="token function">onSubsystem</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">subsystem<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a><span class="token punctuation">, </span></span><span class="parameter ">override<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-deadline-task-group/index.html#-341202094%2FFunctions%2F-325384828"><span class="token function">onSubsystem</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">subsystem<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a><span class="token punctuation">, </span></span><span class="parameter ">override<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="597459044%2FFunctions%2F-325384828" anchor-label="opMode" id="597459044%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html"><span>op</span><wbr></wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="597459044%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html"><span class="token function">opMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>ifRunning<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/Consumer.html">Consumer</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Null check consumer for the <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html">opMode</a> field which will no-op the given consumer if an active <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a> is not present (i.e.</div></div></div>
                 </div>
               </div>
             </div>
@@ -516,6 +561,51 @@ v5.0.0-master-940d19a4            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/poll-finished.html"><span class="token function">pollFinished</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Update and query the state of the task if it is finished. This will return true if the task is finished and the finisher has been fired.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="484505338%2FFunctions%2F-325384828" anchor-label="race" id="484505338%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#484505338%2FFunctions%2F-325384828"><span><span>race</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="484505338%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#484505338%2FFunctions%2F-325384828"><span class="token function">race</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-race-task-group/index.html">RaceTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-race-task-group/index.html">RaceTaskGroup</a> with the supplied tasks to run all of these tasks until one finishes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-452056099%2FFunctions%2F-325384828" anchor-label="repeatedly" id="-452056099%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/repeatedly.html"><span><span>repeatedly</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-452056099%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/repeatedly.html"><span class="token function">repeatedly</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Wrap this task in a <a href="../-repeat-task/index.html">RepeatTask</a> where finish conditions are reset immediately.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-27540731%2FFunctions%2F-325384828" anchor-label="require" id="-27540731%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/require.html"><span><span>require</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-27540731%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/require.html"><span class="token function">require</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>nullableOpMode<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></div><div class="brief ">Null assertion for the <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-component/op-mode.html">opMode</a> field which throws a <a href="https://developer.android.com/reference/kotlin/java/lang/NullPointerException.html">NullPointerException</a> if an active <a href="../../org.murraybridgebunyips.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a> is not present (i.e.</div></div></div>
                 </div>
               </div>
             </div>
@@ -539,13 +629,28 @@ v5.0.0-master-940d19a4            </div>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#-853624561%2FFunctions%2F-325384828"><span><span>run</span></span></a></div>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-853624561%2FFunctions%2F-325384828"><span><span>run</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1796244114%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#-853624561%2FFunctions%2F-325384828"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><br><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/run.html"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Should be called by your polling loop to run the task and manage all state properly.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-853624561%2FFunctions%2F-325384828"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><br><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/run.html"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Should be called by your polling loop to run the task and manage all state properly.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1093915182%2FFunctions%2F-325384828" anchor-label="then" id="1093915182%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#1093915182%2FFunctions%2F-325384828"><span><span>then</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1093915182%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#1093915182%2FFunctions%2F-325384828"><span class="token function">then</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a> with the supplied tasks to follow after this one.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -580,6 +685,36 @@ v5.0.0-master-940d19a4            </div>
               </div>
             </div>
           </div>
+<a data-name="-1702217734%2FFunctions%2F-325384828" anchor-label="until" id="-1702217734%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-1702217734%2FFunctions%2F-325384828"><span><span>until</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1702217734%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-1702217734%2FFunctions%2F-325384828"><span class="token function">until</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">condition<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BooleanSupplier.html">BooleanSupplier</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-race-task-group/index.html">RaceTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-race-task-group/index.html">RaceTaskGroup</a> with a <a href="../-wait-until-task/index.html">WaitUntilTask</a> based on this condition.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1505783909%2FFunctions%2F-325384828" anchor-label="with" id="1505783909%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#1505783909%2FFunctions%2F-325384828"><span><span>with</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1505783909%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#1505783909%2FFunctions%2F-325384828"><span class="token function">with</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html">ParallelTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html">ParallelTaskGroup</a> with the supplied tasks to run all of these tasks at once.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="1958304458%2FFunctions%2F-325384828" anchor-label="withMutedReports" id="1958304458%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
@@ -599,13 +734,13 @@ v5.0.0-master-940d19a4            </div>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#-1241367826%2FFunctions%2F-325384828"><span>with</span><wbr></wbr><span><span>Name</span></span></a></div>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-1241367826%2FFunctions%2F-325384828"><span>with</span><wbr></wbr><span><span>Name</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1241367826%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#-1241367826%2FFunctions%2F-325384828"><span class="token function">withName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the name of this task to be displayed in the OpMode. You may override this method if required to enforce a naming convention/prefix.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-1241367826%2FFunctions%2F-325384828"><span class="token function">withName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the name of this task to be displayed in the OpMode. You may override this method if required to enforce a naming convention/prefix.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -614,13 +749,13 @@ v5.0.0-master-940d19a4            </div>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#-449599856%2FFunctions%2F-325384828"><span>with</span><wbr></wbr><span><span>Timeout</span></span></a></div>
+                  <div><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-449599856%2FFunctions%2F-325384828"><span>with</span><wbr></wbr><span><span>Timeout</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-449599856%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-parallel-task-group/index.html#-449599856%2FFunctions%2F-325384828"><span class="token function">withTimeout</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">timeout<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the timeout of this task dynamically and return the task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.groups/-task-group/index.html#-449599856%2FFunctions%2F-325384828"><span class="token function">withTimeout</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">timeout<span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../org.murraybridgebunyips.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../org.murraybridgebunyips.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the timeout of this task dynamically and return the task.</p></div></div></div>
                 </div>
               </div>
             </div>
