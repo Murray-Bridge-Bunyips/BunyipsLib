@@ -112,7 +112,7 @@ public final class Mathf {
                 // If max magnitude is sufficiently large, the implementation encounters
                 // round-off error.  Implementing the limiting behavior directly avoids
                 // the problem.
-                return value_d > 0.0 ? value_d - deadband_d  : value_d + deadband_d;
+                return value_d > 0.0 ? value_d - deadband_d : value_d + deadband_d;
             }
             if (value_d > 0.0) {
                 // Map deadband to 0 and map max to max.
@@ -419,7 +419,7 @@ public final class Mathf {
         double dy = p2.getY() - p1.getY();
         double a = dx * dx + dy * dy;
         double b = 2 * (dx * (p1.getX() - center.getX()) + dy * (p1.getY() - center.getY()));
-        double c = center.getX() * center.getX() + center.getY() * center.getY() + p1.getX() * p1.getX() + p1.getY() * p1.getY() - 2 * (center.getX() * p1.getX() + center.getY() * p1.getY()) - radius.doubleValue() * radius.doubleValue()    ;
+        double c = center.getX() * center.getX() + center.getY() * center.getY() + p1.getX() * p1.getX() + p1.getY() * p1.getY() - 2 * (center.getX() * p1.getX() + center.getY() * p1.getY()) - radius.doubleValue() * radius.doubleValue();
         List<Double> solutions = solveQuadratic(a, b, c);
         if (solutions.isEmpty()) {
             throw new NoInterceptException();
