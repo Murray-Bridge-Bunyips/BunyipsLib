@@ -264,6 +264,10 @@ public class AprilTagPoseEstimator implements Runnable {
             double tagY = tagPos.get(1);
             double tagRotation = metadata.distanceUnit.toInches(tagOri.thirdAngle);
             // 2D transformation matrix
+            // x' = x * cos(t) - y * sin(t)
+            // y' = x * sin(t) + y * cos(t)
+            // where t=0 yields (-y, x) for a 90 degree default rotation to accommodate for the 90 degree offset
+            // between RoadRunner pose and the FTC Global Coordinate system.
             double relativeX = camPose.x * Math.cos(tagRotation) - camPose.y * Math.sin(tagRotation);
             double relativeY = camPose.x * Math.sin(tagRotation) + camPose.y * Math.cos(tagRotation);
             // Displacement vector
