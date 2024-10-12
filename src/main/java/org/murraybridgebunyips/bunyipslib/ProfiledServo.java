@@ -9,8 +9,9 @@ import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
+import com.qualcomm.robotcore.hardware.ServoImpl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.TrapezoidProfile;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
@@ -20,19 +21,13 @@ import org.murraybridgebunyips.bunyipslib.external.units.Time;
  * This extension also offers refresh rate and cache tolerance handling for loop time optimisation.
  * <p>
  * This class serves as a drop-in replacement for the {@link Servo}, similar to {@link Motor} with the {@link DcMotor}.
+ * Do note that this class cannot be casted to a {@link ServoImplEx} instance, but it does implement the extended
+ * {@link PwmControl} interface for extended operations.
  *
  * @author Lucas Bubner, 2024
  * @since 5.1.0
  */
-public class ProfiledServo implements Servo, PwmControl {
-    protected final ServoControllerEx controller;
-    protected final int port;
-    private final String deviceName;
-
-    protected Direction direction = Direction.FORWARD;
-    protected double limitPositionMin = MIN_POSITION;
-    protected double limitPositionMax = MAX_POSITION;
-
+public class ProfiledServo extends ServoImpl implements PwmControl {
     @Nullable
     private TrapezoidProfile.Constraints constraints;
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
@@ -85,107 +80,7 @@ public class ProfiledServo implements Servo, PwmControl {
      * @param servo the Servo from hardwareMap to use.
      */
     public ProfiledServo(Servo servo) {
-        controller = (ServoControllerEx) servo.getController();
-        port = servo.getPortNumber();
-        deviceName = servo.getDeviceName();
-    }
-
-    /**
-     * Sets the PWM range limits for the servo
-     *
-     * @param range the new PWM range limits for the servo
-     * @see #getPwmRange()
-     */
-    @Override
-    public void setPwmRange(PwmRange range) {
-        controller.setServoPwmRange(port, range);
-    }
-
-    /**
-     * Returns the current PWM range limits for the servo
-     *
-     * @return the current PWM range limits for the servo
-     * @see #setPwmRange(PwmRange)
-     */
-    @Override
-    public PwmRange getPwmRange() {
-        return controller.getServoPwmRange(port);
-    }
-
-    /**
-     * Individually energizes the PWM for this particular servo.
-     *
-     * @see #setPwmDisable()
-     * @see #isPwmEnabled()
-     */
-    @Override
-    public void setPwmEnable() {
-        controller.setServoPwmEnable(port);
-    }
-
-    /**
-     * Individually denergizes the PWM for this particular servo
-     *
-     * @see #setPwmEnable()
-     */
-    @Override
-    public void setPwmDisable() {
-        controller.setServoPwmDisable(port);
-    }
-
-    /**
-     * Returns whether the PWM is energized for this particular servo
-     *
-     * @see #setPwmEnable()
-     */
-    @Override
-    public boolean isPwmEnabled() {
-        return controller.isServoPwmEnabled(port);
-    }
-
-    /**
-     * Returns the underlying servo controller on which this servo is situated.
-     *
-     * @return the underlying servo controller on which this servo is situated.
-     * @see #getPortNumber()
-     */
-    @Override
-    public ServoController getController() {
-        return controller;
-    }
-
-    /**
-     * Returns the port number on the underlying servo controller on which this motor is situated.
-     *
-     * @return the port number on the underlying servo controller on which this motor is situated.
-     * @see #getController()
-     */
-    @Override
-    public int getPortNumber() {
-        return port;
-    }
-
-    /**
-     * Sets the logical direction in which this servo operates.
-     *
-     * @param direction the direction to set for this servo
-     * @see #getDirection()
-     * @see Direction
-     */
-    @Override
-    public synchronized void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
-    /**
-     * Returns the current logical direction in which this servo is set as operating.
-     *
-     * @return the current logical direction in which this servo is set as operating.
-     * @see #setDirection(Direction)
-     */
-    @Override
-    public Direction getDirection() {
-        return direction;
+        super(servo.getController(), servo.getPortNumber(), servo.getDirection());
     }
 
     /**
@@ -203,10 +98,6 @@ public class ProfiledServo implements Servo, PwmControl {
      */
     @Override
     public synchronized void setPosition(double targetPosition) {
-        targetPosition = Mathf.clamp(targetPosition, MIN_POSITION, MAX_POSITION);
-        if (direction == Direction.REVERSE) targetPosition = reverse(targetPosition);
-        targetPosition = Mathf.scale(targetPosition, MIN_POSITION, MAX_POSITION, limitPositionMin, limitPositionMax);
-
         if (constraints != null) {
             // Apply motion profiling for current target in seconds
             TrapezoidProfile.State goal = new TrapezoidProfile.State(targetPosition, 0);
@@ -225,127 +116,66 @@ public class ProfiledServo implements Servo, PwmControl {
         if (Math.abs(lastPosition - targetPosition) < positionDeltaTolerance) {
             return;
         }
+
         lastUpdate = System.nanoTime();
         lastPosition = targetPosition;
-        controller.setServoPosition(port, targetPosition);
+        super.setPosition(targetPosition);
+    }
+
+    // Servo configuration type cannot be accessed from this class, so we'll need to implement the extended interface
+    // methods manually - we can't actually extend ServoImplEx. The servo configuration type is not exposed but is
+    // important for operations, so we won't try to feed the configuration fake data.
+
+    /**
+     * Sets the PWM range limits for the servo
+     *
+     * @param range the new PWM range limits for the servo
+     * @see #getPwmRange()
+     */
+    @Override
+    public void setPwmRange(PwmRange range) {
+        ((ServoControllerEx) getController()).setServoPwmRange(getPortNumber(), range);
     }
 
     /**
-     * Returns the position to which the servo was last commanded to move. Note that this method
-     * does NOT read a position from the servo through any electrical means, as no such electrical
-     * mechanism is, generally, available.
+     * Returns the current PWM range limits for the servo
      *
-     * @return the position to which the servo was last commanded to move, or Double.NaN
-     * if no such position is known
-     * @see #setPosition(double)
-     * @see Double#NaN
-     * @see Double#isNaN()
+     * @return the current PWM range limits for the servo
+     * @see #setPwmRange(PwmRange)
      */
     @Override
-    public synchronized double getPosition() {
-        double position = controller.getServoPosition(port);
-        if (direction == Direction.REVERSE) position = reverse(position);
-        return Mathf.clamp(Mathf.scale(position, limitPositionMin, limitPositionMax, MIN_POSITION, MAX_POSITION), MIN_POSITION, MAX_POSITION);
+    public PwmRange getPwmRange() {
+        return ((ServoControllerEx) getController()).getServoPwmRange(getPortNumber());
     }
 
     /**
-     * Scales the available movement range of the servo to be a subset of its maximum range. Subsequent
-     * positioning calls will operate within that subset range. This is useful if your servo has
-     * only a limited useful range of movement due to the physical hardware that it is manipulating
-     * (as is often the case) but you don't want to have to manually scale and adjust the input
-     * to {@link #setPosition(double) setPosition()} each time.
+     * Individually energizes the PWM for this particular servo.
      *
-     * <p>For example, if scaleRange(0.2, 0.8) is set; then servo positions will be
-     * scaled to fit in that range:<br>
-     * setPosition(0.0) scales to 0.2<br>
-     * setPosition(1.0) scales to 0.8<br>
-     * setPosition(0.5) scales to 0.5<br>
-     * setPosition(0.25) scales to 0.35<br>
-     * setPosition(0.75) scales to 0.65<br>
-     * </p>
-     *
-     * <p>Note the parameters passed here are relative to the underlying full range of motion of
-     * the servo, not its currently scaled range, if any. Thus, scaleRange(0.0, 1.0) will reset
-     * the servo to its full range of movement.</p>
-     *
-     * @param min the lower limit of the servo movement range, a value in the interval [0.0, 1.0]
-     * @param max the upper limit of the servo movement range, a value in the interval [0.0, 1.0]
-     * @see #setPosition(double)
+     * @see #setPwmDisable()
+     * @see #isPwmEnabled()
      */
     @Override
-    public synchronized void scaleRange(double min, double max) {
-        min = Mathf.clamp(min, MIN_POSITION, MAX_POSITION);
-        max = Mathf.clamp(max, MIN_POSITION, MAX_POSITION);
-
-        if (min >= max)
-            throw new IllegalArgumentException("min must be less than max");
-
-        limitPositionMin = min;
-        limitPositionMax = max;
+    public void setPwmEnable() {
+        ((ServoControllerEx) getController()).setServoPwmEnable(getPortNumber());
     }
 
     /**
-     * Returns an indication of the manufacturer of this device.
+     * Individually denergizes the PWM for this particular servo
      *
-     * @return the device's manufacturer
+     * @see #setPwmEnable()
      */
     @Override
-    public Manufacturer getManufacturer() {
-        return controller.getManufacturer();
+    public void setPwmDisable() {
+        ((ServoControllerEx) getController()).setServoPwmDisable(getPortNumber());
     }
 
     /**
-     * Returns a string suitable for display to the user as to the type of device.
-     * Note that this is a device-type-specific name; it has nothing to do with the
-     * name by which a user might have configured the device in a robot configuration.
+     * Returns whether the PWM is energized for this particular servo
      *
-     * @return device manufacturer and name
+     * @see #setPwmEnable()
      */
     @Override
-    public String getDeviceName() {
-        return deviceName;
-    }
-
-    /**
-     * Get connection information about this device in a human readable format
-     *
-     * @return connection info
-     */
-    @Override
-    public String getConnectionInfo() {
-        return controller.getConnectionInfo() + "; port " + port;
-    }
-
-    /**
-     * Version
-     *
-     * @return get the version of this device
-     */
-    @Override
-    public int getVersion() {
-        return 1;
-    }
-
-    /**
-     * Resets the device's configuration to that which is expected at the beginning of an OpMode.
-     * For example, motors will reset the their direction to 'forward'.
-     */
-    @Override
-    public synchronized void resetDeviceConfigurationForOpMode() {
-        limitPositionMin = MIN_POSITION;
-        limitPositionMax = MAX_POSITION;
-        direction = Direction.FORWARD;
-    }
-
-    /**
-     * Closes this device
-     */
-    @Override
-    public void close() {
-        // no-op
-    }
-
-    private double reverse(double position) {
-        return MAX_POSITION - position + MIN_POSITION;
+    public boolean isPwmEnabled() {
+        return ((ServoControllerEx) getController()).isServoPwmEnabled(getPortNumber());
     }
 }
