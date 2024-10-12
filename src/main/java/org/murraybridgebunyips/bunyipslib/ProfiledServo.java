@@ -1,5 +1,7 @@
 package org.murraybridgebunyips.bunyipslib;
 
+import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds;
+
 import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,9 +12,12 @@ import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.TrapezoidProfile;
+import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.external.units.Time;
 
 /**
  * Extension of the extended {@link Servo} interface that allows for motion profiling via a {@link TrapezoidProfile}.
+ * This extension also offers refresh rate and cache tolerance handling for loop time optimisation.
  * <p>
  * This class serves as a drop-in replacement for the {@link Servo}, similar to {@link Motor} with the {@link DcMotor}.
  *
@@ -31,11 +36,35 @@ public class ProfiledServo implements Servo, PwmControl {
     @Nullable
     private TrapezoidProfile.Constraints constraints;
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
-    private double lastDt = -1;
+    private double lastDtSec = -1;
+
+    private double positionDeltaTolerance;
+    private double lastPosition;
+    private long refreshRateNanos;
+    private long lastUpdate;
+
+    /**
+     * Set the delta in servo position required to propagate a hardware write.
+     *
+     * @param magnitude absolute magnitude of delta in servo position, 0/default will disable
+     */
+    public void setPositionDeltaThreshold(double magnitude) {
+        positionDeltaTolerance = Math.abs(magnitude);
+    }
+
+    /**
+     * Set the refresh rate of the servo that will be a minimum time between hardware writes.
+     * Consistent calls to {@link #setPosition(double)} is required for this refresh rate to be effective.
+     *
+     * @param refreshRate the refresh rate interval, <=0/default will disable
+     */
+    public void setPositionRefreshRate(Measure<Time> refreshRate) {
+        refreshRateNanos = (long) refreshRate.in(Nanoseconds);
+    }
 
     /**
      * Sets the trapezoidal constraints to apply to this servo's positions. These constraints are in units
-     * of delta step of position.
+     * of delta step of position (for example, 1 corresponds with the full servo travel distance per second).
      *
      * @param positionConstraints the position velocity and acceleration constraints
      */
@@ -179,15 +208,25 @@ public class ProfiledServo implements Servo, PwmControl {
         targetPosition = Mathf.scale(targetPosition, MIN_POSITION, MAX_POSITION, limitPositionMin, limitPositionMax);
 
         if (constraints != null) {
+            // Apply motion profiling for current target in seconds
             TrapezoidProfile.State goal = new TrapezoidProfile.State(targetPosition, 0);
             TrapezoidProfile profile = new TrapezoidProfile(constraints, goal, setpoint);
             double t = System.nanoTime() / 1.0E9;
-            if (lastDt == -1) lastDt = t;
-            setpoint = profile.calculate(t - lastDt);
-            lastDt = t;
+            if (lastDtSec == -1) lastDtSec = t;
+            setpoint = profile.calculate(t - lastDtSec);
+            lastDtSec = t;
             targetPosition = setpoint.position;
         }
 
+        // Apply refresh rate and cache restrictions
+        if (refreshRateNanos > 0 && Math.abs(lastUpdate - System.nanoTime()) < refreshRateNanos) {
+            return;
+        }
+        if (Math.abs(lastPosition - targetPosition) < positionDeltaTolerance) {
+            return;
+        }
+        lastUpdate = System.nanoTime();
+        lastPosition = targetPosition;
         controller.setServoPosition(port, targetPosition);
     }
 
