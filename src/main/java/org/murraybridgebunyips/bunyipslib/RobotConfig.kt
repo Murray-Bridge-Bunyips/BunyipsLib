@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
+import com.qualcomm.robotcore.hardware.Servo
 import org.murraybridgebunyips.bunyipslib.roadrunner.util.Deadwheel
 import java.util.function.Consumer
 
@@ -110,6 +111,11 @@ abstract class RobotConfig {
         if (IMUEx::class.java.isAssignableFrom(device)) {
             val imu = hardwareMap.get(IMU::class.java, name)
             return IMUEx(imu) as T
+        }
+        // ProfiledServo is the equivalent of Motor in the sense that it is a full extension and can be fetched too
+        if (ProfiledServo::class.java.isAssignableFrom(device)) {
+            val servo = hardwareMap.get(Servo::class.java, name)
+            return ProfiledServo(servo) as T
         }
         return hardwareMap.get(device, name)
     }
