@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author Lucas Bubner, 2023
  * @author Lachlan Paul, 2023
- * @see RoadRunner
  * @see BunyipsOpMode
  * @since 1.0.0-pre
  */

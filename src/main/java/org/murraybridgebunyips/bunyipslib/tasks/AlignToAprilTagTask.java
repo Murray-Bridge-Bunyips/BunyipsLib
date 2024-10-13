@@ -1,18 +1,19 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
-import org.murraybridgebunyips.bunyipslib.drive.Moveable;
+import org.murraybridgebunyips.bunyipslib.Drawing;
+import org.murraybridgebunyips.bunyipslib.Geometry;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
-import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
+import org.murraybridgebunyips.bunyipslib.subsystems.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
@@ -118,41 +119,41 @@ public class AlignToAprilTagTask extends Task {
         // FtcDashboard live tuning
         controller.getPIDFController().setPIDF(coeffs);
 
-        Pose2d pose = new Pose2d();
+        Pose2d pose = Geometry.zeroPose();
         if (x != null)
             pose = Controls.makeRobotPose(x.getAsDouble(), y.getAsDouble(), r.getAsDouble());
 
         List<AprilTagData> data = at.getData();
 
-        Optional<AprilTagData> target = data.stream().filter(p -> TARGET_TAG == -1 || p.getId() == TARGET_TAG).findFirst();
+        Optional<AprilTagData> target = data.stream().filter(t -> TARGET_TAG == -1 || t.getId() == TARGET_TAG).findFirst();
 
         if (!target.isPresent() || !target.get().isInLibrary()) {
-            drive.setPower(pose);
+            drive.setPower(Geometry.poseToVel(pose));
             return;
         }
 
         assert target.get().getFtcPose().isPresent() && target.get().getMetadata().isPresent();
-        drive.setPower(
+        drive.setPower(Geometry.poseToVel(
                 new Pose2d(
-                        pose.getX(),
-                        pose.getY(),
+                        pose.position.x,
+                        pose.position.y,
                         -controller.calculate(target.get().getFtcPose().get().bearing, 0.0)
                 )
-        );
+        ));
         hasCalculated = true;
 
-        if (drive.getLocalizer() == null)
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        if (poseEstimate == null)
             throw new IllegalStateException("A drive localizer must be present to use AlignToAprilTagTask!");
-        Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
         VectorF point = target.get().getMetadata().get().fieldPosition;
 
-        DashboardUtil.useCanvas(canvas -> canvas.setStroke("#dd2c00")
+        Drawing.useCanvas(canvas -> canvas.setStroke("#dd2c00")
                 .strokeCircle(point.get(0), point.get(1), 2)
                 .setStroke("#b89eff")
-                .strokeLine(point.get(0), point.get(1), poseEstimate.getX(), poseEstimate.getY())
+                .strokeLine(point.get(0), point.get(1), poseEstimate.position.x, poseEstimate.position.y)
                 .setStroke("#ffce7a")
-                .strokeLine(point.get(0), point.get(1), point.get(0), poseEstimate.getY())
-                .strokeLine(point.get(0), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY()));
+                .strokeLine(point.get(0), point.get(1), point.get(0), poseEstimate.position.y)
+                .strokeLine(point.get(0), poseEstimate.position.y, poseEstimate.position.x, poseEstimate.position.y));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.murraybridgebunyips.bunyipslib
 
-import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.acmerobotics.roadrunner.Pose2d
 
 /**
  * Legacy enum for determining where the robot is starting on the field. This can be used to determine
@@ -72,7 +72,7 @@ enum class StartingPositions(
      *
      * Units: Inches
      */
-    val vector by lazy { pose.vec() }
+    val vector by lazy { pose.position }
 
     /**
      * Whether the starting position is on the red alliance side of the field.

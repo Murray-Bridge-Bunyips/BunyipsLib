@@ -94,7 +94,7 @@ class DualTelemetry @JvmOverloads constructor(
 
     /**
      * The time threshold at which the frequency segment will display yellow in the overhead telemetry to alert the user of slow
-     * looping times. Note that after [RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT], the loop timer will display red regardless.
+     * looping times.
      */
     var loopSpeedSlowAlert: Measure<Time> = Milliseconds.of(60.0)
 
@@ -196,6 +196,15 @@ class DualTelemetry @JvmOverloads constructor(
      */
     fun addDS(format: Any, vararg args: Any?): Item {
         return opMode.telemetry.addData("", formatString(format.toString(), *args))
+    }
+
+    /**
+     * Get the underlying packet used for user FtcDashboard telemetry in [addDashboard] and [dashboardFieldOverlay].
+     */
+    fun getDashboardPacket(): TelemetryPacket {
+        synchronized(userPacket) {
+            return userPacket
+        }
     }
 
     /**
@@ -341,9 +350,7 @@ class DualTelemetry @JvmOverloads constructor(
         } else {
             // For LinearOpModes we can suppress any alerts during init as this is the heavy phase of the OpMode
             val noSuppression = opMode !is LinearOpMode || !opMode.opModeInInit()
-            if (noSuppression && loopTime >= RoadRunner.DRIVE_UPDATE_SAFETY_TIMEOUT.inUnit(Milliseconds)) {
-                overheadStatus.append("<font color='red'>").append(loopTime).append("ms</font>")
-            } else if (noSuppression && loopTime >= loopSpeedSlowAlert.inUnit(Milliseconds)) {
+            if (noSuppression && loopTime >= loopSpeedSlowAlert.inUnit(Milliseconds)) {
                 overheadStatus.append("<font color='yellow'>").append(loopTime).append("ms</font>")
             } else {
                 overheadStatus.append(loopTime).append("ms")

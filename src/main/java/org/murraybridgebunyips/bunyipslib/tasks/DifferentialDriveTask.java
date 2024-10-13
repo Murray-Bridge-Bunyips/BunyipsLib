@@ -1,12 +1,12 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.jetbrains.annotations.NotNull;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
-import org.murraybridgebunyips.bunyipslib.drive.Moveable;
+import org.murraybridgebunyips.bunyipslib.Geometry;
+import org.murraybridgebunyips.bunyipslib.subsystems.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 
 /**
@@ -37,13 +37,11 @@ public class DifferentialDriveTask extends ForeverTask {
 
     @Override
     protected void periodic() {
-        drive.setPower(
-                Controls.makeRobotPose(gamepad.left_stick_y, 0, gamepad.right_stick_x)
-        );
+        drive.setPower(Controls.makeRobotVel(gamepad.left_stick_y, 0, gamepad.right_stick_x));
     }
 
     @Override
     protected void onFinish() {
-        drive.setPower(new Pose2d());
+        drive.setPower(Geometry.zeroVel());
     }
 }

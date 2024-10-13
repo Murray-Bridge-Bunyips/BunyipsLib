@@ -2,8 +2,8 @@ package org.murraybridgebunyips.bunyipslib;
 
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
@@ -38,8 +38,8 @@ public final class Cartesian {
         // | cos(t) -sin(t) | | x | = | x cos(t) - y sin(t) |
         // | sin(t)  cos(t) | | y | = | x sin(t) + y cos(t) |
         return new Vector2d(
-                cartesianVec.getX() * Math.cos(t) - cartesianVec.getY() * Math.sin(t),
-                cartesianVec.getX() * Math.sin(t) + cartesianVec.getY() * Math.cos(t)
+                cartesianVec.x * Math.cos(t) - cartesianVec.y * Math.sin(t),
+                cartesianVec.x * Math.sin(t) + cartesianVec.y * Math.cos(t)
         );
     }
 
@@ -48,7 +48,8 @@ public final class Cartesian {
      * @return the Robot pose representation of the Cartesian pose
      */
     public static Pose2d toPose(Pose2d pose) {
-        return new Pose2d(pose.getY(), -pose.getX(), -pose.getHeading());
+        // noinspection SuspiciousNameCombination
+        return new Pose2d(pose.position.y, -pose.position.x, -pose.heading.toDouble());
     }
 
     /**
@@ -56,7 +57,8 @@ public final class Cartesian {
      * @return the Cartesian pose representation of the Robot pose
      */
     public static Pose2d fromPose(Pose2d pose) {
-        return new Pose2d(-pose.getY(), pose.getX(), -pose.getHeading());
+        // noinspection SuspiciousNameCombination
+        return new Pose2d(-pose.position.y, pose.position.x, -pose.heading.toDouble());
     }
 
     /**
@@ -86,7 +88,8 @@ public final class Cartesian {
      * @return the Robot vector representation of the Cartesian vector
      */
     public static Vector2d toVector(Vector2d vector) {
-        return new Vector2d(vector.getY(), -vector.getX());
+        // noinspection SuspiciousNameCombination
+        return new Vector2d(vector.y, -vector.x);
     }
 
     /**
@@ -94,7 +97,8 @@ public final class Cartesian {
      * @return the Cartesian vector representation of the Robot vector
      */
     public static Vector2d fromVector(Vector2d vector) {
-        return new Vector2d(-vector.getY(), vector.getX());
+        // noinspection SuspiciousNameCombination
+        return new Vector2d(-vector.y, vector.x);
     }
 
     /**

@@ -1,17 +1,18 @@
 package org.murraybridgebunyips.bunyipslib.tasks;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Controls;
-import org.murraybridgebunyips.bunyipslib.drive.Moveable;
+import org.murraybridgebunyips.bunyipslib.Geometry;
 import org.murraybridgebunyips.bunyipslib.external.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
+import org.murraybridgebunyips.bunyipslib.subsystems.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 import org.murraybridgebunyips.bunyipslib.vision.Processor;
 import org.murraybridgebunyips.bunyipslib.vision.data.ContourData;
@@ -174,7 +175,7 @@ public class MoveToContourTask extends Task {
         translationController.getPIDFController().setPIDF(TRANSLATIONAL_PIDF);
         rotationController.getPIDFController().setPIDF(ROTATIONAL_PIDF);
 
-        Pose2d pose = new Pose2d(0, 0, 0);
+        Pose2d pose = Geometry.zeroPose();
         if (x != null)
             pose = Controls.makeRobotPose(x.getAsDouble(), y.getAsDouble(), r.getAsDouble());
 
@@ -182,16 +183,16 @@ public class MoveToContourTask extends Task {
         ContourData biggestContour = ContourData.getLargest(data);
 
         if (biggestContour != null) {
-            drive.setPower(
+            drive.setPower(Geometry.poseToVel(
                     new Pose2d(
                             -translationController.calculate(biggestContour.getPitch(), Range.clip(PITCH_TARGET, -1.0, 1.0)),
-                            pose.getY(),
+                            pose.position.y,
                             rotationController.calculate(biggestContour.getYaw(), 0.0)
                     )
-            );
+            ));
             hasCalculated = true;
         } else {
-            drive.setPower(pose);
+            drive.setPower(Geometry.poseToVel(pose));
         }
     }
 

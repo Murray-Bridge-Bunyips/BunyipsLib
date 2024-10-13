@@ -1,6 +1,8 @@
 package org.murraybridgebunyips.bunyipslib;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.roadrunner.Pose2d;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -14,7 +16,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
+import org.murraybridgebunyips.bunyipslib.localization.Localizer;
 import org.murraybridgebunyips.bunyipslib.vision.processors.ColourLocator;
 import org.murraybridgebunyips.bunyipslib.vision.processors.ColourSensor;
 
@@ -48,7 +50,6 @@ public final class Storage {
     public static void resetAllStaticFieldsForOpMode() {
         // All static field resets go here
         Exceptions.THROWN_EXCEPTIONS.clear();
-        RoadRunner.resetForOpMode();
         BunyipsSubsystem.resetForOpMode();
         Tasks.resetForOpMode();
         ColourLocator.resetForOpMode();
@@ -98,15 +99,17 @@ public final class Storage {
         /**
          * The last known player Alliance.
          *
-         * @see StartingPositions
+         * @see StartingConfiguration
          */
-        public StartingPositions lastKnownAlliance = null;
+        public StartingConfiguration.Alliance lastKnownAlliance = null;
         /**
-         * The last known position of the robot from odometry.
+         * The last known position of the robot from odometry localization.
+         * Defaults to the origin.
          *
-         * @see RoadRunnerDrive
+         * @see Localizer
          */
-        public Pose2d lastKnownPosition = null;
+        @NonNull
+        public Pose2d lastKnownPosition = Geometry.zeroPose();
 
         private Memory() {
         }
@@ -119,7 +122,7 @@ public final class Storage {
             hardwareErrors.clear();
             unusableComponents.clear();
             lastKnownAlliance = null;
-            lastKnownPosition = null;
+            lastKnownPosition = Geometry.zeroPose();
         }
 
         /**

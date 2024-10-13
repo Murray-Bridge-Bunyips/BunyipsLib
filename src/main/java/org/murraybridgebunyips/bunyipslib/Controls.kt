@@ -1,7 +1,8 @@
 package org.murraybridgebunyips.bunyipslib
 
-import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.acmerobotics.roadrunner.geometry.Vector2d
+import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.PoseVelocity2d
+import com.acmerobotics.roadrunner.Vector2d
 import com.qualcomm.robotcore.hardware.Gamepad
 
 /**
@@ -175,6 +176,14 @@ enum class Controls {
                 map[args[i]] = values()[i]
             }
             return map
+        }
+
+        /**
+         * Convert the gamepad movement values into a robot velocity.
+         */
+        @JvmStatic
+        fun makeRobotVel(x: Double, y: Double, r: Double): PoseVelocity2d {
+            return Geometry.poseToVel(makeRobotPose(x, y, r))
         }
 
         /**

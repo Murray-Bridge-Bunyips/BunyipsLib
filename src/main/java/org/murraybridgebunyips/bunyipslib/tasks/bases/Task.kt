@@ -1,5 +1,9 @@
 package org.murraybridgebunyips.bunyipslib.tasks.bases
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.canvas.Canvas
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
 import org.murraybridgebunyips.bunyipslib.BunyipsComponent
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem
 import org.murraybridgebunyips.bunyipslib.Exceptions
@@ -37,6 +41,11 @@ import java.util.function.BooleanSupplier
  * Task extends [BunyipsComponent] to allow for simpler integration with accessing the OpMode, and was a legacy
  * feature that was kept for the sake of simplicity, more pedantic exception handling, and ease of use.
  *
+ * As of 6.0.0, the Task system now implements the [Action] interface for seamless compatibility with RoadRunner v1.0.0.
+ * The [ActionTask] may be used to convert a pure [Action] into a task, however, writing a task directly using a
+ * Task is encouraged for more control and flexibility, due to there being no downsides to doing so and the exposure
+ * of the same accessors.
+ *
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
@@ -49,12 +58,27 @@ abstract class Task(
      * don't get stuck, making tasks have a focus on timeout conditions.
      */
     var timeout: Measure<Time>
-) : BunyipsComponent(), Runnable {
+) : BunyipsComponent(), Runnable, Action {
     private var overrideDependency: Boolean = false
     private var dependency: BunyipsSubsystem? = null
     private var mutedReport = false
-
     private var name = this.javaClass.simpleName
+
+    // RoadRunner Actions compatibility, exposes the same field names as they are presented in the Action interface
+    /**
+     * Convenience field to get a reference to FtcDashboard's field overlay for drawing on the field.
+     * Available as soon as init() has been called for this task.
+     *
+     * This field is used for porting between [Action] and [Task] implementations.
+     */
+    lateinit var fieldOverlay: Canvas
+    /**
+     * Convenience field to get a reference to a [TelemetryPacket] for sending telemetry to the dashboard.
+     * Available as soon as init() has been called for this task.
+     *
+     * This field is used for porting between [Action] and [Task] implementations.
+     */
+    lateinit var p: TelemetryPacket
 
     /**
      * Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.
@@ -254,6 +278,8 @@ abstract class Task(
      * Should be called by your polling loop to run the task and manage all state properly.
      */
     final override fun run() {
+        p = opMode?.telemetry?.getDashboardPacket() ?: TelemetryPacket()
+        fieldOverlay = p.fieldOverlay()
         if (startTime == 0L) {
             Exceptions.runUserMethod(::init, opMode)
             startTime = System.nanoTime()
@@ -271,6 +297,26 @@ abstract class Task(
         // Don't run the task if it is finished as a safety guard
         if (isFinished()) return
         Exceptions.runUserMethod(::periodic, opMode)
+        if (opMode == null) FtcDashboard.getInstance().sendTelemetryPacket(p)
+    }
+
+    /**
+     * RoadRunner [Action] implementation to run this Task.
+     */
+    final override fun run(p: TelemetryPacket): Boolean {
+        // FtcDashboard parameters are handled by the periodic method of this task, so we can ignore the packet
+        // and fieldOverlay here as we will handle them ourselves. This also allows Action to Task porting
+        // to use the same field parameters.
+        run()
+        return !pollFinished()
+    }
+
+    /**
+     * RoadRunner [Action] implementation to preview the action on the field overlay.
+     * This method no-ops as previews are done via DualTelemetry and the Drawing util.
+     */
+    final override fun preview(fieldOverlay: Canvas) {
+        // no-op
     }
 
     /**

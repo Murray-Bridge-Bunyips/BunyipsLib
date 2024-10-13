@@ -1,6 +1,7 @@
 package org.murraybridgebunyips.bunyipslib
 
 import android.graphics.Color
+import com.acmerobotics.roadrunner.ftc.throwIfModulesAreOutdated
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.Blinker
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -15,7 +16,6 @@ import com.qualcomm.robotcore.util.Version
 import org.murraybridgebunyips.bunyipslib.external.units.Measure
 import org.murraybridgebunyips.bunyipslib.external.units.Time
 import org.murraybridgebunyips.bunyipslib.external.units.Units.*
-import org.murraybridgebunyips.bunyipslib.roadrunner.util.LynxModuleUtil
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task
 import java.util.Optional
 import java.util.concurrent.ExecutorService
@@ -244,7 +244,7 @@ abstract class BunyipsOpMode : BOMInternal() {
         try {
             Storage.resetAllStaticFieldsForOpMode()
             Dbg.log("=============== BunyipsLib v${BuildConfig.SEMVER} BunyipsOpMode ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME} uid:${BuildConfig.ID} ===============")
-            LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap)
+            throwIfModulesAreOutdated(hardwareMap)
             if (!Version.getLibraryVersion().equals(BuildConfig.SDK_VER)) {
                 Dbg.warn(
                     "BunyipsOpMode: SDK version mismatch! (SDK: %, BunyipsLib: %)",

@@ -5,9 +5,9 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.localization.Localizer;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Rotation2d;
+import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -19,11 +19,12 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.Filter;
-import org.murraybridgebunyips.bunyipslib.drive.Moveable;
+import org.murraybridgebunyips.bunyipslib.Geometry;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
+import org.murraybridgebunyips.bunyipslib.localization.Localizable;
 import org.murraybridgebunyips.bunyipslib.vision.data.AprilTagData;
 import org.murraybridgebunyips.bunyipslib.vision.processors.AprilTag;
 
@@ -34,21 +35,22 @@ import java.util.function.Predicate;
 
 /**
  * Combines an AprilTag processor and RoadRunner drive to supply updates in pose estimation.
+ * This class operates solely in 2D space and will update the pose of the localizer with the pose of the detected tag.
  *
  * @author Lucas Bubner, 2024
  * @since 3.2.0
  */
 public class AprilTagPoseEstimator implements Runnable {
     private final AprilTag processor;
-    private final Localizer localizer;
+    private final Localizable localizer;
     private final HashSet<Predicate<AprilTagData>> filters = new HashSet<>();
 
     private Filter.Kalman xf;
     private Filter.Kalman yf;
     private Filter.Kalman rf;
 
-    private Pose2d previousOffset = new Pose2d();
-    private Pose2d cameraRobotOffset = new Pose2d();
+    private Pose2d previousOffset = Geometry.zeroPose();
+    private Pose2d cameraRobotOffset = Geometry.zeroPose();
     private boolean active = true;
     private boolean updateHeading = true;
 
@@ -62,25 +64,9 @@ public class AprilTagPoseEstimator implements Runnable {
      * Adjust this using {@link #setCameraOffset}.
      *
      * @param processor AprilTag processor to use for pose estimation, must be attached to Vision and running
-     * @param drive     the drive localizer to use for pose information
+     * @param localizer the localizable to use for pose information
      */
-    public AprilTagPoseEstimator(AprilTag processor, Moveable drive) {
-        this(processor, Objects.requireNonNull(drive.getLocalizer(), "Non-null localizer required to be attached to the drive instance"));
-    }
-
-    /**
-     * Constructor for AprilTagPoseEstimator.
-     * <p>
-     * Note that the option to also update heading based off these readings is enabled by default.
-     * Disable with {@link #setHeadingEstimate}.
-     * <p>
-     * Also note that by default, this pose estimator will assume the camera is exactly at the center of the robot, facing forward.
-     * Adjust this using {@link #setCameraOffset}.
-     *
-     * @param processor AprilTag processor to use for pose estimation, must be attached to Vision and running
-     * @param localizer the localizer to use for pose information
-     */
-    public AprilTagPoseEstimator(AprilTag processor, @NonNull Localizer localizer) {
+    public AprilTagPoseEstimator(AprilTag processor, @NonNull Localizable localizer) {
         this.processor = processor;
         this.localizer = localizer;
         setKalmanGains(4, 1.0e-3);
@@ -101,28 +87,11 @@ public class AprilTagPoseEstimator implements Runnable {
      * Adjust this using {@link #setCameraOffset}.
      *
      * @param processor AprilTag processor to use for pose estimation, must be attached to Vision and running
-     * @param localizer the localizer to use for pose information
+     * @param localizer the localizable to use for pose information
      * @return a new AprilTagPoseEstimator instance
      */
-    public static AprilTagPoseEstimator enable(AprilTag processor, @NonNull Localizer localizer) {
+    public static AprilTagPoseEstimator enable(AprilTag processor, @NonNull Localizable localizer) {
         return new AprilTagPoseEstimator(processor, localizer);
-    }
-
-    /**
-     * Create a new AprilTagPoseEstimator runner.
-     * <p>
-     * Note that the option to also update heading based off these readings is enabled by default.
-     * Disable with {@link #setHeadingEstimate}.
-     * <p>
-     * Also note that by default, this pose estimator will assume the camera is exactly at the center of the robot, facing forward.
-     * Adjust this using {@link #setCameraOffset}.
-     *
-     * @param processor AprilTag processor to use for pose estimation, must be attached to Vision and running
-     * @param drive     the drive localizer to use for pose information
-     * @return a new AprilTagPoseEstimator instance
-     */
-    public static AprilTagPoseEstimator enable(AprilTag processor, Moveable drive) {
-        return new AprilTagPoseEstimator(processor, drive);
     }
 
     /**
@@ -240,7 +209,9 @@ public class AprilTagPoseEstimator implements Runnable {
         if (!active || !processor.isRunning())
             return;
 
-        Pose2d poseEstimate = localizer.getPoseEstimate().minus(previousOffset);
+        Pose2d current = Objects.requireNonNull(localizer.getPoseEstimate(), "A non-null pose estimate supplier is required to use the AprilTagPoseEstimator.");
+        // TODO: test
+        Pose2d poseEstimate = Pose2d.exp(current.minus(previousOffset));
         ArrayList<AprilTagData> data = processor.getData();
         if (data.isEmpty())
             return;
@@ -276,34 +247,35 @@ public class AprilTagPoseEstimator implements Runnable {
                     tagY - relativeY
             );
             // Offset as defined by the user to account for the camera not representing true position
-            pos = pos.minus(cameraRobotOffset.vec().rotated(tagRotation + Math.PI / 2));
+            pos = pos.minus(Rotation2d.exp(tagRotation + Math.PI / 2).times(cameraRobotOffset.position));
 
             // Only set the heading if the user wants it, which we can do fairly simply if they want that too
-            double heading = poseEstimate.getHeading();
+            double heading = poseEstimate.heading.toDouble();
             if (updateHeading) {
                 // Rotate 90 degrees (pi/2 rads) to match unit circle proportions due to a rotation mismatch as corrected
                 // in the vector calculation above
-                heading = Math.PI / 2.0 + tagRotation - Math.toRadians(camPose.yaw) - cameraRobotOffset.getHeading();
+                heading = Math.PI / 2.0 + tagRotation - Math.toRadians(camPose.yaw) - cameraRobotOffset.heading.toDouble();
             }
-            Pose2d atPoseEstimate = new Pose2d(pos.getX(), pos.getY(), Mathf.inputModulus(heading, -Math.PI, Math.PI));
+            Pose2d atPoseEstimate = new Pose2d(pos.x, pos.y, Mathf.inputModulus(heading, -Math.PI, Math.PI));
 
             // Apply Kalman filters to the vector components
             Pose2d kfPose = new Pose2d(
-                    xf.calculate(poseEstimate.getX(), atPoseEstimate.getX()),
-                    yf.calculate(poseEstimate.getY(), atPoseEstimate.getY()),
+                    xf.calculate(poseEstimate.position.x, atPoseEstimate.position.x),
+                    yf.calculate(poseEstimate.position.y, atPoseEstimate.position.y),
                     updateHeading ? rf.calculate(
-                            Mathf.inputModulus(poseEstimate.getHeading(), -Math.PI, Math.PI),
-                            Mathf.inputModulus(atPoseEstimate.getHeading(), -Math.PI, Math.PI)
-                    ) : poseEstimate.getHeading()
+                            Mathf.inputModulus(poseEstimate.heading.toDouble(), -Math.PI, Math.PI),
+                            Mathf.inputModulus(atPoseEstimate.heading.toDouble(), -Math.PI, Math.PI)
+                    ) : poseEstimate.heading.toDouble()
             );
 
             // Avoid spamming the logs by logging the events that are over an inch away from the current estimate
-            if (poseEstimate.vec().distTo(kfPose.vec()) >= 1)
+            if (Geometry.distBetween(poseEstimate.position, atPoseEstimate.position) >= 1)
                 Dbg.logd(getClass(), "Updated pose based on AprilTag ID#%, %,%->%", aprilTag.getId(), poseEstimate, atPoseEstimate, kfPose);
 
             // Use an unmodified pose as the one we actually calculate otherwise we'll oscillate around the target
             // since the Kalman filter shouldn't be fed it's own data
-            previousOffset = kfPose.minus(poseEstimate);
+            // TODO: test
+            previousOffset = Pose2d.exp(kfPose.minus(poseEstimate));
 
             // Apply the new pose
             localizer.setPoseEstimate(kfPose);

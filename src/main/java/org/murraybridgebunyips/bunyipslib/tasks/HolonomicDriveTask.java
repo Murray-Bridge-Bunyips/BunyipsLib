@@ -2,16 +2,17 @@ package org.murraybridgebunyips.bunyipslib.tasks;
 
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.localization.Localizer;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.jetbrains.annotations.NotNull;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Cartesian;
 import org.murraybridgebunyips.bunyipslib.Controls;
-import org.murraybridgebunyips.bunyipslib.drive.Moveable;
+import org.murraybridgebunyips.bunyipslib.Geometry;
+import org.murraybridgebunyips.bunyipslib.localization.Localizer;
+import org.murraybridgebunyips.bunyipslib.subsystems.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 
 import java.util.Objects;
@@ -74,19 +75,19 @@ public class HolonomicDriveTask extends ForeverTask {
     protected void periodic() {
         double xV = x.get(), yV = y.get();
         if (fieldCentricEnabled.getAsBoolean()) {
-            Pose2d currentPose = Objects.requireNonNull(drive.getLocalizer(), "A heading localizer must be attached to the drive instance to allow for Field-Centric driving!").getPoseEstimate();
+            Pose2d currentPose = Objects.requireNonNull(drive.getPoseEstimate(), "A heading localizer must be attached to the drive instance to allow for Field-Centric driving!");
             Vector2d cVec = Controls.makeCartesianVector(xV, yV);
-            drive.setPower(new Pose2d(
-                    Cartesian.toVector(Cartesian.rotate(cVec, Radians.of(-currentPose.getHeading()))),
+            drive.setPower(Geometry.poseToVel(new Pose2d(
+                    Cartesian.toVector(Cartesian.rotate(cVec, Radians.of(-currentPose.heading.toDouble()))),
                     -r.get())
-            );
+            ));
             return;
         }
-        drive.setPower(Controls.makeRobotPose(xV, yV, r.get()));
+        drive.setPower(Geometry.poseToVel(Controls.makeRobotPose(xV, yV, r.get())));
     }
 
     @Override
     protected void onFinish() {
-        drive.setPower(new Pose2d());
+        drive.setPower(Geometry.zeroVel());
     }
 }

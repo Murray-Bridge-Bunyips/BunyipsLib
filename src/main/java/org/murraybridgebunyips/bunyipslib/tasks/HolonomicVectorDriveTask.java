@@ -5,22 +5,24 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Millisecon
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.jetbrains.annotations.NotNull;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.drive.Moveable;
+import org.murraybridgebunyips.bunyipslib.Drawing;
+import org.murraybridgebunyips.bunyipslib.Geometry;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
+import org.murraybridgebunyips.bunyipslib.external.pid.PController;
+import org.murraybridgebunyips.bunyipslib.external.pid.PDController;
 import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
-import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
+import org.murraybridgebunyips.bunyipslib.subsystems.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;
 
 import java.util.Objects;
@@ -88,12 +90,9 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         this.fieldCentricEnabled = fieldCentricEnabled;
 
         // Sane defaults
-        PIDCoefficients translationCoeffs = new PIDCoefficients(0.1, 0, 0);
-        PIDCoefficients rotationCoeffs = new PIDCoefficients(1, 0, 0.0001);
-
-        xController = new PIDController(translationCoeffs.kP, translationCoeffs.kI, translationCoeffs.kD);
-        yController = new PIDController(translationCoeffs.kP, translationCoeffs.kI, translationCoeffs.kD);
-        rController = new PIDController(rotationCoeffs.kP, rotationCoeffs.kI, rotationCoeffs.kD);
+        xController = new PController(0.1);
+        yController = new PController(0.1);
+        rController = new PDController(1, 0.0001);
 
         withName("Holonomic Vector Control");
     }
@@ -206,8 +205,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
     @Override
     protected void periodic() {
-        Pose2d current = Objects.requireNonNull(drive.getLocalizer(), "A localizer must be attached to the drive instance in order to use the HolonomicVectorDriveTask!")
-                .getPoseEstimate();
+        Pose2d current = Objects.requireNonNull(drive.getPoseEstimate(), "A localizer must be attached to the drive instance in order to use the HolonomicVectorDriveTask!");
 
         // Create a new pose based off the user input, which will be the offset from the current pose.
         // Must rotate by 90 degrees (y, -x), then flip y as it is inverted. Rotation must also be inverted as it
@@ -216,8 +214,8 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         double userY = -x.get();
         double userR = -r.get();
 
-        double cos = Math.cos(current.getHeading());
-        double sin = Math.sin(current.getHeading());
+        double cos = Math.cos(current.heading.toDouble());
+        double sin = Math.sin(current.heading.toDouble());
 
         if (fieldCentricEnabled.getAsBoolean()) {
             // Field-centric inputs that will be rotated before any processing
@@ -228,7 +226,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
         // Rising edge detections for pose locking
         if (userX == 0 && userY == 0 && vectorLock == null && vectorLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
-            vectorLock = current.vec();
+            vectorLock = current.position;
             // We also reset the controllers as the integral term may be incorrect due to a new target
             xController.reset();
             yController.reset();
@@ -237,7 +235,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
             vectorLocker.reset();
         }
         if (userR == 0 && headingLock == null && headingLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
-            headingLock = current.getHeading();
+            headingLock = current.heading.toDouble();
             rController.reset();
         } else if (userR != 0) {
             headingLock = null;
@@ -246,9 +244,9 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
         // Calculate error from current pose to target pose.
         // If we are not locked, the error will be 0, and our error should clamp to zero if it's under the threshold
-        double xLockedError = vectorLock == null || Mathf.isNear(vectorLock.getX(), current.getX(), toleranceInchRad.getX()) ? 0 : vectorLock.getX() - current.getX();
-        double yLockedError = vectorLock == null || Mathf.isNear(vectorLock.getY(), current.getY(), toleranceInchRad.getY()) ? 0 : vectorLock.getY() - current.getY();
-        double rLockedError = headingLock == null || Mathf.isNear(headingLock, current.getHeading(), toleranceInchRad.getHeading()) ? 0 : headingLock - current.getHeading();
+        double xLockedError = vectorLock == null || Mathf.isNear(vectorLock.x, current.position.x, toleranceInchRad.position.x) ? 0 : vectorLock.x - current.position.x;
+        double yLockedError = vectorLock == null || Mathf.isNear(vectorLock.y, current.position.y, toleranceInchRad.position.y) ? 0 : vectorLock.y - current.position.y;
+        double rLockedError = headingLock == null || Mathf.isNear(headingLock, current.heading.toDouble(), toleranceInchRad.heading.toDouble()) ? 0 : headingLock - current.heading.toDouble();
 
         // Rotate error to robot's coordinate frame
         double twistedXError = xLockedError * cos + yLockedError * sin;
@@ -259,26 +257,24 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         if (Mathf.isNear(Math.abs(angle), Math.PI, 0.1))
             angle = -Math.PI * Math.signum(rLockedError);
 
-        drive.setPower(
-                new Pose2d(
-                        vectorLock != null ? -xController.calculate(twistedXError) : userX,
-                        vectorLock != null ? -yController.calculate(twistedYError) : userY,
-                        headingLock != null ? -rController.calculate(angle) : userR
-                )
-        );
+        drive.setPower(Geometry.poseToVel(new Pose2d(
+                vectorLock != null ? -xController.calculate(twistedXError) : userX,
+                vectorLock != null ? -yController.calculate(twistedYError) : userY,
+                headingLock != null ? -rController.calculate(angle) : userR
+        )));
 
-        DashboardUtil.useCanvas(canvas -> {
+        Drawing.useCanvas(canvas -> {
             canvas.setStroke("#c91c00");
             if (vectorLock != null)
-                canvas.strokeLine(current.getX(), current.getY(), vectorLock.getX(), vectorLock.getY());
+                canvas.strokeLine(current.position.x, current.position.y, vectorLock.x, vectorLock.y);
             if (headingLock != null)
-                DashboardUtil.drawRobot(canvas, new Pose2d(current.vec(), headingLock));
+                Drawing.drawRobot(canvas, new Pose2d(current.position, headingLock));
         });
     }
 
     @Override
     protected void onFinish() {
-        drive.setPower(new Pose2d());
+        drive.setPower(Geometry.zeroVel());
     }
 }
 

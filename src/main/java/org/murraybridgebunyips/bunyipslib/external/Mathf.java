@@ -8,14 +8,17 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.util.MathUtil;
+import com.acmerobotics.roadrunner.Vector2d;
 
+import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.MathUtils;
 import org.murraybridgebunyips.bunyipslib.Reference;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,8 +28,12 @@ import java.util.List;
  * <a href="https://github.com/wpilibsuite/allwpilib/blob/dc4c63568a2adbc2acfb5d6a420750236074b6aa/wpimath/src/main/java/edu/wpi/first/math/MathUtil.java">MathUtil</a>
  * and Unity's <a href="https://github.com/Unity-Technologies/UnityCsReference/blob/22a9cc4540dc5efa28ad9f02cd12b37b4b1a21c7/Runtime/Export/Math/Mathf.cs">Mathf</a> features,
  * adjusted to use WPIUnits and custom classes.
+ * <p>
+ * This class internally uses the Apache Commons {@link FastMath} methods.
  *
  * @see Math
+ * @see FastMath
+ * @see MathUtils
  * @since 1.0.0-pre
  */
 public final class Mathf {
@@ -41,7 +48,7 @@ public final class Mathf {
      * @return whether the two numbers are approximately equal by an epsilon of 1e-6
      */
     public static boolean approximatelyEquals(Number a, Number b) {
-        return Math.abs(a.doubleValue() - b.doubleValue()) < 1.0e-6;
+        return FastMath.abs(a.doubleValue() - b.doubleValue()) < 1.0e-6;
     }
 
     /**
@@ -53,17 +60,44 @@ public final class Mathf {
      * @return List of real roots.
      */
     public static List<Double> solveQuadratic(Number a, Number b, Number c) {
-        return MathUtil.solveQuadratic(a.doubleValue(), b.doubleValue(), c.doubleValue());
+        double a_d = a.doubleValue(), b_d = b.doubleValue(), c_d = c.doubleValue();
+        // Discriminant b^2-4ac
+        double disc = b_d * b_d - 4 * a_d * c_d;
+        if (approximatelyEquals(disc, 0)) {
+            // One solution which is the same as setting x=0 for a linear function
+            return Collections.singletonList(-b_d / (2 * a_d));
+        }
+        if (disc < 0) {
+            // No real solutions
+            return Collections.emptyList();
+        }
+        // Solutions at (-b \pm \sqrt{b^2-4ac}) / 2a
+        return Arrays.asList(
+                (-b_d + FastMath.sqrt(disc)) / 2 * a_d,
+                (-b_d - FastMath.sqrt(disc)) / 2 * a_d
+        );
     }
 
     /**
-     * Normalizes the given angle to be within the range of [0, 2pi].
+     * Normalizes the given angle to be within the range of [0, 2pi) radians [0, 360) degrees.
      *
      * @param angle The angle to normalize.
      * @return The normalized angle.
      */
     public static Measure<Angle> normaliseAngle(Measure<Angle> angle) {
-        return Radians.of(com.acmerobotics.roadrunner.util.Angle.norm(angle.in(Radians)));
+        double ang = angle.in(Radians) % MathUtils.TWO_PI;
+        return Radians.of((ang + MathUtils.TWO_PI) % MathUtils.TWO_PI);
+    }
+
+    /**
+     * Normalizes the given radians to be within the range [0, 2pi).
+     *
+     * @param angrad The angle in radians.
+     * @return The normalized radians in the range [0, 2pi)
+     */
+    public static double normaliseRadians(Number angrad) {
+        double ang = angrad.doubleValue() % MathUtils.TWO_PI;
+        return (ang + MathUtils.TWO_PI) % MathUtils.TWO_PI;
     }
 
     /**
@@ -75,7 +109,7 @@ public final class Mathf {
      * @return The clamped value.
      */
     public static double clamp(Number value, Number low, Number high) {
-        return Math.max(low.doubleValue(), Math.min(value.doubleValue(), high.doubleValue()));
+        return FastMath.max(low.doubleValue(), FastMath.min(value.doubleValue(), high.doubleValue()));
     }
 
     /**
@@ -107,7 +141,7 @@ public final class Mathf {
      */
     public static double applyDeadband(Number value, Number deadband, Number maxMagnitude) {
         double value_d = value.doubleValue(), deadband_d = deadband.doubleValue(), maxMagnitude_d = maxMagnitude.doubleValue();
-        if (Math.abs(value_d) > deadband_d) {
+        if (FastMath.abs(value_d) > deadband_d) {
             if (maxMagnitude_d / deadband_d > 1.0e12) {
                 // If max magnitude is sufficiently large, the implementation encounters
                 // round-off error.  Implementing the limiting behavior directly avoids
@@ -196,7 +230,17 @@ public final class Mathf {
      * @return The wrapped angle.
      */
     public static Measure<Angle> angleModulus(Measure<Angle> angle) {
-        return Radians.of(inputModulus(angle.in(Radians), -Math.PI, Math.PI));
+        return Radians.of(inputModulus(angle.in(Radians), -FastMath.PI, FastMath.PI));
+    }
+
+    /**
+     * Wraps radians to the range -pi to pi.
+     *
+     * @param angrad The angle in radians to wrap
+     * @return Wrapped angle between -pi and pi
+     */
+    public static double radianModulus(Number angrad) {
+        return inputModulus(angrad, -FastMath.PI, FastMath.PI);
     }
 
     /**
@@ -249,9 +293,9 @@ public final class Mathf {
      */
     public static double moveTowards(Number current, Number target, Number maxDelta) {
         double current_d = current.doubleValue(), target_d = target.doubleValue(), maxDelta_d = maxDelta.doubleValue();
-        if (Math.abs(target_d - current_d) <= maxDelta_d)
+        if (FastMath.abs(target_d - current_d) <= maxDelta_d)
             return target_d;
-        return current_d + Math.signum(target_d - current_d) * maxDelta_d;
+        return current_d + FastMath.signum(target_d - current_d) * maxDelta_d;
     }
 
     /**
@@ -295,10 +339,10 @@ public final class Mathf {
     public static double gamma(Number value, Number absMax, Number gamma) {
         double value_d = value.doubleValue(), absMax_d = absMax.doubleValue(), gamma_d = gamma.doubleValue();
         boolean negative = value_d < 0.0;
-        double absVal = Math.abs(value_d);
+        double absVal = FastMath.abs(value_d);
         if (absVal > absMax_d)
             return negative ? -absVal : absVal;
-        double result = Math.pow(absVal / absMax_d, gamma_d) * absMax_d;
+        double result = FastMath.pow(absVal / absMax_d, gamma_d) * absMax_d;
         return negative ? -result : result;
     }
 
@@ -374,7 +418,7 @@ public final class Mathf {
      */
     public static double repeat(Number t, Number length) {
         double t_d = t.doubleValue(), length_d = length.doubleValue();
-        return clamp(t_d - Math.floor(t_d / length_d) * length_d, 0.0f, length_d);
+        return clamp(t_d - FastMath.floor(t_d / length_d) * length_d, 0.0f, length_d);
     }
 
     /**
@@ -387,7 +431,7 @@ public final class Mathf {
     public static double pingPong(Number t, Number length) {
         double length_d = length.doubleValue();
         double repeat = repeat(t, length_d * 2.0);
-        return length_d - Math.abs(repeat - length_d);
+        return length_d - FastMath.abs(repeat - length_d);
     }
 
     /**
@@ -415,18 +459,18 @@ public final class Mathf {
      * @throws NoInterceptException If no intercepts are found.
      */
     public static Pair<Vector2d, Vector2d> lineCircleIntersection(Vector2d p1, Vector2d p2, Vector2d center, Number radius) throws NoInterceptException {
-        double dx = p2.getX() - p1.getX();
-        double dy = p2.getY() - p1.getY();
+        double dx = p2.x - p1.x;
+        double dy = p2.y - p1.y;
         double a = dx * dx + dy * dy;
-        double b = 2 * (dx * (p1.getX() - center.getX()) + dy * (p1.getY() - center.getY()));
-        double c = center.getX() * center.getX() + center.getY() * center.getY() + p1.getX() * p1.getX() + p1.getY() * p1.getY() - 2 * (center.getX() * p1.getX() + center.getY() * p1.getY()) - radius.doubleValue() * radius.doubleValue();
+        double b = 2 * (dx * (p1.x - center.x) + dy * (p1.y - center.y));
+        double c = center.x * center.x + center.y * center.y + p1.x * p1.x + p1.y * p1.y - 2 * (center.x * p1.x + center.y * p1.y) - radius.doubleValue() * radius.doubleValue();
         List<Double> solutions = solveQuadratic(a, b, c);
         if (solutions.isEmpty()) {
             throw new NoInterceptException();
         }
         double t1 = solutions.get(0);
         double t2 = solutions.size() == 2 ? solutions.get(1) : t1;
-        return new Pair<>(new Vector2d(p1.getX() + t1 * dx, p1.getY() + t1 * dy), new Vector2d(p1.getX() + t2 * dx, p1.getY() + t2 * dy));
+        return new Pair<>(new Vector2d(p1.x + t1 * dx, p1.y + t1 * dy), new Vector2d(p1.x + t2 * dx, p1.y + t2 * dy));
     }
 
     /**
@@ -440,11 +484,11 @@ public final class Mathf {
      * @throws NoInterceptException If no intercepts are found.
      */
     public static Pair<Vector2d, Vector2d> lineSegmentCircleIntersection(Vector2d p1, Vector2d p2, Vector2d center, Number radius) throws NoInterceptException {
-        double dx = p2.getX() - p1.getX();
-        double dy = p2.getY() - p1.getY();
+        double dx = p2.x - p1.x;
+        double dy = p2.y - p1.y;
         double a = dx * dx + dy * dy;
-        double b = 2 * (dx * (p1.getX() - center.getX()) + dy * (p1.getY() - center.getY()));
-        double c = center.getX() * center.getX() + center.getY() * center.getY() + p1.getX() * p1.getX() + p1.getY() * p1.getY() - 2 * (center.getX() * p1.getX() + center.getY() * p1.getY()) - radius.doubleValue() * radius.doubleValue();
+        double b = 2 * (dx * (p1.x - center.x) + dy * (p1.y - center.y));
+        double c = center.x * center.x + center.y * center.y + p1.x * p1.x + p1.y * p1.y - 2 * (center.x * p1.x + center.y * p1.y) - radius.doubleValue() * radius.doubleValue();
         List<Double> solutions = solveQuadratic(a, b, c);
         if (solutions.isEmpty()) {
             throw new NoInterceptException();
@@ -454,7 +498,7 @@ public final class Mathf {
         if ((t1 < 0 || t1 > 1) && (t2 < 0 || t2 > 1)) {
             throw new NoInterceptException();
         }
-        return new Pair<>(new Vector2d(p1.getX() + t1 * dx, p1.getY() + t1 * dy), new Vector2d(p1.getX() + t2 * dx, p1.getY() + t2 * dy));
+        return new Pair<>(new Vector2d(p1.x + t1 * dx, p1.y + t1 * dy), new Vector2d(p1.x + t2 * dx, p1.y + t2 * dy));
     }
 
     /**
@@ -468,20 +512,20 @@ public final class Mathf {
      * @throws NoInterceptException If no intercept is found.
      */
     public static Vector2d lineIntersection(Vector2d p1, Vector2d p2, Vector2d p3, Vector2d p4) throws NoInterceptException {
-        double bx = p2.getX() - p1.getX();
-        double by = p2.getY() - p1.getY();
-        double dx = p4.getX() - p3.getX();
-        double dy = p4.getY() - p3.getY();
+        double bx = p2.x - p1.x;
+        double by = p2.y - p1.y;
+        double dx = p4.x - p3.x;
+        double dy = p4.y - p3.y;
 
         double bDotDPerp = bx * dy - by * dx;
         if (bDotDPerp == 0) {
             throw new NoInterceptException();
         }
-        double cx = p3.getX() - p1.getX();
-        double cy = p3.getY() - p1.getY();
+        double cx = p3.x - p1.x;
+        double cy = p3.y - p1.y;
         double t = (cx * dy - cy * dx) / bDotDPerp;
 
-        return new Vector2d(p1.getX() + t * bx, p1.getY() + t * by);
+        return new Vector2d(p1.x + t * bx, p1.y + t * by);
     }
 
     /**
@@ -495,17 +539,17 @@ public final class Mathf {
      * @throws NoInterceptException If no intercept is found.
      */
     public static Vector2d lineSegmentIntersection(Vector2d p1, Vector2d p2, Vector2d p3, Vector2d p4) throws NoInterceptException {
-        double bx = p2.getX() - p1.getX();
-        double by = p2.getY() - p1.getY();
-        double dx = p4.getX() - p3.getX();
-        double dy = p4.getY() - p3.getY();
+        double bx = p2.x - p1.x;
+        double by = p2.y - p1.y;
+        double dx = p4.x - p3.x;
+        double dy = p4.y - p3.y;
 
         double bDotDPerp = bx * dy - by * dx;
         if (bDotDPerp == 0) {
             throw new NoInterceptException();
         }
-        double cx = p3.getX() - p1.getX();
-        double cy = p3.getY() - p1.getY();
+        double cx = p3.x - p1.x;
+        double cy = p3.y - p1.y;
         double t = (cx * dy - cy * dx) / bDotDPerp;
         if (t < 0 || t > 1) {
             throw new NoInterceptException();
@@ -515,7 +559,7 @@ public final class Mathf {
             throw new NoInterceptException();
         }
 
-        return new Vector2d(p1.getX() + t * bx, p1.getY() + t * by);
+        return new Vector2d(p1.x + t * bx, p1.y + t * by);
     }
 
     /**
@@ -594,7 +638,7 @@ public final class Mathf {
         if (tolerance_d < 0) {
             throw new IllegalArgumentException("Tolerance must be a non-negative number!");
         }
-        return Math.abs(expected.doubleValue() - actual.doubleValue()) < tolerance_d;
+        return FastMath.abs(expected.doubleValue() - actual.doubleValue()) < tolerance_d;
     }
 
     /**
@@ -622,7 +666,7 @@ public final class Mathf {
         // Max error is exactly halfway between the min and max
         double errorBound = (max.doubleValue() - min.doubleValue()) / 2.0;
         double error = inputModulus(expected.doubleValue() - actual.doubleValue(), -errorBound, errorBound);
-        return Math.abs(error) < tolerance_d;
+        return FastMath.abs(error) < tolerance_d;
     }
 
     /**

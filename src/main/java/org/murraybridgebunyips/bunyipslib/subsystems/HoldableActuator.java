@@ -468,10 +468,10 @@ public class HoldableActuator extends BunyipsSubsystem {
          * Run the actuator for a certain amount of time.
          *
          * @param time the time to run for
-         * @param p    the power to run at
+         * @param pwr  the power to run at
          * @return a task to run the actuator
          */
-        public Task runFor(Measure<Time> time, double p) {
+        public Task runFor(Measure<Time> time, double pwr) {
             return new Task(time) {
                 @Override
                 public void init() {
@@ -481,7 +481,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 @Override
                 public void periodic() {
                     // Will hijack the user power by constantly setting it
-                    userPower = p;
+                    userPower = pwr;
                 }
 
                 @Override

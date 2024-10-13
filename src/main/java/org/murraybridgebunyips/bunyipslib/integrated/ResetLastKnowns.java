@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
+import org.murraybridgebunyips.bunyipslib.Geometry;
 import org.murraybridgebunyips.bunyipslib.Storage;
 
 /**
@@ -45,7 +46,7 @@ public final class ResetLastKnowns {
                 new LinearOpMode() {
                     @Override
                     public void runOpMode() {
-                        Storage.memory().lastKnownPosition = null;
+                        Storage.memory().lastKnownPosition = Geometry.zeroPose();
                         Storage.memory().lastKnownAlliance = null;
                         terminateOpModeNow();
                     }

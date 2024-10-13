@@ -154,7 +154,9 @@ class UserSelection<T : Any>(
         } else {
             require(opMode).telemetry.log("Running OpMode: <font color='#caabff'>${selectedButton.name} -> <b>$opModeName</b></font>")
             if (result is StartingPositions) {
-                Storage.memory().lastKnownAlliance = result as StartingPositions
+                Storage.memory().lastKnownAlliance = (result as StartingPositions).toStartingConfiguration().alliance
+            } else if (result is StartingConfiguration.Position) {
+                Storage.memory().lastKnownAlliance = (result as StartingConfiguration.Position).alliance
             }
         }
 

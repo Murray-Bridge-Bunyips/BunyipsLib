@@ -3,7 +3,7 @@ package org.murraybridgebunyips.bunyipslib;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.Vector2d;
 
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
@@ -50,8 +50,8 @@ public class Rect {
      * @return the normalised Rect
      */
     public static Rect normalise(Rect rect) {
-        Vector2d point1 = new Vector2d(Math.min(rect.point1.getX(), rect.point2.getX()), Math.min(rect.point1.getY(), rect.point2.getY()));
-        Vector2d point2 = new Vector2d(Math.max(rect.point1.getX(), rect.point2.getX()), Math.max(rect.point1.getY(), rect.point2.getY()));
+        Vector2d point1 = new Vector2d(Math.min(rect.point1.x, rect.point2.x), Math.min(rect.point1.y, rect.point2.y));
+        Vector2d point2 = new Vector2d(Math.max(rect.point1.x, rect.point2.x), Math.max(rect.point1.y, rect.point2.y));
         return new Rect(point1, point2, rect.unit);
     }
 
@@ -61,7 +61,7 @@ public class Rect {
      * @return the absolute area of this Rect.
      */
     public Measure<Distance> area() {
-        return unit.of(Math.abs((point2.getX() - point1.getX()) * (point2.getY() - point1.getY())));
+        return unit.of(Math.abs((point2.x - point1.x) * (point2.y - point1.y)));
     }
 
     /**
@@ -72,10 +72,10 @@ public class Rect {
      * @return whether the point is contained in the Rect
      */
     public boolean contains(Vector2d point, Distance unit) {
-        point = new Vector2d(unit.of(point.getX()).in(this.unit), unit.of(point.getY()).in(this.unit));
+        point = new Vector2d(unit.of(point.x).in(this.unit), unit.of(point.y).in(this.unit));
         Rect normRect = normalise(this);
-        return point.getX() >= normRect.point1.getX() && point.getX() <= normRect.point2.getX()
-                && point.getY() >= normRect.point1.getY() && point.getY() <= normRect.point2.getY();
+        return point.x >= normRect.point1.x && point.x <= normRect.point2.x
+                && point.y >= normRect.point1.y && point.y <= normRect.point2.y;
     }
 
     /**
@@ -87,8 +87,8 @@ public class Rect {
     public boolean contains(Rect other) {
         Rect normRect = normalise(this);
         Rect normOther = normalise(other);
-        return normRect.point1.getX() <= normOther.point1.getX() && normRect.point1.getY() <= normOther.point1.getY()
-                && normRect.point2.getX() >= normOther.point2.getX() && normRect.point2.getY() >= normOther.point2.getY();
+        return normRect.point1.x <= normOther.point1.x && normRect.point1.y <= normOther.point1.y
+                && normRect.point2.x >= normOther.point2.x && normRect.point2.y >= normOther.point2.y;
     }
 
     /**
@@ -100,8 +100,8 @@ public class Rect {
     public boolean overlaps(Rect other) {
         Rect normRect = normalise(this);
         Rect normOther = normalise(other);
-        return normRect.point1.getX() < normOther.point2.getX() && normRect.point2.getX() > normOther.point1.getX()
-                && normRect.point1.getY() < normOther.point2.getY() && normRect.point2.getY() > normOther.point1.getY();
+        return normRect.point1.x < normOther.point2.x && normRect.point2.x > normOther.point1.x
+                && normRect.point1.y < normOther.point2.y && normRect.point2.y > normOther.point1.y;
     }
 
     /**
@@ -122,7 +122,7 @@ public class Rect {
      * @param canvas the canvas to draw on
      */
     public void draw(Canvas canvas) {
-        canvas.strokeRect(point1.getX(), point1.getY(), point2.getX() - point1.getX(), point2.getY() - point1.getY());
+        canvas.strokeRect(point1.x, point1.y, point2.x - point1.x, point2.y - point1.y);
     }
 
     /**

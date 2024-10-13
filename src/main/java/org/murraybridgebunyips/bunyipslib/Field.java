@@ -2,7 +2,7 @@ package org.murraybridgebunyips.bunyipslib;
 
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Inches;
 
-import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;

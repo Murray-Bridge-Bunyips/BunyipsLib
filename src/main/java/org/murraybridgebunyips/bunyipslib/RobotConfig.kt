@@ -1,12 +1,13 @@
 package org.murraybridgebunyips.bunyipslib
 
+import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.Servo
-import org.murraybridgebunyips.bunyipslib.roadrunner.util.Deadwheel
 import java.util.function.Consumer
 
 /**
@@ -95,15 +96,18 @@ abstract class RobotConfig {
         }
     }
 
-    private val dcMotorCastable = listOf(Deadwheel::class.java, Ramping.DcMotor::class.java, Motor::class.java)
+    private val dcMotorCastable = listOf(RawEncoder::class.java, Ramping.DcMotor::class.java, Motor::class.java)
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : HardwareDevice> getAndDynamicCast(name: String, device: Class<T>): T? {
         // These devices are known to replicate DcMotor functionality, and we can auto-fetch and safely cast
         // to the new type for use by the user. We can ignore any unchecked cast warnings as these are checked.
-        dcMotorCastable.forEach {
+        dcMotorCastable.forEach { it ->
             if (it.isAssignableFrom(device)) {
                 val motor = hardwareMap.get(DcMotor::class.java, name)
+                // First check for DcMotorEx constructors that we can use
+                if (it.constructors.any { it.parameterTypes.contains(DcMotorEx::class.java) })
+                    return it.getConstructor(DcMotorEx::class.java).newInstance(motor) as T
                 return it.getConstructor(DcMotor::class.java).newInstance(motor) as T
             }
         }

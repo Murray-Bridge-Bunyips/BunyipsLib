@@ -7,22 +7,22 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.localization.Localizer;
+import com.acmerobotics.roadrunner.Pose2d;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.drive.Moveable;
+import org.murraybridgebunyips.bunyipslib.Drawing;
+import org.murraybridgebunyips.bunyipslib.Geometry;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.external.SystemController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
-import org.murraybridgebunyips.bunyipslib.roadrunner.drive.RoadRunnerDrive;
-import org.murraybridgebunyips.bunyipslib.roadrunner.util.DashboardUtil;
+import org.murraybridgebunyips.bunyipslib.subsystems.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Drive to a pose using a localizer and PID-To-Point.
@@ -39,7 +39,7 @@ public class DriveToPoseTask extends Task {
     private final SystemController forwardController;
     private final SystemController strafeController;
     private final SystemController headingController;
-    private final Localizer localizer;
+    private final Supplier<Pose2d> localizer;
 
     private double MAX_FORWARD_SPEED = 1.0;
     private double MAX_STRAFE_SPEED = 1.0;
@@ -64,7 +64,7 @@ public class DriveToPoseTask extends Task {
         if (driveInstance instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) driveInstance, true);
         drive = driveInstance;
-        localizer = Objects.requireNonNull(drive.getLocalizer(), "A localizer must be attached to the drive instance for P2P to work!");
+        localizer = () -> Objects.requireNonNull(drive.getPoseEstimate(), "A localizer must be attached to the drive instance for P2P to work!");
         this.targetPose = targetPose;
         this.forwardController = forwardController;
         this.strafeController = strafeController;
@@ -120,67 +120,62 @@ public class DriveToPoseTask extends Task {
 
     @Override
     protected void init() {
-        if (drive instanceof RoadRunnerDrive) {
-            ((RoadRunnerDrive) drive).cancelTrajectory();
-        }
-        drive.setPower(new Pose2d());
+        drive.setPower(Geometry.zeroVel());
     }
 
     public boolean isVectorNear() {
-        return Mathf.isNear(0, localizer.getPoseEstimate().vec().distTo(targetPose.vec()), vectorTolerance.in(Inches));
+        return Mathf.isNear(0, Geometry.distBetween(localizer.get().position, targetPose.position), vectorTolerance.in(Inches));
     }
 
     public boolean isHeadingNear() {
-        return Mathf.isNear(targetPose.getHeading(), localizer.getPoseEstimate().getHeading(), headingTolerance.in(Radians));
+        return Mathf.isNear(targetPose.heading.toDouble(), localizer.get().heading.toDouble(), headingTolerance.in(Radians));
     }
 
     @Override
     protected void periodic() {
-        Pose2d estimatedPose = localizer.getPoseEstimate();
-        Pose2d error = targetPose.minus(estimatedPose);
+        Pose2d estimatedPose = localizer.get();
+        // TODO: test
+        Pose2d error = Pose2d.exp(targetPose.minus(estimatedPose));
 
         // Twist the error vector to be relative to the robot's heading, as rotations of the robot are not
         // accounted for in the RoadRunner pose estimate
-        double cos = Math.cos(estimatedPose.getHeading());
-        double sin = Math.sin(estimatedPose.getHeading());
+        double cos = Math.cos(estimatedPose.heading.toDouble());
+        double sin = Math.sin(estimatedPose.heading.toDouble());
 
         // Transform error vector to robot's coordinate frame
-        double twistedXError = error.getX() * cos + error.getY() * sin;
-        double twistedYError = -error.getX() * sin + error.getY() * cos;
+        double twistedXError = error.position.x * cos + error.position.y * sin;
+        double twistedYError = -error.position.x * sin + error.position.y * cos;
 
         // Wrap target angle between -pi and pi for optimal turns
-        double angleError = Mathf.inputModulus(error.getHeading(), -Math.PI, Math.PI);
+        double angleError = Mathf.inputModulus(error.heading.toDouble(), -Math.PI, Math.PI);
         // When the angle is near the modulus boundary, lock towards a definitive full rotation to avoid oscillations
         if (Mathf.isNear(Math.abs(angleError), Math.PI, 0.1))
-            angleError = -Math.PI * Math.signum(error.getHeading());
+            angleError = -Math.PI * Math.signum(error.heading.toDouble());
 
         // Apply PID and twist
         double forwardPower = -forwardController.calculate(twistedXError, 0);
         double strafePower = -strafeController.calculate(twistedYError, 0);
         double headingPower = -headingController.calculate(angleError, 0);
 
-        drive.setPower(
+        drive.setPower(Geometry.poseToVel(
                 new Pose2d(
                         Mathf.clamp(forwardPower, -MAX_FORWARD_SPEED, MAX_FORWARD_SPEED),
                         Mathf.clamp(strafePower, -MAX_STRAFE_SPEED, MAX_STRAFE_SPEED),
                         Mathf.clamp(headingPower, -MAX_ROTATION_SPEED, MAX_ROTATION_SPEED)
                 )
-        );
+        ));
 
-        DashboardUtil.useCanvas(canvas -> {
+        Drawing.useCanvas(canvas -> {
             canvas.setStroke("#c91c00")
-                    .strokeLine(estimatedPose.getX(), estimatedPose.getY(), targetPose.getX(), targetPose.getY());
+                    .strokeLine(estimatedPose.position.x, estimatedPose.position.y, targetPose.position.x, targetPose.position.y);
             canvas.setStroke("#4CAF50");
-            DashboardUtil.drawRobot(canvas, targetPose);
+            Drawing.drawRobot(canvas, targetPose);
         });
     }
 
     @Override
     protected void onFinish() {
-        if (drive instanceof RoadRunnerDrive) {
-            ((RoadRunnerDrive) drive).cancelTrajectory();
-        }
-        drive.setPower(new Pose2d());
+        drive.setPower(Geometry.zeroVel());
     }
 
     @Override

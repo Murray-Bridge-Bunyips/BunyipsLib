@@ -1,7 +1,7 @@
 package org.murraybridgebunyips.bunyipslib
 
-import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.acmerobotics.roadrunner.geometry.Vector2d
+import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.Vector2d
 import org.murraybridgebunyips.bunyipslib.external.units.Angle
 import org.murraybridgebunyips.bunyipslib.external.units.Measure
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Radians
@@ -44,7 +44,7 @@ enum class Direction(
     }
 
     val angle: Measure<Angle>
-        get() = Radians.of(vector.angle())
+        get() = Radians.of(vector.angleCast().toDouble())
 
     companion object {
         /**
@@ -52,14 +52,14 @@ enum class Direction(
          */
         @JvmStatic
         fun convert(pose: Pose2d): Any {
-            if (pose.heading != 0.0) {
+            if (pose.heading.toDouble() != 0.0) {
                 return when (pose.heading) {
                     Rotation.CLOCKWISE.pose.heading -> Rotation.CLOCKWISE
                     Rotation.ANTICLOCKWISE.pose.heading -> Rotation.ANTICLOCKWISE
-                    else -> throw IllegalArgumentException("RelativeVector2d: (${pose.x},${pose.y},${pose.heading}) cannot be converted to a Vector2d.")
+                    else -> throw IllegalArgumentException("RelativeVector2d: ($pose) cannot be converted to a Vector2d.")
                 }
             }
-            return convert(Vector2d(pose.x, pose.y))
+            return convert(Vector2d(pose.position.x, pose.position.y))
         }
 
         /**
