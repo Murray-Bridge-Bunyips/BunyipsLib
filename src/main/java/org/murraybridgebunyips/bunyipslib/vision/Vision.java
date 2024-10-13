@@ -1,7 +1,7 @@
 package org.murraybridgebunyips.bunyipslib.vision;
 
 
-import static org.murraybridgebunyips.bunyipslib.Text.round;
+import static org.murraybridgebunyips.bunyipslib.util.Text.round;
 
 import android.graphics.Canvas;
 import android.util.Size;
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 import org.murraybridgebunyips.bunyipslib.Dbg;
-import org.murraybridgebunyips.bunyipslib.Threads;
+import org.murraybridgebunyips.bunyipslib.util.Threads;
 import org.murraybridgebunyips.bunyipslib.vision.data.VisionData;
 import org.opencv.core.Mat;
 

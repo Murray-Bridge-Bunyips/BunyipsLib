@@ -1,8 +1,8 @@
 package org.murraybridgebunyips.bunyipslib;
 
-import static org.murraybridgebunyips.bunyipslib.Text.formatString;
-import static org.murraybridgebunyips.bunyipslib.Text.html;
-import static org.murraybridgebunyips.bunyipslib.Text.round;
+import static org.murraybridgebunyips.bunyipslib.util.Text.formatString;
+import static org.murraybridgebunyips.bunyipslib.util.Text.html;
+import static org.murraybridgebunyips.bunyipslib.util.Text.round;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
@@ -12,6 +12,8 @@ import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.IdleTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
+import org.murraybridgebunyips.bunyipslib.util.NullSafety;
+import org.murraybridgebunyips.bunyipslib.util.Threads;
 
 import java.util.HashSet;
 
@@ -51,7 +53,10 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         return (HashSet<BunyipsSubsystem>) instances.clone();
     }
 
-    static void resetForOpMode() {
+    /**
+     * Reset stored static instances of BunyipsSubsystem.
+     */
+    public static void resetForOpMode() {
         instances.clear();
     }
 

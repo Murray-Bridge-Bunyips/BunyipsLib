@@ -2,6 +2,9 @@ package org.murraybridgebunyips.bunyipslib;
 
 import androidx.annotation.NonNull;
 
+import org.murraybridgebunyips.bunyipslib.util.NullSafety;
+import org.murraybridgebunyips.bunyipslib.util.Text;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;

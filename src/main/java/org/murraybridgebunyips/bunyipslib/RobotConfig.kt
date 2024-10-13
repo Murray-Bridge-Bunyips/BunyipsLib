@@ -8,6 +8,10 @@ import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.Servo
+import org.murraybridgebunyips.bunyipslib.hardware.IMUEx
+import org.murraybridgebunyips.bunyipslib.hardware.Motor
+import org.murraybridgebunyips.bunyipslib.hardware.ProfiledServo
+import org.murraybridgebunyips.bunyipslib.util.Storage
 import java.util.function.Consumer
 
 /**

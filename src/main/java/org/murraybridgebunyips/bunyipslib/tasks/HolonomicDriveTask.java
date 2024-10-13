@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.jetbrains.annotations.NotNull;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.Cartesian;
-import org.murraybridgebunyips.bunyipslib.Controls;
-import org.murraybridgebunyips.bunyipslib.Geometry;
+import org.murraybridgebunyips.bunyipslib.util.Cartesian;
+import org.murraybridgebunyips.bunyipslib.transforms.Controls;
+import org.murraybridgebunyips.bunyipslib.util.Geometry;
 import org.murraybridgebunyips.bunyipslib.localization.Localizer;
 import org.murraybridgebunyips.bunyipslib.subsystems.drive.Moveable;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;

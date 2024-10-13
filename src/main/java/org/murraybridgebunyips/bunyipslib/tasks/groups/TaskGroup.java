@@ -1,8 +1,8 @@
 package org.murraybridgebunyips.bunyipslib.tasks.groups;
 
-import static org.murraybridgebunyips.bunyipslib.Text.getCallingUserCodeFunction;
-import static org.murraybridgebunyips.bunyipslib.Text.html;
-import static org.murraybridgebunyips.bunyipslib.Text.round;
+import static org.murraybridgebunyips.bunyipslib.util.Text.getCallingUserCodeFunction;
+import static org.murraybridgebunyips.bunyipslib.util.Text.html;
+import static org.murraybridgebunyips.bunyipslib.util.Text.round;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;

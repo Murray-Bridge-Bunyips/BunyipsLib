@@ -5,6 +5,7 @@
 package org.murraybridgebunyips.bunyipslib.external.units;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * A function that accepts a single {@code double} and returns a {@code double} result. This is used
@@ -21,6 +22,26 @@ public interface UnaryFunction {
      * The identity function that simply returns the input value.
      */
     UnaryFunction IDENTITY = x -> x;
+    /**
+     * A function that squares the input value and keeps the sign.
+     */
+    UnaryFunction SQUARE_KEEP_SIGN = x -> Math.copySign(x * x, x);
+    /**
+     * A function that squares the input value.
+     */
+    UnaryFunction SQUARE = x -> x * x;
+    /**
+     * A function that cubes the input value and keeps the sign.
+     */
+    UnaryFunction CUBE_KEEP_SIGN = x -> Math.copySign(x * x * x, x);
+    /**
+     * A function that cubes the input value.
+     */
+    UnaryFunction CUBE = x -> x * x * x;
+    /**
+     * A function that negates the input value.
+     */
+    UnaryFunction NEGATE = x -> -x;
 
     /**
      * Applies this function to the input value and returns the result.

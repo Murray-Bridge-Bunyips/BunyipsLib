@@ -9,8 +9,8 @@ import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.murraybridgebunyips.bunyipslib.Cartesian;
-import org.murraybridgebunyips.bunyipslib.Geometry;
+import org.murraybridgebunyips.bunyipslib.util.Cartesian;
+import org.murraybridgebunyips.bunyipslib.util.Geometry;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
 

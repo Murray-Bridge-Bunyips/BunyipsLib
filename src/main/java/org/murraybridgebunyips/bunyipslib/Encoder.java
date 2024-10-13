@@ -2,6 +2,8 @@ package org.murraybridgebunyips.bunyipslib;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.murraybridgebunyips.bunyipslib.util.Filter;
+
 import java.util.function.Supplier;
 
 /**

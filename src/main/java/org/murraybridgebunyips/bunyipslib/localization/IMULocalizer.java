@@ -8,7 +8,7 @@ import com.acmerobotics.roadrunner.Vector2dDual;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.murraybridgebunyips.bunyipslib.Geometry;
+import org.murraybridgebunyips.bunyipslib.util.Geometry;
 
 /**
  * A simple wrapper that will wrap an Inertial Measurement Unit to supply heading-only poses as a {@link Localizer}.

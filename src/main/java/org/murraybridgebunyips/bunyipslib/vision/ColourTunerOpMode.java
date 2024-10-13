@@ -1,6 +1,6 @@
 package org.murraybridgebunyips.bunyipslib.vision;
 
-import static org.murraybridgebunyips.bunyipslib.Text.round;
+import static org.murraybridgebunyips.bunyipslib.util.Text.round;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Milliseconds;
 
 import androidx.annotation.NonNull;
@@ -9,11 +9,12 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
-import org.murraybridgebunyips.bunyipslib.Controller;
-import org.murraybridgebunyips.bunyipslib.Controls;
+import org.murraybridgebunyips.bunyipslib.external.units.UnaryFunction;
+import org.murraybridgebunyips.bunyipslib.hardware.Controller;
+import org.murraybridgebunyips.bunyipslib.transforms.Controls;
 import org.murraybridgebunyips.bunyipslib.Dbg;
 import org.murraybridgebunyips.bunyipslib.EmergencyStop;
-import org.murraybridgebunyips.bunyipslib.Text;
+import org.murraybridgebunyips.bunyipslib.util.Text;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.vision.processors.ColourThreshold;
 import org.opencv.core.Scalar;
@@ -59,7 +60,7 @@ public abstract class ColourTunerOpMode extends BunyipsOpMode {
     @Override
     protected final void onInit() {
         // Using quadratic scaling for the scalar adjustment for more precision
-        gamepad1.set(Controls.Analog.LEFT_STICK_Y, Controller.SQUARE);
+        gamepad1.set(Controls.Analog.LEFT_STICK_Y, UnaryFunction.SQUARE_KEEP_SIGN);
         // Restrict speed so that adjustment is consistent
         setLoopSpeed(Milliseconds.of(10));
         telemetry.setMsTransmissionInterval(25);

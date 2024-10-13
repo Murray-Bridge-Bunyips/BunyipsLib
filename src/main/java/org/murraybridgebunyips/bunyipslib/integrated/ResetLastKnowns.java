@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.murraybridgebunyips.bunyipslib.Geometry;
-import org.murraybridgebunyips.bunyipslib.Storage;
+import org.murraybridgebunyips.bunyipslib.util.Geometry;
+import org.murraybridgebunyips.bunyipslib.util.Storage;
 
 /**
  * Reset OpMode to clear static memory fields for last known position/alliance.

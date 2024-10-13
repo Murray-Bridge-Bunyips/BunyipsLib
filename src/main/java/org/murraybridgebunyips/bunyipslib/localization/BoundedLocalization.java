@@ -6,8 +6,8 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 import org.murraybridgebunyips.bunyipslib.Dbg;
-import org.murraybridgebunyips.bunyipslib.Field;
-import org.murraybridgebunyips.bunyipslib.Rect;
+import org.murraybridgebunyips.bunyipslib.util.Field;
+import org.murraybridgebunyips.bunyipslib.transforms.Rect;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 

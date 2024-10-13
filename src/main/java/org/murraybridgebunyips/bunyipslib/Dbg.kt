@@ -31,8 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package org.murraybridgebunyips.bunyipslib
 
 import com.qualcomm.robotcore.util.RobotLog
-import org.murraybridgebunyips.bunyipslib.Text.formatString
-import org.murraybridgebunyips.bunyipslib.Text.getCallingUserCodeFunction
+import org.murraybridgebunyips.bunyipslib.util.Text.formatString
+import org.murraybridgebunyips.bunyipslib.util.Text.getCallingUserCodeFunction
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds
 
 /**

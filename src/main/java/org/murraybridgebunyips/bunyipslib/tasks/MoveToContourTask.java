@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.Controls;
-import org.murraybridgebunyips.bunyipslib.Geometry;
-import org.murraybridgebunyips.bunyipslib.external.PIDF;
+import org.murraybridgebunyips.bunyipslib.transforms.Controls;
+import org.murraybridgebunyips.bunyipslib.util.Geometry;
+import org.murraybridgebunyips.bunyipslib.external.control.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.subsystems.drive.Moveable;

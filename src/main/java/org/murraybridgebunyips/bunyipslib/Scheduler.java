@@ -1,7 +1,7 @@
 package org.murraybridgebunyips.bunyipslib;
 
-import static org.murraybridgebunyips.bunyipslib.Text.formatString;
-import static org.murraybridgebunyips.bunyipslib.Text.round;
+import static org.murraybridgebunyips.bunyipslib.util.Text.formatString;
+import static org.murraybridgebunyips.bunyipslib.util.Text.round;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Nanoseconds;
 import static org.murraybridgebunyips.bunyipslib.external.units.Units.Seconds;
 import static org.murraybridgebunyips.bunyipslib.tasks.bases.Task.INFINITE_TIMEOUT;
@@ -11,8 +11,11 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
+import org.murraybridgebunyips.bunyipslib.transforms.Controls;
+import org.murraybridgebunyips.bunyipslib.hardware.Controller;
 import org.murraybridgebunyips.bunyipslib.tasks.RunTask;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.Task;
+import org.murraybridgebunyips.bunyipslib.util.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;

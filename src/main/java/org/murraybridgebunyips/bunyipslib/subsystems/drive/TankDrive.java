@@ -38,8 +38,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.Drawing;
-import org.murraybridgebunyips.bunyipslib.Geometry;
+import org.murraybridgebunyips.bunyipslib.util.Drawing;
+import org.murraybridgebunyips.bunyipslib.util.Geometry;
 import org.murraybridgebunyips.bunyipslib.localization.Localizer;
 import org.murraybridgebunyips.bunyipslib.localization.TankLocalizer;
 import org.murraybridgebunyips.bunyipslib.roadrunner.DriveModel;

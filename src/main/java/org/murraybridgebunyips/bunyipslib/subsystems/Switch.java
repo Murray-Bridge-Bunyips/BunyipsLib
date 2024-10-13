@@ -1,6 +1,6 @@
 package org.murraybridgebunyips.bunyipslib.subsystems;
 
-import static org.murraybridgebunyips.bunyipslib.Text.round;
+import static org.murraybridgebunyips.bunyipslib.util.Text.round;
 
 import com.qualcomm.robotcore.hardware.Servo;
 

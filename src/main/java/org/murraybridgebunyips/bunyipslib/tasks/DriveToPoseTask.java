@@ -10,10 +10,10 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.roadrunner.Pose2d;
 
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.Drawing;
-import org.murraybridgebunyips.bunyipslib.Geometry;
+import org.murraybridgebunyips.bunyipslib.util.Drawing;
+import org.murraybridgebunyips.bunyipslib.util.Geometry;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
-import org.murraybridgebunyips.bunyipslib.external.SystemController;
+import org.murraybridgebunyips.bunyipslib.external.control.SystemController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;

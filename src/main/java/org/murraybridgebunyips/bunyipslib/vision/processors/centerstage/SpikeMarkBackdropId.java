@@ -1,7 +1,7 @@
 package org.murraybridgebunyips.bunyipslib.vision.processors.centerstage;
 
-import org.murraybridgebunyips.bunyipslib.Direction;
-import org.murraybridgebunyips.bunyipslib.StartingPositions;
+import org.murraybridgebunyips.bunyipslib.transforms.Direction;
+import org.murraybridgebunyips.bunyipslib.transforms.StartingPositions;
 
 /**
  * Util for obtaining the backdrop ID based on a Spike Mark position and field side.

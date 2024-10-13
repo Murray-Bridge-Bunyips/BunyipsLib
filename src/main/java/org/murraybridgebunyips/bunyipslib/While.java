@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
+import org.murraybridgebunyips.bunyipslib.util.Threads;
 
 import java.util.function.BooleanSupplier;
 
@@ -23,7 +24,6 @@ import java.util.function.BooleanSupplier;
  * }</pre>
  *
  * @author Lucas Bubner, 2023
- * @see Threads
  * @since 1.0.0-pre
  */
 public class While {

@@ -9,7 +9,7 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.murraybridgebunyips.bunyipslib.Cartesian;
+import org.murraybridgebunyips.bunyipslib.util.Cartesian;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
 import org.murraybridgebunyips.bunyipslib.subsystems.drive.MecanumDrive;
 

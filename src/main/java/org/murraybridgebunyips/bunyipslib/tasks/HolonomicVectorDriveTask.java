@@ -12,12 +12,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.jetbrains.annotations.NotNull;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.Drawing;
-import org.murraybridgebunyips.bunyipslib.Geometry;
+import org.murraybridgebunyips.bunyipslib.util.Drawing;
+import org.murraybridgebunyips.bunyipslib.util.Geometry;
 import org.murraybridgebunyips.bunyipslib.external.Mathf;
-import org.murraybridgebunyips.bunyipslib.external.pid.PController;
-import org.murraybridgebunyips.bunyipslib.external.pid.PDController;
-import org.murraybridgebunyips.bunyipslib.external.pid.PIDController;
+import org.murraybridgebunyips.bunyipslib.external.control.pid.PController;
+import org.murraybridgebunyips.bunyipslib.external.control.pid.PDController;
+import org.murraybridgebunyips.bunyipslib.external.control.pid.PIDController;
 import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 import org.murraybridgebunyips.bunyipslib.external.units.Distance;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;

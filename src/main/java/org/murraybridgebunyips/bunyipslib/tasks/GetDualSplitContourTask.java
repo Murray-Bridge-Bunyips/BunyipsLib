@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.murraybridgebunyips.bunyipslib.Direction;
+import org.murraybridgebunyips.bunyipslib.transforms.Direction;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.tasks.bases.ForeverTask;

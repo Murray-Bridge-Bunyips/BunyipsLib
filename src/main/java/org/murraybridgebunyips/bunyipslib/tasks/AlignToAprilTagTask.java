@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
-import org.murraybridgebunyips.bunyipslib.Controls;
-import org.murraybridgebunyips.bunyipslib.Drawing;
-import org.murraybridgebunyips.bunyipslib.Geometry;
-import org.murraybridgebunyips.bunyipslib.external.PIDF;
+import org.murraybridgebunyips.bunyipslib.transforms.Controls;
+import org.murraybridgebunyips.bunyipslib.util.Drawing;
+import org.murraybridgebunyips.bunyipslib.util.Geometry;
+import org.murraybridgebunyips.bunyipslib.external.control.PIDF;
 import org.murraybridgebunyips.bunyipslib.external.units.Measure;
 import org.murraybridgebunyips.bunyipslib.external.units.Time;
 import org.murraybridgebunyips.bunyipslib.subsystems.drive.Moveable;

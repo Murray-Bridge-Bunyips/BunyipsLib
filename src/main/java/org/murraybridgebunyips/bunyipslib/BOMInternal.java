@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * @see BunyipsOpMode
  * @since 1.0.0-pre
  */
-public class BOMInternal extends LinearOpMode {
+public abstract class BOMInternal extends LinearOpMode {
     // Override fields that will be supplemented by BunyipsOpMode
     // This interop problem will probably be fixed in Kotlin v2.0.0, but for now we need to do this so we can override Java fields from superclasses.
     // https://youtrack.jetbrains.com/issue/KT-55017/Prioritize-Kotlin-property-from-derived-class-over-Java-field-from-base-class
@@ -43,10 +43,7 @@ public class BOMInternal extends LinearOpMode {
     /**
      * Main BunyipsOpMode executor method.
      */
-    @SuppressWarnings("RedundantThrows")
-    protected void runBunyipsOpMode() throws InterruptedException {
-        // To be overridden by BunyipsOpMode, which can throw an InterruptedException
-    }
+    protected abstract void runBunyipsOpMode() throws InterruptedException;
 
     /**
      * Main OpMode thread method.

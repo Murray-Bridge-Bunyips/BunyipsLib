@@ -16,11 +16,11 @@
 //import org.murraybridgebunyips.bunyipslib.BunyipsOpMode;
 //import org.murraybridgebunyips.bunyipslib.BunyipsSubsystem;
 //import org.murraybridgebunyips.bunyipslib.Dbg;
-//import org.murraybridgebunyips.bunyipslib.Drawing;
+//import org.murraybridgebunyips.bunyipslib.util.Drawing;
 //import org.murraybridgebunyips.bunyipslib.subsystems.drive.MecanumDrive;
 //import org.murraybridgebunyips.bunyipslib.subsystems.drive.Moveable;
 //import org.murraybridgebunyips.bunyipslib.external.Mathf;
-//import org.murraybridgebunyips.bunyipslib.external.PIDF;
+//import org.murraybridgebunyips.bunyipslib.external.control.PIDF;
 //import org.murraybridgebunyips.bunyipslib.external.pid.PController;
 //import org.murraybridgebunyips.bunyipslib.external.units.Angle;
 //import org.murraybridgebunyips.bunyipslib.external.units.Distance;

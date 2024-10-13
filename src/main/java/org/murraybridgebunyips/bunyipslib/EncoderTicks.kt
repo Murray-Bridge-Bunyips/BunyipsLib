@@ -8,6 +8,7 @@ import org.murraybridgebunyips.bunyipslib.external.units.Measure
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Revolutions
 import org.murraybridgebunyips.bunyipslib.external.units.Units.Second
 import org.murraybridgebunyips.bunyipslib.external.units.Velocity
+import org.murraybridgebunyips.bunyipslib.hardware.Motor
 import kotlin.math.roundToInt
 
 /**
