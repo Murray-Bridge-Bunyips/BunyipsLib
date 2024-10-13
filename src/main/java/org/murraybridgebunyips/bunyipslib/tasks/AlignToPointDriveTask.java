@@ -145,7 +145,6 @@ public class AlignToPointDriveTask extends ForeverTask {
         double theta = difference.angleCast().toDouble();
 
         // Not technically omega because its power. This is the derivative of atan2
-        // TODO: test
         double thetaFF = Rotation2d.exp(-Math.PI / 2)
                 .times(fieldFrameInput.unaryMinus()).dot(difference) / (difference.norm() * difference.norm());
 
