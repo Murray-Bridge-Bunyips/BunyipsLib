@@ -10,10 +10,12 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.PoseVelocity2dDual;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Drawing;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 
@@ -58,13 +60,32 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
     protected void periodic() {
         if (localizer != null) {
             Twist2dDual<Time> twist = localizer.update();
+
             // Auto set to the last known position if the user has not defined one themselves
             if (localizerAccumulatedPose == null)
                 localizerAccumulatedPose = Storage.memory().lastKnownPosition;
+
             // Accumulate the poses
             localizerAccumulatedPose = localizerAccumulatedPose.plus(twist.value());
             localizerVelo = twist.velocity().value();
             Storage.memory().lastKnownPosition = localizerAccumulatedPose;
+
+            Drawing.useCanvas(c -> {
+                c.setStrokeWidth(1);
+                c.setStroke("#3F51B5");
+                Drawing.drawRobot(c, localizerAccumulatedPose);
+
+                Vector2d velocityDirection = localizerAccumulatedPose.heading
+                        .times(localizerVelo)
+                        .linearVel;
+                c.setStroke("#751000")
+                        .strokeLine(
+                                localizerAccumulatedPose.position.x,
+                                localizerAccumulatedPose.position.y,
+                                localizerAccumulatedPose.position.x + velocityDirection.x,
+                                localizerAccumulatedPose.position.y + velocityDirection.y
+                        );
+            });
         }
 
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1)

@@ -227,7 +227,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             Drawing.drawRobot(c, pose);
 
             Vector2d velocityDirection = pose.heading
-                    .times(twist.velocity().value())
+                    .times(poseVelo)
                     .linearVel;
             c.setStroke("#751000")
                     .strokeLine(
