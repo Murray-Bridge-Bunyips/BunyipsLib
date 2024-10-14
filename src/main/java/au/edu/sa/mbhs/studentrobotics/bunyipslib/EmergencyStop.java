@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
+
 /**
  * Custom exception to be thrown when BunyipsLib should end the OpMode following a critical error.
  * This ensures the Exceptions handler will be called but also allows the OpMode to be ended immediately.
@@ -14,6 +16,6 @@ public class EmergencyStop extends RuntimeException {
      * @param message the message to display on the Driver Station.
      */
     public EmergencyStop(String message) {
-        super(message);
+        super(message, new OpModeManagerImpl.ForceStopException());
     }
 }
