@@ -250,6 +250,12 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     @Override
+    protected void onDisable() {
+        leftMotors.forEach(m -> m.setPower(0));
+        rightMotors.forEach(m -> m.setPower(0));
+    }
+
+    @Override
     @NonNull
     public Pose2d getPoseEstimate() {
         return pose;

@@ -192,7 +192,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         this.rightBackPower = rightBackPower;
         this.rightFrontPower = rightFrontPower;
 
-        // TODO: in prog: SimpleMecanumDrive and SimpleTankDrive
         // TODO: RoadRunner unit-based builder (like old RoadRunner util)
         // TODO: RoadRunnerTuningOpMode (and new tuning OpModes)
     }
@@ -295,6 +294,14 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
         rightFront.setPower(rightFrontPower);
+    }
+
+    @Override
+    protected void onDisable() {
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
+        rightFront.setPower(0);
     }
 
     @Override

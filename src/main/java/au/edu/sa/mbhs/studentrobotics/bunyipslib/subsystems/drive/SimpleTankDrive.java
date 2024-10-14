@@ -4,13 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.DualNum;
-import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.PoseVelocity2dDual;
+import com.acmerobotics.roadrunner.TankKinematics;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
@@ -18,18 +20,14 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 
 /**
- * A minimal Mecanum drive implementation that does not include a RoadRunner configuration.
+ * A minimal Tank drive implementation that does not include a RoadRunner configuration.
  * This is useful for implementations where localizer information is not required at all times, such as in TeleOp,
  * and RoadRunner features are not required to be active.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
-    private final DcMotor leftFront;
-    private final DcMotor leftBack;
-    private final DcMotor rightBack;
-    private final DcMotor rightFront;
+public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
     @Nullable
     private Localizer localizer;
     @Nullable
@@ -38,19 +36,22 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
     private PoseVelocity2d localizerVelo;
     private PoseVelocity2d target = Geometry.zeroVel();
 
+    private final List<DcMotor> leftMotors;
+    private final List<DcMotor> rightMotors;
+
     /**
-     * Construct a new SimpleMecanumDrive.
+     * Construct a new SimpleTankDrive.
      *
-     * @param leftFront  the front left motor
-     * @param leftBack   the back left motor
-     * @param rightBack  the back right motor
-     * @param rightFront the front right motor
+     * @param leftMotors           all motors on the left side of the robot (e.g. {@code Arrays.asList(leftFront, leftBack)})
+     * @param rightMotors          all motors on the right side of the robot (e.g. {@code Arrays.asList(rightFront, rightBack)})
      */
-    public SimpleMecanumDrive(DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront) {
-        this.leftFront = leftFront;
-        this.leftBack = leftBack;
-        this.rightBack = rightBack;
-        this.rightFront = rightFront;
+    public SimpleTankDrive(List<DcMotor> leftMotors, List<DcMotor> rightMotors) {
+        assertParamsNotNull(leftMotors, rightMotors);
+        leftMotors.forEach(this::assertParamsNotNull);
+        rightMotors.forEach(this::assertParamsNotNull);
+
+        this.leftMotors = leftMotors;
+        this.rightMotors = rightMotors;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
             localizerVelo = twist.velocity().value();
         }
 
-        MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1)
+        TankKinematics.WheelVelocities<Time> wheelVels = new TankKinematics(2)
                 .inverse(PoseVelocity2dDual.constant(target, 1));
 
         double maxPowerMag = 1;
@@ -74,18 +75,18 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
 
-        leftFront.setPower(wheelVels.leftFront.get(0) / maxPowerMag);
-        leftBack.setPower(wheelVels.leftBack.get(0) / maxPowerMag);
-        rightBack.setPower(wheelVels.rightBack.get(0) / maxPowerMag);
-        rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
+        for (DcMotor m : leftMotors) {
+            m.setPower(wheelVels.left.get(0) / maxPowerMag);
+        }
+        for (DcMotor m : rightMotors) {
+            m.setPower(wheelVels.right.get(0) / maxPowerMag);
+        }
     }
 
     @Override
     protected void onDisable() {
-        leftFront.setPower(0);
-        leftBack.setPower(0);
-        rightBack.setPower(0);
-        rightFront.setPower(0);
+        leftMotors.forEach(m -> m.setPower(0));
+        rightMotors.forEach(m -> m.setPower(0));
     }
 
     @Override
