@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Stack;
 import java.util.function.BooleanSupplier;
 
@@ -421,7 +422,7 @@ public class TelemetryMenu {
 
         @Override
         protected String getDisplayText() {
-            return String.format("%s: <font color='#e37c07' face=monospace>%d</font>", name, i);
+            return String.format(Locale.getDefault(), "%s: <font color='#e37c07' face=monospace>%d</font>", name, i);
         }
 
         public int getValue() {

@@ -6,6 +6,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
+import java.util.Locale;
+
 /**
  * A measure holds the magnitude and unit of some dimension, such as distance, time, or speed. Two
  * measures with the same <i>unit</i> and <i>magnitude</i> are effectively equivalent objects.
@@ -453,7 +455,7 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
         // now gives the magnitude in full (old method exists in toScientificString()).
 
         // eg 1234 V/m (1.234e+04 V/m in scientific form)
-        return String.format("%s %s", magnitude(), unit().symbol());
+        return String.format(Locale.getDefault(), "%s %s", magnitude(), unit().symbol());
     }
 
     /**
