@@ -71,7 +71,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final VoltageSensor voltageSensor;
     private final IMU imu;
     private final List<DcMotorEx> leftMotors, rightMotors;
-    private final Localizer localizer;
 
     private final DriveModel model;
     private final MotionProfile profile;
@@ -94,6 +93,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     public PoseVelocity2d poseVelo;
 
+    private Localizer localizer;
     private volatile double leftPower;
     private volatile double rightPower;
 
@@ -140,6 +140,18 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         FlightRecorder.write("TANK_GAINS", gains);
         FlightRecorder.write("TANK_DRIVE_MODEL", model);
         FlightRecorder.write("TANK_PROFILE", profile);
+    }
+
+    /**
+     * Set the Localizer this drive instance should use.
+     * If not specified, this will be a {@link TankLocalizer}.
+     *
+     * @param localizer the localizer to use
+     * @return this
+     */
+    public TankDrive withLocalizer(Localizer localizer) {
+        this.localizer = localizer;
+        return this;
     }
 
     /**

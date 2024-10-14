@@ -70,7 +70,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final DcMotorEx leftBack;
     private final DcMotorEx rightBack;
     private final DcMotorEx rightFront;
-    private final Localizer localizer;
 
     private final DriveModel model;
     private final MotionProfile profile;
@@ -93,6 +92,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     public PoseVelocity2d poseVelo;
 
+    private Localizer localizer;
     private volatile double leftFrontPower;
     private volatile double leftBackPower;
     private volatile double rightBackPower;
@@ -143,6 +143,18 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         FlightRecorder.write("MECANUM_GAINS", mecanumGains);
         FlightRecorder.write("MECANUM_DRIVE_MODEL", driveModel);
         FlightRecorder.write("MECANUM_PROFILE", motionProfile);
+    }
+
+    /**
+     * Set the Localizer this drive instance should use.
+     * If not specified, this will be a {@link MecanumLocalizer}.
+     *
+     * @param localizer the localizer to use
+     * @return this
+     */
+    public MecanumDrive withLocalizer(Localizer localizer) {
+        this.localizer = localizer;
+        return this;
     }
 
     /**
