@@ -211,8 +211,7 @@ public class AprilTagPoseEstimator implements Runnable {
             return;
 
         Pose2d current = Objects.requireNonNull(localizer.getPoseEstimate(), "A non-null pose estimate supplier is required to use the AprilTagPoseEstimator.");
-        // TODO: test
-        Pose2d poseEstimate = Pose2d.exp(current.minus(previousOffset));
+        Pose2d poseEstimate = Geometry.subtract(current, previousOffset);
         ArrayList<AprilTagData> data = processor.getData();
         if (data.isEmpty())
             return;
@@ -275,8 +274,7 @@ public class AprilTagPoseEstimator implements Runnable {
 
             // Use an unmodified pose as the one we actually calculate otherwise we'll oscillate around the target
             // since the Kalman filter shouldn't be fed it's own data
-            // TODO: test
-            previousOffset = Pose2d.exp(kfPose.minus(poseEstimate));
+            previousOffset = Geometry.subtract(kfPose, poseEstimate);
 
             // Apply the new pose
             localizer.setPoseEstimate(kfPose);

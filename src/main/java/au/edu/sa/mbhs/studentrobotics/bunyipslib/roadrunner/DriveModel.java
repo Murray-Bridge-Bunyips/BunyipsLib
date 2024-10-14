@@ -71,7 +71,7 @@ public class DriveModel {
 
         /**
          * Set the inches per tick for lateral movement as a result of a tuned measurement ratio.
-         * Not required for a differential drive.
+         * Not required for a differential drive. By default, this is set to the same value as inches per tick.
          *
          * @param lateralInPerTick the inches per tick for lateral movement
          * @return the builder
@@ -83,7 +83,7 @@ public class DriveModel {
 
         /**
          * Set the inches per tick for lateral movement as a result of movement and encoder ticks.
-         * Not required for a differential drive.
+         * Not required for a differential drive. By default, this is set to the same value as inches per tick.
          *
          * @param measuredDistance the measured distance of the movement
          * @param reportedTicks    the reported ticks from the encoder when the distance was measured
@@ -96,7 +96,7 @@ public class DriveModel {
 
         /**
          * Set the inches per tick for lateral movement as a result of a precomputed ratio.
-         * Not required for a differential drive.
+         * Not required for a differential drive. By default, this is set to the same value as inches per tick.
          *
          * @param ticksPerRevolution the ticks per revolution of the encoder
          * @param gearRatio          the gear ratio of the drive

@@ -134,8 +134,7 @@ public class DriveToPoseTask extends Task {
     @Override
     protected void periodic() {
         Pose2d estimatedPose = localizer.get();
-        // TODO: test
-        Pose2d error = Pose2d.exp(targetPose.minus(estimatedPose));
+        Pose2d error = Geometry.subtract(targetPose, estimatedPose);
 
         // Twist the error vector to be relative to the robot's heading, as rotations of the robot are not
         // accounted for in the RoadRunner pose estimate

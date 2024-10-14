@@ -56,7 +56,6 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
 
     @Override
     protected void periodic() {
-        // TODO: test
         if (localizer != null) {
             Twist2dDual<Time> twist = localizer.update();
             // Auto set to the last known position if the user has not defined one themselves
@@ -80,6 +79,17 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         leftBack.setPower(wheelVels.leftBack.get(0) / maxPowerMag);
         rightBack.setPower(wheelVels.rightBack.get(0) / maxPowerMag);
         rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
+    }
+
+    /**
+     * Set the localizer for this drive.
+     *
+     * @param localizer the localizer to use
+     * @return this
+     */
+    public SimpleMecanumDrive withLocalizer(Localizer localizer) {
+        this.localizer = localizer;
+        return this;
     }
 
     @Override

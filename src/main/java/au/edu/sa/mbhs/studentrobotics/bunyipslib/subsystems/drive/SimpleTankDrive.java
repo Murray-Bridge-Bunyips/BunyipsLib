@@ -53,9 +53,19 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
         this.rightMotors = rightMotors;
     }
 
+    /**
+     * Set the localizer for this drive.
+     *
+     * @param localizer the localizer to use
+     * @return this
+     */
+    public SimpleTankDrive withLocalizer(Localizer localizer) {
+        this.localizer = localizer;
+        return this;
+    }
+
     @Override
     protected void periodic() {
-        // TODO: test
         if (localizer != null) {
             Twist2dDual<Time> twist = localizer.update();
             // Auto set to the last known position if the user has not defined one themselves

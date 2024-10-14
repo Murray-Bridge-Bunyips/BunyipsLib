@@ -102,4 +102,15 @@ public final class Geometry {
     public static double distBetween(Vector2d a, Vector2d b) {
         return Math.hypot(b.x - a.x, b.y - a.y);
     }
+
+    /**
+     * Subtract two poses at face value, such that a - b = (a.x - b.x, a.y - b.y, a.heading - b.heading).
+     *
+     * @param a the first pose
+     * @param b the second pose
+     * @return a new pose representing the difference between the two poses
+     */
+    public static Pose2d subtract(Pose2d a, Pose2d b) {
+        return new Pose2d(a.position.minus(b.position), a.heading.minus(b.heading));
+    }
 }

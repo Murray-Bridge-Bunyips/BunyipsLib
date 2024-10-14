@@ -226,18 +226,17 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             Drawing.drawPoseHistory(c, poseHistory);
             Drawing.drawRobot(c, pose);
 
-            // TODO: test
-            Vector2d directionOfTravel = pose.heading
-                    .times(twist.value().line)
-                    // 24 for 1 field tile in inches
-                    .times(24);
+            Vector2d velocityDirection = pose.heading
+                    .times(twist.velocity().value())
+                    .linearVel;
             c.setStroke("#751000")
                     .strokeLine(
                             pose.position.x,
                             pose.position.y,
-                            pose.position.x + directionOfTravel.x,
-                            pose.position.y + directionOfTravel.y
+                            pose.position.x + velocityDirection.x,
+                            pose.position.y + velocityDirection.y
                     );
+
         });
 
         for (DcMotorEx m : leftMotors) {
