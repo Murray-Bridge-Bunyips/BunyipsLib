@@ -36,7 +36,7 @@ public final class Drawing {
     }
 
     /**
-     * Draw a filled polygon on the dashboard canvas.
+     * Draw segments tracing out a pose history.
      *
      * @param canvas      dashboard canvas
      * @param poseHistory list of robot poses
@@ -56,9 +56,9 @@ public final class Drawing {
         canvas.strokePolyline(xPoints, yPoints);
     }
 
-    // TODO
+    // TODO: reimplement
 //    /**
-//     * Draw a filled polygon on the dashboard canvas.
+//     * Draw a path along sampled intervals.
 //     *
 //     * @param canvas     dashboard canvas
 //     * @param path       path to draw
@@ -79,7 +79,7 @@ public final class Drawing {
 //    }
 //
 //    /**
-//     * Draw a filled polygon on the dashboard canvas.
+//     * Draw a path along default sampled intervals.
 //     *
 //     * @param canvas dashboard canvas
 //     * @param path   path to draw
@@ -89,7 +89,7 @@ public final class Drawing {
 //    }
 
     /**
-     * Draw a filled polygon on the dashboard canvas.
+     * Draw a circle representing the robot and heading on the field.
      *
      * @param canvas dashboard canvas
      * @param pose   robot pose

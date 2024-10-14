@@ -27,6 +27,7 @@ import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.acmerobotics.roadrunner.TurnActionFactory;
 import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Twist2dDual;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
@@ -200,6 +201,26 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         }
         estimatedPoseWriter.write(new PoseMessage(pose));
 
+        Drawing.useCanvas(c -> {
+            c.setStrokeWidth(1);
+            c.setStroke("#3F51B5");
+            Drawing.drawPoseHistory(c, poseHistory);
+            Drawing.drawRobot(c, pose);
+
+            // TODO: test
+            Vector2d directionOfTravel = pose.heading
+                    .times(twist.value().line)
+                    // 24 for 1 field tile in inches
+                    .times(24);
+            c.setStroke("#751000")
+                    .strokeLine(
+                            pose.position.x,
+                            pose.position.y,
+                            pose.position.x + directionOfTravel.x,
+                            pose.position.y + directionOfTravel.y
+                    );
+        });
+
         for (DcMotorEx m : leftMotors) {
             m.setPower(leftPower);
         }
@@ -330,17 +351,11 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             p.put("yError", error.position.y);
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
 
-            // Only draw when active; only one drive action should be active at a time
             Canvas c = p.fieldOverlay();
             c.setStrokeWidth(1);
-            c.setStroke("#3F51B5");
-            Drawing.drawPoseHistory(c, poseHistory);
 
             c.setStroke("#4CAF50");
             Drawing.drawRobot(c, txWorldTarget.value());
-
-            c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, pose);
 
             c.setStroke("#4CAF50FF");
             c.setStrokeWidth(1);
@@ -412,14 +427,9 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
             Canvas c = p.fieldOverlay();
             c.setStrokeWidth(1);
-            c.setStroke("#3F51B5");
-            Drawing.drawPoseHistory(c, poseHistory);
 
             c.setStroke("#4CAF50");
             Drawing.drawRobot(c, txWorldTarget.value());
-
-            c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, pose);
 
             c.setStroke("#7C4DFFFF");
             c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
