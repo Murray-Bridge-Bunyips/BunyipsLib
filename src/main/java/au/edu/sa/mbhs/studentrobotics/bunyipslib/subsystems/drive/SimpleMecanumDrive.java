@@ -51,6 +51,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         this.leftBack = leftBack;
         this.rightBack = rightBack;
         this.rightFront = rightFront;
+        // TODO: port other cartesian mecanum drive methods over
     }
 
     @Override
@@ -64,6 +65,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
             // Accumulate the poses
             localizerAccumulatedPose = localizerAccumulatedPose.plus(twist.value());
             localizerVelo = twist.velocity().value();
+            Storage.memory().lastKnownPosition = localizerAccumulatedPose;
         }
 
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1)

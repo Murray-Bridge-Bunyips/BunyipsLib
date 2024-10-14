@@ -83,8 +83,8 @@ public final class Cartesian {
     }
 
     /**
-     * @param x the Cartesian x coordinate
-     * @param y the Cartesian y coordinate
+     * @param x       the Cartesian x coordinate
+     * @param y       the Cartesian y coordinate
      * @param heading the Cartesian clockwise heading
      * @return the Robot Velocity pose representation of this Cartesian pose
      */

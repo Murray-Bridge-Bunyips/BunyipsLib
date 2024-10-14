@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.AutonomousBunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
@@ -47,6 +48,13 @@ public abstract class TaskGroup extends Task {
         }
         taskNames.append(tasks[tasks.length - 1]);
         withName(taskNames.toString());
+    }
+
+    /**
+     * @return all tasks in this group
+     */
+    public List<Task> getGroupedTasks() {
+        return new ArrayList<>(tasks);
     }
 
     /**

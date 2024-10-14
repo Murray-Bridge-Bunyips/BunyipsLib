@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import java.util.Arrays;
+import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
@@ -23,6 +24,15 @@ public class ParallelTaskGroup extends TaskGroup {
         // then the group is infinite. This works for parallel applications as every task will go till completion.
         super(Arrays.stream(tasks).anyMatch(t -> t.getTimeout().magnitude() == 0.0) ? INFINITE_TIMEOUT :
                 Seconds.of(Arrays.stream(tasks).mapToDouble(t -> t.getTimeout().in(Seconds)).max().orElse(0.0)), tasks);
+    }
+
+    /**
+     * Create a new ParallelTaskGroup with tasks.
+     *
+     * @param tasks The tasks to run together
+     */
+    public ParallelTaskGroup(List<Task> tasks) {
+        this(tasks.toArray(new Task[0]));
     }
 
     @Override

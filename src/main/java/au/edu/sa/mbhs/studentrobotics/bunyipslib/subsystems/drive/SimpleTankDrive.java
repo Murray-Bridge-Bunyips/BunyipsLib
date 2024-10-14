@@ -28,6 +28,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
  * @since 6.0.0
  */
 public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
+    private final List<DcMotor> leftMotors;
+    private final List<DcMotor> rightMotors;
     @Nullable
     private Localizer localizer;
     @Nullable
@@ -36,14 +38,11 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
     private PoseVelocity2d localizerVelo;
     private PoseVelocity2d target = Geometry.zeroVel();
 
-    private final List<DcMotor> leftMotors;
-    private final List<DcMotor> rightMotors;
-
     /**
      * Construct a new SimpleTankDrive.
      *
-     * @param leftMotors           all motors on the left side of the robot (e.g. {@code Arrays.asList(leftFront, leftBack)})
-     * @param rightMotors          all motors on the right side of the robot (e.g. {@code Arrays.asList(rightFront, rightBack)})
+     * @param leftMotors  all motors on the left side of the robot (e.g. {@code Arrays.asList(leftFront, leftBack)})
+     * @param rightMotors all motors on the right side of the robot (e.g. {@code Arrays.asList(rightFront, rightBack)})
      */
     public SimpleTankDrive(List<DcMotor> leftMotors, List<DcMotor> rightMotors) {
         assertParamsNotNull(leftMotors, rightMotors);
@@ -65,6 +64,7 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
             // Accumulate the poses
             localizerAccumulatedPose = localizerAccumulatedPose.plus(twist.value());
             localizerVelo = twist.velocity().value();
+            Storage.memory().lastKnownPosition = localizerAccumulatedPose;
         }
 
         TankKinematics.WheelVelocities<Time> wheelVels = new TankKinematics(2)

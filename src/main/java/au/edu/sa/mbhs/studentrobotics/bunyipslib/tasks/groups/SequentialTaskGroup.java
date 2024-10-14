@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import java.util.Arrays;
+import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
@@ -27,6 +28,15 @@ public class SequentialTaskGroup extends TaskGroup {
         super(Arrays.stream(tasks).anyMatch(t -> t.getTimeout().magnitude() == 0.0) ? INFINITE_TIMEOUT :
                 Seconds.of(Arrays.stream(tasks).mapToDouble(t -> t.getTimeout().in(Seconds)).sum()), tasks);
         currentTask = this.tasks.get(0);
+    }
+
+    /**
+     * Create a new SequentialTaskGroup with tasks.
+     *
+     * @param tasks The tasks to run in sequence
+     */
+    public SequentialTaskGroup(List<Task> tasks) {
+        this(tasks.toArray(new Task[0]));
     }
 
     @Override

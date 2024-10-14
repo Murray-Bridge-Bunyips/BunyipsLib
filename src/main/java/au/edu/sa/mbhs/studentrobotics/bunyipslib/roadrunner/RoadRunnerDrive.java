@@ -1,13 +1,11 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner;
 
+import com.acmerobotics.roadrunner.IdentityPoseMap;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TimeTrajectory;
-import com.acmerobotics.roadrunner.TimeTurn;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TrajectoryActionFactory;
-import com.acmerobotics.roadrunner.TurnActionFactory;
+import com.acmerobotics.roadrunner.PoseMap;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 
 /**
  * Interface implemented by all RoadRunner drive classes.
@@ -17,38 +15,55 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
  */
 public interface RoadRunnerDrive extends Moveable {
     /**
-     * Create a new TrajectoryActionBuilder to begin building a new trajectory action.
+     * The constants object represents all configuration options required for creating
+     * a RoadRunner trajectory. These constants are used internally by [.makeTrajectory] to provide
+     * task creation.
      *
-     * @param beginPose the starting pose of this trajectory
-     * @return the new TrajectoryActionBuilder
+     * @return the constants and method references used to construct trajectories and motion profiles
      */
-    TrajectoryActionBuilder actionBuilder(Pose2d beginPose);
+    BuilderConstants getConstants();
 
     /**
-     * Get a reference to a factory that can produce a {@link TimeTrajectory} follower task.
+     * Begin building a RoadRunner trajectory from the last-known robot position when this method is called.
+     * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
      *
-     * @return a TrajectoryActionFactory
+     * @return extended RoadRunner trajectory task builder
      */
-    TrajectoryActionFactory newTrajectoryTask();
+    default TaskBuilder makeTrajectory() {
+        return new TaskBuilder(getConstants(), Storage.memory().lastKnownPosition, new IdentityPoseMap());
+    }
 
     /**
-     * Get a reference to a factory that can produce a {@link TimeTurn} follower task.
+     * Begin building a RoadRunner trajectory from the last-known robot position when this method is called.
+     * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
      *
-     * @return a TurnActionFactory
+     * @param poseMap the PoseMap to use for this builder
+     * @return extended RoadRunner trajectory task builder
      */
-    TurnActionFactory newTurnTask();
+    default TaskBuilder makeTrajectory(PoseMap poseMap) {
+        return new TaskBuilder(getConstants(), Storage.memory().lastKnownPosition, poseMap);
+    }
 
     /**
-     * Get the drive model parameters of this RoadRunnerDrive.
+     * Begin building a RoadRunner trajectory from the supplied pose when this method is called.
+     * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
      *
-     * @return the used drive model parameters
+     * @param startPose the pose to start the trajectory generation from
+     * @return extended RoadRunner trajectory task builder
      */
-    DriveModel getDriveModel();
+    default TaskBuilder makeTrajectory(Pose2d startPose) {
+        return new TaskBuilder(getConstants(), startPose, new IdentityPoseMap());
+    }
 
     /**
-     * Get the motion profile parameters of this RoadRunnerDrive.
+     * Begin building a RoadRunner trajectory from the supplied pose when this method is called.
+     * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
      *
-     * @return the used motion profile parameters
+     * @param startPose the pose to start the trajectory generation from
+     * @param poseMap   the PoseMap to use for this builder
+     * @return extended RoadRunner trajectory task builder
      */
-    MotionProfile getMotionProfile();
+    default TaskBuilder makeTrajectory(Pose2d startPose, PoseMap poseMap) {
+        return new TaskBuilder(getConstants(), startPose, poseMap);
+    }
 }

@@ -7,6 +7,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.DynamicTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RepeatTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitUntilTask
@@ -436,5 +437,14 @@ abstract class Task(
          */
         @JvmField
         val INFINITE_TIMEOUT: Measure<Time> = Seconds.zero()
+
+        /**
+         * Utility to create a new [DynamicTask] based on the supplied task builder.
+         * Useful for constructing tasks that use data that is not available at the build time of the wrapped task.
+         */
+        @JvmStatic
+        fun defer(taskBuilder: () -> Task): DynamicTask {
+            return DynamicTask(taskBuilder)
+        }
     }
 }

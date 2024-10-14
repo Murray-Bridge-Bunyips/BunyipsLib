@@ -27,6 +27,7 @@ public class ActionTask extends Task {
      */
     public ActionTask(Action action) {
         this.action = action;
+        withName("Action :: " + action.getClass().getSimpleName());
     }
 
     @Override

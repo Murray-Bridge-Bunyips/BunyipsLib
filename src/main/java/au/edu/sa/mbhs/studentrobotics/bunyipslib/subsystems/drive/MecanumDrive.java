@@ -20,10 +20,7 @@ import com.acmerobotics.roadrunner.ProfileParams;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeTrajectory;
 import com.acmerobotics.roadrunner.TimeTurn;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TrajectoryActionFactory;
 import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
-import com.acmerobotics.roadrunner.TurnActionFactory;
 import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -43,6 +40,7 @@ import java.util.List;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.MecanumLocalizer;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.BuilderConstants;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.MecanumGains;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.MotionProfile;
@@ -263,6 +261,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         Twist2dDual<Time> twist = localizer.update();
         pose = pose.plus(twist.value());
         poseVelo = twist.velocity().value();
+        Storage.memory().lastKnownPosition = pose;
 
         poseHistory.add(pose);
         while (poseHistory.size() > Drawing.MAX_POSE_HISTORY) {
@@ -304,9 +303,13 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         rightFront.setPower(0);
     }
 
+
+    @NonNull
     @Override
-    public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
-        return new TrajectoryActionBuilder(
+    public BuilderConstants getConstants() {
+        return new BuilderConstants(
+                model,
+                profile,
                 TurnTask::new,
                 FollowTrajectoryTask::new,
                 new TrajectoryBuilderParams(
@@ -315,30 +318,9 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                                 0.25, 0.1, 1.0e-2
                         )
                 ),
-                beginPose, 0.0,
-                defaultTurnConstraints,
+                0, defaultTurnConstraints,
                 defaultVelConstraint, defaultAccelConstraint
         );
-    }
-
-    @Override
-    public TrajectoryActionFactory newTrajectoryTask() {
-        return FollowTrajectoryTask::new;
-    }
-
-    @Override
-    public TurnActionFactory newTurnTask() {
-        return TurnTask::new;
-    }
-
-    @Override
-    public DriveModel getDriveModel() {
-        return model;
-    }
-
-    @Override
-    public MotionProfile getMotionProfile() {
-        return profile;
     }
 
     /**
