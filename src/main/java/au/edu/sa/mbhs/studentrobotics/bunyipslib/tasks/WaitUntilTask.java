@@ -1,10 +1,10 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import java.util.function.BooleanSupplier;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-
-import java.util.function.BooleanSupplier;
 
 /**
  * A task that waits until a condition is true before finishing.

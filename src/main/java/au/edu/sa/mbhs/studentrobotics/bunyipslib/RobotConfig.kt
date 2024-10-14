@@ -1,5 +1,9 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.IMUEx
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ProfiledServo
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -8,10 +12,6 @@ import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.Servo
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.IMUEx
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ProfiledServo
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import java.util.function.Consumer
 
 /**

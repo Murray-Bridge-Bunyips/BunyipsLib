@@ -2,14 +2,14 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.CommandBasedBunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RepeatTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Utility class for running {@link Task} instances from an environment that does not have a task scheduler.

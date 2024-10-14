@@ -5,11 +5,11 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.Vector2d;
 
+import java.util.Objects;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
-
-import java.util.Objects;
 
 /**
  * A Rect is a set of two generic {@link Vector2d} instances that define a united upright rectangle.

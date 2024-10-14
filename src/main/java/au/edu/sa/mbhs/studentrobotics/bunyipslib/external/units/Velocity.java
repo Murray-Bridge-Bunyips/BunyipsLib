@@ -4,9 +4,9 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.collections.LongToObjectHashMap;
-
 import java.util.Objects;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.collections.LongToObjectHashMap;
 
 /**
  * Unit of velocity dimension that is a combination of a distance unit (numerator) and a time unit

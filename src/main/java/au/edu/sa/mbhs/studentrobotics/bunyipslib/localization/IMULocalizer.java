@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Time;
@@ -8,6 +10,7 @@ import com.acmerobotics.roadrunner.Vector2dDual;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
@@ -32,6 +35,7 @@ public class IMULocalizer implements Localizer {
         this.imu = imu;
     }
 
+    @NonNull
     @Override
     public Twist2dDual<Time> update() {
         Rotation2d currentHeading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));

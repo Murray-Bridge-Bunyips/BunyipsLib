@@ -12,14 +12,15 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathUtils;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 
 /**
  * Extended math utility functions.

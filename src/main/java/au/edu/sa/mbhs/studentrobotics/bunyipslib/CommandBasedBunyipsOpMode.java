@@ -2,14 +2,14 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
 import androidx.annotation.NonNull;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * Command-based structure for a {@link BunyipsOpMode} utilising the Scheduler.

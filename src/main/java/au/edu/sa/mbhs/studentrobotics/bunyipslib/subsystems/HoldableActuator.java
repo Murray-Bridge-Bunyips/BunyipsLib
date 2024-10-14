@@ -9,18 +9,19 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
+import java.util.function.DoubleSupplier;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Current;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-
-import java.util.function.DoubleSupplier;
 
 /**
  * Controls a generic holdable motor, that may be actuated by a user's input

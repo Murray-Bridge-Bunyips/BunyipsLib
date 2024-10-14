@@ -1,22 +1,23 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+import org.opencv.core.Scalar;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
-import org.opencv.core.Scalar;
 
 /**
  * A tuning OpMode for calibrating the vision system's colour thresholding using controller input.

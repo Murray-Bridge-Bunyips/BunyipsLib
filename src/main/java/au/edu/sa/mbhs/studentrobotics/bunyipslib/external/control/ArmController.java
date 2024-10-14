@@ -1,13 +1,13 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control;
 
+import java.util.function.Supplier;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EncoderTicks;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.ArmFeedforward;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Velocity;
-
-import java.util.function.Supplier;
 
 /**
  * A composite PID and Feedforward controller that represents an arm suspended at an angle from gravity. This class

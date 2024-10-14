@@ -12,9 +12,6 @@ import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.VisionData;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.MultiColourThreshold;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -23,6 +20,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.VisionData;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.MultiColourThreshold;
 
 /**
  * Base class for all vision processors using the Vision system.

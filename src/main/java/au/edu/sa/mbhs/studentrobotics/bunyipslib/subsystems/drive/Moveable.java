@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizable;
@@ -21,5 +23,5 @@ public interface Moveable extends Localizable {
      *
      * @param target the state this robot should now try to represent via motors
      */
-    void setPower(PoseVelocity2d target);
+    void setPower(@NonNull PoseVelocity2d target);
 }

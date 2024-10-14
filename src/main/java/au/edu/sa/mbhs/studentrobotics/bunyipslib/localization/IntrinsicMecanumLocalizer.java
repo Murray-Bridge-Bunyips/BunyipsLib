@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.MecanumKinematics;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -9,13 +11,13 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian;
 
 /**
  * An estimation-based Mecanum localizer that uses no encoders and only the IMU for heading. This is the bare configuration
@@ -70,6 +72,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
         imuOffset = drive.getPoseEstimate().heading.toDouble();
     }
 
+    @NonNull
     @Override
     public Twist2dDual<Time> update() {
         double[] wheelInputs = input != null

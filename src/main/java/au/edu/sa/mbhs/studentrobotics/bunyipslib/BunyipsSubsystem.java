@@ -1,12 +1,14 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.html;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.HashSet;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
@@ -14,8 +16,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
-
-import java.util.HashSet;
 
 /**
  * Base class for all robot subsystems.

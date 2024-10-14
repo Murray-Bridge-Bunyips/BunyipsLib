@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 
@@ -16,5 +18,6 @@ public interface Localizer {
      *
      * @return the twist delta of pose since the last update, units of inches and radians
      */
+    @NonNull
     Twist2dDual<Time> update();
 }

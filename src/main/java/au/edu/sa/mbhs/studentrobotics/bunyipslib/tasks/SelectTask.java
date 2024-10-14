@@ -1,9 +1,9 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-
 import java.util.HashMap;
 import java.util.function.Supplier;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
  * Select a task to run based on a hashmap of states and a supplier of states.

@@ -8,10 +8,11 @@ import androidx.annotation.Nullable;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Direction;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Direction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
 

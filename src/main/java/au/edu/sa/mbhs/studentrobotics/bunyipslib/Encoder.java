@@ -2,9 +2,9 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Filter;
-
 import java.util.function.Supplier;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Filter;
 
 /**
  * Represents a motor or external encoder that takes in suppliers of position and velocity to calculate motor ticks.

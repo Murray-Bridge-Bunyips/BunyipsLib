@@ -1,11 +1,15 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.getCallingUserCodeFunction;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.html;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.AutonomousBunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
@@ -15,10 +19,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 
 /**
  * A group of tasks.

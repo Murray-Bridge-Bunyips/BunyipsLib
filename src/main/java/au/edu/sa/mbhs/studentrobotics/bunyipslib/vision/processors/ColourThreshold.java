@@ -6,9 +6,6 @@ import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.Processor;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -17,6 +14,10 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.Processor;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
 
 /**
  * Legacy colour thresholding processor for a colour space, used to find colour contours in an image.

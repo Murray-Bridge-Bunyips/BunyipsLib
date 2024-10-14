@@ -12,10 +12,6 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.vision.VisionPortal;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.VisionData;
 import org.opencv.core.Mat;
 
 import java.util.ArrayList;
@@ -24,6 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.VisionData;
 
 /**
  * Component wrapper to support the v8.2+ SDK's included libraries for Camera operation.

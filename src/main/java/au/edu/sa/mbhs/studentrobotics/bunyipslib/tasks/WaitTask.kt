@@ -1,10 +1,10 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round
 
 /**
  * Task to wait for a specific amount of time.

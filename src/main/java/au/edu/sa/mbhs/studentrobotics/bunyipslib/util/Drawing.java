@@ -7,10 +7,10 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
-
 import java.util.List;
 import java.util.function.Consumer;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 
 /**
  * Set of helper functions for drawing on the FtcDashboard canvas.

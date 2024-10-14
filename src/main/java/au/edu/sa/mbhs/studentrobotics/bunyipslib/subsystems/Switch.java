@@ -4,13 +4,13 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.function.DoubleSupplier;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-
-import java.util.function.DoubleSupplier;
 
 /**
  * A generic servo controller subsystem that may be used to hold two positions and to control movements in between

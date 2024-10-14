@@ -3,10 +3,11 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.NumberIsTooLargeException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 
 /**
  * A collection of data filters for smoothing out and fusing sensor data.

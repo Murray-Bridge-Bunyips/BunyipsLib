@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Time;
@@ -16,6 +18,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.TwoDeadWheelInputsMessage;
 
@@ -69,6 +72,7 @@ public class TwoWheelLocalizer implements Localizer {
         FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", params);
     }
 
+    @NonNull
     public Twist2dDual<Time> update() {
         PositionVelocityPair parPosVel = par.getPositionAndVelocity();
         PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();

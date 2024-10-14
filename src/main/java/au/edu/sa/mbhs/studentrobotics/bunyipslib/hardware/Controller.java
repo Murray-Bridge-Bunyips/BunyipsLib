@@ -7,13 +7,13 @@ import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
-
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.function.Predicate;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 
 /**
  * A wrapper around a {@link Gamepad} object that provides a {@link Controls} interface and custom input calculations.

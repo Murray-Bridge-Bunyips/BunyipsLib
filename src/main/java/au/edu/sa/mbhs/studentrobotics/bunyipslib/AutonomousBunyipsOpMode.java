@@ -1,24 +1,14 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.html;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.TaskGroup;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -29,6 +19,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.TaskGroup;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 
 /**
  * {@link BunyipsOpMode} variant for Autonomous operation. Uses the {@link Task} system for a queued action OpMode.

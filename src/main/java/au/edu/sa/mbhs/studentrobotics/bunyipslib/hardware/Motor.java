@@ -1,9 +1,9 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString;
 
 import android.util.Pair;
 
@@ -23,6 +23,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+
+import java.util.ArrayList;
+import java.util.Optional;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Encoder;
@@ -39,9 +43,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFContro
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
-
-import java.util.ArrayList;
-import java.util.Optional;
 
 /**
  * Drop-in replacement for a {@link DcMotor} that uses custom control algorithms to operate {@link DcMotor.RunMode#RUN_USING_ENCODER}

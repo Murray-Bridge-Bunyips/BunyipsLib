@@ -36,8 +36,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Drawing;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.MecanumLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
@@ -48,10 +51,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.DriveComman
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.MecanumCommandMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Drawing;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 
 /**
  * This class is the standard Mecanum drive class that controls a set of four mecanum wheels while
@@ -114,6 +115,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param startPose            the starting pose of the robot
      */
     public MecanumDrive(DriveModel driveModel, MotionProfile motionProfile, MecanumGains mecanumGains, DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront, IMU imu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, Pose2d startPose) {
+        assertParamsNotNull(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, imu, voltageSensorMapping, startPose);
+
         pose = startPose;
         gains = mecanumGains;
         model = driveModel;
@@ -147,6 +150,23 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     /**
+     * Create a new MecanumDrive that will start at the last known pose.
+     *
+     * @param driveModel           the drive model parameters
+     * @param motionProfile        the motion profile parameters
+     * @param mecanumGains         the mecanum gains parameters
+     * @param leftFront            the front left motor
+     * @param leftBack             the back left motor
+     * @param rightBack            the back right motor
+     * @param rightFront           the front right motor
+     * @param imu                  the IMU for the robot, see DynIMU for flexible IMU usage
+     * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
+     */
+    public MecanumDrive(DriveModel driveModel, MotionProfile motionProfile, MecanumGains mecanumGains, DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront, IMU imu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
+        this(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, imu, voltageSensorMapping, Storage.memory().lastKnownPosition);
+    }
+
+    /**
      * Set the Localizer this drive instance should use.
      * If not specified, this will be a {@link MecanumLocalizer}.
      *
@@ -172,7 +192,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         this.rightBackPower = rightBackPower;
         this.rightFrontPower = rightFrontPower;
 
-        // TODO: SimpleMecanumDrive and SimpleTankDrive
+        // TODO: in prog: SimpleMecanumDrive and SimpleTankDrive
         // TODO: RoadRunner unit-based builder (like old RoadRunner util)
         // TODO: RoadRunnerTuningOpMode (and new tuning OpModes)
     }
@@ -187,7 +207,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     @Override
-    public void setPower(PoseVelocity2d target) {
+    public void setPower(@NonNull PoseVelocity2d target) {
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1)
                 .inverse(PoseVelocity2dDual.constant(target, 1));
 

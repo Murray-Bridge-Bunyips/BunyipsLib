@@ -2,8 +2,9 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.centerstage;
 
 import androidx.annotation.NonNull;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
 import org.opencv.core.Scalar;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
 
 /**
  * White pixel processor.

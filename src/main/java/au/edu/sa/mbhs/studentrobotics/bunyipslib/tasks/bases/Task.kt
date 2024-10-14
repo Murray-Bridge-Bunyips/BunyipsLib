@@ -1,9 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases
 
-import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.canvas.Canvas
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.acmerobotics.roadrunner.Action
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsComponent
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions
@@ -18,6 +14,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.ParallelTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.RaceTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.SequentialTaskGroup
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.canvas.Canvas
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
 import java.util.Optional
 import java.util.function.BooleanSupplier
 
@@ -72,6 +72,7 @@ abstract class Task(
      * This field is used for porting between [Action] and [Task] implementations.
      */
     lateinit var fieldOverlay: Canvas
+
     /**
      * Convenience field to get a reference to a [TelemetryPacket] for sending telemetry to the dashboard.
      * Available as soon as init() has been called for this task.

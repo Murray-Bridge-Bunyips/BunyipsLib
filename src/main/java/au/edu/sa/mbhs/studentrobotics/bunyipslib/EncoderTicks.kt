@@ -1,7 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
@@ -9,6 +7,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Revolution
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Second
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Velocity
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor
+import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import kotlin.math.roundToInt
 
 /**

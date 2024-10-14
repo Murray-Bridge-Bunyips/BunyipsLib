@@ -31,8 +31,8 @@ public class IMURelocalization implements Runnable {
     /**
      * Create a new IMURelocalization runner.
      *
-     * @param localizable the drive instance or localizer storer to update
-     * @param imu the imu to use for updates
+     * @param localizable            the drive instance or localizer storer to update
+     * @param imu                    the imu to use for updates
      * @param relocalizationInterval the interval at which the IMU is read and updates are propagated
      */
     public IMURelocalization(Localizable localizable, IMU imu, Measure<Time> relocalizationInterval) {
@@ -48,8 +48,8 @@ public class IMURelocalization implements Runnable {
     /**
      * Create a new IMURelocalization runner.
      *
-     * @param localizable the drive instance or localizer storer to update
-     * @param imu the imu to use for updates
+     * @param localizable            the drive instance or localizer storer to update
+     * @param imu                    the imu to use for updates
      * @param relocalizationInterval the interval at which the IMU is read and updates are propagated
      * @return a new instance of IMURelocalization
      */

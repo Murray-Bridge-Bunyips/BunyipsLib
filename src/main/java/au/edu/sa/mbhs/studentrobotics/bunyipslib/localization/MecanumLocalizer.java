@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.MecanumLocalizerInputsMessage;
 
@@ -77,6 +78,7 @@ public class MecanumLocalizer implements Localizer {
         imu.getRobotOrientationAsQuaternion();
     }
 
+    @NonNull
     @Override
     public Twist2dDual<Time> update() {
         PositionVelocityPair leftFrontPosVel = leftFront.getPositionAndVelocity();

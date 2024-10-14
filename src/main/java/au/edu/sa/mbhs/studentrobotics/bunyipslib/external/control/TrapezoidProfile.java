@@ -7,11 +7,11 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control;
 
+import java.util.Objects;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Unit;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Velocity;
-
-import java.util.Objects;
 
 
 /**

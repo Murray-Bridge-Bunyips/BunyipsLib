@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.murraybridgebunyips.bunyipslib.BuildConfig;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -13,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 
 /**
  * Text and string manipulation utilities.

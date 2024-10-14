@@ -6,9 +6,9 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
 import androidx.annotation.NonNull;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.collections.LongToObjectHashMap;
-
 import java.util.Objects;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.collections.LongToObjectHashMap;
 
 /**
  * A combinatory unit type that is equivalent to the product of two other others. Note that

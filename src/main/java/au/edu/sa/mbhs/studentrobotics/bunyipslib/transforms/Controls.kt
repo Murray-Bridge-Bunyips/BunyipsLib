@@ -1,11 +1,11 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Vector2d
 import com.qualcomm.robotcore.hardware.Gamepad
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry
 
 /**
  * Utility class for the different button and analog controls on the gamepad.
@@ -182,6 +182,7 @@ enum class Controls {
 
         /**
          * Convert the gamepad movement values into a robot velocity.
+         * This inverts the y value.
          */
         @JvmStatic
         fun makeRobotVel(x: Double, y: Double, r: Double): PoseVelocity2d {
@@ -190,6 +191,7 @@ enum class Controls {
 
         /**
          * Convert the gamepad movement values to a robot pose.
+         * This inverts the y value.
          */
         @JvmStatic
         fun makeRobotPose(x: Double, y: Double, r: Double): Pose2d {
@@ -198,6 +200,7 @@ enum class Controls {
 
         /**
          * Convert the gamepad movement values to a Cartesian pose.
+         * This inverts the y value.
          */
         @JvmStatic
         fun makeCartesianPose(x: Double, y: Double, r: Double): Pose2d {

@@ -30,10 +30,10 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
-import com.qualcomm.robotcore.util.RobotLog
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.getCallingUserCodeFunction
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import com.qualcomm.robotcore.util.RobotLog
 
 /**
  * Provides utility methods for debug logging.

@@ -1,10 +1,10 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Encoder;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
-
 import java.util.Arrays;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Encoder;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor;
 
 /**
  * A composite controller to use for PID+FF controls (with kV/kA calculated components). This controller is compatible

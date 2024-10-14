@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Time;
@@ -9,10 +11,11 @@ import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
  * SwitchableLocalizer is a composite localizer that allows self-tests to be performed, and to allow a "fallback"
@@ -60,6 +63,7 @@ public class SwitchableLocalizer implements Localizer {
         USING_FALLBACK_LOCALIZER = true;
     }
 
+    @NonNull
     @Override
     public Twist2dDual<Time> update() {
         if (USING_FALLBACK_LOCALIZER) {

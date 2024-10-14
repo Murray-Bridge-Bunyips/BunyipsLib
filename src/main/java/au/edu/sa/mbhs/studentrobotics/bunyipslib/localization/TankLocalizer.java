@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.TankKinematics;
 import com.acmerobotics.roadrunner.Time;
@@ -14,12 +16,12 @@ import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.TankLocalizerInputsMessage;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.TankLocalizerInputsMessage;
 
 /**
  * Tank drivebase localizer that uses drive encoders on all parallel wheels to localize the robot.
@@ -68,6 +70,7 @@ public class TankLocalizer implements Localizer {
         this.rightEncs = Collections.unmodifiableList(rightEncs);
     }
 
+    @NonNull
     @Override
     public Twist2dDual<Time> update() {
         List<PositionVelocityPair> leftReadings = new ArrayList<>(), rightReadings = new ArrayList<>();

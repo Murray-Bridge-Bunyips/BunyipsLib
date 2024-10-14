@@ -8,9 +8,10 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
+import org.opencv.core.Mat;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.Processor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ColourSample;
-import org.opencv.core.Mat;
 
 /**
  * BunyipsLib vision pipeline wrapper for a {@link PredominantColorProcessor}.

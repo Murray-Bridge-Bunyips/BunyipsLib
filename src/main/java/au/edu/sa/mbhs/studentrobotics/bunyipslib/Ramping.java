@@ -7,11 +7,11 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import java.util.function.DoubleSupplier;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
-
-import java.util.function.DoubleSupplier;
 
 /**
  * A collection of ramping functions and values for smoothing out deltas over time.

@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
@@ -58,6 +60,7 @@ public class ThreeWheelLocalizer implements Localizer {
         FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", params);
     }
 
+    @NonNull
     public Twist2dDual<Time> update() {
         PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
         PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();

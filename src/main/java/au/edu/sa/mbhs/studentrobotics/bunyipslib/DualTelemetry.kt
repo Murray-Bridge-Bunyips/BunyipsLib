@@ -1,5 +1,13 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Second
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.config.Config
@@ -10,14 +18,6 @@ import org.firstinspires.ftc.robotcore.external.Func
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.Telemetry.DisplayFormat
 import org.firstinspires.ftc.robotcore.external.Telemetry.Item
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Second
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import java.util.Collections
 import java.util.function.BooleanSupplier
 import kotlin.math.roundToInt

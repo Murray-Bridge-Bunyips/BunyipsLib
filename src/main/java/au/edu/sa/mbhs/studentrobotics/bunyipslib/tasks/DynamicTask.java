@@ -1,18 +1,18 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.getCallingUserCodeFunction;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.html;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
+
+import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-
-import java.util.function.Supplier;
 
 /**
  * Represents a task that is constructed at runtime. This is useful for tasks that have runtime requirements

@@ -1,6 +1,13 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import android.graphics.Color
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.*
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads
 import com.acmerobotics.roadrunner.ftc.throwIfModulesAreOutdated
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.Blinker
@@ -13,13 +20,6 @@ import com.qualcomm.robotcore.hardware.ServoController
 import com.qualcomm.robotcore.util.RobotLog
 import com.qualcomm.robotcore.util.ThreadPool
 import com.qualcomm.robotcore.util.Version
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.*
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads
 import org.murraybridgebunyips.bunyipslib.BuildConfig
 import java.util.Optional
 import java.util.concurrent.ExecutorService

@@ -2,9 +2,9 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-
 import java.util.Arrays;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
  * A group of tasks that runs all at once, until one of them is finished.

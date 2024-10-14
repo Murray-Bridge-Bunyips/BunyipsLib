@@ -1,14 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms
 
-import com.acmerobotics.roadrunner.Pose2d
-import org.apache.commons.math3.exception.NumberIsTooLargeException
-import org.apache.commons.math3.exception.OutOfRangeException
-import org.apache.commons.math3.exception.util.LocalizedFormats
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Alliance.BLUE
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Alliance.RED
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.LEFT
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.RIGHT
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
@@ -17,7 +8,16 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Feet
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.FieldTiles
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Alliance.BLUE
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Alliance.RED
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.LEFT
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.RIGHT
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString
+import com.acmerobotics.roadrunner.Pose2d
+import org.apache.commons.math3.exception.NumberIsTooLargeException
+import org.apache.commons.math3.exception.OutOfRangeException
+import org.apache.commons.math3.exception.util.LocalizedFormats
 import kotlin.math.abs
 
 /**

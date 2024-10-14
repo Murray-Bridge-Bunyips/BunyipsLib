@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
@@ -53,6 +54,15 @@ public final class Cartesian {
     }
 
     /**
+     * @param pose the Cartesian pose to convert to a Robot Velocity form
+     * @return the Robot Velocity pose representation of the Cartesian pose
+     */
+    public static PoseVelocity2d toVel(Pose2d pose) {
+        // noinspection SuspiciousNameCombination
+        return new PoseVelocity2d(new Vector2d(pose.position.y, -pose.position.x), -pose.heading.toDouble());
+    }
+
+    /**
      * @param pose the Robot pose to convert to Cartesian form
      * @return the Cartesian pose representation of the Robot pose
      */
@@ -70,6 +80,17 @@ public final class Cartesian {
     public static Pose2d toPose(double x, double y, double heading) {
         // noinspection SuspiciousNameCombination
         return new Pose2d(y, -x, -heading);
+    }
+
+    /**
+     * @param x the Cartesian x coordinate
+     * @param y the Cartesian y coordinate
+     * @param heading the Cartesian clockwise heading
+     * @return the Robot Velocity pose representation of this Cartesian pose
+     */
+    public static PoseVelocity2d toVel(double x, double y, double heading) {
+        // noinspection SuspiciousNameCombination
+        return new PoseVelocity2d(new Vector2d(y, -x), -heading);
     }
 
     /**

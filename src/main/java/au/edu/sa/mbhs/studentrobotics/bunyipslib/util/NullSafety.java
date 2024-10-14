@@ -2,11 +2,11 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.getCallingUserCodeFunction;
 
+import java.util.List;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
-
-import java.util.List;
 
 /**
  * Null safety utilities for robot components.

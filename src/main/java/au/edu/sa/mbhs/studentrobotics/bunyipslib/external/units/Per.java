@@ -4,9 +4,9 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.collections.LongToObjectHashMap;
-
 import java.util.Objects;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.collections.LongToObjectHashMap;
 
 /**
  * Generic combinatory unit type that represents the proportion of one unit to another, such as

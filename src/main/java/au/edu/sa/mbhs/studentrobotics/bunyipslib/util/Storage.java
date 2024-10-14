@@ -16,15 +16,6 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.RobotConfig;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourLocator;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourSensor;
 
 import java.io.Closeable;
 import java.io.File;
@@ -35,6 +26,16 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.RobotConfig;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourLocator;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourSensor;
 
 /**
  * Global filesystem and volatile storage utilities for robot operation.
