@@ -58,7 +58,6 @@ public class ThreeWheelLocalizer implements Localizer {
         FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", params);
     }
 
-    // TODO: imu reloc
     public Twist2dDual<Time> update() {
         PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
         PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
