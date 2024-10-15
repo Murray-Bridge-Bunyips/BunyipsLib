@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 
 /**
  * Set of helper functions for drawing on the FtcDashboard canvas.
@@ -18,7 +19,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
  * @since 6.0.0
  */
 @Config
-public final class Drawing {
+public final class Dashboard {
     /**
      * Inches for sampled path drawing resolution.
      */
@@ -32,7 +33,7 @@ public final class Drawing {
      */
     public static int MAX_POSE_HISTORY = 100;
 
-    private Drawing() {
+    private Dashboard() {
     }
 
     /**
@@ -107,18 +108,18 @@ public final class Drawing {
     }
 
     /**
-     * Obtain a reference to the dashboard field canvas through an active {@link BunyipsOpMode}
+     * Obtain a reference to a dashboard packet through an active {@link BunyipsOpMode}
      * or by creating a new packet to automatically send to FtcDashboard.
      *
-     * @param canvasOperations the operation to perform on the canvas before auto sending
+     * @param packetOperations the operations to perform on the packet, this packet will be auto-sent
+     *                         by this method or via the available {@link DualTelemetry} instance
      */
-    public static void useCanvas(Consumer<Canvas> canvasOperations) {
+    public static void usePacket(Consumer<TelemetryPacket> packetOperations) {
         BunyipsOpMode opMode = BunyipsOpMode.isRunning() ? BunyipsOpMode.getInstance() : null;
-        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : null;
-        Canvas canvas = opMode != null ? opMode.telemetry.dashboardFieldOverlay() : packet.fieldOverlay();
+        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : opMode.telemetry.getDashboardPacket();
         // User operations, the packet may be sent manually here or automatically via BOM
-        canvasOperations.accept(canvas);
-        if (packet != null)
+        packetOperations.accept(packet);
+        if (opMode == null)
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 }

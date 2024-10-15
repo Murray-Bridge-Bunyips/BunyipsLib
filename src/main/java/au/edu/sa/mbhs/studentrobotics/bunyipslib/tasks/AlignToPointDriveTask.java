@@ -16,7 +16,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Drawing;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
@@ -161,12 +160,12 @@ public class AlignToPointDriveTask extends ForeverTask {
         drive.setPower(Geometry.poseToVel(new Pose2d(fieldCentric ? robotFrameInput : fieldFrameInput, headingInput)));
 
         // Draw the target on the field with lines to the target
-        Drawing.useCanvas(canvas -> canvas.setStroke("#dd2c00")
+        fieldOverlay.setStroke("#dd2c00")
                 .strokeCircle(point.x, point.y, 2)
                 .setStroke("#b89eff")
                 .strokeLine(point.x, point.y, poseEstimate.position.x, poseEstimate.position.y)
                 .setStroke("#ffce7a")
                 .strokeLine(point.x, point.y, point.x, poseEstimate.position.y)
-                .strokeLine(point.x, poseEstimate.position.y, poseEstimate.position.x, poseEstimate.position.y));
+                .strokeLine(point.x, poseEstimate.position.y, poseEstimate.position.x, poseEstimate.position.y);
     }
 }

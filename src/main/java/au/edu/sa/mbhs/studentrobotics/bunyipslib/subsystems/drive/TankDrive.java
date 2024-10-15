@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -52,7 +54,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.DriveComman
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.TankCommandMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Drawing;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 
@@ -215,16 +217,24 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         Storage.memory().lastKnownPosition = pose;
 
         poseHistory.add(pose);
-        while (poseHistory.size() > Drawing.MAX_POSE_HISTORY) {
+        while (poseHistory.size() > Dashboard.MAX_POSE_HISTORY) {
             poseHistory.removeFirst();
         }
         estimatedPoseWriter.write(new PoseMessage(pose));
 
-        Drawing.useCanvas(c -> {
+        Dashboard.usePacket(p -> {
+            p.put("x (in)", pose.position.x);
+            p.put("y (in)", pose.position.y);
+            p.put("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
+            p.put("xVel (in/s)", poseVelo.linearVel.x);
+            p.put("yVel (in/s)", poseVelo.linearVel.y);
+            p.put("headingVel (deg/s)", Math.toDegrees(poseVelo.angVel));
+
+            Canvas c = p.fieldOverlay();
             c.setStrokeWidth(1);
             c.setStroke("#3F51B5");
-            Drawing.drawPoseHistory(c, poseHistory);
-            Drawing.drawRobot(c, pose);
+            Dashboard.drawPoseHistory(c, poseHistory);
+            Dashboard.drawRobot(c, pose);
 
             Vector2d velocityDirection = pose.heading
                     .times(poseVelo)
@@ -238,6 +248,15 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                     );
 
         });
+
+        opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
+                round(pose.position.x, 1),
+                round(poseVelo.linearVel.x, 1),
+                round(pose.position.y, 1),
+                round(poseVelo.linearVel.y, 1),
+                round(Math.toDegrees(pose.heading.toDouble()), 1),
+                round(Math.toDegrees(poseVelo.angVel), 1)
+        ).color("gray"));
 
         for (DcMotorEx m : leftMotors) {
             m.setPower(leftPower);
@@ -360,7 +379,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             c.setStrokeWidth(1);
 
             c.setStroke("#4CAF50");
-            Drawing.drawRobot(c, txWorldTarget.value());
+            Dashboard.drawRobot(c, txWorldTarget.value());
 
             c.setStroke("#4CAF50FF");
             c.setStrokeWidth(1);
@@ -434,7 +453,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             c.setStrokeWidth(1);
 
             c.setStroke("#4CAF50");
-            Drawing.drawRobot(c, txWorldTarget.value());
+            Dashboard.drawRobot(c, txWorldTarget.value());
 
             c.setStroke("#7C4DFFFF");
             c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);

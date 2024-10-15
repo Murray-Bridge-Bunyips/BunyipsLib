@@ -27,7 +27,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Drawing;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
@@ -264,13 +264,11 @@ public class HolonomicVectorDriveTask extends ForeverTask {
                 headingLock != null ? -rController.calculate(angle) : userR
         )));
 
-        Drawing.useCanvas(canvas -> {
-            canvas.setStroke("#c91c00");
-            if (vectorLock != null)
-                canvas.strokeLine(current.position.x, current.position.y, vectorLock.x, vectorLock.y);
-            if (headingLock != null)
-                Drawing.drawRobot(canvas, new Pose2d(current.position, headingLock));
-        });
+        fieldOverlay.setStroke("#c91c00");
+        if (vectorLock != null)
+            fieldOverlay.strokeLine(current.position.x, current.position.y, vectorLock.x, vectorLock.y);
+        if (headingLock != null)
+            Dashboard.drawRobot(fieldOverlay, new Pose2d(current.position, headingLock));
     }
 
     @Override

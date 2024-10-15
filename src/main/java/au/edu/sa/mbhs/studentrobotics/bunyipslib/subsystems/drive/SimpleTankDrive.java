@@ -1,8 +1,11 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -17,7 +20,7 @@ import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Drawing;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 
@@ -80,10 +83,18 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
             localizerVelo = twist.velocity().value();
             Storage.memory().lastKnownPosition = localizerAccumulatedPose;
 
-            Drawing.useCanvas(c -> {
+            Dashboard.usePacket(p -> {
+                p.put("x (in)", localizerAccumulatedPose.position.x);
+                p.put("y (in)", localizerAccumulatedPose.position.y);
+                p.put("heading (deg)", Math.toDegrees(localizerAccumulatedPose.heading.toDouble()));
+                p.put("xVel (in/s)", localizerVelo.linearVel.x);
+                p.put("yVel (in/s)", localizerVelo.linearVel.y);
+                p.put("headingVel (deg/s)", Math.toDegrees(localizerVelo.angVel));
+
+                Canvas c = p.fieldOverlay();
                 c.setStrokeWidth(1);
                 c.setStroke("#3F51B5");
-                Drawing.drawRobot(c, localizerAccumulatedPose);
+                Dashboard.drawRobot(c, localizerAccumulatedPose);
 
                 Vector2d velocityDirection = localizerAccumulatedPose.heading
                         .times(localizerVelo)
@@ -96,6 +107,15 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
                                 localizerAccumulatedPose.position.y + velocityDirection.y
                         );
             });
+
+            opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
+                    round(localizerAccumulatedPose.position.x, 1),
+                    round(localizerVelo.linearVel.x, 1),
+                    round(localizerAccumulatedPose.position.y, 1),
+                    round(localizerVelo.linearVel.y, 1),
+                    round(Math.toDegrees(localizerAccumulatedPose.heading.toDouble()), 1),
+                    round(Math.toDegrees(localizerVelo.angVel), 1)
+            ).color("gray"));
         }
 
         TankKinematics.WheelVelocities<Time> wheelVels = new TankKinematics(2)

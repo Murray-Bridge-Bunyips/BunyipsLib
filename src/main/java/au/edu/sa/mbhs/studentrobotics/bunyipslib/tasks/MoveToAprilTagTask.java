@@ -22,7 +22,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Drawing;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.AprilTagData;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.AprilTag;
@@ -259,13 +258,13 @@ public class MoveToAprilTagTask extends Task {
             throw new IllegalStateException("A drive localizer must be present to use MoveToAprilTagTask!");
         VectorF point = target.get().getMetadata().get().fieldPosition;
 
-        Drawing.useCanvas(canvas -> canvas.setStroke("#dd2c00")
+        fieldOverlay.setStroke("#dd2c00")
                 .strokeCircle(point.get(0), point.get(1), 2)
                 .setStroke("#b89eff")
                 .strokeLine(point.get(0), point.get(1), poseEstimate.position.x, poseEstimate.position.y)
                 .setStroke("#ffce7a")
                 .strokeLine(point.get(0), point.get(1), point.get(0), poseEstimate.position.y)
-                .strokeLine(point.get(0), poseEstimate.position.y, poseEstimate.position.x, poseEstimate.position.y));
+                .strokeLine(point.get(0), poseEstimate.position.y, poseEstimate.position.x, poseEstimate.position.y);
     }
 
     @Override

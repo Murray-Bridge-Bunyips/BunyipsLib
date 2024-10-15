@@ -21,7 +21,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Drawing;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
@@ -164,12 +164,10 @@ public class DriveToPoseTask extends Task {
                 )
         ));
 
-        Drawing.useCanvas(canvas -> {
-            canvas.setStroke("#c91c00")
-                    .strokeLine(estimatedPose.position.x, estimatedPose.position.y, targetPose.position.x, targetPose.position.y);
-            canvas.setStroke("#4CAF50");
-            Drawing.drawRobot(canvas, targetPose);
-        });
+        fieldOverlay.setStroke("#c91c00")
+                .strokeLine(estimatedPose.position.x, estimatedPose.position.y, targetPose.position.x, targetPose.position.y);
+        fieldOverlay.setStroke("#4CAF50");
+        Dashboard.drawRobot(fieldOverlay, targetPose);
     }
 
     @Override

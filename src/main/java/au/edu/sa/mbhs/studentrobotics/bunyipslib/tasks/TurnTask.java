@@ -20,7 +20,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Drawing;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
@@ -123,10 +123,8 @@ public class TurnTask extends Task {
                 new Pose2d(0, 0, pidf.calculate(Mathf.inputModulus(errRad, -Math.PI, Math.PI), 0))
         ));
 
-        Drawing.useCanvas(canvas -> {
-            canvas.setStroke("#4CAF50");
-            Drawing.drawRobot(canvas, new Pose2d(pose.position, angRad));
-        });
+        fieldOverlay.setStroke("#4CAF50");
+        Dashboard.drawRobot(fieldOverlay, new Pose2d(pose.position, angRad));
     }
 
     @Override
