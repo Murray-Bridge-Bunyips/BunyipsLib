@@ -268,15 +268,16 @@ public class AprilTagPoseEstimator implements Runnable {
             // y' = x * sin(t) + y * cos(t)
             // where t=0 yields (-y, x) for a 90 degree default rotation to accommodate for the 90 degree offset
             // between RoadRunner pose and the FTC Global Coordinate system.
-            double relativeX = camPose.x * Math.cos(tagRotation) - camPose.y * Math.sin(tagRotation);
-            double relativeY = camPose.x * Math.sin(tagRotation) + camPose.y * Math.cos(tagRotation);
+            double t = tagRotation - Math.toRadians(camPose.yaw);
+            double relativeX = camPose.x * Math.cos(t) - camPose.y * Math.sin(t);
+            double relativeY = camPose.x * Math.sin(t) + camPose.y * Math.cos(t);
             // Displacement vector
             Vector2d pos = new Vector2d(
                     tagX - relativeX,
                     tagY - relativeY
             );
             // Offset as defined by the user to account for the camera not representing true position
-            pos = pos.minus(cameraRobotOffset.vec().rotated(tagRotation + Math.PI / 2));
+            pos = pos.minus(cameraRobotOffset.vec().rotated(tagRotation + Math.PI / 2).rotated(-Math.toRadians(camPose.yaw)));
 
             // Only set the heading if the user wants it, which we can do fairly simply if they want that too
             double heading = poseEstimate.getHeading();
