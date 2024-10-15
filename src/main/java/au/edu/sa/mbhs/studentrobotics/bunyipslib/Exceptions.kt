@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.ForceStopException
+import org.murraybridgebunyips.bunyipslib.BuildConfig
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.function.Consumer
@@ -92,5 +93,26 @@ object Exceptions {
             // If the BunyipsOpMode is not available, we can just swallow it and let Logcat handle it all
             handle(e) { s -> opMode?.t?.log(s) }
         }
+    }
+
+
+    /**
+     * Get the calling user code function of the current context by looking at the stacktrace until it leaves BunyipsLib.
+     */
+    @JvmStatic
+    fun getCallingUserCodeFunction(): StackTraceElement {
+        val stackTrace = Thread.currentThread().stackTrace
+        // Keep going down the stack trace until we leave the BunyipsLib package
+        for (stackTraceElement in stackTrace) {
+            // dalvik.system.VMStack.getThreadStackTrace(Native Method) is not useful, which shows up in the stacktrace
+            if (stackTraceElement.toString().contains("stacktrace", true)) continue
+            // If porting, ensure the string below is set to the package name of BunyipsLib
+            if (!stackTraceElement.className.startsWith(BuildConfig.LIBRARY_PACKAGE_NAME)) {
+                return stackTraceElement
+            }
+        }
+        // If we can't find the calling function, then we can't return a stack trace element
+        Dbg.warn("Could not find calling function in getCallingUserCodeFunction()!")
+        return StackTraceElement("Unknown", "userMethod", "User Code", -1)
     }
 }

@@ -1,8 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.getCallingUserCodeFunction;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.html;
 
 import androidx.annotation.NonNull;
 
@@ -10,9 +8,11 @@ import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * Represents a task that is constructed at runtime. This is useful for tasks that have runtime requirements
@@ -105,8 +105,9 @@ public class DynamicTask extends Task {
     @NonNull
     @Override
     public final Task onSubsystem(@NonNull BunyipsSubsystem subsystem, boolean override) {
-        Dbg.error(getCallingUserCodeFunction(), "Dynamic tasks are not designed to be attached to a subsystem, as the internal task will be scheduled to subsystems instead.");
-        opMode(o -> o.telemetry.log(getCallingUserCodeFunction(), html().color("red", "error: ").text("dynamic tasks should not be attached to subsystems!")));
+        StackTraceElement f = Exceptions.getCallingUserCodeFunction();
+        Dbg.error(f, "Dynamic tasks are not designed to be attached to a subsystem, as the internal task will be scheduled to subsystems instead.");
+        opMode(o -> o.telemetry.log(f, Text.html().color("red", "error: ").text("dynamic tasks should not be attached to subsystems!")));
         return this;
     }
 }

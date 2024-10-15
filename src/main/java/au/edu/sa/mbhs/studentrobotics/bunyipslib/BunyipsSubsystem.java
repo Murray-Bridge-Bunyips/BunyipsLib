@@ -1,20 +1,19 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.html;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.HashSet;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 
 /**
@@ -32,7 +31,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     /**
      * Reference to the unmodified name of this subsystem.
      *
-     * @see #toString()
+     * @see #toString() referencing `this` to also retrieve delegation status affixed to the end of the name
      */
     protected String name = getClass().getSimpleName();
 
@@ -85,7 +84,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     @NonNull
     public final String toVerboseString() {
-        return formatString("%%%% (%) <=> %", assertionFailed ? "[error]" : "", threadName != null ? " [async]" : "", parent != null ? " [delegated to " + parent + "]" : "", " " + name, shouldRun ? "enabled" : "disabled", getCurrentTask());
+        return Text.format("%%%% (%) <=> %", assertionFailed ? "[error]" : "", threadName != null ? " [async]" : "", parent != null ? " [delegated to " + parent + "]" : "", " " + name, shouldRun ? "enabled" : "disabled", getCurrentTask());
     }
 
     /**
@@ -178,7 +177,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (!shouldRun) return;
         shouldRun = false;
         Dbg.logv(getClass(), "%Subsystem disabled via disable() call.", isDefaultName() ? "" : "(" + this + ") ");
-        opMode(o -> o.telemetry.log(getClass(), html().color("yellow", "disabled. ").small("check logcat for more info.")));
+        opMode(o -> o.telemetry.log(getClass(), Text.html().color("yellow", "disabled. ").small("check logcat for more info.")));
         onDisable();
         if (child != null)
             child.disable();
@@ -192,7 +191,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (shouldRun || assertionFailed) return;
         shouldRun = true;
         Dbg.logv(getClass(), "%Subsystem enabled via enable() call.", isDefaultName() ? "" : "(" + this + ") ");
-        opMode(o -> o.telemetry.log(getClass(), html().color("green", "enabled. ").small("check logcat for more info.")));
+        opMode(o -> o.telemetry.log(getClass(), Text.html().color("green", "enabled. ").small("check logcat for more info.")));
         onEnable();
         if (child != null)
             child.enable();
@@ -352,7 +351,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
                         toString(),
                         task == defaultTask,
                         task.toString(),
-                        round(task.getDeltaTime().in(Seconds), 1),
+                        Mathf.round(task.getDeltaTime().in(Seconds), 1),
                         task.getTimeout().in(Seconds)
                 );
             }
@@ -394,7 +393,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final void startThread(Measure<Time> loopSleepDuration) {
         if (threadName != null || parent != null) return;
-        threadName = formatString("Async-%-%-%", getClass().getSimpleName(), name, hashCode());
+        threadName = Text.format("Async-%-%-%", getClass().getSimpleName(), name, hashCode());
         Threads.startLoop(this::internalUpdate, threadName, loopSleepDuration);
     }
 

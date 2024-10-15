@@ -341,12 +341,12 @@ public class HoldableActuator extends BunyipsSubsystem {
                     break;
                 }
                 motorPower = MOVING_POWER * Math.signum(target - current);
-                opMode(o -> o.telemetry.add("%: <font color='#FF5F1F'>MOVING -> %/% ticks</font> [%tps]", name, current, target, Math.round(motor.getVelocity())));
+                opMode(o -> o.telemetry.add("%: <font color='#FF5F1F'>MOVING -> %/% ticks</font> [%tps]", this, current, target, Math.round(motor.getVelocity())));
                 break;
             case HOMING:
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 motorPower = -MOVING_POWER;
-                opMode(o -> o.telemetry.add("%: <font color='yellow'><b>HOMING</b></font> [%tps]", name, Math.round(motor.getVelocity())));
+                opMode(o -> o.telemetry.add("%: <font color='yellow'><b>HOMING</b></font> [%tps]", this, Math.round(motor.getVelocity())));
                 break;
             case USER_POWER:
                 if (userPower == 0.0) {
@@ -363,13 +363,13 @@ public class HoldableActuator extends BunyipsSubsystem {
                     motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     motorPower = userPower;
                 }
-                opMode(o -> o.telemetry.add("%: % at % ticks [%tps]", name, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", current, Math.round(motor.getVelocity())));
+                opMode(o -> o.telemetry.add("%: % at % ticks [%tps]", this, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", current, Math.round(motor.getVelocity())));
                 break;
             case USER_SETPOINT:
                 newTarget = target + userPower * setpointDeltaMultiplier.getAsDouble();
                 boolean systemResponse = motor.isBusy();
                 motorPower = (systemResponse ? MOVING_POWER : HOLDING_POWER) * Math.signum(target - current);
-                opMode(o -> o.telemetry.add("%: % at % ticks, % error [%tps]", name, !systemResponse ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, target - current, Math.round(motor.getVelocity())));
+                opMode(o -> o.telemetry.add("%: % at % ticks, % error [%tps]", this, !systemResponse ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, target - current, Math.round(motor.getVelocity())));
                 break;
         }
 

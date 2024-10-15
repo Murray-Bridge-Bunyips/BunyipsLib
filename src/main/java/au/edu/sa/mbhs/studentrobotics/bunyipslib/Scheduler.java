@@ -2,9 +2,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task.INFINITE_TIMEOUT;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 
 import androidx.annotation.NonNull;
 
@@ -16,6 +13,7 @@ import java.util.Arrays;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller;
@@ -57,7 +55,7 @@ public class Scheduler extends BunyipsComponent {
      */
     public static void addTaskReport(String className, boolean isDefaultTask, String taskName, double deltaTimeSec, double timeoutSec) {
         if (isMuted) return;
-        String report = formatString(
+        String report = Text.format(
                 "<small><b>%</b>% <font color='gray'>|</font> <b>%</b> -> %",
                 className,
                 isDefaultTask ? " (d.)" : "",
@@ -172,7 +170,7 @@ public class Scheduler extends BunyipsComponent {
                             || !timeExceeded(task)) { // Whether this task has not met timeout requirements
                         continue;
                     }
-                    double deltaTime = round(task.taskToRun.getDeltaTime().in(Seconds), 1);
+                    double deltaTime = Mathf.round(task.taskToRun.getDeltaTime().in(Seconds), 1);
                     o.telemetry.add(
                             "<small><b>Scheduler</b> (c.) <font color='gray'>|</font> <b>%</b> -> %</small>",
                             task.taskToRun,
@@ -192,11 +190,11 @@ public class Scheduler extends BunyipsComponent {
                 }
                 // Update controller states for determining whether they need to be continued to be run
                 boolean timeoutExceeded = timeExceeded(task);
-                if (task.runCondition instanceof ControllerStateHandler && !task.time.equals(INFINITE_TIMEOUT)) {
+                if (task.runCondition instanceof ControllerStateHandler && !task.time.equals(Task.INFINITE_TIMEOUT)) {
                     ((ControllerStateHandler) task.runCondition).setTimeoutCondition(timeoutExceeded);
                 }
                 // Trigger upon timeout goal or if the task does not have one
-                if (task.time.equals(INFINITE_TIMEOUT) || timeoutExceeded) {
+                if (task.time.equals(Task.INFINITE_TIMEOUT) || timeoutExceeded) {
                     if (!task.taskToRun.hasDependency()) {
                         if (task.stopCondition.getAsBoolean()) {
                             // Finish now as we should do nothing with this task
@@ -489,7 +487,7 @@ public class Scheduler extends BunyipsComponent {
         private final ArrayList<BooleanSupplier> and = new ArrayList<>();
         private final ArrayList<BooleanSupplier> or = new ArrayList<>();
         protected Task taskToRun;
-        protected Measure<Time> time = INFINITE_TIMEOUT;
+        protected Measure<Time> time = Task.INFINITE_TIMEOUT;
         protected boolean debouncing;
         protected BooleanSupplier stopCondition = () -> false;
         protected long activeSince = -1;

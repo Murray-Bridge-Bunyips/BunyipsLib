@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 
 import androidx.annotation.NonNull;
 
@@ -43,6 +42,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TankLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.BuilderConstants;
@@ -250,12 +250,12 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         });
 
         opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
-                round(pose.position.x, 1),
-                round(poseVelo.linearVel.x, 1),
-                round(pose.position.y, 1),
-                round(poseVelo.linearVel.y, 1),
-                round(Math.toDegrees(pose.heading.toDouble()), 1),
-                round(Math.toDegrees(poseVelo.angVel), 1)
+                Mathf.round(pose.position.x, 1),
+                Mathf.round(poseVelo.linearVel.x, 1),
+                Mathf.round(pose.position.y, 1),
+                Mathf.round(poseVelo.linearVel.y, 1),
+                Mathf.round(Math.toDegrees(pose.heading.toDouble()), 1),
+                Mathf.round(Math.toDegrees(poseVelo.angVel), 1)
         ).color("gray"));
 
         for (DcMotorEx m : leftMotors) {

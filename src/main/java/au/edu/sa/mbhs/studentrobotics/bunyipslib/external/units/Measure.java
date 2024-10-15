@@ -439,7 +439,7 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      */
     default String toScientificString() {
         // eg 1.234e+04 V/m (1234 Volt per Meter in long form)
-        return String.format("%.3e %s", magnitude(), unit().symbol());
+        return String.format(Locale.getDefault(), "%.3e %s", magnitude(), unit().symbol());
     }
 
     /**

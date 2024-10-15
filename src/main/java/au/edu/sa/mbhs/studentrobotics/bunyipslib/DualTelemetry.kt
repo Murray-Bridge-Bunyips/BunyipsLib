@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds
@@ -7,7 +8,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Second
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.config.Config
@@ -140,7 +140,7 @@ class DualTelemetry @JvmOverloads constructor(
      * Note that using a separator element (defined by [dashboardCaptionValueAutoSeparator], default ": ") in your formatted string
      * will split this to an item for FtcDashboard automagically, replicating what [addDashboard] would do.
      * @param format An object string to add to telemetry
-     * @param args The objects to format into the object format string via [Text.formatString]
+     * @param args The objects to format into the object format string via [Text.format]
      * @return The telemetry item added to the Driver Station, null if the send failed from overflow
      */
     fun add(format: Any, vararg args: Any?): HtmlItem {
@@ -152,7 +152,7 @@ class DualTelemetry @JvmOverloads constructor(
             Dbg.log("Telemetry overflow: $format")
             isOverflow = true
         }
-        return createTelemetryItem(formatString(format.toString(), *args), false, isOverflow)
+        return createTelemetryItem(Text.format(format.toString(), *args), false, isOverflow)
     }
 
     /**
@@ -161,7 +161,7 @@ class DualTelemetry @JvmOverloads constructor(
      * for FtcDashboard.
      * @param caption Caption before appended separator ([dashboardCaptionValueAutoSeparator])
      * @param format Format string to append after separator ([dashboardCaptionValueAutoSeparator])
-     * @param args Objects to format into the format string via [Text.formatString]
+     * @param args Objects to format into the format string via [Text.format]
      * @return The telemetry item added to the Driver Station, null if the send failed from overflow
      */
     override fun addData(caption: String, format: String, vararg args: Any?): Item {
@@ -183,21 +183,21 @@ class DualTelemetry @JvmOverloads constructor(
     /**
      * Add a data to the telemetry object for the Driver Station and FtcDashboard, with integrated formatting.
      * @param format An object string to add to telemetry
-     * @param args The objects to format into the object format string via [Text.formatString]
+     * @param args The objects to format into the object format string via [Text.format]
      * @return The telemetry item added to the Driver Station
      */
     fun addRetained(format: Any, vararg args: Any?): HtmlItem {
         flushTelemetryQueue()
         // Retained objects will never be cleared, so we can just add them immediately, as usually
         // retained messages should be important and not be discarded
-        return createTelemetryItem(formatString(format.toString(), *args), true, isOverflow = false)
+        return createTelemetryItem(Text.format(format.toString(), *args), true, isOverflow = false)
     }
 
     /**
      * Add any additional telemetry to the Driver Station telemetry object.
      */
     fun addDS(format: Any, vararg args: Any?): Item {
-        return opMode.telemetry.addData("", formatString(format.toString(), *args))
+        return opMode.telemetry.addData("", Text.format(format.toString(), *args))
     }
 
     /**
@@ -287,7 +287,7 @@ class DualTelemetry @JvmOverloads constructor(
      * @param args The objects to format into the object format string
      */
     fun log(format: Any, vararg args: Any?) {
-        logMessage(formatString(format.toString(), *args))
+        logMessage(Text.format(format.toString(), *args))
     }
 
     /**
@@ -297,7 +297,7 @@ class DualTelemetry @JvmOverloads constructor(
      * @param args The objects to format into the object format string
      */
     fun log(obj: Class<*>, format: Any, vararg args: Any?) {
-        logMessage("<font color='gray'>[${obj.simpleName}]</font> ${formatString(format.toString(), *args)}")
+        logMessage("<font color='gray'>[${obj.simpleName}]</font> ${Text.format(format.toString(), *args)}")
     }
 
     /**
@@ -307,7 +307,7 @@ class DualTelemetry @JvmOverloads constructor(
      * @param args The objects to format into the object format string
      */
     fun log(stck: StackTraceElement, format: Any, vararg args: Any?) {
-        logMessage("<font color='gray'>[${stck}]</font> ${formatString(format.toString(), *args)}")
+        logMessage("<font color='gray'>[${stck}]</font> ${Text.format(format.toString(), *args)}")
     }
 
     /**
@@ -330,11 +330,11 @@ class DualTelemetry @JvmOverloads constructor(
 
         // Requeue new overhead status message
         val loopTime = movingAverageTimer?.let {
-            Text.round(it.movingAverageLoopTime().inUnit(Milliseconds), 2)
+            Mathf.round(it.movingAverageLoopTime().inUnit(Milliseconds), 2)
         } ?: 0.0
         val loopsSec = movingAverageTimer?.let {
             val loopsPerSec = it.loopsPer(Second)
-            if (!loopsPerSec.isNaN()) Text.round(loopsPerSec, 1) else 0.0
+            if (!loopsPerSec.isNaN()) Mathf.round(loopsPerSec, 1) else 0.0
         } ?: 0.0
         val elapsedTime = movingAverageTimer?.elapsedTime()?.inUnit(Seconds)?.roundToInt()?.toString() ?: "?"
         val status = if (overrideStatus != null) overrideStatus.toString() else opModeStatus
@@ -806,7 +806,7 @@ class DualTelemetry @JvmOverloads constructor(
          * @see addData
          */
         override fun setValue(format: String, vararg args: Any): Item? {
-            value = formatString(format, *args)
+            value = Text.format(format, *args)
             return item?.setValue(build())
         }
 

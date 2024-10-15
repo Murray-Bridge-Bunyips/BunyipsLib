@@ -1,7 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
-
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.function.DoubleSupplier;
@@ -175,10 +173,10 @@ public class Switch extends BunyipsSubsystem {
 
     @Override
     protected void periodic() {
-        opMode(o -> o.telemetry.add("%: %", name, target == openPosition
-                ? "<font color='orange'><b>OPEN</b></font> (" + round(openPosition, 1) + ")"
-                : target == closePosition ? "<font color='green'>CLOSE</font> (" + round(closePosition, 1) + ")"
-                : "<font color='white'>" + round(target, 2) + "/1.00</font>"));
+        opMode(o -> o.telemetry.add("%: %", this, target == openPosition
+                ? "<font color='orange'><b>OPEN</b></font> (" + Mathf.round(openPosition, 1) + ")"
+                : target == closePosition ? "<font color='green'>CLOSE</font> (" + Mathf.round(closePosition, 1) + ")"
+                : "<font color='white'>" + Mathf.round(target, 2) + "/1.00</font>"));
         servo.setPosition(target);
     }
 

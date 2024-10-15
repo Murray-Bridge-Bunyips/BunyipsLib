@@ -3,11 +3,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.murraybridgebunyips.bunyipslib.BuildConfig;
-
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,13 +24,13 @@ public final class Text {
      * Format a string using only '%' placeholders.
      * Differs from String.format() as type can be omitted.
      * <p>
-     * {@code formatString("Hello %!", "world")} -> {@code "Hello world!"}
+     * {@code format("Hello %!", "world")} -> {@code "Hello world!"}
      *
      * @param fstring The string to format
      * @param objs    The objects to insert into the string
      * @return The formatted string
      */
-    public static String formatString(@NonNull String fstring, @Nullable List<Object> objs) {
+    public static String format(@NonNull String fstring, @Nullable List<Object> objs) {
         if (objs == null || objs.isEmpty())
             return fstring;
         // Replace all % with the strings in order
@@ -74,110 +69,8 @@ public final class Text {
      * @param objs    The objects to insert into the string
      * @return The formatted string
      */
-    public static String formatString(@NonNull String fstring, @Nullable Object... objs) {
-        return formatString(fstring, Arrays.asList(objs));
-    }
-
-    /**
-     * Format a string using only '%' placeholders.
-     * Differs from String.format() as type can be omitted.
-     * <p>
-     * {@code format("Hello %!", "world")} -> {@code "Hello world!"}
-     *
-     * @param fstring The string to format
-     * @param objs    The objects to insert into the string
-     * @return The formatted string
-     */
-    public static String format(@NonNull String fstring, @Nullable List<Object> objs) {
-        return formatString(fstring, objs);
-    }
-
-    /**
-     * Format a string using only '%' placeholders.
-     *
-     * @param fstring The string to format
-     * @param objs    The objects to insert into the string
-     * @return The formatted string
-     */
     public static String format(@NonNull String fstring, @Nullable Object... objs) {
-        return formatString(fstring, Arrays.asList(objs));
-    }
-
-    /**
-     * Round a number to a certain number of decimal points.
-     *
-     * @param num      The number to round
-     * @param thDigits The number of decimal places to use after the decimal point
-     * @return The rounded number, or 0 if the number is null
-     */
-    public static double round(@Nullable Double num, int thDigits) {
-        return round(num, thDigits, -1);
-    }
-
-    /**
-     * Round a number to a certain number of decimal points.
-     *
-     * @param num      The number to round
-     * @param thDigits The number of decimal places to use after the decimal point
-     * @return The rounded number, or 0 if the number is null
-     */
-    public static float round(@Nullable Float num, int thDigits) {
-        if (num == null)
-            return 0;
-        return (float) round(Double.valueOf(num), thDigits, -1);
-    }
-
-    /**
-     * Round a number to a certain number of decimal points.
-     *
-     * @param num      The number to round
-     * @param thDigits The number of decimal places to use after the decimal point
-     * @param sigFigs  The number of significant figures to use
-     * @return The rounded number, or 0 if the number is null
-     */
-    public static float round(@Nullable Float num, int thDigits, int sigFigs) {
-        if (num == null)
-            return 0;
-        return (float) round(Double.valueOf(num), thDigits, sigFigs);
-    }
-
-    /**
-     * Round a number to a certain number of decimal points.
-     *
-     * @param num      The number to round
-     * @param thDigits The number of decimal places to use after the decimal point
-     * @param sigFigs  The number of significant figures to use
-     * @return The rounded number, or 0 if the number is null, or 0 if the number is null
-     */
-    public static double round(@Nullable Double num, int thDigits, int sigFigs) {
-        if (num == null)
-            return 0;
-        if (thDigits == 0)
-            return Math.round(num);
-        BigDecimal bd = new BigDecimal(Double.toString(num));
-        bd = bd.setScale(thDigits, RoundingMode.HALF_UP);
-        if (sigFigs != -1)
-            bd = bd.round(new MathContext(sigFigs, RoundingMode.HALF_UP));
-        return bd.doubleValue();
-    }
-
-    /**
-     * Get the calling user code function of the current context by looking at the stacktrace until it leaves BunyipsLib.
-     */
-    public static StackTraceElement getCallingUserCodeFunction() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        // Keep going down the stack trace until we leave the BunyipsLib package
-        for (StackTraceElement stackTraceElement : stackTrace) {
-            // dalvik.system.VMStack.getThreadStackTrace(Native Method) is not useful, which shows up in the stacktrace
-            if (stackTraceElement.toString().toLowerCase().contains("stacktrace")) continue;
-            // If porting, ensure the string below is set to the package name of BunyipsLib
-            if (!stackTraceElement.getClassName().startsWith(BuildConfig.LIBRARY_PACKAGE_NAME)) {
-                return stackTraceElement;
-            }
-        }
-        // If we can't find the calling function, then we can't return a stack trace element
-        Dbg.warn("Could not find calling function in getCallingUserCodeFunction()!");
-        return new StackTraceElement("Unknown", "userMethod", "User Code", -1);
+        return format(fstring, Arrays.asList(objs));
     }
 
     /**
@@ -199,7 +92,7 @@ public final class Text {
      * @return the lowercased string
      */
     public static String lower(String str) {
-        // This method is for Kotlin interop as case conversion is different between the versions
+        // This method is for Kotlin version interop as case conversion is different between the versions
         // we use, and it causes way too many headaches to deal with
         return str.toLowerCase(Locale.getDefault());
     }
@@ -211,7 +104,7 @@ public final class Text {
      * @return the uppercased string
      */
     public static String upper(String str) {
-        // This method is for Kotlin interop as case conversion is different between the versions
+        // This method is for Kotlin version interop as case conversion is different between the versions
         // we use, and it causes way too many headaches to deal with
         return str.toUpperCase(Locale.getDefault());
     }
@@ -226,7 +119,7 @@ public final class Text {
     }
 
     /**
-     * Return a wrapper of {@link StringBuilder} that internally calls {@link #formatString} on all append calls.
+     * Return a wrapper of {@link StringBuilder} that internally calls {@link #format} on all append calls.
      *
      * @return modified StringBuilder with default initial capacity 16
      */
@@ -235,7 +128,7 @@ public final class Text {
     }
 
     /**
-     * Return a wrapper of {@link StringBuilder} that internally calls {@link #formatString} on all append calls.
+     * Return a wrapper of {@link StringBuilder} that internally calls {@link #format} on all append calls.
      *
      * @param capacity the initial capacity of the StringBuilder
      * @return modified StringBuilder with initial capacity defined
@@ -245,7 +138,7 @@ public final class Text {
     }
 
     /**
-     * Return a wrapper of {@link StringBuilder} that internally calls {@link #formatString} on all append calls.
+     * Return a wrapper of {@link StringBuilder} that internally calls {@link #format} on all append calls.
      *
      * @param initial the initial string of the StringBuilder
      * @return modified StringBuilder with initial string defined
@@ -452,7 +345,7 @@ public final class Text {
     }
 
     /**
-     * A modified wrapper of {@link StringBuilder} that internally calls {@link #formatString}  on all append calls.
+     * A modified wrapper of {@link StringBuilder} that internally calls {@link #format}  on all append calls.
      */
     public static class Builder implements CharSequence {
         private final StringBuilder i;
@@ -494,14 +387,14 @@ public final class Text {
         }
 
         /**
-         * Append a string to the builder using a {@link #formatString} call.
+         * Append a string to the builder using a {@link #format} call.
          *
          * @param fstring the format string
          * @param objs    the objects to insert into the string
          * @return the builder instance
          */
         public Builder append(@NonNull String fstring, @Nullable Object... objs) {
-            i.append(formatString(fstring, objs));
+            i.append(format(fstring, objs));
             return this;
         }
 
@@ -646,9 +539,9 @@ public final class Text {
 
         /**
          * Inserts the string representation of the {@code Object}
-         * argument into this character sequence after applying a {@link #formatString} call.
+         * argument into this character sequence after applying a {@link #format} call.
          * <p>
-         * The overall effect is exactly as if the string was formatted using {@link #formatString},
+         * The overall effect is exactly as if the string was formatted using {@link #format},
          * passed into the {@link #insert} method, and then inserted into this character sequence at the indicated offset.
          * <p>
          * The {@code offset} argument must be greater than or equal to
@@ -662,7 +555,7 @@ public final class Text {
          * @throws StringIndexOutOfBoundsException if the offset is invalid.
          */
         public Builder insert(int offset, @NonNull String fstring, @Nullable Object... objs) {
-            i.insert(offset, formatString(fstring, objs));
+            i.insert(offset, format(fstring, objs));
             return this;
         }
 

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian;
 
@@ -50,8 +51,9 @@ public class IntrinsicMecanumLocalizer implements Localizer {
     public IntrinsicMecanumLocalizer(Coefficients coefficients, MecanumDrive drive) {
         this.coefficients = coefficients;
         this.drive = drive;
-        kinematics = new MecanumKinematics(drive.getDriveModel().inPerTick * drive.getDriveModel().trackWidthTicks,
-                drive.getDriveModel().inPerTick / drive.getDriveModel().lateralInPerTick);
+        DriveModel model = drive.getConstants().getDriveModel();
+        kinematics = new MecanumKinematics(model.inPerTick * model.trackWidthTicks,
+                model.inPerTick / model.lateralInPerTick);
         powers = drive::getMotorPowers;
         imuOffset = drive.getPoseEstimate().heading.toDouble();
     }
@@ -66,8 +68,9 @@ public class IntrinsicMecanumLocalizer implements Localizer {
     public IntrinsicMecanumLocalizer(Coefficients coefficients, MecanumDrive drive, Supplier<Pose2d> driveInput) {
         this.coefficients = coefficients;
         this.drive = drive;
-        kinematics = new MecanumKinematics(drive.getDriveModel().inPerTick * drive.getDriveModel().trackWidthTicks,
-                drive.getDriveModel().inPerTick / drive.getDriveModel().lateralInPerTick);
+        DriveModel model = drive.getConstants().getDriveModel();
+        kinematics = new MecanumKinematics(model.inPerTick * model.trackWidthTicks,
+                model.inPerTick / model.lateralInPerTick);
         input = driveInput;
         imuOffset = drive.getPoseEstimate().heading.toDouble();
     }

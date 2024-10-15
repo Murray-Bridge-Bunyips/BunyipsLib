@@ -1,8 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.getAxes;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.getButtons;
-
 import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -247,7 +244,7 @@ public class Controller extends Gamepad {
      * @return this
      */
     public Controller set(Controls.ButtonGroup group, @Nullable Predicate<Boolean> predicate) {
-        for (Controls button : getButtons(group)) {
+        for (Controls button : Controls.getButtons(group)) {
             set(button, predicate);
         }
         return this;
@@ -261,7 +258,7 @@ public class Controller extends Gamepad {
      * @return this
      */
     public Controller set(Controls.AnalogGroup group, @Nullable UnaryFunction function) {
-        for (Controls.Analog axis : getAxes(group)) {
+        for (Controls.Analog axis : Controls.getAxes(group)) {
             set(axis, function);
         }
         return this;

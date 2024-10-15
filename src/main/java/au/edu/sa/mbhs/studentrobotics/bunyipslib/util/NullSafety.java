@@ -1,7 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.getCallingUserCodeFunction;
-
 import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
@@ -28,7 +26,7 @@ public final class NullSafety {
     public static boolean assertNotNull(Object... objs) {
         for (Object o : objs) {
             if (o == null) {
-                Dbg.warn(getCallingUserCodeFunction(), "Assertion by NullSafety.assertNotNull() failed.");
+                Dbg.warn(Exceptions.getCallingUserCodeFunction(), "Assertion by NullSafety.assertNotNull() failed.");
                 return false;
             }
         }
@@ -67,7 +65,7 @@ public final class NullSafety {
                     opMode.telemetry.addRetained("<font color='red'><b>! SUBSYSTEM FAULT</b></font>: %", componentName);
                     opMode.telemetry.log("<font color='yellow'><b>warning!</b> <i>%</i> failed a null self-check and was auto disabled.</font>", componentName);
                 }
-                Dbg.warn(getCallingUserCodeFunction(), "Null object passed to % failed assertion, adding to unusable components...", componentName);
+                Dbg.warn(Exceptions.getCallingUserCodeFunction(), "Null object passed to % failed assertion, adding to unusable components...", componentName);
                 Storage.memory().unusableComponents.add(excludeClassName);
                 return false;
             }

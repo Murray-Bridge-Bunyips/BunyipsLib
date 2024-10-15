@@ -31,8 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.getCallingUserCodeFunction
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.qualcomm.robotcore.util.RobotLog
 
 /**
@@ -57,7 +56,7 @@ object Dbg {
      */
     @JvmStatic
     fun error(stck: StackTraceElement, format: Any, vararg args: Any?) {
-        RobotLog.ee(TAG, "$ERR_PREPEND [$stck] ${formatString(format.toString(), *args)}")
+        RobotLog.ee(TAG, "$ERR_PREPEND [$stck] ${Text.format(format.toString(), *args)}")
     }
 
     /**
@@ -72,7 +71,7 @@ object Dbg {
     fun error(obj: Class<*>, format: Any, vararg args: Any?) {
         RobotLog.ee(
             TAG,
-            "$ERR_PREPEND [${obj.simpleName}] ${formatString(format.toString(), *args)}"
+            "$ERR_PREPEND [${obj.simpleName}] ${Text.format(format.toString(), *args)}"
         )
     }
 
@@ -85,7 +84,7 @@ object Dbg {
      */
     @JvmStatic
     fun error(format: Any, vararg args: Any?) {
-        RobotLog.ee(TAG, "$ERR_PREPEND ${formatString(format.toString(), *args)}")
+        RobotLog.ee(TAG, "$ERR_PREPEND ${Text.format(format.toString(), *args)}")
     }
 
     /**
@@ -110,7 +109,7 @@ object Dbg {
      */
     @JvmStatic
     fun warn(stck: StackTraceElement, format: Any, vararg args: Any?) {
-        RobotLog.ww(TAG, "$WRN_PREPEND [$stck] ${formatString(format.toString(), *args)}")
+        RobotLog.ww(TAG, "$WRN_PREPEND [$stck] ${Text.format(format.toString(), *args)}")
     }
 
     /**
@@ -125,7 +124,7 @@ object Dbg {
     fun warn(obj: Class<*>, format: Any, vararg args: Any?) {
         RobotLog.ww(
             TAG,
-            "$WRN_PREPEND [${obj.simpleName}] ${formatString(format.toString(), *args)}"
+            "$WRN_PREPEND [${obj.simpleName}] ${Text.format(format.toString(), *args)}"
         )
     }
 
@@ -138,7 +137,7 @@ object Dbg {
      */
     @JvmStatic
     fun warn(format: Any, vararg args: Any?) {
-        RobotLog.ww(TAG, "$WRN_PREPEND ${formatString(format.toString(), *args)}")
+        RobotLog.ww(TAG, "$WRN_PREPEND ${Text.format(format.toString(), *args)}")
     }
 
     /**
@@ -150,7 +149,7 @@ object Dbg {
      */
     @JvmStatic
     fun logd(stck: StackTraceElement, format: Any, vararg args: Any?) {
-        RobotLog.dd(TAG, "[$stck] ${formatString(format.toString(), *args)}")
+        RobotLog.dd(TAG, "[$stck] ${Text.format(format.toString(), *args)}")
     }
 
     /**
@@ -164,7 +163,7 @@ object Dbg {
     fun logd(obj: Class<*>, format: Any, vararg args: Any?) {
         RobotLog.dd(
             TAG,
-            "[${obj.simpleName}] ${formatString(format.toString(), *args)}"
+            "[${obj.simpleName}] ${Text.format(format.toString(), *args)}"
         )
     }
 
@@ -176,7 +175,7 @@ object Dbg {
      */
     @JvmStatic
     fun logd(format: Any, vararg args: Any?) {
-        RobotLog.dd(TAG, formatString(format.toString(), *args))
+        RobotLog.dd(TAG, Text.format(format.toString(), *args))
     }
 
     /**
@@ -188,7 +187,7 @@ object Dbg {
      */
     @JvmStatic
     fun log(stck: StackTraceElement, format: Any, vararg args: Any?) {
-        RobotLog.ii(TAG, "[$stck] ${formatString(format.toString(), *args)}")
+        RobotLog.ii(TAG, "[$stck] ${Text.format(format.toString(), *args)}")
     }
 
     /**
@@ -202,7 +201,7 @@ object Dbg {
     fun log(obj: Class<*>, format: Any, vararg args: Any?) {
         RobotLog.ii(
             TAG,
-            "[${obj.simpleName}] ${formatString(format.toString(), *args)}"
+            "[${obj.simpleName}] ${Text.format(format.toString(), *args)}"
         )
     }
 
@@ -214,7 +213,7 @@ object Dbg {
      */
     @JvmStatic
     fun log(format: Any, vararg args: Any?) {
-        RobotLog.ii(TAG, formatString(format.toString(), *args))
+        RobotLog.ii(TAG, Text.format(format.toString(), *args))
     }
 
     /**
@@ -226,7 +225,7 @@ object Dbg {
      */
     @JvmStatic
     fun logv(stck: StackTraceElement, format: Any, vararg args: Any?) {
-        RobotLog.vv(TAG, "[$stck] ${formatString(format.toString(), *args)}")
+        RobotLog.vv(TAG, "[$stck] ${Text.format(format.toString(), *args)}")
     }
 
     /**
@@ -240,7 +239,7 @@ object Dbg {
     fun logv(obj: Class<*>, format: Any, vararg args: Any?) {
         RobotLog.vv(
             TAG,
-            "[${obj.simpleName}] ${formatString(format.toString(), *args)}"
+            "[${obj.simpleName}] ${Text.format(format.toString(), *args)}"
         )
     }
 
@@ -252,7 +251,7 @@ object Dbg {
      */
     @JvmStatic
     fun logv(format: Any, vararg args: Any?) {
-        RobotLog.vv(TAG, formatString(format.toString(), *args))
+        RobotLog.vv(TAG, Text.format(format.toString(), *args))
     }
 
     /**
@@ -314,7 +313,7 @@ object Dbg {
     @JvmStatic
     fun stamp() {
         log(
-            getCallingUserCodeFunction(),
+            Exceptions.getCallingUserCodeFunction(),
             "Stamped at: T+%s",
             if (BunyipsOpMode.isRunning)
                 BunyipsOpMode.instance.timer.elapsedTime().inUnit(Seconds)

@@ -1,9 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.getCallingUserCodeFunction;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.html;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 
 import androidx.annotation.NonNull;
 
@@ -16,10 +13,13 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.AutonomousBunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * A group of tasks.
@@ -72,7 +72,7 @@ public abstract class TaskGroup extends Task {
         }
         // List subtasks
         for (Task task : tasks) {
-            opMode(o -> o.telemetry.log("&nbsp;&nbsp;-> <font color='gray'>%<i>(t=%)</i></font>", task.toString(), task.getTimeout().magnitude() != 0.0 ? round(task.getTimeout().in(Seconds), 1) + "s" : "∞"));
+            opMode(o -> o.telemetry.log("&nbsp;&nbsp;-> <font color='gray'>%<i>(t=%)</i></font>", task.toString(), task.getTimeout().magnitude() != 0.0 ? Mathf.round(task.getTimeout().in(Seconds), 1) + "s" : "∞"));
         }
     }
 
@@ -86,7 +86,7 @@ public abstract class TaskGroup extends Task {
         });
         // Otherwise we can just run the task outright
         if (!task.hasDependency()) {
-            Scheduler.addTaskReport(toString(), false, task.toString(), round(task.getDeltaTime().in(Seconds), 1), task.getTimeout().in(Seconds));
+            Scheduler.addTaskReport(toString(), false, task.toString(), Mathf.round(task.getDeltaTime().in(Seconds), 1), task.getTimeout().in(Seconds));
             task.run();
         }
     }
@@ -112,8 +112,9 @@ public abstract class TaskGroup extends Task {
     @NonNull
     @Override
     public final Task onSubsystem(@NonNull BunyipsSubsystem subsystem, boolean override) {
-        Dbg.error(getCallingUserCodeFunction(), "Task groups are not designed to be attached to a subsystem, as the internal tasks will be scheduled to subsystems instead.");
-        opMode(o -> o.telemetry.log(getCallingUserCodeFunction(), html().color("red", "error: ").text("task groups should not be attached to subsystems!")));
+        StackTraceElement f = Exceptions.getCallingUserCodeFunction();
+        Dbg.error(f, "Task groups are not designed to be attached to a subsystem, as the internal tasks will be scheduled to subsystems instead.");
+        opMode(o -> o.telemetry.log(f, Text.html().color("red", "error: ").text("task groups should not be attached to subsystems!")));
         return this;
     }
 

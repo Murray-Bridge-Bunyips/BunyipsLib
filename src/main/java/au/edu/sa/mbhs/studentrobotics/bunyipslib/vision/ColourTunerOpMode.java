@@ -1,7 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision;
 
+
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 
 import androidx.annotation.NonNull;
 
@@ -119,7 +119,7 @@ public abstract class ColourTunerOpMode extends BunyipsOpMode {
 
         // Scalar adjustment
         scalars[scalarIdx] -= gamepad1.lsy / 6.0;
-        scalars[scalarIdx] = Mathf.clamp(round(scalars[scalarIdx], 2), 0, 255);
+        scalars[scalarIdx] = Mathf.clamp(Mathf.round(scalars[scalarIdx], 2), 0, 255);
 
         telemetry.add("LB/RB: Select processor to tune").small();
         telemetry.add("Dpad Up: Move scalar index up").small();

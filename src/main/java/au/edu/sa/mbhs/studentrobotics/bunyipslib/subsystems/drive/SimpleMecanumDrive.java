@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +13,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
@@ -27,6 +27,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
  * @since 6.0.0
  */
 public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
+    private final DcMotor leftFront;
+    private final DcMotor leftBack;
+    private final DcMotor rightBack;
+    private final DcMotor rightFront;
     /**
      * Forward speed.
      */
@@ -39,11 +43,6 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
      * Counter-clockwise rotational speed.
      */
     public double speedR = 0;
-
-    private final DcMotor leftFront;
-    private final DcMotor leftBack;
-    private final DcMotor rightBack;
-    private final DcMotor rightFront;
     @Nullable
     private Localizer localizer;
     @Nullable
@@ -108,12 +107,12 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
             });
 
             opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
-                    round(localizerAccumulatedPose.position.x, 1),
-                    round(localizerVelo.linearVel.x, 1),
-                    round(localizerAccumulatedPose.position.y, 1),
-                    round(localizerVelo.linearVel.y, 1),
-                    round(Math.toDegrees(localizerAccumulatedPose.heading.toDouble()), 1),
-                    round(Math.toDegrees(localizerVelo.angVel), 1)
+                    Mathf.round(localizerAccumulatedPose.position.x, 1),
+                    Mathf.round(localizerVelo.linearVel.x, 1),
+                    Mathf.round(localizerAccumulatedPose.position.y, 1),
+                    Mathf.round(localizerVelo.linearVel.y, 1),
+                    Mathf.round(Math.toDegrees(localizerAccumulatedPose.heading.toDouble()), 1),
+                    Mathf.round(Math.toDegrees(localizerVelo.angVel), 1)
             ).color("gray"));
         }
 
@@ -180,20 +179,11 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         rightBack.setPower(rightBackPower);
         rightFront.setPower(rightFrontPower);
 
-    }
-
-    /**
-     * Mecanum control prioritisation.
-     */
-    public enum Priority {
-        /**
-         * Calculate translational speeds first.
-         */
-        NORMALISED,
-        /**
-         * Calculate rotational speeds first, and use the rest for translation.
-         */
-        ROTATIONAL
+        opMode(o -> o.telemetry.add("%: %\\% %, %\\% %,%\\% %", this,
+                Math.round(speedX * 100), speedX >= 0 ? "F" : "B",
+                Math.round(speedY * 100), speedY >= 0 ? "L" : "R",
+                Math.round(speedR * 100), speedR >= 0 ? "CCW" : "CW"
+        ));
     }
 
     /**
@@ -256,5 +246,19 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
     @Override
     public PoseVelocity2d getPoseVelocity() {
         return localizerVelo;
+    }
+
+    /**
+     * Mecanum control prioritisation.
+     */
+    public enum Priority {
+        /**
+         * Calculate translational speeds first.
+         */
+        NORMALISED,
+        /**
+         * Calculate rotational speeds first, and use the rest for translation.
+         */
+        ROTATIONAL
     }
 }

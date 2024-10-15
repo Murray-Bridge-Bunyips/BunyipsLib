@@ -1,8 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision;
 
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
-
 import android.graphics.Canvas;
 import android.util.Size;
 
@@ -23,6 +21,7 @@ import java.util.stream.Collectors;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.VisionData;
 
@@ -475,7 +474,7 @@ public class Vision extends BunyipsSubsystem {
                     name,
                     state == VisionPortal.CameraState.STREAMING ? "green" : state == VisionPortal.CameraState.ERROR ? "red" : "yellow",
                     state,
-                    (int) round(visionPortal.getFps(), 0),
+                    (int) Mathf.round(visionPortal.getFps(), 0),
                     processors.stream().filter((p) -> visionPortal.getProcessorEnabled(p)).count(),
                     processors.size()
             ));

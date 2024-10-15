@@ -134,7 +134,7 @@ public class BlinkinLights extends BunyipsSubsystem {
 
     @Override
     protected void periodic() {
-        opMode(o -> o.telemetry.add("%: Pattern->%", name, currentPattern.name()).color("gray"));
+        opMode(o -> o.telemetry.add("%: Pattern->%", this, currentPattern.name()).color("gray"));
         if (setPattern != currentPattern) {
             lights.setPattern(currentPattern);
             setPattern = currentPattern;

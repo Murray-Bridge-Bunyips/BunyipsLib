@@ -1,10 +1,10 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round
 
 /**
  * Task to wait for a specific amount of time.
@@ -25,7 +25,7 @@ class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = true) :
         if (showTelemetry)
             opMode?.telemetry?.add(
                 "Waiting %/% seconds...",
-                round(deltaTime.inUnit(Seconds), 1),
+                Mathf.round(deltaTime.inUnit(Seconds), 1),
                 timeout.inUnit(Seconds)
             )
     }

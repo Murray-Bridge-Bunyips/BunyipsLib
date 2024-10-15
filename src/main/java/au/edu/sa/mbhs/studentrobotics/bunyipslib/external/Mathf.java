@@ -7,12 +7,16 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Sec
 import android.util.Pair;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.MathUtils;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +43,38 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  */
 public final class Mathf {
     private Mathf() {
+    }
+
+    /**
+     * Round a number to a certain number of decimal points.
+     *
+     * @param num      The number to round
+     * @param thDigits The number of decimal places to use after the decimal point
+     * @return The rounded number, or 0 if the number is null
+     */
+    public static double round(@Nullable Number num, int thDigits) {
+        return round(num, thDigits, -1);
+    }
+
+    /**
+     * Round a number to a certain number of decimal points.
+     *
+     * @param num      The number to round
+     * @param thDigits The number of decimal places to use after the decimal point
+     * @param sigFigs  The number of significant figures to use
+     * @return The rounded number, or 0 if the number is null, or 0 if the number is null
+     */
+    public static double round(@Nullable Number num, int thDigits, int sigFigs) {
+        if (num == null)
+            return 0;
+        double n = num.doubleValue();
+        if (thDigits == 0)
+            return Math.round(n);
+        BigDecimal bd = new BigDecimal(Double.toString(n));
+        bd = bd.setScale(thDigits, RoundingMode.HALF_UP);
+        if (sigFigs != -1)
+            bd = bd.round(new MathContext(sigFigs, RoundingMode.HALF_UP));
+        return bd.doubleValue();
     }
 
     /**

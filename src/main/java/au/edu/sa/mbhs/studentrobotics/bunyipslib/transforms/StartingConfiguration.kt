@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
@@ -13,7 +14,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguratio
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.LEFT
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.RIGHT
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString
 import com.acmerobotics.roadrunner.Pose2d
 import org.apache.commons.math3.exception.NumberIsTooLargeException
 import org.apache.commons.math3.exception.OutOfRangeException
@@ -117,7 +117,7 @@ object StartingConfiguration {
          * Return an informative string about this starting configuration.
          */
         fun toVerboseString(): String {
-            return formatString(
+            return Text.format(
                 "{alliance=%, origin=%, backwardTranslation=%, horizontalTranslation=%, ccwRotation=%, fieldPose=%}",
                 alliance.name,
                 origin.name,
@@ -133,13 +133,13 @@ object StartingConfiguration {
          */
         override fun toString(): String {
             val lowCaseAlliance = Text.lower(alliance.name)
-            return formatString(
+            return Text.format(
                 "On <font color='%'>%</font>, % from % wall%%",
                 if (isRed) "red" else "#3863ff",
                 Text.upper(lowCaseAlliance.substring(0, 1))
                         + lowCaseAlliance.substring(1),
                 if (horizontalTranslation.unit().equals(FieldTiles)) {
-                    val tileValue = Text.round(horizontalTranslation.inUnit(FieldTiles) + 0.5, 1)
+                    val tileValue = Mathf.round(horizontalTranslation.inUnit(FieldTiles) + 0.5, 1)
                     // Will want to only display 1 digit if we can for brevity
                     "Tile <b>#${if (tileValue % 1.0 == 0.0) tileValue.toInt() else tileValue}</b>"
                 } else {

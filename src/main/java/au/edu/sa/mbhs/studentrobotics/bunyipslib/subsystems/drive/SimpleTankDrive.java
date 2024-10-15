@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
@@ -109,12 +109,12 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
             });
 
             opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
-                    round(localizerAccumulatedPose.position.x, 1),
-                    round(localizerVelo.linearVel.x, 1),
-                    round(localizerAccumulatedPose.position.y, 1),
-                    round(localizerVelo.linearVel.y, 1),
-                    round(Math.toDegrees(localizerAccumulatedPose.heading.toDouble()), 1),
-                    round(Math.toDegrees(localizerVelo.angVel), 1)
+                    Mathf.round(localizerAccumulatedPose.position.x, 1),
+                    Mathf.round(localizerVelo.linearVel.x, 1),
+                    Mathf.round(localizerAccumulatedPose.position.y, 1),
+                    Mathf.round(localizerVelo.linearVel.y, 1),
+                    Mathf.round(Math.toDegrees(localizerAccumulatedPose.heading.toDouble()), 1),
+                    Mathf.round(Math.toDegrees(localizerVelo.angVel), 1)
             ).color("gray"));
         }
 

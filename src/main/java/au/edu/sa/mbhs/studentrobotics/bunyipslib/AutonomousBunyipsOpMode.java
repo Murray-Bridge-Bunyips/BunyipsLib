@@ -1,9 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.formatString;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.html;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text.round;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
@@ -174,7 +172,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             }
 
             telemetry.setOverheadSubtitle(
-                    formatString("<small><font color='aqua'>Running task <b>%/%</b></font> | %%</small>",
+                    Text.format("<small><font color='aqua'>Running task <b>%/%</b></font> | %%</small>",
                             this.currentTask, taskCount, currentTask, getApproximateTimeLeft())
             );
 
@@ -303,7 +301,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             if (index < 0) {
                 throw new IllegalArgumentException("Cannot insert task at index " + index + ", out of bounds");
             } else if (index > tasks.size()) {
-                telemetry.log(getClass(), html().color("red", "task index % is out of bounds. task was added to the end."), index);
+                telemetry.log(getClass(), Text.html().color("red", "task index % is out of bounds. task was added to the end."), index);
                 Dbg.error(getClass(), "Task index % out of bounds to insert task, appending task to end...", index);
                 return addTaskLast(newTask);
             }
@@ -407,7 +405,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         Measure<Time> timeout = task.getTimeout();
         // INFINITE_TASK is defined as Seconds.zero()
         return timeout.magnitude() != 0.0
-                ? round(timeout.in(Seconds), 1) + "s"
+                ? Mathf.round(timeout.in(Seconds), 1) + "s"
                 : "∞";
     }
 
@@ -434,7 +432,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         // Offset by the current task's time left to interpolate between tasks
         timeLeft -= timeout.in(Seconds);
         // If we get negative time, our guess was very wrong so we'll return a blank string
-        return timeLeft > 0 ? " | " + (approx.get() ? "~" : "") + round(timeLeft, 1) + "s" : "";
+        return timeLeft > 0 ? " | " + (approx.get() ? "~" : "") + Mathf.round(timeLeft, 1) + "s" : "";
     }
 
     /**
@@ -518,7 +516,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         task.getDependency().ifPresent((s) -> {
             if (!updatedSubsystems.contains(s)) {
                 Dbg.warn(getClass(), "Task % has a dependency on %, but it is not being updated by the AutonomousBunyipsOpMode. This is due to a call to useSubsystems() that is not including this subsystem. Please ensure this is intended behaviour. A clearer alternative is to disable() the subsystem(s) you don't wish to update.", task, s);
-                telemetry.log(html().color("yellow", "auto: ").text("dependency % for task % has not been updated"), s, task);
+                telemetry.log(Text.html().color("yellow", "auto: ").text("dependency % for task % has not been updated"), s, task);
             }
         });
     }
