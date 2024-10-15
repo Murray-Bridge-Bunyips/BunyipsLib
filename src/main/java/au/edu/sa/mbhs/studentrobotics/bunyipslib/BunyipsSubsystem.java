@@ -30,9 +30,10 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     private static final HashSet<BunyipsSubsystem> instances = new HashSet<>();
 
     /**
+     * Reference to the unmodified name of this subsystem.
+     *
      * @see #toString()
      */
-    // Kept protected for legacy purposes where BunyipsSubsystems would reference name
     protected String name = getClass().getSimpleName();
 
     private volatile Task currentTask;
@@ -40,6 +41,8 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     private volatile boolean shouldRun = true;
     @Nullable
     private String threadName = null;
+    private BunyipsSubsystem parent = null;
+    private BunyipsSubsystem child = null;
     private boolean assertionFailed = false;
 
     protected BunyipsSubsystem() {
@@ -50,7 +53,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     @SuppressWarnings("unchecked")
     static HashSet<BunyipsSubsystem> getInstances() {
         // Shallow clone as the instances should be the same
-        return (HashSet<BunyipsSubsystem>) instances.clone();
+        return ((HashSet<BunyipsSubsystem>) instances.clone())
+                .stream()
+                // Filter by subsystems that have no parent
+                .filter(subsystem -> subsystem.parent == null)
+                .collect(HashSet::new, HashSet::add, HashSet::addAll);
     }
 
     /**
@@ -67,7 +74,9 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public static void updateAll() {
         for (BunyipsSubsystem subsystem : instances) {
-            subsystem.update();
+            // Only update subsystems that aren't being delegated (no parent)
+            if (subsystem.parent == null)
+                subsystem.update();
         }
     }
 
@@ -76,17 +85,17 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     @NonNull
     public final String toVerboseString() {
-        return formatString("%%% (%) <=> %", assertionFailed ? "[error] " : "", threadName != null ? "[async]" : "", name, shouldRun ? "enabled" : "disabled", getCurrentTask());
+        return formatString("%%%% (%) <=> %", assertionFailed ? "[error]" : "", threadName != null ? " [async]" : "", parent != null ? " [delegated to " + parent + "]" : "", " " + name, shouldRun ? "enabled" : "disabled", getCurrentTask());
     }
 
     /**
-     * @return the name of the subsystem
+     * @return the name of the subsystem with delegation information appended if available
      * @see #withName(String)
      */
     @Override
     @NonNull
     public final String toString() {
-        return name;
+        return name + (parent != null ? " (D. " + parent.name + ")" : "");
     }
 
     /**
@@ -97,7 +106,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * @return this
      */
     @SuppressWarnings("unchecked")
-    public final <T extends BunyipsSubsystem> T withName(@NonNull String subsystemName) {
+    public final synchronized <T extends BunyipsSubsystem> T withName(@NonNull String subsystemName) {
         name = subsystemName;
         return (T) this;
     }
@@ -132,13 +141,34 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (!shouldRun) return false;
         // assertComponentArgs will manage telemetry/impl of errors being ignored, all we need to do
         // is check if it failed and if so, disable the subsystem
-        shouldRun = NullSafety.assertComponentArgs(name, getClass().getSimpleName(), parameters);
+        shouldRun = NullSafety.assertComponentArgs(toString(), getClass().getSimpleName(), parameters);
         if (!shouldRun) {
             assertionFailed = true;
-            Dbg.error(getClass(), "%Subsystem has been disabled as assertParamsNotNull() failed.", isDefaultName() ? "" : "(" + name + ") ");
+            Dbg.error(getClass(), "%Subsystem has been disabled as assertParamsNotNull() failed.", isDefaultName() ? "" : "(" + this + ") ");
             onDisable();
         }
         return shouldRun;
+    }
+
+
+    /**
+     * Call to delegate the update of this subsystem, usually a component of another subsystem, to this subsystem.
+     * This is useful in applications where a subsystem is being used as a component of another subsystem, and the
+     * parent subsystem wishes to update the child subsystem.
+     * <p>
+     * Do note that the child subsystem will be updated after the main subsystem update dispatch, and do be aware
+     * that performing any operations such as disabling/enabling will be done on the child subsystem. The only
+     * operation that is not delegated is the current task, which is managed by the parent subsystem manually.
+     *
+     * @param child the subsystem to delegate to this subsystem. There is a maximum of one delegated subsystem.
+     */
+    protected final void delegate(BunyipsSubsystem child) {
+        if (this.child != null) {
+            Dbg.warn(getClass(), "%Subsystem already has a delegated subsystem, Overriding old delegation from % to %.", isDefaultName() ? "" : "(" + this + ") ", this.child, child);
+            return;
+        }
+        child.parent = this;
+        this.child = child;
     }
 
     /**
@@ -147,9 +177,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     public final void disable() {
         if (!shouldRun) return;
         shouldRun = false;
-        Dbg.logv(getClass(), "%Subsystem disabled via disable() call.", isDefaultName() ? "" : "(" + name + ") ");
+        Dbg.logv(getClass(), "%Subsystem disabled via disable() call.", isDefaultName() ? "" : "(" + this + ") ");
         opMode(o -> o.telemetry.log(getClass(), html().color("yellow", "disabled. ").small("check logcat for more info.")));
         onDisable();
+        if (child != null)
+            child.disable();
     }
 
     /**
@@ -159,9 +191,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     public final void enable() {
         if (shouldRun || assertionFailed) return;
         shouldRun = true;
-        Dbg.logv(getClass(), "%Subsystem enabled via enable() call.", isDefaultName() ? "" : "(" + name + ") ");
+        Dbg.logv(getClass(), "%Subsystem enabled via enable() call.", isDefaultName() ? "" : "(" + this + ") ");
         opMode(o -> o.telemetry.log(getClass(), html().color("green", "enabled. ").small("check logcat for more info.")));
         onEnable();
+        if (child != null)
+            child.enable();
     }
 
     /**
@@ -169,7 +203,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final void cancelCurrentTask() {
         if (shouldRun && currentTask != defaultTask) {
-            Dbg.logv(getClass(), "%Task changed: %<-%(INT)", isDefaultName() ? "" : "(" + name + ") ", defaultTask, currentTask);
+            Dbg.logv(getClass(), "%Task changed: %<-%(INT)", isDefaultName() ? "" : "(" + this + ") ", defaultTask, currentTask);
             currentTask.finishNow();
             currentTask = defaultTask;
         }
@@ -186,11 +220,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (!shouldRun) return null;
         if (currentTask == null || currentTask.isFinished()) {
             if (currentTask == null) {
-                Dbg.logv(getClass(), "%Subsystem awake.", isDefaultName() ? "" : "(" + name + ") ");
+                Dbg.logv(getClass(), "%Subsystem awake.", isDefaultName() ? "" : "(" + this + ") ");
                 onEnable();
             } else {
                 // Task changes are repetitive to telemetry log, will just leave the important messages to there
-                Dbg.logv(getClass(), "%Task changed: %<-%", isDefaultName() ? "" : "(" + name + ") ", defaultTask, currentTask);
+                Dbg.logv(getClass(), "%Task changed: %<-%", isDefaultName() ? "" : "(" + this + ") ", defaultTask, currentTask);
             }
             currentTask = defaultTask;
         }
@@ -224,14 +258,14 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final boolean setCurrentTask(Task newTask) {
         if (!shouldRun) {
-            Dbg.warn(getClass(), "%Subsystem is disabled, ignoring task change.", isDefaultName() ? "" : "(" + name + ") ");
+            Dbg.warn(getClass(), "%Subsystem is disabled, ignoring task change.", isDefaultName() ? "" : "(" + this + ") ");
             return false;
         }
         if (newTask == null)
             return false;
 
         if (currentTask == null) {
-            Dbg.warn(getClass(), "%Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated if this behaviour is not intended.", isDefaultName() ? "" : "(" + name + ") ");
+            Dbg.warn(getClass(), "%Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated if this behaviour is not intended.", isDefaultName() ? "" : "(" + this + ") ");
             currentTask = defaultTask;
         }
 
@@ -245,7 +279,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
                 setHighPriorityCurrentTask(newTask);
                 return true;
             }
-            Dbg.log(getClass(), "%Ignored task change: %->%", isDefaultName() ? "" : "(" + name + ") ", currentTask, newTask);
+            Dbg.log(getClass(), "%Ignored task change: %->%", isDefaultName() ? "" : "(" + this + ") ", currentTask, newTask);
             return false;
         }
 
@@ -255,7 +289,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             defaultTask.finishNow();
             defaultTask.reset();
         }
-        Dbg.logv(getClass(), "%Task changed: %->%", isDefaultName() ? "" : "(" + name + ") ", currentTask, newTask);
+        Dbg.logv(getClass(), "%Task changed: %->%", isDefaultName() ? "" : "(" + this + ") ", currentTask, newTask);
         currentTask = newTask;
         return true;
     }
@@ -267,14 +301,14 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final void setHighPriorityCurrentTask(Task currentTask) {
         if (!shouldRun) {
-            Dbg.warn(getClass(), "%Subsystem is disabled, ignoring high-priority task change.", isDefaultName() ? "" : "(" + name + ") ");
+            Dbg.warn(getClass(), "%Subsystem is disabled, ignoring high-priority task change.", isDefaultName() ? "" : "(" + this + ") ");
             return;
         }
         if (currentTask == null)
             return;
         // Task will be cancelled abruptly, run the finish callback now
         if (this.currentTask != defaultTask) {
-            Dbg.warn(getClass(), "%Task changed: %(INT)->%", isDefaultName() ? "" : "(" + name + ") ", this.currentTask, currentTask);
+            Dbg.warn(getClass(), "%Task changed: %(INT)->%", isDefaultName() ? "" : "(" + this + ") ", this.currentTask, currentTask);
             this.currentTask.finishNow();
         }
         currentTask.reset();
@@ -315,7 +349,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             task.pollFinished();
             if (!task.isMuted()) {
                 Scheduler.addTaskReport(
-                        name,
+                        toString(),
                         task == defaultTask,
                         task.toString(),
                         round(task.getDeltaTime().in(Seconds), 1),
@@ -325,6 +359,9 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         }
         // This should be the only place where periodic() is called for this subsystem
         Exceptions.runUserMethod(this::periodic, opMode);
+        // Update a child subsystem if one is delegated, note we don't touch the parent subsystem at all
+        if (child != null && child.shouldRun)
+            child.internalUpdate();
     }
 
     /**
@@ -335,6 +372,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * Ensure you know the consequences of multithreading, especially over hardware on a Robot Controller.
      * <p>
      * When this subsystem is being multithreaded, manual calls to {@link #update()} will be ignored.
+     * Child subsystems cannot be threaded, only their parents can be.
      * <p>
      * The thread will run at full speed as-is.
      */
@@ -350,11 +388,12 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * Ensure you know the consequences of multithreading, especially over hardware on a Robot Controller.
      * <p>
      * When this subsystem is being multithreaded, manual calls to {@link #update()} will be ignored.
+     * Child subsystems cannot be threaded, only their parents can be.
      *
      * @param loopSleepDuration the duration to sleep the external thread by after every iteration
      */
     public final void startThread(Measure<Time> loopSleepDuration) {
-        if (threadName != null) return;
+        if (threadName != null || parent != null) return;
         threadName = formatString("Async-%-%-%", getClass().getSimpleName(), name, hashCode());
         Threads.startLoop(this::internalUpdate, threadName, loopSleepDuration);
     }
