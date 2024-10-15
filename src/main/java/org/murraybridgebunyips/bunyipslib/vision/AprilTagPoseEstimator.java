@@ -277,7 +277,9 @@ public class AprilTagPoseEstimator implements Runnable {
                     tagY - relativeY
             );
             // Offset as defined by the user to account for the camera not representing true position
-            pos = pos.minus(cameraRobotOffset.vec().rotated(tagRotation + Math.PI / 2).rotated(-Math.toRadians(camPose.yaw)));
+            pos = pos.minus(cameraRobotOffset.vec()
+                    .rotated(tagRotation + Math.PI / 2)
+                    .rotated(-Math.toRadians(camPose.yaw)));
 
             // Only set the heading if the user wants it, which we can do fairly simply if they want that too
             double heading = poseEstimate.getHeading();
@@ -290,6 +292,7 @@ public class AprilTagPoseEstimator implements Runnable {
 
             // Apply Kalman filters to the vector components
             Pose2d kfPose = new Pose2d(
+                    // TODO: kf oscillations, fix and merge to rr1 as well
                     xf.calculate(poseEstimate.getX(), atPoseEstimate.getX()),
                     yf.calculate(poseEstimate.getY(), atPoseEstimate.getY()),
                     updateHeading ? rf.calculate(
