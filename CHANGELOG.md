@@ -1,6 +1,24 @@
 # BunyipsLib Changelog
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v5.1.1 (2024-10-16)
+Hotfixes for AprilTagPoseEstimator.
+### Bug fixes
+- Kalman filter heading outputs for AprilTagPoseEstimator are being stabilised with a low-pass filter as a hotfix
+  - This should reduce the random rotation errors when moving while looking at a tag
+  - In the upcoming v6.0.0 release, details below, ATPE will potentially be upgraded into its own localizer rather than its own component
+    - This upgrade is subject to change for the final release
+- Fixed broken rotation matrices for AprilTagPoseEstimator
+  - The yaw of the tag was not being correctly used and only caused localization to be accurate if the robot was square with the tag
+  - This has been resolved
+- AprilTagPoseEstimator now uses an average if multiple tags are detected to improve accuracy
+### Upcoming changes
+- BunyipsLib v6.0.0
+  - Major restructure of files, more files will be in appropriate folders and the namespace will be updated
+  - RoadRunner will be upgraded from v0.5.6 to v1.0.0, with many of the drive classes being refactored and vastly simplified
+  - Removal of over 30 files (4000 L.O.C)
+  - Various other features and removals to improve and simplify BunyipsLib development
+
 ## v5.1.0 (2024-10-12)
 Several quality-of-life adjustments, bug fixes, and features.
 ### Critical bug fixes
