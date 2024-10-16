@@ -5,6 +5,7 @@ import static org.murraybridgebunyips.bunyipslib.external.units.Units.Radians;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
@@ -38,12 +39,27 @@ import java.util.function.Predicate;
  * @author Lucas Bubner, 2024
  * @since 3.2.0
  */
+@Config
 public class AprilTagPoseEstimator implements Runnable {
+    /**
+     * Heading stabilisation extra low-pass gain.
+     */
+    public static double HEADING_STAB_LP_GAIN = 0.98;
+    /**
+     * Default R gain for Kalman filtering.
+     */
+    public static double DEFAULT_R = 4;
+    /**
+     * Default Q gain for Kalman filtering.
+     */
+    public static double DEFAULT_Q = 1.0e-4;
+
     private final AprilTag processor;
     private final Localizer localizer;
     private final HashSet<Predicate<AprilTagData>> filters = new HashSet<>();
     private final ArrayList<Pose2d> estimates = new ArrayList<>();
 
+    private final Filter.LowPass headingStab = new Filter.LowPass(HEADING_STAB_LP_GAIN);
     private Filter.Kalman xf;
     private Filter.Kalman yf;
     private Filter.Kalman rf;
@@ -84,7 +100,7 @@ public class AprilTagPoseEstimator implements Runnable {
     public AprilTagPoseEstimator(AprilTag processor, @NonNull Localizer localizer) {
         this.processor = processor;
         this.localizer = localizer;
-        setKalmanGains(4, 1.0e-3);
+        setKalmanGains(DEFAULT_R, DEFAULT_Q);
 
         BunyipsOpMode.ifRunning(opMode -> {
             opMode.onActiveLoop(this);
@@ -241,7 +257,7 @@ public class AprilTagPoseEstimator implements Runnable {
         if (!active || !processor.isRunning())
             return;
 
-        Pose2d poseEstimate = localizer.getPoseEstimate().minus(previousOffset);
+        Pose2d poseEstimate = (localizer.getPoseEstimate()).minus(previousOffset);
         ArrayList<AprilTagData> data = processor.getData();
         if (data.isEmpty())
             return;
@@ -302,21 +318,23 @@ public class AprilTagPoseEstimator implements Runnable {
             );
 
             // Avoid spamming the logs by logging the events that are over an inch away from the current estimate
-            if (poseEstimate.vec().distTo(kfPose.vec()) >= 1)
-                Dbg.logd(getClass(), "Updated pose based on AprilTag ID#%, %,%->%", aprilTag.getId(), poseEstimate, atPoseEstimate, kfPose);
-
-            // Use an unmodified pose as the one we actually calculate otherwise we'll oscillate around the target
-            // since the Kalman filter shouldn't be fed it's own data
-            previousOffset = kfPose.minus(poseEstimate);
+            if (atPoseEstimate.vec().distTo(kfPose.vec()) >= 1)
+                Dbg.logd(getClass(), "AprilTag ID#% seen, %,%->%", aprilTag.getId(), poseEstimate, atPoseEstimate, kfPose);
 
             estimates.add(kfPose);
         }
 
-        // Apply the average
-        localizer.setPoseEstimate(
-                estimates.stream()
-                    .reduce(new Pose2d(), Pose2d::plus)
-                    .div(estimates.size())
-        );
+        // Use the average pose calculated by each tag
+        Pose2d avg = estimates.stream()
+                .reduce(new Pose2d(), Pose2d::plus)
+                .div(estimates.size());
+
+        // Use an unmodified pose as the one we actually calculate otherwise we'll oscillate around the target
+        // since the Kalman filter shouldn't be fed it's own data
+        previousOffset = avg.minus(poseEstimate);
+        previousOffset = new Pose2d(previousOffset.vec(),
+                headingStab.apply(Mathf.inputModulus(previousOffset.getHeading(), 0, 2 * Math.PI)));
+
+        localizer.setPoseEstimate(avg);
     }
 }
