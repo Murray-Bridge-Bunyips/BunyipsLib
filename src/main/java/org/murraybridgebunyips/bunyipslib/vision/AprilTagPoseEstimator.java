@@ -42,6 +42,7 @@ public class AprilTagPoseEstimator implements Runnable {
     private final AprilTag processor;
     private final Localizer localizer;
     private final HashSet<Predicate<AprilTagData>> filters = new HashSet<>();
+    private final ArrayList<Pose2d> estimates = new ArrayList<>();
 
     private Filter.Kalman xf;
     private Filter.Kalman yf;
@@ -245,7 +246,7 @@ public class AprilTagPoseEstimator implements Runnable {
         if (data.isEmpty())
             return;
 
-        // We will simply rely on the first entry in the list of detected tags that we can use, if any
+        estimates.clear();
         for (int i = 0; i < data.size(); i++) {
             AprilTagData aprilTag = data.get(i);
             if (!aprilTag.isInLibrary() || filters.stream().anyMatch(f -> !f.test(aprilTag))) {
@@ -292,7 +293,6 @@ public class AprilTagPoseEstimator implements Runnable {
 
             // Apply Kalman filters to the vector components
             Pose2d kfPose = new Pose2d(
-                    // TODO: kf oscillations, fix and merge to rr1 as well
                     xf.calculate(poseEstimate.getX(), atPoseEstimate.getX()),
                     yf.calculate(poseEstimate.getY(), atPoseEstimate.getY()),
                     updateHeading ? rf.calculate(
@@ -309,11 +309,14 @@ public class AprilTagPoseEstimator implements Runnable {
             // since the Kalman filter shouldn't be fed it's own data
             previousOffset = kfPose.minus(poseEstimate);
 
-            // Apply the new pose
-            localizer.setPoseEstimate(kfPose);
-
-            // Stop searching as we have a new pose
-            break;
+            estimates.add(kfPose);
         }
+
+        // Apply the average
+        localizer.setPoseEstimate(
+                estimates.stream()
+                    .reduce(new Pose2d(), Pose2d::plus)
+                    .div(estimates.size())
+        );
     }
 }
