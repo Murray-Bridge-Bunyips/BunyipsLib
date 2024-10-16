@@ -103,6 +103,7 @@ public final class Geometry {
         return Math.hypot(b.x - a.x, b.y - a.y);
     }
 
+    // TODO: is there really no way to do this without a util?
     /**
      * Subtract two poses at face value, such that a - b = (a.x - b.x, a.y - b.y, a.heading - b.heading).
      *
@@ -112,5 +113,27 @@ public final class Geometry {
      */
     public static Pose2d subtract(Pose2d a, Pose2d b) {
         return new Pose2d(a.position.minus(b.position), a.heading.minus(b.heading));
+    }
+
+    /**
+     * Add two poses at face value, such that a + b = (a.x + b.x, a.y + b.y, a.heading + b.heading).
+     *
+     * @param a the first pose
+     * @param b the second pose
+     * @return a new pose representing the sum of the two poses
+     */
+    public static Pose2d add(Pose2d a, Pose2d b) {
+        return new Pose2d(a.position.plus(b.position), a.heading.toDouble() + b.heading.toDouble());
+    }
+
+    /**
+     * Multiply a pose by a scalar at face value, such that a * b = (a.x * b, a.y * b, a.heading * b).
+     *
+     * @param a the pose
+     * @param c the scalar
+     * @return a new pose representing the product of the pose and the scalar
+     */
+    public static Pose2d multiply(Pose2d a, double c) {
+        return new Pose2d(a.position.times(c), a.heading.toDouble() * c);
     }
 }
