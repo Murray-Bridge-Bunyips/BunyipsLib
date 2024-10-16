@@ -8,6 +8,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Rad
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Twist2d;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -134,7 +135,7 @@ public class DriveToPoseTask extends Task {
     @Override
     protected void periodic() {
         Pose2d estimatedPose = localizer.get();
-        Pose2d error = Geometry.subtract(targetPose, estimatedPose);
+        Twist2d error = targetPose.minus(estimatedPose);
 
         // Twist the error vector to be relative to the robot's heading, as rotations of the robot are not
         // accounted for in the RoadRunner pose estimate
@@ -142,14 +143,14 @@ public class DriveToPoseTask extends Task {
         double sin = Math.sin(estimatedPose.heading.toDouble());
 
         // Transform error vector to robot's coordinate frame
-        double twistedXError = error.position.x * cos + error.position.y * sin;
-        double twistedYError = -error.position.x * sin + error.position.y * cos;
+        double twistedXError = error.line.x * cos + error.line.y * sin;
+        double twistedYError = -error.line.x * sin + error.line.y * cos;
 
         // Wrap target angle between -pi and pi for optimal turns
-        double angleError = Mathf.inputModulus(error.heading.toDouble(), -Math.PI, Math.PI);
+        double angleError = Mathf.inputModulus(error.angle, -Math.PI, Math.PI);
         // When the angle is near the modulus boundary, lock towards a definitive full rotation to avoid oscillations
         if (Mathf.isNear(Math.abs(angleError), Math.PI, 0.1))
-            angleError = -Math.PI * Math.signum(error.heading.toDouble());
+            angleError = -Math.PI * Math.signum(error.angle);
 
         // Apply PID and twist
         double forwardPower = -forwardController.calculate(twistedXError, 0);
