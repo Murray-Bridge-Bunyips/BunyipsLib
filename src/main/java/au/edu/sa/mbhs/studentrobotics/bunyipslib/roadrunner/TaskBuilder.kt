@@ -9,7 +9,7 @@ import com.acmerobotics.roadrunner.PoseMap
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-class TaskBuilder(constants: BuilderConstants, startPose: Pose2d, poseMap: PoseMap) {
+class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
     // TODO: RoadRunner utils for building
     // TODO: builder replication
     // TODO: united constraints method

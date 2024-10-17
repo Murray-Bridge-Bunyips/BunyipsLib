@@ -79,6 +79,11 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
         return this;
     }
 
+    @Nullable
+    public Localizer getLocalizer() {
+        return localizer;
+    }
+
     @Override
     protected void periodic() {
         if (localizer != null) {

@@ -184,6 +184,11 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         return this;
     }
 
+    @Nullable
+    public Localizer getLocalizer() {
+        return localizer;
+    }
+
     /**
      * Set the pose accumulator this drive instance should use.
      * If not defined, a default {@link Accumulator} will be used when a Localizer is attached.

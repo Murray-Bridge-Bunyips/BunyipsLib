@@ -41,7 +41,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.MecanumLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.BuilderConstants;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.Constants;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.MecanumGains;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.MotionProfile;
@@ -179,6 +179,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         return this;
     }
 
+    public Localizer getLocalizer() {
+        return localizer;
+    }
+
     /**
      * Set the pose accumulator this drive instance should use.
      * If not specified, the default {@link Accumulator} will be used.
@@ -312,8 +316,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @NonNull
     @Override
-    public BuilderConstants getConstants() {
-        return new BuilderConstants(
+    public Constants getConstants() {
+        return new Constants(
                 model,
                 profile,
                 TurnTask::new,

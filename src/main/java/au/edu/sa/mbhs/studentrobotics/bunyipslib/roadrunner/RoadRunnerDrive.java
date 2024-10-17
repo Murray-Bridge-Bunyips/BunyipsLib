@@ -21,7 +21,7 @@ public interface RoadRunnerDrive extends Moveable {
      *
      * @return the constants and method references used to construct trajectories and motion profiles
      */
-    BuilderConstants getConstants();
+    Constants getConstants();
 
     /**
      * Begin building a RoadRunner trajectory from the last-known robot position when this method is called.

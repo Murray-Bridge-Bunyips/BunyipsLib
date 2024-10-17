@@ -44,7 +44,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TankLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.BuilderConstants;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.Constants;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.MotionProfile;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
@@ -176,6 +176,10 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         return this;
     }
 
+    public Localizer getLocalizer() {
+        return localizer;
+    }
+
     /**
      * Set the pose accumulator this drive instance should use.
      * If not specified, the default {@link Accumulator} will be used.
@@ -277,8 +281,8 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     @Override
-    public BuilderConstants getConstants() {
-        return new BuilderConstants(
+    public Constants getConstants() {
+        return new Constants(
                 model,
                 profile,
                 TurnTask::new,

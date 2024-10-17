@@ -8,7 +8,7 @@ import com.acmerobotics.roadrunner.TurnConstraints
 import com.acmerobotics.roadrunner.VelConstraint
 
 /**
- * Data class storing all the required constants for building a RoadRunner trajectory.
+ * Data class storing all the required constants for using RoadRunner motion planning.
  *
  * @param driveModel the drive model to use
  * @param motionProfile the motion profile to use
@@ -22,7 +22,7 @@ import com.acmerobotics.roadrunner.VelConstraint
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-data class BuilderConstants(
+data class Constants(
     val driveModel: DriveModel,
     val motionProfile: MotionProfile,
     val turnActionFactory: TurnActionFactory,
