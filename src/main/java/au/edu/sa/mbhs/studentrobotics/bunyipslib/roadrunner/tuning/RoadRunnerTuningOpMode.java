@@ -1,7 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.tuning;
 
-import android.util.Pair;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -25,7 +23,6 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -81,15 +78,6 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     @NonNull
     protected abstract RoadRunnerDrive getDrive();
 
-    /**
-     * Supply a name and IMU orientation to use for this tuning process. This internally creates a {@link LazyImu}
-     * that will be used internally, as it is a requirement that cannot be extracted from an existing configuration.
-     *
-     * @return a new Pair with the IMU name and IMU orientation
-     */
-    @NonNull
-    protected abstract Pair<String, ImuOrientationOnRobot> getIMUConfiguration();
-
     @Override
     public final void runOpMode() {
         DualTelemetry out = new DualTelemetry(this, null, "RR Tuning");
@@ -127,30 +115,35 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 // a strict LazyIMU when it is locked to using hardwareMap. This explains why a separate IMU config
                 // is used.
                 Class<?> mdClass = md.getClass();
-                Field leftFrontField, leftBackField, rightFrontField, rightBackField;
+                Field leftFrontField, leftBackField, rightFrontField, rightBackField, lazyImuField;
                 try {
                     leftFrontField = mdClass.getDeclaredField("leftFront");
                     leftBackField = mdClass.getDeclaredField("leftBack");
                     rightFrontField = mdClass.getDeclaredField("rightFront");
                     rightBackField = mdClass.getDeclaredField("rightBack");
+                    lazyImuField = mdClass.getDeclaredField("lazyImu");
                 } catch (NoSuchFieldException e) {
-                    throw new RuntimeException("MecanumDrive is missing fields for motors! This shouldn't happen!");
+                    throw new RuntimeException("MecanumDrive is missing fields for motors or IMU! This shouldn't happen!");
                 }
                 leftFrontField.setAccessible(true);
                 leftBackField.setAccessible(true);
                 rightFrontField.setAccessible(true);
                 rightBackField.setAccessible(true);
+                lazyImuField.setAccessible(true);
                 DcMotorEx leftFront, leftBack, rightFront, rightBack;
+                LazyImu lazyImu;
                 try {
                     leftFront = (DcMotorEx) leftFrontField.get(md);
                     leftBack = (DcMotorEx) leftBackField.get(md);
                     rightFront = (DcMotorEx) rightFrontField.get(md);
                     rightBack = (DcMotorEx) rightBackField.get(md);
+                    lazyImu = (LazyImu) lazyImuField.get(md);
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Unable to access the motor objects on MecanumDrive!");
+                    throw new RuntimeException("Unable to access objects on MecanumDrive!");
                 }
 
                 Constants c = md.getConstants();
+                assert lazyImu != null;
                 return new DriveView(
                         DriveType.MECANUM,
                         c.getDriveModel().inPerTick,
@@ -170,7 +163,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                         rightEncs,
                         parEncs,
                         perpEncs,
-                        new LazyImu(hardwareMap, getIMUConfiguration().first, getIMUConfiguration().second),
+                        lazyImu,
                         hardwareMap.voltageSensor.iterator().next(),
                         () -> new MotorFeedforward(c.getMotionProfile().kS,
                                 c.getMotionProfile().kV / c.getDriveModel().inPerTick,
@@ -202,27 +195,31 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 }
 
                 Class<?> tdClass = td.getClass();
-                Field leftMotorsField, rightMotorsField;
+                Field leftMotorsField, rightMotorsField, lazyImuField;
                 try {
                     leftMotorsField = tdClass.getDeclaredField("leftMotors");
                     rightMotorsField = tdClass.getDeclaredField("rightMotors");
+                    lazyImuField = tdClass.getDeclaredField("lazyImu");
                 } catch (NoSuchFieldException e) {
-                    throw new RuntimeException("TankDrive is missing fields for motors! This shouldn't happen!");
+                    throw new RuntimeException("TankDrive is missing fields for motors or IMU! This shouldn't happen!");
                 }
                 leftMotorsField.setAccessible(true);
                 rightMotorsField.setAccessible(true);
+                lazyImuField.setAccessible(true);
                 List<DcMotorEx> leftMotors, rightMotors;
+                LazyImu lazyImu;
                 try {
                     //noinspection unchecked
                     leftMotors = (List<DcMotorEx>) leftMotorsField.get(td);
                     //noinspection unchecked
                     rightMotors = (List<DcMotorEx>) rightMotorsField.get(td);
+                    lazyImu = (LazyImu) lazyImuField.get(td);
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Unable to access the motor objects on MecanumDrive!");
+                    throw new RuntimeException("Unable to access the objects on TankDrive!");
                 }
 
                 Constants c = drive.getConstants();
-                assert leftMotors != null && rightMotors != null;
+                assert leftMotors != null && rightMotors != null && lazyImu != null;
                 return new DriveView(
                         DriveType.TANK,
                         c.getDriveModel().inPerTick,
@@ -236,7 +233,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                         rightEncs,
                         parEncs,
                         perpEncs,
-                        new LazyImu(hardwareMap, getIMUConfiguration().first, getIMUConfiguration().second),
+                        lazyImu,
                         hardwareMap.voltageSensor.iterator().next(),
                         () -> new MotorFeedforward(c.getMotionProfile().kS,
                                 c.getMotionProfile().kV / c.getDriveModel().inPerTick,

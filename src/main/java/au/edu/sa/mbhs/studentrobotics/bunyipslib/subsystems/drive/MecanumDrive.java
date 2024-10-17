@@ -27,16 +27,17 @@ import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import java.util.Arrays;
 import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.RobotConfig;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.MecanumLocalizer;
@@ -66,7 +67,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final AccelConstraint defaultAccelConstraint;
 
     private final VoltageSensor voltageSensor;
-    private final IMU imu;
+    // Unfortunately we have to expose lazyImu directly on both RR drives as they are required for tuning,
+    // the LazyImu interface is not exposed on the localizers as they should be constructed by simply calling .get()
+    // if a LazyImu were to be used regardless
+    private final LazyImu lazyImu;
     private final DcMotorEx leftFront;
     private final DcMotorEx leftBack;
     private final DcMotorEx rightBack;
@@ -108,12 +112,12 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param leftBack             the back left motor
      * @param rightBack            the back right motor
      * @param rightFront           the front right motor
-     * @param imu                  the IMU for the robot, see DynIMU for flexible IMU usage
+     * @param lazyImu              the LazyImu instance to use, see the {@code getLazyImu} method of {@link RobotConfig} to construct this
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      * @param startPose            the starting pose of the robot
      */
-    public MecanumDrive(DriveModel driveModel, MotionProfile motionProfile, MecanumGains mecanumGains, DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront, IMU imu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, Pose2d startPose) {
-        assertParamsNotNull(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, imu, voltageSensorMapping, startPose);
+    public MecanumDrive(DriveModel driveModel, MotionProfile motionProfile, MecanumGains mecanumGains, DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront, LazyImu lazyImu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, Pose2d startPose) {
+        assertParamsNotNull(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, lazyImu, voltageSensorMapping, startPose);
 
         accumulator = new Accumulator(startPose);
         Storage.memory().lastKnownPosition = startPose;
@@ -132,7 +136,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         this.leftBack = (DcMotorEx) leftBack;
         this.rightBack = (DcMotorEx) rightBack;
         this.rightFront = (DcMotorEx) rightFront;
-        this.imu = imu;
+        this.lazyImu = lazyImu;
 
         kinematics = new MecanumKinematics(driveModel.inPerTick * driveModel.trackWidthTicks, driveModel.inPerTick / driveModel.lateralInPerTick);
         defaultTurnConstraints = new TurnConstraints(motionProfile.maxAngVel, -motionProfile.maxAngAccel, motionProfile.maxAngAccel);
@@ -143,7 +147,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         defaultAccelConstraint = new ProfileAccelConstraint(motionProfile.minProfileAccel, motionProfile.maxProfileAccel);
 
         voltageSensor = voltageSensorMapping.iterator().next();
-        localizer = new MecanumLocalizer(driveModel, leftFront, leftBack, rightBack, rightFront, imu);
 
         FlightRecorder.write("MECANUM_GAINS", mecanumGains);
         FlightRecorder.write("MECANUM_DRIVE_MODEL", driveModel);
@@ -160,11 +163,11 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param leftBack             the back left motor
      * @param rightBack            the back right motor
      * @param rightFront           the front right motor
-     * @param imu                  the IMU for the robot, see DynIMU for flexible IMU usage
+     * @param lazyImu              the LazyImu instance to use, see the {@code getLazyImu} method of {@link RobotConfig} to construct this
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      */
-    public MecanumDrive(DriveModel driveModel, MotionProfile motionProfile, MecanumGains mecanumGains, DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront, IMU imu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
-        this(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, imu, voltageSensorMapping, Storage.memory().lastKnownPosition);
+    public MecanumDrive(DriveModel driveModel, MotionProfile motionProfile, MecanumGains mecanumGains, DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront, LazyImu lazyImu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
+        this(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, lazyImu, voltageSensorMapping, Storage.memory().lastKnownPosition);
     }
 
     /**
@@ -277,6 +280,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     @Override
     protected void periodic() {
+        if (localizer == null) {
+            localizer = new MecanumLocalizer(model, leftFront, leftBack, rightBack, rightFront, lazyImu.get());
+        }
+
         Twist2dDual<Time> twist = localizer.update();
         accumulator.setPoseEstimate(pose);
         accumulator.accumulate(twist);

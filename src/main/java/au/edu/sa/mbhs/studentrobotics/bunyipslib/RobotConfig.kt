@@ -4,6 +4,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.IMUEx
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ProfiledServo
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
+import com.acmerobotics.roadrunner.ftc.LazyImu
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
+import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot
 import com.qualcomm.robotcore.hardware.Servo
 import java.util.function.Consumer
 
@@ -166,5 +168,18 @@ abstract class RobotConfig {
         if (ok)
             onSuccess.accept(hardwareDevice!!)
         return hardwareDevice
+    }
+
+    /**
+     * Returns a [LazyImu] instance to use with RoadRunner drives. The difference between a regular IMU and a LazyImu
+     * is that the LazyImu is auto-initialised only when it is required via the {@code get()} call.
+     *
+     * @param name the name of the IMU in HardwareMap
+     * @param orientationOnRobot the IMU orientation on the robot
+     */
+    @JvmOverloads
+    protected fun getLazyImu(name: String = "imu", orientationOnRobot: ImuOrientationOnRobot): LazyImu? {
+        if (getHardware(name, IMU::class.java) == null) return null
+        return LazyImu(hardwareMap, name, orientationOnRobot, 700)
     }
 }

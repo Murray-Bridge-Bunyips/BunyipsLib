@@ -29,10 +29,10 @@ import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import java.util.Arrays;
@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.RobotConfig;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TankLocalizer;
@@ -70,7 +71,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final AccelConstraint defaultAccelConstraint;
 
     private final VoltageSensor voltageSensor;
-    private final IMU imu;
+    private final LazyImu lazyImu;
     private final List<DcMotorEx> leftMotors, rightMotors;
 
     private final DriveModel model;
@@ -105,12 +106,12 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param tankGains            the tank gains parameters
      * @param leftMotors           all motors on the left side of the robot (e.g. {@code Arrays.asList(leftFront, leftBack)})
      * @param rightMotors          all motors on the right side of the robot (e.g. {@code Arrays.asList(rightFront, rightBack)})
-     * @param imu                  the IMU for the robot, see DynIMU for flexible IMU usage
+     * @param lazyImu              the LazyImu instance to use, see the {@code getLazyImu} method of {@link RobotConfig} to construct this
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      * @param startPose            the starting pose of the robot
      */
-    public TankDrive(DriveModel driveModel, MotionProfile motionProfile, TankGains tankGains, List<DcMotor> leftMotors, List<DcMotor> rightMotors, IMU imu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, Pose2d startPose) {
-        assertParamsNotNull(driveModel, motionProfile, tankGains, leftMotors, rightMotors, imu, voltageSensorMapping, startPose);
+    public TankDrive(DriveModel driveModel, MotionProfile motionProfile, TankGains tankGains, List<DcMotor> leftMotors, List<DcMotor> rightMotors, LazyImu lazyImu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, Pose2d startPose) {
+        assertParamsNotNull(driveModel, motionProfile, tankGains, leftMotors, rightMotors, lazyImu, voltageSensorMapping, startPose);
 
         accumulator = new Accumulator(startPose);
         Storage.memory().lastKnownPosition = startPose;
@@ -131,7 +132,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         this.leftMotors = leftMotors.stream().map(m -> (DcMotorEx) m).collect(Collectors.toList());
         this.rightMotors = rightMotors.stream().map(m -> (DcMotorEx) m).collect(Collectors.toList());
-        this.imu = imu;
+        this.lazyImu = lazyImu;
 
         kinematics = new TankKinematics(driveModel.inPerTick * driveModel.trackWidthTicks);
         defaultTurnConstraints = new TurnConstraints(motionProfile.maxAngVel, -motionProfile.maxAngAccel, motionProfile.maxAngAccel);
@@ -157,11 +158,11 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param tankGains            the tank gains parameters
      * @param leftMotors           all motors on the left side of the robot (e.g. {@code Arrays.asList(leftFront, leftBack)})
      * @param rightMotors          all motors on the right side of the robot (e.g. {@code Arrays.asList(rightFront, rightBack)})
-     * @param imu                  the IMU for the robot, see DynIMU for flexible IMU usage
+     * @param lazyImu              the LazyImu instance to use, see the {@code getLazyImu} method of {@link RobotConfig} to construct this
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      */
-    public TankDrive(DriveModel driveModel, MotionProfile motionProfile, TankGains tankGains, List<DcMotor> leftMotors, List<DcMotor> rightMotors, IMU imu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
-        this(driveModel, motionProfile, tankGains, leftMotors, rightMotors, imu, voltageSensorMapping, Storage.memory().lastKnownPosition);
+    public TankDrive(DriveModel driveModel, MotionProfile motionProfile, TankGains tankGains, List<DcMotor> leftMotors, List<DcMotor> rightMotors, LazyImu lazyImu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
+        this(driveModel, motionProfile, tankGains, leftMotors, rightMotors, lazyImu, voltageSensorMapping, Storage.memory().lastKnownPosition);
     }
 
     /**
