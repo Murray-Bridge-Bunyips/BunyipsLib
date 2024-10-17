@@ -105,7 +105,7 @@ public class Accumulator implements Localizable {
      *
      * @param other the other accumulator to copy to
      */
-    public void copyTo(Accumulator other) {
+    public final void copyTo(Accumulator other) {
         other.pose = pose;
         other.velocity = velocity;
         other.poseHistory = poseHistory;
@@ -115,7 +115,7 @@ public class Accumulator implements Localizable {
      * @return a clone of the pose history as accumulated by this accumulator
      */
     @SuppressWarnings("unchecked")
-    public LinkedList<Pose2d> getPoseHistory() {
+    public final LinkedList<Pose2d> getPoseHistory() {
         return (LinkedList<Pose2d>) poseHistory.clone();
     }
 
