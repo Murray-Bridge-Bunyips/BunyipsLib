@@ -35,8 +35,9 @@ public class Accumulator implements Localizable {
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
     private LinkedList<Pose2d> poseHistory = new LinkedList<>();
-    private PoseVelocity2d velocity = Geometry.zeroVel();
-    private Pose2d pose;
+
+    protected Pose2d pose;
+    protected PoseVelocity2d velocity = Geometry.zeroVel();
 
     /**
      * Construct an Accumulator base.
@@ -45,6 +46,14 @@ public class Accumulator implements Localizable {
      */
     public Accumulator(Pose2d initialPose) {
         pose = initialPose;
+    }
+
+    /**
+     * Create an Accumulator base with the last known robot position.
+     * Useful for constructing an accumulator that will be overridden by replacing an Accumulator.
+     */
+    public Accumulator() {
+        pose = Storage.memory().lastKnownPosition;
     }
 
     /**
