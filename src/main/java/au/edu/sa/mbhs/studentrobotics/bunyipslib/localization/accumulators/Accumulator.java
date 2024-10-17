@@ -21,7 +21,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 
 /**
- * Accumulates heading estimates from a {@link Localizer} to expose {@link Localizable} properties
+ * Accumulates pose estimates from a {@link Localizer} to expose {@link Localizable} properties.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0

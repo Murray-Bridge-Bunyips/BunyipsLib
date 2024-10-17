@@ -91,6 +91,19 @@ public final class Geometry {
     }
 
     /**
+     * Compare two poses with an epsilon value plus a renormalisation of heading.
+     *
+     * @param a the first pose
+     * @param b the second pose
+     * @return whether the two poses are equal within the epsilon value 1e-6 and heading radius
+     */
+    public static boolean epsilonEqualsHeading(Pose2d a, Pose2d b) {
+        return Mathf.approximatelyEquals(a.position.x, b.position.x)
+                && Mathf.approximatelyEquals(a.position.y, b.position.y)
+                && Mathf.approximatelyEquals(Mathf.radianModulus(a.heading.toDouble() - b.heading.toDouble()), 0);
+    }
+
+    /**
      * Compare two vectors with an epsilon value.
      *
      * @param a the first vector

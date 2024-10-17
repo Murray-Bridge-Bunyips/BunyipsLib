@@ -349,6 +349,28 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
+     * Add a task to the run queue at a specified run queue priority.
+     *
+     * @param runQueuePriority the run queue priority.
+     * @param newTask task to add to the run queue
+     * @return the added task
+     * @param <T> the inherited task type
+     * @see #addTaskLast(Task)
+     * @see #addTaskFirst(Task)
+     */
+    public final <T extends Task> T addTask(TaskPriority runQueuePriority, @NonNull T newTask) {
+        switch (runQueuePriority) {
+            case FIRST:
+                return addTaskFirst(newTask);
+            case LAST:
+                return addTaskLast(newTask);
+            case NORMAL:
+            default:
+                return addTask(newTask);
+        }
+    }
+
+    /**
      * Add a task to the run queue, but after {@link #onReady(Reference, Controls)} has processed tasks. This is useful
      * to call when working with tasks that should be queued at the very end of the autonomous, while still
      * being able to add tasks asynchronously with user input in {@link #onReady(Reference, Controls)}.
@@ -597,5 +619,24 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * the task queue is processed.
      */
     protected void periodic() {
+    }
+
+
+    /**
+     * Priority representation for building tasks.
+     */
+    public enum TaskPriority {
+        /**
+         * Add the task to the end of the queue after the onReady() init callback has fired
+         */
+        LAST,
+        /**
+         * Add the task to the queue immediately (default)
+         */
+        NORMAL,
+        /**
+         * Add the task to the front of the queue after the onReady() init callback has fired
+         */
+        FIRST//® Tech Challenge
     }
 }
