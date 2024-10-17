@@ -25,7 +25,6 @@ import com.acmerobotics.roadrunner.TimeTurn;
 import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Twist2dDual;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
@@ -37,7 +36,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +43,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TankLocalizer;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.BuilderConstants;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.MotionProfile;
@@ -78,8 +77,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final MotionProfile profile;
     private final TankGains gains;
 
-    private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
-    private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
     private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);
     private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", 50_000_000);
     private final DownsampledWriter tankCommandWriter = new DownsampledWriter("TANK_COMMAND", 50_000_000);
@@ -96,6 +93,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public PoseVelocity2d poseVelo;
 
     private Localizer localizer;
+    private Accumulator accumulator;
     private volatile double leftPower;
     private volatile double rightPower;
 
@@ -114,7 +112,10 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public TankDrive(DriveModel driveModel, MotionProfile motionProfile, TankGains tankGains, List<DcMotor> leftMotors, List<DcMotor> rightMotors, IMU imu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, Pose2d startPose) {
         assertParamsNotNull(driveModel, motionProfile, tankGains, leftMotors, rightMotors, imu, voltageSensorMapping, startPose);
 
+        accumulator = new Accumulator(startPose);
+        Storage.memory().lastKnownPosition = startPose;
         pose = startPose;
+
         gains = tankGains;
         model = driveModel;
         profile = motionProfile;
@@ -176,6 +177,19 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     /**
+     * Set the pose accumulator this drive instance should use.
+     * If not specified, the default {@link Accumulator} will be used.
+     *
+     * @param accumulator the new accumulator to use
+     * @return this
+     */
+    public TankDrive withAccumulator(@NonNull Accumulator accumulator) {
+        this.accumulator.copyTo(accumulator);
+        this.accumulator = accumulator;
+        return this;
+    }
+
+    /**
      * Set the raw power for each side of the robot.
      *
      * @param leftPower  the power for the left side of the robot
@@ -212,42 +226,10 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     @Override
     protected void periodic() {
         Twist2dDual<Time> twist = localizer.update();
-        pose = pose.plus(twist.value());
-        poseVelo = twist.velocity().value();
-        Storage.memory().lastKnownPosition = pose;
-
-        poseHistory.add(pose);
-        while (poseHistory.size() > Dashboard.MAX_POSE_HISTORY) {
-            poseHistory.removeFirst();
-        }
-        estimatedPoseWriter.write(new PoseMessage(pose));
-
-        Dashboard.usePacket(p -> {
-            p.put("x (in)", pose.position.x);
-            p.put("y (in)", pose.position.y);
-            p.put("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
-            p.put("xVel (in/s)", poseVelo.linearVel.x);
-            p.put("yVel (in/s)", poseVelo.linearVel.y);
-            p.put("headingVel (deg/s)", Math.toDegrees(poseVelo.angVel));
-
-            Canvas c = p.fieldOverlay();
-            c.setStrokeWidth(1);
-            c.setStroke("#3F51B5");
-            Dashboard.drawPoseHistory(c, poseHistory);
-            Dashboard.drawRobot(c, pose);
-
-            Vector2d velocityDirection = pose.heading
-                    .times(poseVelo)
-                    .linearVel;
-            c.setStroke("#751000")
-                    .strokeLine(
-                            pose.position.x,
-                            pose.position.y,
-                            pose.position.x + velocityDirection.x,
-                            pose.position.y + velocityDirection.y
-                    );
-
-        });
+        accumulator.setPoseEstimate(pose);
+        accumulator.accumulate(twist);
+        pose = accumulator.getPoseEstimate();
+        poseVelo = accumulator.getPoseVelocity();
 
         opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
                 Mathf.round(pose.position.x, 1),
@@ -264,6 +246,12 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         for (DcMotorEx m : rightMotors) {
             m.setPower(rightPower);
         }
+
+        opMode(o -> o.telemetry.add("%: L:%\\% %, R:%\\% %", this,
+                // TODO: arrows
+                Math.round(leftPower * 100), leftPower >= 0 ? "F" : "B",
+                Math.round(rightPower * 100), rightPower >= 0 ? "F" : "B"
+        ));
     }
 
     @Override

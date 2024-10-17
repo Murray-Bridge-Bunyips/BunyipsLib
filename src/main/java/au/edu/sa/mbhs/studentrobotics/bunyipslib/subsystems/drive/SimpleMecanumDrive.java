@@ -4,18 +4,16 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 
 /**
@@ -46,9 +44,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
     @Nullable
     private Localizer localizer;
     @Nullable
-    private Pose2d localizerAccumulatedPose;
-    @Nullable
-    private PoseVelocity2d localizerVelo;
+    private Accumulator accumulator;
     private Priority priority = Priority.NORMALISED;
 
     /**
@@ -73,46 +69,18 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
             Twist2dDual<Time> twist = localizer.update();
 
             // Auto set to the last known position if the user has not defined one themselves
-            if (localizerAccumulatedPose == null)
-                localizerAccumulatedPose = Storage.memory().lastKnownPosition;
-
-            // Accumulate the poses
-            localizerAccumulatedPose = localizerAccumulatedPose.plus(twist.value());
-            localizerVelo = twist.velocity().value();
-            Storage.memory().lastKnownPosition = localizerAccumulatedPose;
-
-            Dashboard.usePacket(p -> {
-                p.put("x (in)", localizerAccumulatedPose.position.x);
-                p.put("y (in)", localizerAccumulatedPose.position.y);
-                p.put("heading (deg)", Math.toDegrees(localizerAccumulatedPose.heading.toDouble()));
-                p.put("xVel (in/s)", localizerVelo.linearVel.x);
-                p.put("yVel (in/s)", localizerVelo.linearVel.y);
-                p.put("headingVel (deg/s)", Math.toDegrees(localizerVelo.angVel));
-
-                Canvas c = p.fieldOverlay();
-                c.setStrokeWidth(1);
-                c.setStroke("#3F51B5");
-                Dashboard.drawRobot(c, localizerAccumulatedPose);
-
-                Vector2d velocityDirection = localizerAccumulatedPose.heading
-                        .times(localizerVelo)
-                        .linearVel;
-                c.setStroke("#751000")
-                        .strokeLine(
-                                localizerAccumulatedPose.position.x,
-                                localizerAccumulatedPose.position.y,
-                                localizerAccumulatedPose.position.x + velocityDirection.x,
-                                localizerAccumulatedPose.position.y + velocityDirection.y
-                        );
-            });
+            if (accumulator == null) {
+                accumulator = new Accumulator(Storage.memory().lastKnownPosition);
+            }
+            accumulator.accumulate(twist);
 
             opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
-                    Mathf.round(localizerAccumulatedPose.position.x, 1),
-                    Mathf.round(localizerVelo.linearVel.x, 1),
-                    Mathf.round(localizerAccumulatedPose.position.y, 1),
-                    Mathf.round(localizerVelo.linearVel.y, 1),
-                    Mathf.round(Math.toDegrees(localizerAccumulatedPose.heading.toDouble()), 1),
-                    Mathf.round(Math.toDegrees(localizerVelo.angVel), 1)
+                    Mathf.round(accumulator.getPoseEstimate().position.x, 1),
+                    Mathf.round(accumulator.getPoseVelocity().linearVel.x, 1),
+                    Mathf.round(accumulator.getPoseEstimate().position.y, 1),
+                    Mathf.round(accumulator.getPoseVelocity().linearVel.y, 1),
+                    Mathf.round(Math.toDegrees(accumulator.getPoseEstimate().heading.toDouble()), 1),
+                    Mathf.round(Math.toDegrees(accumulator.getPoseVelocity().angVel), 1)
             ).color("gray"));
         }
 
@@ -179,7 +147,8 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         rightBack.setPower(rightBackPower);
         rightFront.setPower(rightFrontPower);
 
-        opMode(o -> o.telemetry.add("%: %\\% %, %\\% %,%\\% %", this,
+        opMode(o -> o.telemetry.add("%: %\\% %, %\\% %, %\\% %", this,
+                // TODO: Arrows
                 Math.round(speedX * 100), speedX >= 0 ? "F" : "B",
                 Math.round(speedY * 100), speedY >= 0 ? "L" : "R",
                 Math.round(speedR * 100), speedR >= 0 ? "CCW" : "CW"
@@ -216,6 +185,20 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         return this;
     }
 
+    /**
+     * Set the pose accumulator this drive instance should use.
+     * If not defined, a default {@link Accumulator} will be used when a Localizer is attached.
+     *
+     * @param accumulator the  accumulator to use
+     * @return this
+     */
+    public SimpleMecanumDrive withAccumulator(@NonNull Accumulator accumulator) {
+        if (this.accumulator != null)
+            this.accumulator.copyTo(accumulator);
+        this.accumulator = accumulator;
+        return this;
+    }
+
     @Override
     protected void onDisable() {
         leftFront.setPower(0);
@@ -234,18 +217,19 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
     @Nullable
     @Override
     public Pose2d getPoseEstimate() {
-        return localizerAccumulatedPose;
+        return accumulator != null ? accumulator.getPoseEstimate() : null;
     }
 
     @Override
     public void setPoseEstimate(@NonNull Pose2d newPose) {
-        localizerAccumulatedPose = newPose;
+        if (accumulator != null)
+            accumulator.setPoseEstimate(newPose);
     }
 
     @Nullable
     @Override
     public PoseVelocity2d getPoseVelocity() {
-        return localizerVelo;
+        return accumulator != null ? accumulator.getPoseVelocity() : null;
     }
 
     /**

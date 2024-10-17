@@ -28,10 +28,6 @@ public final class Dashboard {
      * The radius of the robot for drawing.
      */
     public static double ROBOT_RADIUS = 9;
-    /**
-     * The maximum pose history length that should be drawn.
-     */
-    public static int MAX_POSE_HISTORY = 100;
 
     private Dashboard() {
     }
