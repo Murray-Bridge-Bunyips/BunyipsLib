@@ -16,6 +16,7 @@ import com.acmerobotics.roadrunner.PoseMap
 import com.acmerobotics.roadrunner.Rotation2d
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder
 import com.acmerobotics.roadrunner.TurnConstraints
+import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.VelConstraint
 
 /**
@@ -73,7 +74,8 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
      * Cannot be called without an applicable pending trajectory.
      */
     @JvmOverloads
-    fun afterDisp(ds: Double, unit: Distance = Inches, a: Action) = apply { builder.afterDisp(unit.of(ds).inUnit(Inches), a) }
+    fun afterDisp(ds: Double, unit: Distance = Inches, a: Action) =
+        apply { builder.afterDisp(unit.of(ds).inUnit(Inches), a) }
 
     /**
      * Schedules function [f] to execute in parallel starting at a displacement [ds] after the last trajectory segment.
@@ -82,21 +84,24 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
      * Cannot be called without an applicable pending trajectory.
      */
     @JvmOverloads
-    fun afterDisp(ds: Double, unit: Distance = Inches, f: InstantFunction) = apply { afterDisp(ds, unit, InstantAction(f)) }
+    fun afterDisp(ds: Double, unit: Distance = Inches, f: InstantFunction) =
+        apply { afterDisp(ds, unit, InstantAction(f)) }
 
     /**
      * Schedules action [a] to execute in parallel starting [dt] seconds after the last trajectory segment, turn, or
      * other action.
      */
     @JvmOverloads
-    fun afterTime(dt: Double, unit: Time = Seconds, a: Action) = apply { builder.afterTime(unit.of(dt).inUnit(Seconds), a) }
+    fun afterTime(dt: Double, unit: Time = Seconds, a: Action) =
+        apply { builder.afterTime(unit.of(dt).inUnit(Seconds), a) }
 
     /**
      * Schedules function [f] to execute in parallel starting [dt] seconds after the last trajectory segment, turn, or
      * other action.
      */
     @JvmOverloads
-    fun afterTime(dt: Double, unit: Time = Seconds, f: InstantFunction) = apply { afterTime(dt, unit, InstantAction(f)) }
+    fun afterTime(dt: Double, unit: Time = Seconds, f: InstantFunction) =
+        apply { afterTime(dt, unit, InstantAction(f)) }
 
     /**
      * Sets the tangent of the builder.
@@ -143,19 +148,47 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
 
     @JvmOverloads
     fun lineToXLinearHeading(posX: Double, posUnit: Distance = Inches, heading: Rotation2d) =
-        apply { builder.lineToXLinearHeading(posUnit.of(posX).inUnit(Inches), heading, velConstraints, accelConstraints) }
+        apply {
+            builder.lineToXLinearHeading(
+                posUnit.of(posX).inUnit(Inches),
+                heading,
+                velConstraints,
+                accelConstraints
+            )
+        }
 
     @JvmOverloads
     fun lineToXLinearHeading(posX: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
-        apply { builder.lineToXLinearHeading(posUnit.of(posX).inUnit(Inches), headingUnit.of(heading).inUnit(Radians), velConstraints, accelConstraints) }
+        apply {
+            builder.lineToXLinearHeading(
+                posUnit.of(posX).inUnit(Inches),
+                headingUnit.of(heading).inUnit(Radians),
+                velConstraints,
+                accelConstraints
+            )
+        }
 
     @JvmOverloads
     fun lineToXSplineHeading(posX: Double, posUnit: Distance = Inches, heading: Rotation2d) =
-        apply { builder.lineToXSplineHeading(posUnit.of(posX).inUnit(Inches), heading, velConstraints, accelConstraints) }
+        apply {
+            builder.lineToXSplineHeading(
+                posUnit.of(posX).inUnit(Inches),
+                heading,
+                velConstraints,
+                accelConstraints
+            )
+        }
 
     @JvmOverloads
     fun lineToXSplineHeading(posX: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
-        apply { builder.lineToXSplineHeading(posUnit.of(posX).inUnit(Inches), headingUnit.of(heading).inUnit(Radians), velConstraints, accelConstraints) }
+        apply {
+            builder.lineToXSplineHeading(
+                posUnit.of(posX).inUnit(Inches),
+                headingUnit.of(heading).inUnit(Radians),
+                velConstraints,
+                accelConstraints
+            )
+        }
 
     @JvmOverloads
     fun lineToY(posY: Double, unit: Distance = Inches) =
@@ -167,21 +200,235 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
 
     @JvmOverloads
     fun lineToYLinearHeading(posY: Double, posUnit: Distance = Inches, heading: Rotation2d) =
-        apply { builder.lineToYLinearHeading(posUnit.of(posY).inUnit(Inches), heading, velConstraints, accelConstraints) }
+        apply {
+            builder.lineToYLinearHeading(
+                posUnit.of(posY).inUnit(Inches),
+                heading,
+                velConstraints,
+                accelConstraints
+            )
+        }
 
     @JvmOverloads
     fun lineToYLinearHeading(posY: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
-        apply { builder.lineToYLinearHeading(posUnit.of(posY).inUnit(Inches), headingUnit.of(heading).inUnit(Radians), velConstraints, accelConstraints) }
+        apply {
+            builder.lineToYLinearHeading(
+                posUnit.of(posY).inUnit(Inches),
+                headingUnit.of(heading).inUnit(Radians),
+                velConstraints,
+                accelConstraints
+            )
+        }
 
     @JvmOverloads
     fun lineToYSplineHeading(posY: Double, posUnit: Distance = Inches, heading: Rotation2d) =
-        apply { builder.lineToYSplineHeading(posUnit.of(posY).inUnit(Inches), heading, velConstraints, accelConstraints) }
+        apply {
+            builder.lineToYSplineHeading(
+                posUnit.of(posY).inUnit(Inches),
+                heading,
+                velConstraints,
+                accelConstraints
+            )
+        }
 
     @JvmOverloads
     fun lineToYSplineHeading(posY: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
-        apply { builder.lineToYSplineHeading(posUnit.of(posY).inUnit(Inches), headingUnit.of(heading).inUnit(Radians), velConstraints, accelConstraints) }
+        apply {
+            builder.lineToYSplineHeading(
+                posUnit.of(posY).inUnit(Inches),
+                headingUnit.of(heading).inUnit(Radians),
+                velConstraints,
+                accelConstraints
+            )
+        }
 
-    // TODO: other methods
+    @JvmOverloads
+    fun strafeTo(pos: Vector2d, unit: Distance = Inches) =
+        apply {
+            builder.strafeTo(
+                Vector2d(unit.of(pos.x).inUnit(Inches), unit.of(pos.y).inUnit(Inches)),
+                velConstraints,
+                accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun strafeToConstantHeading(pos: Vector2d, unit: Distance = Inches) =
+        apply {
+            builder.strafeToConstantHeading(
+                Vector2d(unit.of(pos.x).inUnit(Inches), unit.of(pos.y).inUnit(Inches)),
+                velConstraints,
+                accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun strafeToLinearHeading(pos: Vector2d, posUnit: Distance = Inches, heading: Rotation2d) =
+        apply {
+            builder.strafeToLinearHeading(
+                Vector2d(
+                    posUnit.of(pos.x).inUnit(Inches),
+                    posUnit.of(pos.y).inUnit(Inches)
+                ), heading, velConstraints, accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun strafeToLinearHeading(
+        pos: Vector2d,
+        posUnit: Distance = Inches,
+        heading: Double,
+        headingUnit: Angle = Radians
+    ) =
+        apply {
+            builder.strafeToLinearHeading(
+                Vector2d(
+                    posUnit.of(pos.x).inUnit(Inches),
+                    posUnit.of(pos.y).inUnit(Inches)
+                ), headingUnit.of(heading).inUnit(Radians), velConstraints, accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun strafeToSplineHeading(pos: Vector2d, posUnit: Distance = Inches, heading: Rotation2d) =
+        apply {
+            builder.strafeToSplineHeading(
+                Vector2d(
+                    posUnit.of(pos.x).inUnit(Inches),
+                    posUnit.of(pos.y).inUnit(Inches)
+                ), heading, velConstraints, accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun strafeToSplineHeading(
+        pos: Vector2d,
+        posUnit: Distance = Inches,
+        heading: Double,
+        headingUnit: Angle = Radians
+    ) =
+        apply {
+            builder.strafeToSplineHeading(
+                Vector2d(
+                    posUnit.of(pos.x).inUnit(Inches),
+                    posUnit.of(pos.y).inUnit(Inches)
+                ), headingUnit.of(heading).inUnit(Radians), velConstraints, accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun splineTo(pos: Vector2d, unit: Distance = Inches, tangent: Rotation2d) =
+        apply {
+            builder.splineTo(
+                Vector2d(unit.of(pos.x).inUnit(Inches), unit.of(pos.y).inUnit(Inches)),
+                tangent,
+                velConstraints,
+                accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun splineTo(pos: Vector2d, unit: Distance = Inches, tangent: Double, tangentUnit: Angle = Radians) =
+        apply {
+            builder.splineTo(
+                Vector2d(unit.of(pos.x).inUnit(Inches), unit.of(pos.y).inUnit(Inches)),
+                tangentUnit.of(tangent).inUnit(Radians),
+                velConstraints,
+                accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun splineToConstantHeading(pos: Vector2d, unit: Distance = Inches, tangent: Rotation2d) =
+        apply {
+            builder.splineToConstantHeading(
+                Vector2d(unit.of(pos.x).inUnit(Inches), unit.of(pos.y).inUnit(Inches)),
+                tangent,
+                velConstraints,
+                accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun splineToConstantHeading(pos: Vector2d, unit: Distance = Inches, tangent: Double, tangentUnit: Angle = Radians) =
+        apply {
+            builder.splineToConstantHeading(
+                Vector2d(unit.of(pos.x).inUnit(Inches), unit.of(pos.y).inUnit(Inches)),
+                tangentUnit.of(tangent).inUnit(Radians),
+                velConstraints,
+                accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun splineToLinearHeading(
+        pose: Pose2d,
+        vectorUnit: Distance = Inches,
+        headingUnit: Angle = Radians,
+        tangent: Rotation2d
+    ) =
+        apply {
+            builder.splineToLinearHeading(
+                Pose2d(
+                    vectorUnit.of(pose.position.x).inUnit(Inches),
+                    vectorUnit.of(pose.position.y).inUnit(Inches),
+                    headingUnit.of(pose.heading.toDouble()).inUnit(Radians)
+                ), tangent, velConstraints, accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun splineToLinearHeading(
+        pose: Pose2d,
+        vectorUnit: Distance = Inches,
+        headingUnit: Angle = Radians,
+        tangent: Double,
+        tangentUnit: Angle = Radians
+    ) =
+        apply {
+            builder.splineToLinearHeading(
+                Pose2d(
+                    vectorUnit.of(pose.position.x).inUnit(Inches),
+                    vectorUnit.of(pose.position.y).inUnit(Inches),
+                    headingUnit.of(pose.heading.toDouble()).inUnit(Radians)
+                ), tangentUnit.of(tangent).inUnit(Radians), velConstraints, accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun splineToSplineHeading(
+        pose: Pose2d,
+        vectorUnit: Distance = Inches,
+        headingUnit: Angle = Radians,
+        tangent: Rotation2d
+    ) =
+        apply {
+            builder.splineToSplineHeading(
+                Pose2d(
+                    vectorUnit.of(pose.position.x).inUnit(Inches),
+                    vectorUnit.of(pose.position.y).inUnit(Inches),
+                    headingUnit.of(pose.heading.toDouble()).inUnit(Radians)
+                ), tangent, velConstraints, accelConstraints
+            )
+        }
+
+    @JvmOverloads
+    fun splineToSplineHeading(
+        pose: Pose2d,
+        vectorUnit: Distance = Inches,
+        headingUnit: Angle = Radians,
+        tangent: Double,
+        tangentUnit: Angle = Radians
+    ) =
+        apply {
+            builder.splineToSplineHeading(
+                Pose2d(
+                    vectorUnit.of(pose.position.x).inUnit(Inches),
+                    vectorUnit.of(pose.position.y).inUnit(Inches),
+                    headingUnit.of(pose.heading.toDouble()).inUnit(Radians)
+                ), tangentUnit.of(tangent).inUnit(Radians), velConstraints, accelConstraints
+            )
+        }
 
     fun fresh() {
         // TODO: fresh impl
@@ -198,11 +445,11 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
      */
     fun setTurnConstraints(constraints: Turn) =
         apply {
-           turnConstraints = TurnConstraints(
-               constraints.maxAngVelRadsPerSec ?: turnConstraints.maxAngVel,
-               constraints.minAngAccelRadsPerSecSquared ?: turnConstraints.minAngAccel,
-               constraints.maxAngAccelRadsPerSecSquared ?: turnConstraints.maxAngAccel
-           )
+            turnConstraints = TurnConstraints(
+                constraints.maxAngVelRadsPerSec ?: turnConstraints.maxAngVel,
+                constraints.minAngAccelRadsPerSecSquared ?: turnConstraints.minAngAccel,
+                constraints.maxAngAccelRadsPerSecSquared ?: turnConstraints.maxAngAccel
+            )
         }
 
     /**
