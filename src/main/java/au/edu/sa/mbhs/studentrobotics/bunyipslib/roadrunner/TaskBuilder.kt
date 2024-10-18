@@ -27,7 +27,7 @@ import com.acmerobotics.roadrunner.VelConstraint
 class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
     private var turnConstraints: TurnConstraints = constants.baseTurnConstraints
     private var velConstraints: VelConstraint = constants.baseVelConstraint
-    private var accelConstraint: AccelConstraint = constants.baseAccelConstraint
+    private var accelConstraints: AccelConstraint = constants.baseAccelConstraint
     private val builder: TrajectoryActionBuilder = TrajectoryActionBuilder(
         constants.turnActionFactory,
         constants.trajectoryActionFactory,
@@ -133,10 +133,60 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
     fun turnTo(heading: Double, unit: Angle = Radians) =
         apply { builder.turnTo(unit.of(heading).inUnit(Radians), turnConstraints) }
 
-    // TODO: vel and accel related methods
+    @JvmOverloads
+    fun lineToX(posX: Double, unit: Distance = Inches) =
+        apply { builder.lineToX(unit.of(posX).inUnit(Inches), velConstraints, accelConstraints) }
 
+    @JvmOverloads
+    fun lineToXConstantHeading(posX: Double, unit: Distance = Inches) =
+        apply { builder.lineToXConstantHeading(unit.of(posX).inUnit(Inches), velConstraints, accelConstraints) }
 
-    // TODO: united constraints class
+    @JvmOverloads
+    fun lineToXLinearHeading(posX: Double, posUnit: Distance = Inches, heading: Rotation2d) =
+        apply { builder.lineToXLinearHeading(posUnit.of(posX).inUnit(Inches), heading, velConstraints, accelConstraints) }
+
+    @JvmOverloads
+    fun lineToXLinearHeading(posX: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
+        apply { builder.lineToXLinearHeading(posUnit.of(posX).inUnit(Inches), headingUnit.of(heading).inUnit(Radians), velConstraints, accelConstraints) }
+
+    @JvmOverloads
+    fun lineToXSplineHeading(posX: Double, posUnit: Distance = Inches, heading: Rotation2d) =
+        apply { builder.lineToXSplineHeading(posUnit.of(posX).inUnit(Inches), heading, velConstraints, accelConstraints) }
+
+    @JvmOverloads
+    fun lineToXSplineHeading(posX: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
+        apply { builder.lineToXSplineHeading(posUnit.of(posX).inUnit(Inches), headingUnit.of(heading).inUnit(Radians), velConstraints, accelConstraints) }
+
+    @JvmOverloads
+    fun lineToY(posY: Double, unit: Distance = Inches) =
+        apply { builder.lineToY(unit.of(posY).inUnit(Inches), velConstraints, accelConstraints) }
+
+    @JvmOverloads
+    fun lineToYConstantHeading(posY: Double, unit: Distance = Inches) =
+        apply { builder.lineToYConstantHeading(unit.of(posY).inUnit(Inches), velConstraints, accelConstraints) }
+
+    @JvmOverloads
+    fun lineToYLinearHeading(posY: Double, posUnit: Distance = Inches, heading: Rotation2d) =
+        apply { builder.lineToYLinearHeading(posUnit.of(posY).inUnit(Inches), heading, velConstraints, accelConstraints) }
+
+    @JvmOverloads
+    fun lineToYLinearHeading(posY: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
+        apply { builder.lineToYLinearHeading(posUnit.of(posY).inUnit(Inches), headingUnit.of(heading).inUnit(Radians), velConstraints, accelConstraints) }
+
+    @JvmOverloads
+    fun lineToYSplineHeading(posY: Double, posUnit: Distance = Inches, heading: Rotation2d) =
+        apply { builder.lineToYSplineHeading(posUnit.of(posY).inUnit(Inches), heading, velConstraints, accelConstraints) }
+
+    @JvmOverloads
+    fun lineToYSplineHeading(posY: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
+        apply { builder.lineToYSplineHeading(posUnit.of(posY).inUnit(Inches), headingUnit.of(heading).inUnit(Radians), velConstraints, accelConstraints) }
+
+    // TODO: other methods
+
+    fun fresh() {
+        // TODO: fresh impl
+    }
+
     /**
      * Set the turn constraints for future builder instructions in units of inches.
      */
@@ -155,5 +205,21 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
            )
         }
 
-    // TODO: RoadRunner utils for building
+    /**
+     * Set the velocity constraints for future builder instructions in units of inches.
+     */
+    fun setVelConstraints(velConstraintsInches: VelConstraint) =
+        apply { velConstraints = velConstraintsInches }
+
+    // TODO: Vel object
+
+    /**
+     * Set the acceleration constraints for future builder instructions in units of inches.
+     */
+    fun setAccelConstraints(accelConstraints: AccelConstraint) =
+        apply { this.accelConstraints = accelConstraints }
+
+    // TODO: Accel object
+
+    // TODO: RoadRunner utils for building Tasks
 }
