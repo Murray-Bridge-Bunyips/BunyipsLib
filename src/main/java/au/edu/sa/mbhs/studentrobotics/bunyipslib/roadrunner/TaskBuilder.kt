@@ -9,17 +9,21 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints.Turn
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints.*
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ActionTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import com.acmerobotics.roadrunner.AccelConstraint
 import com.acmerobotics.roadrunner.Action
+import com.acmerobotics.roadrunner.AngularVelConstraint
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.InstantFunction
+import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseMap
+import com.acmerobotics.roadrunner.ProfileAccelConstraint
 import com.acmerobotics.roadrunner.Rotation2d
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder
+import com.acmerobotics.roadrunner.TranslationalVelConstraint
 import com.acmerobotics.roadrunner.TurnConstraints
 import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.VelConstraint
@@ -548,14 +552,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     /**
      * Set the turn constraints as defined by a [Turn] object.
      */
-    fun setTurnConstraints(constraints: Turn) =
-        apply {
-            turnConstraints = TurnConstraints(
-                constraints.maxAngVelRadsPerSec ?: turnConstraints.maxAngVel,
-                constraints.minAngAccelRadsPerSecSquared ?: turnConstraints.minAngAccel,
-                constraints.maxAngAccelRadsPerSecSquared ?: turnConstraints.maxAngAccel
-            )
-        }
+    fun setTurnConstraints(constraints: Turn) = apply { turnConstraints = constraints.getOrDefault(turnConstraints) }
 
     /**
      * Reset the turn constraints to default.
@@ -567,7 +564,19 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     fun setVelConstraints(velConstraintsInches: VelConstraint) = apply { velConstraints = velConstraintsInches }
 
-    // TODO: Vel object
+    /**
+     * Set the velocity constraints as defined by a [Vel] object.
+     */
+    fun setVelConstraints(constraints: Vel) =
+        apply {
+            val (translation, angular) = if (velConstraints is MinVelConstraint) {
+                val minVelConstraint = velConstraints as MinVelConstraint
+                minVelConstraint.constraints[0] to minVelConstraint.constraints[1]
+            } else {
+                TranslationalVelConstraint(Double.MAX_VALUE) to AngularVelConstraint(Double.MAX_VALUE)
+            }
+            velConstraints = constraints.getOrDefault(translation, angular)
+        }
 
     /**
      * Reset the velocity constraints to default.
@@ -579,7 +588,14 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     fun setAccelConstraints(accelConstraints: AccelConstraint) = apply { this.accelConstraints = accelConstraints }
 
-    // TODO: Accel object
+    /**
+     * Set the acceleration constraints as defined by an [Accel] object.
+     */
+    fun setAccelConstraints(constraints: Accel) =
+        apply {
+                accelConstraints = constraints.getOrDefault(
+                    (accelConstraints as? ProfileAccelConstraint) ?: ProfileAccelConstraint(-Double.MAX_VALUE, Double.MAX_VALUE))
+        }
 
     /**
      * Reset the acceleration constraints to default.

@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.InchesPerSecond;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.InchesPerSecondPerSecond;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.RadiansPerSecond;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Second;
 
@@ -130,7 +131,7 @@ public class MotionProfile {
          * @return the builder
          */
         public Builder setMinProfileAccel(Measure<Velocity<Velocity<Distance>>> minAccel) {
-            profile.minProfileAccel = minAccel.in(InchesPerSecond.per(Second));
+            profile.minProfileAccel = minAccel.in(InchesPerSecondPerSecond);
             return this;
         }
 
@@ -152,7 +153,7 @@ public class MotionProfile {
          * @return the builder
          */
         public Builder setMaxProfileAccel(Measure<Velocity<Velocity<Distance>>> maxAccel) {
-            profile.maxProfileAccel = maxAccel.in(InchesPerSecond.per(Second));
+            profile.maxProfileAccel = maxAccel.in(InchesPerSecondPerSecond);
             return this;
         }
 

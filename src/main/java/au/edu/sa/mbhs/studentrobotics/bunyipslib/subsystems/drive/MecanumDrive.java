@@ -355,6 +355,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
          * @param t the trajectory to follow
          */
         public FollowTrajectoryTask(TimeTrajectory t) {
+            // TODO: pose stabilisation
             timeTrajectory = t;
 
             List<Double> disps = com.acmerobotics.roadrunner.Math.range(

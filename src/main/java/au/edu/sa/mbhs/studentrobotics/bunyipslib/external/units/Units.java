@@ -192,30 +192,37 @@ public final class Units {
             MetersPerSecond.per(Second);
 
     /**
-    * A unit of linear acceleration equivalent to accelerating at a rate of one {@link #Foot Foot}
-    * per {@link #Second} every second.
-    */
+     * A unit of linear acceleration equivalent to accelerating at a rate of one {@link #Inch Inch}
+     * per {@link #Second} every second.
+     */
+    public static final Velocity<Velocity<Distance>> InchesPerSecondPerSecond =
+      InchesPerSecond.per(Second);
+
+    /**
+     * A unit of linear acceleration equivalent to accelerating at a rate of one {@link #Foot Foot}
+     * per {@link #Second} every second.
+     */
     public static final Velocity<Velocity<Distance>> FeetPerSecondPerSecond =
       FeetPerSecond.per(Second);
 
     /**
-    * A unit of angular acceleration equivalent to accelerating at a rate of one {@link #Rotations
-    * Rotation} per {@link #Second} every second.
-    */
+     * A unit of angular acceleration equivalent to accelerating at a rate of one {@link #Rotations
+     * Rotation} per {@link #Second} every second.
+     */
     public static final Velocity<Velocity<Angle>> RotationsPerSecondPerSecond =
       RotationsPerSecond.per(Second);
 
     /**
-    * The standard SI unit of angular acceleration, equivalent to accelerating at a rate of one
-    * {@link #Radians Radian} per {@link #Second} every second.
-    */
+     * The standard SI unit of angular acceleration, equivalent to accelerating at a rate of one
+     * {@link #Radians Radian} per {@link #Second} every second.
+     */
     public static final Velocity<Velocity<Angle>> RadiansPerSecondPerSecond =
       RadiansPerSecond.per(Second);
 
     /**
-    * A unit of angular acceleration equivalent to accelerating at a rate of one {@link #Degrees
-    * Degree} per {@link #Second} every second.
-    */
+     * A unit of angular acceleration equivalent to accelerating at a rate of one {@link #Degrees
+     * Degree} per {@link #Second} every second.
+     */
     public static final Velocity<Velocity<Angle>> DegreesPerSecondPerSecond =
       DegreesPerSecond.per(Second);
 

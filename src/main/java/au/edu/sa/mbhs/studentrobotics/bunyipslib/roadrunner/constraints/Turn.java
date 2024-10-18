@@ -5,6 +5,8 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Rad
 
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.roadrunner.TurnConstraints;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Velocity;
 
@@ -101,5 +103,19 @@ public final class Turn {
      */
     public Turn andMaxAngAccel(double maxAngAccel, Velocity<Velocity<Angle>> unit) {
         return new Turn(maxAngVelRadsPerSec, minAngAccelRadsPerSecSquared, unit.of(maxAngAccel).in(RadiansPerSecondPerSecond));
+    }
+
+    /**
+     * Get a built TurnConstraints object with the specified constraints.
+     *
+     * @param defaultConstraints The default constraints to use if no constraints are specified.
+     * @return The built TurnConstraints object.
+     */
+    public TurnConstraints getOrDefault(TurnConstraints defaultConstraints) {
+        return new TurnConstraints(
+            maxAngVelRadsPerSec == null ? defaultConstraints.maxAngVel : maxAngVelRadsPerSec,
+            minAngAccelRadsPerSecSquared == null ? defaultConstraints.minAngAccel : minAngAccelRadsPerSecSquared,
+            maxAngAccelRadsPerSecSquared == null ? defaultConstraints.maxAngAccel : maxAngAccelRadsPerSecSquared
+        );
     }
 }
