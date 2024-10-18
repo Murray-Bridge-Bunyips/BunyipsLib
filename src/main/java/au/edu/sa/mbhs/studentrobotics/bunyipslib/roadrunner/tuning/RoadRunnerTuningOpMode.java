@@ -62,7 +62,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
  * Telemetry is mirrored between FtcDashboard and the Driver Station using a {@link DualTelemetry} instance, the same
  * used in {@link BunyipsOpMode}. It is not required that a Driver Station be active for tuning.
  * <p>
- * To look at details of a tuning process, follow the <a href="https://rr.brott.dev/tuning">tuning guide for RoadRunner v1</a>.
+ * To look at details of a tuning process, follow the <a href="https://rr.brott.dev/docs/v1-0/tuning/">tuning guide for RoadRunner v1.0</a>.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
