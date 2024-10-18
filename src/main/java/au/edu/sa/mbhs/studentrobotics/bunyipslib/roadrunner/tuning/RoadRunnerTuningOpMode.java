@@ -44,6 +44,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.TankDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 
 /**
  * Utility OpMode you will extend to enable an OpMode to tune your RoadRunner coefficients and parameters. This uses
@@ -79,7 +81,8 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     protected abstract RoadRunnerDrive getDrive();
 
     @Override
-    public final void runOpMode() {
+    @SuppressWarnings("unchecked")
+    public final void runOpMode() throws InterruptedException {
         DualTelemetry out = new DualTelemetry(this, null, "RR Tuning");
         RoadRunnerDrive drive = Objects.requireNonNull(getDrive(), "getDrive() returned null");
 
@@ -209,9 +212,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 List<DcMotorEx> leftMotors, rightMotors;
                 LazyImu lazyImu;
                 try {
-                    //noinspection unchecked
                     leftMotors = (List<DcMotorEx>) leftMotorsField.get(td);
-                    //noinspection unchecked
                     rightMotors = (List<DcMotorEx>) rightMotorsField.get(td);
                     lazyImu = (LazyImu) lazyImuField.get(td);
                 } catch (IllegalAccessException e) {
@@ -253,11 +254,11 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 new LateralRampLogger(dvf),
                 new ManualFeedforwardTuner(dvf),
                 new MecanumMotorDirectionDebugger(dvf),
-                new DeadWheelDirectionDebugger(dvf)
-                // TODO: other opmodes
+                new DeadWheelDirectionDebugger(dvf),
+                new ManualFeedbackTuner(drive),
+                new SplineTest(drive),
+                new LocalizationTest(drive)
         };
-
-        // TODO: menu
 
         FtcDashboard.getInstance().withConfigRoot(configRoot -> {
             for (Class<?> c : Arrays.asList(
@@ -265,11 +266,48 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     ForwardRampLogger.class,
                     LateralRampLogger.class,
                     ManualFeedforwardTuner.class,
-                    MecanumMotorDirectionDebugger.class
-                    //TODO: ManualFeedbackTuner.class
+                    MecanumMotorDirectionDebugger.class,
+                    ManualFeedbackTuner.class
             )) {
                 configRoot.putVariable(c.getSimpleName(), ReflectionConfig.createVariableFromClass(c));
             }
         });
+
+        TelemetryMenu.StaticClickableOption[] opModes = new TelemetryMenu.StaticClickableOption[modes.length];
+        // Have to use array access due to inner class variable mutation
+        Object[] selection = {null};
+        for (int i = 0; i < modes.length; i++) {
+            // Must be considered final as it is used in the inner class
+            int finalI = i;
+            opModes[i] = new TelemetryMenu.StaticClickableOption(modes[finalI].getClass().getSimpleName()) {
+                @Override
+                protected void onClick() {
+                    selection[0] = modes[finalI];
+                }
+            };
+        }
+        root.addChildren(opModes);
+        TelemetryMenu menu = new TelemetryMenu(out, root);
+
+        while (selection[0] == null && opModeInInit()) {
+            menu.loop(gamepad1);
+            out.add("Select an option above to run tuning for using <font face='monospace'>gamepad1</font>. Restart the OpMode to pick a different mode.");
+            out.update();
+        }
+
+        out.clearAll();
+        if (selection[0] == null) return;
+
+        // Defer the OpMode to the tuning OpMode now, it is confirmed to be safe to cast
+        out.setOpModeStatus(Text.html().bold(selection[0].getClass().getSimpleName()).toString());
+        out.update();
+        try {
+            // We're delegating the OpMode, however, runBlocking calls do not know that motor powers must be updated,
+            // so we call periodic in the background to mitigate this.
+            Threads.startLoop(drive::periodic, "RR Tuning Drive Update Executor");
+            ((LinearOpMode) selection[0]).runOpMode();
+        } finally {
+            Threads.stopAll();
+        }
     }
 }

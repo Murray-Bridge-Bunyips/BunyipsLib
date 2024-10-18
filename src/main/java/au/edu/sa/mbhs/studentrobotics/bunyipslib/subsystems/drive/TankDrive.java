@@ -229,7 +229,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     @Override
-    protected void periodic() {
+    public void periodic() {
         Twist2dDual<Time> twist = localizer.update();
         accumulator.setPoseEstimate(pose);
         accumulator.accumulate(twist);

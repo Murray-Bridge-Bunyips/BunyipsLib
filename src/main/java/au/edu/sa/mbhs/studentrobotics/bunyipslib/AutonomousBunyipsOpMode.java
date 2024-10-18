@@ -352,9 +352,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Add a task to the run queue at a specified run queue priority.
      *
      * @param runQueuePriority the run queue priority.
-     * @param newTask task to add to the run queue
+     * @param newTask          task to add to the run queue
+     * @param <T>              the inherited task type
      * @return the added task
-     * @param <T> the inherited task type
      * @see #addTaskLast(Task)
      * @see #addTaskFirst(Task)
      */

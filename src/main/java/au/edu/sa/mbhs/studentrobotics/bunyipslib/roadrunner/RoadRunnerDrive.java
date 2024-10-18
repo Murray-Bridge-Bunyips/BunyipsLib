@@ -24,6 +24,11 @@ public interface RoadRunnerDrive extends Moveable {
     Constants getConstants();
 
     /**
+     * Dispatch loop for localization and drive power updates.
+     */
+    void periodic();
+
+    /**
      * Begin building a RoadRunner trajectory from the last-known robot position when this method is called.
      * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
      *

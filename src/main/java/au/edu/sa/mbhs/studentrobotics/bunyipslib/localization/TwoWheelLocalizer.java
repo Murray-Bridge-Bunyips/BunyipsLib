@@ -42,8 +42,11 @@ public class TwoWheelLocalizer implements Localizer {
      * The IMU used for heading information.
      */
     public final IMU imu;
+    /**
+     * Used two-wheel localizer parameters.
+     */
+    public final Params params;
     private final DriveModel driveModel;
-    private final Params params;
     private int lastParPos, lastPerpPos;
     private Rotation2d lastHeading;
     private double lastRawHeadingVel, headingVelOffset;

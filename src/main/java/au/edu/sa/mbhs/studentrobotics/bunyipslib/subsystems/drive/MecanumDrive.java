@@ -279,7 +279,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * It will also update the pose history for drawing on the dashboard.
      */
     @Override
-    protected void periodic() {
+    public void periodic() {
         if (localizer == null) {
             localizer = new MecanumLocalizer(model, leftFront, leftBack, rightBack, rightFront, lazyImu.get());
         }

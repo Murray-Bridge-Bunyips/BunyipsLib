@@ -35,9 +35,12 @@ public class ThreeWheelLocalizer implements Localizer {
      * The perpendicular encoder.
      */
     public final Encoder perp;
+    /**
+     * Used three-wheel localizer parameters.
+     */
+    public final Params params;
 
     private final DriveModel driveModel;
-    private final Params params;
     private int lastPar0Pos, lastPar1Pos, lastPerpPos;
     private boolean initialized;
 

@@ -34,10 +34,9 @@ public class Accumulator implements Localizable {
     public static int MAX_POSE_HISTORY = 100;
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
-    private LinkedList<Pose2d> poseHistory = new LinkedList<>();
-
     protected Pose2d pose;
     protected PoseVelocity2d velocity = Geometry.zeroVel();
+    private LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
     /**
      * Construct an Accumulator base.
