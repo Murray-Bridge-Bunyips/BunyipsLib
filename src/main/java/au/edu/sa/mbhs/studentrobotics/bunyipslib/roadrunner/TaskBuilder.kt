@@ -1,12 +1,17 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.AutonomousBunyipsOpMode
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints.Turn
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ActionTask
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import com.acmerobotics.roadrunner.AccelConstraint
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.InstantAction
@@ -25,11 +30,14 @@ import com.acmerobotics.roadrunner.VelConstraint
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
-    private var turnConstraints: TurnConstraints = constants.baseTurnConstraints
-    private var velConstraints: VelConstraint = constants.baseVelConstraint
-    private var accelConstraints: AccelConstraint = constants.baseAccelConstraint
-    private val builder: TrajectoryActionBuilder = TrajectoryActionBuilder(
+class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
+    private var turnConstraints = constants.baseTurnConstraints
+    private var velConstraints = constants.baseVelConstraint
+    private var accelConstraints = constants.baseAccelConstraint
+    private var timeout: Measure<Time>? = null
+    private var name = "RoadRunner Drive Action"
+    private var priority = AutonomousBunyipsOpMode.TaskPriority.NORMAL
+    private val builder = TrajectoryActionBuilder(
         constants.turnActionFactory,
         constants.trajectoryActionFactory,
         constants.trajectoryBuilderParams,
@@ -138,14 +146,24 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
     fun turnTo(heading: Double, unit: Angle = Radians) =
         apply { builder.turnTo(unit.of(heading).inUnit(Radians), turnConstraints) }
 
+    /**
+     * Move to the specified [posX] coordinate in the direction of the current heading.
+     */
     @JvmOverloads
     fun lineToX(posX: Double, unit: Distance = Inches) =
         apply { builder.lineToX(unit.of(posX).inUnit(Inches), velConstraints, accelConstraints) }
 
+    /**
+     * Move to the specified [posX] coordinate in the direction of the current heading.
+     */
     @JvmOverloads
     fun lineToXConstantHeading(posX: Double, unit: Distance = Inches) =
         apply { builder.lineToXConstantHeading(unit.of(posX).inUnit(Inches), velConstraints, accelConstraints) }
 
+    /**
+     * Move to the specified [posX] coordinate in the direction of the current heading while linearly interpolating the
+     * heading to [heading].
+     */
     @JvmOverloads
     fun lineToXLinearHeading(posX: Double, posUnit: Distance = Inches, heading: Rotation2d) =
         apply {
@@ -157,6 +175,10 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [posX] coordinate in the direction of the current heading while linearly interpolating the
+     * heading to [heading].
+     */
     @JvmOverloads
     fun lineToXLinearHeading(posX: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
         apply {
@@ -168,6 +190,10 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [posX] coordinate in the direction of the current heading while spline interpolating the
+     * heading to [heading].
+     */
     @JvmOverloads
     fun lineToXSplineHeading(posX: Double, posUnit: Distance = Inches, heading: Rotation2d) =
         apply {
@@ -179,6 +205,10 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [posX] coordinate in the direction of the current heading while spline interpolating the
+     * heading to [heading].
+     */
     @JvmOverloads
     fun lineToXSplineHeading(posX: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
         apply {
@@ -190,14 +220,24 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [posY] coordinate in the direction of the current heading.
+     */
     @JvmOverloads
     fun lineToY(posY: Double, unit: Distance = Inches) =
         apply { builder.lineToY(unit.of(posY).inUnit(Inches), velConstraints, accelConstraints) }
 
+    /**
+     * Move to the specified [posY] coordinate in the direction of the current heading.
+     */
     @JvmOverloads
     fun lineToYConstantHeading(posY: Double, unit: Distance = Inches) =
         apply { builder.lineToYConstantHeading(unit.of(posY).inUnit(Inches), velConstraints, accelConstraints) }
 
+    /**
+     * Move to the specified [posY] coordinate in the direction of the current heading while linearly interpolating the
+     * heading to [heading].
+     */
     @JvmOverloads
     fun lineToYLinearHeading(posY: Double, posUnit: Distance = Inches, heading: Rotation2d) =
         apply {
@@ -209,6 +249,10 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [posY] coordinate in the direction of the current heading while linearly interpolating the
+     * heading to [heading].
+     */
     @JvmOverloads
     fun lineToYLinearHeading(posY: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
         apply {
@@ -220,6 +264,10 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [posY] coordinate in the direction of the current heading while spline interpolating the
+     * heading to [heading].
+     */
     @JvmOverloads
     fun lineToYSplineHeading(posY: Double, posUnit: Distance = Inches, heading: Rotation2d) =
         apply {
@@ -231,6 +279,10 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [posY] coordinate in the direction of the current heading while spline interpolating the
+     * heading to [heading].
+     */
     @JvmOverloads
     fun lineToYSplineHeading(posY: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
         apply {
@@ -242,6 +294,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pos] vector while maintaining the current heading.
+     */
     @JvmOverloads
     fun strafeTo(pos: Vector2d, unit: Distance = Inches) =
         apply {
@@ -252,6 +307,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pos] vector while maintaining the current heading.
+     */
     @JvmOverloads
     fun strafeToConstantHeading(pos: Vector2d, unit: Distance = Inches) =
         apply {
@@ -262,6 +320,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pos] vector while linearly interpolating the heading to [heading].
+     */
     @JvmOverloads
     fun strafeToLinearHeading(pos: Vector2d, posUnit: Distance = Inches, heading: Rotation2d) =
         apply {
@@ -273,6 +334,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pos] vector while linearly interpolating the heading to [heading].
+     */
     @JvmOverloads
     fun strafeToLinearHeading(
         pos: Vector2d,
@@ -289,6 +353,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pos] vector while spline interpolating the heading to [heading].
+     */
     @JvmOverloads
     fun strafeToSplineHeading(pos: Vector2d, posUnit: Distance = Inches, heading: Rotation2d) =
         apply {
@@ -300,6 +367,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pos] vector while spline interpolating the heading to [heading].
+     */
     @JvmOverloads
     fun strafeToSplineHeading(
         pos: Vector2d,
@@ -316,6 +386,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pos] in a spline path while following the specified [tangent].
+     */
     @JvmOverloads
     fun splineTo(pos: Vector2d, unit: Distance = Inches, tangent: Rotation2d) =
         apply {
@@ -327,6 +400,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pos] in a spline path while following the specified [tangent].
+     */
     @JvmOverloads
     fun splineTo(pos: Vector2d, unit: Distance = Inches, tangent: Double, tangentUnit: Angle = Radians) =
         apply {
@@ -338,6 +414,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pos] in a spline path while maintaining the current heading.
+     */
     @JvmOverloads
     fun splineToConstantHeading(pos: Vector2d, unit: Distance = Inches, tangent: Rotation2d) =
         apply {
@@ -349,6 +428,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pos] in a spline path while maintaining the current heading.
+     */
     @JvmOverloads
     fun splineToConstantHeading(pos: Vector2d, unit: Distance = Inches, tangent: Double, tangentUnit: Angle = Radians) =
         apply {
@@ -360,6 +442,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pose] in a spline path while linearly interpolating the heading to [tangent].
+     */
     @JvmOverloads
     fun splineToLinearHeading(
         pose: Pose2d,
@@ -377,6 +462,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pose] in a spline path while linearly interpolating the heading to [tangent].
+     */
     @JvmOverloads
     fun splineToLinearHeading(
         pose: Pose2d,
@@ -395,6 +483,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pose] in a spline path while spline interpolating the heading to [tangent].
+     */
     @JvmOverloads
     fun splineToSplineHeading(
         pose: Pose2d,
@@ -412,6 +503,9 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
+    /**
+     * Move to the specified [pose] in a spline path while spline interpolating the heading to [tangent].
+     */
     @JvmOverloads
     fun splineToSplineHeading(
         pose: Pose2d,
@@ -430,8 +524,19 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
             )
         }
 
-    fun fresh() {
-        // TODO: fresh impl
+    /**
+     * Creates a new builder with the same settings at the current pose, tangent.
+     */
+    fun fresh(): TaskBuilder {
+        val bClass = builder::class.java
+        val lastPoseUnmappedField = bClass.getDeclaredField("lastPoseUnmapped")
+        val lastTangentField = bClass.getDeclaredField("lastTangent")
+        lastPoseUnmappedField.isAccessible = true
+        lastTangentField.isAccessible = true
+        val lastPoseUnmapped = lastPoseUnmappedField.get(builder) as Pose2d
+        val lastTangent = lastTangentField.get(builder) as Rotation2d
+
+        return TaskBuilder(constants, lastPoseUnmapped, builder.poseMap).setTangent(lastTangent)
     }
 
     /**
@@ -453,20 +558,67 @@ class TaskBuilder(constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
         }
 
     /**
+     * Reset the turn constraints to default.
+     */
+    fun resetTurnConstraints() = apply { turnConstraints = constants.baseTurnConstraints }
+
+    /**
      * Set the velocity constraints for future builder instructions in units of inches.
      */
-    fun setVelConstraints(velConstraintsInches: VelConstraint) =
-        apply { velConstraints = velConstraintsInches }
+    fun setVelConstraints(velConstraintsInches: VelConstraint) = apply { velConstraints = velConstraintsInches }
 
     // TODO: Vel object
 
     /**
+     * Reset the velocity constraints to default.
+     */
+    fun resetVelConstraints() = apply { velConstraints = constants.baseVelConstraint }
+
+    /**
      * Set the acceleration constraints for future builder instructions in units of inches.
      */
-    fun setAccelConstraints(accelConstraints: AccelConstraint) =
-        apply { this.accelConstraints = accelConstraints }
+    fun setAccelConstraints(accelConstraints: AccelConstraint) = apply { this.accelConstraints = accelConstraints }
 
     // TODO: Accel object
 
-    // TODO: RoadRunner utils for building Tasks
+    /**
+     * Reset the acceleration constraints to default.
+     */
+    fun resetAccelConstraints() = apply { accelConstraints = constants.baseAccelConstraint }
+
+    /**
+     * Set the timeout for the underlying task.
+     */
+    fun withTimeout(timeout: Measure<Time>) = apply { this.timeout = timeout }
+
+    /**
+     * Set the name for the underlying task.
+     */
+    fun withName(name: String) = apply { this.name = name }
+
+    /**
+     * Set the priority for the underlying task if using [addTask].
+     */
+    fun withPriority(priority: AutonomousBunyipsOpMode.TaskPriority) = apply { this.priority = priority }
+
+    /**
+     * Build the current trajectory and return it as a [Task]/[Action].
+     */
+    fun build() = ActionTask(builder.build()).also {
+        it.withName(name)
+        if (timeout != null)
+            it.withTimeout(timeout!!)
+    }
+
+    /**
+     * Build the current trajectory and add it to the current [AutonomousBunyipsOpMode] task queue.
+     *
+     * This method will throw an [UninitializedPropertyAccessException] if the current [BunyipsOpMode] is not an
+     * [AutonomousBunyipsOpMode] or if the [AutonomousBunyipsOpMode] is not running.
+     */
+    fun addTask() = build().also {
+        if (!BunyipsOpMode.isRunning || BunyipsOpMode.instance !is AutonomousBunyipsOpMode)
+            throw UninitializedPropertyAccessException("Cannot call addTask() when an active AutonomousBunyipsOpMode instance is not running!")
+        (BunyipsOpMode.instance as AutonomousBunyipsOpMode).addTask(priority, it)
+    }
 }

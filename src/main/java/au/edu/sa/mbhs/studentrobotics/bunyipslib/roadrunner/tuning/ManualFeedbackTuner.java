@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.tuning;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
@@ -51,12 +53,11 @@ public final class ManualFeedbackTuner extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            // TODO: actions makePath not implemented yet
-//            Actions.runBlocking(
-//                    drive.actionBuilder(new Pose2d(0, 0, 0))
-//                            .lineToX(DISTANCE)
-//                            .lineToX(0)
-//                            .build());
+            Actions.runBlocking(
+                    drive.makeTrajectory(new Pose2d(0, 0, 0))
+                            .lineToX(DISTANCE)
+                            .lineToX(0)
+                            .build());
         }
     }
 }

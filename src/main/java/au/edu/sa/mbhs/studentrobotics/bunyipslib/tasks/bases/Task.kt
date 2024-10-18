@@ -72,7 +72,7 @@ abstract class Task(
      *
      * This field is used for porting between [Action] and [Task] implementations.
      */
-    lateinit var fieldOverlay: Canvas
+    protected lateinit var fieldOverlay: Canvas
 
     /**
      * Convenience field to get a reference to a [TelemetryPacket] for sending telemetry to the dashboard.
@@ -80,7 +80,7 @@ abstract class Task(
      *
      * This field is used for porting between [Action] and [Task] implementations.
      */
-    lateinit var p: TelemetryPacket
+    protected lateinit var p: TelemetryPacket
 
     /**
      * Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.

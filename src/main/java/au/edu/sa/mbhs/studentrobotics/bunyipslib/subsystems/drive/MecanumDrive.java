@@ -1,6 +1,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive;
 
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -365,6 +367,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                 xPoints[i] = p.position.x;
                 yPoints[i] = p.position.y;
             }
+
+            withTimeout(Seconds.of(t.duration));
         }
 
         @Override
@@ -454,6 +458,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
          */
         public TurnTask(TimeTurn turn) {
             this.turn = turn;
+            withTimeout(Seconds.of(turn.duration));
         }
 
         @Override
