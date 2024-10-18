@@ -1,4 +1,4 @@
-//TODO: reimplement
+// TODO: Reimplement as an Accumulator and 3D
 //package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision;
 //
 //
@@ -268,7 +268,6 @@
 //                    tagY - relativeY
 //            );
 //            // Offset as defined by the user to account for the camera not representing true position
-//            // TODO: test
 //            pos = pos.minus(Rotation2d.exp(tagRotation + Math.PI / 2 - Math.toRadians(camPose.yaw))
 //                    .times(cameraRobotOffset.position));
 //

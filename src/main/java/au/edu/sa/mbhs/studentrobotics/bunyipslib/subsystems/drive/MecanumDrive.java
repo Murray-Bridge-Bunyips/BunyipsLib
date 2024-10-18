@@ -212,8 +212,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         this.leftBackPower = leftBackPower;
         this.rightBackPower = rightBackPower;
         this.rightFrontPower = rightFrontPower;
-
-        // TODO: RoadRunnerTuningOpMode (and new tuning OpModes)
     }
 
     /**
