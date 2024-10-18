@@ -43,7 +43,7 @@ public final class Vel {
      * Create a new Vel object with the specified maximum translation velocity.
      *
      * @param maxVel The maximum translation velocity.
-     * @param unit The unit of the maximum translation velocity.
+     * @param unit   The unit of the maximum translation velocity.
      * @return The new Vel object.
      */
     public static Vel ofMaxVel(double maxVel, Velocity<Distance> unit) {
@@ -54,7 +54,7 @@ public final class Vel {
      * Create a new Vel object with the specified maximum angular velocity.
      *
      * @param maxAngVel The maximum angular velocity.
-     * @param unit The unit of the maximum angular velocity.
+     * @param unit      The unit of the maximum angular velocity.
      * @return The new Vel object.
      */
     public static Vel ofMaxAngVel(double maxAngVel, Velocity<Angle> unit) {
@@ -65,7 +65,7 @@ public final class Vel {
      * Compose this Vel object with a maximum translation velocity constraint.
      *
      * @param maxVel The maximum translation velocity.
-     * @param unit The unit of the maximum translation velocity.
+     * @param unit   The unit of the maximum translation velocity.
      * @return The new Vel object.
      */
     public Vel andMaxVel(double maxVel, Velocity<Distance> unit) {
@@ -76,7 +76,7 @@ public final class Vel {
      * Compose this Vel object with a maximum angular velocity constraint.
      *
      * @param maxAngVel The maximum angular velocity.
-     * @param unit The unit of the maximum angular velocity.
+     * @param unit      The unit of the maximum angular velocity.
      * @return The new Vel object.
      */
     public Vel andMaxAngVel(double maxAngVel, Velocity<Angle> unit) {
@@ -86,7 +86,7 @@ public final class Vel {
     /**
      * Get a built MinVelConstraint object with the specified constraints.
      *
-     * @param defaultVelConstraint The default translation velocity constraint to use if no constraint is specified.
+     * @param defaultVelConstraint    The default translation velocity constraint to use if no constraint is specified.
      * @param defaultAngVelConstraint The default angular velocity constraint to use if no constraint is specified.
      * @return The built MinVelConstraint object.
      */

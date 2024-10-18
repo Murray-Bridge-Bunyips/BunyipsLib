@@ -1,6 +1,9 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive;
 
-
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.InchesPerSecond;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.RadiansPerSecond;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
@@ -44,14 +47,15 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.MecanumLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.Constants;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.DriveModel;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.MecanumGains;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.MotionProfile;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.DriveCommandMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.MecanumCommandMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.Constants;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.DriveModel;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.ErrorThresholds;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.MecanumGains;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.MotionProfile;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
@@ -99,6 +103,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     private Localizer localizer;
     private Accumulator accumulator;
+    private ErrorThresholds errorThresholds = ErrorThresholds.DEFAULT;
     private volatile double leftFrontPower;
     private volatile double leftBackPower;
     private volatile double rightBackPower;
@@ -198,6 +203,17 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public MecanumDrive withAccumulator(@NonNull Accumulator accumulator) {
         this.accumulator.copyTo(accumulator);
         this.accumulator = accumulator;
+        return this;
+    }
+
+    /**
+     * Set a new set of error thresholds for this drive instance to use when running trajectories.
+     *
+     * @param errorThresholds the new error thresholds to use
+     * @return this
+     */
+    public MecanumDrive withErrorThresholds(@NonNull ErrorThresholds errorThresholds) {
+        this.errorThresholds = errorThresholds;
         return this;
     }
 
@@ -346,6 +362,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public final class FollowTrajectoryTask extends Task {
         private final TimeTrajectory timeTrajectory;
         private final double[] xPoints, yPoints;
+        private Pose2d error;
         private double beginTs = -1;
         private double t;
 
@@ -355,7 +372,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
          * @param t the trajectory to follow
          */
         public FollowTrajectoryTask(TimeTrajectory t) {
-            // TODO: pose stabilisation
             timeTrajectory = t;
 
             List<Double> disps = com.acmerobotics.roadrunner.Math.range(
@@ -369,7 +385,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                 yPoints[i] = p.position.y;
             }
 
-            withTimeout(Seconds.of(t.duration));
+            withTimeout(Seconds.of(t.duration).plus(errorThresholds.getStabilizationTimeout()));
         }
 
         @Override
@@ -410,11 +426,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
 
-            p.put("x", pose.position.x);
-            p.put("y", pose.position.y);
-            p.put("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
-
-            Pose2d error = txWorldTarget.value().minusExp(pose);
+            error = txWorldTarget.value().minusExp(pose);
             p.put("xError", error.position.x);
             p.put("yError", error.position.y);
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
@@ -432,7 +444,11 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return t >= timeTrajectory.duration;
+            return t >= timeTrajectory.duration
+                    && error.position.norm() < errorThresholds.getMaxTranslationalError().in(Inches)
+                    && poseVelo.linearVel.norm() < errorThresholds.getMinVelStab().in(InchesPerSecond)
+                    && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
+                    && poseVelo.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
         }
 
         @Override
@@ -449,6 +465,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     public final class TurnTask extends Task {
         private final TimeTurn turn;
+        private Pose2d error;
         private double beginTs = -1;
         private double t;
 
@@ -459,7 +476,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
          */
         public TurnTask(TimeTurn turn) {
             this.turn = turn;
-            withTimeout(Seconds.of(turn.duration));
+            withTimeout(Seconds.of(turn.duration).plus(errorThresholds.getStabilizationTimeout()));
         }
 
         @Override
@@ -498,6 +515,9 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
 
+            error = txWorldTarget.value().minusExp(pose);
+            p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
+
             Canvas c = p.fieldOverlay();
             c.setStrokeWidth(1);
 
@@ -510,7 +530,9 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return t >= turn.duration;
+            return t >= turn.duration
+                    && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
+                    && poseVelo.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
         }
 
         @Override

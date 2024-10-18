@@ -43,7 +43,7 @@ public final class Turn {
      * Create a new Turn object with the specified maximum angular velocity.
      *
      * @param maxAngVel The maximum angular velocity in radians per second.
-     * @param unit The unit of the maximum angular velocity.
+     * @param unit      The unit of the maximum angular velocity.
      * @return The new Turn object.
      */
     public static Turn ofMaxAngVel(double maxAngVel, Velocity<Angle> unit) {
@@ -54,7 +54,7 @@ public final class Turn {
      * Create a new Turn object with the specified minimum angular acceleration.
      *
      * @param minAngAccel The minimum angular acceleration in radians per second squared.
-     * @param unit The unit of the minimum angular acceleration.
+     * @param unit        The unit of the minimum angular acceleration.
      * @return The new Turn object.
      */
     public static Turn ofMinAngAccel(double minAngAccel, Velocity<Velocity<Angle>> unit) {
@@ -65,7 +65,7 @@ public final class Turn {
      * Create a new Turn object with the specified maximum angular acceleration.
      *
      * @param maxAngAccel The maximum angular acceleration in radians per second squared.
-     * @param unit The unit of the maximum angular acceleration.
+     * @param unit        The unit of the maximum angular acceleration.
      * @return The new Turn object.
      */
     public static Turn ofMaxAngAccel(double maxAngAccel, Velocity<Velocity<Angle>> unit) {
@@ -76,7 +76,7 @@ public final class Turn {
      * Compose this Turn object with a maximum angular velocity constraint.
      *
      * @param maxAngVel The maximum angular velocity in radians per second.
-     * @param unit The unit of the maximum angular velocity.
+     * @param unit      The unit of the maximum angular velocity.
      * @return The new Turn object.
      */
     public Turn andMaxAngVel(double maxAngVel, Velocity<Angle> unit) {
@@ -87,7 +87,7 @@ public final class Turn {
      * Compose this Turn object with a minimum angular acceleration constraint.
      *
      * @param minAngAccel The minimum angular acceleration in radians per second squared.
-     * @param unit The unit of the minimum angular acceleration.
+     * @param unit        The unit of the minimum angular acceleration.
      * @return The new Turn object.
      */
     public Turn andMinAngAccel(double minAngAccel, Velocity<Velocity<Angle>> unit) {
@@ -98,7 +98,7 @@ public final class Turn {
      * Compose this Turn object with a maximum angular acceleration constraint.
      *
      * @param maxAngAccel The maximum angular acceleration in radians per second squared.
-     * @param unit The unit of the maximum angular acceleration.
+     * @param unit        The unit of the maximum angular acceleration.
      * @return The new Turn object.
      */
     public Turn andMaxAngAccel(double maxAngAccel, Velocity<Velocity<Angle>> unit) {
@@ -113,9 +113,9 @@ public final class Turn {
      */
     public TurnConstraints getOrDefault(TurnConstraints defaultConstraints) {
         return new TurnConstraints(
-            maxAngVelRadsPerSec == null ? defaultConstraints.maxAngVel : maxAngVelRadsPerSec,
-            minAngAccelRadsPerSecSquared == null ? defaultConstraints.minAngAccel : minAngAccelRadsPerSecSquared,
-            maxAngAccelRadsPerSecSquared == null ? defaultConstraints.maxAngAccel : maxAngAccelRadsPerSecSquared
+                maxAngVelRadsPerSec == null ? defaultConstraints.maxAngVel : maxAngVelRadsPerSec,
+                minAngAccelRadsPerSecSquared == null ? defaultConstraints.minAngAccel : minAngAccelRadsPerSecSquared,
+                maxAngAccelRadsPerSecSquared == null ? defaultConstraints.maxAngAccel : maxAngAccelRadsPerSecSquared
         );
     }
 }

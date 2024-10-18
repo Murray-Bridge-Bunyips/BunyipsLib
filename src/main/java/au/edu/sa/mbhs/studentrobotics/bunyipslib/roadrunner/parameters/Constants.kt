@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters
 
 import com.acmerobotics.roadrunner.AccelConstraint
 import com.acmerobotics.roadrunner.TrajectoryActionFactory

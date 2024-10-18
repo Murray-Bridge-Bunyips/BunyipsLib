@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters;
 
 /**
  * Drive coefficients that define gains for a Mecanum drivetrain.

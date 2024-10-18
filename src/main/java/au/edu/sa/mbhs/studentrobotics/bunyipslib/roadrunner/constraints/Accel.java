@@ -36,7 +36,7 @@ public final class Accel {
      * Create a new Accel object with the specified minimum acceleration.
      *
      * @param minAccel The minimum acceleration in inches per second squared.
-     * @param unit The unit of the minimum acceleration.
+     * @param unit     The unit of the minimum acceleration.
      * @return The new Accel object.
      */
     public static Accel ofMinAccel(double minAccel, Velocity<Velocity<Distance>> unit) {
@@ -47,7 +47,7 @@ public final class Accel {
      * Create a new Accel object with the specified maximum acceleration.
      *
      * @param maxAccel The maximum acceleration in inches per second squared.
-     * @param unit The unit of the maximum acceleration.
+     * @param unit     The unit of the maximum acceleration.
      * @return The new Accel object.
      */
     public static Accel ofMaxAccel(double maxAccel, Velocity<Velocity<Distance>> unit) {
@@ -58,7 +58,7 @@ public final class Accel {
      * Compose this Accel object with a maximum acceleration constraint.
      *
      * @param maxAccel The maximum acceleration in inches per second squared.
-     * @param unit The unit of the maximum acceleration.
+     * @param unit     The unit of the maximum acceleration.
      * @return The new Accel object.
      */
     public Accel andMaxAccel(double maxAccel, Velocity<Velocity<Distance>> unit) {
@@ -69,7 +69,7 @@ public final class Accel {
      * Compose this Accel object with a minimum acceleration constraint.
      *
      * @param minAccel The minimum acceleration in inches per second squared.
-     * @param unit The unit of the minimum acceleration.
+     * @param unit     The unit of the minimum acceleration.
      * @return The new Accel object.
      */
     public Accel andMinAccel(double minAccel, Velocity<Velocity<Distance>> unit) {
