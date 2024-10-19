@@ -540,7 +540,7 @@ public class Scheduler extends BunyipsComponent {
          * Implicitly make a new RunTask to run once the condition is met.
          * This callback will run repeatedly while the condition is met.
          * <p>
-         * This method can only be called once per ConditionalTask.
+         * This method can only be called once per ConditionalTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
          * ending immediately as it is an RunTask.
          *
@@ -555,7 +555,7 @@ public class Scheduler extends BunyipsComponent {
          * Queue a task when the condition is met, debouncing the task from queueing more than once the condition is met.
          * This effectively does the same as {@link #run}, however only a single queue is permitted per rising edge.
          * <p>
-         * This method can only be called once per ConditionalTask.
+         * This method can only be called once per ConditionalTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
          * ending when the task ends.
          *
@@ -571,7 +571,7 @@ public class Scheduler extends BunyipsComponent {
          * Implicitly make a new RunTask to run once the condition is met, debouncing the task from queueing more than once the condition is met.
          * This effectively will run this code block once when the condition is met at the rising edge.
          * <p>
-         * This method can only be called once per ConditionalTask.
+         * This method can only be called once per ConditionalTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
          * ending immediately as it is an RunTask.
          *
@@ -622,48 +622,42 @@ public class Scheduler extends BunyipsComponent {
         /**
          * Run a task assigned to in run() in a certain amount of time of the condition remaining true.
          * If on a controller, this will delay the activation of the task by the specified amount of time.
+         * If this method is called multiple times, the last time directive will be used.
          *
          * @param interval The time interval
+         * @return Current builder for additional task parameters
          */
-        public void in(Measure<Time> interval) {
+        public ConditionalTask in(Measure<Time> interval) {
             time = interval;
+            return this;
         }
 
         /**
          * Run a task assigned to in run() in a certain amount of time of the condition remaining true.
          * If on a controller, this will delay the activation of the task by the specified amount of time.
+         * If this method is called multiple times, the last time directive will be used.
          *
          * @param interval The time interval
+         * @return Current builder for additional task parameters
          */
         // Kotlin interop, as in is a reserved keyword
-        public void inTime(Measure<Time> interval) {
+        public ConditionalTask inTime(Measure<Time> interval) {
             time = interval;
+            return this;
         }
 
         /**
          * Run the task assigned to in run() until this condition is met. Once this condition is met, the task will
          * be forcefully stopped and the scheduler will move on. This is useful for continuous tasks.
+         * If this method is called multiple times, an OR condition will be composed with the last condition.
          *
          * @param condition The condition to stop the task. Note the task will be auto-stopped if it finishes by itself,
          *                  this condition simply allows for an early finish if this condition is met.
+         * @return Current builder for additional task parameters
          */
-        public void finishingIf(BooleanSupplier condition) {
-            stopCondition = condition;
-        }
-
-        /**
-         * Run the task assigned to in run() in a certain amount of time of the condition remaining true.
-         * If on a controller, this will delay the activation of the task by the specified amount of time.
-         * Once this condition is met, the task will be forcefully stopped and the scheduler will move on.
-         * This is useful for continuous tasks.
-         *
-         * @param interval  The time interval
-         * @param condition The condition to stop the task. Note the task will be auto-stopped if it finishes by itself,
-         *                  this condition simply allows for an early finish if this condition is met.
-         */
-        public void inTimeFinishingIf(Measure<Time> interval, BooleanSupplier condition) {
-            time = interval;
-            stopCondition = condition;
+        public ConditionalTask finishingIf(BooleanSupplier condition) {
+            stopCondition = stopCondition == null ? condition : () -> stopCondition.getAsBoolean() || condition.getAsBoolean();
+            return this;
         }
 
         @NonNull
