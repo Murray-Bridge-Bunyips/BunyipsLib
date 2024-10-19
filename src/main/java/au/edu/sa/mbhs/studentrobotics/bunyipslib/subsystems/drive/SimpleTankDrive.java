@@ -114,10 +114,10 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
         }
 
         for (DcMotor m : leftMotors) {
-            m.setPower(wheelVels.left.get(0) / maxPowerMag);
+            m.setPower(Mathf.clamp(wheelVels.left.get(0) / maxPowerMag, -1, 1));
         }
         for (DcMotor m : rightMotors) {
-            m.setPower(wheelVels.right.get(0) / maxPowerMag);
+            m.setPower(Mathf.clamp(wheelVels.right.get(0) / maxPowerMag, -1, 1));
         }
 
         opMode(o -> o.telemetry.add("%: %\\% %, %\\% %", this,

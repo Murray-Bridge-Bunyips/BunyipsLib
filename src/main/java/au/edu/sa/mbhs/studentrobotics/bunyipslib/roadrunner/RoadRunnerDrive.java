@@ -26,6 +26,9 @@ public interface RoadRunnerDrive extends Moveable {
 
     /**
      * Dispatch loop for localization and drive power updates.
+     * <p>
+     * Note: If this drive is a subsystem, this method is called in the subsystem's {@code update()} method and
+     * should be called there.
      */
     void periodic();
 

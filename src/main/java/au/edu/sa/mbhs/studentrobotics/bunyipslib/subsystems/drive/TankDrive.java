@@ -226,8 +226,8 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
 
-        leftPower = wheelVels.left.get(0) / maxPowerMag;
-        rightPower = wheelVels.right.get(0) / maxPowerMag;
+        leftPower = Mathf.clamp(wheelVels.left.get(0) / maxPowerMag, -1, 1);
+        rightPower = Mathf.clamp(wheelVels.right.get(0) / maxPowerMag, -1, 1);
     }
 
     @Override

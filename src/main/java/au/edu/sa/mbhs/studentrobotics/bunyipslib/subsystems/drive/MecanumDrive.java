@@ -251,10 +251,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
 
-        leftFrontPower = wheelVels.leftFront.get(0) / maxPowerMag;
-        leftBackPower = wheelVels.leftBack.get(0) / maxPowerMag;
-        rightBackPower = wheelVels.rightBack.get(0) / maxPowerMag;
-        rightFrontPower = wheelVels.rightFront.get(0) / maxPowerMag;
+        leftFrontPower = Mathf.clamp(wheelVels.leftFront.get(0) / maxPowerMag, -1, 1);
+        leftBackPower = Mathf.clamp(wheelVels.leftBack.get(0) / maxPowerMag, -1, 1);
+        rightBackPower = Mathf.clamp(wheelVels.rightBack.get(0) / maxPowerMag, -1, 1);
+        rightFrontPower = Mathf.clamp(wheelVels.rightFront.get(0) / maxPowerMag, -1, 1);
     }
 
     /**

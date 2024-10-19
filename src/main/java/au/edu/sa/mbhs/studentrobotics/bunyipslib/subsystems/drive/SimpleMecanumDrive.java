@@ -65,6 +65,10 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
 
     @Override
     protected void periodic() {
+        speedX = Mathf.clamp(speedX, -1, 1);
+        speedY = Mathf.clamp(speedY, -1, 1);
+        speedR = Mathf.clamp(speedR, -1, 1);
+
         if (localizer != null) {
             Twist2dDual<Time> twist = localizer.update();
 
