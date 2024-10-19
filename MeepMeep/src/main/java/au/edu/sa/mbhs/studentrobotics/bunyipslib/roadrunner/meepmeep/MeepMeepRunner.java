@@ -16,7 +16,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.MeepM
 
 /**
  * Runner file for MeepMeep. This is where you will create your MeepMeep path and run it.
- * This file is gitignored so cross-team collaboration can be done without conflicts.
+ * <p>
+ * You may wish to ignore this file from Git using `git update-index --skip-worktree MeepMeepRunner.java`
+ * in the current directory from the command line.
  *
  * @since 6.0.0
  */
