@@ -190,6 +190,9 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     public Localizer getLocalizer() {
+        if (localizer == null) {
+            localizer = new MecanumLocalizer(model, leftFront, leftBack, rightBack, rightFront, lazyImu.get());
+        }
         return localizer;
     }
 
