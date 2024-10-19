@@ -3,7 +3,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.ForceStopException
-import org.murraybridgebunyips.bunyipslib.BuildConfig
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.function.Consumer

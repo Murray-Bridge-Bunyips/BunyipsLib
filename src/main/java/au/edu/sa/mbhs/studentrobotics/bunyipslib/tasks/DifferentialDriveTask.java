@@ -1,8 +1,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
+import androidx.annotation.NonNull;
 
-import org.jetbrains.annotations.NotNull;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
@@ -28,7 +28,7 @@ public class DifferentialDriveTask extends ForeverTask {
      * @param gamepad the gamepad to use
      * @param drive   the drive to control, this task may be attached on this BunyipsSubsystem if applicable
      */
-    public DifferentialDriveTask(Gamepad gamepad, @NotNull Moveable drive) {
+    public DifferentialDriveTask(Gamepad gamepad, @NonNull Moveable drive) {
         this.drive = drive;
         this.gamepad = gamepad;
         if (drive instanceof BunyipsSubsystem)

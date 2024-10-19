@@ -5,8 +5,6 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Sec
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -235,7 +233,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param <T>     the inherited task type
      * @return the added task
      */
-    public final <T extends Task> T addTask(@NotNull T newTask, boolean ack) {
+    public final <T extends Task> T addTask(@NonNull T newTask, boolean ack) {
         checkTaskForDependency(newTask);
         if (!safeToAddTasks && !ack) {
             telemetry.log("<font color='gray'>auto:</font> <font color='yellow'>caution!</font> a task was added manually before the onReady callback");
@@ -257,7 +255,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param <T>     the inherited task type
      * @return the added task
      */
-    public final <T extends Task> T addTask(@NotNull T newTask) {
+    public final <T extends Task> T addTask(@NonNull T newTask) {
         return addTask(newTask, false);
     }
 
@@ -267,7 +265,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param runnable the code to add to the run queue to run once
      * @return the added {@link RunTask}
      */
-    public final RunTask addTask(@NotNull Runnable runnable) {
+    public final RunTask addTask(@NonNull Runnable runnable) {
         return addTask(new RunTask(runnable));
     }
 
@@ -278,7 +276,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param name     the name of the task
      * @return the added {@link RunTask}
      */
-    public final RunTask addTask(@NotNull Runnable runnable, String name) {
+    public final RunTask addTask(@NonNull Runnable runnable, String name) {
         RunTask task = new RunTask(runnable);
         task.withName(name);
         return addTask(task);
@@ -294,7 +292,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param <T>     the inherited task type
      * @return the added task
      */
-    public final <T extends Task> T addTaskAtIndex(int index, @NotNull T newTask) {
+    public final <T extends Task> T addTaskAtIndex(int index, @NonNull T newTask) {
         checkTaskForDependency(newTask);
         ArrayDeque<Task> tmp = new ArrayDeque<>();
         synchronized (tasks) {
@@ -330,7 +328,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param runnable the code to add to the run queue to run once
      * @return the added {@link RunTask}
      */
-    public final RunTask addTaskAtIndex(int index, @NotNull Runnable runnable) {
+    public final RunTask addTaskAtIndex(int index, @NonNull Runnable runnable) {
         return addTaskAtIndex(index, new RunTask(runnable));
     }
 
@@ -342,7 +340,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param name     the name of the task
      * @return the added {@link RunTask}
      */
-    public final RunTask addTaskAtIndex(int index, @NotNull Runnable runnable, String name) {
+    public final RunTask addTaskAtIndex(int index, @NonNull Runnable runnable, String name) {
         RunTask task = new RunTask(runnable);
         task.withName(name);
         return addTaskAtIndex(index, task);
@@ -379,7 +377,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param <T>     the inherited task type
      * @return the added task
      */
-    public final <T extends Task> T addTaskLast(@NotNull T newTask) {
+    public final <T extends Task> T addTaskLast(@NonNull T newTask) {
         checkTaskForDependency(newTask);
         if (!callbackReceived) {
             postQueue.add(newTask);
@@ -405,7 +403,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param <T>     the inherited task type
      * @return the added task
      */
-    public final <T extends Task> T addTaskFirst(@NotNull T newTask) {
+    public final <T extends Task> T addTaskFirst(@NonNull T newTask) {
         checkTaskForDependency(newTask);
         if (!callbackReceived) {
             preQueue.add(newTask);
@@ -500,7 +498,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *
      * @param task the task to be removed
      */
-    public final void removeTask(@NotNull Task task) {
+    public final void removeTask(@NonNull Task task) {
         synchronized (tasks) {
             if (tasks.contains(task)) {
                 tasks.remove(task);

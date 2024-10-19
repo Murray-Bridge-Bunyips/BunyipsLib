@@ -5,12 +5,12 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Mil
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
@@ -81,7 +81,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      *                            if possible. A localizer attached is required.
      * @param fieldCentricEnabled A BooleanSupplier that returns whether field centric drive is enabled
      */
-    public HolonomicVectorDriveTask(Supplier<Float> xSupplier, Supplier<Float> ySupplier, Supplier<Float> rSupplier, @NotNull Moveable drive, BooleanSupplier fieldCentricEnabled) {
+    public HolonomicVectorDriveTask(Supplier<Float> xSupplier, Supplier<Float> ySupplier, Supplier<Float> rSupplier, @NonNull Moveable drive, BooleanSupplier fieldCentricEnabled) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
@@ -108,7 +108,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      *                            if possible. A localizer attached is required.
      * @param fieldCentricEnabled A BooleanSupplier that returns whether field centric drive is enabled
      */
-    public HolonomicVectorDriveTask(Gamepad driver, @NotNull Moveable drive, BooleanSupplier fieldCentricEnabled) {
+    public HolonomicVectorDriveTask(Gamepad driver, @NonNull Moveable drive, BooleanSupplier fieldCentricEnabled) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, fieldCentricEnabled);
     }
 
