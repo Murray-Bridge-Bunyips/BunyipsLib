@@ -1,11 +1,16 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
+
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Twist2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 
 /**
  * Defines useful conversion methods for RoadRunner geometry types, including conversion between {@link Pose2d} and {@link PoseVelocity2d},
@@ -55,6 +60,33 @@ public final class Geometry {
      */
     public static Twist2d zeroTwist() {
         return new Twist2d(new Vector2d(0, 0), 0);
+    }
+
+    /**
+     * Create a vector in the desired units to be converted to a conventional Inches unit.
+     *
+     * @param value the vector
+     * @param unit the unit of both the x and y values
+     * @return the vector in Inches
+     */
+    public static Vector2d unitVec(Vector2d value, Distance unit) {
+        return new Vector2d(unit.of(value.x).in(Inches), unit.of(value.y).in(Inches));
+    }
+
+    /**
+     * Create a pose in the desired units to be converted to conventional Inches and Radians units.
+     *
+     * @param value the pose
+     * @param tUnit the unit of both the x and y values
+     * @param rUnit the unit of the heading value
+     * @return the pose in corresponding Inches and Radians units
+     */
+    public static Pose2d unitPose(Pose2d value, Distance tUnit, Angle rUnit) {
+        return new Pose2d(
+                tUnit.of(value.position.x).in(Inches),
+                tUnit.of(value.position.y).in(Inches),
+                rUnit.of(value.heading.toDouble()).in(Radians)
+        );
     }
 
     /**

@@ -1,35 +1,31 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.AutonomousBunyipsOpMode
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints.Accel
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints.Turn
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints.Vel
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.Constants
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ActionTask
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Angle
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Distance
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Measure
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Time
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Inches
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Radians
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Seconds
 import com.acmerobotics.roadrunner.AccelConstraint
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.AngularVelConstraint
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.InstantFunction
+import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.Pose2d
-import com.acmerobotics.roadrunner.PoseMap
 import com.acmerobotics.roadrunner.ProfileAccelConstraint
 import com.acmerobotics.roadrunner.Rotation2d
+import com.acmerobotics.roadrunner.TankKinematics
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder
 import com.acmerobotics.roadrunner.TranslationalVelConstraint
 import com.acmerobotics.roadrunner.TurnConstraints
 import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.VelConstraint
+import com.noahbres.meepmeep.roadrunner.Constraints
+import com.noahbres.meepmeep.roadrunner.DriveTrainType
+import java.util.function.Consumer
 
 /**
  * Extension of a RoadRunner trajectory builder to provide WPIUnits and task building support.
@@ -37,24 +33,35 @@ import com.acmerobotics.roadrunner.VelConstraint
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
-    private var turnConstraints = constants.baseTurnConstraints
-    private var velConstraints = constants.baseVelConstraint
-    private var accelConstraints = constants.baseAccelConstraint
-    private var timeout: Measure<Time>? = null
-    private var name = "RoadRunner Drive Action"
-    private var priority = AutonomousBunyipsOpMode.TaskPriority.NORMAL
-    private var builder = TrajectoryActionBuilder(
-        constants.turnActionFactory,
-        constants.trajectoryActionFactory,
-        constants.trajectoryBuilderParams,
-        startPose,
-        constants.beginEndVel,
-        constants.baseTurnConstraints,
-        constants.baseVelConstraint,
-        constants.baseAccelConstraint,
-        poseMap
-    )
+class TaskBuilder(
+    private var builder: TrajectoryActionBuilder,
+    private val baseConstraints: Constraints,
+    private val driveTrainType: DriveTrainType,
+    private val runActionConsumer: Consumer<Action> = Consumer { }
+) {
+    private val baseTurnConstraints: TurnConstraints =
+        TurnConstraints(baseConstraints.maxAngVel, -baseConstraints.maxAngAccel, baseConstraints.maxAngAccel)
+    private val baseVelConstraints: VelConstraint = when (driveTrainType) {
+        DriveTrainType.MECANUM -> MinVelConstraint(
+            listOf(
+                AngularVelConstraint(baseConstraints.maxAngVel),
+                MecanumKinematics(baseConstraints.trackWidth).WheelVelConstraint(baseConstraints.maxVel),
+            )
+        )
+
+        DriveTrainType.TANK -> MinVelConstraint(
+            listOf(
+                AngularVelConstraint(baseConstraints.maxAngVel),
+                TankKinematics(baseConstraints.trackWidth).WheelVelConstraint(baseConstraints.maxVel),
+            )
+        )
+    }
+    private val baseAccelConstraints: AccelConstraint =
+        ProfileAccelConstraint(-baseConstraints.maxAccel, baseConstraints.maxAccel)
+
+    private var turnConstraints: TurnConstraints = baseTurnConstraints
+    private var velConstraints: VelConstraint = baseVelConstraints
+    private var accelConstraints: AccelConstraint = baseAccelConstraints
 
     /**
      * Ends the current trajectory in progress. No-op if no trajectory segments are pending.
@@ -127,7 +134,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      * Sets the tangent of thebuilder = builder.
      */
     @JvmOverloads
-    fun setTangent(r: Double, unit: Angle = Radians) = apply { builder = builder.setTangent(unit.of(r).inUnit(Radians)) }
+    fun setTangent(r: Double, unit: Angle = Radians) =
+        apply { builder = builder.setTangent(unit.of(r).inUnit(Radians)) }
 
     /**
      * Set the reversed tangent state of thebuilder = builder.
@@ -165,7 +173,9 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     @JvmOverloads
     fun lineToXConstantHeading(posX: Double, unit: Distance = Inches) =
-        apply { builder = builder.lineToXConstantHeading(unit.of(posX).inUnit(Inches), velConstraints, accelConstraints) }
+        apply {
+            builder = builder.lineToXConstantHeading(unit.of(posX).inUnit(Inches), velConstraints, accelConstraints)
+        }
 
     /**
      * Move to the specified [posX] coordinate in the direction of the current heading while linearly interpolating the
@@ -239,7 +249,9 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     @JvmOverloads
     fun lineToYConstantHeading(posY: Double, unit: Distance = Inches) =
-        apply { builder = builder.lineToYConstantHeading(unit.of(posY).inUnit(Inches), velConstraints, accelConstraints) }
+        apply {
+            builder = builder.lineToYConstantHeading(unit.of(posY).inUnit(Inches), velConstraints, accelConstraints)
+        }
 
     /**
      * Move to the specified [posY] coordinate in the direction of the current heading while linearly interpolating the
@@ -536,14 +548,11 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     fun fresh(): TaskBuilder {
         val bClass = builder::class.java
-        val lastPoseUnmappedField = bClass.getDeclaredField("lastPoseUnmapped")
         val lastTangentField = bClass.getDeclaredField("lastTangent")
-        lastPoseUnmappedField.isAccessible = true
         lastTangentField.isAccessible = true
-        val lastPoseUnmapped = lastPoseUnmappedField.get(builder) as Pose2d
         val lastTangent = lastTangentField.get(builder) as Rotation2d
 
-        return TaskBuilder(constants, lastPoseUnmapped, builder.poseMap).setTangent(lastTangent)
+        return TaskBuilder(builder.fresh(), baseConstraints, driveTrainType).setTangent(lastTangent)
     }
 
     /**
@@ -560,7 +569,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     /**
      * Reset the turn constraints to default.
      */
-    fun resetTurnConstraints() = apply { turnConstraints = constants.baseTurnConstraints }
+    fun resetTurnConstraints() = apply { turnConstraints = baseTurnConstraints }
 
     /**
      * Set the velocity constraints for future builder instructions in units of inches.
@@ -584,7 +593,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     /**
      * Reset the velocity constraints to default.
      */
-    fun resetVelConstraints() = apply { velConstraints = constants.baseVelConstraint }
+    fun resetVelConstraints() = apply { velConstraints = baseVelConstraints }
 
     /**
      * Set the acceleration constraints for future builder instructions in units of inches.
@@ -607,41 +616,39 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     /**
      * Reset the acceleration constraints to default.
      */
-    fun resetAccelConstraints() = apply { accelConstraints = constants.baseAccelConstraint }
+    fun resetAccelConstraints() = apply { accelConstraints = baseAccelConstraints }
+
 
     /**
-     * Set the timeout for the underlying task.
+     * Build the current trajectory and return it as an [Action].
+     * The BunyipsLib Task system does not exist in MeepMeep.
      */
-    fun withTimeout(timeout: Measure<Time>) = apply { this.timeout = timeout }
+    fun build() = builder.build()
 
     /**
-     * Set the name for the underlying task.
+     * Will attempt to auto-call `bot.runAction()` with the built task.
+     * Mimics adding the built task to the AutonomousBunyipsOpMode queue automatically.
+     * Do note only 1 action should be running at a time.
      */
-    fun withName(name: String) = apply { this.name = name }
-
-    /**
-     * Set the priority for the underlying task if using [addTask].
-     */
-    fun withPriority(priority: AutonomousBunyipsOpMode.TaskPriority) = apply { this.priority = priority }
-
-    /**
-     * Build the current trajectory and return it as a [Task]/[Action].
-     */
-    fun build() = ActionTask(builder.build()).also {
-        it.withName(name)
-        if (timeout != null)
-            it.withTimeout(timeout!!)
+    fun addTask() {
+        runActionConsumer.accept(build())
     }
 
     /**
-     * Build the current trajectory and add it to the current [AutonomousBunyipsOpMode] task queue.
-     *
-     * This method will throw an [UninitializedPropertyAccessException] if the current [BunyipsOpMode] is not an
-     * [AutonomousBunyipsOpMode] or if the [AutonomousBunyipsOpMode] is not running.
+     * Stubbed method
      */
-    fun addTask() = build().also {
-        if (!BunyipsOpMode.isRunning || BunyipsOpMode.instance !is AutonomousBunyipsOpMode)
-            throw UninitializedPropertyAccessException("Cannot call addTask() when an active AutonomousBunyipsOpMode instance is not running!")
-        (BunyipsOpMode.instance as AutonomousBunyipsOpMode).addTask(priority, it)
-    }
+    @Suppress("UNUSED_PARAMETER")
+    fun withTimeout(timeout: Measure<Time>) = run {}
+
+    /**
+     * Stubbed method
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun withName(name: String) = run {}
+
+    /**
+     * Stubbed method
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun withPriority(priority: Any) = run {}
 }
