@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot
@@ -105,7 +104,7 @@ abstract class RobotConfig {
     private val dcMotorCastable = listOf(RawEncoder::class.java, Ramping.DcMotor::class.java, Motor::class.java)
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : HardwareDevice> getAndDynamicCast(name: String, device: Class<T>): T? {
+    private fun <T> getAndDynamicCast(name: String, device: Class<T>): T? {
         // These devices are known to replicate DcMotor functionality, and we can auto-fetch and safely cast
         // to the new type for use by the user. We can ignore any unchecked cast warnings as these are checked.
         dcMotorCastable.forEach { it ->
@@ -144,7 +143,7 @@ abstract class RobotConfig {
      *                  without having to check for null explicitly.
      */
     @JvmOverloads
-    protected fun <T : HardwareDevice> getHardware(
+    protected fun <T> getHardware(
         name: String,
         device: Class<T>,
         onSuccess: Consumer<T> = Consumer { }
