@@ -255,8 +255,8 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         }
 
         opMode(o -> o.telemetry.add("%: L:%\\% %, R:%\\% %", this,
-                Math.round(leftPower * 100), leftPower >= 0 ? "↑" : "↓",
-                Math.round(rightPower * 100), rightPower >= 0 ? "↑" : "↓"
+                Math.round(Math.abs(leftPower * 100)), leftPower >= 0 ? "↑" : "↓",
+                Math.round(Math.abs(rightPower * 100)), rightPower >= 0 ? "↑" : "↓"
         ));
     }
 

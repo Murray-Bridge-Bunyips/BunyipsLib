@@ -152,9 +152,9 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         rightFront.setPower(rightFrontPower);
 
         opMode(o -> o.telemetry.add("%: %\\% %, %\\% %, %\\% %", this,
-                Math.round(speedX * 100), speedX >= 0 ? "↑" : "↓",
-                Math.round(speedY * 100), speedY >= 0 ? "←" : "→",
-                Math.round(speedR * 100), speedR >= 0 ? "↺" : "↻"
+                Math.round(Math.abs(speedX * 100)), speedX >= 0 ? "↑" : "↓",
+                Math.round(Math.abs(speedY * 100)), speedY >= 0 ? "←" : "→",
+                Math.round(Math.abs(speedR * 100)), speedR >= 0 ? "↺" : "↻"
         ));
     }
 

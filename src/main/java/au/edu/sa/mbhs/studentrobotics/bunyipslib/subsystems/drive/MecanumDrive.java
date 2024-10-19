@@ -321,10 +321,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         rightFront.setPower(rightFrontPower);
 
         opMode(o -> o.telemetry.add("%: FL:%\\% %, BL:%\\% %, BR:%\\% %, FR:%\\% %", this,
-                Math.round(leftFrontPower * 100), leftFrontPower >= 0 ? "↑" : "↓",
-                Math.round(leftBackPower * 100), leftBackPower >= 0 ? "↑" : "↓",
-                Math.round(rightBackPower * 100), rightBackPower >= 0 ? "↑" : "↓",
-                Math.round(rightFrontPower * 100), rightFrontPower >= 0 ? "↑" : "↓"
+                Math.round(Math.abs(leftFrontPower * 100)), leftFrontPower >= 0 ? "↑" : "↓",
+                Math.round(Math.abs(leftBackPower * 100)), leftBackPower >= 0 ? "↑" : "↓",
+                Math.round(Math.abs(rightBackPower * 100)), rightBackPower >= 0 ? "↑" : "↓",
+                Math.round(Math.abs(rightFrontPower * 100)), rightFrontPower >= 0 ? "↑" : "↓"
         ));
     }
 

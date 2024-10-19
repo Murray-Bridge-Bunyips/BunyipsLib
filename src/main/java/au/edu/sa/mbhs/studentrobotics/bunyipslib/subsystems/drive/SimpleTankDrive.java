@@ -121,8 +121,8 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
         }
 
         opMode(o -> o.telemetry.add("%: %\\% %, %\\% %", this,
-                Math.round(target.linearVel.x * 100), target.linearVel.x >= 0 ? "↑" : "↓",
-                Math.round(target.angVel * 100), target.angVel >= 0 ? "↺" : "↻"
+                Math.round(Math.abs(target.linearVel.x * 100)), target.linearVel.x >= 0 ? "↑" : "↓",
+                Math.round(Math.abs(target.angVel * 100)), target.angVel >= 0 ? "↺" : "↻"
         ));
     }
 
