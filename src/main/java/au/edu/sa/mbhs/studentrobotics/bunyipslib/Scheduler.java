@@ -604,16 +604,16 @@ public class Scheduler extends BunyipsComponent {
                         .append(handler.button)
                         .append(" is ")
                         .append(handler.edge);
+                Measure<Time> delay = originalRunCondition.getActiveDelay();
+                if (delay.magnitude() > 0) {
+                        out.append(" after ")
+                            .append(Mathf.round(originalRunCondition.getActiveDelay().in(Seconds), 1))
+                            .append("s");
+                }
             } else {
                 out.append(" when ")
                         .append(originalRunCondition.toString().replace(BuildConfig.LIBRARY_PACKAGE_NAME + ".Scheduler", ""))
                         .append(" is true");
-            }
-            Measure<Time> delay = originalRunCondition.getActiveDelay();
-            if (delay.magnitude() > 0) {
-                out.append(", delayed ")
-                        .append(Mathf.round(delay.in(Seconds), 1))
-                        .append("s");
             }
             out.append(!and.isEmpty() ? ", " + and.size() + " extra AND condition(s)" : "")
                     .append(!or.isEmpty() ? ", " + or.size() + " extra OR condition(s)" : "")
