@@ -99,6 +99,20 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     }
 
     /**
+     * Constructor for HolonomicVectorDriveTask on an always disabled field-centric mode.
+     *
+     * @param xSupplier           The supplier for the Cartesian x-axis input
+     * @param ySupplier           The supplier for the Cartesian y-axis input, <i>note that this will be inverted</i>
+     * @param rSupplier           The supplier for the clockwise rotation input
+     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *                            if possible. A localizer attached is required.
+     */
+    public HolonomicVectorDriveTask(Supplier<Float> xSupplier, Supplier<Float> ySupplier, Supplier<Float> rSupplier, @NonNull Moveable drive) {
+        this(xSupplier, ySupplier, rSupplier, drive, () -> false);
+    }
+
+    /**
      * Constructor for HolonomicVectorDriveTask using a default Mecanum binding.
      * Left stick controls translation, right stick controls rotation.
      *
@@ -110,6 +124,19 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      */
     public HolonomicVectorDriveTask(Gamepad driver, @NonNull Moveable drive, BooleanSupplier fieldCentricEnabled) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, fieldCentricEnabled);
+    }
+
+    /**
+     * Constructor for HolonomicVectorDriveTask using a default Mecanum binding. Field-centric mode is disabled by default.
+     * Left stick controls translation, right stick controls rotation.
+     *
+     * @param driver              The gamepad to use for driving
+     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *                            if possible. A localizer attached is required.
+     */
+    public HolonomicVectorDriveTask(Gamepad driver, @NonNull Moveable drive) {
+        this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, () -> false);
     }
 
     /**
