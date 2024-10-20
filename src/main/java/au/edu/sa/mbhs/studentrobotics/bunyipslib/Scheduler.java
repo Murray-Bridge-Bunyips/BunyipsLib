@@ -574,7 +574,11 @@ public class Scheduler extends BunyipsComponent {
          * @return Current builder for additional task parameters
          */
         public ScheduledTask finishingIf(BooleanSupplier condition) {
-            stopCondition = stopCondition == null ? condition : () -> stopCondition.getAsBoolean() || condition.getAsBoolean();
+            // Use prev to avoid a stack overflow
+            BooleanSupplier prev = stopCondition;
+            stopCondition = prev == null
+                    ? condition
+                    : () -> prev.getAsBoolean() || condition.getAsBoolean();
             return this;
         }
 
