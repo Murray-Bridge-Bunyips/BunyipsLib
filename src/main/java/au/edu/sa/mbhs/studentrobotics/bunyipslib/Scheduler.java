@@ -159,7 +159,7 @@ public class Scheduler extends BunyipsComponent {
                 }
                 for (ScheduledTask task : allocatedTasks) {
                     if (task.taskToRun.hasDependency() // Whether the task is never run from the Scheduler (and task reports will come from the reports array)
-                            || task.debouncing // Whether this task will only run once and then proceed to stay as "active" in the telemetry
+                            || !task.taskToRun.isRunning() // Whether this task is actually running
                             || task.taskToRun.isMuted() // Whether the task has declared itself as muted
                     ) {
                         continue;
