@@ -207,7 +207,7 @@ public class Scheduler extends BunyipsComponent {
                     continue;
                 }
                 task.taskToRun.getDependency().get().setCurrentTask(task.taskToRun);
-            } else if (task.taskToRun.isFinished()) {
+            } else if (task.taskToRun.isFinished() && !task.debouncing) {
                 task.taskToRun.reset();
             }
         }
@@ -438,7 +438,7 @@ public class Scheduler extends BunyipsComponent {
          * looping/long tasks, as you might experience runaway tasks.
          * See {@link #finishingIf} for fine-grain "run exclusively if" control.
          * <p>
-         * This method can only be called once per ConditionalTask.
+         * This method can only be called once per ScheduledTask.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
          * ending when the task ends.
          *
@@ -456,10 +456,10 @@ public class Scheduler extends BunyipsComponent {
         }
 
         /**
-         * Implicitly make a new RunTask to run once the condition is met.
-         * This callback will run repeatedly while the condition is met.
+         * Implicitly make a new RunTask to run as the condition is met.
+         * This callback will requeue as many times as the trigger is met.
          * <p>
-         * This method can only be called once per ConditionalTask, see a TaskGroup for multiple task execution.
+         * This method can only be called once per ScheduledTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
          * ending immediately as it is an RunTask.
          *
@@ -472,9 +472,12 @@ public class Scheduler extends BunyipsComponent {
 
         /**
          * Queue a task when the condition is met, debouncing the task from queueing more than once the condition is met.
-         * This effectively does the same as {@link #run}, however only a single queue is permitted per rising edge.
          * <p>
-         * This method can only be called once per ConditionalTask, see a TaskGroup for multiple task execution.
+         * This task will run, and a self-reset will not be propagated once the task is completed. Do note that this
+         * effectively nullifies the trigger for the task, as it cannot auto-reset unless the task is manually reset
+         * or designed to reset itself/run continuously. Managing the task passed here is up to the user.
+         * <p>
+         * This method can only be called once per ScheduledTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
          * ending when the task ends.
          *
@@ -488,9 +491,12 @@ public class Scheduler extends BunyipsComponent {
 
         /**
          * Implicitly make a new RunTask to run once the condition is met, debouncing the task from queueing more than once the condition is met.
-         * This effectively will run this code block once when the condition is met at the rising edge.
          * <p>
-         * This method can only be called once per ConditionalTask, see a TaskGroup for multiple task execution.
+         * This code block will run, and a self-reset will not be propagated once the task is completed. Do note that this
+         * effectively nullifies the entire trigger for the task, as it cannot auto-reset. For a Runnable that can reset itself,
+         * consider passing a {@link RunTask} to the {@link #runOnce(Task)} method which will grant you access to the task's reset method.
+         * <p>
+         * This method can only be called once per ScheduledTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
          * ending immediately as it is an RunTask.
          *
