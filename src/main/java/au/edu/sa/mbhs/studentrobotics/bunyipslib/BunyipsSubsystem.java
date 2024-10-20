@@ -5,7 +5,9 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Sec
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
@@ -27,21 +29,19 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
  */
 public abstract class BunyipsSubsystem extends BunyipsComponent {
     private static final HashSet<BunyipsSubsystem> instances = new HashSet<>();
-
+    private final List<BunyipsSubsystem> children = new ArrayList<>();
     /**
      * Reference to the unmodified name of this subsystem.
      *
      * @see #toString() referencing `this` to also retrieve delegation status affixed to the end of the name
      */
     protected String name = getClass().getSimpleName();
-
     private volatile Task currentTask;
     private volatile Task defaultTask = new IdleTask();
     private volatile boolean shouldRun = true;
     @Nullable
     private String threadName = null;
     private BunyipsSubsystem parent = null;
-    private BunyipsSubsystem child = null;
     private boolean assertionFailed = false;
 
     protected BunyipsSubsystem() {
@@ -159,15 +159,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * that performing any operations such as disabling/enabling will be done on the child subsystem. The only
      * operation that is not delegated is the current task, which is managed by the parent subsystem manually.
      *
-     * @param child the subsystem to delegate to this subsystem. There is a maximum of one delegated subsystem.
+     * @param child the subsystem to add to the list of children of this subsystem
      */
     protected final void delegate(BunyipsSubsystem child) {
-        if (this.child != null) {
-            Dbg.warn(getClass(), "%Subsystem already has a delegated subsystem, Overriding old delegation from % to %.", isDefaultName() ? "" : "(" + this + ") ", this.child, child);
-            return;
-        }
         child.parent = this;
-        this.child = child;
+        children.add(child);
     }
 
     /**
@@ -179,7 +175,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         Dbg.logv(getClass(), "%Subsystem disabled via disable() call.", isDefaultName() ? "" : "(" + this + ") ");
         opMode(o -> o.telemetry.log(getClass(), Text.html().color("yellow", "disabled. ").small("check logcat for more info.")));
         onDisable();
-        if (child != null)
+        for (BunyipsSubsystem child : children)
             child.disable();
     }
 
@@ -193,7 +189,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         Dbg.logv(getClass(), "%Subsystem enabled via enable() call.", isDefaultName() ? "" : "(" + this + ") ");
         opMode(o -> o.telemetry.log(getClass(), Text.html().color("green", "enabled. ").small("check logcat for more info.")));
         onEnable();
-        if (child != null)
+        for (BunyipsSubsystem child : children)
             child.enable();
     }
 
@@ -358,9 +354,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         }
         // This should be the only place where periodic() is called for this subsystem
         Exceptions.runUserMethod(this::periodic, opMode);
-        // Update a child subsystem if one is delegated, note we don't touch the parent subsystem at all
-        if (child != null && child.shouldRun)
-            child.internalUpdate();
+        // Update child subsystems if they are delegated, note we don't touch the parent subsystem at all
+        for (BunyipsSubsystem child : children) {
+            if (child != null && child.shouldRun)
+                child.internalUpdate();
+        }
     }
 
     /**

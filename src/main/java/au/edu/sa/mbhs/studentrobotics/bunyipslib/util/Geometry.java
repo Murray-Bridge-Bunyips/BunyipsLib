@@ -66,7 +66,7 @@ public final class Geometry {
      * Create a vector in the desired units to be converted to a conventional Inches unit.
      *
      * @param value the vector
-     * @param unit the unit of both the x and y values
+     * @param unit  the unit of both the x and y values
      * @return the vector in Inches
      */
     public static Vector2d unitVec(Vector2d value, Distance unit) {

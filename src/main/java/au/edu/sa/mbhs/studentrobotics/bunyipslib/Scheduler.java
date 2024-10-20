@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
@@ -17,12 +16,13 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.OnceTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
- * Scheduler and command plexus for use with the BunyipsLib task system.
+ * Scheduler and command plexus for use with the BunyipsLib task system in TeleOp.
  *
  * @author Lucas Bubner, 2024
  * @see CommandBasedBunyipsOpMode
@@ -32,7 +32,7 @@ public class Scheduler extends BunyipsComponent {
     private static final ArrayList<String> reports = new ArrayList<>();
     private static boolean isMuted = false;
     private final ArrayList<BunyipsSubsystem> subsystems = new ArrayList<>();
-    private final ArrayList<ConditionalTask> allocatedTasks = new ArrayList<>();
+    private final ArrayList<ScheduledTask> allocatedTasks = new ArrayList<>();
 
     /**
      * Create a new scheduler and reset static fields.
@@ -68,8 +68,8 @@ public class Scheduler extends BunyipsComponent {
     /**
      * Get all allocated tasks.
      */
-    public ConditionalTask[] getAllocatedTasks() {
-        return allocatedTasks.toArray(new ConditionalTask[0]);
+    public ScheduledTask[] getAllocatedTasks() {
+        return allocatedTasks.toArray(new ScheduledTask[0]);
     }
 
     /**
@@ -131,10 +131,6 @@ public class Scheduler extends BunyipsComponent {
         isMuted = false;
     }
 
-    private boolean timeExceeded(ConditionalTask task) {
-        return task.time.in(Nanoseconds) + task.activeSince < System.nanoTime();
-    }
-
     /**
      * Run the scheduler. This will run all subsystems and tasks allocated to the scheduler.
      * This should be called in the {@code activeLoop()} method of the {@link BunyipsOpMode}, and is automatically called
@@ -161,12 +157,11 @@ public class Scheduler extends BunyipsComponent {
                     if (item.contains("IdleTask")) continue;
                     o.telemetry.add(item);
                 }
-                for (ConditionalTask task : allocatedTasks) {
+                for (ScheduledTask task : allocatedTasks) {
                     if (task.taskToRun.hasDependency() // Whether the task is never run from the Scheduler (and task reports will come from the reports array)
                             || task.debouncing // Whether this task will only run once and then proceed to stay as "active" in the telemetry
                             || task.taskToRun.isMuted() // Whether the task has declared itself as muted
-                            || task.activeSince == -1 // Whether the task is not being run by the Scheduler currently
-                            || !timeExceeded(task)) { // Whether this task has not met timeout requirements
+                    ) {
                         continue;
                     }
                     double deltaTime = Mathf.round(task.taskToRun.getDeltaTime().in(Seconds), 1);
@@ -180,53 +175,40 @@ public class Scheduler extends BunyipsComponent {
             reports.clear();
         }
 
-        for (ConditionalTask task : allocatedTasks) {
+        for (ScheduledTask task : allocatedTasks) {
             boolean condition = task.runCondition.getAsBoolean();
             if (condition || task.taskToRun.isRunning()) {
-                // Latch current timing of truthy condition
-                if (task.activeSince == -1) {
-                    task.activeSince = System.nanoTime();
-                }
-                // Update controller states for determining whether they need to be continued to be run
-                boolean timeoutExceeded = timeExceeded(task);
-                if (task.runCondition instanceof ControllerStateHandler && !task.time.equals(Task.INFINITE_TIMEOUT)) {
-                    ((ControllerStateHandler) task.runCondition).setTimeoutCondition(timeoutExceeded);
-                }
-                // Trigger upon timeout goal or if the task does not have one
-                if (task.time.equals(Task.INFINITE_TIMEOUT) || timeoutExceeded) {
-                    if (!task.taskToRun.hasDependency()) {
-                        if (task.stopCondition.getAsBoolean()) {
-                            // Finish now as we should do nothing with this task
-                            task.taskToRun.finishNow();
-                            continue;
-                        }
-                        // This is a non-command task, run it now as it will not be run by any subsystem
-                        task.taskToRun.run();
-                        // Debouncing should not auto-reset the task if it is completed
-                        if (task.taskToRun.pollFinished() && !task.debouncing) {
-                            // Reset the task as it is not attached to a subsystem and will not be reintegrated by one
-                            task.taskToRun.reset();
-                        }
-                        continue;
-                    }
-                    // This task must have a dependency, set the current task of the subsystem that depends on it
-                    // Tasks may only have one subsystem dependency, where this dependency represents where the task
-                    // will be executed by the scheduler.
-                    assert task.taskToRun.getDependency().isPresent();
+                if (!task.taskToRun.hasDependency()) {
                     if (task.stopCondition.getAsBoolean()) {
-                        // Finish handler will be called on the subsystem
-                        task.taskToRun.finish();
+                        // Finish now as we should do nothing with this task
+                        task.taskToRun.finishNow();
                         continue;
                     }
-                    if (task.taskToRun.isFinished() && task.debouncing) {
-                        // Don't requeue if debouncing
-                        continue;
+                    // This is a non-command task, run it now as it will not be run by any subsystem
+                    task.taskToRun.run();
+                    // Debouncing should not auto-reset the task if it is completed
+                    if (task.taskToRun.pollFinished() && !task.debouncing) {
+                        // Reset the task as it is not attached to a subsystem and will not be reintegrated by one
+                        task.taskToRun.reset();
                     }
-                    task.taskToRun.getDependency().get().setCurrentTask(task.taskToRun);
+                    continue;
                 }
-            } else {
+                // This task must have a dependency, set the current task of the subsystem that depends on it
+                // Tasks may only have one subsystem dependency, where this dependency represents where the task
+                // will be executed by the scheduler.
+                assert task.taskToRun.getDependency().isPresent();
+                if (task.stopCondition.getAsBoolean()) {
+                    // Finish handler will be called on the subsystem
+                    task.taskToRun.finish();
+                    continue;
+                }
+                if (task.taskToRun.isFinished() && task.debouncing) {
+                    // Don't requeue if debouncing
+                    continue;
+                }
+                task.taskToRun.getDependency().get().setCurrentTask(task.taskToRun);
+            } else if (task.taskToRun.isFinished()) {
                 task.taskToRun.reset();
-                task.activeSince = -1;
             }
         }
     }
@@ -234,11 +216,11 @@ public class Scheduler extends BunyipsComponent {
     /**
      * Create a new controller button trigger creator.
      *
-     * @param user The driver to use for the controller.
+     * @param user The Controller instance to use.
      * @return The controller button trigger creator.
      */
-    public ControllerButtonCreator when(Controller user) {
-        return new ControllerButtonCreator(user);
+    public ControllerTriggerCreator when(Controller user) {
+        return new ControllerTriggerCreator(user);
     }
 
     /**
@@ -246,8 +228,8 @@ public class Scheduler extends BunyipsComponent {
      *
      * @return The controller button trigger creator.
      */
-    public ControllerButtonCreator driver() {
-        return new ControllerButtonCreator(require(opMode).gamepad1);
+    public ControllerTriggerCreator driver() {
+        return new ControllerTriggerCreator(require(opMode).gamepad1);
     }
 
     /**
@@ -255,241 +237,179 @@ public class Scheduler extends BunyipsComponent {
      *
      * @return The controller button trigger creator.
      */
-    public ControllerButtonCreator operator() {
-        return new ControllerButtonCreator(require(opMode).gamepad2);
+    public ControllerTriggerCreator operator() {
+        return new ControllerTriggerCreator(require(opMode).gamepad2);
     }
 
     /**
      * Run a task when a condition is met.
+     * This condition will be evaluated continuously.
      *
      * @param condition Supplier to provide a boolean value of when the task should be run.
-     * @return Timing/stop control for allocation.
+     * @return Task scheduling builder
      */
-    public ConditionalTask when(BooleanSupplier condition) {
-        return new ConditionalTask(condition);
+    public ScheduledTask when(BooleanSupplier condition) {
+        if (condition instanceof Condition) {
+            return new ScheduledTask((Condition) condition);
+        }
+        return new ScheduledTask(new Condition(condition));
     }
 
     /**
-     * Run a task when a condition is met, debouncing the task from running more than once the condition is met.
-     * <p>
-     * In some situations, this method may be functionally equivalent to running a task via the {@code runOnce()} method, however, the difference is
-     * that {@code runDebounced()} will perform rising-edge latching on this boolean condition, while {@code runOnce()}
-     * will perform latching on the queueing state of the task. Therefore, if this debounce is used here in conjunction
-     * with a reasonable {@code inTime()} directive, the task will not run as the condition has debounced and has not been continually sustained.
-     * Ensure the latching behaviour is correct for your application.
+     * Run a task when a condition is met.
+     * This condition will be evaluated according to a rising-edge detection.
      *
      * @param condition Supplier to provide a boolean value of when the task should be run.
-     * @return Timing/stop control for allocation.
-     * @see DebounceCondition
+     * @return Task scheduling builder
      */
-    public ConditionalTask whenDebounced(BooleanSupplier condition) {
-        return new ConditionalTask(
-                new DebounceCondition(condition)
-        );
+    public ScheduledTask whenRising(BooleanSupplier condition) {
+        return new ScheduledTask(new Condition(condition, Condition.Edge.RISING));
     }
 
     /**
-     * Run a task always. This is the same as calling .when(() -> true).
+     * Run a task when a condition is met.
+     * This condition will be evaluated according to a falling-edge detection.
      *
-     * @return Timing/stop control for allocation.
+     * @param condition Supplier to provide a boolean value of when the task should be run.
+     * @return Task scheduling builder
      */
-    public ConditionalTask always() {
-        return new ConditionalTask(
-                () -> true
-        );
+    public ScheduledTask whenFalling(BooleanSupplier condition) {
+        return new ScheduledTask(new Condition(condition, Condition.Edge.FALLING));
     }
 
-    private static class DebounceCondition implements BooleanSupplier {
-        private final BooleanSupplier condition;
-        private boolean lastState;
-
-        public DebounceCondition(BooleanSupplier condition) {
-            this.condition = condition;
-        }
-
-        @Override
-        public boolean getAsBoolean() {
-            boolean currentState = condition.getAsBoolean();
-            if (currentState && !lastState) {
-                lastState = true;
-                return true;
-            } else if (!currentState) {
-                lastState = false;
-            }
-            return false;
-        }
-
-        public boolean getReversedAsBoolean() {
-            boolean currentState = condition.getAsBoolean();
-            if (!currentState && lastState) {
-                lastState = false;
-                return true;
-            } else if (currentState) {
-                lastState = true;
-            }
-            return false;
-        }
+    /**
+     * Run a task always. This is the same as calling {@code .when(() -> true)}.
+     *
+     * @return Task scheduling builder
+     */
+    public ScheduledTask always() {
+        return new ScheduledTask(new Condition(() -> true));
     }
 
-    private static class ControllerStateHandler implements BooleanSupplier {
-        private final State state;
-        private final Controls button;
-        private final Controller controller;
-        private final DebounceCondition debounceCondition;
-        private boolean timerIsRunning;
+    private static class ControllerButtonBind extends Condition {
+        protected final Controls button;
+        protected final Controller controller;
 
-        public ControllerStateHandler(Controller controller, Controls button, State state) {
+        ControllerButtonBind(Controller controller, Controls button, Edge edge) {
+            super(() -> controller.get(button), edge);
             this.button = button;
-            this.state = state;
             this.controller = controller;
-            debounceCondition = new DebounceCondition(() -> controller.get(button));
         }
 
-        public void setTimeoutCondition(boolean timerNotFinished) {
-            timerIsRunning = !timerNotFinished;
-        }
-
+        @NonNull
         @Override
-        public boolean getAsBoolean() {
-            switch (state) {
-                case PRESSED:
-                    // Allow timers to run if they exist by not locking out but returning true for the duration
-                    // This also ensures that repeated calls will not trigger the task multiple times, as this adds
-                    // way too much unnecessary complexity to the task allocation system and to the BunyipsOpMode itself.
-                    // There is realistically no reason for a task to have such a delay between allocation and execution
-                    // where it will be called multiple times, in which case the task itself should be the one waiting.
-                    return debounceCondition.getAsBoolean() || timerIsRunning;
-                case RELEASED:
-                    return debounceCondition.getReversedAsBoolean() || timerIsRunning;
-                case HELD:
-                    return controller.get(button);
-            }
-            return false;
+        public String toString() {
+            return "Button:" + controller.getUser().toString() + "->" + button.toString();
+        }
+    }
+
+    private static class ControllerAxisThreshold extends Condition {
+        private final Controls.Analog axis;
+
+        ControllerAxisThreshold(Controller user, Controls.Analog axis, Predicate<? super Float> threshold, Edge edge) {
+            super(() -> threshold.test(user.get(axis)), edge);
+            this.axis = axis;
         }
 
-        enum State {
-            PRESSED,
-            RELEASED,
-            HELD
+        @NonNull
+        @Override
+        public String toString() {
+            return "Axis:" + axis.toString();
         }
     }
 
     /**
-     * Controller button trigger creator.
-     * Used for ControllerStateHandler creation.
+     * Controller trigger creator.
      */
-    public class ControllerButtonCreator {
+    public class ControllerTriggerCreator {
         private final Controller user;
 
-        private ControllerButtonCreator(Controller user) {
+        private ControllerTriggerCreator(Controller user) {
             this.user = user;
         }
 
         /**
          * Run a task once this analog axis condition is met.
+         * This condition will be evaluated continuously.
          *
          * @param axis      The axis of the controller.
          * @param threshold The threshold to meet.
-         * @return Timing/stop control for allocation.
+         * @return Task scheduling builder
          */
-        public ConditionalTask when(Controls.Analog axis, Predicate<? super Float> threshold) {
-            return new ConditionalTask(
-                    new AxisThreshold(axis, threshold)
-            );
+        public ScheduledTask when(Controls.Analog axis, Predicate<? super Float> threshold) {
+            return new ScheduledTask(new ControllerAxisThreshold(user, axis, threshold, Condition.Edge.ACTIVE));
+        }
+
+        /**
+         * Run a task once this analog axis condition is met.
+         * This condition will be evaluated according to a rising-edge detection.
+         *
+         * @param axis      The axis of the controller.
+         * @param threshold The threshold to meet.
+         * @return Task scheduling builder
+         */
+        public ScheduledTask whenRising(Controls.Analog axis, Predicate<? super Float> threshold) {
+            return new ScheduledTask(new ControllerAxisThreshold(user, axis, threshold, Condition.Edge.RISING));
+        }
+
+        /**
+         * Run a task once this analog axis condition is met.
+         * This condition will be evaluated according to a falling-edge detection.
+         *
+         * @param axis      The axis of the controller.
+         * @param threshold The threshold to meet.
+         * @return Task scheduling builder
+         */
+        public ScheduledTask whenFalling(Controls.Analog axis, Predicate<? super Float> threshold) {
+            return new ScheduledTask(new ControllerAxisThreshold(user, axis, threshold, Condition.Edge.FALLING));
         }
 
         /**
          * Run a task when a controller button is held.
+         * This condition will be evaluated continuously.
          *
          * @param button The button of the controller.
-         * @return Timing/stop control for allocation.
+         * @return Task scheduling builder
          */
-        public ConditionalTask whenHeld(Controls button) {
-            return new ConditionalTask(
-                    new ControllerStateHandler(
-                            user,
-                            button,
-                            ControllerStateHandler.State.HELD
-                    )
-            );
+        public ScheduledTask whenHeld(Controls button) {
+            return new ScheduledTask(new ControllerButtonBind(user, button, Condition.Edge.ACTIVE));
         }
 
         /**
          * Run a task when a controller button is pressed (will run once when pressing the desired input).
+         * This is the same as rising-edge detection.
          *
          * @param button The button of the controller.
-         * @return Timing/stop control for allocation.
+         * @return Task scheduling builder
          */
-        public ConditionalTask whenPressed(Controls button) {
-            return new ConditionalTask(
-                    new ControllerStateHandler(
-                            user,
-                            button,
-                            ControllerStateHandler.State.PRESSED
-                    )
-            );
+        public ScheduledTask whenPressed(Controls button) {
+            return new ScheduledTask(new ControllerButtonBind(user, button, Condition.Edge.RISING));
         }
 
         /**
          * Run a task when a controller button is released (will run once letting go of the desired input).
+         * This is the same as falling-edge detection.
          *
          * @param button The button of the controller.
-         * @return Timing/stop control for allocation.
+         * @return Task scheduling builder
          */
-        public ConditionalTask whenReleased(Controls button) {
-            return new ConditionalTask(
-                    new ControllerStateHandler(
-                            user,
-                            button,
-                            ControllerStateHandler.State.RELEASED
-                    )
-            );
-        }
-
-        /**
-         * Represents an axis threshold for the controller.
-         */
-        public class AxisThreshold implements BooleanSupplier {
-            private final BooleanSupplier cond;
-            private final Controls.Analog axis;
-
-            /**
-             * Wrap a condition for an axis threshold.
-             *
-             * @param axis      The axis of the controller.
-             * @param threshold The threshold to meet.
-             */
-            public AxisThreshold(Controls.Analog axis, Predicate<? super Float> threshold) {
-                this.axis = axis;
-                cond = () -> threshold.test(user.get(axis));
-            }
-
-            @Override
-            public boolean getAsBoolean() {
-                return cond.getAsBoolean();
-            }
-
-            @NonNull
-            @Override
-            public String toString() {
-                return "AxisThreshold:" + axis.toString();
-            }
+        public ScheduledTask whenReleased(Controls button) {
+            return new ScheduledTask(new ControllerButtonBind(user, button, Condition.Edge.FALLING));
         }
     }
 
     /**
      * A task that will run when a condition is met.
      */
-    public class ConditionalTask {
+    public class ScheduledTask {
+        protected final Condition originalRunCondition;
         protected final BooleanSupplier runCondition;
-        private final BooleanSupplier originalRunCondition;
         private final ArrayList<BooleanSupplier> and = new ArrayList<>();
         private final ArrayList<BooleanSupplier> or = new ArrayList<>();
         protected Task taskToRun;
-        protected Measure<Time> time = Task.INFINITE_TIMEOUT;
         protected boolean debouncing;
         protected BooleanSupplier stopCondition = () -> false;
-        protected long activeSince = -1;
+
         private boolean isTaskMuted = false;
 
         /**
@@ -497,7 +417,7 @@ public class Scheduler extends BunyipsComponent {
          *
          * @param originalRunCondition The condition to start running the task.
          */
-        public ConditionalTask(BooleanSupplier originalRunCondition) {
+        public ScheduledTask(Condition originalRunCondition) {
             // Run the task if the original expression is met,
             // and all AND conditions are met, or any OR conditions are met
             runCondition = () -> originalRunCondition.getAsBoolean()
@@ -525,7 +445,7 @@ public class Scheduler extends BunyipsComponent {
          * @param task The task to run.
          * @return Current builder for additional task parameters
          */
-        public ConditionalTask run(Task task) {
+        public ScheduledTask run(Task task) {
             if (taskToRun != null) {
                 throw new EmergencyStop("A run(Task) method has been called more than once on a scheduler task. If you wish to run multiple tasks see about using a task group as your task.");
             }
@@ -546,7 +466,7 @@ public class Scheduler extends BunyipsComponent {
          * @param runnable The code to run
          * @return Current builder for additional task parameters
          */
-        public ConditionalTask run(Runnable runnable) {
+        public ScheduledTask run(Runnable runnable) {
             return run(new RunTask(runnable));
         }
 
@@ -561,7 +481,7 @@ public class Scheduler extends BunyipsComponent {
          * @param task The task to run.
          * @return Current builder for additional task parameters
          */
-        public ConditionalTask runOnce(Task task) {
+        public ScheduledTask runOnce(Task task) {
             debouncing = true;
             return run(task);
         }
@@ -577,7 +497,7 @@ public class Scheduler extends BunyipsComponent {
          * @param runnable The code to run
          * @return Current builder for additional task parameters
          */
-        public ConditionalTask runOnce(Runnable runnable) {
+        public ScheduledTask runOnce(Runnable runnable) {
             return runOnce(new RunTask(runnable));
         }
 
@@ -586,7 +506,7 @@ public class Scheduler extends BunyipsComponent {
          *
          * @return Current builder for additional task parameters
          */
-        public ConditionalTask muted() {
+        public ScheduledTask muted() {
             if (taskToRun != null) {
                 taskToRun.withMutedReports();
             }
@@ -601,7 +521,7 @@ public class Scheduler extends BunyipsComponent {
          * @param condition The AND condition to chain.
          * @return Current builder for additional task parameters
          */
-        public ConditionalTask andIf(BooleanSupplier condition) {
+        public ScheduledTask andIf(BooleanSupplier condition) {
             and.add(condition);
             return this;
         }
@@ -613,36 +533,35 @@ public class Scheduler extends BunyipsComponent {
          * @param condition The OR condition to chain.
          * @return Current builder for additional task parameters
          */
-        public ConditionalTask orIf(BooleanSupplier condition) {
+        public ScheduledTask orIf(BooleanSupplier condition) {
             or.add(condition);
             return this;
         }
 
         /**
          * Run a task assigned to in run() in a certain amount of time of the condition remaining true.
-         * If on a controller, this will delay the activation of the task by the specified amount of time.
+         * This will delay the activation of the task by the specified amount of time of the condition remaining true.
          * If this method is called multiple times, the last time directive will be used.
          *
          * @param interval The time interval
          * @return Current builder for additional task parameters
          */
-        public ConditionalTask in(Measure<Time> interval) {
-            time = interval;
+        public ScheduledTask in(Measure<Time> interval) {
+            originalRunCondition.withActiveDelay(interval);
             return this;
         }
 
         /**
          * Run a task assigned to in run() in a certain amount of time of the condition remaining true.
-         * If on a controller, this will delay the activation of the task by the specified amount of time.
+         * This will delay the activation of the task by the specified amount of time of the condition remaining true.
          * If this method is called multiple times, the last time directive will be used.
          *
          * @param interval The time interval
          * @return Current builder for additional task parameters
          */
         // Kotlin interop, as in is a reserved keyword
-        public ConditionalTask inTime(Measure<Time> interval) {
-            time = interval;
-            return this;
+        public ScheduledTask inTime(Measure<Time> interval) {
+            return in(interval);
         }
 
         /**
@@ -654,7 +573,7 @@ public class Scheduler extends BunyipsComponent {
          *                  this condition simply allows for an early finish if this condition is met.
          * @return Current builder for additional task parameters
          */
-        public ConditionalTask finishingIf(BooleanSupplier condition) {
+        public ScheduledTask finishingIf(BooleanSupplier condition) {
             stopCondition = stopCondition == null ? condition : () -> stopCondition.getAsBoolean() || condition.getAsBoolean();
             return this;
         }
@@ -668,26 +587,31 @@ public class Scheduler extends BunyipsComponent {
                     .append(taskToRun.toString())
                     .append("'");
             double timeout = taskToRun.getTimeout().in(Seconds);
-            if (timeout > 0.001) {
+            if (timeout * 1000.0 > OnceTask.EPSILON_MS) {
                 out.append(" (t=").append(timeout).append("s)");
             }
             if (taskToRun.isOverriding())
                 out.append(" (overriding)");
-            if (originalRunCondition instanceof ControllerStateHandler) {
-                ControllerStateHandler handler = (ControllerStateHandler) originalRunCondition;
+            if (originalRunCondition instanceof ControllerButtonBind) {
+                ControllerButtonBind handler = (ControllerButtonBind) originalRunCondition;
                 out.append(" when GP")
                         .append(handler.controller.getUser() == GamepadUser.ONE ? 1 : 2)
                         .append("->")
                         .append(handler.button)
                         .append(" is ")
-                        .append(handler.state);
+                        .append(handler.edge);
             } else {
                 out.append(" when ")
                         .append(originalRunCondition.toString().replace(BuildConfig.LIBRARY_PACKAGE_NAME + ".Scheduler", ""))
                         .append(" is true");
             }
-            out.append(time.magnitude() > 0 ? " for " + time.in(Seconds) + "s" : "")
-                    .append(!and.isEmpty() ? ", " + and.size() + " extra AND condition(s)" : "")
+            Measure<Time> delay = originalRunCondition.getActiveDelay();
+            if (delay.magnitude() > 0) {
+                out.append(", delayed ")
+                        .append(Mathf.round(delay.in(Seconds), 1))
+                        .append("s");
+            }
+            out.append(!and.isEmpty() ? ", " + and.size() + " extra AND condition(s)" : "")
                     .append(!or.isEmpty() ? ", " + or.size() + " extra OR condition(s)" : "")
                     .append(debouncing ? ", debouncing" : "")
                     .append(isTaskMuted || taskToRun.isMuted() ? ", task status muted" : "");

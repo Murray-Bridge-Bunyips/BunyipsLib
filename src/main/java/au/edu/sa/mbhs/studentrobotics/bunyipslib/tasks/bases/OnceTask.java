@@ -11,7 +11,10 @@ public abstract class OnceTask extends Task {
     // This value may need adjustment in combination with a SequentialTaskGroup where the timeouts are summed,
     // however we can't tell how long a single method will execute for so we need to assume OnceTasks will only
     // do one small task.
-    private static final int EPSILON_MS = 10;
+    /**
+     * The epsilon value for the OnceTask timeout.
+     */
+    public static final int EPSILON_MS = 10;
 
     protected OnceTask() {
         // For OnceTasks, we can't have an infinite timeout but we can use a very very short one instead

@@ -127,7 +127,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      * Sets the tangent of thebuilder = builder.
      */
     @JvmOverloads
-    fun setTangent(r: Double, unit: Angle = Radians) = apply { builder = builder.setTangent(unit.of(r).inUnit(Radians)) }
+    fun setTangent(r: Double, unit: Angle = Radians) =
+        apply { builder = builder.setTangent(unit.of(r).inUnit(Radians)) }
 
     /**
      * Set the reversed tangent state of thebuilder = builder.
@@ -165,7 +166,9 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     @JvmOverloads
     fun lineToXConstantHeading(posX: Double, unit: Distance = Inches) =
-        apply { builder = builder.lineToXConstantHeading(unit.of(posX).inUnit(Inches), velConstraints, accelConstraints) }
+        apply {
+            builder = builder.lineToXConstantHeading(unit.of(posX).inUnit(Inches), velConstraints, accelConstraints)
+        }
 
     /**
      * Move to the specified [posX] coordinate in the direction of the current heading while linearly interpolating the
@@ -239,7 +242,9 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     @JvmOverloads
     fun lineToYConstantHeading(posY: Double, unit: Distance = Inches) =
-        apply { builder = builder.lineToYConstantHeading(unit.of(posY).inUnit(Inches), velConstraints, accelConstraints) }
+        apply {
+            builder = builder.lineToYConstantHeading(unit.of(posY).inUnit(Inches), velConstraints, accelConstraints)
+        }
 
     /**
      * Move to the specified [posY] coordinate in the direction of the current heading while linearly interpolating the

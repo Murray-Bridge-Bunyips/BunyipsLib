@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
@@ -21,76 +22,83 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  * @since 1.0.0-pre
  */
 public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
+    /**
+     * The Scheduler instance manages all operations and commands for the CommandBasedBunyipsOpMode.
+     * <p>
+     * Tasks may be scheduled and managed through this instance, with setup and subsystem management
+     * being handled automatically. Common scheduling that are used in the Scheduler are available here as a proxy.
+     */
+    public Scheduler scheduler = new Scheduler();
     @NonNull
     private HashSet<BunyipsSubsystem> managedSubsystems = new HashSet<>();
 
-    // Components can't be final due to runtime instantiation, so we cannot expose the scheduler directly and must use a getter.
-    // This is for consistency with the driver() and operator() methods, which are also accessed through a getter.
-    // We technically could assign this similar to the telemetry, gamepads, and timer in BunyipsOpMode, but this is more explicit
-    // and reduces the risk of accidental overwriting of this field especially as this is a derived class.
-    private Scheduler scheduler;
-
     /**
-     * Call to directly access the Scheduler from within the OpMode.
+     * Create a new controller button trigger creator.
      *
-     * @return The Scheduler instance.
+     * @param user The Controller instance to use.
+     * @return The controller button trigger creator.
      */
-    public Scheduler scheduler() {
-        return scheduler;
+    public Scheduler.ControllerTriggerCreator when(Controller user) {
+        return scheduler.when(user);
     }
 
     /**
-     * Call to access the driver() method from the Scheduler.
-     * This is the same as calling {@code scheduler().driver()}.
+     * Create a new controller button trigger creator for the driver.
      *
-     * @return a ControllerButtonCreator for the driver controller
+     * @return The controller button trigger creator.
      */
-    public Scheduler.ControllerButtonCreator driver() {
+    public Scheduler.ControllerTriggerCreator driver() {
         return scheduler.driver();
     }
 
     /**
-     * Call to access the operator() method from the Scheduler.
-     * This is the same as calling {@code scheduler().operator()}.
+     * Create a new controller button trigger creator for the operator.
      *
-     * @return a ControllerButtonCreator for the operator controller
+     * @return The controller button trigger creator.
      */
-    public Scheduler.ControllerButtonCreator operator() {
+    public Scheduler.ControllerTriggerCreator operator() {
         return scheduler.operator();
     }
 
     /**
-     * Call to access the when() scheduler from the Scheduler.
-     * This is the same as calling {@code scheduler().when()}.
-     * This is used to create a conditional command based on a boolean supplier.
+     * Run a task when a condition is met.
+     * This condition will be evaluated continuously.
      *
-     * @param condition the condition to be checked
-     * @return task creation
+     * @param condition Supplier to provide a boolean value of when the task should be run.
+     * @return Task scheduling builder
      */
-    public Scheduler.ConditionalTask when(BooleanSupplier condition) {
+    public Scheduler.ScheduledTask when(BooleanSupplier condition) {
         return scheduler.when(condition);
     }
 
     /**
-     * Call to access the whenDebounced() scheduler from the Scheduler.
-     * This is the same as calling {@code scheduler().whenDebounced()}.
-     * This is used to create a conditional command based on a boolean supplier that is debounced.
+     * Run a task when a condition is met.
+     * This condition will be evaluated according to a rising-edge detection.
      *
-     * @param condition the condition to be debounced
-     * @return task creation
+     * @param condition Supplier to provide a boolean value of when the task should be run.
+     * @return Task scheduling builder
      */
-    public Scheduler.ConditionalTask whenDebounced(BooleanSupplier condition) {
-        return scheduler.whenDebounced(condition);
+    public Scheduler.ScheduledTask whenRising(BooleanSupplier condition) {
+        return scheduler.whenRising(condition);
     }
 
     /**
-     * Call to access the always() scheduler from the Scheduler.
-     * This is the same as calling {@code scheduler().always()}.
-     * This is used to create a command that runs every loop.
+     * Run a task when a condition is met.
+     * This condition will be evaluated according to a falling-edge detection.
      *
-     * @return task creation
+     * @param condition Supplier to provide a boolean value of when the task should be run.
+     * @return Task scheduling builder
      */
-    public Scheduler.ConditionalTask always() {
+    public Scheduler.ScheduledTask whenFalling(BooleanSupplier condition) {
+        return scheduler.whenFalling(condition);
+    }
+
+    /**
+     * Run a task always. This is the same as calling {@code .when(() -> true)}.
+     *
+     * @return Task scheduling builder
+     */
+    public Scheduler.ScheduledTask always() {
         return scheduler.always();
     }
 
@@ -115,7 +123,6 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     protected final void onInit() {
         Exceptions.runUserMethod(this::onInitialise, this);
 
-        scheduler = new Scheduler();
         if (managedSubsystems.isEmpty()) {
             managedSubsystems = BunyipsSubsystem.getInstances();
         }
@@ -123,7 +130,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
         Exceptions.runUserMethod(this::assignCommands, this);
 
-        Scheduler.ConditionalTask[] tasks = scheduler.getAllocatedTasks();
+        Scheduler.ScheduledTask[] tasks = scheduler.getAllocatedTasks();
         BunyipsSubsystem[] subsystems = scheduler.getManagedSubsystems();
         Text.Builder out = Text.builder();
         // Task count will account for tasks on subsystems that are not IdleTasks
@@ -136,13 +143,13 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
         );
         for (BunyipsSubsystem subsystem : subsystems) {
             out.append("  | %\n", subsystem.toVerboseString());
-            for (Scheduler.ConditionalTask task : tasks) {
+            for (Scheduler.ScheduledTask task : tasks) {
                 Optional<BunyipsSubsystem> dep = task.taskToRun.getDependency();
                 if (!dep.isPresent() || !dep.get().equals(subsystem)) continue;
                 out.append("    -> %\n", task);
             }
         }
-        for (Scheduler.ConditionalTask task : tasks) {
+        for (Scheduler.ScheduledTask task : tasks) {
             if (task.taskToRun.getDependency().isPresent()) continue;
             out.append("  | %\n", task);
         }
@@ -170,7 +177,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     protected abstract void onInitialise();
 
     /**
-     * Assign your scheduler commands here by accessing the {@link #scheduler()} and controllers {@link #driver()} and {@link #operator()}.
+     * Assign your scheduler commands here by accessing the {@link #scheduler} and controllers {@link #driver()} and {@link #operator()}.
      */
     protected abstract void assignCommands();
 
