@@ -58,6 +58,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.MecanumGa
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.MotionProfile;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 
 /**
@@ -365,7 +366,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public final class FollowTrajectoryTask extends Task {
         private final TimeTrajectory timeTrajectory;
         private final double[] xPoints, yPoints;
-        private Pose2d error;
+        private Pose2d error = Geometry.zeroPose();
         private double beginTs = -1;
         private double t;
 
@@ -468,7 +469,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     public final class TurnTask extends Task {
         private final TimeTurn turn;
-        private Pose2d error;
+        private Pose2d error = Geometry.zeroPose();
         private double beginTs = -1;
         private double t;
 
