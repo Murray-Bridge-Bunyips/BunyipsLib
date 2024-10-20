@@ -168,7 +168,7 @@ class UserSelection<T : Any>(
         require(opMode).telemetry.addDashboard(
             "<small>USR</small>",
             if (result == null) "No selection" else "${selectedButton.name} -> $opModeName@T+${
-                Mathf.round(require(opMode).timer.elapsedTime().inUnit(Seconds), 1)
+                Mathf.round(require(opMode).timer.elapsedTime().`in`(Seconds), 1)
             }s"
         )
 

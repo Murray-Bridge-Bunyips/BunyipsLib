@@ -20,7 +20,7 @@ class MessageTask(time: Measure<Time>, private val message: String) : Task(time)
     }
 
     private fun buildString(): String {
-        return Text.format("%/%s: %", Mathf.round(deltaTime.inUnit(Seconds), 1), timeout.inUnit(Seconds), message)
+        return Text.format("%/%s: %", Mathf.round(deltaTime.`in`(Seconds), 1), timeout.`in`(Seconds), message)
     }
 
     override fun init() {

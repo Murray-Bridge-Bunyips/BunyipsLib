@@ -215,6 +215,9 @@ public class Scheduler extends BunyipsComponent {
 
     /**
      * Create a new controller button trigger creator.
+     * <p>
+     * For Kotlin users, calling this method can be done with the notation {@code `when`}
+     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
      *
      * @param user The Controller instance to use.
      * @return The controller button trigger creator.
@@ -244,6 +247,9 @@ public class Scheduler extends BunyipsComponent {
     /**
      * Run a task when a condition is met.
      * This condition will be evaluated continuously.
+     * <p>
+     * For Kotlin users, calling this method can be done with the notation {@code `when`}
+     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
      *
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
@@ -331,6 +337,9 @@ public class Scheduler extends BunyipsComponent {
         /**
          * Run a task once this analog axis condition is met.
          * This condition will be evaluated continuously.
+         * <p>
+         * For Kotlin users, calling this method can be done with the notation {@code `when`}
+         * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
          *
          * @param axis      The axis of the controller.
          * @param threshold The threshold to meet.
@@ -548,6 +557,9 @@ public class Scheduler extends BunyipsComponent {
          * Run a task assigned to in run() in a certain amount of time of the condition remaining true.
          * This will delay the activation of the task by the specified amount of time of the condition remaining true.
          * If this method is called multiple times, the last time directive will be used.
+         * <p>
+         * For Kotlin users, calling this method can be done with the notation {@code `in`}
+         * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
          *
          * @param interval The time interval
          * @return Current builder for additional task parameters
@@ -555,19 +567,6 @@ public class Scheduler extends BunyipsComponent {
         public ScheduledTask in(Measure<Time> interval) {
             originalRunCondition.withActiveDelay(interval);
             return this;
-        }
-
-        /**
-         * Run a task assigned to in run() in a certain amount of time of the condition remaining true.
-         * This will delay the activation of the task by the specified amount of time of the condition remaining true.
-         * If this method is called multiple times, the last time directive will be used.
-         *
-         * @param interval The time interval
-         * @return Current builder for additional task parameters
-         */
-        // Kotlin interop, as in is a reserved keyword
-        public ScheduledTask inTime(Measure<Time> interval) {
-            return in(interval);
         }
 
         /**

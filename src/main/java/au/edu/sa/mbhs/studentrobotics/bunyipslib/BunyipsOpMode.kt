@@ -91,7 +91,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // Warn the user if their target loop speed cannot be achieved
             telemetry.loopSpeedSlowAlert = field
             field = value
-            Dbg.warn("BunyipsOpMode: Loop speed set to % ms", value.inUnit(Milliseconds))
+            Dbg.warn("BunyipsOpMode: Loop speed set to % ms", value.`in`(Milliseconds))
         }
 
     /**
@@ -343,7 +343,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 timer.update()
                 telemetry.update()
                 if (loopSpeed.magnitude() > 0)
-                    sleep(abs((loopSpeed.inUnit(Nanoseconds).toLong() - (System.nanoTime() - curr))) / 1_000_000)
+                    sleep(abs((loopSpeed.`in`(Nanoseconds).toLong() - (System.nanoTime() - curr))) / 1_000_000)
             }
 
             telemetry.opModeStatus = "<font color='yellow'>finish_init</font>"
@@ -391,7 +391,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // Ready to go.
             telemetry.opModeStatus = "<font color='green'>ready</font>"
             timer.update()
-            Dbg.logd("BunyipsOpMode: init cycle completed in ${timer.elapsedTime().inUnit(Seconds)} secs")
+            Dbg.logd("BunyipsOpMode: init cycle completed in ${timer.elapsedTime().`in`(Seconds)} secs")
             telemetry.addDS("<b>Init <font color='green'>complete</font>. Press play to start.</b>")
             Dbg.logd("BunyipsOpMode: ready.")
 
@@ -458,7 +458,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 timer.update()
                 telemetry.update()
                 if (loopSpeed.magnitude() > 0)
-                    sleep(abs((loopSpeed.inUnit(Nanoseconds).toLong() - (System.nanoTime() - curr))) / 1_000_000)
+                    sleep(abs((loopSpeed.`in`(Nanoseconds).toLong() - (System.nanoTime() - curr))) / 1_000_000)
             }
 
             telemetry.opModeStatus = "<font color='gray'>finished</font>"
@@ -513,7 +513,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // Telemetry may be not in a nice state, so we will call our stateful functions
             // such as thread stops and cleanup in onStop() first before updating the status
             telemetry.opModeStatus = "<font color='red'>terminating</font>"
-            Dbg.logd("BunyipsOpMode: active cycle completed in ${timer.elapsedTime().inUnit(Seconds)} secs")
+            Dbg.logd("BunyipsOpMode: active cycle completed in ${timer.elapsedTime().`in`(Seconds)} secs")
             telemetry.update()
             Dbg.logv("BunyipsOpMode: exiting...")
         }

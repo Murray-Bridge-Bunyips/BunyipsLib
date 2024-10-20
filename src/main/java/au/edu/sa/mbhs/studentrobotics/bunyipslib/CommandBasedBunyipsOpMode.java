@@ -34,6 +34,9 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Create a new controller button trigger creator.
+     * <p>
+     * For Kotlin users, calling this method can be done with the notation {@code `when`}
+     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
      *
      * @param user The Controller instance to use.
      * @return The controller button trigger creator.
@@ -63,6 +66,9 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     /**
      * Run a task when a condition is met.
      * This condition will be evaluated continuously.
+     * <p>
+     * For Kotlin users, calling this method can be done with the notation {@code `when`}
+     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
      *
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder

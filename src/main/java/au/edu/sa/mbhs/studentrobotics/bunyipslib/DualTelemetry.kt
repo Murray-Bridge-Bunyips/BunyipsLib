@@ -273,7 +273,7 @@ class DualTelemetry @JvmOverloads constructor(
         var prepend = ""
         if (movingAverageTimer != null)
             prepend = "<small><font color='$logBracketColor'>[</font>T+${
-                Math.round(movingAverageTimer.elapsedTime().inUnit(Seconds))
+                Math.round(movingAverageTimer.elapsedTime().`in`(Seconds))
             }s<font color='$logBracketColor'>]</font></small> "
         opMode.telemetry.log().add(prepend + msg)
         synchronized(dashboardItems) {
@@ -330,13 +330,13 @@ class DualTelemetry @JvmOverloads constructor(
 
         // Requeue new overhead status message
         val loopTime = movingAverageTimer?.let {
-            Mathf.round(it.movingAverageLoopTime().inUnit(Milliseconds), 2)
+            Mathf.round(it.movingAverageLoopTime().`in`(Milliseconds), 2)
         } ?: 0.0
         val loopsSec = movingAverageTimer?.let {
             val loopsPerSec = it.loopsPer(Second)
             if (!loopsPerSec.isNaN()) Mathf.round(loopsPerSec, 1) else 0.0
         } ?: 0.0
-        val elapsedTime = movingAverageTimer?.elapsedTime()?.inUnit(Seconds)?.roundToInt()?.toString() ?: "?"
+        val elapsedTime = movingAverageTimer?.elapsedTime()?.`in`(Seconds)?.roundToInt()?.toString() ?: "?"
         val status = if (overrideStatus != null) overrideStatus.toString() else opModeStatus
         val overheadStatus = StringBuilder()
         overheadStatus.append(status).append("\n")
@@ -352,7 +352,7 @@ class DualTelemetry @JvmOverloads constructor(
         } else {
             // For LinearOpModes we can suppress any alerts during init as this is the heavy phase of the OpMode
             val noSuppression = opMode !is LinearOpMode || !opMode.opModeInInit()
-            if (noSuppression && loopTime >= loopSpeedSlowAlert.inUnit(Milliseconds)) {
+            if (noSuppression && loopTime >= loopSpeedSlowAlert.`in`(Milliseconds)) {
                 overheadStatus.append("<font color='yellow'>").append(loopTime).append("ms</font>")
             } else {
                 overheadStatus.append(loopTime).append("ms")

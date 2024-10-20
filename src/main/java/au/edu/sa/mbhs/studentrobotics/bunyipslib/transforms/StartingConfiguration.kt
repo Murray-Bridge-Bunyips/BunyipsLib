@@ -68,9 +68,9 @@ object StartingConfiguration {
             val xZeroInch = -72.0 * origin.directionMultiplier * alliance.directionMultiplier
             val yZeroInch = -60.0 * alliance.directionMultiplier
             return Pose2d(
-                xZeroInch + horizontalTranslation.inUnit(Inches) * origin.directionMultiplier * alliance.directionMultiplier,
-                yZeroInch - backwardTranslation.inUnit(Inches) * alliance.directionMultiplier,
-                alliance.directionMultiplier * Math.PI / 2.0 + ccwRotation.inUnit(Radians)
+                xZeroInch + horizontalTranslation.`in`(Inches) * origin.directionMultiplier * alliance.directionMultiplier,
+                yZeroInch - backwardTranslation.`in`(Inches) * alliance.directionMultiplier,
+                alliance.directionMultiplier * Math.PI / 2.0 + ccwRotation.`in`(Radians)
             )
         }
 
@@ -139,7 +139,7 @@ object StartingConfiguration {
                 Text.upper(lowCaseAlliance.substring(0, 1))
                         + lowCaseAlliance.substring(1),
                 if (horizontalTranslation.unit().equals(FieldTiles)) {
-                    val tileValue = Mathf.round(horizontalTranslation.inUnit(FieldTiles) + 0.5, 1)
+                    val tileValue = Mathf.round(horizontalTranslation.`in`(FieldTiles) + 0.5, 1)
                     // Will want to only display 1 digit if we can for brevity
                     "Tile <b>#${if (tileValue % 1.0 == 0.0) tileValue.toInt() else tileValue}</b>"
                 } else {
@@ -152,7 +152,7 @@ object StartingConfiguration {
                     ""
                 },
                 if (ccwRotation.magnitude() != 0.0) {
-                    ", ↺ ${ccwRotation.inUnit(Degrees)}°"
+                    ", ↺ ${ccwRotation.`in`(Degrees)}°"
                 } else {
                     ""
                 }
@@ -270,7 +270,7 @@ object StartingConfiguration {
          * This translation is positioned in the vertical center of the field tile, starting from the side of the origin.
          */
         fun translate(translationFromOrigin: Measure<Distance>): PrebuiltPosition {
-            val mag = abs(translationFromOrigin.inUnit(Feet))
+            val mag = abs(translationFromOrigin.`in`(Feet))
             if (mag > 12.0)
                 throw NumberIsTooLargeException(mag, 12, true)
             horizontalTranslation = translationFromOrigin

@@ -25,8 +25,8 @@ class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = true) :
         if (showTelemetry)
             opMode?.telemetry?.add(
                 "Waiting %/% seconds...",
-                Mathf.round(deltaTime.inUnit(Seconds), 1),
-                timeout.inUnit(Seconds)
+                Mathf.round(deltaTime.`in`(Seconds), 1),
+                timeout.`in`(Seconds)
             )
     }
 
