@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -31,6 +33,7 @@ public class AlignToContourTask extends Task {
     /**
      * PIDF coefficients for the alignment controller.
      */
+    @NonNull
     public static PIDFCoefficients coeffs = new PIDFCoefficients();
 
     private final Moveable drive;
@@ -51,7 +54,7 @@ public class AlignToContourTask extends Task {
      * @param processor  the vision processor to use
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToContourTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, Moveable drive, Processor<ContourData> processor, PIDF controller) {
+    public AlignToContourTask(@NonNull DoubleSupplier xSupplier, @NonNull DoubleSupplier ySupplier, @NonNull DoubleSupplier rSupplier, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF controller) {
         this(xSupplier, ySupplier, rSupplier, drive, processor::getData, controller);
     }
 
@@ -63,7 +66,7 @@ public class AlignToContourTask extends Task {
      * @param processor  the vision processor to use
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToContourTask(Gamepad driver, Moveable drive, Processor<ContourData> processor, PIDF controller) {
+    public AlignToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF controller) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, processor::getData, controller);
     }
 
@@ -75,7 +78,7 @@ public class AlignToContourTask extends Task {
      * @param processor  the vision processor to use
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToContourTask(Measure<Time> timeout, Moveable drive, Processor<ContourData> processor, PIDF controller) {
+    public AlignToContourTask(@NonNull Measure<Time> timeout, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF controller) {
         this(timeout, drive, processor::getData, controller);
     }
 
@@ -89,7 +92,7 @@ public class AlignToContourTask extends Task {
      * @param supplier   a supplier source that will provide contour data
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToContourTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, Moveable drive, Supplier<List<ContourData>> supplier, PIDF controller) {
+    public AlignToContourTask(@NonNull DoubleSupplier xSupplier, @NonNull DoubleSupplier ySupplier, @NonNull DoubleSupplier rSupplier, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF controller) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
@@ -110,7 +113,7 @@ public class AlignToContourTask extends Task {
      * @param supplier   a supplier source that will provide contour data
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToContourTask(Gamepad driver, Moveable drive, Supplier<List<ContourData>> supplier, PIDF controller) {
+    public AlignToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF controller) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, supplier, controller);
     }
 
@@ -122,7 +125,7 @@ public class AlignToContourTask extends Task {
      * @param supplier   a supplier source that will provide contour data
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToContourTask(Measure<Time> timeout, Moveable drive, Supplier<List<ContourData>> supplier, PIDF controller) {
+    public AlignToContourTask(@NonNull Measure<Time> timeout, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF controller) {
         super(timeout);
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);

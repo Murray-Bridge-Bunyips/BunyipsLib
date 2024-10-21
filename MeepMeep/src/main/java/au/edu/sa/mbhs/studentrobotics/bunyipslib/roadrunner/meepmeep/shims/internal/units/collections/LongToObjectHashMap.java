@@ -15,6 +15,7 @@ import java.util.Collection;
  * @param <V> the type of the values stored in the map
  * @since 1.0.0-pre
  */
+@SuppressWarnings("UnknownNullness")
 public class LongToObjectHashMap<V> {
     private static final int INITIAL_SIZE = 0;
     private static final int INITIAL_CAPACITY = 8; // NOTE: Must be a power of two

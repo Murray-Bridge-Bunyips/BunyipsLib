@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.PoseVelocity2dDual;
 import com.acmerobotics.roadrunner.Time;
 
@@ -39,7 +41,7 @@ public final class DriveCommandMessage {
     public double angularAcceleration;
 
     @SuppressWarnings("MissingJavadoc")
-    public DriveCommandMessage(PoseVelocity2dDual<Time> poseVelocity) {
+    public DriveCommandMessage(@NonNull PoseVelocity2dDual<Time> poseVelocity) {
         timestamp = System.nanoTime();
         forwardVelocity = poseVelocity.linearVel.x.get(0);
         forwardAcceleration = poseVelocity.linearVel.x.get(1);

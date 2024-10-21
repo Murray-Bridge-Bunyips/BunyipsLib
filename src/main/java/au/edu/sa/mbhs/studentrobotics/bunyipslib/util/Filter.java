@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
+import androidx.annotation.NonNull;
+
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.NumberIsTooLargeException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
@@ -133,7 +135,7 @@ public final class Filter {
          *                an example is if you have 2 inputs, and you trust them equally, setting both weights
          *                to 0.5 will make them equally important.
          */
-        public WeightedFusion(DoubleSupplier[] inputs, double[] weights) {
+        public WeightedFusion(@NonNull DoubleSupplier[] inputs, @NonNull double[] weights) {
             if (inputs.length != weights.length)
                 throw new DimensionMismatchException(weights.length, inputs.length);
             this.inputs = inputs;

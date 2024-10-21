@@ -29,6 +29,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -48,7 +50,7 @@ public final class Voltage {
      * @param opMode the opmode
      * @return the robot voltage
      */
-    public static double getRobotVoltage(OpMode opMode) {
+    public static double getRobotVoltage(@NonNull OpMode opMode) {
         double result = Double.POSITIVE_INFINITY;
         for (VoltageSensor sensor : opMode.hardwareMap.voltageSensor) {
             double voltage = sensor.getVoltage();

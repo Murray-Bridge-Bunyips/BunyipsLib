@@ -42,7 +42,7 @@ public class GetDualSplitContourTask extends ForeverTask {
      *
      * @param colourThreshold the initialised and running colour threshold processor
      */
-    public GetDualSplitContourTask(ColourThreshold colourThreshold) {
+    public GetDualSplitContourTask(@NonNull ColourThreshold colourThreshold) {
         this();
         this.colourThreshold = colourThreshold;
     }
@@ -61,7 +61,8 @@ public class GetDualSplitContourTask extends ForeverTask {
      *             or RIGHT
      * @return this
      */
-    public GetDualSplitContourTask withNoDetectionPersistenceTime(Measure<Time> time) {
+    @NonNull
+    public GetDualSplitContourTask withNoDetectionPersistenceTime(@NonNull Measure<Time> time) {
         noDetectionPersistenceTime = time;
         return this;
     }
@@ -72,7 +73,8 @@ public class GetDualSplitContourTask extends ForeverTask {
      * @param newProcessor the processor to use
      * @return this
      */
-    public GetDualSplitContourTask setProcessor(ColourThreshold newProcessor) {
+    @NonNull
+    public GetDualSplitContourTask setProcessor(@NonNull ColourThreshold newProcessor) {
         if (!newProcessor.isRunning())
             throw new IllegalStateException("Processor not attached and running on an active vision processor");
         colourThreshold = newProcessor;
@@ -90,7 +92,7 @@ public class GetDualSplitContourTask extends ForeverTask {
      * @return the mapped direction
      */
     @NonNull
-    public Direction getMappedPosition(Direction camLeft, Direction camRight, Direction noDetection) {
+    public Direction getMappedPosition(@NonNull Direction camLeft, @NonNull Direction camRight, @NonNull Direction noDetection) {
         return position == Direction.LEFT ? camLeft : position == Direction.RIGHT ? camRight : noDetection;
     }
 

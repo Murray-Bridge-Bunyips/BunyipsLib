@@ -3,6 +3,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Twist2d;
@@ -31,6 +33,7 @@ public final class Geometry {
      *
      * @return the zero pose
      */
+    @NonNull
     public static Pose2d zeroPose() {
         return new Pose2d(0, 0, 0);
     }
@@ -40,6 +43,7 @@ public final class Geometry {
      *
      * @return the zero pose velocity
      */
+    @NonNull
     public static PoseVelocity2d zeroVel() {
         return new PoseVelocity2d(new Vector2d(0, 0), 0);
     }
@@ -49,6 +53,7 @@ public final class Geometry {
      *
      * @return the zero vector
      */
+    @NonNull
     public static Vector2d zeroVec() {
         return new Vector2d(0, 0);
     }
@@ -58,6 +63,7 @@ public final class Geometry {
      *
      * @return the zero twist
      */
+    @NonNull
     public static Twist2d zeroTwist() {
         return new Twist2d(new Vector2d(0, 0), 0);
     }
@@ -69,7 +75,8 @@ public final class Geometry {
      * @param unit  the unit of both the x and y values
      * @return the vector in Inches
      */
-    public static Vector2d unitVec(Vector2d value, Distance unit) {
+    @NonNull
+    public static Vector2d unitVec(@NonNull Vector2d value, @NonNull Distance unit) {
         return new Vector2d(unit.of(value.x).in(Inches), unit.of(value.y).in(Inches));
     }
 
@@ -82,7 +89,8 @@ public final class Geometry {
      * @param rUnit the unit of the heading value
      * @return the vector in Inches
      */
-    public static Pose2d unitPose(Vector2d vec, Distance tUnit, double r, Angle rUnit) {
+    @NonNull
+    public static Pose2d unitPose(@NonNull Vector2d vec, @NonNull Distance tUnit, double r, @NonNull Angle rUnit) {
         return new Pose2d(
                 tUnit.of(vec.x).in(Inches),
                 tUnit.of(vec.y).in(Inches),
@@ -97,7 +105,8 @@ public final class Geometry {
      * @param pose the pose to convert
      * @return the converted pose
      */
-    public static PoseVelocity2d poseToVel(Pose2d pose) {
+    @NonNull
+    public static PoseVelocity2d poseToVel(@NonNull Pose2d pose) {
         return new PoseVelocity2d(pose.position, pose.heading.toDouble());
     }
 
@@ -107,7 +116,8 @@ public final class Geometry {
      * @param pose the pose to convert
      * @return the converted pose
      */
-    public static Pose2d poseFromVel(PoseVelocity2d pose) {
+    @NonNull
+    public static Pose2d poseFromVel(@NonNull PoseVelocity2d pose) {
         return new Pose2d(pose.linearVel, pose.angVel);
     }
 
@@ -118,7 +128,7 @@ public final class Geometry {
      * @param b the second pose
      * @return whether the two poses are equal within the epsilon value 1e-6
      */
-    public static boolean epsilonEquals(Pose2d a, Pose2d b) {
+    public static boolean epsilonEquals(@NonNull Pose2d a, @NonNull Pose2d b) {
         return Mathf.approximatelyEquals(a.position.x, b.position.x)
                 && Mathf.approximatelyEquals(a.position.y, b.position.y)
                 && Mathf.approximatelyEquals(a.heading.toDouble(), b.heading.toDouble());
@@ -131,7 +141,7 @@ public final class Geometry {
      * @param b the second pose
      * @return whether the two poses are equal within the epsilon value 1e-6 and heading radius
      */
-    public static boolean epsilonEqualsHeading(Pose2d a, Pose2d b) {
+    public static boolean epsilonEqualsHeading(@NonNull Pose2d a, @NonNull Pose2d b) {
         return Mathf.approximatelyEquals(a.position.x, b.position.x)
                 && Mathf.approximatelyEquals(a.position.y, b.position.y)
                 && Mathf.approximatelyEquals(Mathf.radianModulus(a.heading.toDouble() - b.heading.toDouble()), 0);
@@ -144,7 +154,7 @@ public final class Geometry {
      * @param b the second vector
      * @return whether the two vectors are equal within the epsilon value 1e-6
      */
-    public static boolean epsilonEquals(Vector2d a, Vector2d b) {
+    public static boolean epsilonEquals(@NonNull Vector2d a, @NonNull Vector2d b) {
         return Mathf.approximatelyEquals(a.x, b.x)
                 && Mathf.approximatelyEquals(a.y, b.y);
     }
@@ -156,7 +166,7 @@ public final class Geometry {
      * @param b the second vector
      * @return the distance between the two vectors
      */
-    public static double distBetween(Vector2d a, Vector2d b) {
+    public static double distBetween(@NonNull Vector2d a, @NonNull Vector2d b) {
         return Math.hypot(b.x - a.x, b.y - a.y);
     }
 }

@@ -5,6 +5,8 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inc
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.RadiansPerSecond;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Second;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
@@ -64,6 +66,7 @@ public class MotionProfile {
          * @param kS the static feedforward gain in tick units
          * @return the builder
          */
+        @NonNull
         public Builder setKs(double kS) {
             profile.kS = kS;
             return this;
@@ -75,6 +78,7 @@ public class MotionProfile {
          * @param kV the velocity feedforward gain in tick units
          * @return the builder
          */
+        @NonNull
         public Builder setKv(double kV) {
             profile.kV = kV;
             return this;
@@ -86,6 +90,7 @@ public class MotionProfile {
          * @param kA the acceleration feedforward gain in tick units
          * @return the builder
          */
+        @NonNull
         public Builder setKa(double kA) {
             profile.kA = kA;
             return this;
@@ -97,6 +102,7 @@ public class MotionProfile {
          * @param maxWheelVel the maximum wheel velocity in inches per second
          * @return the builder
          */
+        @NonNull
         public Builder setMaxWheelVel(double maxWheelVel) {
             profile.maxWheelVel = maxWheelVel;
             return this;
@@ -108,7 +114,8 @@ public class MotionProfile {
          * @param maxVelocity the maximum wheel velocity in desired units
          * @return the builder
          */
-        public Builder setMaxWheelVel(Measure<Velocity<Distance>> maxVelocity) {
+        @NonNull
+        public Builder setMaxWheelVel(@NonNull Measure<Velocity<Distance>> maxVelocity) {
             profile.maxWheelVel = maxVelocity.in(InchesPerSecond);
             return this;
         }
@@ -119,6 +126,7 @@ public class MotionProfile {
          * @param minProfileAccel the lower acceleration profile limit in inches per second squared
          * @return the builder
          */
+        @NonNull
         public Builder setMinProfileAccel(double minProfileAccel) {
             profile.minProfileAccel = minProfileAccel;
             return this;
@@ -130,7 +138,8 @@ public class MotionProfile {
          * @param minAccel the lower acceleration profile limit in desired units
          * @return the builder
          */
-        public Builder setMinProfileAccel(Measure<Velocity<Velocity<Distance>>> minAccel) {
+        @NonNull
+        public Builder setMinProfileAccel(@NonNull Measure<Velocity<Velocity<Distance>>> minAccel) {
             profile.minProfileAccel = minAccel.in(InchesPerSecondPerSecond);
             return this;
         }
@@ -141,6 +150,7 @@ public class MotionProfile {
          * @param maxProfileAccel the upper acceleration profile limit in inches per second squared
          * @return the builder
          */
+        @NonNull
         public Builder setMaxProfileAccel(double maxProfileAccel) {
             profile.maxProfileAccel = maxProfileAccel;
             return this;
@@ -152,7 +162,8 @@ public class MotionProfile {
          * @param maxAccel the upper acceleration profile limit in desired units
          * @return the builder
          */
-        public Builder setMaxProfileAccel(Measure<Velocity<Velocity<Distance>>> maxAccel) {
+        @NonNull
+        public Builder setMaxProfileAccel(@NonNull Measure<Velocity<Velocity<Distance>>> maxAccel) {
             profile.maxProfileAccel = maxAccel.in(InchesPerSecondPerSecond);
             return this;
         }
@@ -163,6 +174,7 @@ public class MotionProfile {
          * @param maxAngVel the maximum angular velocity in radians per second
          * @return the builder
          */
+        @NonNull
         public Builder setMaxAngVel(double maxAngVel) {
             profile.maxAngVel = maxAngVel;
             return this;
@@ -174,7 +186,8 @@ public class MotionProfile {
          * @param maxAngVel the maximum angular velocity in desired units
          * @return the builder
          */
-        public Builder setMaxAngVel(Measure<Velocity<Angle>> maxAngVel) {
+        @NonNull
+        public Builder setMaxAngVel(@NonNull Measure<Velocity<Angle>> maxAngVel) {
             profile.maxAngVel = maxAngVel.in(RadiansPerSecond);
             return this;
         }
@@ -185,6 +198,7 @@ public class MotionProfile {
          * @param maxAngAccel the maximum angular acceleration in radians per second squared
          * @return the builder
          */
+        @NonNull
         public Builder setMaxAngAccel(double maxAngAccel) {
             profile.maxAngAccel = maxAngAccel;
             return this;
@@ -196,7 +210,8 @@ public class MotionProfile {
          * @param maxAngAccel the maximum angular acceleration in desired units
          * @return the builder
          */
-        public Builder setMaxAngAccel(Measure<Velocity<Velocity<Angle>>> maxAngAccel) {
+        @NonNull
+        public Builder setMaxAngAccel(@NonNull Measure<Velocity<Velocity<Angle>>> maxAngAccel) {
             profile.maxAngAccel = maxAngAccel.in(RadiansPerSecond.per(Second));
             return this;
         }
@@ -206,6 +221,7 @@ public class MotionProfile {
          *
          * @return the drive profile
          */
+        @NonNull
         public MotionProfile build() {
             return profile;
         }

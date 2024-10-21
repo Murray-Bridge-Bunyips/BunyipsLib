@@ -157,6 +157,7 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
      *
      * @return list of all vision data detected since the last stateful update
      */
+    @NonNull
     public ArrayList<T> getData() {
         synchronized (data) {
             // Return a copy of the data to prevent concurrent modification
@@ -206,10 +207,11 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
      * @param frame            the frame to process
      * @param captureTimeNanos the time the frame was captured
      */
-    protected abstract void onProcessFrame(Mat frame, long captureTimeNanos);
+    protected abstract void onProcessFrame(@NonNull Mat frame, long captureTimeNanos);
 
+    @Nullable
     @Override
-    public final Object processFrame(Mat frame, long captureTimeNanos) {
+    public final Object processFrame(@NonNull Mat frame, long captureTimeNanos) {
         if (isFlipped)
             Core.flip(frame, frame, -1);
         // Run user processing
@@ -235,10 +237,10 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
      *
      * @param canvas the canvas to draw on
      */
-    protected abstract void onFrameDraw(Canvas canvas);
+    protected abstract void onFrameDraw(@NonNull Canvas canvas);
 
     @Override
-    public void getFrameBitmap(Continuation<? extends Consumer<Bitmap>> continuation) {
+    public void getFrameBitmap(@NonNull Continuation<? extends Consumer<Bitmap>> continuation) {
         continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(lastFrame.get()));
     }
 
@@ -251,12 +253,12 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
      * scaleBmpPxToCanvasPx and scaleCanvasDensity should be assumed as 1.0f.
      */
     @Override
-    public final void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
+    public final void onDrawFrame(@NonNull Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, @NonNull Object userContext) {
         // no-op
     }
 
     // Optional init method from VisionProcessor
     @Override
-    public void init(int width, int height, CameraCalibration calibration) {
+    public void init(int width, int height, @NonNull CameraCalibration calibration) {
     }
 }

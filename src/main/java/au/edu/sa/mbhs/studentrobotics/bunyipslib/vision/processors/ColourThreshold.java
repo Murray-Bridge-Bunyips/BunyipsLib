@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Size;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 
 import org.opencv.core.Core;
@@ -61,7 +63,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * @param colourSpace the colour space to use
      */
     @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
-    public ColourThreshold(ColourSpace colourSpace) {
+    public ColourThreshold(@NonNull ColourSpace colourSpace) {
         this.colourSpace = colourSpace;
     }
 
@@ -74,6 +76,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      *
      * @return the upper scalar
      */
+    @NonNull
     public Scalar getUpper() {
         return upperOverride == null ? setUpper() : upperOverride;
     }
@@ -83,9 +86,9 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      *
      * @param upper the upper scalar to use
      */
-    public void setUpper(Scalar upper) {
+    public void setUpper(@NonNull Scalar upper) {
         if (!upper.equals(upperOverride)) {
-            Dbg.logd(getClass(), "Overriding upper scalar to " + upper + " from " + setUpper().toString());
+            Dbg.logd(getClass(), "Overriding upper scalar to " + upper + " from " + setUpper());
             upperOverride = upper;
         }
     }
@@ -95,6 +98,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      *
      * @return the lower scalar
      */
+    @NonNull
     public Scalar getLower() {
         return lowerOverride == null ? setLower() : lowerOverride;
     }
@@ -104,15 +108,17 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      *
      * @param lower the lower scalar to use
      */
-    public void setLower(Scalar lower) {
+    public void setLower(@NonNull Scalar lower) {
         if (!lower.equals(lowerOverride)) {
-            Dbg.logd(getClass(), "Overriding lower scalar to " + lower + " from " + setLower().toString());
+            Dbg.logd(getClass(), "Overriding lower scalar to " + lower + " from " + setLower());
             lowerOverride = lower;
         }
     }
 
+    @NonNull
     protected abstract Scalar setLower();
 
+    @NonNull
     protected abstract Scalar setUpper();
 
     public abstract int getBoxColour();
@@ -127,7 +133,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     public void resetLower() {
         if (lowerOverride != null)
-            Dbg.logd(getClass(), "Resetting scalar to " + setLower().toString());
+            Dbg.logd(getClass(), "Resetting scalar to " + setLower());
         lowerOverride = null;
     }
 
@@ -136,7 +142,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     public void resetUpper() {
         if (upperOverride != null)
-            Dbg.logd(getClass(), "Resetting scalar to " + setUpper().toString());
+            Dbg.logd(getClass(), "Resetting scalar to " + setUpper());
         upperOverride = null;
     }
 
@@ -154,7 +160,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     }
 
     @Override
-    protected final void onProcessFrame(Mat frame, long captureTimeNanos) {
+    protected final void onProcessFrame(@NonNull Mat frame, long captureTimeNanos) {
         /*
          * Converts our input mat from RGB to
          * specified color space by the enum.
@@ -221,7 +227,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     }
 
     @Override
-    protected final void onFrameDraw(Canvas canvas) {
+    protected final void onFrameDraw(@NonNull Canvas canvas) {
         // Draw borders around the contours, with a thicker border for the largest contour
         ContourData biggest = ContourData.getLargest(data);
         for (ContourData contour : data) {
@@ -281,6 +287,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
          * @param idx the index of the channel, 0-2
          * @return the name of the channel, or null if the index is out of bounds
          */
+        @NonNull
         public final String getChannelName(int idx) {
             switch (this) {
                 case RGB:
@@ -292,7 +299,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                 case Lab:
                     return new String[]{"Lightness", "A", "B"}[idx];
                 default:
-                    return null;
+                    return "Unknown";
             }
         }
     }

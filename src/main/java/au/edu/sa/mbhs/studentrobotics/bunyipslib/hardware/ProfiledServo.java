@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -43,7 +44,7 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
      *
      * @param servo the Servo from hardwareMap to use.
      */
-    public ProfiledServo(Servo servo) {
+    public ProfiledServo(@NonNull Servo servo) {
         super(servo.getController(), servo.getPortNumber(), servo.getDirection());
     }
 
@@ -62,7 +63,7 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
      *
      * @param refreshRate the refresh rate interval, <=0/default will disable
      */
-    public void setPositionRefreshRate(Measure<Time> refreshRate) {
+    public void setPositionRefreshRate(@NonNull Measure<Time> refreshRate) {
         refreshRateNanos = (long) refreshRate.in(Nanoseconds);
     }
 
@@ -132,6 +133,7 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
      * @return the current PWM range limits for the servo
      * @see #setPwmRange(PwmRange)
      */
+    @NonNull
     @Override
     public PwmRange getPwmRange() {
         return ((ServoControllerEx) getController()).getServoPwmRange(getPortNumber());
@@ -144,7 +146,7 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
      * @see #getPwmRange()
      */
     @Override
-    public void setPwmRange(PwmRange range) {
+    public void setPwmRange(@NonNull PwmRange range) {
         ((ServoControllerEx) getController()).setServoPwmRange(getPortNumber(), range);
     }
 

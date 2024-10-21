@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
+
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
@@ -31,7 +33,7 @@ public class PurePursuitTask extends Task {
      * @param runner the Pure Pursuit runner to use
      * @param path   the path to follow
      */
-    public PurePursuitTask(PurePursuit runner, Path path) {
+    public PurePursuitTask(@NonNull PurePursuit runner, @NonNull Path path) {
         this.runner = runner;
         pathBuilder = () -> path;
         withName(Text.format("Pure Pursuit Path %::%", path.start(), path.end()));
@@ -45,7 +47,7 @@ public class PurePursuitTask extends Task {
      * @param runner    the Pure Pursuit runner to use
      * @param pathMaker the path maker to construct the path when this task is run
      */
-    public PurePursuitTask(PurePursuit runner, PurePursuit.PathMaker pathMaker) {
+    public PurePursuitTask(@NonNull PurePursuit runner, @NonNull PurePursuit.PathMaker pathMaker) {
         this.runner = runner;
         pathBuilder = pathMaker::buildPath;
         withName("Pure Pursuit Path");

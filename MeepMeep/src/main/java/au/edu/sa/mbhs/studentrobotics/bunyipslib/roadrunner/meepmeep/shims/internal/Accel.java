@@ -13,6 +13,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
+@SuppressWarnings("UnknownNullness")
 public final class Accel {
     /**
      * Specified minimum acceleration in inches per second squared.

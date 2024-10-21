@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.InchesPerSecondPerSecond;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
@@ -39,7 +40,8 @@ public final class Accel {
      * @param unit     The unit of the minimum acceleration.
      * @return The new Accel object.
      */
-    public static Accel ofMinAccel(double minAccel, Velocity<Velocity<Distance>> unit) {
+    @NonNull
+    public static Accel ofMinAccel(double minAccel, @NonNull Velocity<Velocity<Distance>> unit) {
         return new Accel(unit.of(minAccel).in(InchesPerSecondPerSecond), null);
     }
 
@@ -50,7 +52,8 @@ public final class Accel {
      * @param unit     The unit of the maximum acceleration.
      * @return The new Accel object.
      */
-    public static Accel ofMaxAccel(double maxAccel, Velocity<Velocity<Distance>> unit) {
+    @NonNull
+    public static Accel ofMaxAccel(double maxAccel, @NonNull Velocity<Velocity<Distance>> unit) {
         return new Accel(null, unit.of(maxAccel).in(InchesPerSecondPerSecond));
     }
 
@@ -61,7 +64,8 @@ public final class Accel {
      * @param unit     The unit of the maximum acceleration.
      * @return The new Accel object.
      */
-    public Accel andMaxAccel(double maxAccel, Velocity<Velocity<Distance>> unit) {
+    @NonNull
+    public Accel andMaxAccel(double maxAccel, @NonNull Velocity<Velocity<Distance>> unit) {
         return new Accel(minAccelInchesPerSecSquared, unit.of(maxAccel).in(InchesPerSecondPerSecond));
     }
 
@@ -72,7 +76,8 @@ public final class Accel {
      * @param unit     The unit of the minimum acceleration.
      * @return The new Accel object.
      */
-    public Accel andMinAccel(double minAccel, Velocity<Velocity<Distance>> unit) {
+    @NonNull
+    public Accel andMinAccel(double minAccel, @NonNull Velocity<Velocity<Distance>> unit) {
         return new Accel(unit.of(minAccel).in(InchesPerSecondPerSecond), maxAccelInchesPerSecSquared);
     }
 
@@ -82,7 +87,8 @@ public final class Accel {
      * @param defaultConstraints The default constraints to use if no constraints are specified.
      * @return The built ProfileAccelConstraint object.
      */
-    public ProfileAccelConstraint getOrDefault(ProfileAccelConstraint defaultConstraints) {
+    @NonNull
+    public ProfileAccelConstraint getOrDefault(@NonNull ProfileAccelConstraint defaultConstraints) {
         return new ProfileAccelConstraint(
                 minAccelInchesPerSecSquared == null ? defaultConstraints.minAccel : minAccelInchesPerSecSquared,
                 maxAccelInchesPerSecSquared == null ? defaultConstraints.maxAccel : maxAccelInchesPerSecSquared

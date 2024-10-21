@@ -57,7 +57,7 @@ public class TelemetryMenu {
      * @param telemetry pass in 'telemetry' from your OpMode
      * @param root      the root menu element
      */
-    public TelemetryMenu(Telemetry telemetry, MenuElement root) {
+    public TelemetryMenu(@NonNull Telemetry telemetry, @NonNull MenuElement root) {
         this.root = root;
         currentLevel = root;
         this.telemetry = telemetry;
@@ -72,7 +72,7 @@ public class TelemetryMenu {
      *
      * @param gamepad the gamepad you want to use to navigate the menu
      */
-    public void loop(Gamepad gamepad) {
+    public void loop(@NonNull Gamepad gamepad) {
         // Capture current state of the gamepad buttons we care about;
         // We can only look once or we risk a race condition
         boolean dpadUp = gamepad.dpad_up;
@@ -242,7 +242,7 @@ public class TelemetryMenu {
          * @param name   the name for this menu
          * @param isRoot whether this is a root menu, or a submenu
          */
-        public MenuElement(String name, boolean isRoot) {
+        public MenuElement(@NonNull String name, boolean isRoot) {
             this.name = name;
 
             // If it's not the root menu, we add the up one level option as the first element
@@ -257,7 +257,7 @@ public class TelemetryMenu {
          * @param child the child element to add
          */
         @SuppressWarnings("ClassEscapesDefinedScope")
-        public void addChild(Element child) {
+        public void addChild(@NonNull Element child) {
             child.setParent(this);
             children.add(child);
         }
@@ -268,13 +268,14 @@ public class TelemetryMenu {
          * @param childrenElems the children to add
          */
         @SuppressWarnings("ClassEscapesDefinedScope")
-        public void addChildren(Element[] childrenElems) {
+        public void addChildren(@NonNull Element[] childrenElems) {
             for (Element e : childrenElems) {
                 e.setParent(this);
                 children.add(e);
             }
         }
 
+        @NonNull
         @Override
         protected String getDisplayText() {
             return name;
@@ -314,7 +315,9 @@ public class TelemetryMenu {
     @SuppressWarnings("rawtypes")
     public static class EnumOption extends OptionElement {
         protected int idx = 0;
+        @NonNull
         protected Enum[] e;
+        @NonNull
         protected String name;
 
         /**
@@ -323,7 +326,7 @@ public class TelemetryMenu {
          * @param name The name of this option
          * @param e    The enum to back these options
          */
-        public EnumOption(String name, Enum[] e) {
+        public EnumOption(@NonNull String name, @NonNull Enum[] e) {
             this.e = e;
             this.name = name;
         }
@@ -335,7 +338,7 @@ public class TelemetryMenu {
          * @param e    The enum to back these options
          * @param def  Default value
          */
-        public EnumOption(String name, Enum[] e, Enum def) {
+        public EnumOption(@NonNull String name, @NonNull Enum[] e, @NonNull Enum def) {
             this(name, e);
             idx = def.ordinal();
         }
@@ -363,11 +366,13 @@ public class TelemetryMenu {
             onRightInput();
         }
 
+        @NonNull
         @Override
         protected String getDisplayText() {
             return String.format("%s: <font color='#e37c07' face=monospace>%s</font>", name, e[idx].name());
         }
 
+        @NonNull
         public Enum getValue() {
             return e[idx];
         }
@@ -380,6 +385,7 @@ public class TelemetryMenu {
         protected int i;
         protected int min;
         protected int max;
+        @NonNull
         protected String name;
 
         /**
@@ -390,7 +396,7 @@ public class TelemetryMenu {
          * @param max  maximum integer range
          * @param def  default option
          */
-        public IntegerOption(String name, int min, int max, int def) {
+        public IntegerOption(@NonNull String name, int min, int max, int def) {
             this.name = name;
             this.min = min;
             this.max = max;
@@ -420,6 +426,7 @@ public class TelemetryMenu {
             onRightInput();
         }
 
+        @NonNull
         @Override
         protected String getDisplayText() {
             return String.format(Locale.getDefault(), "%s: <font color='#e37c07' face=monospace>%d</font>", name, i);
@@ -446,7 +453,7 @@ public class TelemetryMenu {
          * @param name the name of this option
          * @param def  default value
          */
-        public BooleanOption(String name, boolean def) {
+        public BooleanOption(@NonNull String name, boolean def) {
             this.name = name;
             val = def;
         }
@@ -459,7 +466,7 @@ public class TelemetryMenu {
          * @param customTrue  the value instead of "true" to display when this option is selected
          * @param customFalse the value instead of "false" to display when this option is selected
          */
-        public BooleanOption(String name, boolean def, String customTrue, String customFalse) {
+        public BooleanOption(@NonNull String name, boolean def, @NonNull String customTrue, @NonNull String customFalse) {
             this(name, def);
             this.customTrue = customTrue;
             this.customFalse = customFalse;
@@ -480,6 +487,7 @@ public class TelemetryMenu {
             val = !val;
         }
 
+        @NonNull
         @Override
         protected String getDisplayText() {
             String valStr;
@@ -515,10 +523,11 @@ public class TelemetryMenu {
          *
          * @param name the name of this option
          */
-        public StaticItem(String name) {
+        public StaticItem(@NonNull String name) {
             this.name = name;
         }
 
+        @NonNull
         @Override
         protected String getDisplayText() {
             return name;
@@ -531,12 +540,13 @@ public class TelemetryMenu {
     public abstract static class StaticClickableOption extends OptionElement {
         private final String name;
 
-        protected StaticClickableOption(String name) {
+        protected StaticClickableOption(@NonNull String name) {
             this.name = name;
         }
 
         protected abstract void onClick();
 
+        @NonNull
         @Override
         protected String getDisplayText() {
             return name;

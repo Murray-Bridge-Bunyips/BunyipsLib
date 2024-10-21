@@ -28,7 +28,7 @@ public class DifferentialDriveTask extends ForeverTask {
      * @param gamepad the gamepad to use
      * @param drive   the drive to control, this task may be attached on this BunyipsSubsystem if applicable
      */
-    public DifferentialDriveTask(Gamepad gamepad, @NonNull Moveable drive) {
+    public DifferentialDriveTask(@NonNull Gamepad gamepad, @NonNull Moveable drive) {
         this.drive = drive;
         this.gamepad = gamepad;
         if (drive instanceof BunyipsSubsystem)

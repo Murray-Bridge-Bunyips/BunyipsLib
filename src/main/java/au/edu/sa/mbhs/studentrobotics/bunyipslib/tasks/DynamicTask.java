@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.function.Supplier;
 
@@ -36,7 +37,7 @@ public class DynamicTask extends Task {
      *
      * @param lazyTask the task to construct and run when the DynamicTask starts running.
      */
-    public DynamicTask(Supplier<Task> lazyTask) {
+    public DynamicTask(@NonNull Supplier<Task> lazyTask) {
         this.lazyTask = lazyTask;
         // We're not actually a task, so we'll let the inner task manage reports
         withMutedReports();
@@ -92,7 +93,7 @@ public class DynamicTask extends Task {
      */
     @NonNull
     @Override
-    public final Task withName(String name) {
+    public final Task withName(@Nullable String name) {
         if (builtTask != null)
             return this;
         super.withName(name + " (dyn)");

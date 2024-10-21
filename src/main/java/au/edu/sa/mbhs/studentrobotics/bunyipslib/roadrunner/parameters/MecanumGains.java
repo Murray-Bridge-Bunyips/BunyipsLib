@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters;
 
+import androidx.annotation.NonNull;
+
 /**
  * Drive coefficients that define gains for a Mecanum drivetrain.
  *
@@ -39,31 +41,37 @@ public class MecanumGains {
     public static class Builder {
         private final MecanumGains gains = new MecanumGains();
 
+        @NonNull
         public Builder setAxialGain(double axialGain) {
             gains.axialGain = axialGain;
             return this;
         }
 
+        @NonNull
         public Builder setLateralGain(double lateralGain) {
             gains.lateralGain = lateralGain;
             return this;
         }
 
+        @NonNull
         public Builder setHeadingGain(double headingGain) {
             gains.headingGain = headingGain;
             return this;
         }
 
+        @NonNull
         public Builder setAxialVelGain(double axialVelGain) {
             gains.axialVelGain = axialVelGain;
             return this;
         }
 
+        @NonNull
         public Builder setLateralVelGain(double lateralVelGain) {
             gains.lateralVelGain = lateralVelGain;
             return this;
         }
 
+        @NonNull
         public Builder setHeadingVelGain(double headingVelGain) {
             gains.headingVelGain = headingVelGain;
             return this;
@@ -74,6 +82,7 @@ public class MecanumGains {
          *
          * @return the MecanumGains object
          */
+        @NonNull
         public MecanumGains build() {
             return gains;
         }

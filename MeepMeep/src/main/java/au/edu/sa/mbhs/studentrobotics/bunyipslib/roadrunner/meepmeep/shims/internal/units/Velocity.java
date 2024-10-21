@@ -22,6 +22,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
  * @param <D> the distance unit, such as {@link Angle} or {@link Distance}
  * @since 1.0.0-pre
  */
+@SuppressWarnings("UnknownNullness")
 public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
     /**
      * Stores velocity units that were created ad-hoc using {@link #combine(Unit, Time, String,

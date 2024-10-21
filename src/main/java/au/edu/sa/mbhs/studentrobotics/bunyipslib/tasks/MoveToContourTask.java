@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -32,10 +34,12 @@ public class MoveToContourTask extends Task {
     /**
      * The PIDF coefficients for the translational controller.
      */
+    @NonNull
     public static PIDFCoefficients TRANSLATIONAL_PIDF = new PIDFCoefficients();
     /**
      * The PIDF coefficients for the rotational controller.
      */
+    @NonNull
     public static PIDFCoefficients ROTATIONAL_PIDF = new PIDFCoefficients();
     /**
      * The target position of the pixel on the camera pitch axis.
@@ -62,7 +66,7 @@ public class MoveToContourTask extends Task {
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, Moveable drive, Supplier<List<ContourData>> supplier, PIDF translationController, PIDF rotationController) {
+    public MoveToContourTask(@NonNull DoubleSupplier xSupplier, @NonNull DoubleSupplier ySupplier, @NonNull DoubleSupplier rSupplier, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
@@ -86,7 +90,7 @@ public class MoveToContourTask extends Task {
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(Gamepad driver, Moveable drive, Supplier<List<ContourData>> supplier, PIDF translationController, PIDF rotationController) {
+    public MoveToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, supplier, translationController, rotationController);
     }
 
@@ -99,7 +103,7 @@ public class MoveToContourTask extends Task {
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(Measure<Time> timeout, Moveable drive, Supplier<List<ContourData>> supplier, PIDF translationController, PIDF rotationController) {
+    public MoveToContourTask(@NonNull Measure<Time> timeout, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
         super(timeout);
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
@@ -123,7 +127,7 @@ public class MoveToContourTask extends Task {
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, Moveable drive, Processor<ContourData> processor, PIDF translationController, PIDF rotationController) {
+    public MoveToContourTask(@NonNull DoubleSupplier xSupplier, @NonNull DoubleSupplier ySupplier, @NonNull DoubleSupplier rSupplier, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
         this(xSupplier, ySupplier, rSupplier, drive, processor::getData, translationController, rotationController);
     }
 
@@ -136,7 +140,7 @@ public class MoveToContourTask extends Task {
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(Gamepad driver, Moveable drive, Processor<ContourData> processor, PIDF translationController, PIDF rotationController) {
+    public MoveToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, processor::getData, translationController, rotationController);
     }
 
@@ -149,7 +153,7 @@ public class MoveToContourTask extends Task {
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(Measure<Time> timeout, Moveable drive, Processor<ContourData> processor, PIDF translationController, PIDF rotationController) {
+    public MoveToContourTask(@NonNull Measure<Time> timeout, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
         this(timeout, drive, processor::getData, translationController, rotationController);
     }
 
@@ -159,6 +163,7 @@ public class MoveToContourTask extends Task {
      * @param pitchTarget the target pitch to move to
      * @return the task
      */
+    @NonNull
     public MoveToContourTask withPitchTarget(double pitchTarget) {
         PITCH_TARGET = pitchTarget;
         return this;

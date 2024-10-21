@@ -6,6 +6,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Rad
 
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -68,6 +69,7 @@ public class Motor implements DcMotorEx {
     private final Encoder encoder;
     private final String deviceName;
     private final Rotation operationalRotation;
+    @NonNull
     protected Direction direction;
     private DcMotor.RunMode mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
     private double maxMagnitude = 1;
@@ -86,7 +88,7 @@ public class Motor implements DcMotorEx {
      *
      * @param motor the DcMotor from hardwareMap to use.
      */
-    public Motor(DcMotor motor) {
+    public Motor(@NonNull DcMotor motor) {
         // Take control over this motor's controller, we don't need to manage the motor configuration as that
         // should be on the controller and has been detached in the overhead DcMotor
         controller = (DcMotorControllerEx) motor.getController();
@@ -121,7 +123,7 @@ public class Motor implements DcMotorEx {
      *
      * @param refreshRate the refresh rate interval, <=0/default will disable
      */
-    public void setPowerRefreshRate(Measure<Time> refreshRate) {
+    public void setPowerRefreshRate(@NonNull Measure<Time> refreshRate) {
         refreshRateNanos = (long) refreshRate.in(Nanoseconds);
     }
 
@@ -156,7 +158,7 @@ public class Motor implements DcMotorEx {
      *
      * @param controller the controller to use, recommended to use a closed-loop controller such as PID
      */
-    public void setRunToPositionController(SystemController controller) {
+    public void setRunToPositionController(@NonNull SystemController controller) {
         rtpController = controller;
         if (rtpController instanceof PIDF)
             ((PIDF) rtpController).getPIDFController().setTolerance(LynxConstants.DEFAULT_TARGET_POSITION_TOLERANCE);
@@ -185,7 +187,7 @@ public class Motor implements DcMotorEx {
      *
      * @param controller the controller to use, recommended to use a PIDFF controller.
      */
-    public void setRunUsingEncoderController(SystemController controller) {
+    public void setRunUsingEncoderController(@NonNull SystemController controller) {
         setRunUsingEncoderController(controller, 1, getMotorType().getAchieveableMaxTicksPerSecond());
     }
 
@@ -206,7 +208,7 @@ public class Motor implements DcMotorEx {
      * @param bufferFraction              fractional value for velocity control, must be in (0, 1].
      * @param maxAchievableTicksPerSecond your motor's spec for how many ticks/sec it can reach
      */
-    public void setRunUsingEncoderController(SystemController controller, double bufferFraction, double maxAchievableTicksPerSecond) {
+    public void setRunUsingEncoderController(@NonNull SystemController controller, double bufferFraction, double maxAchievableTicksPerSecond) {
         if (bufferFraction <= 0 || bufferFraction > 1) {
             throw new OutOfRangeException(LocalizedFormats.OUT_OF_RANGE_LEFT, bufferFraction, 0, 1);
         }
@@ -230,7 +232,7 @@ public class Motor implements DcMotorEx {
      * @param controller     the controller to use, recommended to use a PIDFF controller.
      * @param bufferFraction fractional value for velocity control, must be in (0, 1].
      */
-    public void setRunUsingEncoderController(SystemController controller, double bufferFraction) {
+    public void setRunUsingEncoderController(@NonNull SystemController controller, double bufferFraction) {
         if (bufferFraction <= 0 || bufferFraction > 1) {
             throw new OutOfRangeException(LocalizedFormats.OUT_OF_RANGE_LEFT, bufferFraction, 0, 1);
         }
@@ -245,6 +247,7 @@ public class Motor implements DcMotorEx {
      *
      * @return a builder to specify encoder tick positions to gains of your {@link DcMotor.RunMode#RUN_TO_POSITION} controller
      */
+    @NonNull
     public GainScheduling scheduleRunToPositionGains() {
         rtpGains.clear();
         return new GainScheduling(DcMotor.RunMode.RUN_TO_POSITION);
@@ -257,6 +260,7 @@ public class Motor implements DcMotorEx {
      *
      * @return a builder to specify encoder tick positions to gains of your {@link DcMotor.RunMode#RUN_USING_ENCODER} controller
      */
+    @NonNull
     public GainScheduling scheduleRunUsingEncoderGains() {
         rueGains.clear();
         return new GainScheduling(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -276,6 +280,7 @@ public class Motor implements DcMotorEx {
      *
      * @return the encoder object that is used for encoder readings on this motor
      */
+    @NonNull
     public Encoder getEncoder() {
         return encoder;
     }
@@ -327,7 +332,7 @@ public class Motor implements DcMotorEx {
      * @see #setVelocity(double, AngleUnit)
      */
     @Override
-    public synchronized double getVelocity(AngleUnit unit) {
+    public synchronized double getVelocity(@NonNull AngleUnit unit) {
         Measure<Angle> vel = EncoderTicks.toAngle((int) getVelocity(), (int) getMotorType().getTicksPerRev(), 1);
         return unit == AngleUnit.DEGREES ? vel.in(Degrees) : vel.in(Radians);
     }
@@ -342,7 +347,7 @@ public class Motor implements DcMotorEx {
      * @see #getPIDCoefficients(DcMotor.RunMode)
      */
     @Override
-    public void setPIDCoefficients(DcMotor.RunMode mode, PIDCoefficients pidCoefficients) {
+    public void setPIDCoefficients(@NonNull RunMode mode, @NonNull PIDCoefficients pidCoefficients) {
         mode = mode.migrate();
         if (mode == DcMotor.RunMode.RUN_TO_POSITION) {
             setRunToPositionController(new PIDController(pidCoefficients.p, pidCoefficients.i, pidCoefficients.d));
@@ -363,7 +368,7 @@ public class Motor implements DcMotorEx {
      * @see #getPIDFCoefficients(DcMotor.RunMode)
      */
     @Override
-    public void setPIDFCoefficients(DcMotor.RunMode mode, PIDFCoefficients pidfCoefficients) {
+    public void setPIDFCoefficients(@NonNull RunMode mode, @NonNull PIDFCoefficients pidfCoefficients) {
         mode = mode.migrate();
         if (mode == DcMotor.RunMode.RUN_TO_POSITION) {
             if (rtpController == null) {
@@ -435,8 +440,9 @@ public class Motor implements DcMotorEx {
      * @param mode either {@link DcMotor.RunMode#RUN_USING_ENCODER} or {@link DcMotor.RunMode#RUN_TO_POSITION}
      * @return the PID control coefficients used when running in the indicated mode on this motor
      */
+    @NonNull
     @Override
-    public PIDCoefficients getPIDCoefficients(DcMotor.RunMode mode) {
+    public PIDCoefficients getPIDCoefficients(@NonNull DcMotor.RunMode mode) {
         PIDFCoefficients coeffs = getPIDFCoefficients(mode);
         return new PIDCoefficients(coeffs.p, coeffs.i, coeffs.d);
     }
@@ -449,8 +455,9 @@ public class Motor implements DcMotorEx {
      * @return the PIDF control coefficients used when running in the indicated mode on this motor
      * @see #setPIDFCoefficients(DcMotor.RunMode, PIDFCoefficients)
      */
+    @NonNull
     @Override
-    public PIDFCoefficients getPIDFCoefficients(DcMotor.RunMode mode) {
+    public PIDFCoefficients getPIDFCoefficients(@NonNull DcMotor.RunMode mode) {
         double[] coeffs = new double[0];
         mode = mode.migrate();
         if (mode == DcMotor.RunMode.RUN_TO_POSITION) {
@@ -508,6 +515,7 @@ public class Motor implements DcMotorEx {
      * which is always set to {@link DcMotor.RunMode#RUN_WITHOUT_ENCODER}, but rather the equivalent mode this motor
      * is currently running in.
      */
+    @NonNull
     @Override
     public DcMotor.RunMode getMode() {
         return mode;
@@ -521,7 +529,7 @@ public class Motor implements DcMotorEx {
      * @param mode the new current run mode for this motor
      */
     @Override
-    public synchronized void setMode(DcMotor.RunMode mode) {
+    public synchronized void setMode(@NonNull DcMotor.RunMode mode) {
         if (mode == DcMotor.RunMode.STOP_AND_RESET_ENCODER) {
             setPower(0);
             resetEncoder();
@@ -575,7 +583,7 @@ public class Motor implements DcMotorEx {
      * @return the current consumed by this motor.
      */
     @Override
-    public double getCurrent(CurrentUnit unit) {
+    public double getCurrent(@NonNull CurrentUnit unit) {
         return controller.getMotorCurrent(port, unit);
     }
 
@@ -586,7 +594,7 @@ public class Motor implements DcMotorEx {
      * @return the current alert for this motor
      */
     @Override
-    public double getCurrentAlert(CurrentUnit unit) {
+    public double getCurrentAlert(@NonNull CurrentUnit unit) {
         return controller.getMotorCurrentAlert(port, unit);
     }
 
@@ -597,7 +605,7 @@ public class Motor implements DcMotorEx {
      * @param unit    current units
      */
     @Override
-    public void setCurrentAlert(double current, CurrentUnit unit) {
+    public void setCurrentAlert(double current, @NonNull CurrentUnit unit) {
         controller.setMotorCurrentAlert(port, current, unit);
     }
 
@@ -619,6 +627,7 @@ public class Motor implements DcMotorEx {
      *
      * @return the assigned type for this motor
      */
+    @NonNull
     @Override
     public MotorConfigurationType getMotorType() {
         return controller.getMotorType(port);
@@ -631,7 +640,7 @@ public class Motor implements DcMotorEx {
      * @see #getMotorType()
      */
     @Override
-    public void setMotorType(MotorConfigurationType motorType) {
+    public void setMotorType(@NonNull MotorConfigurationType motorType) {
         controller.setMotorType(port, motorType);
     }
 
@@ -641,6 +650,7 @@ public class Motor implements DcMotorEx {
      * @return the underlying motor controller on which this motor is situated.
      * @see #getPortNumber()
      */
+    @NonNull
     @Override
     public DcMotorController getController() {
         return controller;
@@ -662,6 +672,7 @@ public class Motor implements DcMotorEx {
      *
      * @return the current behavior of the motor were a power level of zero to be applied.
      */
+    @NonNull
     @Override
     public synchronized ZeroPowerBehavior getZeroPowerBehavior() {
         return controller.getMotorZeroPowerBehavior(port);
@@ -675,7 +686,7 @@ public class Motor implements DcMotorEx {
      * @see #setPower(double)
      */
     @Override
-    public synchronized void setZeroPowerBehavior(ZeroPowerBehavior zeroPowerBehavior) {
+    public synchronized void setZeroPowerBehavior(@NonNull ZeroPowerBehavior zeroPowerBehavior) {
         controller.setMotorZeroPowerBehavior(port, zeroPowerBehavior);
     }
 
@@ -787,7 +798,7 @@ public class Motor implements DcMotorEx {
      * @param unit   the units in which angVel is expressed
      */
     @Override
-    public synchronized void setVelocity(double angVel, AngleUnit unit) {
+    public synchronized void setVelocity(double angVel, @NonNull AngleUnit unit) {
         double tpr = getMotorType().getTicksPerRev();
         if (tpr <= 0) {
             throw new IllegalStateException(Text.format("The Ticks Per Revolution attribute has not been set for this motor (% on port %). You will have to clone the current motorType, set the ticksPerRev, and set the new motorType to the cloned copy.", deviceName, port));
@@ -816,6 +827,7 @@ public class Motor implements DcMotorEx {
      * @return the current logical direction in which this motor is set as operating.
      * @see #setDirection(Direction)
      */
+    @NonNull
     @Override
     public Direction getDirection() {
         return direction;
@@ -828,7 +840,7 @@ public class Motor implements DcMotorEx {
      * @see #getDirection()
      */
     @Override
-    public synchronized void setDirection(Direction direction) {
+    public synchronized void setDirection(@NonNull Direction direction) {
         // The only directional controls we have in the Motor class is the setting of power, the encoder ticks themselves
         // are managed via the Encoder class (they should also be equal so we hook it here)
         encoder.setDirection(direction);
@@ -941,6 +953,7 @@ public class Motor implements DcMotorEx {
      *
      * @return the device's manufacturer
      */
+    @NonNull
     @Override
     public Manufacturer getManufacturer() {
         return controller.getManufacturer();
@@ -953,6 +966,7 @@ public class Motor implements DcMotorEx {
      *
      * @return device manufacturer and name
      */
+    @NonNull
     @Override
     public String getDeviceName() {
         return deviceName;
@@ -963,6 +977,7 @@ public class Motor implements DcMotorEx {
      *
      * @return connection info
      */
+    @NonNull
     @Override
     public String getConnectionInfo() {
         return controller.getConnectionInfo() + "; port " + port;
@@ -1025,7 +1040,8 @@ public class Motor implements DcMotorEx {
          * @param coeffs        the coefficients at encoder ticks position
          * @return the builder
          */
-        public GainScheduling atPosition(double positionTicks, double... coeffs) {
+        @NonNull
+        public GainScheduling atPosition(double positionTicks, @NonNull double... coeffs) {
             for (int i = 0; i < coeffs.length; i++) {
                 if (gains.size() <= i) {
                     gains.add(new InterpolatedLookupTable());

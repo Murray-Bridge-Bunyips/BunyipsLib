@@ -100,7 +100,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      * @param startPose            the starting pose of the robot
      */
-    public TankDrive(DriveModel driveModel, MotionProfile motionProfile, TankGains tankGains, List<DcMotor> leftMotors, List<DcMotor> rightMotors, LazyImu lazyImu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, Pose2d startPose) {
+    public TankDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull TankGains tankGains, @NonNull List<DcMotor> leftMotors, @NonNull List<DcMotor> rightMotors, @NonNull LazyImu lazyImu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, @NonNull Pose2d startPose) {
         assertParamsNotNull(driveModel, motionProfile, tankGains, leftMotors, rightMotors, lazyImu, voltageSensorMapping, startPose);
 
         accumulator = new Accumulator(startPose);
@@ -149,7 +149,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param lazyImu              the LazyImu instance to use, see the {@code getLazyImu} method of {@link RobotConfig} to construct this
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      */
-    public TankDrive(DriveModel driveModel, MotionProfile motionProfile, TankGains tankGains, List<DcMotor> leftMotors, List<DcMotor> rightMotors, LazyImu lazyImu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
+    public TankDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull TankGains tankGains, @NonNull List<DcMotor> leftMotors, @NonNull List<DcMotor> rightMotors, @NonNull LazyImu lazyImu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
         this(driveModel, motionProfile, tankGains, leftMotors, rightMotors, lazyImu, voltageSensorMapping, Storage.memory().lastKnownPosition);
     }
 
@@ -160,11 +160,13 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param localizer the localizer to use
      * @return this
      */
-    public TankDrive withLocalizer(Localizer localizer) {
+    @NonNull
+    public TankDrive withLocalizer(@NonNull Localizer localizer) {
         this.localizer = localizer;
         return this;
     }
 
+    @NonNull
     public Localizer getLocalizer() {
         return localizer;
     }
@@ -176,6 +178,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param accumulator the new accumulator to use
      * @return this
      */
+    @NonNull
     public TankDrive withAccumulator(@NonNull Accumulator accumulator) {
         this.accumulator.copyTo(accumulator);
         this.accumulator = accumulator;
@@ -198,6 +201,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      *
      * @return the power for the left and right sides of the robot
      */
+    @NonNull
     public double[] getMotorPowers() {
         return new double[]{leftPower, rightPower};
     }
@@ -267,6 +271,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         return accumulator.getVelocity();
     }
 
+    @NonNull
     @Override
     public Constants getConstants() {
         return new Constants(
@@ -299,7 +304,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
          *
          * @param t the trajectory to follow
          */
-        public FollowTrajectoryTask(TimeTrajectory t) {
+        public FollowTrajectoryTask(@NonNull TimeTrajectory t) {
             timeTrajectory = t;
 
             List<Double> disps = com.acmerobotics.roadrunner.Math.range(
@@ -387,7 +392,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
          *
          * @param turn the turn to execute
          */
-        public TurnTask(TimeTurn turn) {
+        public TurnTask(@NonNull TimeTurn turn) {
             this.turn = turn;
             withTimeout(Seconds.of(turn.duration));
         }

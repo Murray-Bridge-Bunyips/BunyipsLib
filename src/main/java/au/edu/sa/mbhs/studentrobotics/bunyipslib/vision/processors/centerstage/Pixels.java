@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.centerstage;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
 
 /**
@@ -16,6 +18,7 @@ public final class Pixels {
      *
      * @return An array of all the pixel processors - White Pixel, Purple Pixel, Yellow Pixel, and Green Pixel
      */
+    @NonNull
     public static ColourThreshold[] createProcessors() {
         return new ColourThreshold[]{
                 new WhitePixel(),

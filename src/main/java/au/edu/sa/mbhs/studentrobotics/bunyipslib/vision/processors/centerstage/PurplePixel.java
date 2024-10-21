@@ -18,10 +18,12 @@ public class PurplePixel extends ColourThreshold {
     /**
      * Lower bounds for the YCrCb colour space.
      */
+    @NonNull
     public static Scalar LOWER_YCRCB = new Scalar(150, 0.0, 145.8);
     /**
      * Upper bounds for the YCrCb colour space.
      */
+    @NonNull
     public static Scalar UPPER_YCRCB = new Scalar(255.0, 255.0, 255.0);
     /**
      * Default minimum area for the contour.
@@ -59,11 +61,13 @@ public class PurplePixel extends ColourThreshold {
         return MAX_AREA;
     }
 
+    @NonNull
     @Override
     protected Scalar setLower() {
         return LOWER_YCRCB;
     }
 
+    @NonNull
     @Override
     protected Scalar setUpper() {
         return UPPER_YCRCB;

@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Time;
@@ -26,6 +28,7 @@ public class BoundedAccumulator extends Accumulator {
     /**
      * Maximum bounds (FTC field)
      */
+    @NonNull
     public static Rect MAX_BOUNDS = Field.MAX_BOUNDS;
 
     private final List<Rect> restrictedAreas = new ArrayList<>();
@@ -36,7 +39,7 @@ public class BoundedAccumulator extends Accumulator {
      *
      * @param robotRadius the radius of the robot from the center of localization
      */
-    public BoundedAccumulator(Measure<Distance> robotRadius) {
+    public BoundedAccumulator(@NonNull Measure<Distance> robotRadius) {
         robotBoundingBox = new Rect(new Vector2d(-robotRadius.magnitude(), -robotRadius.magnitude()),
                 new Vector2d(robotRadius.magnitude(), robotRadius.magnitude()), robotRadius.unit());
     }
@@ -47,7 +50,8 @@ public class BoundedAccumulator extends Accumulator {
      * @param areas the areas to restrict the robot from moving into
      * @return this
      */
-    public BoundedAccumulator withRestrictedAreas(Rect... areas) {
+    @NonNull
+    public BoundedAccumulator withRestrictedAreas(@NonNull Rect... areas) {
         Collections.addAll(restrictedAreas, areas);
         return this;
     }
@@ -58,13 +62,14 @@ public class BoundedAccumulator extends Accumulator {
      * @param seasonField the current season field to restrict the robot from moving into
      * @return this
      */
-    public BoundedAccumulator withRestrictedAreas(Field.Season seasonField) {
+    @NonNull
+    public BoundedAccumulator withRestrictedAreas(@NonNull Field.Season seasonField) {
         restrictedAreas.addAll(seasonField.getRestrictedAreas());
         return this;
     }
 
     @Override
-    public void accumulate(Twist2dDual<Time> twist) {
+    public void accumulate(@NonNull Twist2dDual<Time> twist) {
         super.accumulate(twist);
 
         Pose2d currentPose = pose;

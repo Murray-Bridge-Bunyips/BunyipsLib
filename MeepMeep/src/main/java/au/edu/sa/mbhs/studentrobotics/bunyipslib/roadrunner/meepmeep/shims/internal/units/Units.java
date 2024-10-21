@@ -10,6 +10,7 @@ import java.util.Locale;
  * Contains and exposes a set of predefined units.
  * @since 1.0.0-pre
  */
+@SuppressWarnings("UnknownNullness")
 public final class Units {
     private Units() {
         // Prevent instantiation

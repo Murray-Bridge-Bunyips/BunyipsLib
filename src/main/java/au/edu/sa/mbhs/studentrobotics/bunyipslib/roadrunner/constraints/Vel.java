@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.InchesPerSecond;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.RadiansPerSecond;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.AngularVelConstraint;
@@ -46,7 +47,8 @@ public final class Vel {
      * @param unit   The unit of the maximum translation velocity.
      * @return The new Vel object.
      */
-    public static Vel ofMaxVel(double maxVel, Velocity<Distance> unit) {
+    @NonNull
+    public static Vel ofMaxVel(double maxVel, @NonNull Velocity<Distance> unit) {
         return new Vel(unit.of(maxVel).in(InchesPerSecond), null);
     }
 
@@ -57,7 +59,8 @@ public final class Vel {
      * @param unit      The unit of the maximum angular velocity.
      * @return The new Vel object.
      */
-    public static Vel ofMaxAngVel(double maxAngVel, Velocity<Angle> unit) {
+    @NonNull
+    public static Vel ofMaxAngVel(double maxAngVel, @NonNull Velocity<Angle> unit) {
         return new Vel(null, unit.of(maxAngVel).in(RadiansPerSecond));
     }
 
@@ -68,7 +71,8 @@ public final class Vel {
      * @param unit   The unit of the maximum translation velocity.
      * @return The new Vel object.
      */
-    public Vel andMaxVel(double maxVel, Velocity<Distance> unit) {
+    @NonNull
+    public Vel andMaxVel(double maxVel, @NonNull Velocity<Distance> unit) {
         return new Vel(unit.of(maxVel).in(InchesPerSecond), maxAngVelRadsPerSec);
     }
 
@@ -79,7 +83,8 @@ public final class Vel {
      * @param unit      The unit of the maximum angular velocity.
      * @return The new Vel object.
      */
-    public Vel andMaxAngVel(double maxAngVel, Velocity<Angle> unit) {
+    @NonNull
+    public Vel andMaxAngVel(double maxAngVel, @NonNull Velocity<Angle> unit) {
         return new Vel(maxVelInchesPerSec, unit.of(maxAngVel).in(RadiansPerSecond));
     }
 
@@ -90,7 +95,8 @@ public final class Vel {
      * @param defaultAngVelConstraint The default angular velocity constraint to use if no constraint is specified.
      * @return The built MinVelConstraint object.
      */
-    public MinVelConstraint getOrDefault(VelConstraint defaultVelConstraint, VelConstraint defaultAngVelConstraint) {
+    @NonNull
+    public MinVelConstraint getOrDefault(@NonNull VelConstraint defaultVelConstraint, @NonNull VelConstraint defaultAngVelConstraint) {
         return new MinVelConstraint(Arrays.asList(
                 maxVelInchesPerSec == null ? defaultVelConstraint : new TranslationalVelConstraint(maxVelInchesPerSec),
                 maxAngVelRadsPerSec == null ? defaultAngVelConstraint : new AngularVelConstraint(maxAngVelRadsPerSec)

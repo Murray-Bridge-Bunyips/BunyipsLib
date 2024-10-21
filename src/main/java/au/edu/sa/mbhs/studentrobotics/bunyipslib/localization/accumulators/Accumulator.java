@@ -34,7 +34,9 @@ public class Accumulator implements Localizable {
     public static int MAX_POSE_HISTORY = 100;
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
+    @NonNull
     protected Pose2d pose;
+    @NonNull
     protected PoseVelocity2d velocity = Geometry.zeroVel();
     private LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
@@ -43,7 +45,7 @@ public class Accumulator implements Localizable {
      *
      * @param initialPose the initial pose to accumulate from
      */
-    public Accumulator(Pose2d initialPose) {
+    public Accumulator(@NonNull Pose2d initialPose) {
         pose = initialPose;
         Storage.memory().lastKnownPosition = initialPose;
     }
@@ -62,7 +64,7 @@ public class Accumulator implements Localizable {
      *
      * @param twist the change in position and velocity with respect to time
      */
-    public void accumulate(Twist2dDual<Time> twist) {
+    public void accumulate(@NonNull Twist2dDual<Time> twist) {
         pose = pose.plus(twist.value());
         velocity = twist.velocity().value();
         Storage.memory().lastKnownPosition = pose;
@@ -105,7 +107,7 @@ public class Accumulator implements Localizable {
      *
      * @param other the other accumulator to copy to
      */
-    public final void copyTo(Accumulator other) {
+    public final void copyTo(@NonNull Accumulator other) {
         other.pose = pose;
         other.velocity = velocity;
         other.poseHistory = poseHistory;
@@ -114,6 +116,7 @@ public class Accumulator implements Localizable {
     /**
      * @return a clone of the pose history as accumulated by this accumulator
      */
+    @NonNull
     @SuppressWarnings("unchecked")
     public final LinkedList<Pose2d> getPoseHistory() {
         return (LinkedList<Pose2d>) poseHistory.clone();

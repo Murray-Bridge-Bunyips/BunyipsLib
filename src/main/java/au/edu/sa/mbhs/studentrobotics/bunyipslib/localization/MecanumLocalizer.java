@@ -66,7 +66,7 @@ public class MecanumLocalizer implements Localizer {
      * @param rightFront the front right motor
      * @param imu        the IMU to use for heading
      */
-    public MecanumLocalizer(DriveModel driveModel, @NonNull DcMotor leftFront, @NonNull DcMotor leftBack, @NonNull DcMotor rightBack, @NonNull DcMotor rightFront, @NonNull IMU imu) {
+    public MecanumLocalizer(@NonNull DriveModel driveModel, @NonNull DcMotor leftFront, @NonNull DcMotor leftBack, @NonNull DcMotor rightBack, @NonNull DcMotor rightFront, @NonNull IMU imu) {
         kinematics = new MecanumKinematics(driveModel.inPerTick * driveModel.trackWidthTicks, driveModel.inPerTick / driveModel.lateralInPerTick);
         this.driveModel = driveModel;
         this.leftFront = new OverflowEncoder(new RawEncoder((DcMotorEx) leftFront));

@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
+import androidx.annotation.NonNull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class RaceTaskGroup extends TaskGroup {
      *
      * @param tasks The tasks to run together
      */
-    public RaceTaskGroup(Task... tasks) {
+    public RaceTaskGroup(@NonNull Task... tasks) {
         // Try to extract the lowest timeout to be the timeout of this task group.
         // This works for a race where the first task to finish will finish the rest.
         super(Seconds.of(Arrays.stream(tasks).mapToDouble(t -> t.getTimeout().in(Seconds)).min().orElse(0.0)), tasks);
@@ -31,7 +33,7 @@ public class RaceTaskGroup extends TaskGroup {
      *
      * @param tasks The tasks to run together
      */
-    public RaceTaskGroup(List<Task> tasks) {
+    public RaceTaskGroup(@NonNull List<Task> tasks) {
         this(tasks.toArray(new Task[0]));
     }
 

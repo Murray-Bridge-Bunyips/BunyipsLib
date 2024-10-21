@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 
 /**
@@ -9,5 +11,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFContro
  * @since 4.0.0
  */
 public interface PIDF extends SystemController {
+    @NonNull
     PIDFController getPIDFController();
 }

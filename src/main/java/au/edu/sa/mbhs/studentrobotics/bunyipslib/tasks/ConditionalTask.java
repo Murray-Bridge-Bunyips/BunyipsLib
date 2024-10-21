@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
+
 import java.util.function.BooleanSupplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
@@ -22,7 +24,7 @@ public class ConditionalTask extends Task {
      * @param falseTask the task to run if the condition is false
      * @param condition the condition to evaluate
      */
-    public ConditionalTask(Task trueTask, Task falseTask, BooleanSupplier condition) {
+    public ConditionalTask(@NonNull Task trueTask, @NonNull Task falseTask, @NonNull BooleanSupplier condition) {
         this.trueTask = trueTask;
         this.falseTask = falseTask;
         this.condition = condition;
@@ -36,7 +38,7 @@ public class ConditionalTask extends Task {
      * @param onFalse   the callback to run if the condition is false
      * @param condition the condition to evaluate
      */
-    public ConditionalTask(Runnable onTrue, Runnable onFalse, BooleanSupplier condition) {
+    public ConditionalTask(@NonNull Runnable onTrue, @NonNull Runnable onFalse, @NonNull BooleanSupplier condition) {
         this(new RunTask(onTrue), new RunTask(onFalse), condition);
     }
 

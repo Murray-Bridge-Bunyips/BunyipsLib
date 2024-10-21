@@ -3,6 +3,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Amps;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -76,7 +78,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      *
      * @param motor the motor to control
      */
-    public HoldableActuator(DcMotor motor) {
+    public HoldableActuator(@NonNull DcMotor motor) {
         if (!assertParamsNotNull(motor)) return;
         this.motor = (DcMotorEx) motor;
         // Always default to BRAKE because HoldableActuators are meant to hold
@@ -95,6 +97,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param applyToMotor whether to apply this tolerance to the motor as well as the task checks
      * @return this
      */
+    @NonNull
     public HoldableActuator withTolerance(int tolerance, boolean applyToMotor) {
         if (applyToMotor)
             motor.setTargetPositionTolerance(tolerance);
@@ -110,6 +113,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return this
      * @see #disableHomingZeroHits()
      */
+    @NonNull
     public HoldableActuator withHomingZeroHits(int threshold) {
         ZERO_HIT_THRESHOLD = threshold;
         return this;
@@ -120,6 +124,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      *
      * @return this
      */
+    @NonNull
     public HoldableActuator disableHomingZeroHits() {
         return withHomingZeroHits(0);
     }
@@ -133,7 +138,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return this
      * @see #disableHomingOvercurrent()
      */
-    public HoldableActuator withHomingOvercurrent(Measure<Current> current, Measure<Time> forTime) {
+    @NonNull
+    public HoldableActuator withHomingOvercurrent(@NonNull Measure<Current> current, @NonNull Measure<Time> forTime) {
         OVERCURRENT = current;
         OVERCURRENT_TIME = forTime;
         return this;
@@ -144,6 +150,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      *
      * @return this
      */
+    @NonNull
     public HoldableActuator disableHomingOvercurrent() {
         return withHomingOvercurrent(Amps.of(0), Seconds.of(0));
     }
@@ -154,7 +161,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param timeout the time to set for the Home Task to complete. Default is 5s.
      * @return this
      */
-    public HoldableActuator withHomingTimeout(Measure<Time> timeout) {
+    @NonNull
+    public HoldableActuator withHomingTimeout(@NonNull Measure<Time> timeout) {
         HOMING_TIMEOUT = timeout;
         return this;
     }
@@ -164,6 +172,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      *
      * @return this
      */
+    @NonNull
     public HoldableActuator disableHomingTimeout() {
         return withHomingTimeout(Task.INFINITE_TIMEOUT);
     }
@@ -174,7 +183,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param topLimitSwitch the limit switch to set as the top switch where the arm would be at the max position
      * @return this
      */
-    public HoldableActuator withTopSwitch(TouchSensor topLimitSwitch) {
+    @NonNull
+    public HoldableActuator withTopSwitch(@NonNull TouchSensor topLimitSwitch) {
         topSwitch = topLimitSwitch;
         return this;
     }
@@ -187,7 +197,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @see #disableHomingZeroHits()
      * @see #disableHomingOvercurrent()
      */
-    public HoldableActuator withBottomSwitch(TouchSensor bottomLimitSwitch) {
+    @NonNull
+    public HoldableActuator withBottomSwitch(@NonNull TouchSensor bottomLimitSwitch) {
         bottomSwitch = bottomLimitSwitch;
         return this;
     }
@@ -198,6 +209,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param targetPower the power to set
      * @return this
      */
+    @NonNull
     public HoldableActuator withHoldingPower(double targetPower) {
         HOLDING_POWER = targetPower;
         return this;
@@ -210,6 +222,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param targetPower the power to set
      * @return this
      */
+    @NonNull
     public HoldableActuator withMovingPower(double targetPower) {
         MOVING_POWER = targetPower;
         return this;
@@ -221,6 +234,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param lowerPower the lower power clamp to set
      * @return this
      */
+    @NonNull
     public HoldableActuator withLowerPowerClamp(double lowerPower) {
         return withPowerClamps(lowerPower, UPPER_POWER);
     }
@@ -231,6 +245,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param upperPower the upper power clamp to set
      * @return this
      */
+    @NonNull
     public HoldableActuator withUpperPowerClamp(double upperPower) {
         return withPowerClamps(LOWER_POWER, upperPower);
     }
@@ -242,6 +257,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param upperPower the upper power clamp to set
      * @return this
      */
+    @NonNull
     public HoldableActuator withPowerClamps(double lowerPower, double upperPower) {
         LOWER_POWER = Mathf.clamp(lowerPower, -1, 1);
         UPPER_POWER = Mathf.clamp(upperPower, -1, 1);
@@ -254,6 +270,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param minLimit the lower limit to set in encoder ticks
      * @return this
      */
+    @NonNull
     public HoldableActuator withLowerLimit(long minLimit) {
         MIN_LIMIT = minLimit;
         return this;
@@ -265,6 +282,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param maxLimit the upper limit to set in encoder ticks
      * @return this
      */
+    @NonNull
     public HoldableActuator withUpperLimit(long maxLimit) {
         MAX_LIMIT = maxLimit;
         return this;
@@ -277,6 +295,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param maxLimit the upper limit of the actuator in encoder ticks
      * @return this
      */
+    @NonNull
     public HoldableActuator withEncoderLimits(long minLimit, long maxLimit) {
         MIN_LIMIT = minLimit;
         MAX_LIMIT = maxLimit;
@@ -295,7 +314,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return this
      * @see #disableHomingOvercurrent()
      */
-    public HoldableActuator enableUserSetpointControl(DoubleSupplier setpointDeltaMultiplier) {
+    @NonNull
+    public HoldableActuator enableUserSetpointControl(@NonNull DoubleSupplier setpointDeltaMultiplier) {
         this.setpointDeltaMultiplier = setpointDeltaMultiplier;
         userControlsSetpoint = true;
         if (inputMode == Mode.USER_POWER)
@@ -309,6 +329,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return this
      * @see #enableUserSetpointControl(DoubleSupplier)
      */
+    @NonNull
     public HoldableActuator disableUserSetpointControl() {
         userControlsSetpoint = false;
         return this;
@@ -320,6 +341,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param p power level in domain [-1.0, 1.0], will be clamped
      * @return this
      */
+    @NonNull
     public HoldableActuator setPower(double p) {
         userPower = Mathf.clamp(p, LOWER_POWER, UPPER_POWER);
         return this;
@@ -449,7 +471,8 @@ public class HoldableActuator extends BunyipsSubsystem {
          * @param powerSupplier the power value supplier
          * @return a task to move the actuator
          */
-        public Task control(DoubleSupplier powerSupplier) {
+        @NonNull
+        public Task control(@NonNull DoubleSupplier powerSupplier) {
             return new ContinuousTask(() -> HoldableActuator.this.setPower(powerSupplier.getAsDouble()))
                     .onSubsystem(HoldableActuator.this, false)
                     .withName("Supplier Control");
@@ -461,6 +484,7 @@ public class HoldableActuator extends BunyipsSubsystem {
          * @param p the power to set
          * @return a task to set the power
          */
+        @NonNull
         public Task setPower(double p) {
             return new RunTask(() -> HoldableActuator.this.setPower(p))
                     .onSubsystem(HoldableActuator.this, false)
@@ -474,7 +498,8 @@ public class HoldableActuator extends BunyipsSubsystem {
          * @param pwr  the power to run at
          * @return a task to run the actuator
          */
-        public Task runFor(Measure<Time> time, double pwr) {
+        @NonNull
+        public Task runFor(@NonNull Measure<Time> time, double pwr) {
             return new Task(time) {
                 @Override
                 public void init() {
@@ -505,6 +530,7 @@ public class HoldableActuator extends BunyipsSubsystem {
          *
          * @return a task to home the actuator
          */
+        @NonNull
         public Task home() {
             return new Task(HOMING_TIMEOUT) {
                 private ElapsedTime overcurrentTimer;
@@ -567,6 +593,7 @@ public class HoldableActuator extends BunyipsSubsystem {
          *
          * @return a task to ceiling the actuator
          */
+        @NonNull
         public Task ceil() {
             return new Task(HOMING_TIMEOUT) {
                 private ElapsedTime overcurrentTimer;
@@ -627,6 +654,7 @@ public class HoldableActuator extends BunyipsSubsystem {
          * @param targetPosition the position to set
          * @return a task to set the position
          */
+        @NonNull
         public Task goTo(int targetPosition) {
             return new Task() {
                 @Override
@@ -660,6 +688,7 @@ public class HoldableActuator extends BunyipsSubsystem {
          * @param deltaPosition the delta to add to the current position of the actuator
          * @return a task to delta the position
          */
+        @NonNull
         public Task delta(int deltaPosition) {
             return new Task() {
                 private int target;

@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -18,18 +20,22 @@ public final class MecanumLocalizerInputsMessage {
     /**
      * The position and velocity of the left front wheel at this time.
      */
+    @NonNull
     public PositionVelocityPair leftFront;
     /**
      * The position and velocity of the left back wheel at this time.
      */
+    @NonNull
     public PositionVelocityPair leftBack;
     /**
      * The position and velocity of the right back wheel at this time.
      */
+    @NonNull
     public PositionVelocityPair rightBack;
     /**
      * The position and velocity of the right front wheel at this time.
      */
+    @NonNull
     public PositionVelocityPair rightFront;
     /**
      * The yaw angle at this time.
@@ -45,7 +51,7 @@ public final class MecanumLocalizerInputsMessage {
     public double roll;
 
     @SuppressWarnings("MissingJavadoc")
-    public MecanumLocalizerInputsMessage(PositionVelocityPair leftFront, PositionVelocityPair leftBack, PositionVelocityPair rightBack, PositionVelocityPair rightFront, YawPitchRollAngles angles) {
+    public MecanumLocalizerInputsMessage(@NonNull PositionVelocityPair leftFront, @NonNull PositionVelocityPair leftBack, @NonNull PositionVelocityPair rightBack, @NonNull PositionVelocityPair rightFront, @NonNull YawPitchRollAngles angles) {
         timestamp = System.nanoTime();
         this.leftFront = leftFront;
         this.leftBack = leftBack;

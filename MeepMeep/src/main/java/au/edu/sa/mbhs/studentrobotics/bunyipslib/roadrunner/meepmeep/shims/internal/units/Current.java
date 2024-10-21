@@ -17,6 +17,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shim
  *
  * @since 1.0.0-pre
  */
+@SuppressWarnings("UnknownNullness")
 public class Current extends Unit<Current> {
     /**
      * @noinspection SameParameterValue

@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
@@ -102,6 +104,7 @@ public class PIDFController implements PIDF {
      * @param velocityTolerance Velocity error which is tolerable.
      * @return this
      */
+    @NonNull
     public PIDFController setTolerance(double positionTolerance, double velocityTolerance) {
         errorTolerance_p = positionTolerance;
         errorTolerance_v = velocityTolerance;
@@ -115,6 +118,7 @@ public class PIDFController implements PIDF {
      * @param upper the upper clamp
      * @return this
      */
+    @NonNull
     public PIDFController setOutputClamps(double lower, double upper) {
         lowerLim = lower;
         upperLim = upper;
@@ -136,6 +140,7 @@ public class PIDFController implements PIDF {
      * @param sp The desired setpoint.
      * @return this
      */
+    @NonNull
     public PIDFController setSetPoint(double sp) {
         setPoint = sp;
         errorVal_p = setPoint - measuredValue;
@@ -157,13 +162,14 @@ public class PIDFController implements PIDF {
     /**
      * @return the PIDF coefficients
      */
+    @NonNull
     @Override
     public double[] getCoefficients() {
         return new double[]{kP, kI, kD, kF};
     }
 
     @Override
-    public void setCoefficients(double[] coeffs) {
+    public void setCoefficients(@NonNull double[] coeffs) {
         if (coeffs.length < 1) {
             throw new IllegalArgumentException("expected >1 coefficients, got " + coeffs.length);
         }
@@ -183,6 +189,7 @@ public class PIDFController implements PIDF {
     /**
      * @return the tolerances of the controller
      */
+    @NonNull
     public double[] getTolerance() {
         return new double[]{errorTolerance_p, errorTolerance_v};
     }
@@ -193,7 +200,8 @@ public class PIDFController implements PIDF {
      * @param tolerances The positional and velocity tolerances.
      * @return this
      */
-    public PIDFController setTolerance(double[] tolerances) {
+    @NonNull
+    public PIDFController setTolerance(@NonNull double[] tolerances) {
         setTolerance(tolerances[0], tolerances[1]);
         return this;
     }
@@ -204,6 +212,7 @@ public class PIDFController implements PIDF {
      * @param positionTolerance Position error which is tolerable.
      * @return this
      */
+    @NonNull
     public PIDFController setTolerance(double positionTolerance) {
         setTolerance(positionTolerance, Double.POSITIVE_INFINITY);
         return this;
@@ -289,6 +298,7 @@ public class PIDFController implements PIDF {
      * @param kf The value of kF for the coefficients.
      * @return this
      */
+    @NonNull
     public PIDFController setPIDF(double kp, double ki, double kd, double kf) {
         kP = kp;
         kI = ki;
@@ -303,7 +313,8 @@ public class PIDFController implements PIDF {
      * @param coefficients the coefficients to set
      * @return this
      */
-    public PIDFController setPIDF(PIDFCoefficients coefficients) {
+    @NonNull
+    public PIDFController setPIDF(@NonNull PIDFCoefficients coefficients) {
         kP = coefficients.p;
         kI = coefficients.i;
         kD = coefficients.d;
@@ -317,7 +328,8 @@ public class PIDFController implements PIDF {
      * @param coefficients the coefficients to update
      * @return this
      */
-    public PIDFController updatePIDF(PIDFCoefficients coefficients) {
+    @NonNull
+    public PIDFController updatePIDF(@NonNull PIDFCoefficients coefficients) {
         coefficients.p = kP;
         coefficients.i = kI;
         coefficients.d = kD;
@@ -332,6 +344,7 @@ public class PIDFController implements PIDF {
      * @param integralMax The maximum value for the integral term.
      * @return this
      */
+    @NonNull
     public PIDFController setIntegrationBounds(double integralMin, double integralMax) {
         minIntegral = integralMin;
         maxIntegral = integralMax;
@@ -343,6 +356,7 @@ public class PIDFController implements PIDF {
      *
      * @return this
      */
+    @NonNull
     public PIDFController clearTotalError() {
         totalError = 0;
         return this;
@@ -358,6 +372,7 @@ public class PIDFController implements PIDF {
      * @param kp proportional
      * @return this
      */
+    @NonNull
     public PIDFController setP(double kp) {
         kP = kp;
         return this;
@@ -373,6 +388,7 @@ public class PIDFController implements PIDF {
      * @param ki integral
      * @return this
      */
+    @NonNull
     public PIDFController setI(double ki) {
         kI = ki;
         return this;
@@ -388,6 +404,7 @@ public class PIDFController implements PIDF {
      * @param kd derivative
      * @return this
      */
+    @NonNull
     public PIDFController setD(double kd) {
         kD = kd;
         return this;
@@ -403,6 +420,7 @@ public class PIDFController implements PIDF {
      * @param kf feedforward
      * @return this
      */
+    @NonNull
     public PIDFController setF(double kf) {
         kF = kf;
         return this;
@@ -412,6 +430,7 @@ public class PIDFController implements PIDF {
         return period;
     }
 
+    @NonNull
     @Override
     public PIDFController getPIDFController() {
         return this;

@@ -84,7 +84,7 @@ public final class Mathf {
      * @param b the second number
      * @return whether the two numbers are approximately equal by an epsilon of 1e-6
      */
-    public static boolean approximatelyEquals(Number a, Number b) {
+    public static boolean approximatelyEquals(@NonNull Number a, @NonNull Number b) {
         return FastMath.abs(a.doubleValue() - b.doubleValue()) < 1.0e-6;
     }
 
@@ -96,7 +96,8 @@ public final class Mathf {
      * @param c Constant.
      * @return List of real roots.
      */
-    public static List<Double> solveQuadratic(Number a, Number b, Number c) {
+    @NonNull
+    public static List<Double> solveQuadratic(@NonNull Number a, @NonNull Number b, @NonNull Number c) {
         double a_d = a.doubleValue(), b_d = b.doubleValue(), c_d = c.doubleValue();
         // Discriminant b^2-4ac
         double disc = b_d * b_d - 4 * a_d * c_d;
@@ -121,7 +122,8 @@ public final class Mathf {
      * @param angle The angle to normalize.
      * @return The normalized angle.
      */
-    public static Measure<Angle> normaliseAngle(Measure<Angle> angle) {
+    @NonNull
+    public static Measure<Angle> normaliseAngle(@NonNull Measure<Angle> angle) {
         double ang = angle.in(Radians) % MathUtils.TWO_PI;
         return Radians.of((ang + MathUtils.TWO_PI) % MathUtils.TWO_PI);
     }
@@ -132,7 +134,7 @@ public final class Mathf {
      * @param angrad The angle in radians.
      * @return The normalized radians in the range [0, 2pi)
      */
-    public static double normaliseRadians(Number angrad) {
+    public static double normaliseRadians(@NonNull Number angrad) {
         double ang = angrad.doubleValue() % MathUtils.TWO_PI;
         return (ang + MathUtils.TWO_PI) % MathUtils.TWO_PI;
     }
@@ -145,7 +147,7 @@ public final class Mathf {
      * @param high  The higher boundary to which to clamp value.
      * @return The clamped value.
      */
-    public static double clamp(Number value, Number low, Number high) {
+    public static double clamp(@NonNull Number value, @NonNull Number low, @NonNull Number high) {
         return FastMath.max(low.doubleValue(), FastMath.min(value.doubleValue(), high.doubleValue()));
     }
 
@@ -159,7 +161,7 @@ public final class Mathf {
      * @param y2 upper bound of scale
      * @return a double scaled to a value between y1 and y2, inclusive
      */
-    public static double scale(Number n, Number x1, Number x2, Number y1, Number y2) {
+    public static double scale(@NonNull Number n, @NonNull Number x1, @NonNull Number x2, @NonNull Number y1, @NonNull Number y2) {
         double n_d = n.doubleValue(), x1_d = x1.doubleValue(), x2_d = x2.doubleValue(), y1_d = y1.doubleValue(), y2_d = y2.doubleValue();
         double m = (y1_d - y2_d) / (x1_d - x2_d);
         double c = y1_d - x1_d * (y1_d - y2_d) / (x1_d - x2_d);
@@ -176,7 +178,7 @@ public final class Mathf {
      * @param maxMagnitude The maximum magnitude of the input. Can be infinite.
      * @return The value after the deadband is applied.
      */
-    public static double applyDeadband(Number value, Number deadband, Number maxMagnitude) {
+    public static double applyDeadband(@NonNull Number value, @NonNull Number deadband, @NonNull Number maxMagnitude) {
         double value_d = value.doubleValue(), deadband_d = deadband.doubleValue(), maxMagnitude_d = maxMagnitude.doubleValue();
         if (FastMath.abs(value_d) > deadband_d) {
             if (maxMagnitude_d / deadband_d > 1.0e12) {
@@ -233,7 +235,7 @@ public final class Mathf {
      * @param deadband Range around zero.
      * @return The value after the deadband is applied.
      */
-    public static double applyDeadband(Number value, Number deadband) {
+    public static double applyDeadband(@NonNull Number value, @NonNull Number deadband) {
         return applyDeadband(value, deadband, 1);
     }
 
@@ -245,7 +247,7 @@ public final class Mathf {
      * @param maximumInput The maximum value expected from the input.
      * @return The wrapped value.
      */
-    public static double inputModulus(Number input, Number minimumInput, Number maximumInput) {
+    public static double inputModulus(@NonNull Number input, @NonNull Number minimumInput, @NonNull Number maximumInput) {
         double input_d = input.doubleValue(), minimumInput_d = minimumInput.doubleValue(), maximumInput_d = maximumInput.doubleValue();
         double modulus = maximumInput_d - minimumInput_d;
 
@@ -266,7 +268,8 @@ public final class Mathf {
      * @param angle Angle to wrap.
      * @return The wrapped angle.
      */
-    public static Measure<Angle> angleModulus(Measure<Angle> angle) {
+    @NonNull
+    public static Measure<Angle> angleModulus(@NonNull Measure<Angle> angle) {
         return Radians.of(inputModulus(angle.in(Radians), -FastMath.PI, FastMath.PI));
     }
 
@@ -276,7 +279,7 @@ public final class Mathf {
      * @param angrad The angle in radians to wrap
      * @return Wrapped angle between -pi and pi
      */
-    public static double radianModulus(Number angrad) {
+    public static double radianModulus(@NonNull Number angrad) {
         return inputModulus(angrad, -FastMath.PI, FastMath.PI);
     }
 
@@ -288,7 +291,7 @@ public final class Mathf {
      * @param t          How far between the two values to interpolate. This is clamped to [0, 1].
      * @return The interpolated value.
      */
-    public static double interpolate(Number startValue, Number endValue, Number t) {
+    public static double interpolate(@NonNull Number startValue, @NonNull Number endValue, @NonNull Number t) {
         return startValue.doubleValue() + (endValue.doubleValue() - startValue.doubleValue()) * clamp(t, 0, 1);
     }
 
@@ -300,7 +303,7 @@ public final class Mathf {
      * @param t          How far between the two values to interpolate.
      * @return The interpolated value.
      */
-    public static double interpolateUnclamped(Number startValue, Number endValue, Number t) {
+    public static double interpolateUnclamped(@NonNull Number startValue, @NonNull Number endValue, @NonNull Number t) {
         return startValue.doubleValue() + (endValue.doubleValue() - startValue.doubleValue()) * t.doubleValue();
     }
 
@@ -313,7 +316,8 @@ public final class Mathf {
      * @param t The interpolation parameter.
      * @return The interpolated value.
      */
-    public static Measure<Angle> interpolateAngle(Measure<Angle> a, Measure<Angle> b, Number t) {
+    @NonNull
+    public static Measure<Angle> interpolateAngle(@NonNull Measure<Angle> a, @NonNull Measure<Angle> b, @NonNull Number t) {
         double delta = repeat(b.in(Degrees) - a.in(Degrees), 360);
         if (delta > 180)
             delta -= 360;
@@ -328,7 +332,7 @@ public final class Mathf {
      * @param maxDelta The maximum change that should be applied to the value.
      * @return The new value.
      */
-    public static double moveTowards(Number current, Number target, Number maxDelta) {
+    public static double moveTowards(@NonNull Number current, @NonNull Number target, @NonNull Number maxDelta) {
         double current_d = current.doubleValue(), target_d = target.doubleValue(), maxDelta_d = maxDelta.doubleValue();
         if (FastMath.abs(target_d - current_d) <= maxDelta_d)
             return target_d;
@@ -344,7 +348,8 @@ public final class Mathf {
      * @param maxDelta The maximum change that should be applied to the value.
      * @return The new value.
      */
-    public static Measure<Angle> moveTowardsAngle(Measure<Angle> current, Measure<Angle> target, Measure<Angle> maxDelta) {
+    @NonNull
+    public static Measure<Angle> moveTowardsAngle(@NonNull Measure<Angle> current, @NonNull Measure<Angle> target, @NonNull Measure<Angle> maxDelta) {
         Measure<Angle> delta = deltaAngle(current, target);
         if (maxDelta.negate().lt(delta) && delta.lt(maxDelta))
             return target;
@@ -359,7 +364,7 @@ public final class Mathf {
      * @param t    The interpolation value between the two.
      * @return The smooth step value.
      */
-    public static double smoothStep(Number from, Number to, Number t) {
+    public static double smoothStep(@NonNull Number from, @NonNull Number to, @NonNull Number t) {
         double newT = clamp(t, 0, 1);
         newT = -2.0F * newT * newT * newT + 3.0F * newT * newT;
         return to.doubleValue() * newT + from.doubleValue() * (1.0 - newT);
@@ -373,7 +378,7 @@ public final class Mathf {
      * @param gamma  the gamma value for correction
      * @return the gamma corrected value
      */
-    public static double gamma(Number value, Number absMax, Number gamma) {
+    public static double gamma(@NonNull Number value, @NonNull Number absMax, @NonNull Number gamma) {
         double value_d = value.doubleValue(), absMax_d = absMax.doubleValue(), gamma_d = gamma.doubleValue();
         boolean negative = value_d < 0.0;
         double absVal = FastMath.abs(value_d);
@@ -396,7 +401,7 @@ public final class Mathf {
      * @return The new position following the smooth damp. The new velocity is stored in the currentVelocity reference,
      * for when this method is called again. Any clamping of this value to minimum limits is left to your discretion.
      */
-    public static double smoothDamp(Number current, Number target, @NonNull Reference<Double> currentVelocity, Measure<Time> smoothTime, Number maxVelocity, Measure<Time> deltaTime) {
+    public static double smoothDamp(@NonNull Number current, @NonNull Number target, @NonNull Reference<Double> currentVelocity, @NonNull Measure<Time> smoothTime, @NonNull Number maxVelocity, @NonNull Measure<Time> deltaTime) {
         double current_d = current.doubleValue(), target_d = target.doubleValue(), maxVelocity_d = maxVelocity.doubleValue();
 
         double t = smoothTime.in(Seconds);
@@ -441,7 +446,8 @@ public final class Mathf {
      * for when this method is called again. Any clamping of this value to minimum limits is left to your discretion.
      */
 
-    public static Measure<Angle> smoothDampAngle(Measure<Angle> current, Measure<Angle> target, Reference<Double> currentVelocity, Measure<Time> smoothTime, Number maxVelocity, Measure<Time> deltaTime) {
+    @NonNull
+    public static Measure<Angle> smoothDampAngle(@NonNull Measure<Angle> current, @NonNull Measure<Angle> target, @NonNull Reference<Double> currentVelocity, @NonNull Measure<Time> smoothTime, @NonNull Number maxVelocity, @NonNull Measure<Time> deltaTime) {
         double res = smoothDamp(current.in(Degrees), current.plus(deltaAngle(current, target)).in(Degrees), currentVelocity, smoothTime, maxVelocity, deltaTime);
         return Degrees.of(res);
     }
@@ -453,7 +459,7 @@ public final class Mathf {
      * @param length The length of the loop.
      * @return The looped value.
      */
-    public static double repeat(Number t, Number length) {
+    public static double repeat(@NonNull Number t, @NonNull Number length) {
         double t_d = t.doubleValue(), length_d = length.doubleValue();
         return clamp(t_d - FastMath.floor(t_d / length_d) * length_d, 0.0f, length_d);
     }
@@ -465,7 +471,7 @@ public final class Mathf {
      * @param length The length of the pingpong.
      * @return The pingponged value.
      */
-    public static double pingPong(Number t, Number length) {
+    public static double pingPong(@NonNull Number t, @NonNull Number length) {
         double length_d = length.doubleValue();
         double repeat = repeat(t, length_d * 2.0);
         return length_d - FastMath.abs(repeat - length_d);
@@ -478,7 +484,8 @@ public final class Mathf {
      * @param target  The target angle.
      * @return The shortest difference between the two angles.
      */
-    public static Measure<Angle> deltaAngle(Measure<Angle> current, Measure<Angle> target) {
+    @NonNull
+    public static Measure<Angle> deltaAngle(@NonNull Measure<Angle> current, @NonNull Measure<Angle> target) {
         double delta = repeat(target.minus(current).in(Degrees), 360.0);
         if (delta > 180.0F)
             delta -= 360.0F;
@@ -495,7 +502,8 @@ public final class Mathf {
      * @return The intersection points.
      * @throws NoInterceptException If no intercepts are found.
      */
-    public static Pair<Vector2d, Vector2d> lineCircleIntersection(Vector2d p1, Vector2d p2, Vector2d center, Number radius) throws NoInterceptException {
+    @NonNull
+    public static Pair<Vector2d, Vector2d> lineCircleIntersection(@NonNull Vector2d p1, @NonNull Vector2d p2, @NonNull Vector2d center, @NonNull Number radius) throws NoInterceptException {
         double dx = p2.x - p1.x;
         double dy = p2.y - p1.y;
         double a = dx * dx + dy * dy;
@@ -520,7 +528,8 @@ public final class Mathf {
      * @return The intersection points.
      * @throws NoInterceptException If no intercepts are found.
      */
-    public static Pair<Vector2d, Vector2d> lineSegmentCircleIntersection(Vector2d p1, Vector2d p2, Vector2d center, Number radius) throws NoInterceptException {
+    @NonNull
+    public static Pair<Vector2d, Vector2d> lineSegmentCircleIntersection(@NonNull Vector2d p1, @NonNull Vector2d p2, @NonNull Vector2d center, @NonNull Number radius) throws NoInterceptException {
         double dx = p2.x - p1.x;
         double dy = p2.y - p1.y;
         double a = dx * dx + dy * dy;
@@ -548,7 +557,8 @@ public final class Mathf {
      * @return The intersection point.
      * @throws NoInterceptException If no intercept is found.
      */
-    public static Vector2d lineIntersection(Vector2d p1, Vector2d p2, Vector2d p3, Vector2d p4) throws NoInterceptException {
+    @NonNull
+    public static Vector2d lineIntersection(@NonNull Vector2d p1, @NonNull Vector2d p2, @NonNull Vector2d p3, @NonNull Vector2d p4) throws NoInterceptException {
         double bx = p2.x - p1.x;
         double by = p2.y - p1.y;
         double dx = p4.x - p3.x;
@@ -575,7 +585,8 @@ public final class Mathf {
      * @return The intersection point.
      * @throws NoInterceptException If no intercept is found.
      */
-    public static Vector2d lineSegmentIntersection(Vector2d p1, Vector2d p2, Vector2d p3, Vector2d p4) throws NoInterceptException {
+    @NonNull
+    public static Vector2d lineSegmentIntersection(@NonNull Vector2d p1, @NonNull Vector2d p2, @NonNull Vector2d p3, @NonNull Vector2d p4) throws NoInterceptException {
         double bx = p2.x - p1.x;
         double by = p2.y - p1.y;
         double dx = p4.x - p3.x;
@@ -649,7 +660,7 @@ public final class Mathf {
      * @param q          Query.
      * @return Interpolant in range [0, 1].
      */
-    public static double inverseInterpolate(Number startValue, Number endValue, Number q) {
+    public static double inverseInterpolate(@NonNull Number startValue, @NonNull Number endValue, @NonNull Number q) {
         double startValue_d = startValue.doubleValue();
         double totalRange = endValue.doubleValue() - startValue_d;
         if (totalRange <= 0) {
@@ -670,7 +681,7 @@ public final class Mathf {
      * @param tolerance The allowed difference between the actual and the expected value
      * @return Whether or not the actual value is within the allowed tolerance
      */
-    public static boolean isNear(Number expected, Number actual, Number tolerance) {
+    public static boolean isNear(@NonNull Number expected, @NonNull Number actual, @NonNull Number tolerance) {
         double tolerance_d = tolerance.doubleValue();
         if (tolerance_d < 0) {
             throw new IllegalArgumentException("Tolerance must be a non-negative number!");
@@ -695,7 +706,7 @@ public final class Mathf {
      * @param max       Largest value before wrapping around to the smallest value
      * @return Whether or not the actual value is within the allowed tolerance
      */
-    public static boolean isNear(Number expected, Number actual, Number tolerance, Number min, Number max) {
+    public static boolean isNear(@NonNull Number expected, @NonNull Number actual, @NonNull Number tolerance, @NonNull Number min, @NonNull Number max) {
         double tolerance_d = tolerance.doubleValue();
         if (tolerance_d < 0) {
             throw new IllegalArgumentException("Tolerance must be a non-negative number!");

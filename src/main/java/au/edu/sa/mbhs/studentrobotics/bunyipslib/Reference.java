@@ -40,6 +40,7 @@ public class Reference<V> implements Supplier<V>, Consumer<V> {
      * @param <V>   the type of the reference
      * @return a new reference with the given value
      */
+    @NonNull
     public static <V> Reference<V> of(@Nullable V value) {
         return new Reference<>(value);
     }
@@ -50,6 +51,7 @@ public class Reference<V> implements Supplier<V>, Consumer<V> {
      * @param <V> the type of the reference
      * @return a new reference with a null value
      */
+    @NonNull
     public static <V> Reference<V> empty() {
         return new Reference<>();
     }
@@ -143,7 +145,7 @@ public class Reference<V> implements Supplier<V>, Consumer<V> {
      *
      * @param consumer the consumer to run
      */
-    public void ifPresent(Consumer<V> consumer) {
+    public void ifPresent(@NonNull Consumer<V> consumer) {
         if (value != null) {
             consumer.accept(value);
         }
@@ -154,7 +156,7 @@ public class Reference<V> implements Supplier<V>, Consumer<V> {
      *
      * @param runnable the runnable to run if the reference is null
      */
-    public void ifNotPresent(Runnable runnable) {
+    public void ifNotPresent(@NonNull Runnable runnable) {
         if (value == null) {
             runnable.run();
         }
@@ -167,7 +169,7 @@ public class Reference<V> implements Supplier<V>, Consumer<V> {
      * @param consumer the consumer to run
      * @param runnable the runnable to run if the reference is null
      */
-    public void ifPresentOrElse(Consumer<V> consumer, Runnable runnable) {
+    public void ifPresentOrElse(@NonNull Consumer<V> consumer, @NonNull Runnable runnable) {
         if (value != null) {
             consumer.accept(value);
         } else {

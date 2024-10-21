@@ -44,7 +44,7 @@ public interface Localizable {
      * @param heading     the heading component of the pose
      * @param headingUnit the unit of the heading component angles
      */
-    default void setPose(@NonNull Vector2d vector, Distance vectorUnit, double heading, Angle headingUnit) {
+    default void setPose(@NonNull Vector2d vector, @NonNull Distance vectorUnit, double heading, @NonNull Angle headingUnit) {
         setPose(Geometry.unitPose(vector, vectorUnit, heading, headingUnit));
     }
 

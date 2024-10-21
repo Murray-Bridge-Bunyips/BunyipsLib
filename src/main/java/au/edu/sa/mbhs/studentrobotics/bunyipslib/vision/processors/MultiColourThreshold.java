@@ -38,7 +38,7 @@ public class MultiColourThreshold extends Processor<ContourData> {
      *
      * @param thresholdProcessors the colour processors to use
      */
-    public MultiColourThreshold(ColourThreshold... thresholdProcessors) {
+    public MultiColourThreshold(@NonNull ColourThreshold... thresholdProcessors) {
         for (ColourThreshold processor : thresholdProcessors) {
             colourProcessors.add(new Pair<>(processor, new Mat()));
         }
@@ -67,7 +67,7 @@ public class MultiColourThreshold extends Processor<ContourData> {
     }
 
     @Override
-    protected void onProcessFrame(Mat frame, long captureTimeNanos) {
+    protected void onProcessFrame(@NonNull Mat frame, long captureTimeNanos) {
         for (Pair<ColourThreshold, Mat> processor : colourProcessors) {
             frame.copyTo(processor.second);
             processor.first.onProcessFrame(processor.second, captureTimeNanos);
@@ -78,7 +78,7 @@ public class MultiColourThreshold extends Processor<ContourData> {
     }
 
     @Override
-    protected void onFrameDraw(Canvas canvas) {
+    protected void onFrameDraw(@NonNull Canvas canvas) {
         for (Pair<ColourThreshold, Mat> processor : colourProcessors) {
             processor.first.onFrameDraw(canvas);
         }

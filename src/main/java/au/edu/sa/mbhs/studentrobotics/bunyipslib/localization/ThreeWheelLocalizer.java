@@ -53,7 +53,7 @@ public class ThreeWheelLocalizer implements Localizer {
      * @param par1       the second parallel encoder
      * @param perp       the perpendicular encoder
      */
-    public ThreeWheelLocalizer(DriveModel driveModel, Params params, RawEncoder par0, RawEncoder par1, RawEncoder perp) {
+    public ThreeWheelLocalizer(@NonNull DriveModel driveModel, @NonNull Params params, @NonNull RawEncoder par0, @NonNull RawEncoder par1, @NonNull RawEncoder perp) {
         this.par0 = new OverflowEncoder(par0);
         this.par1 = new OverflowEncoder(par1);
         this.perp = new OverflowEncoder(perp);
@@ -141,6 +141,7 @@ public class ThreeWheelLocalizer implements Localizer {
              * @param par0YTicks the y position of the first parallel encoder as determined by tuning the deadwheel localizer
              * @return this builder
              */
+            @NonNull
             public Builder setPar0YTicks(double par0YTicks) {
                 params.par0YTicks = par0YTicks;
                 return this;
@@ -152,6 +153,7 @@ public class ThreeWheelLocalizer implements Localizer {
              * @param par1YTicks the y position of the second parallel encoder as determined by tuning the deadwheel localizer
              * @return this builder
              */
+            @NonNull
             public Builder setPar1YTicks(double par1YTicks) {
                 params.par1YTicks = par1YTicks;
                 return this;
@@ -163,6 +165,7 @@ public class ThreeWheelLocalizer implements Localizer {
              * @param perpXTicks the x position of the perpendicular encoder as determined by tuning the deadwheel localizer
              * @return this builder
              */
+            @NonNull
             public Builder setPerpXTicks(double perpXTicks) {
                 params.perpXTicks = perpXTicks;
                 return this;
@@ -173,6 +176,7 @@ public class ThreeWheelLocalizer implements Localizer {
              *
              * @return the parameters
              */
+            @NonNull
             public Params build() {
                 return params;
             }

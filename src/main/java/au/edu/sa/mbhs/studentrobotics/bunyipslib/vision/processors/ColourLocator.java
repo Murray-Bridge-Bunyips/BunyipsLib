@@ -45,7 +45,7 @@ public class ColourLocator extends Processor<ColourBlob> {
      * @param targetRange      the colour range to filter for
      * @param generationMode   the type of data that will be reported by this processor
      */
-    public ColourLocator(ImageRegion regionOfInterest, ColorRange targetRange, ColorBlobLocatorProcessor.ContourMode generationMode) {
+    public ColourLocator(@NonNull ImageRegion regionOfInterest, @NonNull ColorRange targetRange, @NonNull ColorBlobLocatorProcessor.ContourMode generationMode) {
         instance = makeBuilderWithCommonSettings()
                 .setRoi(regionOfInterest)
                 .setTargetColorRange(targetRange)
@@ -58,7 +58,7 @@ public class ColourLocator extends Processor<ColourBlob> {
      *
      * @param builder the builder which you will supply your own colour blob locator settings
      */
-    public ColourLocator(Function<ColorBlobLocatorProcessor.Builder, ColorBlobLocatorProcessor.Builder> builder) {
+    public ColourLocator(@NonNull Function<ColorBlobLocatorProcessor.Builder, ColorBlobLocatorProcessor.Builder> builder) {
         instance = builder.apply(makeBuilderWithCommonSettings()).build();
     }
 
@@ -79,6 +79,7 @@ public class ColourLocator extends Processor<ColourBlob> {
      *
      * @return direct wrapped instance from the SDK
      */
+    @NonNull
     public ColorBlobLocatorProcessor getInstance() {
         return instance;
     }
@@ -88,7 +89,7 @@ public class ColourLocator extends Processor<ColourBlob> {
      *
      * @param filter the filter to add
      */
-    public void addFilter(ColorBlobLocatorProcessor.BlobFilter filter) {
+    public void addFilter(@NonNull ColorBlobLocatorProcessor.BlobFilter filter) {
         instance.addFilter(filter);
     }
 
@@ -97,7 +98,7 @@ public class ColourLocator extends Processor<ColourBlob> {
      *
      * @param filter the filter to remove
      */
-    public void removeFilter(ColorBlobLocatorProcessor.BlobFilter filter) {
+    public void removeFilter(@NonNull ColorBlobLocatorProcessor.BlobFilter filter) {
         instance.removeFilter(filter);
     }
 
@@ -113,7 +114,7 @@ public class ColourLocator extends Processor<ColourBlob> {
      *
      * @param sortingMethod the sorting method to sort the array data
      */
-    public void setSort(ColorBlobLocatorProcessor.BlobSort sortingMethod) {
+    public void setSort(@NonNull ColorBlobLocatorProcessor.BlobSort sortingMethod) {
         instance.setSort(sortingMethod);
     }
 
@@ -145,17 +146,17 @@ public class ColourLocator extends Processor<ColourBlob> {
     }
 
     @Override
-    public void init(int width, int height, CameraCalibration calibration) {
+    public void init(int width, int height, @NonNull CameraCalibration calibration) {
         instance.init(width, height, calibration);
     }
 
     @Override
-    protected void onProcessFrame(Mat frame, long captureTimeNanos) {
+    protected void onProcessFrame(@NonNull Mat frame, long captureTimeNanos) {
         ctx = instance.processFrame(frame, captureTimeNanos);
     }
 
     @Override
-    protected void onFrameDraw(Canvas canvas) {
+    protected void onFrameDraw(@NonNull Canvas canvas) {
         Size dimensions = getCameraDimensions();
         if (dimensions == null || ctx == null) return;
         instance.onDrawFrame(canvas, dimensions.getWidth(), dimensions.getHeight(), 1.0f, 1.0f, ctx);

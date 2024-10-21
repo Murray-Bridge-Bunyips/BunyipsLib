@@ -23,6 +23,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
  *
  * @author Lucas Bubner, 2024
  */
+@SuppressWarnings("UnknownNullness")
 public abstract class MeepMeepInternal {
     /**
      * Shim to reference a BunyipsLibBotBuilder instance that has been created and built.

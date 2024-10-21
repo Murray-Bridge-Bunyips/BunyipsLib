@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
@@ -23,7 +25,7 @@ public final class NullSafety {
      * @param objs Objects to check for null
      * @return Whether all objects are not null
      */
-    public static boolean assertNotNull(Object... objs) {
+    public static boolean assertNotNull(@NonNull Object... objs) {
         for (Object o : objs) {
             if (o == null) {
                 Dbg.warn(Exceptions.getCallingUserCodeFunction(), "Assertion by NullSafety.assertNotNull() failed.");
@@ -39,7 +41,7 @@ public final class NullSafety {
      * @param objs Objects to check for null
      * @return Whether all objects are not null
      */
-    public static boolean assertNotNull(List<Object> objs) {
+    public static boolean assertNotNull(@NonNull List<Object> objs) {
         return assertNotNull(objs.toArray());
     }
 
@@ -55,7 +57,7 @@ public final class NullSafety {
      * @param objs             Objects to check for null
      * @return Whether the component is safe to instantiate
      */
-    public static boolean assertComponentArgs(String componentName, String excludeClassName, Object... objs) {
+    public static boolean assertComponentArgs(@NonNull String componentName, @NonNull String excludeClassName, @NonNull Object... objs) {
         // We do not check now for the presence of excludeClassName in unusableComponents, since the same classes
         // can be used for different subsystems. We don't want every HoldableActuator to not work because one failed.
         for (Object o : objs) {

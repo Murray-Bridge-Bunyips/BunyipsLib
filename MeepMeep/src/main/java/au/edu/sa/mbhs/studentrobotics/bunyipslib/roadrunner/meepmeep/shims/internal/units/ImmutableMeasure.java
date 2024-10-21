@@ -15,6 +15,7 @@ import java.util.Objects;
  * @param <U> the unit type of the measure
  * @since 1.0.0-pre
  */
+@SuppressWarnings("UnknownNullness")
 public class ImmutableMeasure<U extends Unit<U>> implements Measure<U> {
     private final double magnitude;
     private final double baseUnitMagnitude;

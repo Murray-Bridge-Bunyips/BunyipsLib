@@ -30,6 +30,7 @@ public final class Text {
      * @param objs    The objects to insert into the string
      * @return The formatted string
      */
+    @NonNull
     public static String format(@NonNull String fstring, @Nullable List<Object> objs) {
         if (objs == null || objs.isEmpty())
             return fstring;
@@ -69,6 +70,7 @@ public final class Text {
      * @param objs    The objects to insert into the string
      * @return The formatted string
      */
+    @NonNull
     public static String format(@NonNull String fstring, @Nullable Object... objs) {
         return format(fstring, Arrays.asList(objs));
     }
@@ -79,7 +81,8 @@ public final class Text {
      * @param htmlString the string with HTML
      * @return string with tags and {@code &nbsp;} removed
      */
-    public static String removeHtml(String htmlString) {
+    @NonNull
+    public static String removeHtml(@NonNull String htmlString) {
         return htmlString
                 .replaceAll("<.*?>", "")
                 .replaceAll("&nbsp;", " ");
@@ -91,7 +94,8 @@ public final class Text {
      * @param str the string to lowercase
      * @return the lowercased string
      */
-    public static String lower(String str) {
+    @NonNull
+    public static String lower(@NonNull String str) {
         // This method is for Kotlin version interop as case conversion is different between the versions
         // we use, and it causes way too many headaches to deal with
         return str.toLowerCase(Locale.getDefault());
@@ -103,7 +107,8 @@ public final class Text {
      * @param str the string to uppercase
      * @return the uppercased string
      */
-    public static String upper(String str) {
+    @NonNull
+    public static String upper(@NonNull String str) {
         // This method is for Kotlin version interop as case conversion is different between the versions
         // we use, and it causes way too many headaches to deal with
         return str.toUpperCase(Locale.getDefault());
@@ -114,6 +119,7 @@ public final class Text {
      *
      * @return A HtmlBuilder instance
      */
+    @NonNull
     public static HtmlBuilder html() {
         return new HtmlBuilder();
     }
@@ -123,6 +129,7 @@ public final class Text {
      *
      * @return modified StringBuilder with default initial capacity 16
      */
+    @NonNull
     public static Builder builder() {
         return new Builder();
     }
@@ -133,6 +140,7 @@ public final class Text {
      * @param capacity the initial capacity of the StringBuilder
      * @return modified StringBuilder with initial capacity defined
      */
+    @NonNull
     public static Builder builder(int capacity) {
         return new Builder(capacity);
     }
@@ -143,7 +151,8 @@ public final class Text {
      * @param initial the initial string of the StringBuilder
      * @return modified StringBuilder with initial string defined
      */
-    public static Builder builder(String initial) {
+    @NonNull
+    public static Builder builder(@NonNull String initial) {
         return new Builder(initial);
     }
 
@@ -162,7 +171,8 @@ public final class Text {
          * @param text The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder text(String text) {
+        @NonNull
+        public HtmlBuilder text(@NonNull String text) {
             html.append(text);
             return this;
         }
@@ -172,6 +182,7 @@ public final class Text {
          *
          * @return The HtmlBuilder instance
          */
+        @NonNull
         public HtmlBuilder endl() {
             html.append("\n");
             return this;
@@ -183,7 +194,8 @@ public final class Text {
          * @param text The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder bold(String text) {
+        @NonNull
+        public HtmlBuilder bold(@NonNull String text) {
             html.append("<b>").append(text).append("</b>");
             return this;
         }
@@ -194,7 +206,8 @@ public final class Text {
          * @param text The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder italic(String text) {
+        @NonNull
+        public HtmlBuilder italic(@NonNull String text) {
             html.append("<i>").append(text).append("</i>");
             return this;
         }
@@ -205,7 +218,8 @@ public final class Text {
          * @param text The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder big(String text) {
+        @NonNull
+        public HtmlBuilder big(@NonNull String text) {
             html.append("<big>").append(text).append("</big>");
             return this;
         }
@@ -216,7 +230,8 @@ public final class Text {
          * @param text The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder small(String text) {
+        @NonNull
+        public HtmlBuilder small(@NonNull String text) {
             html.append("<small>").append(text).append("</small>");
             return this;
         }
@@ -227,7 +242,8 @@ public final class Text {
          * @param text The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder underline(String text) {
+        @NonNull
+        public HtmlBuilder underline(@NonNull String text) {
             html.append("<u>").append(text).append("</u>");
             return this;
         }
@@ -238,7 +254,8 @@ public final class Text {
          * @param text The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder strikethrough(String text) {
+        @NonNull
+        public HtmlBuilder strikethrough(@NonNull String text) {
             html.append("<s>").append(text).append("</s>");
             return this;
         }
@@ -249,7 +266,8 @@ public final class Text {
          * @param text The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder superscript(String text) {
+        @NonNull
+        public HtmlBuilder superscript(@NonNull String text) {
             html.append("<sup>").append(text).append("</sup>");
             return this;
         }
@@ -260,7 +278,8 @@ public final class Text {
          * @param text The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder subscript(String text) {
+        @NonNull
+        public HtmlBuilder subscript(@NonNull String text) {
             html.append("<sub>").append(text).append("</sub>");
             return this;
         }
@@ -272,7 +291,8 @@ public final class Text {
          * @param level The header level
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder header(int level, String text) {
+        @NonNull
+        public HtmlBuilder header(int level, @NonNull String text) {
             if (level < 1 || level > 6) {
                 Dbg.warn("Invalid header level " + level + " in HtmlBuilder.header()");
                 return this;
@@ -289,7 +309,8 @@ public final class Text {
          * @param text The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder tag(String tag, String text) {
+        @NonNull
+        public HtmlBuilder tag(@NonNull String tag, @NonNull String text) {
             html.append("<").append(tag).append(">").append(text).append("</").append(tag).append(">");
             return this;
         }
@@ -301,7 +322,8 @@ public final class Text {
          * @param text  The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder color(String color, String text) {
+        @NonNull
+        public HtmlBuilder color(@NonNull String color, @NonNull String text) {
             html.append("<font color=\"").append(color).append("\">").append(text).append("</font>");
             return this;
         }
@@ -313,7 +335,8 @@ public final class Text {
          * @param text  The text to insert
          * @return The HtmlBuilder instance
          */
-        public HtmlBuilder bgColor(String color, String text) {
+        @NonNull
+        public HtmlBuilder bgColor(@NonNull String color, @NonNull String text) {
             html.append("<span style=\"background-color:").append(color).append("\">").append(text).append("</span>");
             return this;
         }
@@ -362,7 +385,7 @@ public final class Text {
          *
          * @param initial the initial string of the StringBuilder
          */
-        public Builder(String initial) {
+        public Builder(@NonNull String initial) {
             i = new StringBuilder(initial);
         }
 
@@ -381,6 +404,7 @@ public final class Text {
          * @param o the object to append
          * @return the builder instance
          */
+        @NonNull
         public Builder append(@Nullable Object o) {
             i.append(o);
             return this;
@@ -393,6 +417,7 @@ public final class Text {
          * @param objs    the objects to insert into the string
          * @return the builder instance
          */
+        @NonNull
         public Builder append(@NonNull String fstring, @Nullable Object... objs) {
             i.append(format(fstring, objs));
             return this;
@@ -417,6 +442,7 @@ public final class Text {
          * @throws IllegalArgumentException if the specified
          *                                  {@code codePoint} isn't a valid Unicode code point
          */
+        @NonNull
         public Builder appendCodePoint(int codePoint) {
             i.appendCodePoint(codePoint);
             return this;
@@ -436,6 +462,7 @@ public final class Text {
          *                                         is negative, greater than {@code length()}, or
          *                                         greater than {@code end}.
          */
+        @NonNull
         public Builder delete(int start, int end) {
             i.delete(start, end);
             return this;
@@ -458,6 +485,7 @@ public final class Text {
          *                                         is negative or greater than or equal to
          *                                         {@code length()}.
          */
+        @NonNull
         public Builder deleteCharAt(int index) {
             i.deleteCharAt(index);
             return this;
@@ -482,7 +510,8 @@ public final class Text {
          *                                         is negative, greater than {@code length()}, or
          *                                         greater than {@code end}.
          */
-        public Builder replace(int start, int end, String str) {
+        @NonNull
+        public Builder replace(int start, int end, @NonNull String str) {
             i.replace(start, end, str);
             return this;
         }
@@ -508,7 +537,8 @@ public final class Text {
          *                                         {@code (offset+len)} is greater than
          *                                         {@code str.length}.
          */
-        public Builder insert(int index, char[] str, int offset, int len) {
+        @NonNull
+        public Builder insert(int index, @NonNull char[] str, int offset, int len) {
             i.insert(index, str, offset, len);
             return this;
         }
@@ -532,7 +562,8 @@ public final class Text {
          * @return a reference to this object.
          * @throws StringIndexOutOfBoundsException if the offset is invalid.
          */
-        public Builder insert(int offset, Object obj) {
+        @NonNull
+        public Builder insert(int offset, @NonNull Object obj) {
             i.insert(offset, obj);
             return this;
         }
@@ -554,6 +585,7 @@ public final class Text {
          * @return a reference to this object.
          * @throws StringIndexOutOfBoundsException if the offset is invalid.
          */
+        @NonNull
         public Builder insert(int offset, @NonNull String fstring, @Nullable Object... objs) {
             i.insert(offset, format(fstring, objs));
             return this;
@@ -574,7 +606,7 @@ public final class Text {
          * such substring is returned; if it does not occur as a
          * substring, {@code -1} is returned.
          */
-        public int indexOf(String str) {
+        public int indexOf(@NonNull String str) {
             return i.indexOf(str);
         }
 
@@ -593,7 +625,7 @@ public final class Text {
          * @return the index within this string of the first occurrence of the
          * specified substring, starting at the specified index.
          */
-        public int indexOf(String str, int fromIndex) {
+        public int indexOf(@NonNull String str, int fromIndex) {
             return i.indexOf(str, fromIndex);
         }
 
@@ -613,7 +645,7 @@ public final class Text {
          * the last such substring is returned. If it does not occur as
          * a substring, {@code -1} is returned.
          */
-        public int lastIndexOf(String str) {
+        public int lastIndexOf(@NonNull String str) {
             return i.lastIndexOf(str);
         }
 
@@ -632,7 +664,7 @@ public final class Text {
          * @return the index within this sequence of the last occurrence of the
          * specified substring.
          */
-        public int lastIndexOf(String str, int fromIndex) {
+        public int lastIndexOf(@NonNull String str, int fromIndex) {
             return i.lastIndexOf(str, fromIndex);
         }
 
@@ -658,6 +690,7 @@ public final class Text {
          *
          * @return a reference to this object.
          */
+        @NonNull
         public Builder reverse() {
             i.reverse();
             return this;

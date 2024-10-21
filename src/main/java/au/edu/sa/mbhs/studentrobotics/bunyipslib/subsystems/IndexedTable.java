@@ -1,6 +1,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
@@ -26,7 +28,7 @@ public class IndexedTable extends BunyipsSubsystem {
      *
      * @param tableValues the values to use, when the index is selected the corresponding value is used
      */
-    public IndexedTable(double... tableValues) {
+    public IndexedTable(@NonNull double... tableValues) {
         this.tableValues = tableValues;
     }
 
@@ -36,6 +38,7 @@ public class IndexedTable extends BunyipsSubsystem {
      * @param defaultIndex the index to set
      * @return this
      */
+    @NonNull
     public IndexedTable withDefaultIndex(int defaultIndex) {
         if (defaultIndex < 0 || defaultIndex >= tableValues.length)
             throw new EmergencyStop("Default index out of bounds");
@@ -103,6 +106,7 @@ public class IndexedTable extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task decrement() {
             return new RunTask(IndexedTable.this::decrement)
                     .onSubsystem(IndexedTable.this, false)
@@ -114,6 +118,7 @@ public class IndexedTable extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task increment() {
             return new RunTask(IndexedTable.this::increment)
                     .onSubsystem(IndexedTable.this, false)

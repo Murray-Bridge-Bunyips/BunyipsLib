@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.centerstage;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Direction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingPositions;
 
@@ -20,7 +22,7 @@ public final class SpikeMarkBackdropId {
      * @param robotStartingPosition the side of the field the robot is starting on
      * @return the backdrop ID, -1 if invalid arguments
      */
-    public static int get(Direction spikeMarkPosition, StartingPositions robotStartingPosition) {
+    public static int get(@NonNull Direction spikeMarkPosition, @NonNull StartingPositions robotStartingPosition) {
         switch (robotStartingPosition) {
             case STARTING_RED_LEFT:
             case STARTING_RED_RIGHT:

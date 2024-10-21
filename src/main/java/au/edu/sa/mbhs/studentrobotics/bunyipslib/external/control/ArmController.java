@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control;
 
+import androidx.annotation.NonNull;
+
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EncoderTicks;
@@ -35,7 +37,7 @@ public class ArmController implements PIDF {
      * @param velocityAngleProvider     the angular velocity provider
      * @param accelerationAngleProvider the angular acceleration provider
      */
-    public ArmController(PIDF pid, ArmFeedforward ff, Supplier<Measure<Angle>> setPointAngleProvider, Supplier<Measure<Velocity<Angle>>> velocityAngleProvider, Supplier<Measure<Velocity<Velocity<Angle>>>> accelerationAngleProvider) {
+    public ArmController(@NonNull PIDF pid, @NonNull ArmFeedforward ff, @NonNull Supplier<Measure<Angle>> setPointAngleProvider, @NonNull Supplier<Measure<Velocity<Angle>>> velocityAngleProvider, @NonNull Supplier<Measure<Velocity<Velocity<Angle>>>> accelerationAngleProvider) {
         this.pid = pid;
         this.ff = ff;
         this.setPointAngleProvider = setPointAngleProvider;
@@ -43,6 +45,7 @@ public class ArmController implements PIDF {
         this.accelerationAngleProvider = accelerationAngleProvider;
     }
 
+    @NonNull
     @Override
     public double[] getCoefficients() {
         PIDFController c = pid.getPIDFController();
@@ -50,7 +53,7 @@ public class ArmController implements PIDF {
     }
 
     @Override
-    public void setCoefficients(double[] coeffs) {
+    public void setCoefficients(@NonNull double[] coeffs) {
         if (coeffs.length != 8) {
             throw new IllegalArgumentException("expected 8 coefficients, got " + coeffs.length);
         }
@@ -68,6 +71,7 @@ public class ArmController implements PIDF {
         pid.reset();
     }
 
+    @NonNull
     @Override
     public PIDFController getPIDFController() {
         return pid.getPIDFController();

@@ -218,7 +218,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *
      * @param subsystems the restrictive list of subsystems to be managed and updated by ABOM
      */
-    public final void useSubsystems(BunyipsSubsystem... subsystems) {
+    public final void useSubsystems(@NonNull BunyipsSubsystem... subsystems) {
         if (!NullSafety.assertNotNull(Arrays.stream(subsystems).toArray())) {
             throw new RuntimeException("Null subsystems were added in the useSubsystems() method!");
         }
@@ -265,6 +265,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param runnable the code to add to the run queue to run once
      * @return the added {@link RunTask}
      */
+    @NonNull
     public final RunTask addTask(@NonNull Runnable runnable) {
         return addTask(new RunTask(runnable));
     }
@@ -276,7 +277,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param runnable the code to add to the run queue to run once
      * @return the added {@link RunTask}
      */
-    public final RunTask addTask(String name, @NonNull Runnable runnable) {
+    @NonNull
+    public final RunTask addTask(@NonNull String name, @NonNull Runnable runnable) {
         RunTask task = new RunTask(runnable);
         task.withName(name);
         return addTask(task);
@@ -328,6 +330,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param runnable the code to add to the run queue to run once
      * @return the added {@link RunTask}
      */
+    @NonNull
     public final RunTask addTaskAtIndex(int index, @NonNull Runnable runnable) {
         return addTaskAtIndex(index, new RunTask(runnable));
     }
@@ -340,7 +343,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param runnable the code to add to the run queue to run once
      * @return the added {@link RunTask}
      */
-    public final RunTask addTaskAtIndex(int index, String name, @NonNull Runnable runnable) {
+    @NonNull
+    public final RunTask addTaskAtIndex(int index, @NonNull String name, @NonNull Runnable runnable) {
         RunTask task = new RunTask(runnable);
         task.withName(name);
         return addTaskAtIndex(index, task);
@@ -356,7 +360,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @see #addTaskLast(Task)
      * @see #addTaskFirst(Task)
      */
-    public final <T extends Task> T addTask(TaskPriority runQueuePriority, @NonNull T newTask) {
+    public final <T extends Task> T addTask(@NonNull TaskPriority runQueuePriority, @NonNull T newTask) {
         switch (runQueuePriority) {
             case FIRST:
                 return addTaskFirst(newTask);
@@ -610,7 +614,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param selectedButton the button selected by the user. Will be Controls.NONE if no selection is made or given.
      * @see #addTask(Task)
      */
-    protected abstract void onReady(@Nullable Reference<?> selectedOpMode, Controls selectedButton);
+    protected abstract void onReady(@Nullable Reference<?> selectedOpMode, @Nullable Controls selectedButton);
 
     /**
      * Override to this method to add extra code to the activeLoop, which will be run before

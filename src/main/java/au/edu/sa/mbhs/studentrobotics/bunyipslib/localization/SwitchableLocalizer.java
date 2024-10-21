@@ -35,6 +35,7 @@ public class SwitchableLocalizer implements Localizer {
     /**
      * Available tasks for self-tests on this localizer.
      */
+    @NonNull
     public Tasks tasks = new Tasks();
 
     /**
@@ -43,7 +44,7 @@ public class SwitchableLocalizer implements Localizer {
      * @param main     the main localizer to use
      * @param fallback the fallback localizer to use, activated if the self-test task fails, or by the user.
      */
-    public SwitchableLocalizer(Localizer main, Localizer fallback) {
+    public SwitchableLocalizer(@NonNull Localizer main, @NonNull Localizer fallback) {
         USING_FALLBACK_LOCALIZER = false;
         this.main = main;
         this.fallback = fallback;
@@ -81,6 +82,7 @@ public class SwitchableLocalizer implements Localizer {
          *
          * @return a task to perform the main localizer test - will change localizer status when this task finishes.
          */
+        @NonNull
         public Task autoTestMainLocalizer() {
             return new Task() {
                 private Pose2d pose = Geometry.zeroPose();
@@ -162,6 +164,7 @@ public class SwitchableLocalizer implements Localizer {
          *
          * @return a task to test the localizer manually using human judgement, will propagate result on user input
          */
+        @NonNull
         public Task manualTestMainLocalizer() {
             return new Task() {
                 private Pose2d pose = Geometry.zeroPose();

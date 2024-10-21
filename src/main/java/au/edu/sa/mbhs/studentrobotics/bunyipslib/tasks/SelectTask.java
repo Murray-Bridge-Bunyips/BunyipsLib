@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
 import android.annotation.SuppressLint;
 
+import androidx.annotation.NonNull;
+
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -22,7 +24,7 @@ public class SelectTask<T> extends Task {
      *
      * @param stateSupplier the supplier of states to check in the when() method
      */
-    public SelectTask(Supplier<T> stateSupplier) {
+    public SelectTask(@NonNull Supplier<T> stateSupplier) {
         this.stateSupplier = stateSupplier;
         withName("Select");
     }
@@ -38,8 +40,9 @@ public class SelectTask<T> extends Task {
      * @param task  the task to run
      * @return this task
      */
+    @NonNull
     @SuppressLint("NoHardKeywords")
-    public SelectTask<T> when(T state, Task task) {
+    public SelectTask<T> when(T state, @NonNull Task task) {
         tasks.put(state, task);
         return this;
     }
@@ -51,7 +54,8 @@ public class SelectTask<T> extends Task {
      * @param task  the task to run
      * @return this task
      */
-    public SelectTask<T> on(T state, Task task) {
+    @NonNull
+    public SelectTask<T> on(T state, @NonNull Task task) {
         return when(state, task);
     }
 

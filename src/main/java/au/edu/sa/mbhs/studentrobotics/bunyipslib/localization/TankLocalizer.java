@@ -51,7 +51,7 @@ public class TankLocalizer implements Localizer {
      * @param leftMotors  the left motors
      * @param rightMotors the right motors
      */
-    public TankLocalizer(DriveModel driveModel, List<DcMotor> leftMotors, List<DcMotor> rightMotors) {
+    public TankLocalizer(@NonNull DriveModel driveModel, @NonNull List<DcMotor> leftMotors, @NonNull List<DcMotor> rightMotors) {
         kinematics = new TankKinematics(driveModel.inPerTick * driveModel.trackWidthTicks);
         this.driveModel = driveModel;
 

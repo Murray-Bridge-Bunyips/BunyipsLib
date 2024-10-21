@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.Servo;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
@@ -36,7 +38,7 @@ public class DualServos extends BunyipsSubsystem {
      * @param rightClosed the right servo closed position
      * @param rightOpen   the right servo open position
      */
-    public DualServos(Servo left, Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
+    public DualServos(@NonNull Servo left, @NonNull Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
         if (leftClosed == leftOpen || rightClosed == rightOpen)
             throw new IllegalArgumentException("Open and close positions for either servo cannot be the same");
 
@@ -61,7 +63,8 @@ public class DualServos extends BunyipsSubsystem {
      * @param servo the servo to toggle
      * @return this
      */
-    public DualServos toggle(ServoSide servo) {
+    @NonNull
+    public DualServos toggle(@NonNull ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = (leftServoPosition == LEFT_SERVO_OPEN_POSITION) ? LEFT_SERVO_CLOSED_POSITION : LEFT_SERVO_OPEN_POSITION;
             return this;
@@ -81,7 +84,8 @@ public class DualServos extends BunyipsSubsystem {
      * @param servo the servo to open
      * @return this
      */
-    public DualServos open(ServoSide servo) {
+    @NonNull
+    public DualServos open(@NonNull ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = LEFT_SERVO_OPEN_POSITION;
             return this;
@@ -102,7 +106,8 @@ public class DualServos extends BunyipsSubsystem {
      * @param servo the servo to close
      * @return this
      */
-    public DualServos close(ServoSide servo) {
+    @NonNull
+    public DualServos close(@NonNull ServoSide servo) {
         if (servo == ServoSide.LEFT) {
             leftServoPosition = LEFT_SERVO_CLOSED_POSITION;
             return this;
@@ -122,7 +127,7 @@ public class DualServos extends BunyipsSubsystem {
      * @param servo the servo to query
      * @return whether the servo side is open
      */
-    public boolean isOpen(ServoSide servo) {
+    public boolean isOpen(@NonNull ServoSide servo) {
         switch (servo) {
             case LEFT:
                 return left.getPosition() == LEFT_SERVO_OPEN_POSITION;
@@ -173,6 +178,7 @@ public class DualServos extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task openLeft() {
             return new RunTask(() -> open(ServoSide.LEFT))
                     .onSubsystem(DualServos.this, true)
@@ -184,6 +190,7 @@ public class DualServos extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task openRight() {
             return new RunTask(() -> open(ServoSide.RIGHT))
                     .onSubsystem(DualServos.this, true)
@@ -195,6 +202,7 @@ public class DualServos extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task openBoth() {
             return new RunTask(() -> {
                 open(ServoSide.LEFT);
@@ -209,6 +217,7 @@ public class DualServos extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task closeLeft() {
             return new RunTask(() -> close(ServoSide.LEFT))
                     .onSubsystem(DualServos.this, true)
@@ -220,6 +229,7 @@ public class DualServos extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task closeRight() {
             return new RunTask(() -> close(ServoSide.RIGHT))
                     .onSubsystem(DualServos.this, true)
@@ -231,6 +241,7 @@ public class DualServos extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task closeBoth() {
             return new RunTask(() -> {
                 close(ServoSide.LEFT);
@@ -245,6 +256,7 @@ public class DualServos extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task toggleLeft() {
             return new RunTask(() -> toggle(ServoSide.LEFT))
                     .onSubsystem(DualServos.this, true)
@@ -256,6 +268,7 @@ public class DualServos extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task toggleRight() {
             return new RunTask(() -> toggle(ServoSide.RIGHT))
                     .onSubsystem(DualServos.this, true)
@@ -267,6 +280,7 @@ public class DualServos extends BunyipsSubsystem {
          *
          * @return the task
          */
+        @NonNull
         public Task toggleBoth() {
             return new RunTask(() -> {
                 toggle(ServoSide.LEFT);

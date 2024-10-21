@@ -18,10 +18,12 @@ public class YellowPixel extends ColourThreshold {
     /**
      * Lower bounds for YCrCb
      */
+    @NonNull
     public static Scalar LOWER_YCRCB = new Scalar(0.0, 150.0, 0.0);
     /**
      * Upper bounds for YCrCb
      */
+    @NonNull
     public static Scalar UPPER_YCRCB = new Scalar(255.0, 255.0, 82.2);
     /**
      * Default min area for detections.
@@ -59,11 +61,13 @@ public class YellowPixel extends ColourThreshold {
         return MAX_AREA;
     }
 
+    @NonNull
     @Override
     protected Scalar setLower() {
         return LOWER_YCRCB;
     }
 
+    @NonNull
     @Override
     protected Scalar setUpper() {
         return UPPER_YCRCB;

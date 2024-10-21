@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
@@ -20,7 +22,7 @@ public class StartEndTask extends Task {
      * @param onStart the callback to run when the task starts
      * @param onEnd   the callback to run when the task finishes
      */
-    public StartEndTask(Runnable onStart, Runnable onEnd) {
+    public StartEndTask(@NonNull Runnable onStart, @NonNull Runnable onEnd) {
         this(INFINITE_TIMEOUT, onStart, onEnd);
     }
 
@@ -31,7 +33,7 @@ public class StartEndTask extends Task {
      * @param onStart        the callback to run when the task starts
      * @param onFinish       the callback to run when the task finishes
      */
-    public StartEndTask(Measure<Time> timeoutSeconds, Runnable onStart, Runnable onFinish) {
+    public StartEndTask(@NonNull Measure<Time> timeoutSeconds, @NonNull Runnable onStart, @NonNull Runnable onFinish) {
         super(timeoutSeconds);
         this.onStart = onStart;
         this.onFinish = onFinish;

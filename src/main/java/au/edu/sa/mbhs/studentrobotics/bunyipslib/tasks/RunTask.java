@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.OnceTask;
 
 /**
@@ -17,7 +19,7 @@ public class RunTask extends OnceTask {
      *
      * @param callback The callback to run
      */
-    public RunTask(Runnable callback) {
+    public RunTask(@NonNull Runnable callback) {
         this.callback = callback;
         withName("Run");
     }

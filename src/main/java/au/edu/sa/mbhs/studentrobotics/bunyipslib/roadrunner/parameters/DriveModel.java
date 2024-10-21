@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 
@@ -38,6 +40,7 @@ public class DriveModel {
          * @param inPerTick the inches per tick for the drive calculated as (real dist in inches / ticks reported)
          * @return the builder
          */
+        @NonNull
         public Builder setInPerTick(double inPerTick) {
             model.inPerTick = inPerTick;
             if (model.lateralInPerTick == Double.MAX_VALUE) model.lateralInPerTick = inPerTick;
@@ -51,7 +54,8 @@ public class DriveModel {
          * @param reportedTicks    the reported ticks from the encoder when the distance was measured
          * @return the builder
          */
-        public Builder setDistPerTick(Measure<Distance> measuredDistance, double reportedTicks) {
+        @NonNull
+        public Builder setDistPerTick(@NonNull Measure<Distance> measuredDistance, double reportedTicks) {
             setInPerTick(measuredDistance.in(Inches) / reportedTicks);
             return this;
         }
@@ -64,7 +68,8 @@ public class DriveModel {
          * @param wheelDiameter      the diameter of the wheel
          * @return the builder
          */
-        public Builder setComputedInPerTick(double ticksPerRevolution, double gearRatio, Measure<Distance> wheelDiameter) {
+        @NonNull
+        public Builder setComputedInPerTick(double ticksPerRevolution, double gearRatio, @NonNull Measure<Distance> wheelDiameter) {
             setInPerTick((wheelDiameter.in(Inches) * Math.PI) / (ticksPerRevolution * gearRatio));
             return this;
         }
@@ -76,6 +81,7 @@ public class DriveModel {
          * @param lateralInPerTick the inches per tick for lateral movement
          * @return the builder
          */
+        @NonNull
         public Builder setLateralInPerTick(double lateralInPerTick) {
             model.lateralInPerTick = lateralInPerTick;
             return this;
@@ -89,7 +95,8 @@ public class DriveModel {
          * @param reportedTicks    the reported ticks from the encoder when the distance was measured
          * @return the builder
          */
-        public Builder setLateralDistPerTick(Measure<Distance> measuredDistance, double reportedTicks) {
+        @NonNull
+        public Builder setLateralDistPerTick(@NonNull Measure<Distance> measuredDistance, double reportedTicks) {
             model.lateralInPerTick = measuredDistance.in(Inches) / reportedTicks;
             return this;
         }
@@ -103,7 +110,8 @@ public class DriveModel {
          * @param wheelDiameter      the diameter of the wheel
          * @return the builder
          */
-        public Builder setComputedLateralInPerTick(double ticksPerRevolution, double gearRatio, Measure<Distance> wheelDiameter) {
+        @NonNull
+        public Builder setComputedLateralInPerTick(double ticksPerRevolution, double gearRatio, @NonNull Measure<Distance> wheelDiameter) {
             model.lateralInPerTick = (wheelDiameter.in(Inches) * Math.PI) / (ticksPerRevolution * gearRatio);
             return this;
         }
@@ -114,6 +122,7 @@ public class DriveModel {
          * @param trackWidthTicks the track width in encoder ticks as a result of a tuned measurement
          * @return the builder
          */
+        @NonNull
         public Builder setTrackWidthTicks(double trackWidthTicks) {
             model.trackWidthTicks = trackWidthTicks;
             return this;
@@ -124,6 +133,7 @@ public class DriveModel {
          *
          * @return the DriveModel
          */
+        @NonNull
         public DriveModel build() {
             return model;
         }

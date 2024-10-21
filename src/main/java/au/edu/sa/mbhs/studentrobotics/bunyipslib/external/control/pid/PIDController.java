@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 /**
@@ -41,6 +43,7 @@ public class PIDController extends PIDFController {
      * @param kd The value of kD for the coefficients.
      * @return this
      */
+    @NonNull
     public PIDController setPID(double kp, double ki, double kd) {
         setPIDF(kp, ki, kd, 0);
         return this;
@@ -52,7 +55,8 @@ public class PIDController extends PIDFController {
      * @param coefficients the coefficients to set
      * @return this
      */
-    public PIDController setPID(PIDCoefficients coefficients) {
+    @NonNull
+    public PIDController setPID(@NonNull PIDCoefficients coefficients) {
         setPIDF(coefficients.p, coefficients.i, coefficients.d, 0);
         return this;
     }
@@ -63,7 +67,8 @@ public class PIDController extends PIDFController {
      * @param coefficients the coefficients to update
      * @return this
      */
-    public PIDController updatePID(PIDCoefficients coefficients) {
+    @NonNull
+    public PIDController updatePID(@NonNull PIDCoefficients coefficients) {
         coefficients.p = getP();
         coefficients.i = getI();
         coefficients.d = getD();

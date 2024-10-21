@@ -31,7 +31,7 @@ public class IMULocalizer implements Localizer {
      *
      * @param imu the imu to use
      */
-    public IMULocalizer(IMU imu) {
+    public IMULocalizer(@NonNull IMU imu) {
         this.imu = imu;
     }
 

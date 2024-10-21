@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
@@ -18,7 +20,7 @@ public class DeadlineTaskGroup extends TaskGroup {
      *
      * @param tasks The tasks to run together
      */
-    public DeadlineTaskGroup(Task... tasks) {
+    public DeadlineTaskGroup(@NonNull Task... tasks) {
         // Timeout is defined by the very first task
         super(tasks[0].getTimeout(), tasks);
     }
@@ -28,7 +30,7 @@ public class DeadlineTaskGroup extends TaskGroup {
      *
      * @param tasks The tasks to run together
      */
-    public DeadlineTaskGroup(List<Task> tasks) {
+    public DeadlineTaskGroup(@NonNull List<Task> tasks) {
         this(tasks.toArray(new Task[0]));
     }
 

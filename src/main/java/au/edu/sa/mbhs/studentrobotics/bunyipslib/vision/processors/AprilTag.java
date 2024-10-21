@@ -45,7 +45,7 @@ public class AprilTag extends Processor<AprilTagData> {
      *
      * @param customBuilderSettings additional settings that will be attached to the builder
      */
-    public AprilTag(Function<AprilTagProcessor.Builder, AprilTagProcessor.Builder> customBuilderSettings) {
+    public AprilTag(@NonNull Function<AprilTagProcessor.Builder, AprilTagProcessor.Builder> customBuilderSettings) {
         instance = customBuilderSettings.apply(makeBuilderWithCommonSettings()).build();
     }
 
@@ -61,6 +61,7 @@ public class AprilTag extends Processor<AprilTagData> {
      *
      * @return direct AprilTagProcessor instance
      */
+    @NonNull
     public AprilTagProcessor getInstance() {
         return instance;
     }
@@ -94,17 +95,17 @@ public class AprilTag extends Processor<AprilTagData> {
     // Untouched methods to be handled by the AprilTagProcessor
 
     @Override
-    public void init(int width, int height, CameraCalibration calibration) {
+    public void init(int width, int height, @NonNull CameraCalibration calibration) {
         instance.init(width, height, calibration);
     }
 
     @Override
-    protected void onProcessFrame(Mat frame, long captureTimeNanos) {
+    protected void onProcessFrame(@NonNull Mat frame, long captureTimeNanos) {
         ctx = instance.processFrame(frame, captureTimeNanos);
     }
 
     @Override
-    protected void onFrameDraw(Canvas canvas) {
+    protected void onFrameDraw(@NonNull Canvas canvas) {
         Size dimensions = getCameraDimensions();
         if (dimensions == null || ctx == null) return;
         instance.onDrawFrame(canvas, dimensions.getWidth(), dimensions.getHeight(), 1.0f, 1.0f, ctx);

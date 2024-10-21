@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -52,7 +53,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      * @param rotationController rotation PID controller to use
      * @param point              the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(@Nullable Supplier<Float> passThroughPoseX, @Nullable Supplier<Float> passThroughPoseY, Moveable drive, SystemController rotationController, Supplier<Vector2d> point) {
+    public AlignToPointDriveTask(@Nullable Supplier<Float> passThroughPoseX, @Nullable Supplier<Float> passThroughPoseY, @NonNull Moveable drive, @NonNull SystemController rotationController, @NonNull Supplier<Vector2d> point) {
         this.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
@@ -79,7 +80,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      * @param drive                  drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      * @param point                  the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(Gamepad passThroughTranslation, Moveable drive, PIDF rotationController, Supplier<Vector2d> point) {
+    public AlignToPointDriveTask(@NonNull Gamepad passThroughTranslation, @NonNull Moveable drive, @NonNull PIDF rotationController, @NonNull Supplier<Vector2d> point) {
         this(() -> -passThroughTranslation.left_stick_y, () -> -passThroughTranslation.left_stick_x, drive, rotationController, point);
     }
 
@@ -94,7 +95,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      * @param rotationController rotation PID controller to use
      * @param point              the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(Moveable drive, PIDF rotationController, Supplier<Vector2d> point) {
+    public AlignToPointDriveTask(@NonNull Moveable drive, @NonNull PIDF rotationController, @NonNull Supplier<Vector2d> point) {
         this(null, null, drive, rotationController, point);
     }
 
@@ -104,6 +105,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      * @param speed the max magnitude from [-1.0, 1.0]
      * @return this
      */
+    @NonNull
     public AlignToPointDriveTask withMaxRotationSpeed(double speed) {
         maxRotation = Math.abs(speed);
         return this;
@@ -115,6 +117,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      * @param enabled whether to use field centric control
      * @return this
      */
+    @NonNull
     public AlignToPointDriveTask withFieldCentric(boolean enabled) {
         fieldCentric = enabled;
         return this;

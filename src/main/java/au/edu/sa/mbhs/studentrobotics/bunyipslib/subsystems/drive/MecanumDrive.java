@@ -112,7 +112,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      * @param startPose            the starting pose of the robot
      */
-    public MecanumDrive(DriveModel driveModel, MotionProfile motionProfile, MecanumGains mecanumGains, DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront, LazyImu lazyImu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, Pose2d startPose) {
+    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @NonNull DcMotor leftFront, @NonNull DcMotor leftBack, @NonNull DcMotor rightBack, @NonNull DcMotor rightFront, @NonNull LazyImu lazyImu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, @NonNull Pose2d startPose) {
         accumulator = new Accumulator(startPose);
 
         gains = mecanumGains;
@@ -160,7 +160,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param lazyImu              the LazyImu instance to use, see the {@code getLazyImu} method of {@link RobotConfig} to construct this
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      */
-    public MecanumDrive(DriveModel driveModel, MotionProfile motionProfile, MecanumGains mecanumGains, DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront, LazyImu lazyImu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
+    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @NonNull DcMotor leftFront, @NonNull DcMotor leftBack, @NonNull DcMotor rightBack, @NonNull DcMotor rightFront, @NonNull LazyImu lazyImu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
         this(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, lazyImu, voltageSensorMapping, Storage.memory().lastKnownPosition);
     }
 
@@ -171,11 +171,13 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param localizer the localizer to use
      * @return this
      */
+    @NonNull
     public MecanumDrive withLocalizer(@NonNull Localizer localizer) {
         this.localizer = localizer;
         return this;
     }
 
+    @NonNull
     public Localizer getLocalizer() {
         if (localizer == null) {
             localizer = new MecanumLocalizer(model, leftFront, leftBack, rightBack, rightFront, lazyImu.get());
@@ -190,6 +192,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param accumulator the new accumulator to use
      * @return this
      */
+    @NonNull
     public MecanumDrive withAccumulator(@NonNull Accumulator accumulator) {
         this.accumulator.copyTo(accumulator);
         this.accumulator = accumulator;
@@ -202,6 +205,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param errorThresholds the new error thresholds to use
      * @return this
      */
+    @NonNull
     public MecanumDrive withErrorThresholds(@NonNull ErrorThresholds errorThresholds) {
         this.errorThresholds = errorThresholds;
         return this;
@@ -227,6 +231,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      *
      * @return the power of each motor on the drive, in the order of left front, left back, right back, right front
      */
+    @NonNull
     public double[] getMotorPowers() {
         return new double[]{leftFrontPower, leftBackPower, rightBackPower, rightFrontPower};
     }
@@ -360,7 +365,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
          *
          * @param t the trajectory to follow
          */
-        public FollowTrajectoryTask(TimeTrajectory t) {
+        public FollowTrajectoryTask(@NonNull TimeTrajectory t) {
             timeTrajectory = t;
 
             List<Double> disps = com.acmerobotics.roadrunner.Math.range(
@@ -464,7 +469,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
          *
          * @param turn the turn to execute
          */
-        public TurnTask(TimeTurn turn) {
+        public TurnTask(@NonNull TimeTurn turn) {
             this.turn = turn;
             withTimeout(Seconds.of(turn.duration).plus(errorThresholds.getStabilizationTimeout()));
         }

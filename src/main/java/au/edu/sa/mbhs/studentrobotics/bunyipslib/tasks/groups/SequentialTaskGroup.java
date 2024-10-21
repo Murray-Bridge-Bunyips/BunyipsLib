@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
+import androidx.annotation.NonNull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,7 +24,7 @@ public class SequentialTaskGroup extends TaskGroup {
      *
      * @param tasks The tasks to run in sequence
      */
-    public SequentialTaskGroup(Task... tasks) {
+    public SequentialTaskGroup(@NonNull Task... tasks) {
         // Timeout will be represented by the sum of all tasks, unless one is infinite then the entire group is infinite.
         // This works for a sequential following where each task gets its own runtime
         super(Arrays.stream(tasks).anyMatch(t -> t.getTimeout().magnitude() == 0.0) ? INFINITE_TIMEOUT :
@@ -35,7 +37,7 @@ public class SequentialTaskGroup extends TaskGroup {
      *
      * @param tasks The tasks to run in sequence
      */
-    public SequentialTaskGroup(List<Task> tasks) {
+    public SequentialTaskGroup(@NonNull List<Task> tasks) {
         this(tasks.toArray(new Task[0]));
     }
 

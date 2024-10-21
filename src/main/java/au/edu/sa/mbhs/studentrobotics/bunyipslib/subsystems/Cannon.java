@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.Servo;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
@@ -36,7 +38,7 @@ public class Cannon extends BunyipsSubsystem {
      * @param closePosition the position to set the servo to when not firing
      * @param openPosition  the position to set the servo to when firing
      */
-    public Cannon(Servo prolong, double openPosition, double closePosition) {
+    public Cannon(@NonNull Servo prolong, double openPosition, double closePosition) {
         if (openPosition == closePosition)
             throw new IllegalArgumentException("Open and close positions cannot be the same");
 
@@ -56,7 +58,7 @@ public class Cannon extends BunyipsSubsystem {
      *
      * @param prolong the servo to use
      */
-    public Cannon(Servo prolong) {
+    public Cannon(@NonNull Servo prolong) {
         this(prolong, 1.0, 0.0);
     }
 
@@ -65,6 +67,7 @@ public class Cannon extends BunyipsSubsystem {
      *
      * @return this
      */
+    @NonNull
     public Cannon fire() {
         target = FIRED;
         return this;
@@ -75,6 +78,7 @@ public class Cannon extends BunyipsSubsystem {
      *
      * @return this
      */
+    @NonNull
     public Cannon reset() {
         target = RESET;
         return this;
@@ -113,6 +117,7 @@ public class Cannon extends BunyipsSubsystem {
          *
          * @return Fire cannon task
          */
+        @NonNull
         public Task fire() {
             return new RunTask(Cannon.this::fire).onSubsystem(Cannon.this, true).withName("Fire");
         }
@@ -122,6 +127,7 @@ public class Cannon extends BunyipsSubsystem {
          *
          * @return Reset cannon task
          */
+        @NonNull
         public Task reset() {
             return new RunTask(Cannon.this::reset).onSubsystem(Cannon.this, true).withName("Reset");
         }

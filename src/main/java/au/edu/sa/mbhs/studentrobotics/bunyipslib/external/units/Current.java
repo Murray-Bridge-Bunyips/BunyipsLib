@@ -6,6 +6,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Watts;
 
+import androidx.annotation.NonNull;
+
 /**
  * Unit of electric current dimension.
  *
@@ -45,7 +47,8 @@ public class Current extends Unit<Current> {
      * @param symbol  the symbol used to represent the unit of power
      * @return the power unit
      */
-    public Power times(Unit<Voltage> voltage, String name, String symbol) {
+    @NonNull
+    public Power times(@NonNull Unit<Voltage> voltage, @NonNull String name, @NonNull String symbol) {
         return new Power(Watts, toBaseUnits(1) * voltage.toBaseUnits(1), name, symbol);
     }
 }

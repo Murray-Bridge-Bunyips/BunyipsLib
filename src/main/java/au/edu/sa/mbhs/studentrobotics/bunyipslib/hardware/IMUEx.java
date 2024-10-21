@@ -110,12 +110,12 @@ public class IMUEx implements IMU, Runnable {
      *
      * @param imu the imu to wrap
      */
-    public IMUEx(IMU imu) {
+    public IMUEx(@NonNull IMU imu) {
         this.imu = imu;
     }
 
     @Override
-    public boolean initialize(Parameters parameters) {
+    public boolean initialize(@NonNull Parameters parameters) {
         return imu.initialize(parameters);
     }
 
@@ -135,6 +135,7 @@ public class IMUEx implements IMU, Runnable {
      *
      * @inheritDoc
      */
+    @NonNull
     @Override
     @SuppressWarnings("DataFlowIssue")
     public YawPitchRollAngles getRobotYawPitchRollAngles() {
@@ -159,8 +160,9 @@ public class IMUEx implements IMU, Runnable {
      *
      * @inheritDoc
      */
+    @NonNull
     @Override
-    public Orientation getRobotOrientation(AxesReference reference, AxesOrder order, AngleUnit angleUnit) {
+    public Orientation getRobotOrientation(@NonNull AxesReference reference, @NonNull AxesOrder order, @NonNull AngleUnit angleUnit) {
         return getRobotOrientationAsQuaternion().toOrientation(reference, order, angleUnit);
     }
 
@@ -172,15 +174,17 @@ public class IMUEx implements IMU, Runnable {
      *
      * @inheritDoc
      */
+    @NonNull
     @Override
     public Quaternion getRobotOrientationAsQuaternion() {
         run();
         return quaternion;
     }
 
+    @NonNull
     @Override
     @SuppressWarnings("DataFlowIssue")
-    public AngularVelocity getRobotAngularVelocity(AngleUnit angleUnit) {
+    public AngularVelocity getRobotAngularVelocity(@NonNull AngleUnit angleUnit) {
         run();
         return new AngularVelocity(AngleUnit.DEGREES, (float) pitchVel.magnitude(), (float) rollVel.magnitude(), (float) yawVel.magnitude(), lastAcquisitionTimeNanos);
     }
@@ -190,6 +194,7 @@ public class IMUEx implements IMU, Runnable {
      *
      * @return the yaw domain that can be used to view the current domain and convert between
      */
+    @NonNull
     public YawDomain getYawDomain() {
         return domain;
     }
@@ -201,14 +206,14 @@ public class IMUEx implements IMU, Runnable {
      *
      * @param newDomain the new domain of the {@link #yaw} property
      */
-    public void setYawDomain(YawDomain newDomain) {
-        if (newDomain == null) return;
+    public void setYawDomain(@NonNull YawDomain newDomain) {
         domain = newDomain;
     }
 
     /**
      * @return the current yaw offset as respected by this class and its methods
      */
+    @NonNull
     public Measure<Angle> getYawOffset() {
         return yawOffset;
     }
@@ -218,8 +223,7 @@ public class IMUEx implements IMU, Runnable {
      *
      * @param yawOffset the yaw offset that will be added, applies to all IMU-related reads
      */
-    public void setYawOffset(Measure<Angle> yawOffset) {
-        if (yawOffset == null) return;
+    public void setYawOffset(@NonNull Measure<Angle> yawOffset) {
         this.yawOffset = yawOffset;
     }
 
@@ -273,7 +277,7 @@ public class IMUEx implements IMU, Runnable {
      *
      * @param loopSleepDuration the duration to sleep this thread after every loop to save resources
      */
-    public void startThread(Measure<Time> loopSleepDuration) {
+    public void startThread(@NonNull Measure<Time> loopSleepDuration) {
         if (threadName != null) return;
         // Run at least once to ensure last acquired time is updated
         internalUpdate();
@@ -336,16 +340,19 @@ public class IMUEx implements IMU, Runnable {
         rollVel = DegreesPerSecond.of(angleVels.yRotationRate);
     }
 
+    @NonNull
     @Override
     public Manufacturer getManufacturer() {
         return imu.getManufacturer();
     }
 
+    @NonNull
     @Override
     public String getDeviceName() {
         return imu.getDeviceName();
     }
 
+    @NonNull
     @Override
     public String getConnectionInfo() {
         return imu.getConnectionInfo();

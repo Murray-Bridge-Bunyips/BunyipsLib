@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
@@ -21,7 +23,7 @@ public class RunForTask extends Task {
      * @param timeout  The time to run the task for
      * @param callback The callback to run every loop
      */
-    public RunForTask(Measure<Time> timeout, Runnable callback) {
+    public RunForTask(@NonNull Measure<Time> timeout, @NonNull Runnable callback) {
         super(timeout);
         this.callback = callback;
         withName("Run For");
@@ -34,7 +36,7 @@ public class RunForTask extends Task {
      * @param callback       The callback to run every loop
      * @param finishCallback The callback to run after this task finishes
      */
-    public RunForTask(Measure<Time> timeout, Runnable callback, Runnable finishCallback) {
+    public RunForTask(@NonNull Measure<Time> timeout, @NonNull Runnable callback, @NonNull Runnable finishCallback) {
         super(timeout);
         this.callback = callback;
         this.finishCallback = finishCallback;

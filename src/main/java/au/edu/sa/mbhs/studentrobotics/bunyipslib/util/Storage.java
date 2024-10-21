@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.google.gson.Gson;
@@ -68,6 +69,7 @@ public final class Storage {
      *
      * @return Instance for volatile memory storage
      */
+    @NonNull
     public static Memory memory() {
         if (memory == null)
             memory = new Memory();
@@ -80,6 +82,7 @@ public final class Storage {
      *
      * @return Instance for persistent storage
      */
+    @NonNull
     public static Filesystem filesystem() {
         if (filesystem == null)
             filesystem = new Filesystem();
@@ -108,6 +111,7 @@ public final class Storage {
          *
          * @see StartingConfiguration
          */
+        @Nullable
         public StartingConfiguration.Alliance lastKnownAlliance = null;
         /**
          * The last known position of the robot from odometry localization.
@@ -146,7 +150,8 @@ public final class Storage {
          * @return the value associated with the key
          * @throws IllegalArgumentException if key not found
          */
-        public Object getVolatile(String key) throws IllegalArgumentException {
+        @Nullable
+        public Object getVolatile(@NonNull String key) throws IllegalArgumentException {
             if (!store.containsKey(key))
                 throw new IllegalArgumentException("Key not found in memory: " + key);
             return store.get(key);
@@ -158,7 +163,7 @@ public final class Storage {
          * @param key   the key to store the value under
          * @param value the value to store
          */
-        public void setVolatile(String key, Object value) {
+        public void setVolatile(@NonNull String key, @NonNull Object value) {
             store.put(key, value);
         }
     }
@@ -199,6 +204,7 @@ public final class Storage {
          *
          * @return the stored values
          */
+        @NonNull
         public HashMap<String, Object> access() {
             return store;
         }

@@ -58,7 +58,7 @@ public class MovingAverageTimer {
      * @param bufSize                the size of the ring buffer
      * @param formatStringResolution the resolution of the timer for format strings
      */
-    public MovingAverageTimer(int bufSize, Time formatStringResolution) {
+    public MovingAverageTimer(int bufSize, @NonNull Time formatStringResolution) {
         reset();
         ringBufferSize = bufSize;
         loopTimeRingBuffer = new long[ringBufferSize];
@@ -145,13 +145,14 @@ public class MovingAverageTimer {
      * @param unit the time unit to return the loops per unit in
      * @return the number of loops per unit
      */
-    public double loopsPer(Time unit) {
+    public double loopsPer(@NonNull Time unit) {
         return loopCount / (Nanoseconds.of(runningTotal).in(unit));
     }
 
     /**
      * @return the moving average loop time
      */
+    @NonNull
     public Measure<Time> movingAverageLoopTime() {
         return Nanoseconds.of(movingAverage);
     }
@@ -159,6 +160,7 @@ public class MovingAverageTimer {
     /**
      * @return the minimum moving average loop time
      */
+    @NonNull
     public Measure<Time> minMovingAverageLoopTime() {
         return Nanoseconds.of(minMovingAverage);
     }
@@ -166,6 +168,7 @@ public class MovingAverageTimer {
     /**
      * @return the maximum moving average loop time
      */
+    @NonNull
     public Measure<Time> maxMovingAverageLoopTime() {
         return Nanoseconds.of(maxMovingAverage);
     }
@@ -173,6 +176,7 @@ public class MovingAverageTimer {
     /**
      * @return the average loop time
      */
+    @NonNull
     public Measure<Time> averageLoopTime() {
         return Nanoseconds.of(average);
     }
@@ -180,6 +184,7 @@ public class MovingAverageTimer {
     /**
      * @return the minimum average loop time
      */
+    @NonNull
     public Measure<Time> minAverageLoopTime() {
         return Nanoseconds.of(minAverage);
     }
@@ -187,6 +192,7 @@ public class MovingAverageTimer {
     /**
      * @return the maximum average loop time
      */
+    @NonNull
     public Measure<Time> maxAverageLoopTime() {
         return Nanoseconds.of(maxAverage);
     }
@@ -194,6 +200,7 @@ public class MovingAverageTimer {
     /**
      * @return the minimum loop time
      */
+    @NonNull
     public Measure<Time> minLoopTime() {
         return Nanoseconds.of(minLoopTime);
     }
@@ -201,6 +208,7 @@ public class MovingAverageTimer {
     /**
      * @return the maximum loop time
      */
+    @NonNull
     public Measure<Time> maxLoopTime() {
         return Nanoseconds.of(maxLoopTime);
     }
@@ -208,6 +216,7 @@ public class MovingAverageTimer {
     /**
      * @return the total time elapsed
      */
+    @NonNull
     public Measure<Time> elapsedTime() {
         return Nanoseconds.of(runningTotal);
     }
@@ -215,6 +224,7 @@ public class MovingAverageTimer {
     /**
      * @return the current loop time (time since the last update of this timer)
      */
+    @NonNull
     public Measure<Time> deltaTime() {
         return Nanoseconds.of(loopTime);
     }

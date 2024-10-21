@@ -25,10 +25,12 @@ public class Rect {
     /**
      * The first point making up this Rect.
      */
+    @NonNull
     public Vector2d point1;
     /**
      * The second point making up this Rect.
      */
+    @NonNull
     public Vector2d point2;
 
     /**
@@ -38,7 +40,7 @@ public class Rect {
      * @param p2   point 2
      * @param unit the unit used for point 1 and 2
      */
-    public Rect(Vector2d p1, Vector2d p2, Distance unit) {
+    public Rect(@NonNull Vector2d p1, @NonNull Vector2d p2, @NonNull Distance unit) {
         this.unit = unit;
         point1 = p1;
         point2 = p2;
@@ -50,7 +52,8 @@ public class Rect {
      * @param rect the Rect to normalise
      * @return the normalised Rect
      */
-    public static Rect normalise(Rect rect) {
+    @NonNull
+    public static Rect normalise(@NonNull Rect rect) {
         Vector2d point1 = new Vector2d(Math.min(rect.point1.x, rect.point2.x), Math.min(rect.point1.y, rect.point2.y));
         Vector2d point2 = new Vector2d(Math.max(rect.point1.x, rect.point2.x), Math.max(rect.point1.y, rect.point2.y));
         return new Rect(point1, point2, rect.unit);
@@ -61,6 +64,7 @@ public class Rect {
      *
      * @return the absolute area of this Rect.
      */
+    @NonNull
     public Measure<Distance> area() {
         return unit.of(Math.abs((point2.x - point1.x) * (point2.y - point1.y)));
     }
@@ -72,7 +76,7 @@ public class Rect {
      * @param unit  the distance unit of this point to convert to the {@link #unit}
      * @return whether the point is contained in the Rect
      */
-    public boolean contains(Vector2d point, Distance unit) {
+    public boolean contains(@NonNull Vector2d point, @NonNull Distance unit) {
         point = new Vector2d(unit.of(point.x).in(this.unit), unit.of(point.y).in(this.unit));
         Rect normRect = normalise(this);
         return point.x >= normRect.point1.x && point.x <= normRect.point2.x
@@ -85,7 +89,7 @@ public class Rect {
      * @param other the other Rect to check
      * @return whether this Rect fully contains the other Rect
      */
-    public boolean contains(Rect other) {
+    public boolean contains(@NonNull Rect other) {
         Rect normRect = normalise(this);
         Rect normOther = normalise(other);
         return normRect.point1.x <= normOther.point1.x && normRect.point1.y <= normOther.point1.y
@@ -98,7 +102,7 @@ public class Rect {
      * @param other the other Rect to check
      * @return whether this Rect overlaps the other Rect in some way
      */
-    public boolean overlaps(Rect other) {
+    public boolean overlaps(@NonNull Rect other) {
         Rect normRect = normalise(this);
         Rect normOther = normalise(other);
         return normRect.point1.x < normOther.point2.x && normRect.point2.x > normOther.point1.x
@@ -111,7 +115,8 @@ public class Rect {
      * @param center the center point of the new Rect
      * @return a new Rect with the same dimensions as this Rect and the center at the supplied point
      */
-    public Rect centeredAt(Vector2d center) {
+    @NonNull
+    public Rect centeredAt(@NonNull Vector2d center) {
         Rect normRect = normalise(this);
         Vector2d halfSize = normRect.point2.minus(normRect.point1).times(0.5);
         return new Rect(center.minus(halfSize), center.plus(halfSize), unit);
@@ -122,13 +127,14 @@ public class Rect {
      *
      * @param canvas the canvas to draw on
      */
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         canvas.strokeRect(point1.x, point1.y, point2.x - point1.x, point2.y - point1.y);
     }
 
     /**
      * @return a copy of this Rect
      */
+    @NonNull
     public Rect copy() {
         return new Rect(point1, point2, unit);
     }

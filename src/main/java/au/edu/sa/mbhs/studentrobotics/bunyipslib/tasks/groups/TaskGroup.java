@@ -34,7 +34,7 @@ public abstract class TaskGroup extends Task {
     protected final ArrayList<Task> tasks = new ArrayList<>();
     private final HashSet<Task> attachedTasks = new HashSet<>();
 
-    protected TaskGroup(Measure<Time> maxTimeout, Task... tasks) {
+    protected TaskGroup(@NonNull Measure<Time> maxTimeout, @NonNull Task... tasks) {
         super(maxTimeout);
         this.tasks.addAll(Arrays.asList(tasks));
         if (tasks.length == 0) {
@@ -53,6 +53,7 @@ public abstract class TaskGroup extends Task {
     /**
      * @return all tasks in this group
      */
+    @NonNull
     public List<Task> getGroupedTasks() {
         return new ArrayList<>(tasks);
     }
@@ -76,7 +77,7 @@ public abstract class TaskGroup extends Task {
         }
     }
 
-    protected final void executeTask(Task task) {
+    protected final void executeTask(@NonNull Task task) {
         if (task.isFinished()) return;
         // Do not manage a task if it is already attached to a subsystem being managed there
         if (attachedTasks.contains(task)) return;

@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.function.DoubleSupplier;
@@ -35,7 +37,7 @@ public class Switch extends BunyipsSubsystem {
      * @param openPosition  the position to set the servo to when open
      * @param closePosition the position to set the servo to when closed
      */
-    public Switch(Servo servo, double openPosition, double closePosition) {
+    public Switch(@NonNull Servo servo, double openPosition, double closePosition) {
         this.servo = servo;
         // Auto-close servo
         // Note: Updating must be done manually
@@ -49,7 +51,7 @@ public class Switch extends BunyipsSubsystem {
      *
      * @param servo the servo to use
      */
-    public Switch(Servo servo) {
+    public Switch(@NonNull Servo servo) {
         this(servo, 1, 0);
     }
 
@@ -190,7 +192,8 @@ public class Switch extends BunyipsSubsystem {
          * @param positionSupplier the position value supplier
          * @return a task to continually move the switch to the position supply
          */
-        public Task controlPosition(DoubleSupplier positionSupplier) {
+        @NonNull
+        public Task controlPosition(@NonNull DoubleSupplier positionSupplier) {
             return new ContinuousTask(() -> setPosition(positionSupplier.getAsDouble()))
                     .onSubsystem(Switch.this, false)
                     .withName("Supplier Position Control");
@@ -202,7 +205,8 @@ public class Switch extends BunyipsSubsystem {
          * @param powerSupplier the power/delta supplier
          * @return a task to continually move the switch in accordance with the delta step
          */
-        public Task controlDelta(DoubleSupplier powerSupplier) {
+        @NonNull
+        public Task controlDelta(@NonNull DoubleSupplier powerSupplier) {
             return new ContinuousTask(() -> setPosition(servo.getPosition() + powerSupplier.getAsDouble()))
                     .onSubsystem(Switch.this, false)
                     .withName("Supplier Delta Control");
@@ -213,6 +217,7 @@ public class Switch extends BunyipsSubsystem {
          *
          * @return Open switch task.
          */
+        @NonNull
         public Task open() {
             return new RunTask(Switch.this::open)
                     .onSubsystem(Switch.this, true)
@@ -224,6 +229,7 @@ public class Switch extends BunyipsSubsystem {
          *
          * @return Close switch task.
          */
+        @NonNull
         public Task close() {
             return new RunTask(Switch.this::close)
                     .onSubsystem(Switch.this, true)
@@ -235,6 +241,7 @@ public class Switch extends BunyipsSubsystem {
          *
          * @return Toggle switch task
          */
+        @NonNull
         public Task toggle() {
             return new RunTask(Switch.this::toggle)
                     .onSubsystem(Switch.this, true)
@@ -247,6 +254,7 @@ public class Switch extends BunyipsSubsystem {
          * @param position the position to set to, clipped between open and close
          * @return a task to perform this action
          */
+        @NonNull
         public Task setClipped(double position) {
             return new RunTask(() -> setPositionClipped(position))
                     .onSubsystem(Switch.this, true)
@@ -259,6 +267,7 @@ public class Switch extends BunyipsSubsystem {
          * @param position the raw position to send to the servo
          * @return a task to perform this action
          */
+        @NonNull
         public Task setTo(double position) {
             return new RunTask(() -> setPosition(position))
                     .onSubsystem(Switch.this, true)
@@ -271,6 +280,7 @@ public class Switch extends BunyipsSubsystem {
          * @param delta the amount to delta the servo by
          * @return a task to perform this action
          */
+        @NonNull
         public Task deltaClipped(double delta) {
             return new RunTask(() -> setPositionClipped(servo.getPosition() + delta))
                     .onSubsystem(Switch.this, true)
@@ -283,6 +293,7 @@ public class Switch extends BunyipsSubsystem {
          * @param delta the amount to delta the servo by, unclamped between the closed and open bounds
          * @return a task to perform this action
          */
+        @NonNull
         public Task delta(double delta) {
             return new RunTask(() -> setPosition(servo.getPosition() + delta))
                     .onSubsystem(Switch.this, true)

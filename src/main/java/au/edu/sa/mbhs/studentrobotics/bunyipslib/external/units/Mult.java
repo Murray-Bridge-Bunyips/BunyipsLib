@@ -69,6 +69,7 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
      * @param b   the second unit
      * @return the combined unit
      */
+    @NonNull
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <A extends Unit<A>, B extends Unit<B>> Mult<A, B> combine(A a, B b) {
         long key = ((long) a.hashCode()) << 32L | (b.hashCode() & 0xFFFFFFFFL);

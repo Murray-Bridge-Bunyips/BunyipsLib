@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control;
 
+import androidx.annotation.NonNull;
+
 import java.util.Arrays;
 
 /**
@@ -20,6 +22,7 @@ public interface SystemController {
      *
      * @return an array of coefficients for this controller
      */
+    @NonNull
     double[] getCoefficients();
 
     /**
@@ -29,7 +32,7 @@ public interface SystemController {
      *
      * @param coeffs a list of coefficients to set this controller to
      */
-    void setCoefficients(double[] coeffs);
+    void setCoefficients(@NonNull double[] coeffs);
 
     /**
      * Sets the coefficients for this controller.
@@ -38,7 +41,7 @@ public interface SystemController {
      *
      * @param coeffs a list of coefficients to set this controller to
      */
-    default void setCoefficients(Double... coeffs) {
+    default void setCoefficients(@NonNull Double... coeffs) {
         setCoefficients(Arrays.stream(coeffs).mapToDouble(Double::doubleValue).toArray());
     }
 

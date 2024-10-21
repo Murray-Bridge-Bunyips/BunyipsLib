@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 
 /**
@@ -15,18 +17,21 @@ public final class ThreeDeadWheelInputsMessage {
     /**
      * The position and velocity of the first parallel wheel at this time.
      */
+    @NonNull
     public PositionVelocityPair par0;
     /**
      * The position and velocity of the second parallel wheel at this time.
      */
+    @NonNull
     public PositionVelocityPair par1;
     /**
      * The position and velocity of the perpendicular wheel at this time.
      */
+    @NonNull
     public PositionVelocityPair perp;
 
     @SuppressWarnings("MissingJavadoc")
-    public ThreeDeadWheelInputsMessage(PositionVelocityPair par0, PositionVelocityPair par1, PositionVelocityPair perp) {
+    public ThreeDeadWheelInputsMessage(@NonNull PositionVelocityPair par0, @NonNull PositionVelocityPair par1, @NonNull PositionVelocityPair perp) {
         timestamp = System.nanoTime();
         this.par0 = par0;
         this.par1 = par1;

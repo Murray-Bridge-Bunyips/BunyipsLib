@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.Action;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
@@ -25,7 +27,7 @@ public class ActionTask extends Task {
      *
      * @param action The action to wrap
      */
-    public ActionTask(Action action) {
+    public ActionTask(@NonNull Action action) {
         this.action = action;
         withName("Action :: " + action.getClass().getSimpleName());
     }

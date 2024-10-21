@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
+import androidx.annotation.NonNull;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class ParallelTaskGroup extends TaskGroup {
      *
      * @param tasks The tasks to run together
      */
-    public ParallelTaskGroup(Task... tasks) {
+    public ParallelTaskGroup(@NonNull Task... tasks) {
         // Try to extract the highest timeout to be the timeout of this task group, however if one is infinite
         // then the group is infinite. This works for parallel applications as every task will go till completion.
         super(Arrays.stream(tasks).anyMatch(t -> t.getTimeout().magnitude() == 0.0) ? INFINITE_TIMEOUT :
@@ -31,7 +33,7 @@ public class ParallelTaskGroup extends TaskGroup {
      *
      * @param tasks The tasks to run together
      */
-    public ParallelTaskGroup(List<Task> tasks) {
+    public ParallelTaskGroup(@NonNull List<Task> tasks) {
         this(tasks.toArray(new Task[0]));
     }
 

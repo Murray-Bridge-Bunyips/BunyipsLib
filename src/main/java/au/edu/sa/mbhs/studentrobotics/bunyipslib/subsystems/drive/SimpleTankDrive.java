@@ -45,7 +45,7 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
      * @param leftMotors  all motors on the left side of the robot (e.g. {@code Arrays.asList(leftFront, leftBack)})
      * @param rightMotors all motors on the right side of the robot (e.g. {@code Arrays.asList(rightFront, rightBack)})
      */
-    public SimpleTankDrive(List<DcMotor> leftMotors, List<DcMotor> rightMotors) {
+    public SimpleTankDrive(@NonNull List<DcMotor> leftMotors, @NonNull List<DcMotor> rightMotors) {
         assertParamsNotNull(leftMotors, rightMotors);
         leftMotors.forEach((m) -> {
             if (assertParamsNotNull(m))
@@ -66,7 +66,8 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
      * @param localizer the localizer to use
      * @return this
      */
-    public SimpleTankDrive withLocalizer(Localizer localizer) {
+    @NonNull
+    public SimpleTankDrive withLocalizer(@NonNull Localizer localizer) {
         this.localizer = localizer;
         return this;
     }
@@ -78,6 +79,7 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
      * @param accumulator the new accumulator to use
      * @return this
      */
+    @NonNull
     public SimpleTankDrive withAccumulator(@NonNull Accumulator accumulator) {
         if (this.accumulator != null)
             this.accumulator.copyTo(accumulator);

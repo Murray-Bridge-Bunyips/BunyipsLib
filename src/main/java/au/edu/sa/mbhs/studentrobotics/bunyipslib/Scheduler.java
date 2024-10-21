@@ -5,6 +5,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Sec
 import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
 
@@ -17,6 +18,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.OnceTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
@@ -54,7 +56,7 @@ public class Scheduler extends BunyipsComponent {
      * @param deltaTimeSec  The time this task has been running in seconds
      * @param timeoutSec    The time this task is allowed to run in seconds, 0.0 if indefinite
      */
-    public static void addTaskReport(String className, boolean isDefaultTask, String taskName, double deltaTimeSec, double timeoutSec) {
+    public static void addTaskReport(@NonNull String className, boolean isDefaultTask, @NonNull String taskName, double deltaTimeSec, double timeoutSec) {
         if (isMuted) return;
         String report = Text.format(
                 "<small><b>%</b>% <font color='gray'>|</font> <b>%</b> -> %",
@@ -70,6 +72,7 @@ public class Scheduler extends BunyipsComponent {
     /**
      * Get all allocated tasks.
      */
+    @NonNull
     public ScheduledTask[] getAllocatedTasks() {
         return allocatedTasks.toArray(new ScheduledTask[0]);
     }
@@ -77,6 +80,7 @@ public class Scheduler extends BunyipsComponent {
     /**
      * Get all subsystems attached to the scheduler.
      */
+    @NonNull
     public BunyipsSubsystem[] getManagedSubsystems() {
         return subsystems.toArray(new BunyipsSubsystem[0]);
     }
@@ -93,7 +97,7 @@ public class Scheduler extends BunyipsComponent {
      *
      * @param dispatch The subsystems to add.
      */
-    public void addSubsystems(BunyipsSubsystem... dispatch) {
+    public void addSubsystems(@NonNull BunyipsSubsystem... dispatch) {
         subsystems.addAll(Arrays.asList(dispatch));
         if (subsystems.isEmpty())
             Dbg.warn(getClass(), "Caution: No subsystems were added for the Scheduler to update.");
@@ -180,6 +184,8 @@ public class Scheduler extends BunyipsComponent {
 
         for (ScheduledTask task : allocatedTasks) {
             boolean condition = task.runCondition.getAsBoolean();
+            if (task.stopCondition == null)
+                task.stopCondition = () -> false;
             if (condition || task.taskToRun.isRunning()) {
                 if (!task.taskToRun.hasDependency()) {
                     if (task.stopCondition.getAsBoolean()) {
@@ -226,8 +232,9 @@ public class Scheduler extends BunyipsComponent {
      * @param user The Controller instance to use.
      * @return The controller button trigger creator.
      */
+    @NonNull
     @SuppressLint("NoHardKeywords")
-    public ControllerTriggerCreator when(Controller user) {
+    public ControllerTriggerCreator when(@NonNull Controller user) {
         return new ControllerTriggerCreator(user);
     }
 
@@ -237,7 +244,8 @@ public class Scheduler extends BunyipsComponent {
      * @param user The Controller instance to use.
      * @return The controller button trigger creator.
      */
-    public ControllerTriggerCreator on(Controller user) {
+    @NonNull
+    public ControllerTriggerCreator on(@NonNull Controller user) {
         return new ControllerTriggerCreator(user);
     }
 
@@ -246,6 +254,7 @@ public class Scheduler extends BunyipsComponent {
      *
      * @return The controller button trigger creator.
      */
+    @NonNull
     public ControllerTriggerCreator driver() {
         return new ControllerTriggerCreator(require(opMode).gamepad1);
     }
@@ -255,6 +264,7 @@ public class Scheduler extends BunyipsComponent {
      *
      * @return The controller button trigger creator.
      */
+    @NonNull
     public ControllerTriggerCreator operator() {
         return new ControllerTriggerCreator(require(opMode).gamepad2);
     }
@@ -270,8 +280,9 @@ public class Scheduler extends BunyipsComponent {
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
+    @NonNull
     @SuppressLint("NoHardKeywords")
-    public ScheduledTask when(BooleanSupplier condition) {
+    public ScheduledTask when(@NonNull BooleanSupplier condition) {
         if (condition instanceof Condition) {
             return new ScheduledTask((Condition) condition);
         }
@@ -285,7 +296,8 @@ public class Scheduler extends BunyipsComponent {
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
-    public ScheduledTask on(BooleanSupplier condition) {
+    @NonNull
+    public ScheduledTask on(@NonNull BooleanSupplier condition) {
         return when(condition);
     }
 
@@ -296,7 +308,8 @@ public class Scheduler extends BunyipsComponent {
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
-    public ScheduledTask whenRising(BooleanSupplier condition) {
+    @NonNull
+    public ScheduledTask whenRising(@NonNull BooleanSupplier condition) {
         return new ScheduledTask(new Condition(Condition.Edge.RISING, condition));
     }
 
@@ -307,7 +320,8 @@ public class Scheduler extends BunyipsComponent {
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
-    public ScheduledTask whenFalling(BooleanSupplier condition) {
+    @NonNull
+    public ScheduledTask whenFalling(@NonNull BooleanSupplier condition) {
         return new ScheduledTask(new Condition(Condition.Edge.FALLING, condition));
     }
 
@@ -316,6 +330,7 @@ public class Scheduler extends BunyipsComponent {
      *
      * @return Task scheduling builder
      */
+    @NonNull
     public ScheduledTask always() {
         return new ScheduledTask(new Condition(() -> true));
     }
@@ -374,8 +389,9 @@ public class Scheduler extends BunyipsComponent {
          * @param threshold The threshold to meet.
          * @return Task scheduling builder
          */
+        @NonNull
         @SuppressLint("NoHardKeywords")
-        public ScheduledTask when(Controls.Analog axis, Predicate<? super Float> threshold) {
+        public ScheduledTask when(@NonNull Controls.Analog axis, @NonNull Predicate<? super Float> threshold) {
             return new ScheduledTask(new ControllerAxisThreshold(user, axis, threshold, Condition.Edge.ACTIVE));
         }
 
@@ -387,7 +403,8 @@ public class Scheduler extends BunyipsComponent {
          * @param threshold The threshold to meet.
          * @return Task scheduling builder
          */
-        public ScheduledTask on(Controls.Analog axis, Predicate<? super Float> threshold) {
+        @NonNull
+        public ScheduledTask on(@NonNull Controls.Analog axis, @NonNull Predicate<? super Float> threshold) {
             return when(axis, threshold);
         }
 
@@ -399,7 +416,8 @@ public class Scheduler extends BunyipsComponent {
          * @param threshold The threshold to meet.
          * @return Task scheduling builder
          */
-        public ScheduledTask whenRising(Controls.Analog axis, Predicate<? super Float> threshold) {
+        @NonNull
+        public ScheduledTask whenRising(@NonNull Controls.Analog axis, @NonNull Predicate<? super Float> threshold) {
             return new ScheduledTask(new ControllerAxisThreshold(user, axis, threshold, Condition.Edge.RISING));
         }
 
@@ -411,7 +429,8 @@ public class Scheduler extends BunyipsComponent {
          * @param threshold The threshold to meet.
          * @return Task scheduling builder
          */
-        public ScheduledTask whenFalling(Controls.Analog axis, Predicate<? super Float> threshold) {
+        @NonNull
+        public ScheduledTask whenFalling(@NonNull Controls.Analog axis, @NonNull Predicate<? super Float> threshold) {
             return new ScheduledTask(new ControllerAxisThreshold(user, axis, threshold, Condition.Edge.FALLING));
         }
 
@@ -422,7 +441,8 @@ public class Scheduler extends BunyipsComponent {
          * @param button The button of the controller.
          * @return Task scheduling builder
          */
-        public ScheduledTask whenHeld(Controls button) {
+        @NonNull
+        public ScheduledTask whenHeld(@NonNull Controls button) {
             return new ScheduledTask(new ControllerButtonBind(user, button, Condition.Edge.ACTIVE));
         }
 
@@ -433,7 +453,8 @@ public class Scheduler extends BunyipsComponent {
          * @param button The button of the controller.
          * @return Task scheduling builder
          */
-        public ScheduledTask whenPressed(Controls button) {
+        @NonNull
+        public ScheduledTask whenPressed(@NonNull Controls button) {
             return new ScheduledTask(new ControllerButtonBind(user, button, Condition.Edge.RISING));
         }
 
@@ -444,7 +465,8 @@ public class Scheduler extends BunyipsComponent {
          * @param button The button of the controller.
          * @return Task scheduling builder
          */
-        public ScheduledTask whenReleased(Controls button) {
+        @NonNull
+        public ScheduledTask whenReleased(@NonNull Controls button) {
             return new ScheduledTask(new ControllerButtonBind(user, button, Condition.Edge.FALLING));
         }
     }
@@ -457,9 +479,11 @@ public class Scheduler extends BunyipsComponent {
         protected final BooleanSupplier runCondition;
         private final ArrayList<BooleanSupplier> and = new ArrayList<>();
         private final ArrayList<BooleanSupplier> or = new ArrayList<>();
-        protected Task taskToRun;
+        @NonNull
+        protected Task taskToRun = new IdleTask();
         protected boolean debouncing;
-        protected BooleanSupplier stopCondition = () -> false;
+        @Nullable
+        protected BooleanSupplier stopCondition;
 
         private boolean isTaskMuted = false;
 
@@ -468,7 +492,7 @@ public class Scheduler extends BunyipsComponent {
          *
          * @param originalRunCondition The condition to start running the task.
          */
-        public ScheduledTask(Condition originalRunCondition) {
+        public ScheduledTask(@NonNull Condition originalRunCondition) {
             // Run the task if the original expression is met,
             // and all AND conditions are met, or any OR conditions are met
             runCondition = () -> originalRunCondition.getAsBoolean()
@@ -496,8 +520,9 @@ public class Scheduler extends BunyipsComponent {
          * @param task The task to run.
          * @return Current builder for additional task parameters
          */
-        public ScheduledTask run(Task task) {
-            if (taskToRun != null) {
+        @NonNull
+        public ScheduledTask run(@NonNull Task task) {
+            if (!(taskToRun instanceof IdleTask)) {
                 throw new EmergencyStop("A run(Task) method has been called more than once on a scheduler task. If you wish to run multiple tasks see about using a task group as your task.");
             }
             taskToRun = task;
@@ -517,7 +542,8 @@ public class Scheduler extends BunyipsComponent {
          * @param runnable The code to run
          * @return Current builder for additional task parameters
          */
-        public ScheduledTask run(Runnable runnable) {
+        @NonNull
+        public ScheduledTask run(@NonNull Runnable runnable) {
             return run(new RunTask(runnable));
         }
 
@@ -535,7 +561,8 @@ public class Scheduler extends BunyipsComponent {
          * @param task The task to run.
          * @return Current builder for additional task parameters
          */
-        public ScheduledTask runOnce(Task task) {
+        @NonNull
+        public ScheduledTask runOnce(@NonNull Task task) {
             debouncing = true;
             return run(task);
         }
@@ -554,7 +581,8 @@ public class Scheduler extends BunyipsComponent {
          * @param runnable The code to run
          * @return Current builder for additional task parameters
          */
-        public ScheduledTask runOnce(Runnable runnable) {
+        @NonNull
+        public ScheduledTask runOnce(@NonNull Runnable runnable) {
             return runOnce(new RunTask(runnable));
         }
 
@@ -563,10 +591,9 @@ public class Scheduler extends BunyipsComponent {
          *
          * @return Current builder for additional task parameters
          */
+        @NonNull
         public ScheduledTask muted() {
-            if (taskToRun != null) {
-                taskToRun.withMutedReports();
-            }
+            taskToRun.withMutedReports();
             isTaskMuted = true;
             return this;
         }
@@ -578,7 +605,8 @@ public class Scheduler extends BunyipsComponent {
          * @param condition The AND condition to chain.
          * @return Current builder for additional task parameters
          */
-        public ScheduledTask andIf(BooleanSupplier condition) {
+        @NonNull
+        public ScheduledTask andIf(@NonNull BooleanSupplier condition) {
             and.add(condition);
             return this;
         }
@@ -590,7 +618,8 @@ public class Scheduler extends BunyipsComponent {
          * @param condition The OR condition to chain.
          * @return Current builder for additional task parameters
          */
-        public ScheduledTask orIf(BooleanSupplier condition) {
+        @NonNull
+        public ScheduledTask orIf(@NonNull BooleanSupplier condition) {
             or.add(condition);
             return this;
         }
@@ -607,8 +636,9 @@ public class Scheduler extends BunyipsComponent {
          * @param interval The time interval
          * @return Current builder for additional task parameters
          */
+        @NonNull
         @SuppressLint("NoHardKeywords")
-        public ScheduledTask in(Measure<Time> interval) {
+        public ScheduledTask in(@NonNull Measure<Time> interval) {
             originalRunCondition.withActiveDelay(interval);
             return this;
         }
@@ -621,7 +651,8 @@ public class Scheduler extends BunyipsComponent {
          * @param interval The time interval
          * @return Current builder for additional task parameters
          */
-        public ScheduledTask after(Measure<Time> interval) {
+        @NonNull
+        public ScheduledTask after(@NonNull Measure<Time> interval) {
             return in(interval);
         }
 
@@ -634,7 +665,8 @@ public class Scheduler extends BunyipsComponent {
          *                  this condition simply allows for an early finish if this condition is met.
          * @return Current builder for additional task parameters
          */
-        public ScheduledTask finishingIf(BooleanSupplier condition) {
+        @NonNull
+        public ScheduledTask finishingIf(@NonNull BooleanSupplier condition) {
             // Use prev to avoid a stack overflow
             BooleanSupplier prev = stopCondition;
             stopCondition = prev == null

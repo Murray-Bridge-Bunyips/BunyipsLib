@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
@@ -33,7 +35,7 @@ public class BlinkinLights extends BunyipsSubsystem {
      * @param lights         the LED driver to use.
      * @param defaultPattern the default pattern which will be the one this driver goes back to as a default.
      */
-    public BlinkinLights(RevBlinkinLedDriver lights, RevBlinkinLedDriver.BlinkinPattern defaultPattern) {
+    public BlinkinLights(@NonNull RevBlinkinLedDriver lights, @NonNull RevBlinkinLedDriver.BlinkinPattern defaultPattern) {
         this.lights = lights;
         this.defaultPattern = defaultPattern;
         currentPattern = defaultPattern;
@@ -47,6 +49,7 @@ public class BlinkinLights extends BunyipsSubsystem {
      *
      * @return currently respected pattern
      */
+    @NonNull
     public RevBlinkinLedDriver.BlinkinPattern getPattern() {
         return currentPattern;
     }
@@ -57,7 +60,8 @@ public class BlinkinLights extends BunyipsSubsystem {
      * @param pattern the pattern to update to.
      * @return this
      */
-    public BlinkinLights setPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
+    @NonNull
+    public BlinkinLights setPattern(@NonNull RevBlinkinLedDriver.BlinkinPattern pattern) {
         if (getCurrentTask() instanceof IdleTask)
             currentPattern = pattern;
         return this;
@@ -68,6 +72,7 @@ public class BlinkinLights extends BunyipsSubsystem {
      *
      * @return currently respected default pattern.
      */
+    @NonNull
     public RevBlinkinLedDriver.BlinkinPattern getDefaultPattern() {
         return defaultPattern;
     }
@@ -80,7 +85,8 @@ public class BlinkinLights extends BunyipsSubsystem {
      * @param defaultPattern the new default pattern
      * @return this
      */
-    public BlinkinLights setDefaultPattern(RevBlinkinLedDriver.BlinkinPattern defaultPattern) {
+    @NonNull
+    public BlinkinLights setDefaultPattern(@NonNull RevBlinkinLedDriver.BlinkinPattern defaultPattern) {
         if (this.defaultPattern == currentPattern)
             currentPattern = defaultPattern;
         this.defaultPattern = defaultPattern;
@@ -93,7 +99,8 @@ public class BlinkinLights extends BunyipsSubsystem {
      * @param pattern the pattern to update to.
      * @return this
      */
-    public BlinkinLights forceSetPattern(RevBlinkinLedDriver.BlinkinPattern pattern) {
+    @NonNull
+    public BlinkinLights forceSetPattern(@NonNull RevBlinkinLedDriver.BlinkinPattern pattern) {
         if (!(getCurrentTask() instanceof IdleTask))
             cancelCurrentTask();
         currentPattern = pattern;
@@ -105,6 +112,7 @@ public class BlinkinLights extends BunyipsSubsystem {
      *
      * @return this
      */
+    @NonNull
     public BlinkinLights resetPattern() {
         if (getCurrentTask() instanceof IdleTask)
             currentPattern = defaultPattern;
@@ -116,6 +124,7 @@ public class BlinkinLights extends BunyipsSubsystem {
      *
      * @return this
      */
+    @NonNull
     public BlinkinLights turnOff() {
         cancelCurrentTask();
         currentPattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
@@ -152,7 +161,8 @@ public class BlinkinLights extends BunyipsSubsystem {
          * @param pattern  the pattern to set
          * @return a task to set the pattern for a duration
          */
-        public Task setPatternFor(Measure<Time> duration, RevBlinkinLedDriver.BlinkinPattern pattern) {
+        @NonNull
+        public Task setPatternFor(@NonNull Measure<Time> duration, @NonNull RevBlinkinLedDriver.BlinkinPattern pattern) {
             return new RunForTask(duration, () -> currentPattern = pattern, () -> currentPattern = defaultPattern)
                     .onSubsystem(BlinkinLights.this, true)
                     .withName("Lights:" + pattern.name());

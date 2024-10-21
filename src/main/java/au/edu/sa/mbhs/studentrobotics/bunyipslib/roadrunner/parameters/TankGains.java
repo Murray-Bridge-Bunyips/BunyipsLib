@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters;
 
+import androidx.annotation.NonNull;
+
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.apache.commons.math3.exception.NumberIsTooLargeException;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
@@ -41,6 +43,7 @@ public class TankGains {
          * @param ramseteZeta the RAMSETE zeta gain
          * @return the builder
          */
+        @NonNull
         public Builder setRamseteZeta(double ramseteZeta) {
             if (ramseteZeta <= 0) {
                 throw new NumberIsTooSmallException(ramseteZeta, 0, false);
@@ -58,6 +61,7 @@ public class TankGains {
          * @param ramseteBBar the RAMSETE beta bar gain
          * @return the builder
          */
+        @NonNull
         public Builder setRamseteBBar(double ramseteBBar) {
             if (ramseteBBar <= 0) {
                 throw new NotStrictlyPositiveException(ramseteBBar);
@@ -72,6 +76,7 @@ public class TankGains {
          * @param turnGain the gain for turning movement as determined through tuning
          * @return the builder
          */
+        @NonNull
         public Builder setTurnGain(double turnGain) {
             gains.turnGain = turnGain;
             return this;
@@ -83,6 +88,7 @@ public class TankGains {
          * @param turnVelGain the gain for turning velocity as determined through tuning
          * @return the builder
          */
+        @NonNull
         public Builder setTurnVelGain(double turnVelGain) {
             gains.turnVelGain = turnVelGain;
             return this;
@@ -93,6 +99,7 @@ public class TankGains {
          *
          * @return the TankGains object
          */
+        @NonNull
         public TankGains build() {
             return gains;
         }

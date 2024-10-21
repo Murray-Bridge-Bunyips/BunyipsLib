@@ -90,7 +90,7 @@ public class PurePursuit implements Runnable {
      *
      * @param drive the drive instance that will be used for localisation and controlling motors
      */
-    public PurePursuit(Moveable drive) {
+    public PurePursuit(@NonNull Moveable drive) {
         this.drive = drive;
 
         // Sane defaults
@@ -113,7 +113,8 @@ public class PurePursuit implements Runnable {
      * @param pidf the PIDF controller to use for the X axis
      * @return this
      */
-    public PurePursuit withXPIDF(PIDF pidf) {
+    @NonNull
+    public PurePursuit withXPIDF(@NonNull PIDF pidf) {
         p2pX = pidf;
         return this;
     }
@@ -124,7 +125,8 @@ public class PurePursuit implements Runnable {
      * @param pidf the PIDF controller to use for the Y axis
      * @return this
      */
-    public PurePursuit withYPIDF(PIDF pidf) {
+    @NonNull
+    public PurePursuit withYPIDF(@NonNull PIDF pidf) {
         p2pY = pidf;
         return this;
     }
@@ -135,7 +137,8 @@ public class PurePursuit implements Runnable {
      * @param pidf the PIDF controller to use for the heading
      * @return this
      */
-    public PurePursuit withHeadingPIDF(PIDF pidf) {
+    @NonNull
+    public PurePursuit withHeadingPIDF(@NonNull PIDF pidf) {
         p2pHeading = pidf;
         return this;
     }
@@ -146,7 +149,8 @@ public class PurePursuit implements Runnable {
      * @param vectorDistance the distance tolerance for the path position
      * @return this
      */
-    public PurePursuit withVectorTolerance(Measure<Distance> vectorDistance) {
+    @NonNull
+    public PurePursuit withVectorTolerance(@NonNull Measure<Distance> vectorDistance) {
         if (vectorDistance.magnitude() <= 0) {
             throw new NotStrictlyPositiveException(vectorDistance.magnitude());
         }
@@ -160,7 +164,8 @@ public class PurePursuit implements Runnable {
      * @param headingDiff the heading tolerance for the path heading
      * @return this
      */
-    public PurePursuit withHeadingTolerance(Measure<Angle> headingDiff) {
+    @NonNull
+    public PurePursuit withHeadingTolerance(@NonNull Measure<Angle> headingDiff) {
         if (headingDiff.magnitude() <= 0) {
             throw new NotStrictlyPositiveException(headingDiff.magnitude());
         }
@@ -175,7 +180,8 @@ public class PurePursuit implements Runnable {
      * @param headingDiff    the heading tolerance for the path heading
      * @return this
      */
-    public PurePursuit withTolerances(Measure<Distance> vectorDistance, Measure<Angle> headingDiff) {
+    @NonNull
+    public PurePursuit withTolerances(@NonNull Measure<Distance> vectorDistance, @NonNull Measure<Angle> headingDiff) {
         withVectorTolerance(vectorDistance);
         withHeadingTolerance(headingDiff);
         return this;
@@ -187,7 +193,8 @@ public class PurePursuit implements Runnable {
      * @param lookaheadRadius the lookahead radius to use
      * @return this
      */
-    public PurePursuit withLookaheadRadius(Measure<Distance> lookaheadRadius) {
+    @NonNull
+    public PurePursuit withLookaheadRadius(@NonNull Measure<Distance> lookaheadRadius) {
         if (lookaheadRadius.magnitude() <= 0) {
             throw new NotStrictlyPositiveException(lookaheadRadius.magnitude());
         }
@@ -207,6 +214,7 @@ public class PurePursuit implements Runnable {
     /**
      * @return the current path that is being followed
      */
+    @NonNull
     public Path getCurrentPath() {
         return currentPath;
     }
@@ -327,6 +335,7 @@ public class PurePursuit implements Runnable {
      *
      * @return the Pure Pursuit path and task builder
      */
+    @NonNull
     public PathMaker makePath() {
         return makePath(drive::getPose);
     }
@@ -337,7 +346,8 @@ public class PurePursuit implements Runnable {
      * @param staticStartPose the pose to start from
      * @return the Pure Pursuit path and task builder
      */
-    public PathMaker makePath(Pose2d staticStartPose) {
+    @NonNull
+    public PathMaker makePath(@NonNull Pose2d staticStartPose) {
         return makePath(() -> staticStartPose);
     }
 
@@ -348,7 +358,8 @@ public class PurePursuit implements Runnable {
      * @param startPose the pose to use as the path starting pose when this path is started
      * @return the Pure Pursuit path and task builder
      */
-    public PathMaker makePath(Supplier<Pose2d> startPose) {
+    @NonNull
+    public PathMaker makePath(@NonNull Supplier<Pose2d> startPose) {
         return new PathMaker(startPose);
     }
 
@@ -374,7 +385,7 @@ public class PurePursuit implements Runnable {
          *
          * @param startPoseAtRuntime the start pose to use when this path is requested
          */
-        public PathMaker(Supplier<Pose2d> startPoseAtRuntime) {
+        public PathMaker(@NonNull Supplier<Pose2d> startPoseAtRuntime) {
             startPose = startPoseAtRuntime;
             startTangent = () -> Radians.of(startPose.get().heading.toDouble());
         }
@@ -384,6 +395,7 @@ public class PurePursuit implements Runnable {
          *
          * @return this
          */
+        @NonNull
         public PathMaker reversed() {
             startTangent = () -> Mathf.normaliseAngle(Radians.of(startPose.get().heading.toDouble() + Math.PI));
             return this;
@@ -396,7 +408,8 @@ public class PurePursuit implements Runnable {
          * @param unit    the unit of the tangent
          * @return this
          */
-        public PathMaker withStartTangent(double tangent, Angle unit) {
+        @NonNull
+        public PathMaker withStartTangent(double tangent, @NonNull Angle unit) {
             startTangent = () -> Mathf.normaliseAngle(unit.of(tangent));
             return this;
         }
@@ -408,7 +421,8 @@ public class PurePursuit implements Runnable {
          * @param unit        units of the supplied vector
          * @return this
          */
-        public PathMaker lineTo(Vector2d endPosition, Distance unit) {
+        @NonNull
+        public PathMaker lineTo(@NonNull Vector2d endPosition, @NonNull Distance unit) {
             buildInstructions.add((b) ->
                     b.lineTo(new Vector2d(
                             unit.of(endPosition.x).in(Inches),
@@ -425,7 +439,8 @@ public class PurePursuit implements Runnable {
          * @param unit        units of the supplied vector
          * @return this
          */
-        public PathMaker lineToConstantHeading(Vector2d endPosition, Distance unit) {
+        @NonNull
+        public PathMaker lineToConstantHeading(@NonNull Vector2d endPosition, @NonNull Distance unit) {
             buildInstructions.add((b) ->
                     b.lineToConstantHeading(new Vector2d(
                             unit.of(endPosition.x).in(Inches),
@@ -442,7 +457,8 @@ public class PurePursuit implements Runnable {
          * @param unit        units of the supplied vector
          * @return this
          */
-        public PathMaker strafeTo(Vector2d endPosition, Distance unit) {
+        @NonNull
+        public PathMaker strafeTo(@NonNull Vector2d endPosition, @NonNull Distance unit) {
             buildInstructions.add((b) ->
                     b.strafeTo(new Vector2d(
                             unit.of(endPosition.x).in(Inches),
@@ -460,7 +476,8 @@ public class PurePursuit implements Runnable {
          * @param angleUnit  units of the supplied angle
          * @return this
          */
-        public PathMaker lineToLinearHeading(Pose2d endPose, Distance vectorUnit, Angle angleUnit) {
+        @NonNull
+        public PathMaker lineToLinearHeading(@NonNull Pose2d endPose, @NonNull Distance vectorUnit, @NonNull Angle angleUnit) {
             buildInstructions.add((b) ->
                     b.lineToLinearHeading(new Pose2d(
                             vectorUnit.of(endPose.position.x).in(Inches),
@@ -479,7 +496,8 @@ public class PurePursuit implements Runnable {
          * @param angleUnit  units of the supplied angle
          * @return this
          */
-        public PathMaker lineToSplineHeading(Pose2d endPose, Distance vectorUnit, Angle angleUnit) {
+        @NonNull
+        public PathMaker lineToSplineHeading(@NonNull Pose2d endPose, @NonNull Distance vectorUnit, @NonNull Angle angleUnit) {
             buildInstructions.add((b) ->
                     b.lineToSplineHeading(new Pose2d(
                             vectorUnit.of(endPose.position.x).in(Inches),
@@ -497,7 +515,8 @@ public class PurePursuit implements Runnable {
          * @param unit     the unit of the distance
          * @return this
          */
-        public PathMaker forward(double distance, Distance unit) {
+        @NonNull
+        public PathMaker forward(double distance, @NonNull Distance unit) {
             buildInstructions.add((b) ->
                     b.forward(unit.of(distance).in(Inches))
             );
@@ -511,7 +530,8 @@ public class PurePursuit implements Runnable {
          * @param unit     the unit of the distance
          * @return this
          */
-        public PathMaker back(double distance, Distance unit) {
+        @NonNull
+        public PathMaker back(double distance, @NonNull Distance unit) {
             buildInstructions.add((b) ->
                     b.back(unit.of(distance).in(Inches))
             );
@@ -525,7 +545,8 @@ public class PurePursuit implements Runnable {
          * @param unit     the unit of the distance
          * @return this
          */
-        public PathMaker strafeLeft(double distance, Distance unit) {
+        @NonNull
+        public PathMaker strafeLeft(double distance, @NonNull Distance unit) {
             buildInstructions.add((b) ->
                     b.strafeLeft(unit.of(distance).in(Inches))
             );
@@ -539,7 +560,8 @@ public class PurePursuit implements Runnable {
          * @param unit     the unit of the distance
          * @return this
          */
-        public PathMaker strafeRight(double distance, Distance unit) {
+        @NonNull
+        public PathMaker strafeRight(double distance, @NonNull Distance unit) {
             buildInstructions.add((b) ->
                     b.strafeRight(unit.of(distance).in(Inches))
             );
@@ -555,7 +577,8 @@ public class PurePursuit implements Runnable {
          * @param angleUnit    units of the supplied angle
          * @return this
          */
-        public PathMaker splineTo(Vector2d endPosition, Distance distanceUnit, double endTangent, Angle angleUnit) {
+        @NonNull
+        public PathMaker splineTo(@NonNull Vector2d endPosition, @NonNull Distance distanceUnit, double endTangent, @NonNull Angle angleUnit) {
             buildInstructions.add((b) ->
                     b.splineTo(new Vector2d(
                             distanceUnit.of(endPosition.x).in(Inches),
@@ -574,7 +597,8 @@ public class PurePursuit implements Runnable {
          * @param angleUnit    units of the supplied angle
          * @return this
          */
-        public PathMaker splineToConstantHeading(Vector2d endPosition, Distance distanceUnit, double endTangent, Angle angleUnit) {
+        @NonNull
+        public PathMaker splineToConstantHeading(@NonNull Vector2d endPosition, @NonNull Distance distanceUnit, double endTangent, @NonNull Angle angleUnit) {
             buildInstructions.add((b) ->
                     b.splineToConstantHeading(new Vector2d(
                             distanceUnit.of(endPosition.x).in(Inches),
@@ -594,7 +618,8 @@ public class PurePursuit implements Runnable {
          * @param endTangentUnit units of the supplied angle for the end tangent
          * @return this
          */
-        public PathMaker splineToLinearHeading(Pose2d endPose, Distance vectorUnit, Angle angleUnit, double endTangent, Angle endTangentUnit) {
+        @NonNull
+        public PathMaker splineToLinearHeading(@NonNull Pose2d endPose, @NonNull Distance vectorUnit, @NonNull Angle angleUnit, double endTangent, @NonNull Angle endTangentUnit) {
             buildInstructions.add((b) ->
                     b.splineToLinearHeading(new Pose2d(
                             vectorUnit.of(endPose.position.x).in(Inches),
@@ -615,7 +640,8 @@ public class PurePursuit implements Runnable {
          * @param endTangentUnit units of the supplied angle for the end tangent
          * @return this
          */
-        public PathMaker splineToSplineHeading(Pose2d endPose, Distance vectorUnit, Angle angleUnit, double endTangent, Angle endTangentUnit) {
+        @NonNull
+        public PathMaker splineToSplineHeading(@NonNull Pose2d endPose, @NonNull Distance vectorUnit, @NonNull Angle angleUnit, double endTangent, @NonNull Angle endTangentUnit) {
             buildInstructions.add((b) ->
                     b.splineToSplineHeading(new Pose2d(
                             vectorUnit.of(endPose.position.x).in(Inches),
@@ -633,7 +659,8 @@ public class PurePursuit implements Runnable {
          * @param interval Timeout for the path task built through this builder
          * @return this
          */
-        public PathMaker withTimeout(Measure<Time> interval) {
+        @NonNull
+        public PathMaker withTimeout(@NonNull Measure<Time> interval) {
             if (interval.lt(Task.INFINITE_TIMEOUT)) {
                 timeout = Task.INFINITE_TIMEOUT;
                 return this;
@@ -648,7 +675,8 @@ public class PurePursuit implements Runnable {
          * @param taskName Name of the task
          * @return this
          */
-        public PathMaker withName(String taskName) {
+        @NonNull
+        public PathMaker withName(@NonNull String taskName) {
             name = taskName;
             return this;
         }
@@ -660,6 +688,7 @@ public class PurePursuit implements Runnable {
          * @param p Priority level
          * @return this
          */
+        @NonNull
         public PathMaker withPriority(@NonNull AutonomousBunyipsOpMode.TaskPriority p) {
             priority = p;
             return this;
@@ -671,6 +700,7 @@ public class PurePursuit implements Runnable {
          *
          * @return the built path from the instructions
          */
+        @NonNull
         public Path buildPath() {
             PathBuilder builder = new PathBuilder(startPose.get(), startTangent.get().in(Radians));
             buildInstructions.forEach(instruction -> instruction.accept(builder));
@@ -686,6 +716,7 @@ public class PurePursuit implements Runnable {
          *
          * @return the task that will build and run the path when executed
          */
+        @NonNull
         public PurePursuitTask buildTask() {
             PurePursuitTask task = new PurePursuitTask(PurePursuit.this, this);
             task.withName(name);
@@ -701,6 +732,7 @@ public class PurePursuit implements Runnable {
          *
          * @return the task that will track the built path when executed
          */
+        @NonNull
         public PurePursuitTask buildTaskNow() {
             PurePursuitTask task = new PurePursuitTask(PurePursuit.this, buildPath());
             task.withName(name);
@@ -718,6 +750,7 @@ public class PurePursuit implements Runnable {
          * @return the task instance to allow for {@code onSubsystem} chaining
          * @throws UninitializedPropertyAccessException if the task is added outside of an {@link AutonomousBunyipsOpMode}
          */
+        @NonNull
         public PurePursuitTask addTask() throws UninitializedPropertyAccessException {
             if (!BunyipsOpMode.isRunning() || !(BunyipsOpMode.getInstance() instanceof AutonomousBunyipsOpMode)) {
                 throw new UninitializedPropertyAccessException("Cannot call addTask() when there is no running AutonomousBunyipsOpMode!");
@@ -736,6 +769,7 @@ public class PurePursuit implements Runnable {
          * @return the task instance to allow for {@code onSubsystem} chaining
          * @throws UninitializedPropertyAccessException if the task is added outside of an {@link AutonomousBunyipsOpMode}
          */
+        @NonNull
         public PurePursuitTask addTaskNow() throws UninitializedPropertyAccessException {
             if (!BunyipsOpMode.isRunning() || !(BunyipsOpMode.getInstance() instanceof AutonomousBunyipsOpMode)) {
                 throw new UninitializedPropertyAccessException("Cannot call addTaskNow() when there is no running AutonomousBunyipsOpMode!");

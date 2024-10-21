@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
@@ -34,7 +36,7 @@ public final class ResetLastKnowns {
      * @param manager The OpModeManager to register the OpMode with.
      */
     @OpModeRegistrar
-    public static void registerOpMode(OpModeManager manager) {
+    public static void registerOpMode(@NonNull OpModeManager manager) {
         if (suppress)
             return;
         manager.register(

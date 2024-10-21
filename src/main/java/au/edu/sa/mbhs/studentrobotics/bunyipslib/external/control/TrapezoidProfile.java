@@ -7,6 +7,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
@@ -67,7 +69,7 @@ public class TrapezoidProfile {
      * @param goal        The desired state when the profile is complete.
      * @param initial     The initial state (usually the current state).
      */
-    public TrapezoidProfile(Constraints constraints, State goal, State initial) {
+    public TrapezoidProfile(@NonNull Constraints constraints, @NonNull State goal, @NonNull State initial) {
         direction = shouldFlipAcceleration(initial, goal) ? -1 : 1;
         this.constraints = constraints;
         this.initial = direct(initial);
@@ -113,7 +115,7 @@ public class TrapezoidProfile {
      * @param constraints The constraints on the profile, like maximum velocity.
      * @param goal        The desired state when the profile is complete.
      */
-    public TrapezoidProfile(Constraints constraints, State goal) {
+    public TrapezoidProfile(@NonNull Constraints constraints, @NonNull State goal) {
         this(constraints, goal, new State(0, 0));
     }
 
@@ -136,6 +138,7 @@ public class TrapezoidProfile {
      * @param t The time since the beginning of the profile.
      * @return The state (position and velocity) at time t.
      */
+    @NonNull
     public State calculate(double t) {
         State result = new State(initial.position, initial.velocity);
 
@@ -286,7 +289,7 @@ public class TrapezoidProfile {
          * @param maxAcceleration maximum acceleration
          */
         public <U extends Unit<U>> Constraints(
-                Measure<Velocity<U>> maxVelocity, Measure<Velocity<Velocity<U>>> maxAcceleration) {
+                @NonNull Measure<Velocity<U>> maxVelocity, @NonNull Measure<Velocity<Velocity<U>>> maxAcceleration) {
             this(maxVelocity.baseUnitMagnitude(), maxAcceleration.baseUnitMagnitude());
         }
     }
@@ -329,7 +332,7 @@ public class TrapezoidProfile {
          * @param position The position at this state.
          * @param velocity The velocity at this state.
          */
-        public <U extends Unit<U>> State(Measure<U> position, Measure<Velocity<U>> velocity) {
+        public <U extends Unit<U>> State(@NonNull Measure<U> position, @NonNull Measure<Velocity<U>> velocity) {
             this(position.baseUnitMagnitude(), velocity.baseUnitMagnitude());
         }
 

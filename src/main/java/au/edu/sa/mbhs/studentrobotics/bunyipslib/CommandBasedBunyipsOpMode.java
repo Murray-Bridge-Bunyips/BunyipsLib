@@ -30,6 +30,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * Tasks may be scheduled and managed through this instance, with setup and subsystem management
      * being handled automatically. Common scheduling that are used in the Scheduler are available here as a proxy.
      */
+    @NonNull
     public Scheduler scheduler = new Scheduler();
     @NonNull
     private HashSet<BunyipsSubsystem> managedSubsystems = new HashSet<>();
@@ -44,8 +45,9 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * @param user The Controller instance to use.
      * @return The controller button trigger creator.
      */
+    @NonNull
     @SuppressLint("NoHardKeywords")
-    public Scheduler.ControllerTriggerCreator when(Controller user) {
+    public Scheduler.ControllerTriggerCreator when(@NonNull Controller user) {
         return scheduler.when(user);
     }
 
@@ -55,7 +57,8 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * @param user The Controller instance to use.
      * @return The controller button trigger creator.
      */
-    public Scheduler.ControllerTriggerCreator on(Controller user) {
+    @NonNull
+    public Scheduler.ControllerTriggerCreator on(@NonNull Controller user) {
         return scheduler.when(user);
     }
 
@@ -64,6 +67,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      *
      * @return The controller button trigger creator.
      */
+    @NonNull
     public Scheduler.ControllerTriggerCreator driver() {
         return scheduler.driver();
     }
@@ -73,6 +77,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      *
      * @return The controller button trigger creator.
      */
+    @NonNull
     public Scheduler.ControllerTriggerCreator operator() {
         return scheduler.operator();
     }
@@ -88,8 +93,9 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
+    @NonNull
     @SuppressLint("NoHardKeywords")
-    public Scheduler.ScheduledTask when(BooleanSupplier condition) {
+    public Scheduler.ScheduledTask when(@NonNull BooleanSupplier condition) {
         return scheduler.when(condition);
     }
 
@@ -100,7 +106,8 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
-    public Scheduler.ScheduledTask on(BooleanSupplier condition) {
+    @NonNull
+    public Scheduler.ScheduledTask on(@NonNull BooleanSupplier condition) {
         return scheduler.when(condition);
     }
 
@@ -111,7 +118,8 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
-    public Scheduler.ScheduledTask whenRising(BooleanSupplier condition) {
+    @NonNull
+    public Scheduler.ScheduledTask whenRising(@NonNull BooleanSupplier condition) {
         return scheduler.whenRising(condition);
     }
 
@@ -122,7 +130,8 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
-    public Scheduler.ScheduledTask whenFalling(BooleanSupplier condition) {
+    @NonNull
+    public Scheduler.ScheduledTask whenFalling(@NonNull BooleanSupplier condition) {
         return scheduler.whenFalling(condition);
     }
 
@@ -131,6 +140,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      *
      * @return Task scheduling builder
      */
+    @NonNull
     public Scheduler.ScheduledTask always() {
         return scheduler.always();
     }
@@ -145,7 +155,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      *
      * @param subsystems the restrictive list of subsystems to be managed and updated by the scheduler
      */
-    public void useSubsystems(BunyipsSubsystem... subsystems) {
+    public void useSubsystems(@NonNull BunyipsSubsystem... subsystems) {
         if (!NullSafety.assertNotNull(Arrays.stream(subsystems).toArray())) {
             throw new RuntimeException("Null subsystems were added in the useSubsystems() method!");
         }

@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -35,6 +37,7 @@ public final class Field {
          * 2024-2025 season field.
          */
         INTO_THE_DEEP {
+            @NonNull
             @Override
             public List<Rect> getRestrictedAreas() {
                 return Arrays.asList(
@@ -48,6 +51,7 @@ public final class Field {
                 );
             }
 
+            @NonNull
             @Override
             public AprilTagLibrary getAprilTagLibrary() {
                 return AprilTagGameDatabase.getIntoTheDeepTagLibrary();
@@ -57,11 +61,13 @@ public final class Field {
         /**
          * @return areas on the field that cannot be entered via method of drivetrain localization (such as obstacles)
          */
+        @NonNull
         public abstract List<Rect> getRestrictedAreas();
 
         /**
          * @return the AprilTag library for this season field
          */
+        @NonNull
         public abstract AprilTagLibrary getAprilTagLibrary();
     }
 }

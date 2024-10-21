@@ -12,6 +12,8 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Rad
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.RadiansPerSecondPerSecond;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Volts;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
@@ -95,8 +97,8 @@ public class ArmFeedforward implements SystemController {
      * @param acceleration The acceleration setpoint.
      * @return The computed feedforward.
      */
-    public double calculate(Measure<Angle> position, Measure<Velocity<Angle>> velocity,
-                            Measure<Velocity<Velocity<Angle>>> acceleration) {
+    public double calculate(@NonNull Measure<Angle> position, @NonNull Measure<Velocity<Angle>> velocity,
+                            @NonNull Measure<Velocity<Velocity<Angle>>> acceleration) {
         double positionRadians = position.in(Radians);
         double velocityRadPerSec = velocity.in(RadiansPerSecond);
         double accelRadPerSecSquared = acceleration.in(RadiansPerSecondPerSecond);
@@ -113,7 +115,7 @@ public class ArmFeedforward implements SystemController {
      * @param velocity The velocity setpoint.
      * @return The computed feedforward.
      */
-    public double calculate(Measure<Angle> position, Measure<Velocity<Angle>> velocity) {
+    public double calculate(@NonNull Measure<Angle> position, @NonNull Measure<Velocity<Angle>> velocity) {
         return calculate(position, velocity, RadiansPerSecondPerSecond.zero());
     }
 
@@ -132,7 +134,8 @@ public class ArmFeedforward implements SystemController {
      * @param acceleration The acceleration of the arm.
      * @return The maximum possible velocity at the given acceleration and angle.
      */
-    public Measure<Velocity<Angle>> maxAchievableVelocity(Measure<Voltage> maxVoltage, Measure<Angle> angle, Measure<Velocity<Velocity<Angle>>> acceleration) {
+    @NonNull
+    public Measure<Velocity<Angle>> maxAchievableVelocity(@NonNull Measure<Voltage> maxVoltage, @NonNull Measure<Angle> angle, @NonNull Measure<Velocity<Velocity<Angle>>> acceleration) {
         // Assume max velocity is positive
         return RadiansPerSecond.of((maxVoltage.in(Volts) - kS - Math.cos(angle.in(Radians)) * kCos - acceleration.in(RadiansPerSecondPerSecond) * kA) / kV);
     }
@@ -149,7 +152,8 @@ public class ArmFeedforward implements SystemController {
      * @param acceleration The acceleration of the arm.
      * @return The minimum possible velocity at the given acceleration and angle.
      */
-    public Measure<Velocity<Angle>> minAchievableVelocity(Measure<Voltage> maxVoltage, Measure<Angle> angle, Measure<Velocity<Velocity<Angle>>> acceleration) {
+    @NonNull
+    public Measure<Velocity<Angle>> minAchievableVelocity(@NonNull Measure<Voltage> maxVoltage, @NonNull Measure<Angle> angle, @NonNull Measure<Velocity<Velocity<Angle>>> acceleration) {
         // Assume min velocity is negative, ks flips sign
         return RadiansPerSecond.of((-maxVoltage.in(Volts) + kS - Math.cos(angle.in(Radians)) * kCos - acceleration.in(RadiansPerSecondPerSecond) * kA) / kV);
     }
@@ -166,7 +170,8 @@ public class ArmFeedforward implements SystemController {
      * @param velocity   The velocity of the arm.
      * @return The maximum possible acceleration at the given velocity.
      */
-    public Measure<Velocity<Velocity<Angle>>> maxAchievableAcceleration(Measure<Voltage> maxVoltage, Measure<Angle> angle, Measure<Velocity<Angle>> velocity) {
+    @NonNull
+    public Measure<Velocity<Velocity<Angle>>> maxAchievableAcceleration(@NonNull Measure<Voltage> maxVoltage, @NonNull Measure<Angle> angle, @NonNull Measure<Velocity<Angle>> velocity) {
         double v = velocity.in(RadiansPerSecond);
         return RadiansPerSecondPerSecond.of((maxVoltage.in(Volts) - kS * Math.signum(v) - Math.cos(angle.in(Radians)) * kCos - v * kV) / kA);
     }
@@ -183,17 +188,19 @@ public class ArmFeedforward implements SystemController {
      * @param velocity   The velocity of the arm.
      * @return The minimum possible acceleration at the given velocity.
      */
-    public Measure<Velocity<Velocity<Angle>>> minAchievableAcceleration(Measure<Voltage> maxVoltage, Measure<Angle> angle, Measure<Velocity<Angle>> velocity) {
+    @NonNull
+    public Measure<Velocity<Velocity<Angle>>> minAchievableAcceleration(@NonNull Measure<Voltage> maxVoltage, @NonNull Measure<Angle> angle, @NonNull Measure<Velocity<Angle>> velocity) {
         return maxAchievableAcceleration(maxVoltage.negate(), angle, velocity);
     }
 
+    @NonNull
     @Override
     public double[] getCoefficients() {
         return new double[]{kS, kCos, kV, kA};
     }
 
     @Override
-    public void setCoefficients(double[] coeffs) {
+    public void setCoefficients(@NonNull double[] coeffs) {
         if (coeffs.length != 4) {
             throw new IllegalArgumentException("expected 4 coefficients, got " + coeffs.length);
         }

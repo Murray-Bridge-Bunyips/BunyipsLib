@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -19,10 +21,12 @@ public final class TwoDeadWheelInputsMessage {
     /**
      * The position and velocity of the parallel wheel at this time.
      */
+    @NonNull
     public PositionVelocityPair par;
     /**
      * The position and velocity of the perpendicular wheel at this time.
      */
+    @NonNull
     public PositionVelocityPair perp;
     /**
      * The yaw angle of the IMU at this time.
@@ -50,7 +54,7 @@ public final class TwoDeadWheelInputsMessage {
     public double zRotationRate;
 
     @SuppressWarnings("MissingJavadoc")
-    public TwoDeadWheelInputsMessage(PositionVelocityPair par, PositionVelocityPair perp, YawPitchRollAngles angles, AngularVelocity angularVelocity) {
+    public TwoDeadWheelInputsMessage(@NonNull PositionVelocityPair par, @NonNull PositionVelocityPair perp, @NonNull YawPitchRollAngles angles, @NonNull AngularVelocity angularVelocity) {
         timestamp = System.nanoTime();
         this.par = par;
         this.perp = perp;

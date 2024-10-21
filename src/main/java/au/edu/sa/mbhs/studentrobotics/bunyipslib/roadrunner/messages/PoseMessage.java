@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.Pose2d;
 
 /**
@@ -26,7 +28,7 @@ public final class PoseMessage {
     public double heading;
 
     @SuppressWarnings("MissingJavadoc")
-    public PoseMessage(Pose2d pose) {
+    public PoseMessage(@NonNull Pose2d pose) {
         timestamp = System.nanoTime();
         x = pose.position.x;
         y = pose.position.y;

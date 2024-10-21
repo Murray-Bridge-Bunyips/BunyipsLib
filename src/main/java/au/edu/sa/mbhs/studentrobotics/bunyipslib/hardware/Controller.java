@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -93,7 +94,7 @@ public class Controller extends Gamepad {
      *
      * @param gamepad The Gamepad to wrap (gamepad1, gamepad2)
      */
-    public Controller(Gamepad gamepad) {
+    public Controller(@NonNull Gamepad gamepad) {
         sdk = gamepad;
         update();
     }
@@ -210,7 +211,8 @@ public class Controller extends Gamepad {
      * @param predicate The custom function to use based on the button's value
      * @return this
      */
-    public Controller set(Controls button, @Nullable Predicate<Boolean> predicate) {
+    @NonNull
+    public Controller set(@NonNull Controls button, @Nullable Predicate<Boolean> predicate) {
         if (predicate == null) {
             buttons.remove(button);
             return this;
@@ -227,7 +229,8 @@ public class Controller extends Gamepad {
      * @param function The custom function to use based on the axis's value
      * @return this
      */
-    public Controller set(Controls.Analog axis, @Nullable UnaryFunction function) {
+    @NonNull
+    public Controller set(@NonNull Controls.Analog axis, @Nullable UnaryFunction function) {
         if (function == null) {
             axes.remove(axis);
             return this;
@@ -243,7 +246,8 @@ public class Controller extends Gamepad {
      * @param predicate The custom function to use based on the group's value
      * @return this
      */
-    public Controller set(Controls.ButtonGroup group, @Nullable Predicate<Boolean> predicate) {
+    @NonNull
+    public Controller set(@NonNull Controls.ButtonGroup group, @Nullable Predicate<Boolean> predicate) {
         for (Controls button : Controls.getButtons(group)) {
             set(button, predicate);
         }
@@ -257,7 +261,8 @@ public class Controller extends Gamepad {
      * @param function The custom function to use based on the group's value
      * @return this
      */
-    public Controller set(Controls.AnalogGroup group, @Nullable UnaryFunction function) {
+    @NonNull
+    public Controller set(@NonNull Controls.AnalogGroup group, @Nullable UnaryFunction function) {
         for (Controls.Analog axis : Controls.getAxes(group)) {
             set(axis, function);
         }
@@ -270,7 +275,7 @@ public class Controller extends Gamepad {
      * @param button The button to get the value of
      * @return The value of the button
      */
-    public boolean get(Controls button) {
+    public boolean get(@NonNull Controls button) {
         boolean isPressed = Controls.isSelected(sdk, button);
         Predicate<Boolean> predicate = buttons.get(button);
         return predicate == null ? isPressed : predicate.test(isPressed);
@@ -282,7 +287,7 @@ public class Controller extends Gamepad {
      * @param axis The axis to get the value of
      * @return The value of the axis
      */
-    public float get(Controls.Analog axis) {
+    public float get(@NonNull Controls.Analog axis) {
         float value = Controls.Analog.get(sdk, axis);
         UnaryFunction function = axes.get(axis);
         return function == null ? value : (float) function.apply(value);
@@ -295,7 +300,7 @@ public class Controller extends Gamepad {
      * @param button The button to check
      * @return True if the button is pressed and not debounced
      */
-    public boolean getDebounced(Controls button) {
+    public boolean getDebounced(@NonNull Controls button) {
         boolean buttonPressed = get(button);
         // Default value will be true as it won't be in the map, to avoid debouncing a value that was never pressed
         boolean isPressed = Boolean.TRUE.equals(debounces.getOrDefault(button, true));

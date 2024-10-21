@@ -143,7 +143,7 @@ public final class Tasks {
      *
      * @param task the registered instance of the task that will be stored and subsequently run with additional calls to this method
      */
-    public static void run(Task task) {
+    public static void run(@NonNull Task task) {
         run(registeredTasks.indexOf(task));
     }
 
@@ -154,7 +154,7 @@ public final class Tasks {
      *
      * @param task the registered instance of the task that will be stored and subsequently run with additional calls to this method
      */
-    public static void runRepeatedly(Task task) {
+    public static void runRepeatedly(@NonNull Task task) {
         runRepeatedly(registeredTasks.indexOf(task));
     }
 }

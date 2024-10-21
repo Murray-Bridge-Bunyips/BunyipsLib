@@ -39,7 +39,7 @@ public class ColourSensor extends Processor<ColourSample> {
      * @param regionOfInterest the region of interest on which to perform colour analysis
      * @param swatches         the swatches from which a "best guess" at the shade of the predominant colour will be made
      */
-    public ColourSensor(ImageRegion regionOfInterest, PredominantColorProcessor.Swatch... swatches) {
+    public ColourSensor(@NonNull ImageRegion regionOfInterest, @NonNull PredominantColorProcessor.Swatch... swatches) {
         instance = new PredominantColorProcessor.Builder()
                 .setRoi(regionOfInterest)
                 .setSwatches(swatches)
@@ -58,6 +58,7 @@ public class ColourSensor extends Processor<ColourSample> {
      *
      * @return direct wrapped instance from the SDK
      */
+    @NonNull
     public PredominantColorProcessor getInstance() {
         return instance;
     }
@@ -77,17 +78,17 @@ public class ColourSensor extends Processor<ColourSample> {
     }
 
     @Override
-    public void init(int width, int height, CameraCalibration calibration) {
+    public void init(int width, int height, @NonNull CameraCalibration calibration) {
         instance.init(width, height, calibration);
     }
 
     @Override
-    protected void onProcessFrame(Mat frame, long captureTimeNanos) {
+    protected void onProcessFrame(@NonNull Mat frame, long captureTimeNanos) {
         ctx = instance.processFrame(frame, captureTimeNanos);
     }
 
     @Override
-    protected void onFrameDraw(Canvas canvas) {
+    protected void onFrameDraw(@NonNull Canvas canvas) {
         Size dimensions = getCameraDimensions();
         if (dimensions == null || ctx == null) return;
         instance.onDrawFrame(canvas, dimensions.getWidth(), dimensions.getHeight(), 1.0f, 1.0f, ctx);

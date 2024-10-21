@@ -4,6 +4,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 /**
@@ -64,7 +66,8 @@ public interface UnaryFunction {
      * @param next the next operation to pipe to
      * @return the composite function g(f(x))
      */
-    default UnaryFunction pipeTo(UnaryFunction next) {
+    @NonNull
+    default UnaryFunction pipeTo(@NonNull UnaryFunction next) {
         Objects.requireNonNull(next, "The next operation in the chain must be provided");
 
         return x -> next.apply(apply(x));
@@ -76,7 +79,8 @@ public interface UnaryFunction {
      * @param multiplier the function to multiply this one by
      * @return the composite function f(x) * g(x)
      */
-    default UnaryFunction mult(UnaryFunction multiplier) {
+    @NonNull
+    default UnaryFunction mult(@NonNull UnaryFunction multiplier) {
         Objects.requireNonNull(multiplier, "A multiplier function must be provided");
 
         return x -> apply(x) * multiplier.apply(x);
@@ -88,6 +92,7 @@ public interface UnaryFunction {
      * @param multiplier the constant value to multiply this function's results by
      * @return the composite function k * f(x)
      */
+    @NonNull
     default UnaryFunction mult(double multiplier) {
         return x -> apply(x) * multiplier;
     }
@@ -98,7 +103,8 @@ public interface UnaryFunction {
      * @param divisor the function to divide this one by
      * @return the composite function f(x) / g(x)
      */
-    default UnaryFunction div(UnaryFunction divisor) {
+    @NonNull
+    default UnaryFunction div(@NonNull UnaryFunction divisor) {
         Objects.requireNonNull(divisor, "A divisor function must be provided");
 
         return x -> {
@@ -121,6 +127,7 @@ public interface UnaryFunction {
      * @param divisor the constant value to divide this function's results by
      * @return the composite function 1/k * f(x)
      */
+    @NonNull
     default UnaryFunction div(double divisor) {
         return x -> apply(x) / divisor;
     }
@@ -131,7 +138,8 @@ public interface UnaryFunction {
      * @param exponent the function to exponentiate this function's results by
      * @return the composite function f(x) ^ g(x)
      */
-    default UnaryFunction exp(UnaryFunction exponent) {
+    @NonNull
+    default UnaryFunction exp(@NonNull UnaryFunction exponent) {
         Objects.requireNonNull(exponent, "An exponent function must be provided");
 
         return x -> Math.pow(apply(x), exponent.apply(x));
@@ -143,6 +151,7 @@ public interface UnaryFunction {
      * @param exponent the constant value to exponentiate this function's results by
      * @return the composite function f(x) ^ k
      */
+    @NonNull
     default UnaryFunction exp(double exponent) {
         return x -> Math.pow(apply(x), exponent);
     }

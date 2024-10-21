@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.function.Supplier;
@@ -31,7 +33,7 @@ public class Encoder {
      * @param velocity the velocity supplier which points to the
      *                 current velocity the motor in ticks per second ({@code obj::getVelocity})
      */
-    public Encoder(Supplier<Integer> position, Supplier<Double> velocity) {
+    public Encoder(@NonNull Supplier<Integer> position, @NonNull Supplier<Double> velocity) {
         this.position = position;
         this.velocity = velocity;
         resetVal = 0;
@@ -46,7 +48,7 @@ public class Encoder {
      *
      * @param supplier the supplier to use
      */
-    public void trackDirection(Supplier<DcMotorSimple.Direction> supplier) {
+    public void trackDirection(@NonNull Supplier<DcMotorSimple.Direction> supplier) {
         directionSupplier = supplier;
     }
 
@@ -90,7 +92,7 @@ public class Encoder {
      *
      * @param direction the desired direction
      */
-    public void setDirection(DcMotorSimple.Direction direction) {
+    public void setDirection(@NonNull DcMotorSimple.Direction direction) {
         this.direction = direction;
     }
 

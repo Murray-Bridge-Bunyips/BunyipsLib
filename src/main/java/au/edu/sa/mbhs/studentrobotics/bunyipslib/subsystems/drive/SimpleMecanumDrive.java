@@ -55,7 +55,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
      * @param rightBack  the back right motor
      * @param rightFront the front right motor
      */
-    public SimpleMecanumDrive(DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront) {
+    public SimpleMecanumDrive(@NonNull DcMotor leftFront, @NonNull DcMotor leftBack, @NonNull DcMotor rightBack, @NonNull DcMotor rightFront) {
         if (assertParamsNotNull(leftFront, leftBack, rightBack, rightFront)) {
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -168,7 +168,8 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
      * @param priority the drive power priority
      * @return this
      */
-    public SimpleMecanumDrive setPriority(Priority priority) {
+    @NonNull
+    public SimpleMecanumDrive setPriority(@NonNull Priority priority) {
         this.priority = priority;
         return this;
     }
@@ -178,6 +179,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
      *
      * @return this
      */
+    @NonNull
     public SimpleMecanumDrive swapPriority() {
         priority = priority == Priority.NORMALISED ? Priority.ROTATIONAL : Priority.NORMALISED;
         return this;
@@ -189,7 +191,8 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
      * @param localizer the localizer to use
      * @return this
      */
-    public SimpleMecanumDrive withLocalizer(Localizer localizer) {
+    @NonNull
+    public SimpleMecanumDrive withLocalizer(@NonNull Localizer localizer) {
         this.localizer = localizer;
         return this;
     }
@@ -206,6 +209,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
      * @param accumulator the  accumulator to use
      * @return this
      */
+    @NonNull
     public SimpleMecanumDrive withAccumulator(@NonNull Accumulator accumulator) {
         if (this.accumulator != null)
             this.accumulator.copyTo(accumulator);

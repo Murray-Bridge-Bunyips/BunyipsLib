@@ -26,7 +26,7 @@ public class ReadOnlyPrimitiveLongSet implements Iterable<Long> {
      * @param values the values that belong to the set.
      */
     @SuppressWarnings("ForLoopReplaceableByForEach")
-    public ReadOnlyPrimitiveLongSet(long... values) {
+    public ReadOnlyPrimitiveLongSet(@NonNull long... values) {
         // Initial size is the upper limit
         long[] uniqueValues = new long[values.length];
         int numUniqueValues = 0;
@@ -99,6 +99,7 @@ public class ReadOnlyPrimitiveLongSet implements Iterable<Long> {
      * @return a sequential Stream over the elements in this collection
      * @see Set#stream()
      */
+    @NonNull
     public LongStream stream() {
         return Arrays.stream(values);
     }
@@ -108,6 +109,7 @@ public class ReadOnlyPrimitiveLongSet implements Iterable<Long> {
      *
      * @return an array containing all the values in the set
      */
+    @NonNull
     public long[] toArray() {
         return Arrays.copyOf(values, values.length);
     }

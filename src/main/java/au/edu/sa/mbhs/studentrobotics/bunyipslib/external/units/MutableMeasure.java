@@ -44,7 +44,8 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param measure the measure to create a mutable copy of
      * @return a new mutable measure with an initial state equal to the given measure
      */
-    public static <U extends Unit<U>> MutableMeasure<U> mutable(Measure<U> measure) {
+    @NonNull
+    public static <U extends Unit<U>> MutableMeasure<U> mutable(@NonNull Measure<U> measure) {
         return new MutableMeasure<>(measure.magnitude(), measure.baseUnitMagnitude(), measure.unit());
     }
 
@@ -55,6 +56,7 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param unit the unit of measure
      * @return a new mutable measure
      */
+    @NonNull
     public static <U extends Unit<U>> MutableMeasure<U> zero(U unit) {
         return mutable(unit.zero());
     }
@@ -68,6 +70,7 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param unit              the unit of measure
      * @return a new mutable measure
      */
+    @NonNull
     public static <U extends Unit<U>> MutableMeasure<U> ofBaseUnits(
             double baseUnitMagnitude, U unit) {
         return new MutableMeasure<>(unit.fromBaseUnits(baseUnitMagnitude), baseUnitMagnitude, unit);
@@ -81,6 +84,7 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param unit              the unit of measure
      * @return a new mutable measure
      */
+    @NonNull
     public static <U extends Unit<U>> MutableMeasure<U> ofRelativeUnits(
             double relativeMagnitude, U unit) {
         return new MutableMeasure<>(relativeMagnitude, unit.toBaseUnits(relativeMagnitude), unit);
@@ -131,7 +135,8 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param other the other measure to copy values from
      * @return this measure
      */
-    public MutableMeasure<U> mut_replace(Measure<U> other) {
+    @NonNull
+    public MutableMeasure<U> mut_replace(@NonNull Measure<U> other) {
         magnitudeVal = other.magnitude();
         baseUnitMagnitudeVal = other.baseUnitMagnitude();
         unitVal = other.unit();
@@ -145,6 +150,7 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param unit      the new unit
      * @return this measure
      */
+    @NonNull
     public MutableMeasure<U> mut_replace(double magnitude, U unit) {
         magnitudeVal = magnitude;
         baseUnitMagnitudeVal = unit.toBaseUnits(magnitude);
@@ -159,6 +165,7 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param raw the raw value to accumulate by
      * @return the measure
      */
+    @NonNull
     public MutableMeasure<U> mut_acc(double raw) {
         magnitudeVal += raw;
         baseUnitMagnitudeVal += unitVal.toBaseUnits(raw);
@@ -171,7 +178,8 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param other the measure whose value should be added to this one
      * @return the measure
      */
-    public MutableMeasure<U> mut_acc(Measure<U> other) {
+    @NonNull
+    public MutableMeasure<U> mut_acc(@NonNull Measure<U> other) {
         baseUnitMagnitudeVal += other.baseUnitMagnitude();
 
         // can't naively use magnitude += other.in(unit) because the units may not
@@ -189,7 +197,8 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param other the measurement to add
      * @return this measure
      */
-    public MutableMeasure<U> mut_plus(Measure<U> other) {
+    @NonNull
+    public MutableMeasure<U> mut_plus(@NonNull Measure<U> other) {
         return mut_plus(other.magnitude(), other.unit());
     }
 
@@ -202,6 +211,7 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param unit      the unit of the other measurement
      * @return this measure
      */
+    @NonNull
     public MutableMeasure<U> mut_plus(double magnitude, U unit) {
         mut_setBaseUnitMagnitude(baseUnitMagnitudeVal + unit.toBaseUnits(magnitude));
         return this;
@@ -214,7 +224,8 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param other the measurement to add
      * @return this measure
      */
-    public MutableMeasure<U> mut_minus(Measure<U> other) {
+    @NonNull
+    public MutableMeasure<U> mut_minus(@NonNull Measure<U> other) {
         return mut_minus(other.magnitude(), other.unit());
     }
 
@@ -227,6 +238,7 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param unit      the unit of the other measurement
      * @return this measure
      */
+    @NonNull
     public MutableMeasure<U> mut_minus(double magnitude, U unit) {
         return mut_plus(-magnitude, unit);
     }
@@ -238,6 +250,7 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param multiplier the multiplier to scale the measurement by
      * @return this measure
      */
+    @NonNull
     public MutableMeasure<U> mut_times(double multiplier) {
         mut_setBaseUnitMagnitude(baseUnitMagnitudeVal * multiplier);
         return this;
@@ -250,7 +263,8 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param multiplier the multiplier to scale the measurement by
      * @return this measure
      */
-    public MutableMeasure<U> mut_times(Measure<? extends Dimensionless> multiplier) {
+    @NonNull
+    public MutableMeasure<U> mut_times(@NonNull Measure<? extends Dimensionless> multiplier) {
         return mut_times(multiplier.baseUnitMagnitude());
     }
 
@@ -261,6 +275,7 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param divisor the divisor to scale the measurement by
      * @return this measure
      */
+    @NonNull
     public MutableMeasure<U> mut_divide(double divisor) {
         mut_setBaseUnitMagnitude(baseUnitMagnitudeVal / divisor);
         return this;
@@ -273,10 +288,12 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param divisor the divisor to scale the measurement by
      * @return this measure
      */
-    public MutableMeasure<U> mut_divide(Measure<? extends Dimensionless> divisor) {
+    @NonNull
+    public MutableMeasure<U> mut_divide(@NonNull Measure<? extends Dimensionless> divisor) {
         return mut_divide(divisor.baseUnitMagnitude());
     }
 
+    @NonNull
     @Override
     public Measure<U> copy() {
         return new ImmutableMeasure<>(magnitudeVal, baseUnitMagnitudeVal, unitVal);

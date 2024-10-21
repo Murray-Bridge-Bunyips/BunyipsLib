@@ -7,6 +7,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 
 /**
@@ -171,13 +173,14 @@ public class ElevatorFeedforward implements SystemController {
         return maxAchievableAcceleration(-maxVoltage, velocity);
     }
 
+    @NonNull
     @Override
     public double[] getCoefficients() {
         return new double[]{kS, kG, kV, kA};
     }
 
     @Override
-    public void setCoefficients(double[] coeffs) {
+    public void setCoefficients(@NonNull double[] coeffs) {
         if (coeffs.length != 4) {
             throw new IllegalArgumentException("expected 4 coefficients, got " + coeffs.length);
         }

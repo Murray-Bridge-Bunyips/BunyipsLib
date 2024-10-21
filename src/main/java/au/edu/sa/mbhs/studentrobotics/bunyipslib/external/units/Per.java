@@ -4,6 +4,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.collections.LongToObjectHashMap;
@@ -76,6 +78,7 @@ public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
      * @param denominator the denominator for unit time
      * @return the combined unit
      */
+    @NonNull
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <N extends Unit<N>, D extends Unit<D>> Per<N, D> combine(
             N numerator, D denominator) {
@@ -115,6 +118,7 @@ public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
      *
      * @return the reciprocal
      */
+    @NonNull
     public Per<D, N> reciprocal() {
         return denominator.per(numerator);
     }

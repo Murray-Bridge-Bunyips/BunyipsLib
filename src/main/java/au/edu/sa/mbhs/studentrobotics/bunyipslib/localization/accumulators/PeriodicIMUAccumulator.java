@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -30,13 +32,13 @@ public class PeriodicIMUAccumulator extends Accumulator {
      * @param imu                    the imu to use for updates
      * @param relocalizationInterval the interval at which the IMU is read and updates are propagated
      */
-    public PeriodicIMUAccumulator(IMU imu, Measure<Time> relocalizationInterval) {
+    public PeriodicIMUAccumulator(@NonNull IMU imu, @NonNull Measure<Time> relocalizationInterval) {
         this.imu = imu;
         relocalizationIntervalMs = relocalizationInterval.in(Milliseconds);
     }
 
     @Override
-    public void accumulate(Twist2dDual<com.acmerobotics.roadrunner.Time> twist) {
+    public void accumulate(@NonNull Twist2dDual<com.acmerobotics.roadrunner.Time> twist) {
         super.accumulate(twist);
 
         if (timer.milliseconds() >= relocalizationIntervalMs) {

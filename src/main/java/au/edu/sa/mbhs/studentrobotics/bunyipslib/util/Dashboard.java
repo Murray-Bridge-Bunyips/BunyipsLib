@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -39,7 +41,7 @@ public final class Dashboard {
      * @param canvas      dashboard canvas
      * @param poseHistory list of robot poses
      */
-    public static void drawPoseHistory(Canvas canvas, List<Pose2d> poseHistory) {
+    public static void drawPoseHistory(@NonNull Canvas canvas, @NonNull List<Pose2d> poseHistory) {
         double[] xPoints = new double[poseHistory.size()];
         double[] yPoints = new double[poseHistory.size()];
 
@@ -61,7 +63,7 @@ public final class Dashboard {
      * @param path       path to draw
      * @param resolution distance units; presumed inches
      */
-    public static void drawSampledPath(Canvas canvas, Path path, double resolution) {
+    public static void drawSampledPath(@NonNull Canvas canvas, @NonNull Path path, double resolution) {
         int samples = (int) Math.ceil(path.length() / resolution);
         double[] xPoints = new double[samples];
         double[] yPoints = new double[samples];
@@ -81,7 +83,7 @@ public final class Dashboard {
      * @param canvas dashboard canvas
      * @param path   path to draw
      */
-    public static void drawSampledPath(Canvas canvas, Path path) {
+    public static void drawSampledPath(@NonNull Canvas canvas, @NonNull Path path) {
         drawSampledPath(canvas, path, DEFAULT_RESOLUTION);
     }
 
@@ -91,7 +93,7 @@ public final class Dashboard {
      * @param canvas dashboard canvas
      * @param pose   robot pose
      */
-    public static void drawRobot(Canvas canvas, Pose2d pose) {
+    public static void drawRobot(@NonNull Canvas canvas, @NonNull Pose2d pose) {
         final double ROBOT_RADIUS = 9;
 
         canvas.setStrokeWidth(1);
@@ -110,7 +112,7 @@ public final class Dashboard {
      * @param packetOperations the operations to perform on the packet, this packet will be auto-sent
      *                         by this method or via the available {@link DualTelemetry} instance
      */
-    public static void usePacket(Consumer<TelemetryPacket> packetOperations) {
+    public static void usePacket(@NonNull Consumer<TelemetryPacket> packetOperations) {
         BunyipsOpMode opMode = BunyipsOpMode.isRunning() ? BunyipsOpMode.getInstance() : null;
         TelemetryPacket packet = opMode == null ? new TelemetryPacket() : opMode.telemetry.getDashboardPacket();
         // User operations, the packet may be sent manually here or automatically via BOM

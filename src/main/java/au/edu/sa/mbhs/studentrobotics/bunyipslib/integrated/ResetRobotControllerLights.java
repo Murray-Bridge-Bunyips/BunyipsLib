@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
@@ -32,7 +34,7 @@ public final class ResetRobotControllerLights {
      * @param manager The OpModeManager to register the OpMode with.
      */
     @OpModeRegistrar
-    public static void registerOpMode(OpModeManager manager) {
+    public static void registerOpMode(@NonNull OpModeManager manager) {
         if (suppress)
             return;
         manager.register(

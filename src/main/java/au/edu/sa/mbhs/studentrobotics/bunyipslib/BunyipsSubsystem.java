@@ -35,6 +35,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      *
      * @see #toString() referencing `this` to also retrieve delegation status affixed to the end of the name
      */
+    @NonNull
     protected String name = getClass().getSimpleName();
     private volatile Task currentTask;
     private volatile Task defaultTask = new IdleTask();
@@ -134,7 +135,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      *                   in which case the subsystem should be disabled
      * @return whether the assertion passed or failed, where you can stop the constructor if this returns false
      */
-    protected final boolean assertParamsNotNull(Object... parameters) {
+    protected final boolean assertParamsNotNull(@NonNull Object... parameters) {
         // If a previous check has already failed, we don't need to check again otherwise we might
         // erase a previous check that failed
         if (!shouldRun) return false;
@@ -161,7 +162,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      *
      * @param child the subsystem to add to the list of children of this subsystem
      */
-    protected final void delegate(BunyipsSubsystem child) {
+    protected final void delegate(@NonNull BunyipsSubsystem child) {
         child.parent = this;
         children.add(child);
     }
@@ -231,8 +232,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      *
      * @param defaultTask The task to set as the default task
      */
-    public final void setDefaultTask(Task defaultTask) {
-        if (defaultTask == null) return;
+    public final void setDefaultTask(@NonNull Task defaultTask) {
         defaultTask.onSubsystem(this, false);
         this.defaultTask = defaultTask;
     }
@@ -251,13 +251,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * @param newTask The task to set as the current task
      * @return whether the task was successfully set or ignored
      */
-    public final boolean setCurrentTask(Task newTask) {
+    public final boolean setCurrentTask(@NonNull Task newTask) {
         if (!shouldRun) {
             Dbg.warn(getClass(), "%Subsystem is disabled, ignoring task change.", isDefaultName() ? "" : "(" + this + ") ");
             return false;
         }
-        if (newTask == null)
-            return false;
 
         if (currentTask == null) {
             Dbg.warn(getClass(), "%Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated if this behaviour is not intended.", isDefaultName() ? "" : "(" + this + ") ");
@@ -294,13 +292,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      *
      * @param currentTask The task to set as the current task
      */
-    public final void setHighPriorityCurrentTask(Task currentTask) {
+    public final void setHighPriorityCurrentTask(@NonNull Task currentTask) {
         if (!shouldRun) {
             Dbg.warn(getClass(), "%Subsystem is disabled, ignoring high-priority task change.", isDefaultName() ? "" : "(" + this + ") ");
             return;
         }
-        if (currentTask == null)
-            return;
         // Task will be cancelled abruptly, run the finish callback now
         if (this.currentTask != defaultTask) {
             Dbg.warn(getClass(), "%Task changed: %(INT)->%", isDefaultName() ? "" : "(" + this + ") ", this.currentTask, currentTask);
@@ -389,7 +385,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      *
      * @param loopSleepDuration the duration to sleep the external thread by after every iteration
      */
-    public final void startThread(Measure<Time> loopSleepDuration) {
+    public final void startThread(@NonNull Measure<Time> loopSleepDuration) {
         if (threadName != null || parent != null) return;
         threadName = Text.format("Async-%-%-%", getClass().getSimpleName(), name, hashCode());
         Threads.startLoop(threadName, loopSleepDuration, this::internalUpdate);

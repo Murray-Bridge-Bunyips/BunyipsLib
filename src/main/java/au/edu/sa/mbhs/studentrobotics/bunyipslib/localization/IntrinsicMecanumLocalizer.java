@@ -48,7 +48,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
      * @param drive        the drive instance (assumed to be Mecanum/conforms to Mecanum equations). Power info will be
      *                     extracted from the drive.
      */
-    public IntrinsicMecanumLocalizer(Coefficients coefficients, MecanumDrive drive) {
+    public IntrinsicMecanumLocalizer(@NonNull Coefficients coefficients, @NonNull MecanumDrive drive) {
         this.coefficients = coefficients;
         this.drive = drive;
         DriveModel model = drive.getConstants().getDriveModel();
@@ -65,7 +65,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
      * @param drive        the drive instance (assumed to be Mecanum/conforms to Mecanum equations)
      * @param driveInput   the robot pose input (x forward, y left, heading anticlockwise) of the drive
      */
-    public IntrinsicMecanumLocalizer(Coefficients coefficients, MecanumDrive drive, Supplier<Pose2d> driveInput) {
+    public IntrinsicMecanumLocalizer(@NonNull Coefficients coefficients, @NonNull MecanumDrive drive, @NonNull Supplier<Pose2d> driveInput) {
         this.coefficients = coefficients;
         this.drive = drive;
         DriveModel model = drive.getConstants().getDriveModel();
@@ -152,6 +152,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
         /**
          * The breakaway speeds for the forward and strafe axes.
          */
+        @NonNull
         public double[] BREAKAWAY_SPEEDS = {0.1, 0.1};
 
         /**
@@ -167,6 +168,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
              *                   way you would tune the multiplier for a deadwheel localizer.
              * @return this builder
              */
+            @NonNull
             public Builder setMultiplier(double multiplier) {
                 coeffs.MULTIPLIER = multiplier;
                 return this;
@@ -180,6 +182,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
              * @param strafe  the minimum vector power required to move the robot left/right
              * @return this builder
              */
+            @NonNull
             public Builder setBreakawaySpeeds(double forward, double strafe) {
                 coeffs.BREAKAWAY_SPEEDS = new double[]{forward, strafe};
                 return this;
@@ -190,6 +193,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
              *
              * @return the coefficients
              */
+            @NonNull
             public Coefficients build() {
                 return coeffs;
             }

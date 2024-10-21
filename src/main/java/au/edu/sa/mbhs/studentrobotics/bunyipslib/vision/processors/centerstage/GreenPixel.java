@@ -18,10 +18,12 @@ public class GreenPixel extends ColourThreshold {
     /**
      * Lower clamp for YCrCb
      */
+    @NonNull
     public static Scalar LOWER_YCRCB = new Scalar(145, 0, 0);
     /**
      * Upper clamp for YCrCb
      */
+    @NonNull
     public static Scalar UPPER_YCRCB = new Scalar(255, 120, 255);
     /**
      * Default minimum area for the contour
@@ -59,11 +61,13 @@ public class GreenPixel extends ColourThreshold {
         return MAX_AREA;
     }
 
+    @NonNull
     @Override
     protected Scalar setLower() {
         return LOWER_YCRCB;
     }
 
+    @NonNull
     @Override
     protected Scalar setUpper() {
         return UPPER_YCRCB;

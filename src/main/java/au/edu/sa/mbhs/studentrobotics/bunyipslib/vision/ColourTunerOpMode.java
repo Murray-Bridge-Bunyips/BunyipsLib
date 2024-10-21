@@ -33,6 +33,7 @@ public abstract class ColourTunerOpMode extends BunyipsOpMode {
     /**
      * The scalars used for the current processor.
      */
+    @NonNull
     public static double[] scalars = new double[6];
 
     private final String[] channelNames = new String[3];

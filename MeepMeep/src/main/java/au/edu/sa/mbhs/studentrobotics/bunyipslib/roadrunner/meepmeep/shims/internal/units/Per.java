@@ -19,6 +19,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
  * @param <D> the type of the denominator unit
  * @since 1.0.0-pre
  */
+@SuppressWarnings("UnknownNullness")
 public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
     /**
      * Keep a cache of created instances so expressions like Volts.per(Meter) don't do any allocations

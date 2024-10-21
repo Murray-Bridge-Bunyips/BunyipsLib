@@ -16,6 +16,7 @@ import java.util.Locale;
  * @param <U> the unit type of the measure
  * @since 1.0.0-pre
  */
+@SuppressWarnings("UnknownNullness")
 public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
     /**
      * The threshold for two measures to be considered equivalent if converted to the same unit. This

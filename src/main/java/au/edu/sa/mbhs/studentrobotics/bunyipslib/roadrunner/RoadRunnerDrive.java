@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.IdentityPoseMap;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseMap;
@@ -26,6 +28,7 @@ public interface RoadRunnerDrive extends Moveable {
      *
      * @return the constants and method references used to construct trajectories and motion profiles
      */
+    @NonNull
     Constants getConstants();
 
     /**
@@ -42,6 +45,7 @@ public interface RoadRunnerDrive extends Moveable {
      *
      * @return extended RoadRunner trajectory task builder
      */
+    @NonNull
     default TaskBuilder makeTrajectory() {
         return new TaskBuilder(getConstants(), Storage.memory().lastKnownPosition, new IdentityPoseMap());
     }
@@ -53,7 +57,8 @@ public interface RoadRunnerDrive extends Moveable {
      * @param poseMap the PoseMap to use for this builder
      * @return extended RoadRunner trajectory task builder
      */
-    default TaskBuilder makeTrajectory(PoseMap poseMap) {
+    @NonNull
+    default TaskBuilder makeTrajectory(@NonNull PoseMap poseMap) {
         return new TaskBuilder(getConstants(), Storage.memory().lastKnownPosition, poseMap);
     }
 
@@ -64,7 +69,8 @@ public interface RoadRunnerDrive extends Moveable {
      * @param startPose the pose to start the trajectory generation from
      * @return extended RoadRunner trajectory task builder
      */
-    default TaskBuilder makeTrajectory(Pose2d startPose) {
+    @NonNull
+    default TaskBuilder makeTrajectory(@NonNull Pose2d startPose) {
         return new TaskBuilder(getConstants(), startPose, new IdentityPoseMap());
     }
 
@@ -76,7 +82,8 @@ public interface RoadRunnerDrive extends Moveable {
      * @param poseMap   the PoseMap to use for this builder
      * @return extended RoadRunner trajectory task builder
      */
-    default TaskBuilder makeTrajectory(Pose2d startPose, PoseMap poseMap) {
+    @NonNull
+    default TaskBuilder makeTrajectory(@NonNull Pose2d startPose, @NonNull PoseMap poseMap) {
         return new TaskBuilder(getConstants(), startPose, poseMap);
     }
 
@@ -90,7 +97,8 @@ public interface RoadRunnerDrive extends Moveable {
      * @param angUnit  the unit of angle of the start pose
      * @return extended RoadRunner trajectory task builder
      */
-    default TaskBuilder makeTrajectory(Vector2d startVec, Distance distUnit, double ang, Angle angUnit) {
+    @NonNull
+    default TaskBuilder makeTrajectory(@NonNull Vector2d startVec, @NonNull Distance distUnit, double ang, @NonNull Angle angUnit) {
         return new TaskBuilder(getConstants(), Geometry.unitPose(startVec, distUnit, ang, angUnit), new IdentityPoseMap());
     }
 
@@ -105,7 +113,8 @@ public interface RoadRunnerDrive extends Moveable {
      * @param poseMap  the PoseMap to use for this builder
      * @return extended RoadRunner trajectory task builder
      */
-    default TaskBuilder makeTrajectory(Vector2d startVec, Distance distUnit, double ang, Angle angUnit, PoseMap poseMap) {
+    @NonNull
+    default TaskBuilder makeTrajectory(@NonNull Vector2d startVec, @NonNull Distance distUnit, double ang, @NonNull Angle angUnit, @NonNull PoseMap poseMap) {
         return new TaskBuilder(getConstants(), Geometry.unitPose(startVec, distUnit, ang, angUnit), poseMap);
     }
 }

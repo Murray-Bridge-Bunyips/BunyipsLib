@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
+
 import java.util.function.BooleanSupplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
@@ -21,7 +23,7 @@ public class WaitUntilTask extends Task {
      * @param timeout   max timeout
      * @param condition the condition to wait for true
      */
-    public WaitUntilTask(Measure<Time> timeout, BooleanSupplier condition) {
+    public WaitUntilTask(@NonNull Measure<Time> timeout, @NonNull BooleanSupplier condition) {
         super(timeout);
         this.condition = condition;
         withName("Wait Until");
@@ -32,7 +34,7 @@ public class WaitUntilTask extends Task {
      *
      * @param condition the condition to wait for true
      */
-    public WaitUntilTask(BooleanSupplier condition) {
+    public WaitUntilTask(@NonNull BooleanSupplier condition) {
         this.condition = condition;
         withName("Wait Until");
     }

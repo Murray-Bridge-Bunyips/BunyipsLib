@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
 
 /**
@@ -15,7 +17,7 @@ public class EmergencyStop extends RuntimeException {
      *
      * @param message the message to display on the Driver Station.
      */
-    public EmergencyStop(String message) {
+    public EmergencyStop(@NonNull String message) {
         super(message, new OpModeManagerImpl.ForceStopException());
     }
 }

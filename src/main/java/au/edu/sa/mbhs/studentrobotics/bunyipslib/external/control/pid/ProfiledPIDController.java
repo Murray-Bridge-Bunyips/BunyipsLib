@@ -7,6 +7,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.TrapezoidProfile;
 
@@ -32,7 +34,7 @@ public class ProfiledPIDController implements PIDF {
      * @param constraints Velocity and acceleration constraints for goal.
      */
     public ProfiledPIDController(double Kp, double Ki, double Kd,
-                                 TrapezoidProfile.Constraints constraints) {
+                                 @NonNull TrapezoidProfile.Constraints constraints) {
         controller = new PIDController(Kp, Ki, Kd);
         this.constraints = constraints;
     }
@@ -47,6 +49,7 @@ public class ProfiledPIDController implements PIDF {
      * @param Kd Differential coefficient
      * @return this
      */
+    @NonNull
     public ProfiledPIDController setPID(double Kp, double Ki, double Kd) {
         controller.setPID(Kp, Ki, Kd);
         return this;
@@ -67,6 +70,7 @@ public class ProfiledPIDController implements PIDF {
      * @param Kp proportional coefficient
      * @return this
      */
+    @NonNull
     public ProfiledPIDController setP(double Kp) {
         controller.setP(Kp);
         return this;
@@ -87,6 +91,7 @@ public class ProfiledPIDController implements PIDF {
      * @param Ki integral coefficient
      * @return this
      */
+    @NonNull
     public ProfiledPIDController setI(double Ki) {
         controller.setI(Ki);
         return this;
@@ -107,6 +112,7 @@ public class ProfiledPIDController implements PIDF {
      * @param Kd differential coefficient
      * @return this
      */
+    @NonNull
     public ProfiledPIDController setD(double Kd) {
         controller.setD(Kd);
         return this;
@@ -124,6 +130,7 @@ public class ProfiledPIDController implements PIDF {
     /**
      * Gets the goal for the ProfiledPIDController.
      */
+    @NonNull
     public TrapezoidProfile.State getGoal() {
         return goal;
     }
@@ -134,7 +141,8 @@ public class ProfiledPIDController implements PIDF {
      * @param goal The desired goal state.
      * @return this
      */
-    public ProfiledPIDController setGoal(TrapezoidProfile.State goal) {
+    @NonNull
+    public ProfiledPIDController setGoal(@NonNull TrapezoidProfile.State goal) {
         this.goal = goal;
         return this;
     }
@@ -145,6 +153,7 @@ public class ProfiledPIDController implements PIDF {
      * @param goal The desired goal position.
      * @return this
      */
+    @NonNull
     public ProfiledPIDController setGoal(double goal) {
         this.goal = new TrapezoidProfile.State(goal, 0);
         return this;
@@ -167,7 +176,8 @@ public class ProfiledPIDController implements PIDF {
      * @param constraints Velocity and acceleration constraints for goal.
      * @return this
      */
-    public ProfiledPIDController setConstraints(TrapezoidProfile.Constraints constraints) {
+    @NonNull
+    public ProfiledPIDController setConstraints(@NonNull TrapezoidProfile.Constraints constraints) {
         this.constraints = constraints;
         return this;
     }
@@ -177,6 +187,7 @@ public class ProfiledPIDController implements PIDF {
      *
      * @return The current setpoint.
      */
+    @NonNull
     public TrapezoidProfile.State getSetpoint() {
         return setpoint;
     }
@@ -198,6 +209,7 @@ public class ProfiledPIDController implements PIDF {
      * @param positionTolerance Position error which is tolerable.
      * @return this
      */
+    @NonNull
     public ProfiledPIDController setTolerance(double positionTolerance) {
         setTolerance(positionTolerance, Double.POSITIVE_INFINITY);
         return this;
@@ -210,6 +222,7 @@ public class ProfiledPIDController implements PIDF {
      * @param velocityTolerance Velocity error which is tolerable.
      * @return this
      */
+    @NonNull
     public ProfiledPIDController setTolerance(double positionTolerance, double velocityTolerance) {
         controller.setTolerance(positionTolerance, velocityTolerance);
         return this;
@@ -250,7 +263,7 @@ public class ProfiledPIDController implements PIDF {
      * @param newGoal     The new goal of the controller.
      * @return The next output of the PID controller.
      */
-    public double calculate(double measurement, TrapezoidProfile.State newGoal) {
+    public double calculate(double measurement, @NonNull TrapezoidProfile.State newGoal) {
         goal = newGoal;
         return calculate(measurement);
     }
@@ -276,8 +289,8 @@ public class ProfiledPIDController implements PIDF {
      * @param newConstraints Velocity and acceleration constraints for goal.
      * @return The next output of the PID controller.
      */
-    public double calculate(double measurement, TrapezoidProfile.State newGoal,
-                            TrapezoidProfile.Constraints newConstraints) {
+    public double calculate(double measurement, @NonNull TrapezoidProfile.State newGoal,
+                            @NonNull TrapezoidProfile.Constraints newConstraints) {
         constraints = newConstraints;
         return calculate(measurement, newGoal);
     }
@@ -296,7 +309,8 @@ public class ProfiledPIDController implements PIDF {
      * @param measurement The current measured State of the system.
      * @return this
      */
-    public ProfiledPIDController reset(TrapezoidProfile.State measurement) {
+    @NonNull
+    public ProfiledPIDController reset(@NonNull TrapezoidProfile.State measurement) {
         controller.reset();
         setpoint = measurement;
         return this;
@@ -309,6 +323,7 @@ public class ProfiledPIDController implements PIDF {
      * @param measuredVelocity The current measured velocity of the system.
      * @return this
      */
+    @NonNull
     public ProfiledPIDController reset(double measuredPosition, double measuredVelocity) {
         reset(new TrapezoidProfile.State(measuredPosition, measuredVelocity));
         return this;
@@ -321,21 +336,24 @@ public class ProfiledPIDController implements PIDF {
      *                         assumed to be zero.
      * @return this
      */
+    @NonNull
     public ProfiledPIDController reset(double measuredPosition) {
         reset(measuredPosition, 0.0);
         return this;
     }
 
+    @NonNull
     @Override
     public double[] getCoefficients() {
         return new double[]{getP(), getI(), getD()};
     }
 
     @Override
-    public void setCoefficients(double[] coeffs) {
+    public void setCoefficients(@NonNull double[] coeffs) {
         controller.setCoefficients(coeffs);
     }
 
+    @NonNull
     @Override
     public PIDFController getPIDFController() {
         // Note: The controller as returned here will be limited in trapezoidal limitation

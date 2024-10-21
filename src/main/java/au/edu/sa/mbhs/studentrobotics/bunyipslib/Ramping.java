@@ -27,6 +27,7 @@ public interface Ramping {
      * @param enabled whether the ramping function is enabled, default is on
      * @return this
      */
+    @NonNull
     Ramping setRampingEnabled(boolean enabled);
 
     /**
@@ -36,7 +37,8 @@ public interface Ramping {
      * @param delta the maximum change in value per second
      * @return this
      */
-    Ramping setRampingParameters(Measure<Time> time, double delta);
+    @NonNull
+    Ramping setRampingParameters(@NonNull Measure<Time> time, double delta);
 
     /**
      * Set the time it takes for the value to reach the target.
@@ -44,7 +46,8 @@ public interface Ramping {
      * @param smoothTime the time it takes for the value to reach the target.
      * @return this
      */
-    Ramping setRampingTime(Measure<Time> smoothTime);
+    @NonNull
+    Ramping setRampingTime(@NonNull Measure<Time> smoothTime);
 
     /**
      * Set the maximum change in units per second.
@@ -52,6 +55,7 @@ public interface Ramping {
      * @param maxDelta the maximum change in units per second
      * @return this
      */
+    @NonNull
     Ramping setMaxRampingDelta(double maxDelta);
 
     /**
@@ -74,6 +78,7 @@ public interface Ramping {
          *
          * @param enabled whether the ramping function is enabled, default is on
          */
+        @NonNull
         @Override
         public Value setRampingEnabled(boolean enabled) {
             this.enabled = enabled;
@@ -87,8 +92,9 @@ public interface Ramping {
          * @param delta the maximum change in value per second
          * @return this
          */
+        @NonNull
         @Override
-        public Value setRampingParameters(Measure<Time> time, double delta) {
+        public Value setRampingParameters(@NonNull Measure<Time> time, double delta) {
             smoothTime = time;
             maxDelta = delta;
             return this;
@@ -99,8 +105,9 @@ public interface Ramping {
          *
          * @param smoothTime the time it takes for the value to reach the target.
          */
+        @NonNull
         @Override
-        public Value setRampingTime(Measure<Time> smoothTime) {
+        public Value setRampingTime(@NonNull Measure<Time> smoothTime) {
             this.smoothTime = smoothTime;
             return this;
         }
@@ -110,6 +117,7 @@ public interface Ramping {
          *
          * @param maxDelta the maximum change in units per second
          */
+        @NonNull
         @Override
         public Value setMaxRampingDelta(double maxDelta) {
             this.maxDelta = maxDelta;
@@ -176,6 +184,7 @@ public interface Ramping {
             this.current = current;
         }
 
+        @NonNull
         public Supplier setCurrentSupplier(@NonNull DoubleSupplier current) {
             this.current = current;
             return this;
@@ -187,6 +196,7 @@ public interface Ramping {
          *
          * @param enabled whether the ramping function is enabled, default is on
          */
+        @NonNull
         @Override
         public Supplier setRampingEnabled(boolean enabled) {
             v.setRampingEnabled(enabled);
@@ -200,8 +210,9 @@ public interface Ramping {
          * @param delta the maximum change in value per second
          * @return this
          */
+        @NonNull
         @Override
-        public Supplier setRampingParameters(Measure<Time> time, double delta) {
+        public Supplier setRampingParameters(@NonNull Measure<Time> time, double delta) {
             v.setRampingParameters(time, delta);
             return this;
         }
@@ -212,8 +223,9 @@ public interface Ramping {
          * @param smoothTime the time it takes for the value to reach the target.
          * @return this
          */
+        @NonNull
         @Override
-        public Supplier setRampingTime(Measure<Time> smoothTime) {
+        public Supplier setRampingTime(@NonNull Measure<Time> smoothTime) {
             v.setRampingTime(smoothTime);
             return this;
         }
@@ -224,6 +236,7 @@ public interface Ramping {
          * @param maxDelta the maximum change in units per second
          * @return this
          */
+        @NonNull
         @Override
         public Supplier setMaxRampingDelta(double maxDelta) {
             v.setMaxRampingDelta(maxDelta);
@@ -271,7 +284,7 @@ public interface Ramping {
          *
          * @param motor the DcMotor object to wrap. By default, the ramping function is enabled.
          */
-        public DcMotor(com.qualcomm.robotcore.hardware.DcMotor motor) {
+        public DcMotor(@NonNull com.qualcomm.robotcore.hardware.DcMotor motor) {
             super(motor.getController(), motor.getPortNumber(), motor.getDirection(), motor.getMotorType());
         }
 
@@ -283,7 +296,7 @@ public interface Ramping {
          * @param smoothTime the time it takes for the motor to reach the target power level
          * @param maxDelta   the maximum change in power level per second
          */
-        public DcMotor(com.qualcomm.robotcore.hardware.DcMotor motor, Measure<Time> smoothTime, double maxDelta) {
+        public DcMotor(@NonNull com.qualcomm.robotcore.hardware.DcMotor motor, @NonNull Measure<Time> smoothTime, double maxDelta) {
             super(motor.getController(), motor.getPortNumber(), motor.getDirection(), motor.getMotorType());
             v.setRampingParameters(smoothTime, maxDelta);
         }
@@ -294,6 +307,7 @@ public interface Ramping {
          *
          * @param enabled whether the ramping function is enabled, default is on
          */
+        @NonNull
         @Override
         public DcMotor setRampingEnabled(boolean enabled) {
             v.setRampingEnabled(enabled);
@@ -306,8 +320,9 @@ public interface Ramping {
          * @param smoothTime the time it takes for the motor to reach the target power level
          * @param maxDelta   the maximum change in power level per second
          */
+        @NonNull
         @Override
-        public DcMotor setRampingParameters(Measure<Time> smoothTime, double maxDelta) {
+        public DcMotor setRampingParameters(@NonNull Measure<Time> smoothTime, double maxDelta) {
             v.setRampingParameters(smoothTime, maxDelta);
             return this;
         }
@@ -317,8 +332,9 @@ public interface Ramping {
          *
          * @param smoothTime the time it takes for the motor to reach the target power level
          */
+        @NonNull
         @Override
-        public DcMotor setRampingTime(Measure<Time> smoothTime) {
+        public DcMotor setRampingTime(@NonNull Measure<Time> smoothTime) {
             v.setRampingTime(smoothTime);
             return this;
         }
@@ -328,6 +344,7 @@ public interface Ramping {
          *
          * @param maxDelta the maximum change in power level per second
          */
+        @NonNull
         @Override
         public DcMotor setMaxRampingDelta(double maxDelta) {
             v.setMaxRampingDelta(maxDelta);

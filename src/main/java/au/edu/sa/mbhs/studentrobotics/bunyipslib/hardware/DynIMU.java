@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.ImuInitMessage;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
@@ -42,7 +44,7 @@ public class DynIMU implements IMU {
      *                         Do not manually call {@link #initialize(Parameters)} on this IMU before passing it here.
      * @param initParameters   the parameters to use when initialising the IMU.
      */
-    public DynIMU(IMU uninitializedIMU, Parameters initParameters) {
+    public DynIMU(@NonNull IMU uninitializedIMU, @NonNull Parameters initParameters) {
         this.initParameters = initParameters;
         imu = uninitializedIMU;
     }
@@ -54,6 +56,7 @@ public class DynIMU implements IMU {
      * @return a DynIMU object that will always return invalid zero data, do be cautious that accessing this object in
      * a method that would require the presence of an IMU will log warnings and potentially cause issues.
      */
+    @NonNull
     public static DynIMU none() {
         return new DynIMU(new IMU() {
             @Override
@@ -133,7 +136,8 @@ public class DynIMU implements IMU {
      * @param timeout the timeout for the initialisation, default 500ms
      * @return this object for chaining.
      */
-    public DynIMU withInitTimeout(Measure<Time> timeout) {
+    @NonNull
+    public DynIMU withInitTimeout(@NonNull Measure<Time> timeout) {
         timeoutMs = timeout.in(Milliseconds);
         return this;
     }
@@ -162,7 +166,7 @@ public class DynIMU implements IMU {
     }
 
     @Override
-    public boolean initialize(Parameters parameters) {
+    public boolean initialize(@NonNull Parameters parameters) {
         // We can't really crash since this is still legal usage, but we should warn the user.
         Dbg.warn(getClass(), "Manual IMU initialisation was started on a DynIMU object. This is invalid usage!");
         return imu.initialize(parameters);
@@ -174,40 +178,47 @@ public class DynIMU implements IMU {
         imu.resetYaw();
     }
 
+    @NonNull
     @Override
     public YawPitchRollAngles getRobotYawPitchRollAngles() {
         tryInit();
         return imu.getRobotYawPitchRollAngles();
     }
 
+    @NonNull
     @Override
-    public Orientation getRobotOrientation(AxesReference reference, AxesOrder order, AngleUnit angleUnit) {
+    public Orientation getRobotOrientation(@NonNull AxesReference reference, @NonNull AxesOrder order, @NonNull AngleUnit angleUnit) {
         tryInit();
         return imu.getRobotOrientation(reference, order, angleUnit);
     }
 
+    @NonNull
     @Override
     public Quaternion getRobotOrientationAsQuaternion() {
         tryInit();
         return imu.getRobotOrientationAsQuaternion();
     }
 
+    @NonNull
     @Override
-    public AngularVelocity getRobotAngularVelocity(AngleUnit angleUnit) {
+    public AngularVelocity getRobotAngularVelocity(@NonNull AngleUnit angleUnit) {
         tryInit();
         return imu.getRobotAngularVelocity(angleUnit);
     }
 
+    @NonNull
     @Override
     public Manufacturer getManufacturer() {
         return imu.getManufacturer();
     }
 
+    @NonNull
     @Override
     public String getDeviceName() {
         return imu.getDeviceName();
     }
 
+    @NonNull
     @Override
     public String getConnectionInfo() {
         return imu.getConnectionInfo();

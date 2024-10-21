@@ -38,6 +38,7 @@ public class SwitchableVisionSender implements Runnable {
      * Can be changed dynamically via FtcDashboard. This is the processor feed
      * that will be sent to FtcDashboard and to the Driver Station feed.
      */
+    @NonNull
     public static String CURRENT_PROCESSOR_NAME = "";
     /**
      * Can be changed dynamically via FtcDashboard. This is the current Vision instance index
@@ -99,7 +100,7 @@ public class SwitchableVisionSender implements Runnable {
      *
      * @param processorName the name of the processor to send to FtcDashboard
      */
-    public void setStreamingProcessor(String processorName) {
+    public void setStreamingProcessor(@NonNull String processorName) {
         CURRENT_PROCESSOR_NAME = processorName;
     }
 

@@ -19,6 +19,7 @@ import java.util.Objects;
  * @param <U> the type of the unit
  * @since 1.0.0-pre
  */
+@SuppressWarnings("UnknownNullness")
 public final class UnitBuilder<U extends Unit<U>> {
     private final U base;
     private UnaryFunction fromBaseVal = UnaryFunction.IDENTITY;

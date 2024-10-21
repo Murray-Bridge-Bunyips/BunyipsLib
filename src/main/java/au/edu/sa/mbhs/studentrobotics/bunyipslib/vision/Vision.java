@@ -62,6 +62,7 @@ public class Vision extends BunyipsSubsystem {
      *
      * @noinspection ClassEscapesDefinedScope (should never be used outside of this class, and checks exist for usage in other classes)
      */
+    @NonNull
     public Raw raw = new Raw();
     private int senderIdx = -1;
     private VisionPortal visionPortal = null;
@@ -73,7 +74,7 @@ public class Vision extends BunyipsSubsystem {
      * @param cameraWidth  The camera width resolution to use
      * @param cameraHeight The camera height resolution to use
      */
-    public Vision(CameraName camera, int cameraWidth, int cameraHeight) {
+    public Vision(@NonNull CameraName camera, int cameraWidth, int cameraHeight) {
         assertParamsNotNull(camera);
         this.camera = camera;
         // Allow the user to set the camera resolution if they want
@@ -85,7 +86,7 @@ public class Vision extends BunyipsSubsystem {
      *
      * @param camera The camera to use
      */
-    public Vision(CameraName camera) {
+    public Vision(@NonNull CameraName camera) {
         this(camera, DEFAULT_CAMERA_WIDTH, DEFAULT_CAMERA_HEIGHT);
     }
 
@@ -110,6 +111,7 @@ public class Vision extends BunyipsSubsystem {
     /**
      * Get all VisionProcessors attached to the VisionPortal.
      */
+    @NonNull
     @SuppressWarnings("rawtypes")
     public List<Processor> getAttachedProcessors() {
         return processors;
@@ -124,8 +126,9 @@ public class Vision extends BunyipsSubsystem {
      * @param newProcessors Processor instances
      * @return the vision instance
      */
+    @NonNull
     @SuppressWarnings("rawtypes")
-    public Vision init(Processor... newProcessors) {
+    public Vision init(@NonNull Processor... newProcessors) {
         if (visionPortal != null) {
             Dbg.warn(getClass(), "%visionportal instance already initialised! tearing down...", isDefaultName() ? "" : "(" + name + ") ");
             terminate();
@@ -200,8 +203,9 @@ public class Vision extends BunyipsSubsystem {
      * @param attachedProcessors Processor instances
      * @return the vision instance
      */
+    @NonNull
     @SuppressWarnings("rawtypes")
-    public Vision start(Processor... attachedProcessors) {
+    public Vision start(@NonNull Processor... attachedProcessors) {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
         }
@@ -247,8 +251,9 @@ public class Vision extends BunyipsSubsystem {
      * @param attachedProcessors Processor instances
      * @return the vision instance
      */
+    @NonNull
     @SuppressWarnings("rawtypes")
-    public Vision stop(Processor... attachedProcessors) {
+    public Vision stop(@NonNull Processor... attachedProcessors) {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
         }
@@ -273,6 +278,7 @@ public class Vision extends BunyipsSubsystem {
      *
      * @return the vision instance
      */
+    @NonNull
     public Vision stop() {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
@@ -290,6 +296,7 @@ public class Vision extends BunyipsSubsystem {
      *
      * @return HashMap of all processor data from every attached processor
      */
+    @NonNull
     @SuppressWarnings({"rawtypes", "unchecked"})
     public HashMap<String, List<VisionData>> getAllData() {
         HashMap<String, List<VisionData>> data = new HashMap<>();
@@ -314,6 +321,7 @@ public class Vision extends BunyipsSubsystem {
      *
      * @return the vision instance
      */
+    @NonNull
     @SuppressWarnings("rawtypes")
     public Vision terminate() {
         if (visionPortal == null) {
@@ -335,8 +343,9 @@ public class Vision extends BunyipsSubsystem {
      * @param attachedProcessors Processor instances
      * @return the vision instance
      */
+    @NonNull
     @SuppressWarnings("rawtypes")
-    public Vision flip(Processor... attachedProcessors) {
+    public Vision flip(@NonNull Processor... attachedProcessors) {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
         }
@@ -359,6 +368,7 @@ public class Vision extends BunyipsSubsystem {
      *
      * @return the vision instance
      */
+    @NonNull
     @SuppressWarnings("rawtypes")
     public Vision flip() {
         if (visionPortal == null) {
@@ -374,6 +384,7 @@ public class Vision extends BunyipsSubsystem {
     /**
      * Get the current status of the camera attached to the VisionPortal.
      */
+    @NonNull
     public VisionPortal.CameraState getStatus() {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
@@ -408,6 +419,7 @@ public class Vision extends BunyipsSubsystem {
      *
      * @return the VisionPortal instance
      */
+    @NonNull
     public VisionPortal getVisionPortal() {
         if (visionPortal == null) {
             throw new IllegalStateException("Vision: VisionPortal is not initialised from init()!");
@@ -442,7 +454,7 @@ public class Vision extends BunyipsSubsystem {
      * @param processorName the name of the processor to display on FtcDashboard
      * @see SwitchableVisionSender
      */
-    public void setPreview(String processorName) {
+    public void setPreview(@NonNull String processorName) {
         if (senderIdx != -1 && visionSender != null && processors.stream().anyMatch((p) -> processorName.equals(p.toString()))) {
             visionSender.setInstance(senderIdx);
             visionSender.setStreamingProcessor(processorName);
@@ -458,7 +470,7 @@ public class Vision extends BunyipsSubsystem {
      * @see SwitchableVisionSender
      */
     @SuppressWarnings("rawtypes")
-    public void setPreview(Processor processor) {
+    public void setPreview(@NonNull Processor processor) {
         setPreview(processor.toString());
     }
 
@@ -498,12 +510,12 @@ public class Vision extends BunyipsSubsystem {
         }
 
         @Override
-        public void onProcessFrame(Mat frame, long captureTimeNanos) {
+        public void onProcessFrame(@NonNull Mat frame, long captureTimeNanos) {
             // no-op
         }
 
         @Override
-        public void onFrameDraw(Canvas canvas) {
+        public void onFrameDraw(@NonNull Canvas canvas) {
             // no-op
         }
     }

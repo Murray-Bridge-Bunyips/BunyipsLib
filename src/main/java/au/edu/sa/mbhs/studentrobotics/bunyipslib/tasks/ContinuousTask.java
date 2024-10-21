@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
 
 /**
@@ -17,7 +19,7 @@ public class ContinuousTask extends ForeverTask {
      *
      * @param callback the task to run continuously
      */
-    public ContinuousTask(Runnable callback) {
+    public ContinuousTask(@NonNull Runnable callback) {
         this.callback = callback;
         withName("Continuous");
     }

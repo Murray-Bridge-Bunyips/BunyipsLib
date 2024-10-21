@@ -24,6 +24,7 @@ import java.util.Objects;
  * @param <U> the type of the unit of measure
  * @since 1.0.0-pre
  */
+@SuppressWarnings("UnknownNullness")
 public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
     private double magnitudeVal;
     private double baseUnitMagnitudeVal;

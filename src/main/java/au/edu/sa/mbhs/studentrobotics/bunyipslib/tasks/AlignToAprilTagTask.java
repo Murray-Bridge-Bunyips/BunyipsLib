@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -33,6 +35,7 @@ public class AlignToAprilTagTask extends Task {
     /**
      * PIDF coefficients for the alignment controller.
      */
+    @NonNull
     public static PIDFCoefficients coeffs = new PIDFCoefficients();
     /**
      * The target tag to align to. -1 for any tag.
@@ -56,7 +59,7 @@ public class AlignToAprilTagTask extends Task {
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(Measure<Time> timeout, Moveable drive, AprilTag at, int targetTag, PIDF controller) {
+    public AlignToAprilTagTask(@NonNull Measure<Time> timeout, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
         super(timeout);
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
@@ -79,7 +82,7 @@ public class AlignToAprilTagTask extends Task {
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, Moveable drive, AprilTag at, int targetTag, PIDF controller) {
+    public AlignToAprilTagTask(@NonNull DoubleSupplier xSupplier, @NonNull DoubleSupplier ySupplier, @NonNull DoubleSupplier rSupplier, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
         super(INFINITE_TIMEOUT);
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
@@ -103,7 +106,7 @@ public class AlignToAprilTagTask extends Task {
      * @param targetTag  The tag to align to, -1 for any tag
      * @param controller The PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(Gamepad driver, Moveable drive, AprilTag at, int targetTag, PIDF controller) {
+    public AlignToAprilTagTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
         this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, at, targetTag, controller);
     }
 

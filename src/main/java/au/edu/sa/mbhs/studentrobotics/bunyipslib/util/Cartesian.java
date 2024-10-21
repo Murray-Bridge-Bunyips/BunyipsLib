@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -33,7 +35,8 @@ public final class Cartesian {
      * @param rot          the angle to rotate these points around by
      * @return the rotated Cartesian pose
      */
-    public static Vector2d rotate(Vector2d cartesianVec, Measure<Angle> rot) {
+    @NonNull
+    public static Vector2d rotate(@NonNull Vector2d cartesianVec, @NonNull Measure<Angle> rot) {
         double t = rot.in(Radians);
         // 2D rotation matrix
         // | cos(t) -sin(t) | | x | = | x cos(t) - y sin(t) |
@@ -48,7 +51,8 @@ public final class Cartesian {
      * @param pose the Cartesian pose to convert to Robot form
      * @return the Robot pose representation of the Cartesian pose
      */
-    public static Pose2d toPose(Pose2d pose) {
+    @NonNull
+    public static Pose2d toPose(@NonNull Pose2d pose) {
         // noinspection SuspiciousNameCombination
         return new Pose2d(pose.position.y, -pose.position.x, -pose.heading.toDouble());
     }
@@ -57,7 +61,8 @@ public final class Cartesian {
      * @param pose the Cartesian pose to convert to a Robot Velocity form
      * @return the Robot Velocity pose representation of the Cartesian pose
      */
-    public static PoseVelocity2d toVel(Pose2d pose) {
+    @NonNull
+    public static PoseVelocity2d toVel(@NonNull Pose2d pose) {
         // noinspection SuspiciousNameCombination
         return new PoseVelocity2d(new Vector2d(pose.position.y, -pose.position.x), -pose.heading.toDouble());
     }
@@ -66,7 +71,8 @@ public final class Cartesian {
      * @param pose the Robot pose to convert to Cartesian form
      * @return the Cartesian pose representation of the Robot pose
      */
-    public static Pose2d fromPose(Pose2d pose) {
+    @NonNull
+    public static Pose2d fromPose(@NonNull Pose2d pose) {
         // noinspection SuspiciousNameCombination
         return new Pose2d(-pose.position.y, pose.position.x, -pose.heading.toDouble());
     }
@@ -77,6 +83,7 @@ public final class Cartesian {
      * @param heading the Cartesian clockwise heading
      * @return the Robot pose representation of the Cartesian pose
      */
+    @NonNull
     public static Pose2d toPose(double x, double y, double heading) {
         // noinspection SuspiciousNameCombination
         return new Pose2d(y, -x, -heading);
@@ -88,6 +95,7 @@ public final class Cartesian {
      * @param heading the Cartesian clockwise heading
      * @return the Robot Velocity pose representation of this Cartesian pose
      */
+    @NonNull
     public static PoseVelocity2d toVel(double x, double y, double heading) {
         // noinspection SuspiciousNameCombination
         return new PoseVelocity2d(new Vector2d(y, -x), -heading);
@@ -99,6 +107,7 @@ public final class Cartesian {
      * @param heading the Robot anti-clockwise heading
      * @return the Cartesian pose representation of the Robot pose
      */
+    @NonNull
     public static Pose2d fromPose(double x, double y, double heading) {
         // noinspection SuspiciousNameCombination
         return new Pose2d(-y, x, -heading);
@@ -108,7 +117,8 @@ public final class Cartesian {
      * @param vector the Cartesian vector to convert to Robot form
      * @return the Robot vector representation of the Cartesian vector
      */
-    public static Vector2d toVector(Vector2d vector) {
+    @NonNull
+    public static Vector2d toVector(@NonNull Vector2d vector) {
         // noinspection SuspiciousNameCombination
         return new Vector2d(vector.y, -vector.x);
     }
@@ -117,7 +127,8 @@ public final class Cartesian {
      * @param vector the Robot vector to convert to Cartesian form
      * @return the Cartesian vector representation of the Robot vector
      */
-    public static Vector2d fromVector(Vector2d vector) {
+    @NonNull
+    public static Vector2d fromVector(@NonNull Vector2d vector) {
         // noinspection SuspiciousNameCombination
         return new Vector2d(-vector.y, vector.x);
     }
@@ -127,6 +138,7 @@ public final class Cartesian {
      * @param y the Cartesian y coordinate
      * @return the Robot vector representation of the Cartesian vector
      */
+    @NonNull
     public static Vector2d toVector(double x, double y) {
         // noinspection SuspiciousNameCombination
         return new Vector2d(y, -x);
@@ -137,6 +149,7 @@ public final class Cartesian {
      * @param y the Robot y coordinate
      * @return the Cartesian vector representation of the Robot vector
      */
+    @NonNull
     public static Vector2d fromVector(double x, double y) {
         // noinspection SuspiciousNameCombination
         return new Vector2d(-y, x);
