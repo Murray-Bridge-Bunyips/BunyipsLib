@@ -462,32 +462,34 @@ class TaskBuilder(
         }
 
     /**
-     * Move to the specified [pose] in a spline path while linearly interpolating the heading to [tangent].
+     * Move to the specified [vector] tangent to [heading] in a spline path while linearly interpolating the robot heading to [tangent].
      */
     @JvmOverloads
     fun splineToLinearHeading(
-        pose: Pose2d,
+        vector: Vector2d,
         vectorUnit: Distance = Inches,
+        heading: Double,
         headingUnit: Angle = Radians,
         tangent: Rotation2d
     ) =
         apply {
             builder = builder.splineToLinearHeading(
                 Pose2d(
-                    vectorUnit.of(pose.position.x).inUnit(Inches),
-                    vectorUnit.of(pose.position.y).inUnit(Inches),
-                    headingUnit.of(pose.heading.toDouble()).inUnit(Radians)
+                    vectorUnit.of(vector.x).`in`(Inches),
+                    vectorUnit.of(vector.y).`in`(Inches),
+                    headingUnit.of(heading).`in`(Radians)
                 ), tangent, velConstraints, accelConstraints
             )
         }
 
     /**
-     * Move to the specified [pose] in a spline path while linearly interpolating the heading to [tangent].
+     * Move to the specified [vector] tangent to [heading] in a spline path while linearly interpolating the robot heading to [tangent].
      */
     @JvmOverloads
     fun splineToLinearHeading(
-        pose: Pose2d,
+        vector: Vector2d,
         vectorUnit: Distance = Inches,
+        heading: Double,
         headingUnit: Angle = Radians,
         tangent: Double,
         tangentUnit: Angle = Radians
@@ -495,40 +497,42 @@ class TaskBuilder(
         apply {
             builder = builder.splineToLinearHeading(
                 Pose2d(
-                    vectorUnit.of(pose.position.x).inUnit(Inches),
-                    vectorUnit.of(pose.position.y).inUnit(Inches),
-                    headingUnit.of(pose.heading.toDouble()).inUnit(Radians)
-                ), tangentUnit.of(tangent).inUnit(Radians), velConstraints, accelConstraints
+                    vectorUnit.of(vector.x).`in`(Inches),
+                    vectorUnit.of(vector.y).`in`(Inches),
+                    headingUnit.of(heading).`in`(Radians)
+                ), tangentUnit.of(tangent).`in`(Radians), velConstraints, accelConstraints
             )
         }
 
     /**
-     * Move to the specified [pose] in a spline path while spline interpolating the heading to [tangent].
+     * Move to the specified [vector] tangent to [heading] in a spline path while spline interpolating the robot heading to [tangent].
      */
     @JvmOverloads
     fun splineToSplineHeading(
-        pose: Pose2d,
+        vector: Vector2d,
         vectorUnit: Distance = Inches,
+        heading: Double,
         headingUnit: Angle = Radians,
         tangent: Rotation2d
     ) =
         apply {
             builder = builder.splineToSplineHeading(
                 Pose2d(
-                    vectorUnit.of(pose.position.x).inUnit(Inches),
-                    vectorUnit.of(pose.position.y).inUnit(Inches),
-                    headingUnit.of(pose.heading.toDouble()).inUnit(Radians)
+                    vectorUnit.of(vector.x).`in`(Inches),
+                    vectorUnit.of(vector.y).`in`(Inches),
+                    headingUnit.of(heading).`in`(Radians)
                 ), tangent, velConstraints, accelConstraints
             )
         }
 
     /**
-     * Move to the specified [pose] in a spline path while spline interpolating the heading to [tangent].
+     * Move to the specified [vector] tangent to [heading] in a spline path while spline interpolating the robot heading to [tangent].
      */
     @JvmOverloads
     fun splineToSplineHeading(
-        pose: Pose2d,
+        vector: Vector2d,
         vectorUnit: Distance = Inches,
+        heading: Double,
         headingUnit: Angle = Radians,
         tangent: Double,
         tangentUnit: Angle = Radians
@@ -536,12 +540,100 @@ class TaskBuilder(
         apply {
             builder = builder.splineToSplineHeading(
                 Pose2d(
-                    vectorUnit.of(pose.position.x).inUnit(Inches),
-                    vectorUnit.of(pose.position.y).inUnit(Inches),
-                    headingUnit.of(pose.heading.toDouble()).inUnit(Radians)
-                ), tangentUnit.of(tangent).inUnit(Radians), velConstraints, accelConstraints
+                    vectorUnit.of(vector.x).`in`(Inches),
+                    vectorUnit.of(vector.y).`in`(Inches),
+                    headingUnit.of(heading).`in`(Radians)
+                ), tangentUnit.of(tangent).`in`(Radians), velConstraints, accelConstraints
             )
         }
+
+    /**
+     * Move to the specified [poseHeadingRad] in a spline path while linearly interpolating the heading to [tangent].
+     */
+    @JvmOverloads
+    fun splineToLinearHeading(
+        poseHeadingRad: Pose2d,
+        vectorUnit: Distance = Inches,
+        tangent: Rotation2d
+    ) =
+        apply {
+            builder = builder.splineToLinearHeading(
+                Pose2d(
+                    Vector2d(
+                        vectorUnit.of(poseHeadingRad.position.x).`in`(Inches),
+                        vectorUnit.of(poseHeadingRad.position.y).`in`(Inches)
+                    ),
+                    poseHeadingRad.heading
+                ), tangent, velConstraints, accelConstraints
+            )
+        }
+
+    /**
+     * Move to the specified [poseHeadingRad] in a spline path while linearly interpolating the heading to [tangent].
+     */
+    @JvmOverloads
+    fun splineToLinearHeading(
+        poseHeadingRad: Pose2d,
+        vectorUnit: Distance = Inches,
+        tangent: Double,
+        tangentUnit: Angle = Radians
+    ) =
+        apply {
+            builder = builder.splineToLinearHeading(
+                Pose2d(
+                    Vector2d(
+                        vectorUnit.of(poseHeadingRad.position.x).`in`(Inches),
+                        vectorUnit.of(poseHeadingRad.position.y).`in`(Inches)
+                    ),
+                    poseHeadingRad.heading
+                ), tangentUnit.of(tangent).`in`(Radians), velConstraints, accelConstraints
+            )
+        }
+
+    /**
+     * Move to the specified [poseHeadingRad] in a spline path while spline interpolating the heading to [tangent].
+     */
+    @JvmOverloads
+    fun splineToSplineHeading(
+        poseHeadingRad: Pose2d,
+        vectorUnit: Distance = Inches,
+        tangent: Rotation2d
+    ) =
+        apply {
+            builder = builder.splineToSplineHeading(
+                Pose2d(
+                    Vector2d(
+                        vectorUnit.of(poseHeadingRad.position.x).`in`(Inches),
+                        vectorUnit.of(poseHeadingRad.position.y).`in`(Inches)
+                    ),
+                    poseHeadingRad.heading
+                ),
+                tangent, velConstraints, accelConstraints
+            )
+        }
+
+    /**
+     * Move to the specified [poseHeadingRad] in a spline path while spline interpolating the heading to [tangent].
+     */
+    @JvmOverloads
+    fun splineToSplineHeading(
+        poseHeadingRad: Pose2d,
+        vectorUnit: Distance = Inches,
+        tangent: Double,
+        tangentUnit: Angle = Radians
+    ) =
+        apply {
+            builder = builder.splineToSplineHeading(
+                Pose2d(
+                    Vector2d(
+                        vectorUnit.of(poseHeadingRad.position.x).`in`(Inches),
+                        vectorUnit.of(poseHeadingRad.position.y).`in`(Inches)
+                    ),
+                    poseHeadingRad.heading
+                ), tangentUnit.of(tangent).`in`(Radians), velConstraints, accelConstraints
+            )
+        }
+
 
     /**
      * Creates a new builder with the same settings and default constraints at the current pose, tangent.

@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.roadrunner.Constraints;
 import com.noahbres.meepmeep.roadrunner.DriveTrainType;
 
@@ -12,7 +13,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.TaskBuilder;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Angle;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Distance;
 
 /**
  * Internal shim for MeepMeep and BunyipsLib interop.
@@ -65,6 +69,7 @@ public abstract class MeepMeepInternal {
 
         /**
          * Shim to create a new trajectory from the supplied pose.
+         * PoseMap is not used in this shim.
          *
          * @param startPose the pose to start the trajectory at and where the robot will be placed
          * @return a new TaskBuilder to build the trajectory action
@@ -81,6 +86,20 @@ public abstract class MeepMeepInternal {
             );
             operatingIndex = 0;
             return tb;
+        }
+
+        /**
+         * Shim to create a new trajectory from the supplied pose.
+         * PoseMap is not used in this shim.
+         *
+         * @param startVec the vector to start the trajectory at and where the robot will be placed
+         * @param distUnit the unit of distance of the start pose
+         * @param ang      the angle of the start pose
+         * @param angUnit  the unit of angle of the start pose
+         * @return a new TaskBuilder to build the trajectory action
+         */
+        public TaskBuilder makeTrajectory(Vector2d startVec, Distance distUnit, double ang, Angle angUnit) {
+            return makeTrajectory(Geometry.unitPose(startVec, distUnit, ang, angUnit));
         }
     }
 }

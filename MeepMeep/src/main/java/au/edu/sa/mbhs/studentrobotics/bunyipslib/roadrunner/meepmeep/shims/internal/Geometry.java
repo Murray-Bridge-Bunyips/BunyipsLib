@@ -77,16 +77,17 @@ public final class Geometry {
     /**
      * Create a pose in the desired units to be converted to conventional Inches and Radians units.
      *
-     * @param value the pose
+     * @param vec the vector element
      * @param tUnit the unit of both the x and y values
+     * @param r the heading value
      * @param rUnit the unit of the heading value
      * @return the vector in Inches
      */
-    public static Pose2d unitPose(Pose2d value, Distance tUnit, Angle rUnit) {
+    public static Pose2d unitPose(Vector2d vec, Distance tUnit, double r, Angle rUnit) {
         return new Pose2d(
-                tUnit.of(value.position.x).in(Inches),
-                tUnit.of(value.position.y).in(Inches),
-                rUnit.of(value.heading.toDouble()).in(Radians)
+                tUnit.of(vec.x).in(Inches),
+                tUnit.of(vec.y).in(Inches),
+                rUnit.of(r).in(Radians)
         );
     }
 }
