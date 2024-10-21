@@ -255,10 +255,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
 
-        leftFrontPower = Mathf.clamp(wheelVels.leftFront.get(0) / maxPowerMag, -1, 1);
-        leftBackPower = Mathf.clamp(wheelVels.leftBack.get(0) / maxPowerMag, -1, 1);
-        rightBackPower = Mathf.clamp(wheelVels.rightBack.get(0) / maxPowerMag, -1, 1);
-        rightFrontPower = Mathf.clamp(wheelVels.rightFront.get(0) / maxPowerMag, -1, 1);
+        leftFrontPower = wheelVels.leftFront.get(0) / maxPowerMag;
+        leftBackPower = wheelVels.leftBack.get(0) / maxPowerMag;
+        rightBackPower = wheelVels.rightBack.get(0) / maxPowerMag;
+        rightFrontPower = wheelVels.rightFront.get(0) / maxPowerMag;
     }
 
     /**
@@ -325,10 +325,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         rightFront.setPower(rightFrontPower);
 
         opMode(o -> o.telemetry.add("%: FL:%\\% %, BL:%\\% %, BR:%\\% %, FR:%\\% %", this,
-                Math.round(Math.abs(leftFrontPower * 100)), leftFrontPower >= 0 ? "↑" : "↓",
-                Math.round(Math.abs(leftBackPower * 100)), leftBackPower >= 0 ? "↑" : "↓",
-                Math.round(Math.abs(rightBackPower * 100)), rightBackPower >= 0 ? "↑" : "↓",
-                Math.round(Math.abs(rightFrontPower * 100)), rightFrontPower >= 0 ? "↑" : "↓"
+                Math.round(Math.min(100, Math.abs(leftFrontPower * 100))), leftFrontPower >= 0 ? "↑" : "↓",
+                Math.round(Math.min(100, Math.abs(leftBackPower * 100))), leftBackPower >= 0 ? "↑" : "↓",
+                Math.round(Math.min(100, Math.abs(rightBackPower * 100))), rightBackPower >= 0 ? "↑" : "↓",
+                Math.round(Math.min(100, Math.abs(rightFrontPower * 100))), rightFrontPower >= 0 ? "↑" : "↓"
         ));
     }
 

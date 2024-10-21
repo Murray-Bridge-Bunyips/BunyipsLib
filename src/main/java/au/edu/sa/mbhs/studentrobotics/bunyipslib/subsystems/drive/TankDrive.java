@@ -226,8 +226,8 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             maxPowerMag = Math.max(maxPowerMag, power.value());
         }
 
-        leftPower = Mathf.clamp(wheelVels.left.get(0) / maxPowerMag, -1, 1);
-        rightPower = Mathf.clamp(wheelVels.right.get(0) / maxPowerMag, -1, 1);
+        leftPower = wheelVels.left.get(0) / maxPowerMag;
+        rightPower = wheelVels.right.get(0) / maxPowerMag;
     }
 
     @Override
@@ -255,8 +255,8 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         }
 
         opMode(o -> o.telemetry.add("%: L:%\\% %, R:%\\% %", this,
-                Math.round(Math.abs(leftPower * 100)), leftPower >= 0 ? "↑" : "↓",
-                Math.round(Math.abs(rightPower * 100)), rightPower >= 0 ? "↑" : "↓"
+                Math.round(Math.min(100, Math.abs(leftPower * 100))), leftPower >= 0 ? "↑" : "↓",
+                Math.round(Math.min(100, Math.abs(rightPower * 100))), rightPower >= 0 ? "↑" : "↓"
         ));
     }
 

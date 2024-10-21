@@ -200,7 +200,7 @@ abstract class Task(
     fun after(runnable: Runnable): SequentialTaskGroup {
         val task = RunTask(runnable)
         task.withName("$name hook")
-        return SequentialTaskGroup(this, task)
+        return SequentialTaskGroup(task, this)
     }
 
     /**
