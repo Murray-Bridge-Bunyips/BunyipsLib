@@ -74,6 +74,17 @@ public class TurnTask extends Task {
     /**
      * Construct a new TurnTask that will turn the robot to the given global angle.
      *
+     * @param drive the drive instance to use, this subsystem will be automatically attached to the task
+     *              if it is a {@link BunyipsSubsystem}
+     * @param angle the angle to turn to in a global coordinate frame
+     */
+    public TurnTask(Moveable drive, Measure<Angle> angle) {
+        this(drive, angle, false);
+    }
+
+    /**
+     * Construct a new TurnTask that will turn the robot to the given global angle.
+     *
      * @param powerIn      the consumer to set the power of the robot, can ignore the x and y values if not needed
      * @param poseEstimate the supplier to get the current pose of the robot, can ignore the x and y values if not needed
      * @param angle        the angle to turn to in a global coordinate frame
