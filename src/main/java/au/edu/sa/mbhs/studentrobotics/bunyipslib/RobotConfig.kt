@@ -17,8 +17,8 @@ import java.util.function.Consumer
 
 /**
  * Abstract class to use as parent to the class you will define to mirror a "saved configuration"
- * on the Robot Controller, and to define any robot related constants.
- * Supported for use in both BunyipsOpModes and any other normal SDK OpMode.
+ * on the Robot Controller, and to define any robot related constants or subsystems.
+ * Supported for use in both BunyipsOpModes and any other normal SDK OpMode. This paradigm is known as RobotHardware.
  * ```
  *     private final YourConfig config = new YourConfig();
  * ```
@@ -39,8 +39,9 @@ abstract class RobotConfig {
     protected lateinit var hardwareMap: HardwareMap
 
     /**
-     * Here you will assign class instance variables to public HardwareDevices, and assign any runtime-related
-     * settings and variables for use. This is called from the `init` method.
+     * This method is executed when the `init` method is called on this RobotConfig instance. In this method,
+     * you have access to the `hardwareMap`, as well as utility methods such as `getHardware` to retrieve and configure
+     * hardware. Devices and subsystems that you would like to expose should be listed as public fields in your config.
      */
     protected abstract fun onRuntime()
 
