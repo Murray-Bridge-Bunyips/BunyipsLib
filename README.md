@@ -49,4 +49,4 @@ robots, see [BunyipsFTC](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/) f
 
 ___
 
-###### BunyipsLib. Copyright (c) 2024 Lucas Bubner, MBHS Student Robotics Club, under the MIT License.<br>Library features, including the FTC SDK, RoadRunner v0.5.6, and other redistributed components are copyright of their respective owners.
+###### BunyipsLib. Copyright (c) 2024 Lucas Bubner, MBHS Student Robotics Club, under the MIT License.<br>Library features, including the FTC SDK, RoadRunner, and other redistributed components are copyright of their respective owners.
