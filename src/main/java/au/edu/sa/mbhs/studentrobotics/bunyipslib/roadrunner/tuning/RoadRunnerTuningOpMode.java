@@ -90,7 +90,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
         if (drive instanceof MecanumDrive) {
             dvf = (h) -> {
                 MecanumDrive md = (MecanumDrive) drive;
-                md.pose = Geometry.zeroPose();
+                md.setPose(Geometry.zeroPose());
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
                 Localizer localizer = md.getLocalizer();
@@ -176,7 +176,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
         } else if (drive instanceof TankDrive) {
             dvf = (h) -> {
                 TankDrive td = (TankDrive) drive;
-                td.pose = Geometry.zeroPose();
+                td.setPose(Geometry.zeroPose());
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
                 Localizer localizer = td.getLocalizer();
