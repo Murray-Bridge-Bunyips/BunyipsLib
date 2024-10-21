@@ -45,6 +45,7 @@ public class Accumulator implements Localizable {
      */
     public Accumulator(Pose2d initialPose) {
         pose = initialPose;
+        Storage.memory().lastKnownPosition = initialPose;
     }
 
     /**
@@ -120,18 +121,18 @@ public class Accumulator implements Localizable {
 
     @NonNull
     @Override
-    public final Pose2d getPoseEstimate() {
+    public final Pose2d getPose() {
         return pose;
     }
 
     @Override
-    public final void setPoseEstimate(@NonNull Pose2d newPose) {
+    public final void setPose(@NonNull Pose2d newPose) {
         pose = newPose;
     }
 
     @NonNull
     @Override
-    public final PoseVelocity2d getPoseVelocity() {
+    public final PoseVelocity2d getVelocity() {
         return velocity;
     }
 }

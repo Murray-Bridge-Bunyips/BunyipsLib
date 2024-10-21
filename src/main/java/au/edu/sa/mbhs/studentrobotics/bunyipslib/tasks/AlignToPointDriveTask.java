@@ -123,7 +123,7 @@ public class AlignToPointDriveTask extends ForeverTask {
     @Override
     protected void periodic() {
         // https://github.com/NoahBres/road-runner-quickstart/blob/advanced-examples/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/advanced/TeleOpAlignWithPoint.java
-        Pose2d poseEstimate = drive.getPoseEstimate();
+        Pose2d poseEstimate = drive.getPose();
         if (poseEstimate == null)
             throw new IllegalStateException("AlignToPointDriveTask requires a localizer to be attached to the drive system!");
         Vector2d point = pointSupplier.get();
@@ -153,7 +153,7 @@ public class AlignToPointDriveTask extends ForeverTask {
         headingInput = Mathf.clamp(headingInput, -maxRotation, maxRotation);
 
         // If we're at a discontinuity, we can't really do much so we should stop rotating
-        if (Double.isNaN(headingInput) || Mathf.isNear(0, Geometry.distBetween(drive.getPoseEstimate().position, point), VECTOR_DELTA_CUTOFF_INCHES))
+        if (Double.isNaN(headingInput) || Mathf.isNear(0, Geometry.distBetween(drive.getPose().position, point), VECTOR_DELTA_CUTOFF_INCHES))
             headingInput = 0;
 
         // Combine the x/y velocity with our derived angular velocity

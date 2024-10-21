@@ -142,7 +142,7 @@ public class AlignToAprilTagTask extends Task {
         ));
         hasCalculated = true;
 
-        Pose2d poseEstimate = drive.getPoseEstimate();
+        Pose2d poseEstimate = drive.getPose();
         if (poseEstimate == null)
             throw new IllegalStateException("A drive localizer must be present to use AlignToAprilTagTask!");
         VectorF point = target.get().getMetadata().get().fieldPosition;

@@ -103,7 +103,7 @@ public class HolonomicDriveTask extends ForeverTask {
     protected void periodic() {
         double xV = x.get(), yV = y.get();
         if (fieldCentricEnabled.getAsBoolean()) {
-            Pose2d currentPose = Objects.requireNonNull(drive.getPoseEstimate(), "A heading localizer must be attached to the drive instance to allow for Field-Centric driving!");
+            Pose2d currentPose = Objects.requireNonNull(drive.getPose(), "A heading localizer must be attached to the drive instance to allow for Field-Centric driving!");
             Vector2d cVec = Controls.makeCartesianVector(xV, yV);
             drive.setPower(Geometry.poseToVel(new Pose2d(
                     Cartesian.toVector(Cartesian.rotate(cVec, Radians.of(-currentPose.heading.toDouble()))),

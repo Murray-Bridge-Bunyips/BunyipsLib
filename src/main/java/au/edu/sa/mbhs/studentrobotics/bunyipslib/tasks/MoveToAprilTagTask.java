@@ -253,7 +253,7 @@ public class MoveToAprilTagTask extends Task {
                 ))
         );
 
-        Pose2d poseEstimate = drive.getPoseEstimate();
+        Pose2d poseEstimate = drive.getPose();
         if (poseEstimate == null)
             throw new IllegalStateException("A drive localizer must be present to use MoveToAprilTagTask!");
         VectorF point = target.get().getMetadata().get().fieldPosition;

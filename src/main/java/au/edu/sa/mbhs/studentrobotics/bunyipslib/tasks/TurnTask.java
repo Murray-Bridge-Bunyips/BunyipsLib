@@ -48,7 +48,7 @@ public class TurnTask extends Task {
      * @param delta if this angle is a delta from the current drive rotation at runtime
      */
     public TurnTask(Moveable drive, Measure<Angle> angle, boolean delta) {
-        this(drive::setPower, () -> Objects.requireNonNull(drive.getPoseEstimate(), "Drive instance requires a localizer attached to determine heading!"), angle, delta);
+        this(drive::setPower, () -> Objects.requireNonNull(drive.getPose(), "Drive instance requires a localizer attached to determine heading!"), angle, delta);
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive);
     }

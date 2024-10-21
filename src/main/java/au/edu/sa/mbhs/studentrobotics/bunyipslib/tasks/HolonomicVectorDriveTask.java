@@ -233,7 +233,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
     @Override
     protected void periodic() {
-        Pose2d current = Objects.requireNonNull(drive.getPoseEstimate(), "A localizer must be attached to the drive instance in order to use the HolonomicVectorDriveTask!");
+        Pose2d current = Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance in order to use the HolonomicVectorDriveTask!");
 
         // Create a new pose based off the user input, which will be the offset from the current pose.
         // Must rotate by 90 degrees (y, -x), then flip y as it is inverted. Rotation must also be inverted as it

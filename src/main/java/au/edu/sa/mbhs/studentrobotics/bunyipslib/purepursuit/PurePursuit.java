@@ -235,7 +235,7 @@ public class PurePursuit implements Runnable {
             time.reset();
             return;
         }
-        Pose2d currentPose = Objects.requireNonNull(drive.getPoseEstimate(), "Non-null Localizer required for Pure Pursuit!");
+        Pose2d currentPose = Objects.requireNonNull(drive.getPose(), "Non-null Localizer required for Pure Pursuit!");
 
         if (time.milliseconds() >= PROJECTION_REFRESH_RATE) {
             pathProjection = currentPath.project(currentPose.position, PROJECTION_INTERVAL);
@@ -328,7 +328,7 @@ public class PurePursuit implements Runnable {
      * @return the Pure Pursuit path and task builder
      */
     public PathMaker makePath() {
-        return makePath(drive::getPoseEstimate);
+        return makePath(drive::getPose);
     }
 
     /**

@@ -28,7 +28,6 @@ import com.acmerobotics.roadrunner.TimeTrajectory;
 import com.acmerobotics.roadrunner.TimeTurn;
 import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.acmerobotics.roadrunner.TurnConstraints;
-import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
@@ -91,19 +90,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", 50_000_000);
     private final DownsampledWriter mecanumCommandWriter = new DownsampledWriter("MECANUM_COMMAND", 50_000_000);
 
-    // Exposed as public for ease of use and to match the quickstart, although the pose field is *not* mutable.
-    // This is due to the accumulator taking responsibility for updating the pose estimate, so we can't have a field
-    // that can be directly modified.
-    /**
-     * (Read-only) The current pose estimate of the robot.
-     * @see #setPoseEstimate(Pose2d)
-     */
-    public Pose2d pose;
-    /**
-     * (Read-only) The current pose velocity of the robot.
-     */
-    public PoseVelocity2d poseVel;
-
     private Localizer localizer;
     private Accumulator accumulator;
     private ErrorThresholds errorThresholds = ErrorThresholds.DEFAULT;
@@ -128,8 +114,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     public MecanumDrive(DriveModel driveModel, MotionProfile motionProfile, MecanumGains mecanumGains, DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront, LazyImu lazyImu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, Pose2d startPose) {
         accumulator = new Accumulator(startPose);
-        Storage.memory().lastKnownPosition = startPose;
-        pose = startPose;
 
         gains = mecanumGains;
         model = driveModel;
@@ -270,8 +254,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     @Override
     @NonNull
-    public Pose2d getPoseEstimate() {
-        return accumulator.getPoseEstimate();
+    public Pose2d getPose() {
+        return accumulator.getPose();
     }
 
     /**
@@ -281,8 +265,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param newPose the new pose to continue localization from
      */
     @Override
-    public void setPoseEstimate(@NonNull Pose2d newPose) {
-        accumulator.setPoseEstimate(newPose);
+    public void setPose(@NonNull Pose2d newPose) {
+        accumulator.setPose(newPose);
     }
 
     /**
@@ -292,8 +276,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     @Override
     @NonNull
-    public PoseVelocity2d getPoseVelocity() {
-        return accumulator.getPoseVelocity();
+    public PoseVelocity2d getVelocity() {
+        return accumulator.getVelocity();
     }
 
     /**
@@ -306,11 +290,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             localizer = new MecanumLocalizer(model, leftFront, leftBack, rightBack, rightFront, lazyImu.get());
         }
 
-        Twist2dDual<Time> twist = localizer.update();
-        accumulator.accumulate(twist);
-        pose = accumulator.getPoseEstimate();
-        poseVel = accumulator.getPoseVelocity();
+        accumulator.accumulate(localizer.update());
 
+        Pose2d pose = accumulator.getPose();
+        PoseVelocity2d poseVel = accumulator.getVelocity();
         opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
                 Mathf.round(pose.position.x, 1),
                 Mathf.round(poseVel.linearVel.x, 1),
@@ -368,6 +351,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         private final TimeTrajectory timeTrajectory;
         private final double[] xPoints, yPoints;
         private Pose2d error = Geometry.zeroPose();
+        private PoseVelocity2d robotVelRobot = Geometry.zeroVel();
         private double beginTs = -1;
         private double t;
 
@@ -409,13 +393,13 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
-            PoseVelocity2d robotVelRobot = getPoseVelocity();
+            robotVelRobot = accumulator.getVelocity();
 
             PoseVelocity2dDual<Time> command = new HolonomicController(
                     gains.axialGain, gains.lateralGain, gains.headingGain,
                     gains.axialVelGain, gains.lateralVelGain, gains.headingVelGain
             )
-                    .compute(txWorldTarget, accumulator.getPoseEstimate(), robotVelRobot);
+                    .compute(txWorldTarget, accumulator.getPose(), robotVelRobot);
             driveCommandWriter.write(new DriveCommandMessage(command));
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
@@ -431,7 +415,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
 
-            error = txWorldTarget.value().minusExp(accumulator.getPoseEstimate());
+            error = txWorldTarget.value().minusExp(accumulator.getPose());
             p.put("xError", error.position.x);
             p.put("yError", error.position.y);
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
@@ -451,9 +435,9 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         protected boolean isTaskFinished() {
             return t >= timeTrajectory.duration
                     && error.position.norm() < errorThresholds.getMaxTranslationalError().in(Inches)
-                    && poseVel.linearVel.norm() < errorThresholds.getMinVelStab().in(InchesPerSecond)
+                    && robotVelRobot.linearVel.norm() < errorThresholds.getMinVelStab().in(InchesPerSecond)
                     && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
-                    && poseVel.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
+                    && robotVelRobot.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
         }
 
         @Override
@@ -471,6 +455,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public final class TurnTask extends Task {
         private final TimeTurn turn;
         private Pose2d error = Geometry.zeroPose();
+        private PoseVelocity2d robotVelRobot = Geometry.zeroVel();
         private double beginTs = -1;
         private double t;
 
@@ -499,13 +484,13 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             Pose2dDual<Time> txWorldTarget = turn.get(t);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
-            PoseVelocity2d robotVelRobot = getPoseVelocity();
+            robotVelRobot = accumulator.getVelocity();
 
             PoseVelocity2dDual<Time> command = new HolonomicController(
                     gains.axialGain, gains.lateralGain, gains.headingGain,
                     gains.axialVelGain, gains.lateralVelGain, gains.headingVelGain
             )
-                    .compute(txWorldTarget, accumulator.getPoseEstimate(), robotVelRobot);
+                    .compute(txWorldTarget, accumulator.getPose(), robotVelRobot);
             driveCommandWriter.write(new DriveCommandMessage(command));
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
@@ -520,7 +505,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
 
-            error = txWorldTarget.value().minusExp(accumulator.getPoseEstimate());
+            error = txWorldTarget.value().minusExp(accumulator.getPose());
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
 
             Canvas c = p.fieldOverlay();
@@ -537,7 +522,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         protected boolean isTaskFinished() {
             return t >= turn.duration
                     && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
-                    && poseVel.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
+                    && robotVelRobot.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
         }
 
         @Override

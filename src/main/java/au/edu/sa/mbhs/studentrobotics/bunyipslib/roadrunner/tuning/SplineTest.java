@@ -22,7 +22,7 @@ public final class SplineTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        drive.setPoseEstimate(Geometry.zeroPose());
+        drive.setPose(Geometry.zeroPose());
 
         waitForStart();
 

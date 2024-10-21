@@ -55,7 +55,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
         kinematics = new MecanumKinematics(model.inPerTick * model.trackWidthTicks,
                 model.inPerTick / model.lateralInPerTick);
         powers = drive::getMotorPowers;
-        imuOffset = drive.getPoseEstimate().heading.toDouble();
+        imuOffset = drive.getPose().heading.toDouble();
     }
 
     /**
@@ -72,7 +72,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
         kinematics = new MecanumKinematics(model.inPerTick * model.trackWidthTicks,
                 model.inPerTick / model.lateralInPerTick);
         input = driveInput;
-        imuOffset = drive.getPoseEstimate().heading.toDouble();
+        imuOffset = drive.getPose().heading.toDouble();
     }
 
     @NonNull
@@ -93,7 +93,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
             wheelDeltas.add(runningMotorPos[i] - lastMotorPos[i]);
         }
 
-        double heading = Mathf.angleModulus(Radians.of(drive.getPoseEstimate().heading.toDouble() - imuOffset)).in(Radians);
+        double heading = Mathf.angleModulus(Radians.of(drive.getPose().heading.toDouble() - imuOffset)).in(Radians);
         double headingDelta = Mathf.angleModulus(Radians.of(heading - lastHeading)).in(Radians);
 
         Twist2dDual<Time> robotPoseDelta = kinematics.forward(new MecanumKinematics.WheelIncrements<>(

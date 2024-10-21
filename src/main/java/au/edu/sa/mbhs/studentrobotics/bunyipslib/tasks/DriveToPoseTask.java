@@ -65,7 +65,7 @@ public class DriveToPoseTask extends Task {
         if (driveInstance instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) driveInstance, true);
         drive = driveInstance;
-        localizer = () -> Objects.requireNonNull(drive.getPoseEstimate(), "A localizer must be attached to the drive instance for P2P to work!");
+        localizer = () -> Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance for P2P to work!");
         this.targetPose = targetPose;
         this.forwardController = forwardController;
         this.strafeController = strafeController;

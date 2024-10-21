@@ -102,12 +102,12 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
             accumulator.accumulate(twist);
 
             opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
-                    Mathf.round(accumulator.getPoseEstimate().position.x, 1),
-                    Mathf.round(accumulator.getPoseVelocity().linearVel.x, 1),
-                    Mathf.round(accumulator.getPoseEstimate().position.y, 1),
-                    Mathf.round(accumulator.getPoseVelocity().linearVel.y, 1),
-                    Mathf.round(Math.toDegrees(accumulator.getPoseEstimate().heading.toDouble()), 1),
-                    Mathf.round(Math.toDegrees(accumulator.getPoseVelocity().angVel), 1)
+                    Mathf.round(accumulator.getPose().position.x, 1),
+                    Mathf.round(accumulator.getVelocity().linearVel.x, 1),
+                    Mathf.round(accumulator.getPose().position.y, 1),
+                    Mathf.round(accumulator.getVelocity().linearVel.y, 1),
+                    Mathf.round(Math.toDegrees(accumulator.getPose().heading.toDouble()), 1),
+                    Mathf.round(Math.toDegrees(accumulator.getVelocity().angVel), 1)
             ).color("gray"));
         }
 
@@ -145,19 +145,19 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
 
     @Nullable
     @Override
-    public Pose2d getPoseEstimate() {
-        return accumulator != null ? accumulator.getPoseEstimate() : null;
+    public Pose2d getPose() {
+        return accumulator != null ? accumulator.getPose() : null;
     }
 
     @Override
-    public void setPoseEstimate(@NonNull Pose2d newPose) {
+    public void setPose(@NonNull Pose2d newPose) {
         if (accumulator != null)
-            accumulator.setPoseEstimate(newPose);
+            accumulator.setPose(newPose);
     }
 
     @Nullable
     @Override
-    public PoseVelocity2d getPoseVelocity() {
-        return accumulator != null ? accumulator.getPoseVelocity() : null;
+    public PoseVelocity2d getVelocity() {
+        return accumulator != null ? accumulator.getVelocity() : null;
     }
 }

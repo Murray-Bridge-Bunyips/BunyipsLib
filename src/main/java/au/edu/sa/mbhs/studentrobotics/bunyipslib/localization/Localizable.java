@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 
 /**
- * Interface for a generic object that may hold some current pose estimate and velocity.
+ * Interface for a generic object that may hold some current pose and velocity estimates.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
@@ -19,7 +19,7 @@ public interface Localizable {
      * @return the current pose estimate of the drive, may be nullable if this drive does not support localization
      */
     @Nullable
-    Pose2d getPoseEstimate();
+    Pose2d getPose();
 
     /**
      * Reset the accumulated pose estimate to this pose. Further updates from an internal localizer will continue
@@ -27,7 +27,7 @@ public interface Localizable {
      *
      * @param newPose the new pose to continue localization from, may no-op if the drive does not support localization
      */
-    void setPoseEstimate(@NonNull Pose2d newPose);
+    void setPose(@NonNull Pose2d newPose);
 
     /**
      * Calculate the first derivative of the accumulated pose from an internal localizer.
@@ -36,5 +36,5 @@ public interface Localizable {
      * does not supply velocity
      */
     @Nullable
-    PoseVelocity2d getPoseVelocity();
+    PoseVelocity2d getVelocity();
 }

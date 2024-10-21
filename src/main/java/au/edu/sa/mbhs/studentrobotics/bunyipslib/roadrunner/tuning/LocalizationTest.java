@@ -40,7 +40,7 @@ public final class LocalizationTest extends LinearOpMode {
                     -gamepad1.right_stick_x
             ));
 
-            Pose2d poseEstimate = Objects.requireNonNull(drive.getPoseEstimate(), "Non-null localizer required to localize.");
+            Pose2d poseEstimate = Objects.requireNonNull(drive.getPose(), "Non-null localizer required to localize.");
 
             telemetry.addData("x", poseEstimate.position.x);
             telemetry.addData("y", poseEstimate.position.y);
