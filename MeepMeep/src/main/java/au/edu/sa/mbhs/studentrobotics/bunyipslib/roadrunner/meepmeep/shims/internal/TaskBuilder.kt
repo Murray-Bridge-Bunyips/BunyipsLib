@@ -138,7 +138,7 @@ class TaskBuilder(
         apply { builder = builder.setTangent(unit.of(r).inUnit(Radians)) }
 
     /**
-     * Set the reversed tangent state of thebuilder = builder.
+     * Set the reversed tangent state of the builder.
      */
     fun setReversed(reversed: Boolean) = apply { builder = builder.setReversed(reversed) }
 

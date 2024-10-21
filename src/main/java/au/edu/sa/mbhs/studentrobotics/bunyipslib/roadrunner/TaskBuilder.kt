@@ -119,19 +119,19 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         apply { afterTime(dt, unit, InstantAction(f)) }
 
     /**
-     * Sets the tangent of thebuilder = builder.
+     * Sets the tangent of the builder.
      */
     fun setTangent(r: Rotation2d) = apply { builder = builder.setTangent(r) }
 
     /**
-     * Sets the tangent of thebuilder = builder.
+     * Sets the tangent of the builder.
      */
     @JvmOverloads
     fun setTangent(r: Double, unit: Angle = Radians) =
         apply { builder = builder.setTangent(unit.of(r).`in`(Radians)) }
 
     /**
-     * Set the reversed tangent state of thebuilder = builder.
+     * Set the reversed tangent state of the builder.
      */
     fun setReversed(reversed: Boolean) = apply { builder = builder.setReversed(reversed) }
 
