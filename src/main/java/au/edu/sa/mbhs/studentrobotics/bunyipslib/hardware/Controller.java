@@ -32,59 +32,59 @@ public class Controller extends Gamepad {
     private final HashMap<Controls.Analog, UnaryFunction> axes = new HashMap<>();
     private final HashMap<Controls, Boolean> debounces = new HashMap<>();
     /**
-     * Shorthand for left_stick_x
+     * (Read-only) Shorthand for left_stick_x
      */
     public volatile float lsx;
     /**
-     * Shorthand for left_stick_y
+     * (Read-only) Shorthand for left_stick_y
      */
     public volatile float lsy;
     /**
-     * Shorthand for right_stick_x
+     * (Read-only) Shorthand for right_stick_x
      */
     public volatile float rsx;
     /**
-     * Shorthand for right_stick_y
+     * (Read-only) Shorthand for right_stick_y
      */
     public volatile float rsy;
     /**
-     * Shorthand for left_trigger
+     * (Read-only) Shorthand for left_trigger
      */
     public volatile float lt;
     /**
-     * Shorthand for right_trigger
+     * (Read-only) Shorthand for right_trigger
      */
     public volatile float rt;
     /**
-     * Shorthand for left_bumper
+     * (Read-only) Shorthand for left_bumper
      */
     public volatile boolean lb;
     /**
-     * Shorthand for right_bumper
+     * (Read-only) Shorthand for right_bumper
      */
     public volatile boolean rb;
     /**
-     * Shorthand for dpad_up
+     * (Read-only) Shorthand for dpad_up
      */
     public volatile boolean du;
     /**
-     * Shorthand for dpad_down
+     * (Read-only) Shorthand for dpad_down
      */
     public volatile boolean dd;
     /**
-     * Shorthand for dpad_left
+     * (Read-only) Shorthand for dpad_left
      */
     public volatile boolean dl;
     /**
-     * Shorthand for dpad_right
+     * (Read-only) Shorthand for dpad_right
      */
     public volatile boolean dr;
     /**
-     * Shorthand for left_stick_button
+     * (Read-only) Shorthand for left_stick_button
      */
     public volatile boolean lsb;
     /**
-     * Shorthand for right_stick_button
+     * (Read-only) Shorthand for right_stick_button
      */
     public volatile boolean rsb;
 

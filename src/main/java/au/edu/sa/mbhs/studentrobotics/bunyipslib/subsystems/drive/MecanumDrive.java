@@ -91,16 +91,18 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", 50_000_000);
     private final DownsampledWriter mecanumCommandWriter = new DownsampledWriter("MECANUM_COMMAND", 50_000_000);
 
-    // Exposed as public for ease of use and to match the quickstart, will also expose poseVelo for completeness,
-    // although poseVelo cannot be reassigned by the user and must instead be done via the power setter.
+    // Exposed as public for ease of use and to match the quickstart, although the pose field is *not* mutable.
+    // This is due to the accumulator taking responsibility for updating the pose estimate, so we can't have a field
+    // that can be directly modified.
     /**
-     * The current pose estimate of the robot which may be modified to reflect a new pose.
+     * (Read-only) The current pose estimate of the robot.
+     * @see #setPoseEstimate(Pose2d)
      */
     public Pose2d pose;
     /**
      * (Read-only) The current pose velocity of the robot.
      */
-    public PoseVelocity2d poseVelo;
+    public PoseVelocity2d poseVel;
 
     private Localizer localizer;
     private Accumulator accumulator;
@@ -305,18 +307,17 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         }
 
         Twist2dDual<Time> twist = localizer.update();
-        accumulator.setPoseEstimate(pose);
         accumulator.accumulate(twist);
         pose = accumulator.getPoseEstimate();
-        poseVelo = accumulator.getPoseVelocity();
+        poseVel = accumulator.getPoseVelocity();
 
         opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
                 Mathf.round(pose.position.x, 1),
-                Mathf.round(poseVelo.linearVel.x, 1),
+                Mathf.round(poseVel.linearVel.x, 1),
                 Mathf.round(pose.position.y, 1),
-                Mathf.round(poseVelo.linearVel.y, 1),
+                Mathf.round(poseVel.linearVel.y, 1),
                 Mathf.round(Math.toDegrees(pose.heading.toDouble()), 1),
-                Mathf.round(Math.toDegrees(poseVelo.angVel), 1)
+                Mathf.round(Math.toDegrees(poseVel.angVel), 1)
         ).color("gray"));
 
         leftFront.setPower(leftFrontPower);
@@ -414,7 +415,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                     gains.axialGain, gains.lateralGain, gains.headingGain,
                     gains.axialVelGain, gains.lateralVelGain, gains.headingVelGain
             )
-                    .compute(txWorldTarget, pose, robotVelRobot);
+                    .compute(txWorldTarget, accumulator.getPoseEstimate(), robotVelRobot);
             driveCommandWriter.write(new DriveCommandMessage(command));
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
@@ -430,7 +431,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
 
-            error = txWorldTarget.value().minusExp(pose);
+            error = txWorldTarget.value().minusExp(accumulator.getPoseEstimate());
             p.put("xError", error.position.x);
             p.put("yError", error.position.y);
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
@@ -450,9 +451,9 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         protected boolean isTaskFinished() {
             return t >= timeTrajectory.duration
                     && error.position.norm() < errorThresholds.getMaxTranslationalError().in(Inches)
-                    && poseVelo.linearVel.norm() < errorThresholds.getMinVelStab().in(InchesPerSecond)
+                    && poseVel.linearVel.norm() < errorThresholds.getMinVelStab().in(InchesPerSecond)
                     && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
-                    && poseVelo.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
+                    && poseVel.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
         }
 
         @Override
@@ -504,7 +505,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                     gains.axialGain, gains.lateralGain, gains.headingGain,
                     gains.axialVelGain, gains.lateralVelGain, gains.headingVelGain
             )
-                    .compute(txWorldTarget, pose, robotVelRobot);
+                    .compute(txWorldTarget, accumulator.getPoseEstimate(), robotVelRobot);
             driveCommandWriter.write(new DriveCommandMessage(command));
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
@@ -519,7 +520,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
 
-            error = txWorldTarget.value().minusExp(pose);
+            error = txWorldTarget.value().minusExp(accumulator.getPoseEstimate());
             p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
 
             Canvas c = p.fieldOverlay();
@@ -536,7 +537,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         protected boolean isTaskFinished() {
             return t >= turn.duration
                     && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
-                    && poseVelo.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
+                    && poseVel.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
         }
 
         @Override
