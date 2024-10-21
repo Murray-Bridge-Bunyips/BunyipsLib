@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import android.annotation.SuppressLint;
+
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -29,15 +31,28 @@ public class SelectTask<T> extends Task {
      * Add a task to run when the state is equal to the given state.
      * <p>
      * For Kotlin users, calling this method can be done with the notation {@code `when`}
-     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
+     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
+     * or by calling the alias {@code on}.
      *
      * @param state the state to run the task on
      * @param task  the task to run
      * @return this task
      */
+    @SuppressLint("NoHardKeywords")
     public SelectTask<T> when(T state, Task task) {
         tasks.put(state, task);
         return this;
+    }
+
+    /**
+     * Add a task to run when the state is equal to the given state.
+     *
+     * @param state the state to run the task on
+     * @param task  the task to run
+     * @return this task
+     */
+    public SelectTask<T> on(T state, Task task) {
+        return when(state, task);
     }
 
     @Override

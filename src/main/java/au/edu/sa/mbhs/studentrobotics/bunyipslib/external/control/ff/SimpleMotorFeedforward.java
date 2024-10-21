@@ -166,7 +166,7 @@ public class SimpleMotorFeedforward implements SystemController {
     }
 
     @Override
-    public void setCoefficients(double... coeffs) {
+    public void setCoefficients(double[] coeffs) {
         if (coeffs.length != 3) {
             throw new IllegalArgumentException("expected 3 coefficients, got " + coeffs.length);
         }

@@ -5,6 +5,8 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Deg
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Pose2d;
@@ -60,7 +62,7 @@ public class DriveToPoseTask extends Task {
      * @param headingController The system/PID controller for heading.
      */
     public DriveToPoseTask(@NonNull Measure<Time> timeout, @NonNull Moveable driveInstance,
-                           Pose2d targetPose, SystemController forwardController, SystemController strafeController, SystemController headingController) {
+                           Pose2d targetPose, SystemController forwardController, SystemController strafeController, @SuppressLint("LambdaLast") SystemController headingController) {
         super(timeout);
         if (driveInstance instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) driveInstance, true);

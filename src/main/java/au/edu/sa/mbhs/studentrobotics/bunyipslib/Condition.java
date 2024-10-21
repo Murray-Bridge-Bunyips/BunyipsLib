@@ -29,10 +29,10 @@ public class Condition implements BooleanSupplier {
     /**
      * Creates a new Condition with the given {@link BooleanSupplier}.
      *
-     * @param condition The {@link BooleanSupplier} to use.
      * @param edge      The edge detection to use.
+     * @param condition The {@link BooleanSupplier} to use.
      */
-    public Condition(BooleanSupplier condition, Edge edge) {
+    public Condition(Edge edge, BooleanSupplier condition) {
         this.condition = condition;
         this.edge = edge;
     }
@@ -43,7 +43,7 @@ public class Condition implements BooleanSupplier {
      * @param condition The {@link BooleanSupplier} to use.
      */
     public Condition(BooleanSupplier condition) {
-        this(condition, Edge.ACTIVE);
+        this(Edge.ACTIVE, condition);
     }
 
     /**
@@ -148,7 +148,7 @@ public class Condition implements BooleanSupplier {
      * @return A new Condition that is the logical OR of this Condition and the other {@link BooleanSupplier}.
      */
     public Condition or(BooleanSupplier other) {
-        return new Condition(() -> getAsBoolean() || other.getAsBoolean(), edge);
+        return new Condition(edge, () -> getAsBoolean() || other.getAsBoolean());
     }
 
     /**
@@ -158,7 +158,7 @@ public class Condition implements BooleanSupplier {
      * @return A new Condition that is the logical AND of this Condition and the other {@link BooleanSupplier}.
      */
     public Condition and(BooleanSupplier other) {
-        return new Condition(() -> getAsBoolean() && other.getAsBoolean(), edge);
+        return new Condition(edge, () -> getAsBoolean() && other.getAsBoolean());
     }
 
     /**
@@ -168,7 +168,7 @@ public class Condition implements BooleanSupplier {
      * @return A new Condition that is the logical XOR of this Condition and the other {@link BooleanSupplier}.
      */
     public Condition xor(BooleanSupplier other) {
-        return new Condition(() -> getAsBoolean() ^ other.getAsBoolean(), edge);
+        return new Condition(edge, () -> getAsBoolean() ^ other.getAsBoolean());
     }
 
     /**
@@ -177,7 +177,7 @@ public class Condition implements BooleanSupplier {
      * @return A new Condition that is the logical NOT of this Condition.
      */
     public Condition not() {
-        return new Condition(() -> !getAsBoolean(), edge);
+        return new Condition(edge, () -> !getAsBoolean());
     }
 
     @NonNull

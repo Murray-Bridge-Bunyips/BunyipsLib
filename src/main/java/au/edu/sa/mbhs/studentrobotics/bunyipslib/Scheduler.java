@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
@@ -218,12 +220,24 @@ public class Scheduler extends BunyipsComponent {
      * Create a new controller button trigger creator.
      * <p>
      * For Kotlin users, calling this method can be done with the notation {@code `when`}
-     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
+     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
+     * or by calling the alias {@code on}.
      *
      * @param user The Controller instance to use.
      * @return The controller button trigger creator.
      */
+    @SuppressLint("NoHardKeywords")
     public ControllerTriggerCreator when(Controller user) {
+        return new ControllerTriggerCreator(user);
+    }
+
+    /**
+     * Create a new controller button trigger creator.
+     *
+     * @param user The Controller instance to use.
+     * @return The controller button trigger creator.
+     */
+    public ControllerTriggerCreator on(Controller user) {
         return new ControllerTriggerCreator(user);
     }
 
@@ -250,16 +264,29 @@ public class Scheduler extends BunyipsComponent {
      * This condition will be evaluated continuously.
      * <p>
      * For Kotlin users, calling this method can be done with the notation {@code `when`}
-     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
+     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
+     * or by calling the alias {@code on}.
      *
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
+    @SuppressLint("NoHardKeywords")
     public ScheduledTask when(BooleanSupplier condition) {
         if (condition instanceof Condition) {
             return new ScheduledTask((Condition) condition);
         }
         return new ScheduledTask(new Condition(condition));
+    }
+
+    /**
+     * Run a task when a condition is met.
+     * This condition will be evaluated continuously.
+     *
+     * @param condition Supplier to provide a boolean value of when the task should be run.
+     * @return Task scheduling builder
+     */
+    public ScheduledTask on(BooleanSupplier condition) {
+        return when(condition);
     }
 
     /**
@@ -270,7 +297,7 @@ public class Scheduler extends BunyipsComponent {
      * @return Task scheduling builder
      */
     public ScheduledTask whenRising(BooleanSupplier condition) {
-        return new ScheduledTask(new Condition(condition, Condition.Edge.RISING));
+        return new ScheduledTask(new Condition(Condition.Edge.RISING, condition));
     }
 
     /**
@@ -281,7 +308,7 @@ public class Scheduler extends BunyipsComponent {
      * @return Task scheduling builder
      */
     public ScheduledTask whenFalling(BooleanSupplier condition) {
-        return new ScheduledTask(new Condition(condition, Condition.Edge.FALLING));
+        return new ScheduledTask(new Condition(Condition.Edge.FALLING, condition));
     }
 
     /**
@@ -298,7 +325,7 @@ public class Scheduler extends BunyipsComponent {
         protected final Controller controller;
 
         ControllerButtonBind(Controller controller, Controls button, Edge edge) {
-            super(() -> controller.get(button), edge);
+            super(edge, () -> controller.get(button));
             this.button = button;
             this.controller = controller;
         }
@@ -314,7 +341,7 @@ public class Scheduler extends BunyipsComponent {
         private final Controls.Analog axis;
 
         ControllerAxisThreshold(Controller user, Controls.Analog axis, Predicate<? super Float> threshold, Edge edge) {
-            super(() -> threshold.test(user.get(axis)), edge);
+            super(edge, () -> threshold.test(user.get(axis)));
             this.axis = axis;
         }
 
@@ -340,14 +367,28 @@ public class Scheduler extends BunyipsComponent {
          * This condition will be evaluated continuously.
          * <p>
          * For Kotlin users, calling this method can be done with the notation {@code `when`}
-         * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
+         * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
+         * or by calling the alias {@code on}.
          *
          * @param axis      The axis of the controller.
          * @param threshold The threshold to meet.
          * @return Task scheduling builder
          */
+        @SuppressLint("NoHardKeywords")
         public ScheduledTask when(Controls.Analog axis, Predicate<? super Float> threshold) {
             return new ScheduledTask(new ControllerAxisThreshold(user, axis, threshold, Condition.Edge.ACTIVE));
+        }
+
+        /**
+         * Run a task once this analog axis condition is met.
+         * This condition will be evaluated continuously.
+         *
+         * @param axis      The axis of the controller.
+         * @param threshold The threshold to meet.
+         * @return Task scheduling builder
+         */
+        public ScheduledTask on(Controls.Analog axis, Predicate<? super Float> threshold) {
+            return when(axis, threshold);
         }
 
         /**
@@ -560,14 +601,28 @@ public class Scheduler extends BunyipsComponent {
          * If this method is called multiple times, the last time directive will be used.
          * <p>
          * For Kotlin users, calling this method can be done with the notation {@code `in`}
-         * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
+         * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
+         * or by calling the alias {@code after}.
          *
          * @param interval The time interval
          * @return Current builder for additional task parameters
          */
+        @SuppressLint("NoHardKeywords")
         public ScheduledTask in(Measure<Time> interval) {
             originalRunCondition.withActiveDelay(interval);
             return this;
+        }
+
+        /**
+         * Run a task assigned to in run() in a certain amount of time of the condition remaining true.
+         * This will delay the activation of the task by the specified amount of time of the condition remaining true.
+         * If this method is called multiple times, the last time directive will be used.
+         *
+         * @param interval The time interval
+         * @return Current builder for additional task parameters
+         */
+        public ScheduledTask after(Measure<Time> interval) {
+            return in(interval);
         }
 
         /**

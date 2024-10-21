@@ -41,7 +41,7 @@ public class Unit<U extends Unit<U>> {
             UnaryFunction toBaseConverter,
             UnaryFunction fromBaseConverter,
             String name,
-            String symbol) {
+            @SuppressWarnings("LambdaLast") String symbol) {
         this.baseUnit = baseUnit == null ? (U) this : baseUnit;
         this.toBaseConverter = Objects.requireNonNull(toBaseConverter);
         this.fromBaseConverter = Objects.requireNonNull(fromBaseConverter);

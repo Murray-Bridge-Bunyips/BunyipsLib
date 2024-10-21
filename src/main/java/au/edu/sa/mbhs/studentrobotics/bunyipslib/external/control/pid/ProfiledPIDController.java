@@ -332,7 +332,7 @@ public class ProfiledPIDController implements PIDF {
     }
 
     @Override
-    public void setCoefficients(double... coeffs) {
+    public void setCoefficients(double[] coeffs) {
         controller.setCoefficients(coeffs);
     }
 

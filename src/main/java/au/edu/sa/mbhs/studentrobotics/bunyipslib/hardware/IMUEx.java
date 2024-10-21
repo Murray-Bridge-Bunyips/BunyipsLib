@@ -278,7 +278,7 @@ public class IMUEx implements IMU, Runnable {
         // Run at least once to ensure last acquired time is updated
         internalUpdate();
         threadName = "IMUEx-Threaded-" + hashCode();
-        Threads.startLoop(this::internalUpdate, threadName, loopSleepDuration);
+        Threads.startLoop(threadName, loopSleepDuration, this::internalUpdate);
     }
 
     /**

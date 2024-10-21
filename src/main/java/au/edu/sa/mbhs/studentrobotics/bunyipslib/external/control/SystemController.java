@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control;
 
+import java.util.Arrays;
+
 /**
  * Marker interface that represents a control algorithm (PID, feedforward, etc).
  * <p>
@@ -27,7 +29,18 @@ public interface SystemController {
      *
      * @param coeffs a list of coefficients to set this controller to
      */
-    void setCoefficients(double... coeffs);
+    void setCoefficients(double[] coeffs);
+
+    /**
+     * Sets the coefficients for this controller.
+     * The order of the coefficients is expected to be the same as the return of the get method,
+     * specified internally by the controller.
+     *
+     * @param coeffs a list of coefficients to set this controller to
+     */
+    default void setCoefficients(Double... coeffs) {
+        setCoefficients(Arrays.stream(coeffs).mapToDouble(Double::doubleValue).toArray());
+    }
 
     /**
      * Calculate the next output of this control algorithm.

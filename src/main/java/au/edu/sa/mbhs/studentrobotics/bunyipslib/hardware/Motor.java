@@ -6,6 +6,8 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Rad
 
 import android.util.Pair;
 
+import androidx.annotation.Nullable;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
@@ -24,7 +26,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
@@ -134,8 +135,9 @@ public class Motor implements DcMotorEx {
     /**
      * @return the currently set RUN_TO_POSITION system controller
      */
-    public Optional<SystemController> getRunToPositionController() {
-        return Optional.ofNullable(rtpController);
+    @Nullable
+    public SystemController getRunToPositionController() {
+        return rtpController;
     }
 
     /**
@@ -163,8 +165,28 @@ public class Motor implements DcMotorEx {
     /**
      * @return the currently set RUN_USING_ENCODER system controller
      */
-    public Optional<SystemController> getRunUsingEncoderController() {
-        return Optional.ofNullable(rueController);
+    @Nullable
+    public SystemController getRunUsingEncoderController() {
+        return rueController;
+    }
+
+    /**
+     * Set a system controller to use for {@link DcMotor.RunMode#RUN_USING_ENCODER}.
+     * <p>
+     * The coefficients of this controller can be gain scheduled through {@link #scheduleRunUsingEncoderGains()}.
+     * Otherwise, you can adjust the coefficients directly on the controller instance and they will be respected, unless
+     * a gain scheduler is set for this controller.
+     * <p>
+     * Note that when using a motor with this class, the PIDF coefficients attached to the motor itself will be used only
+     * if a controller is not specified, and will only take a <b>snapshot at runtime</b> of these values to populate
+     * a controller, making a fallback default VelocityFF controller to use. The SDK PIDF values are otherwise ignored.
+     * Falling back on a default controller will also push a robot global warning as it is highly dangerous
+     * to use the stock PIDF values in this context. Set your own controller using this method.
+     *
+     * @param controller the controller to use, recommended to use a PIDFF controller.
+     */
+    public void setRunUsingEncoderController(SystemController controller) {
+        setRunUsingEncoderController(controller, 1, getMotorType().getAchieveableMaxTicksPerSecond());
     }
 
     /**

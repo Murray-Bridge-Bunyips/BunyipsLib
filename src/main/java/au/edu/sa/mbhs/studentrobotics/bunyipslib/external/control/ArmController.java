@@ -50,7 +50,7 @@ public class ArmController implements PIDF {
     }
 
     @Override
-    public void setCoefficients(double... coeffs) {
+    public void setCoefficients(double[] coeffs) {
         if (coeffs.length != 8) {
             throw new IllegalArgumentException("expected 8 coefficients, got " + coeffs.length);
         }

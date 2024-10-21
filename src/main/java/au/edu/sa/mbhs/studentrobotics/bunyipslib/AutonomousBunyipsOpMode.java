@@ -272,11 +272,11 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     /**
      * Implicitly constructs a new {@link RunTask} to add to the run queue.
      *
-     * @param runnable the code to add to the run queue to run once
      * @param name     the name of the task
+     * @param runnable the code to add to the run queue to run once
      * @return the added {@link RunTask}
      */
-    public final RunTask addTask(@NonNull Runnable runnable, String name) {
+    public final RunTask addTask(String name, @NonNull Runnable runnable) {
         RunTask task = new RunTask(runnable);
         task.withName(name);
         return addTask(task);
@@ -336,11 +336,11 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Insert an implicit RunTask at a specific index in the queue.
      *
      * @param index    the index to insert the task at, starting from 0
-     * @param runnable the code to add to the run queue to run once
      * @param name     the name of the task
+     * @param runnable the code to add to the run queue to run once
      * @return the added {@link RunTask}
      */
-    public final RunTask addTaskAtIndex(int index, @NonNull Runnable runnable, String name) {
+    public final RunTask addTaskAtIndex(int index, String name, @NonNull Runnable runnable) {
         RunTask task = new RunTask(runnable);
         task.withName(name);
         return addTaskAtIndex(index, task);

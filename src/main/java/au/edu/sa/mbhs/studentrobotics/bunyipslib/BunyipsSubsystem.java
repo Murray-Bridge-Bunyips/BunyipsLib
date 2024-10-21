@@ -392,7 +392,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     public final void startThread(Measure<Time> loopSleepDuration) {
         if (threadName != null || parent != null) return;
         threadName = Text.format("Async-%-%-%", getClass().getSimpleName(), name, hashCode());
-        Threads.startLoop(this::internalUpdate, threadName, loopSleepDuration);
+        Threads.startLoop(threadName, loopSleepDuration, this::internalUpdate);
     }
 
     /**

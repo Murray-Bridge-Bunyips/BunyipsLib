@@ -4,6 +4,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
+import android.annotation.SuppressLint;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
@@ -264,7 +266,7 @@ public final class UnitBuilder<U extends Unit<U>> {
                 UnaryFunction toBaseUnits,
                 UnaryFunction fromBaseUnits,
                 String name,
-                String symbol);
+                @SuppressLint("LambdaLast") String symbol);
     }
 
     /**

@@ -3,6 +3,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Meters;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -89,7 +91,7 @@ public class MoveToAprilTagTask extends Task {
      * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */
-    public MoveToAprilTagTask(Measure<Time> timeout, Moveable drive, AprilTag aprilTag, int targetTag) {
+    public MoveToAprilTagTask(Measure<Time> timeout, Moveable drive, AprilTag aprilTag, @SuppressLint("LambdaLast") int targetTag) {
         super(timeout);
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
@@ -109,7 +111,7 @@ public class MoveToAprilTagTask extends Task {
      * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */
-    public MoveToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, Moveable drive, AprilTag aprilTag, int targetTag) {
+    public MoveToAprilTagTask(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier rSupplier, Moveable drive, AprilTag aprilTag, @SuppressLint("LambdaLast") int targetTag) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
@@ -129,7 +131,7 @@ public class MoveToAprilTagTask extends Task {
      * @param aprilTag  the AprilTag processor to use
      * @param targetTag the tag to target. -1 for any tag
      */
-    public MoveToAprilTagTask(Gamepad gamepad, Moveable drive, AprilTag aprilTag, int targetTag) {
+    public MoveToAprilTagTask(Gamepad gamepad, Moveable drive, AprilTag aprilTag, @SuppressLint("LambdaLast") int targetTag) {
         this(() -> gamepad.left_stick_x, () -> gamepad.left_stick_y, () -> gamepad.right_stick_x, drive, aprilTag, targetTag);
     }
 

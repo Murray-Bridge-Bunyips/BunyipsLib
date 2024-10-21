@@ -193,7 +193,7 @@ public class ArmFeedforward implements SystemController {
     }
 
     @Override
-    public void setCoefficients(double... coeffs) {
+    public void setCoefficients(double[] coeffs) {
         if (coeffs.length != 4) {
             throw new IllegalArgumentException("expected 4 coefficients, got " + coeffs.length);
         }

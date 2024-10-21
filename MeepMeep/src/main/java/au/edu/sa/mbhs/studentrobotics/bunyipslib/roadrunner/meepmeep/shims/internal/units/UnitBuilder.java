@@ -264,7 +264,7 @@ public final class UnitBuilder<U extends Unit<U>> {
                 UnaryFunction toBaseUnits,
                 UnaryFunction fromBaseUnits,
                 String name,
-                String symbol);
+                @SuppressWarnings("LambdaLast") String symbol);
     }
 
     /**

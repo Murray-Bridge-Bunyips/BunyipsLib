@@ -3,6 +3,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
+import android.annotation.SuppressLint;
+
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 
@@ -47,7 +49,7 @@ public class TurnTask extends Task {
      * @param angle the angle to turn to, if this is a delta angle this will be counter-clockwise
      * @param delta if this angle is a delta from the current drive rotation at runtime
      */
-    public TurnTask(Moveable drive, Measure<Angle> angle, boolean delta) {
+    public TurnTask(Moveable drive, Measure<Angle> angle, @SuppressLint("LambdaLast") boolean delta) {
         this(drive::setPower, () -> Objects.requireNonNull(drive.getPose(), "Drive instance requires a localizer attached to determine heading!"), angle, delta);
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive);
@@ -61,7 +63,7 @@ public class TurnTask extends Task {
      * @param angle        the angle to turn to, if this is a delta angle this will be counter-clockwise
      * @param delta        if this angle is a delta from the current drive rotation at runtime
      */
-    public TurnTask(Consumer<PoseVelocity2d> powerIn, Supplier<Pose2d> poseEstimate, Measure<Angle> angle, boolean delta) {
+    public TurnTask(Consumer<PoseVelocity2d> powerIn, Supplier<Pose2d> poseEstimate, Measure<Angle> angle, @SuppressLint("LambdaLast") boolean delta) {
         this.powerIn = powerIn;
         this.poseEstimate = poseEstimate;
         setDelta = delta;
@@ -78,7 +80,7 @@ public class TurnTask extends Task {
      *              if it is a {@link BunyipsSubsystem}
      * @param angle the angle to turn to in a global coordinate frame
      */
-    public TurnTask(Moveable drive, Measure<Angle> angle) {
+    public TurnTask(Moveable drive, @SuppressLint("LambdaLast") Measure<Angle> angle) {
         this(drive, angle, false);
     }
 
@@ -89,7 +91,7 @@ public class TurnTask extends Task {
      * @param poseEstimate the supplier to get the current pose of the robot, can ignore the x and y values if not needed
      * @param angle        the angle to turn to in a global coordinate frame
      */
-    public TurnTask(Consumer<PoseVelocity2d> powerIn, Supplier<Pose2d> poseEstimate, Measure<Angle> angle) {
+    public TurnTask(Consumer<PoseVelocity2d> powerIn, Supplier<Pose2d> poseEstimate, @SuppressLint("LambdaLast") Measure<Angle> angle) {
         this(powerIn, poseEstimate, angle, false);
     }
 

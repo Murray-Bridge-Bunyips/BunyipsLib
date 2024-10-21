@@ -4,6 +4,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 
 import java.util.Objects;
@@ -43,7 +45,7 @@ public class Unit<U extends Unit<U>> {
             UnaryFunction toBaseConverter,
             UnaryFunction fromBaseConverter,
             String name,
-            String symbol) {
+            @SuppressLint("LambdaLast") String symbol) {
         this.baseUnit = baseUnit == null ? (U) this : baseUnit;
         this.toBaseConverter = Objects.requireNonNull(toBaseConverter);
         this.fromBaseConverter = Objects.requireNonNull(fromBaseConverter);

@@ -3,6 +3,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
+import android.annotation.SuppressLint;
+
 import java.util.HashMap;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
@@ -28,10 +30,10 @@ public final class Threads {
     /**
      * Start a new thread with the given task.
      *
-     * @param task the runnable task to run on the new thread
      * @param name the name of the thread to access it later and to log as
+     * @param task the runnable task to run on the new thread
      */
-    public static void start(Runnable task, String name) {
+    public static void start(String name, Runnable task) {
         Thread thread = new Thread(() -> {
             try {
                 task.run();
@@ -52,18 +54,18 @@ public final class Threads {
      * @param task the runnable task to run on the new thread
      */
     public static void start(Runnable task) {
-        start(task, task.getClass().getSimpleName());
+        start(task.getClass().getSimpleName(), task);
     }
 
     /**
      * Start a new thread with the given infinite loop task.
      * This thread will auto end when the task is interrupted.
      *
-     * @param task              the infinite loop task to run on the new thread
      * @param name              the name of the thread to access it later and to log as
      * @param loopSleepDuration the duration to sleep this thread after every loop to save resources
+     * @param task              the infinite loop task to run on the new thread
      */
-    public static void startLoop(Runnable task, String name, Measure<Time> loopSleepDuration) {
+    public static void startLoop(String name, Measure<Time> loopSleepDuration, Runnable task) {
         long magMillis = (long) Math.abs(loopSleepDuration.in(Milliseconds));
         Thread thread = new Thread(() -> {
             try {
@@ -91,22 +93,22 @@ public final class Threads {
      * Start a new thread with the given infinite loop task.
      * This thread will auto end when the task is interrupted.
      *
-     * @param task the infinite loop task to run on the new thread
      * @param name the name of the thread to access it later and to log as
+     * @param task the infinite loop task to run on the new thread
      */
-    public static void startLoop(Runnable task, String name) {
-        startLoop(task, name, Seconds.zero());
+    public static void startLoop(String name, Runnable task) {
+        startLoop(name, Seconds.zero(), task);
     }
 
     /**
      * Start a new thread with the given infinite loop task.
      * This thread will auto end when the task is interrupted, with a name defined by the class of the Runnable.
      *
-     * @param task              the infinite loop task to run on the new thread
      * @param loopSleepDuration the duration to sleep this thread after every loop to save resources
+     * @param task              the infinite loop task to run on the new thread
      */
-    public static void startLoop(Runnable task, Measure<Time> loopSleepDuration) {
-        startLoop(task, task.getClass().getSimpleName(), loopSleepDuration);
+    public static void startLoop(Measure<Time> loopSleepDuration, Runnable task) {
+        startLoop(task.getClass().getSimpleName(), loopSleepDuration, task);
     }
 
     /**
@@ -116,7 +118,7 @@ public final class Threads {
      * @param task the infinite loop task to run on the new thread
      */
     public static void startLoop(Runnable task) {
-        startLoop(task, task.getClass().getSimpleName(), Seconds.zero());
+        startLoop(task.getClass().getSimpleName(), Seconds.zero(), task);
     }
 
     /**
@@ -216,7 +218,7 @@ public final class Threads {
         for (Thread thread : threads.values()) {
             if (thread.getName().equals(task)) {
                 stop(thread.getName());
-                start(thread, thread.getName());
+                start(thread.getName(), thread);
                 return;
             }
         }
@@ -262,7 +264,7 @@ public final class Threads {
      * @param task      the task to wait for, must be managed by Threads
      * @param interrupt whether to interrupt the task first then wait
      */
-    public static void waitFor(Runnable task, boolean interrupt) {
+    public static void waitFor(Runnable task, @SuppressLint("LambdaLast") boolean interrupt) {
         Thread thread = threads.get(task.hashCode());
         if (thread != null) {
             if (!thread.isAlive()) return;

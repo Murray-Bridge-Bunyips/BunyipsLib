@@ -57,15 +57,12 @@ public class DebugMode extends BunyipsComponent implements Runnable {
 
     /**
      * Add a custom actionable condition.
-     * <p>
-     * For Kotlin users, calling this method can be done with the notation {@code `when`}
-     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
      *
-     * @param stopCondition the condition to periodically check
      * @param action        the action to take if the condition is met
+     * @param stopCondition the condition to periodically check
      * @return this
      */
-    public DebugMode when(BooleanSupplier stopCondition, TriggerAction action) {
+    public DebugMode trigger(TriggerAction action, BooleanSupplier stopCondition) {
         actions.add(new Pair<>(stopCondition, action));
         return this;
     }

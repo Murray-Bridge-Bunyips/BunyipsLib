@@ -163,7 +163,7 @@ public class PIDFController implements PIDF {
     }
 
     @Override
-    public void setCoefficients(double... coeffs) {
+    public void setCoefficients(double[] coeffs) {
         if (coeffs.length < 1) {
             throw new IllegalArgumentException("expected >1 coefficients, got " + coeffs.length);
         }
@@ -185,6 +185,17 @@ public class PIDFController implements PIDF {
      */
     public double[] getTolerance() {
         return new double[]{errorTolerance_p, errorTolerance_v};
+    }
+
+    /**
+     * Sets the error which is considered tolerable for use with {@link #atSetPoint()}.
+     *
+     * @param tolerances The positional and velocity tolerances.
+     * @return this
+     */
+    public PIDFController setTolerance(double[] tolerances) {
+        setTolerance(tolerances[0], tolerances[1]);
+        return this;
     }
 
     /**

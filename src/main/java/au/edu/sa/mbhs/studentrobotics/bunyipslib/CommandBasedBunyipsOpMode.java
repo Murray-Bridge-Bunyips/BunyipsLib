@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
+import android.annotation.SuppressLint;
+
 import androidx.annotation.NonNull;
 
 import java.util.Arrays;
@@ -36,12 +38,24 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * Create a new controller button trigger creator.
      * <p>
      * For Kotlin users, calling this method can be done with the notation {@code `when`}
-     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
+     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
+     * or by calling the alias {@code on}.
      *
      * @param user The Controller instance to use.
      * @return The controller button trigger creator.
      */
+    @SuppressLint("NoHardKeywords")
     public Scheduler.ControllerTriggerCreator when(Controller user) {
+        return scheduler.when(user);
+    }
+
+    /**
+     * Create a new controller button trigger creator.
+     *
+     * @param user The Controller instance to use.
+     * @return The controller button trigger creator.
+     */
+    public Scheduler.ControllerTriggerCreator on(Controller user) {
         return scheduler.when(user);
     }
 
@@ -68,12 +82,25 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * This condition will be evaluated continuously.
      * <p>
      * For Kotlin users, calling this method can be done with the notation {@code `when`}
-     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
+     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
+     * or by calling the alias {@code on}.
      *
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
+    @SuppressLint("NoHardKeywords")
     public Scheduler.ScheduledTask when(BooleanSupplier condition) {
+        return scheduler.when(condition);
+    }
+
+    /**
+     * Run a task when a condition is met.
+     * This condition will be evaluated continuously.
+     *
+     * @param condition Supplier to provide a boolean value of when the task should be run.
+     * @return Task scheduling builder
+     */
+    public Scheduler.ScheduledTask on(BooleanSupplier condition) {
         return scheduler.when(condition);
     }
 

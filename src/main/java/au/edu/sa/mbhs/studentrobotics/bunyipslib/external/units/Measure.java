@@ -6,6 +6,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
+import android.annotation.SuppressLint;
+
 import java.util.Locale;
 
 /**
@@ -95,7 +97,8 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * seconds. Converting to the same unit is equivalent to calling {@link #magnitude()}.
      * <p>
      * For Kotlin users, calling this method can be done with the notation {@code `in`}
-     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>).
+     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
+     * or by calling the alias {@code to}.
      *
      * <pre>
      *   Meters.of(12).in(Feet) // 39.3701
@@ -105,12 +108,29 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @param unit the unit to convert this measure to
      * @return the value of this measure in the given unit
      */
+    @SuppressLint("NoHardKeywords")
     default double in(Unit<U> unit) {
         if (unit().equals(unit)) {
             return magnitude();
         } else {
             return unit.fromBaseUnits(baseUnitMagnitude());
         }
+    }
+
+    /**
+     * Converts this measure to a measure with a different unit of the same type, eg minutes to
+     * seconds. Converting to the same unit is equivalent to calling {@link #magnitude()}.
+     *
+     * <pre>
+     *   Meters.of(12).in(Feet) // 39.3701
+     *   Seconds.of(15).in(Minutes) // 0.25
+     * </pre>
+     *
+     * @param unit the unit to convert this measure to
+     * @return the value of this measure in the given unit
+     */
+    default double to(Unit<U> unit) {
+        return in(unit);
     }
 
     /**

@@ -304,7 +304,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
         try {
             // We're delegating the OpMode, however, runBlocking calls do not know that motor powers must be updated,
             // so we call periodic in the background to mitigate this.
-            Threads.startLoop(drive::periodic, "RR Tuning Drive Update Executor");
+            Threads.startLoop("RR Tuning Drive Update Executor", drive::periodic);
             ((LinearOpMode) selection[0]).runOpMode();
         } finally {
             Threads.stopAll();
