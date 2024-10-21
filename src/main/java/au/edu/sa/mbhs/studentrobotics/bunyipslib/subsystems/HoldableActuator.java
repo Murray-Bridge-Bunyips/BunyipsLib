@@ -79,6 +79,8 @@ public class HoldableActuator extends BunyipsSubsystem {
     public HoldableActuator(DcMotor motor) {
         if (!assertParamsNotNull(motor)) return;
         this.motor = (DcMotorEx) motor;
+        // Always default to BRAKE because HoldableActuators are meant to hold
+        this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Assumes current arm position is the zero position, the user may home manually if required using setInitTask
         this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.motor.setTargetPosition(0);

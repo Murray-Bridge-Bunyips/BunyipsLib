@@ -125,8 +125,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param startPose            the starting pose of the robot
      */
     public MecanumDrive(DriveModel driveModel, MotionProfile motionProfile, MecanumGains mecanumGains, DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront, LazyImu lazyImu, HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, Pose2d startPose) {
-        assertParamsNotNull(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, lazyImu, voltageSensorMapping, startPose);
-
         accumulator = new Accumulator(startPose);
         Storage.memory().lastKnownPosition = startPose;
         pose = startPose;
@@ -134,17 +132,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         gains = mecanumGains;
         model = driveModel;
         profile = motionProfile;
-
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        this.leftFront = (DcMotorEx) leftFront;
-        this.leftBack = (DcMotorEx) leftBack;
-        this.rightBack = (DcMotorEx) rightBack;
-        this.rightFront = (DcMotorEx) rightFront;
-        this.lazyImu = lazyImu;
 
         kinematics = new MecanumKinematics(driveModel.inPerTick * driveModel.trackWidthTicks, driveModel.inPerTick / driveModel.lateralInPerTick);
         defaultTurnConstraints = new TurnConstraints(motionProfile.maxAngVel, -motionProfile.maxAngAccel, motionProfile.maxAngAccel);
@@ -159,6 +146,19 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         FlightRecorder.write("MECANUM_GAINS", mecanumGains);
         FlightRecorder.write("MECANUM_DRIVE_MODEL", driveModel);
         FlightRecorder.write("MECANUM_PROFILE", motionProfile);
+
+        if (assertParamsNotNull(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, lazyImu, voltageSensorMapping, startPose)) {
+            leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        this.leftFront = (DcMotorEx) leftFront;
+        this.leftBack = (DcMotorEx) leftBack;
+        this.rightBack = (DcMotorEx) rightBack;
+        this.rightFront = (DcMotorEx) rightFront;
+        this.lazyImu = lazyImu;
     }
 
     /**

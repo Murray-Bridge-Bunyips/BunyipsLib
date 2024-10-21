@@ -47,8 +47,14 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
      */
     public SimpleTankDrive(List<DcMotor> leftMotors, List<DcMotor> rightMotors) {
         assertParamsNotNull(leftMotors, rightMotors);
-        leftMotors.forEach(this::assertParamsNotNull);
-        rightMotors.forEach(this::assertParamsNotNull);
+        leftMotors.forEach((m) -> {
+            if (assertParamsNotNull(m))
+                m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        });
+        rightMotors.forEach((m) -> {
+            if (assertParamsNotNull(m))
+                m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        });
 
         this.leftMotors = leftMotors;
         this.rightMotors = rightMotors;

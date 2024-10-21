@@ -56,7 +56,13 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
      * @param rightFront the front right motor
      */
     public SimpleMecanumDrive(DcMotor leftFront, DcMotor leftBack, DcMotor rightBack, DcMotor rightFront) {
-        assertParamsNotNull(leftFront, leftBack, rightBack, rightFront);
+        if (assertParamsNotNull(leftFront, leftBack, rightBack, rightFront)) {
+            leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
         this.leftFront = leftFront;
         this.leftBack = leftBack;
         this.rightBack = rightBack;

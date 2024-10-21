@@ -124,12 +124,12 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         profile = motionProfile;
 
         for (DcMotor m : leftMotors) {
-            assertParamsNotNull(m);
-            m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            if (assertParamsNotNull(m))
+                m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         for (DcMotor m : rightMotors) {
-            assertParamsNotNull(m);
-            m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            if (assertParamsNotNull(m))
+                m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
         this.leftMotors = leftMotors.stream().map(m -> (DcMotorEx) m).collect(Collectors.toList());
