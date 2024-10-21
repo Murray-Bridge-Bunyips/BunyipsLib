@@ -111,6 +111,7 @@ public class ReadOnlyPrimitiveLongSet implements Iterable<Long> {
     }
 
     @Override
+    @SuppressWarnings("NullableProblems")
     public Iterator<Long> iterator() {
         return new Iterator<>() {
             private int index = 0;

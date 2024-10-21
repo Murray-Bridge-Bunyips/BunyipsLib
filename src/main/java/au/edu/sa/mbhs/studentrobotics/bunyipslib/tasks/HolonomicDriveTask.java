@@ -60,12 +60,12 @@ public class HolonomicDriveTask extends ForeverTask {
     /**
      * Constructor for HolonomicDriveTask on an always disabled field-centric mode.
      *
-     * @param xSupplier           The supplier for the Cartesian x-axis input
-     * @param yInvSupplier        The supplier for the Cartesian y-axis input, <i>note that this will be inverted</i>
-     * @param rSupplier           The supplier for the CW rotation input
-     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
-     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
-     *                            if possible.
+     * @param xSupplier    The supplier for the Cartesian x-axis input
+     * @param yInvSupplier The supplier for the Cartesian y-axis input, <i>note that this will be inverted</i>
+     * @param rSupplier    The supplier for the CW rotation input
+     * @param drive        The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *                     called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *                     if possible.
      */
     public HolonomicDriveTask(Supplier<Float> xSupplier, Supplier<Float> yInvSupplier, Supplier<Float> rSupplier, @NonNull Moveable drive) {
         this(xSupplier, yInvSupplier, rSupplier, drive, () -> false);
@@ -90,10 +90,10 @@ public class HolonomicDriveTask extends ForeverTask {
      * Constructor for HolonomicDriveTask using a default Mecanum binding. Field-centric mode is disabled by default.
      * Left stick controls translation, right stick controls rotation.
      *
-     * @param driver              The gamepad to use for driving in a standard configuration
-     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
-     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
-     *                            if possible.
+     * @param driver The gamepad to use for driving in a standard configuration
+     * @param drive  The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *               called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *               if possible.
      */
     public HolonomicDriveTask(Gamepad driver, @NonNull Moveable drive) {
         this(driver, drive, () -> false);

@@ -102,7 +102,7 @@ public interface RoadRunnerDrive extends Moveable {
      * @param distUnit the unit of distance of the start pose
      * @param ang      the angle of the start pose
      * @param angUnit  the unit of angle of the start pose
-     * @param poseMap   the PoseMap to use for this builder
+     * @param poseMap  the PoseMap to use for this builder
      * @return extended RoadRunner trajectory task builder
      */
     default TaskBuilder makeTrajectory(Vector2d startVec, Distance distUnit, double ang, Angle angUnit, PoseMap poseMap) {

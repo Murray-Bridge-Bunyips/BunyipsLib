@@ -77,9 +77,9 @@ public final class Geometry {
     /**
      * Create a pose in the desired units to be converted to conventional Inches and Radians units.
      *
-     * @param vec the vector element
+     * @param vec   the vector element
      * @param tUnit the unit of both the x and y values
-     * @param r the heading value
+     * @param r     the heading value
      * @param rUnit the unit of the heading value
      * @return the vector in Inches
      */

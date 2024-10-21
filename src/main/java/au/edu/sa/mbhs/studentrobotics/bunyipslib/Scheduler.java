@@ -612,7 +612,7 @@ public class Scheduler extends BunyipsComponent {
                         .append(handler.edge);
                 Measure<Time> delay = originalRunCondition.getActiveDelay();
                 if (delay.magnitude() > 0) {
-                        out.append(" after ")
+                    out.append(" after ")
                             .append(Mathf.round(originalRunCondition.getActiveDelay().in(Seconds), 1))
                             .append("s");
                 }
