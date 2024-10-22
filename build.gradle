@@ -62,7 +62,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    namespace = 'org.murraybridgebunyips.bunyipslib'
+    namespace = 'au.edu.sa.mbhs.studentrobotics.bunyipslib'
 }
 
 tasks.dokkaHtml.configure {
