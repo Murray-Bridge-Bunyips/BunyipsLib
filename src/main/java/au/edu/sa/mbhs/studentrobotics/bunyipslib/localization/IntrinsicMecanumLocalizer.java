@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.MecanumKinematics;
-import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,7 +18,6 @@ import java.util.function.Supplier;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.DriveModel;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian;
 
 /**
  * An estimation-based Mecanum localizer that uses no encoders and only the IMU for heading. This is the bare configuration
@@ -38,7 +37,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
     private final double[] runningMotorPos = new double[4];
     private double lastHeading = 0;
 
-    private Supplier<Pose2d> input;
+    private Supplier<PoseVelocity2d> input;
     private Supplier<double[]> powers;
 
     /**
@@ -65,7 +64,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
      * @param drive        the drive instance (assumed to be Mecanum/conforms to Mecanum equations)
      * @param driveInput   the robot pose input (x forward, y left, heading anticlockwise) of the drive
      */
-    public IntrinsicMecanumLocalizer(@NonNull Coefficients coefficients, @NonNull MecanumDrive drive, @NonNull Supplier<Pose2d> driveInput) {
+    public IntrinsicMecanumLocalizer(@NonNull Coefficients coefficients, @NonNull MecanumDrive drive, @NonNull Supplier<PoseVelocity2d> driveInput) {
         this.coefficients = coefficients;
         this.drive = drive;
         DriveModel model = drive.getConstants().getDriveModel();
@@ -79,7 +78,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
     @Override
     public Twist2dDual<Time> update() {
         double[] wheelInputs = input != null
-                ? getWheelPowers(Cartesian.fromPose(input.get()))
+                ? getWheelPowers(input.get())
                 : getClampedPowers(powers.get());
 
         // Use a delta time strategy to calculate a running total
@@ -114,12 +113,12 @@ public class IntrinsicMecanumLocalizer implements Localizer {
         );
     }
 
-    private double[] getWheelPowers(Pose2d inputCartesian) {
-        double[] inputs = {inputCartesian.position.x, inputCartesian.position.y, inputCartesian.heading.toDouble()};
+    private double[] getWheelPowers(PoseVelocity2d input) {
+        double[] cartesianInputs = {input.linearVel.y, -input.linearVel.x, -input.angVel};
         // Should reject anything below the breakaway speeds
-        double cX = Math.abs(inputs[0]) >= coefficients.BREAKAWAY_SPEEDS[1] ? inputs[0] : 0;
-        double cY = Math.abs(inputs[1]) >= coefficients.BREAKAWAY_SPEEDS[0] ? inputs[1] : 0;
-        double cR = Math.abs(inputs[2]) >= coefficients.BREAKAWAY_SPEEDS[2] ? inputs[2] : 0;
+        double cX = Math.abs(cartesianInputs[0]) >= coefficients.BREAKAWAY_SPEEDS[1] ? cartesianInputs[0] : 0;
+        double cY = Math.abs(cartesianInputs[1]) >= coefficients.BREAKAWAY_SPEEDS[0] ? cartesianInputs[1] : 0;
+        double cR = Math.abs(cartesianInputs[2]) >= coefficients.BREAKAWAY_SPEEDS[2] ? cartesianInputs[2] : 0;
 
         // Standard Mecanum drive equations
         double denom = Math.max(Math.abs(cY) + Math.abs(cX) + Math.abs(cR), 1);

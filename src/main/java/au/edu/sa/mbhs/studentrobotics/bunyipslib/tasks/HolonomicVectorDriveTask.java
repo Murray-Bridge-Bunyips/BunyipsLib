@@ -8,6 +8,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Rad
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,6 +28,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
@@ -52,9 +54,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  */
 public class HolonomicVectorDriveTask extends ForeverTask {
     private final Moveable drive;
-    private final Supplier<Float> x;
-    private final Supplier<Float> y;
-    private final Supplier<Float> r;
+    private final Supplier<PoseVelocity2d> vel;
     private final BooleanSupplier fieldCentricEnabled;
 
     private final PIDController xController;
@@ -73,21 +73,17 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     /**
      * Constructor for HolonomicVectorDriveTask.
      *
-     * @param xSupplier           The supplier for the Cartesian x-axis input
-     * @param ySupplier           The supplier for the Cartesian y-axis input, <i>note that this will be inverted</i>
-     * @param rSupplier           The supplier for the clockwise rotation input
+     * @param vel                 The supplier for the current pose velocity of the robot
      * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
      *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
      *                            if possible. A localizer attached is required.
      * @param fieldCentricEnabled A BooleanSupplier that returns whether field centric drive is enabled
      */
-    public HolonomicVectorDriveTask(@NonNull Supplier<Float> xSupplier, @NonNull Supplier<Float> ySupplier, @NonNull Supplier<Float> rSupplier, @NonNull Moveable drive, @NonNull BooleanSupplier fieldCentricEnabled) {
+    public HolonomicVectorDriveTask(@NonNull Supplier<PoseVelocity2d> vel, @NonNull Moveable drive, @NonNull BooleanSupplier fieldCentricEnabled) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
-        x = xSupplier;
-        y = ySupplier;
-        r = rSupplier;
+        this.vel = vel;
         this.fieldCentricEnabled = fieldCentricEnabled;
 
         // Sane defaults
@@ -101,15 +97,13 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     /**
      * Constructor for HolonomicVectorDriveTask on an always disabled field-centric mode.
      *
-     * @param xSupplier The supplier for the Cartesian x-axis input
-     * @param ySupplier The supplier for the Cartesian y-axis input, <i>note that this will be inverted</i>
-     * @param rSupplier The supplier for the clockwise rotation input
+     * @param vel   The supplier for the current pose velocity of the robot
      * @param drive     The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
      *                  called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
      *                  if possible. A localizer attached is required.
      */
-    public HolonomicVectorDriveTask(@NonNull Supplier<Float> xSupplier, @NonNull Supplier<Float> ySupplier, @NonNull Supplier<Float> rSupplier, @NonNull Moveable drive) {
-        this(xSupplier, ySupplier, rSupplier, drive, () -> false);
+    public HolonomicVectorDriveTask(@NonNull Supplier<PoseVelocity2d> vel, @NonNull Moveable drive) {
+        this(vel, drive, () -> false);
     }
 
     /**
@@ -123,7 +117,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      * @param fieldCentricEnabled A BooleanSupplier that returns whether field centric drive is enabled
      */
     public HolonomicVectorDriveTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull BooleanSupplier fieldCentricEnabled) {
-        this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, fieldCentricEnabled);
+        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, fieldCentricEnabled);
     }
 
     /**
@@ -136,7 +130,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      *               if possible. A localizer attached is required.
      */
     public HolonomicVectorDriveTask(@NonNull Gamepad driver, @NonNull Moveable drive) {
-        this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, () -> false);
+        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, () -> false);
     }
 
     /**
@@ -240,12 +234,10 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     protected void periodic() {
         Pose2d current = Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance in order to use the HolonomicVectorDriveTask!");
 
-        // Create a new pose based off the user input, which will be the offset from the current pose.
-        // Must rotate by 90 degrees (y, -x), then flip y as it is inverted. Rotation must also be inverted as it
-        // must be positive anticlockwise.
-        double userX = -y.get();
-        double userY = -x.get();
-        double userR = -r.get();
+        PoseVelocity2d v = vel.get();
+        double userX = v.linearVel.x;
+        double userY = v.linearVel.y;
+        double userR = v.angVel;
 
         double cos = Math.cos(current.heading.toDouble());
         double sin = Math.sin(current.heading.toDouble());
@@ -290,11 +282,11 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         if (Mathf.isNear(Math.abs(angle), Math.PI, 0.1))
             angle = -Math.PI * Math.signum(rLockedError);
 
-        drive.setPower(Geometry.poseToVel(new Pose2d(
+        drive.setPower(Geometry.vel(
                 vectorLock != null ? -xController.calculate(twistedXError) : userX,
                 vectorLock != null ? -yController.calculate(twistedYError) : userY,
                 headingLock != null ? -rController.calculate(angle) : userR
-        )));
+        ));
 
         fieldOverlay.setStroke("#c91c00");
         if (vectorLock != null)

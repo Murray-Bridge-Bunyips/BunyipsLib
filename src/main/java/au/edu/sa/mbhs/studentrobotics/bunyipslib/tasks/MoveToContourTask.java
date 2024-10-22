@@ -3,13 +3,12 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
@@ -51,29 +50,23 @@ public class MoveToContourTask extends Task {
     private final PIDF translationController;
     private final PIDF rotationController;
     private boolean hasCalculated;
-    private DoubleSupplier x;
-    private DoubleSupplier y;
-    private DoubleSupplier r;
+    private Supplier<PoseVelocity2d> passthrough;
 
     /**
      * TeleOp constructor.
      *
-     * @param xSupplier             x (strafe) value
-     * @param ySupplier             y (forward) value
-     * @param rSupplier             r (rotate) value
+     * @param passthrough           the pose velocity passthrough for the drivetrain
      * @param drive                 the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param supplier              a supplier source that will provide contour data
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(@NonNull DoubleSupplier xSupplier, @NonNull DoubleSupplier ySupplier, @NonNull DoubleSupplier rSupplier, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
+    public MoveToContourTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
         contours = supplier;
-        x = xSupplier;
-        y = ySupplier;
-        r = rSupplier;
+        this.passthrough = passthrough;
         this.translationController = translationController;
         this.rotationController = rotationController;
         translationController.getPIDFController().updatePIDF(TRANSLATIONAL_PIDF);
@@ -91,7 +84,7 @@ public class MoveToContourTask extends Task {
      * @param rotationController    the PID controller for the rotational movement
      */
     public MoveToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
-        this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, supplier, translationController, rotationController);
+        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, supplier, translationController, rotationController);
     }
 
     /**
@@ -119,16 +112,14 @@ public class MoveToContourTask extends Task {
     /**
      * TeleOp constructor.
      *
-     * @param xSupplier             x (strafe) value
-     * @param ySupplier             y (forward) value
-     * @param rSupplier             r (rotate) value
+     * @param passthrough           the pose velocity passthrough for the drivetrain
      * @param drive                 the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param processor             the vision processor to use
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(@NonNull DoubleSupplier xSupplier, @NonNull DoubleSupplier ySupplier, @NonNull DoubleSupplier rSupplier, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
-        this(xSupplier, ySupplier, rSupplier, drive, processor::getData, translationController, rotationController);
+    public MoveToContourTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
+        this(passthrough, drive, processor::getData, translationController, rotationController);
     }
 
     /**
@@ -141,7 +132,7 @@ public class MoveToContourTask extends Task {
      * @param rotationController    the PID controller for the rotational movement
      */
     public MoveToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
-        this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, processor::getData, translationController, rotationController);
+        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, processor::getData, translationController, rotationController);
     }
 
     /**
@@ -180,29 +171,29 @@ public class MoveToContourTask extends Task {
         translationController.getPIDFController().setPIDF(TRANSLATIONAL_PIDF);
         rotationController.getPIDFController().setPIDF(ROTATIONAL_PIDF);
 
-        Pose2d pose = Geometry.zeroPose();
-        if (x != null)
-            pose = Controls.makeRobotPose(x.getAsDouble(), y.getAsDouble(), r.getAsDouble());
+        PoseVelocity2d vel = Geometry.zeroVel();
+        if (passthrough != null)
+            vel = passthrough.get();
 
         List<ContourData> data = contours.get();
         ContourData biggestContour = ContourData.getLargest(data);
 
         if (biggestContour != null) {
-            drive.setPower(Geometry.poseToVel(
-                    new Pose2d(
+            drive.setPower(
+                    Geometry.vel(
                             -translationController.calculate(biggestContour.getPitch(), Range.clip(PITCH_TARGET, -1.0, 1.0)),
-                            pose.position.y,
+                            vel.linearVel.y,
                             rotationController.calculate(biggestContour.getYaw(), 0.0)
                     )
-            ));
+            );
             hasCalculated = true;
         } else {
-            drive.setPower(Geometry.poseToVel(pose));
+            drive.setPower(vel);
         }
     }
 
     @Override
     protected boolean isTaskFinished() {
-        return x == null && hasCalculated && translationController.getPIDFController().atSetPoint() && rotationController.getPIDFController().atSetPoint();
+        return passthrough == null && hasCalculated && translationController.getPIDFController().atSetPoint() && rotationController.getPIDFController().atSetPoint();
     }
 }

@@ -15,8 +15,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 
 /**
- * Defines useful conversion methods for RoadRunner geometry types, including conversion between {@link Pose2d} and {@link PoseVelocity2d},
- * as well as restoring some removed methods from RoadRunner v0.5.
+ * Defines useful conversion methods for RoadRunner geometry types, restoring some removed methods from RoadRunner v0.5.
  * <p>
  * This class was created for migration purposes between RoadRunner v0.5 and v1.0, where new types were introduced
  * and some methods removed, but these methods are still useful within BunyipsLib.
@@ -69,6 +68,19 @@ public final class Geometry {
     }
 
     /**
+     * Create a new {@link PoseVelocity2d} with x, y, and heading values.
+     *
+     * @param xVel   the +forward velocity
+     * @param yVel   the +left velocity
+     * @param angVel the +anticlockwise heading velocity
+     * @return the pose velocity
+     */
+    @NonNull
+    public static PoseVelocity2d vel(double xVel, double yVel, double angVel) {
+        return new PoseVelocity2d(new Vector2d(xVel, yVel), angVel);
+    }
+
+    /**
      * Create a vector in the desired units to be converted to a conventional Inches unit.
      *
      * @param value the vector
@@ -96,29 +108,6 @@ public final class Geometry {
                 tUnit.of(vec.y).in(Inches),
                 rUnit.of(r).in(Radians)
         );
-    }
-
-
-    /**
-     * Convert a {@link Pose2d} to a {@link PoseVelocity2d}.
-     *
-     * @param pose the pose to convert
-     * @return the converted pose
-     */
-    @NonNull
-    public static PoseVelocity2d poseToVel(@NonNull Pose2d pose) {
-        return new PoseVelocity2d(pose.position, pose.heading.toDouble());
-    }
-
-    /**
-     * Convert a {@link PoseVelocity2d} to a {@link Pose2d}.
-     *
-     * @param pose the pose to convert
-     * @return the converted pose
-     */
-    @NonNull
-    public static Pose2d poseFromVel(@NonNull PoseVelocity2d pose) {
-        return new Pose2d(pose.linearVel, pose.angVel);
     }
 
     /**

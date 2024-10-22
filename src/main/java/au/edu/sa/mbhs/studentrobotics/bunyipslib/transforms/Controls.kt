@@ -1,8 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry
-import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Vector2d
 import com.qualcomm.robotcore.hardware.Gamepad
@@ -182,45 +180,20 @@ enum class Controls {
 
         /**
          * Convert the gamepad movement values into a robot velocity.
-         * This inverts the y value.
+         * This inverts the y value as the gamepad y stick is inverted.
          */
         @JvmStatic
-        fun makeRobotVel(x: Double, y: Double, r: Double): PoseVelocity2d {
-            return Geometry.poseToVel(makeRobotPose(x, y, r))
-        }
-
-        /**
-         * Convert the gamepad movement values to a robot pose.
-         * This inverts the y value.
-         */
-        @JvmStatic
-        fun makeRobotPose(x: Double, y: Double, r: Double): Pose2d {
-            return Cartesian.toPose(x, -y, r)
-        }
-
-        /**
-         * Convert the gamepad movement values to a Cartesian pose.
-         * This inverts the y value.
-         */
-        @JvmStatic
-        fun makeCartesianPose(x: Double, y: Double, r: Double): Pose2d {
-            return Pose2d(x, -y, r)
+        fun vel(lsx: Double, lsy: Double, rsx: Double): PoseVelocity2d {
+            return Cartesian.toVel(lsx, -lsy, rsx)
         }
 
         /**
          * Convert the gamepad translation values to a robot vector.
+         * This inverts the y value as the gamepad y stick is inverted.
          */
         @JvmStatic
-        fun makeRobotVector(x: Double, y: Double): Vector2d {
-            return Cartesian.toVector(x, -y)
-        }
-
-        /**
-         * Convert the gamepad translation values to a Cartesian vector.
-         */
-        @JvmStatic
-        fun makeCartesianVector(x: Double, y: Double): Vector2d {
-            return Vector2d(x, -y)
+        fun vec(lsx: Double, lsy: Double): Vector2d {
+            return Cartesian.toVec(lsx, -lsy)
         }
 
         /**

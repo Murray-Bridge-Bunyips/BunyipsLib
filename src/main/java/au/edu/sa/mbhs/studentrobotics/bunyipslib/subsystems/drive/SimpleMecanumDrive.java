@@ -108,7 +108,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
                     cY + cX,
                     cY - cX,
                     cY - cX,
-                    cY +cX
+                    cY + cX
             };
             double[] rotationValues = {
                     cR,

@@ -136,10 +136,7 @@ public class TurnTask extends Task {
     protected void periodic() {
         Pose2d pose = poseEstimate.get();
         double errRad = Mathf.inputModulus(pose.heading.toDouble(), -Math.PI, Math.PI) - angRad;
-        powerIn.accept(Geometry.poseToVel(
-                new Pose2d(0, 0, pidf.calculate(Mathf.inputModulus(errRad, -Math.PI, Math.PI), 0))
-        ));
-
+        powerIn.accept(Geometry.vel(0, 0, pidf.calculate(Mathf.inputModulus(errRad, -Math.PI, Math.PI), 0)));
         fieldOverlay.setStroke("#4CAF50");
         Dashboard.drawRobot(fieldOverlay, new Pose2d(pose.position, angRad));
     }

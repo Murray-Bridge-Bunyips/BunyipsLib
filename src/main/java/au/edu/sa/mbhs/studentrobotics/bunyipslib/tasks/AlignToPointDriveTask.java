@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -17,6 +18,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
@@ -36,8 +38,7 @@ public class AlignToPointDriveTask extends ForeverTask {
     private final SystemController controller;
     private final Moveable drive;
 
-    private final Supplier<Float> pX;
-    private final Supplier<Float> pY;
+    private final Supplier<Vector2d> passthrough;
     private final Supplier<Vector2d> pointSupplier;
 
     private double maxRotation = 1;
@@ -47,13 +48,12 @@ public class AlignToPointDriveTask extends ForeverTask {
     /**
      * Construct a new pass-through AlignToPointTask.
      *
-     * @param passThroughPoseX   the pose X power to pass through to the drive
-     * @param passThroughPoseY   the pose Y power to pass through to the drive
+     * @param passthrough        the robot linear velocity pass-through
      * @param drive              drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      * @param rotationController rotation PID controller to use
      * @param point              the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(@Nullable Supplier<Float> passThroughPoseX, @Nullable Supplier<Float> passThroughPoseY, @NonNull Moveable drive, @NonNull SystemController rotationController, @NonNull Supplier<Vector2d> point) {
+    public AlignToPointDriveTask(@Nullable Supplier<Vector2d> passthrough, @NonNull Moveable drive, @NonNull SystemController rotationController, @NonNull Supplier<Vector2d> point) {
         this.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
@@ -64,8 +64,7 @@ public class AlignToPointDriveTask extends ForeverTask {
             ((PIDF) controller).getPIDFController()
                     .setTolerance(Math.max(Math.toRadians(1), ((PIDF) controller).getPIDFController().getTolerance()[0]));
         }
-        pX = passThroughPoseX;
-        pY = passThroughPoseY;
+        this.passthrough = passthrough;
 
         Vector2d currentTarget = point.get();
         withName("Align To Point: " + currentTarget);
@@ -75,13 +74,13 @@ public class AlignToPointDriveTask extends ForeverTask {
     /**
      * Construct a new controller-based pass-through AlignToPointTask.
      *
-     * @param passThroughTranslation the controller where the left stick will be used to pass translation pose
+     * @param passthroughTranslation the controller where the left stick will be used to pass translation pose
      * @param rotationController     rotation PID controller to use
      * @param drive                  drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      * @param point                  the point to align to in field space, will use the drive's pose estimate for current position
      */
-    public AlignToPointDriveTask(@NonNull Gamepad passThroughTranslation, @NonNull Moveable drive, @NonNull PIDF rotationController, @NonNull Supplier<Vector2d> point) {
-        this(() -> -passThroughTranslation.left_stick_y, () -> -passThroughTranslation.left_stick_x, drive, rotationController, point);
+    public AlignToPointDriveTask(@NonNull Gamepad passthroughTranslation, @NonNull Moveable drive, @NonNull PIDF rotationController, @NonNull Supplier<Vector2d> point) {
+        this(() -> Controls.vec(passthroughTranslation.left_stick_x, passthroughTranslation.left_stick_y), drive, rotationController, point);
     }
 
     /**
@@ -96,7 +95,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      * @param point              the point to align to in field space, will use the drive's pose estimate for current position
      */
     public AlignToPointDriveTask(@NonNull Moveable drive, @NonNull PIDF rotationController, @NonNull Supplier<Vector2d> point) {
-        this(null, null, drive, rotationController, point);
+        this((Supplier<Vector2d>) null, drive, rotationController, point);
     }
 
     /**
@@ -136,9 +135,9 @@ public class AlignToPointDriveTask extends ForeverTask {
         }
         lastPoint = point;
 
-        // Create a vector from the gamepad x/y inputs which is the field relative movement
+        // Create a vector from the x/y inputs which is the field relative movement
         // Then, rotate that vector by the inverse of that heading for field centric control
-        Vector2d fieldFrameInput = new Vector2d(pX.get(), pY.get());
+        Vector2d fieldFrameInput = passthrough.get();
         Vector2d robotFrameInput = poseEstimate.heading.inverse().times(fieldFrameInput);
 
         // Difference between the target vector and the bot's position
@@ -160,7 +159,7 @@ public class AlignToPointDriveTask extends ForeverTask {
             headingInput = 0;
 
         // Combine the x/y velocity with our derived angular velocity
-        drive.setPower(Geometry.poseToVel(new Pose2d(fieldCentric ? robotFrameInput : fieldFrameInput, headingInput)));
+        drive.setPower(new PoseVelocity2d(fieldCentric ? robotFrameInput : fieldFrameInput, headingInput));
 
         // Draw the target on the field with lines to the target
         fieldOverlay.setStroke("#dd2c00")

@@ -38,7 +38,7 @@ public class DifferentialDriveTask extends ForeverTask {
 
     @Override
     protected void periodic() {
-        drive.setPower(Controls.makeRobotVel(gamepad.left_stick_y, 0, gamepad.right_stick_x));
+        drive.setPower(Controls.vel(gamepad.left_stick_y, 0, gamepad.right_stick_x));
     }
 
     @Override

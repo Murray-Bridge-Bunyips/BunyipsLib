@@ -1,18 +1,12 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
-
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-
 /**
- * Rotational utilities for Pose2d and Vector2d, including conversion from Cartesian to Robot space.
+ * Rotational utilities from Cartesian to Robot space.
  * <p>
  * The Cartesian Coordinate System is a 2D coordinate system where the x-axis goes to the right (pos X) and the y-axis goes up/forward (pos Y).
  * Angles on the Cartesian Coordinate System are measured clockwise from the positive y-axis.
@@ -29,129 +23,35 @@ public final class Cartesian {
     }
 
     /**
-     * Rotate a Cartesian vector.
-     *
-     * @param cartesianVec the vector to rotate, must be in a Cartesian vector
-     * @param rot          the angle to rotate these points around by
-     * @return the rotated Cartesian pose
-     */
-    @NonNull
-    public static Vector2d rotate(@NonNull Vector2d cartesianVec, @NonNull Measure<Angle> rot) {
-        double t = rot.in(Radians);
-        // 2D rotation matrix
-        // | cos(t) -sin(t) | | x | = | x cos(t) - y sin(t) |
-        // | sin(t)  cos(t) | | y | = | x sin(t) + y cos(t) |
-        return new Vector2d(
-                cartesianVec.x * Math.cos(t) - cartesianVec.y * Math.sin(t),
-                cartesianVec.x * Math.sin(t) + cartesianVec.y * Math.cos(t)
-        );
-    }
-
-    /**
-     * @param pose the Cartesian pose to convert to Robot form
-     * @return the Robot pose representation of the Cartesian pose
-     */
-    @NonNull
-    public static Pose2d toPose(@NonNull Pose2d pose) {
-        // noinspection SuspiciousNameCombination
-        return new Pose2d(pose.position.y, -pose.position.x, -pose.heading.toDouble());
-    }
-
-    /**
-     * @param pose the Cartesian pose to convert to a Robot Velocity form
-     * @return the Robot Velocity pose representation of the Cartesian pose
-     */
-    @NonNull
-    public static PoseVelocity2d toVel(@NonNull Pose2d pose) {
-        // noinspection SuspiciousNameCombination
-        return new PoseVelocity2d(new Vector2d(pose.position.y, -pose.position.x), -pose.heading.toDouble());
-    }
-
-    /**
-     * @param pose the Robot pose to convert to Cartesian form
-     * @return the Cartesian pose representation of the Robot pose
-     */
-    @NonNull
-    public static Pose2d fromPose(@NonNull Pose2d pose) {
-        // noinspection SuspiciousNameCombination
-        return new Pose2d(-pose.position.y, pose.position.x, -pose.heading.toDouble());
-    }
-
-    /**
-     * @param x       the Cartesian x coordinate
-     * @param y       the Cartesian y coordinate
-     * @param heading the Cartesian clockwise heading
-     * @return the Robot pose representation of the Cartesian pose
-     */
-    @NonNull
-    public static Pose2d toPose(double x, double y, double heading) {
-        // noinspection SuspiciousNameCombination
-        return new Pose2d(y, -x, -heading);
-    }
-
-    /**
-     * @param x       the Cartesian x coordinate
-     * @param y       the Cartesian y coordinate
-     * @param heading the Cartesian clockwise heading
+     * @param cartesianXVel   the Cartesian x velocity
+     * @param cartesianYVel   the Cartesian y velocity
+     * @param cartesianAngVel the Cartesian clockwise heading velocity
      * @return the Robot Velocity pose representation of this Cartesian pose
      */
     @NonNull
-    public static PoseVelocity2d toVel(double x, double y, double heading) {
+    public static PoseVelocity2d toVel(double cartesianXVel, double cartesianYVel, double cartesianAngVel) {
         // noinspection SuspiciousNameCombination
-        return new PoseVelocity2d(new Vector2d(y, -x), -heading);
+        return new PoseVelocity2d(new Vector2d(cartesianYVel, -cartesianXVel), -cartesianAngVel);
     }
 
     /**
-     * @param x       the Robot x coordinate
-     * @param y       the Robot y coordinate
-     * @param heading the Robot anti-clockwise heading
-     * @return the Cartesian pose representation of the Robot pose
-     */
-    @NonNull
-    public static Pose2d fromPose(double x, double y, double heading) {
-        // noinspection SuspiciousNameCombination
-        return new Pose2d(-y, x, -heading);
-    }
-
-    /**
-     * @param vector the Cartesian vector to convert to Robot form
+     * @param cartesianVec the Cartesian vector to convert to Robot form
      * @return the Robot vector representation of the Cartesian vector
      */
     @NonNull
-    public static Vector2d toVector(@NonNull Vector2d vector) {
+    public static Vector2d toVec(@NonNull Vector2d cartesianVec) {
         // noinspection SuspiciousNameCombination
-        return new Vector2d(vector.y, -vector.x);
+        return new Vector2d(cartesianVec.y, -cartesianVec.x);
     }
 
     /**
-     * @param vector the Robot vector to convert to Cartesian form
-     * @return the Cartesian vector representation of the Robot vector
-     */
-    @NonNull
-    public static Vector2d fromVector(@NonNull Vector2d vector) {
-        // noinspection SuspiciousNameCombination
-        return new Vector2d(-vector.y, vector.x);
-    }
-
-    /**
-     * @param x the Cartesian x coordinate
-     * @param y the Cartesian y coordinate
+     * @param cartesianX the Cartesian x coordinate
+     * @param cartesianY the Cartesian y coordinate
      * @return the Robot vector representation of the Cartesian vector
      */
     @NonNull
-    public static Vector2d toVector(double x, double y) {
+    public static Vector2d toVec(double cartesianX, double cartesianY) {
         // noinspection SuspiciousNameCombination
-        return new Vector2d(y, -x);
-    }
-
-    /**
-     * @param x the Robot x coordinate
-     * @param y the Robot y coordinate
-     * @return the Cartesian vector representation of the Robot vector
-     */
-    @NonNull
-    public static Vector2d fromVector(double x, double y) {
-        // noinspection SuspiciousNameCombination
-        return new Vector2d(-y, x);
+        return new Vector2d(cartesianY, -cartesianX);
     }
 }

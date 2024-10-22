@@ -317,7 +317,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 // here instead.
                 started.setAccessible(true);
                 started.set(opMode, true);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+            } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e) {
                 throw new RuntimeException("Internal error while starting OpMode. This shouldn't happen!");
             }
             opMode.gamepad1 = gamepad1;

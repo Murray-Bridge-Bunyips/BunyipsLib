@@ -1,7 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -14,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
@@ -102,7 +99,8 @@ public class SwitchableLocalizer implements Localizer {
                 protected void init() {
                     telemetry = require(opMode).telemetry.addRetained("Initialising Localizer Self Test...").bold();
                     pose = pose.plus(main.update().value());
-                    capture = Cartesian.rotate(Cartesian.fromPose(pose).position, Radians.of(pose.heading.toDouble()).negate());
+                    // TODO: test
+                    capture = pose.heading.inverse().times(pose.position);
                 }
 
                 @Override
@@ -120,18 +118,17 @@ public class SwitchableLocalizer implements Localizer {
                         finish();
                         return;
                     }
-                    // Always calculate error forward, using cartesian coordinates
-                    Vector2d error = capture.minus(Cartesian.rotate(Cartesian.fromPose(pose).position, Radians.of(pose.heading.toDouble()).negate()));
+                    Vector2d error = capture.minus(pose.heading.inverse().times(pose.position));
                     if (!forwardCheck) {
                         update("<font color='red'>Please move the robot forward a minimum of 10 inches.</font>");
-                        if (!Mathf.isNear(error.y, capture.y, 10)) {
+                        if (!Mathf.isNear(error.x, capture.x, 10)) {
                             forwardCheck = true;
                         }
                         return;
                     }
                     if (!strafeCheck) {
                         update("<font color='yellow'>Please move the robot sideways a minimum of 10 inches.</font>");
-                        if (!Mathf.isNear(error.x, capture.x, 10)) {
+                        if (!Mathf.isNear(error.y, capture.y, 10)) {
                             strafeCheck = true;
                         }
                         return;
@@ -175,7 +172,7 @@ public class SwitchableLocalizer implements Localizer {
                 protected void init() {
                     telemetry = require(opMode).telemetry.addRetained("Initialising Localizer Test...").bold();
                     pose = pose.plus(main.update().value());
-                    capture = Cartesian.rotate(Cartesian.fromPose(pose).position, Radians.of(pose.heading.toDouble()).negate());
+                    capture = pose.heading.inverse().times(pose.position);
                 }
 
                 @Override
@@ -199,7 +196,7 @@ public class SwitchableLocalizer implements Localizer {
                             "<font color='gray'>gamepad1.left_bumper to fail the test.\n" +
                             "gamepad1.right_bumper to pass the test. Pass the test if the below values are increasing properly.</font>\n" +
                             "Raw: " + pose + "\n" +
-                            "Error (rotated): " + capture.minus(Cartesian.rotate(Cartesian.fromPose(pose).position, Radians.of(pose.heading.toDouble()).negate())) + "\n");
+                            "Error (rotated): " + capture.minus(pose.heading.inverse().times(pose.position)) + "\n");
                 }
 
                 @Override

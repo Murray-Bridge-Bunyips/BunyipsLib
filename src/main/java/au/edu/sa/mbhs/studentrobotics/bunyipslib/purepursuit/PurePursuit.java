@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -273,11 +274,13 @@ public class PurePursuit implements Runnable {
         if (Mathf.isNear(Math.abs(headingError), Math.PI, 0.1))
             headingError = Math.PI;
 
-        drive.setPower(Geometry.poseToVel(new Pose2d(
-                Mathf.clamp(p2pX.calculate(rotCurr.x, rotLook.x), -1, 1),
-                Mathf.clamp(p2pY.calculate(rotCurr.y, rotLook.y), -1, 1),
+        drive.setPower(new PoseVelocity2d(
+                new Vector2d(
+                        Mathf.clamp(p2pX.calculate(rotCurr.x, rotLook.x), -1, 1),
+                        Mathf.clamp(p2pY.calculate(rotCurr.y, rotLook.y), -1, 1)
+                ),
                 Mathf.clamp(-p2pHeading.calculate(headingError, 0), -1, 1)
-        )));
+        ));
 
         Dashboard.usePacket(p -> {
             Canvas canvas = p.fieldOverlay();

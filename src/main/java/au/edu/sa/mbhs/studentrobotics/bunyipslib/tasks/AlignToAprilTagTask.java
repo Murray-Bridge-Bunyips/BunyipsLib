@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
@@ -42,12 +43,10 @@ public class AlignToAprilTagTask extends Task {
      */
     public static int TARGET_TAG = -1;
 
+    private Supplier<PoseVelocity2d> passthrough;
     private final Moveable drive;
     private final AprilTag at;
     private final PIDF controller;
-    private DoubleSupplier x;
-    private DoubleSupplier y;
-    private DoubleSupplier r;
     private boolean hasCalculated;
 
     /**
@@ -74,24 +73,20 @@ public class AlignToAprilTagTask extends Task {
     /**
      * TeleOp constructor.
      *
-     * @param xSupplier  x (strafe) value
-     * @param ySupplier  y (forward) value
-     * @param rSupplier  r (rotate) value
-     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param at         the AprilTag processor to use
-     * @param targetTag  the tag to align to, -1 for any tag
-     * @param controller the PID controller to use for aligning to a target
+     * @param passthrough the pose velocity passthrough for the drivetrain
+     * @param drive       the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param at          the AprilTag processor to use
+     * @param targetTag   the tag to align to, -1 for any tag
+     * @param controller  the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(@NonNull DoubleSupplier xSupplier, @NonNull DoubleSupplier ySupplier, @NonNull DoubleSupplier rSupplier, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
+    public AlignToAprilTagTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
         super(INFINITE_TIMEOUT);
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
         this.at = at;
         TARGET_TAG = targetTag;
-        x = xSupplier;
-        y = ySupplier;
-        r = rSupplier;
+        this.passthrough = passthrough;
         this.controller = controller;
         controller.getPIDFController().updatePIDF(coeffs);
         withName("Align To AprilTag");
@@ -107,7 +102,7 @@ public class AlignToAprilTagTask extends Task {
      * @param controller The PID controller to use for aligning to a target
      */
     public AlignToAprilTagTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
-        this(() -> driver.left_stick_x, () -> driver.left_stick_y, () -> driver.right_stick_x, drive, at, targetTag, controller);
+        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, at, targetTag, controller);
     }
 
     @Override
@@ -122,26 +117,23 @@ public class AlignToAprilTagTask extends Task {
         // FtcDashboard live tuning
         controller.getPIDFController().setPIDF(coeffs);
 
-        Pose2d pose = Geometry.zeroPose();
-        if (x != null)
-            pose = Controls.makeRobotPose(x.getAsDouble(), y.getAsDouble(), r.getAsDouble());
+        PoseVelocity2d vel = Geometry.zeroVel();
+        if (passthrough != null)
+            vel = passthrough.get();
 
         List<AprilTagData> data = at.getData();
 
         Optional<AprilTagData> target = data.stream().filter(t -> TARGET_TAG == -1 || t.getId() == TARGET_TAG).findFirst();
 
         if (!target.isPresent() || !target.get().isInLibrary()) {
-            drive.setPower(Geometry.poseToVel(pose));
+            drive.setPower(vel);
             return;
         }
 
         assert target.get().getFtcPose().isPresent() && target.get().getMetadata().isPresent();
-        drive.setPower(Geometry.poseToVel(
-                new Pose2d(
-                        pose.position.x,
-                        pose.position.y,
-                        -controller.calculate(target.get().getFtcPose().get().bearing, 0.0)
-                )
+        drive.setPower(new PoseVelocity2d(
+                vel.linearVel,
+                -controller.calculate(target.get().getFtcPose().get().bearing, 0.0)
         ));
         hasCalculated = true;
 
@@ -161,6 +153,6 @@ public class AlignToAprilTagTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return x == null && hasCalculated && controller.getPIDFController().atSetPoint();
+        return passthrough == null && hasCalculated && controller.getPIDFController().atSetPoint();
     }
 }
