@@ -216,9 +216,14 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     /**
-     * Map a switch sensor to a position on the actuator, which will update the current encoder reading
-     * to the position of the switch when pressed. This is different from the bottom switch, and top switches,
-     * which are used as software stops for the actuator.
+     * Map a limit switch to a position on the actuator, which will update the current encoder reading
+     * to the position of the switch when pressed.
+     * <p>
+     * This is different from the bottom switch, and top switches, which are used as software stops for the actuator.
+     * This method operates to reduce encoder drift, as if a switch is pressed by the actuator, the position can be mapped.
+     * It may be wise to map the top switch here if used, which will increase encoder accuracy.
+     * The bottom limit switch does not need to be mapped since it is used to reset the encoder, therefore
+     * setting the reading to 0.
      *
      * @param switchSensor the switch sensor to map
      * @param position     the position to map the switch to in encoder ticks of the actuator
@@ -227,7 +232,6 @@ public class HoldableActuator extends BunyipsSubsystem {
     @NonNull
     public HoldableActuator map(@NonNull TouchSensor switchSensor, int position) {
         switchMapping.put(switchSensor, position);
-        // TODO: implement
         return this;
     }
 
@@ -423,6 +427,15 @@ public class HoldableActuator extends BunyipsSubsystem {
                 motorPower = (systemResponse ? MOVING_POWER : HOLDING_POWER) * Math.signum(target - current);
                 opMode(o -> o.telemetry.add("%: % at % ticks, % error [%tps]", this, !systemResponse ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, target - current, Math.round(encoder.getVelocity())));
                 break;
+        }
+
+        for (TouchSensor limitSwitch : switchMapping.keySet()) {
+            // Map encoder to limit switch positions
+            if (limitSwitch.isPressed()) {
+                Integer ticks = switchMapping.get(limitSwitch);
+                if (ticks != null)
+                    encoder.setKnownPosition(ticks);
+            }
         }
 
         if (bottomSwitch != null) {
