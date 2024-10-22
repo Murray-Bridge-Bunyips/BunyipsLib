@@ -22,8 +22,8 @@ BunyipsLib was originally a collection of common functions that our FTC teams us
 It has since evolved into a full-fledged library that is used by all of our teams. It is designed to
 provide useful development utilities in making robot code, offering efficient common modules and
 OpMode abstractions with
-error handling, dynamic device initialisation, native RoadRunner v0.5 support, FtcDashboard, and Vision
-processing, and an expansible ecosystem focused on multi-bot repos.
+error handling, dynamic device initialisation, native RoadRunner v1.0 and MeepMeep support, FtcDashboard, Vision
+processing, subsystems and tasks, and an expansible ecosystem focused on multi-bot repos.
 
 BunyipsLib takes inspiration from FTCLib, WPILib, RoadRunner, and other libraries, and is designed
 to be the one-stop shop for all of our teams' needs. It is designed to be easy to use, and to integrate
