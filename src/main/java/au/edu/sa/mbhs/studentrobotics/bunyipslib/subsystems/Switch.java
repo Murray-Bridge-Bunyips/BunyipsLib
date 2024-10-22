@@ -60,57 +60,71 @@ public class Switch extends BunyipsSubsystem {
      *
      * @param openPosition  the open position to respect
      * @param closePosition the closed position to respect
+     * @return this
      */
-    public void setBounds(double openPosition, double closePosition) {
+    public Switch setBounds(double openPosition, double closePosition) {
         this.openPosition = Mathf.clamp(openPosition, 0, 1);
         this.closePosition = Mathf.clamp(closePosition, 0, 1);
+        return this;
     }
 
     /**
      * Set the new open position.
      *
      * @param openPosition the open position to respect
+     * @return this
      */
-    public void setOpenBound(double openPosition) {
+    public Switch setOpenBound(double openPosition) {
         this.openPosition = Mathf.clamp(openPosition, 0, 1);
+        return this;
     }
 
     /**
      * Set the new closed position.
      *
      * @param closePosition the closed position to respect
+     * @return this
      */
-    public void setClosedBound(double closePosition) {
+    public Switch setClosedBound(double closePosition) {
         this.closePosition = Mathf.clamp(closePosition, 0, 1);
+        return this;
     }
 
     /**
      * Open the switch.
+     *
+     * @return this
      */
-    public void open() {
+    public Switch open() {
         target = openPosition;
+        return this;
     }
 
     /**
      * Close the switch.
+     *
+     * @return this
      */
-    public void close() {
+    public Switch close() {
         target = closePosition;
+        return this;
     }
 
     /**
      * Toggles the switch between the open and closed positions, moving to the closest position if the servo is
      * not in one of the two open or closed positions.
+     *
+     * @return this
      */
-    public void toggle() {
+    public Switch toggle() {
         double pos = servo.getPosition();
         if (pos == openPosition) {
             close();
-            return;
+            return this;
         }
         if (pos == closePosition) {
             open();
-            return;
+            return this;
         }
 
         // Snap to the closest open or closed position
@@ -121,6 +135,7 @@ public class Switch extends BunyipsSubsystem {
         } else {
             close();
         }
+        return this;
     }
 
     /**
@@ -128,8 +143,9 @@ public class Switch extends BunyipsSubsystem {
      *
      * @param position the position to set to, clipped between open and close
      */
-    public void setPositionClipped(double position) {
+    public Switch setPositionClipped(double position) {
         target = Mathf.clamp(position, Math.min(openPosition, closePosition), Math.max(openPosition, closePosition));
+        return this;
     }
 
     /**
@@ -151,8 +167,9 @@ public class Switch extends BunyipsSubsystem {
      *
      * @param position the raw position to send to the servo
      */
-    public void setPosition(double position) {
+    public Switch setPosition(double position) {
         target = Mathf.clamp(position, 0, 1);
+        return this;
     }
 
     /**
