@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.function.Supplier;
@@ -9,9 +10,14 @@ import java.util.function.Supplier;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Filter;
 
 /**
- * Represents a motor or external encoder that takes in suppliers of position and velocity to calculate motor ticks.
+ * Represents a motor or external encoder that takes in suppliers of position and velocity to calculate encoder ticks.
  * The velocity methods of this class have been adjusted to include acceleration and corrected velocity receivers.
+ * <p>
+ * This class uses an internal accumulator to determine the current position of the encoder, allowing for the current
+ * position to be asserted by the end user.
  *
+ * @author Lucas Bubner, 2024
+ * @see RawEncoder RawEncoder - used in drivebases and for RoadRunner
  * @since 4.0.0
  */
 public class Encoder {
@@ -27,12 +33,12 @@ public class Encoder {
     private int accumulation;
 
     /**
-     * The encoder object for the motor.
+     * The encoder object for some positional and velocity supplier.
      *
      * @param position the position supplier which points to the
-     *                 current position of the motor in ticks ({@code obj::getCurrentPosition})
+     *                 current position of the encoder in ticks ({@code obj::getCurrentPosition})
      * @param velocity the velocity supplier which points to the
-     *                 current velocity the motor in ticks per second ({@code obj::getVelocity})
+     *                 current velocity the encoder in ticks per second ({@code obj::getVelocity})
      */
     public Encoder(@NonNull Supplier<Integer> position, @NonNull Supplier<Double> velocity) {
         this.position = position;
@@ -83,7 +89,7 @@ public class Encoder {
     }
 
     /**
-     * Resets the encoder without having to stop the motor.
+     * Resets the encoder without having to adjust output speed.
      */
     public void reset() {
         resetVal += getPosition();
@@ -118,7 +124,7 @@ public class Encoder {
     }
 
     /**
-     * @return the estimated acceleration of the motor in ticks per second squared. this method will internally
+     * @return the estimated acceleration of the encoder in ticks per second squared. this method will internally
      * call {@link #getRawVelocity()} to update the velocity information which is required.
      */
     public double getAcceleration() {
@@ -127,7 +133,7 @@ public class Encoder {
     }
 
     /**
-     * @return the velocity of the motor, will correct for overflow if told to do so
+     * @return the velocity of the encoder, will correct for overflow if told to do so
      * by {@link #useEncoderOverflowCorrection()}.
      */
     public double getVelocity() {
@@ -135,7 +141,7 @@ public class Encoder {
     }
 
     /**
-     * @return the raw velocity of the motor reported by the encoder, may overflow if ticks/sec exceed 32767/sec
+     * @return the raw velocity of the encoder, may overflow if ticks/sec exceed 32767/sec
      */
     public double getRawVelocity() {
         double velo = (getOperationalDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
