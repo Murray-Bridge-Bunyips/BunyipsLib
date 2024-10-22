@@ -98,9 +98,9 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      * Constructor for HolonomicVectorDriveTask on an always disabled field-centric mode.
      *
      * @param vel   The supplier for the current pose velocity of the robot
-     * @param drive     The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
-     *                  called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
-     *                  if possible. A localizer attached is required.
+     * @param drive The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *              called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *              if possible. A localizer attached is required.
      */
     public HolonomicVectorDriveTask(@NonNull Supplier<PoseVelocity2d> vel, @NonNull Moveable drive) {
         this(vel, drive, () -> false);

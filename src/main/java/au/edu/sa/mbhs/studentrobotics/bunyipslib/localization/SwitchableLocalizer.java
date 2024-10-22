@@ -3,16 +3,15 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
-import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * SwitchableLocalizer is a composite localizer that allows self-tests to be performed, and to allow a "fallback"
@@ -82,64 +81,77 @@ public class SwitchableLocalizer implements Localizer {
         @NonNull
         public Task autoTestMainLocalizer() {
             return new Task() {
-                private Pose2d pose = Geometry.zeroPose();
+                private double SELF_TEST_VELOCITY_INCHES = 7;
+
                 private Telemetry.Item telemetry;
-                private Vector2d capture;
+                private double minX, minY;
+                private double maxX, maxY;
 
-                private boolean forwardCheck;
-                private boolean strafeCheck;
+                private boolean forwardCheck, backwardCheck;
+                private boolean leftCheck, rightCheck;
 
-                private void update(String text) {
-                    telemetry.setValue("\nLocalizer Auto Test in progress.\n" +
-                            "<font color='gray'>gamepad1.left_bumper to early abort and fail the test.\n" +
-                            "gamepad1.right_bumper to force pass the test.</font>\n" + text + "\n" + pose + "\n");
+                /**
+                 * Set the velocity in inches for the self-test to pass.
+                 *
+                 * @param velocity velocity magnitude to pass the test for each translation axis
+                 */
+                public void setSelfTestVelocityInches(double velocity) {
+                    SELF_TEST_VELOCITY_INCHES = velocity;
                 }
 
                 @Override
                 protected void init() {
                     telemetry = require(opMode).telemetry.addRetained("Initialising Localizer Self Test...").bold();
-                    pose = pose.plus(main.update().value());
-                    // TODO: test
-                    capture = pose.heading.inverse().times(pose.position);
                 }
 
                 @Override
                 protected void periodic() {
-                    pose = pose.plus(main.update().value());
+                    PoseVelocity2d vel = main.update().velocity().value();
+                    minX = Math.min(minX, vel.linearVel.x);
+                    minY = Math.min(minY, vel.linearVel.y);
+                    maxX = Math.max(maxX, vel.linearVel.x);
+                    maxY = Math.max(maxY, vel.linearVel.y);
                     if (require(opMode).gamepad1.left_bumper) {
                         forwardCheck = false;
-                        strafeCheck = false;
+                        backwardCheck = false;
+                        leftCheck = false;
+                        rightCheck = false;
                         finish();
                         return;
                     }
                     if (opMode.gamepad1.right_bumper) {
                         forwardCheck = true;
-                        strafeCheck = true;
+                        backwardCheck = true;
+                        leftCheck = true;
+                        rightCheck = true;
                         finish();
                         return;
                     }
-                    Vector2d error = capture.minus(pose.heading.inverse().times(pose.position));
-                    if (!forwardCheck) {
-                        update("<font color='red'>Please move the robot forward a minimum of 10 inches.</font>");
-                        if (!Mathf.isNear(error.x, capture.x, 10)) {
-                            forwardCheck = true;
-                        }
-                        return;
-                    }
-                    if (!strafeCheck) {
-                        update("<font color='yellow'>Please move the robot sideways a minimum of 10 inches.</font>");
-                        if (!Mathf.isNear(error.y, capture.y, 10)) {
-                            strafeCheck = true;
-                        }
-                        return;
-                    }
-                    update("<font color='green'>Self check passed.</font>");
+
+                    forwardCheck = maxX > SELF_TEST_VELOCITY_INCHES;
+                    backwardCheck = minX < -SELF_TEST_VELOCITY_INCHES;
+                    leftCheck = maxY > SELF_TEST_VELOCITY_INCHES;
+                    rightCheck = minY < -SELF_TEST_VELOCITY_INCHES;
+
+                    telemetry.setValue(Text.builder()
+                            .append("\nLocalizer Auto Test in progress.\n")
+                            .append("<font color='gray'>gamepad1.left_bumper to early abort and fail the test.\n")
+                            .append("gamepad1.right_bumper to force pass the test.</font>\n")
+                            .append("<font color='%'>[%] Forward Check</font>\n", forwardCheck ? "green" : "red", forwardCheck ? "X" : " ")
+                            .append("<font color='%'>[%] Backward Check</font>\n", backwardCheck ? "green" : "red", backwardCheck ? "X" : " ")
+                            .append("<font color='%'>[%] Left Check</font>\n", leftCheck ? "green" : "red", leftCheck ? "X" : " ")
+                            .append("<font color='%'>[%] Right Check</font>\n", rightCheck ? "green" : "red", rightCheck ? "X" : " ")
+                            .append("Min Velocities: ")
+                            .append("x:%,y:%\n", Mathf.round(minX, 1), Mathf.round(minY, 1))
+                            .append("Max Velocities: ")
+                            .append("x:%,y:%\n", Mathf.round(maxX, 1), Mathf.round(maxY, 1))
+                            .toString());
                 }
 
                 @Override
                 protected void onFinish() {
                     telemetry.setRetained(false);
-                    if (!forwardCheck || !strafeCheck) {
+                    if (!forwardCheck || !backwardCheck || !leftCheck || !rightCheck) {
                         require(opMode).telemetry.log("<font color='yellow'>Localizer test failed. Falling back to backup localizer.</font>");
                         USING_FALLBACK_LOCALIZER = true;
                         return;
@@ -150,8 +162,8 @@ public class SwitchableLocalizer implements Localizer {
 
                 @Override
                 protected boolean isTaskFinished() {
-                    // Timeout or manual exit only
-                    return false;
+                    // Manual exit or if all checks are complete
+                    return forwardCheck && backwardCheck && leftCheck && rightCheck;
                 }
             }.withName("Auto Test Main Localizer");
         }
@@ -164,20 +176,24 @@ public class SwitchableLocalizer implements Localizer {
         @NonNull
         public Task manualTestMainLocalizer() {
             return new Task() {
-                private Pose2d pose = Geometry.zeroPose();
                 private Telemetry.Item telemetry;
-                private Vector2d capture;
+                private double minX, minY, minAng;
+                private double maxX, maxY, maxAng;
 
                 @Override
                 protected void init() {
                     telemetry = require(opMode).telemetry.addRetained("Initialising Localizer Test...").bold();
-                    pose = pose.plus(main.update().value());
-                    capture = pose.heading.inverse().times(pose.position);
                 }
 
                 @Override
                 protected void periodic() {
-                    pose = pose.plus(main.update().value());
+                    PoseVelocity2d vel = main.update().velocity().value();
+                    minX = Math.min(minX, vel.linearVel.x);
+                    minY = Math.min(minY, vel.linearVel.y);
+                    minAng = Math.min(minAng, vel.angVel);
+                    maxX = Math.max(maxX, vel.linearVel.x);
+                    maxY = Math.max(maxY, vel.linearVel.y);
+                    maxAng = Math.max(maxAng, vel.angVel);
                     if (require(opMode).gamepad1.left_bumper) {
                         USING_FALLBACK_LOCALIZER = true;
                         opMode.telemetry.log("<font color='yellow'>Localizer test failed. Falling back to backup localizer.</font>");
@@ -192,11 +208,15 @@ public class SwitchableLocalizer implements Localizer {
                         finish();
                         return;
                     }
-                    telemetry.setValue("\nLocalizer Test in progress.\n" +
-                            "<font color='gray'>gamepad1.left_bumper to fail the test.\n" +
-                            "gamepad1.right_bumper to pass the test. Pass the test if the below values are increasing properly.</font>\n" +
-                            "Raw: " + pose + "\n" +
-                            "Error (rotated): " + capture.minus(pose.heading.inverse().times(pose.position)) + "\n");
+                    telemetry.setValue(Text.builder()
+                            .append("\nLocalizer Test in progress.\n")
+                            .append("<font color='gray'>gamepad1.left_bumper to fail the test.\n")
+                            .append("gamepad1.right_bumper to pass the test. Pass the test if the below minimum and maximum velocities are updating.</font>\n")
+                            .append("Min Velocities: ")
+                            .append("x:%,y:%,r:%\n", Mathf.round(minX, 1), Mathf.round(minY, 1), Mathf.round(minAng, 1))
+                            .append("Max Velocities: ")
+                            .append("x:%,y:%,r:%\n", Mathf.round(maxX, 1), Mathf.round(maxY, 1), Mathf.round(maxAng, 1))
+                            .toString());
                 }
 
                 @Override

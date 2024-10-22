@@ -32,7 +32,7 @@ public class HolonomicDriveTask extends ForeverTask {
     /**
      * Constructor for HolonomicDriveTask.
      *
-     * @param velSupplier           The supplier for Robot velocity input
+     * @param velSupplier         The supplier for Robot velocity input
      * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
      *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
      *                            if possible.
@@ -51,10 +51,10 @@ public class HolonomicDriveTask extends ForeverTask {
     /**
      * Constructor for HolonomicDriveTask on an always disabled field-centric mode.
      *
-     * @param velSupplier           The supplier for Robot velocity input
-     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
-     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
-     *                            if possible.
+     * @param velSupplier The supplier for Robot velocity input
+     * @param drive       The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *                    called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *                    if possible.
      */
     public HolonomicDriveTask(@NonNull Supplier<PoseVelocity2d> velSupplier, @NonNull Moveable drive) {
         this(velSupplier, drive, () -> false);

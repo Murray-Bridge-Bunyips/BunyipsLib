@@ -45,9 +45,9 @@ public class AlignToContourTask extends Task {
      * TeleOp constructor.
      *
      * @param passthrough the pose velocity passthrough for the drivetrain
-     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param processor  the vision processor to use
-     * @param controller the PID controller to use for aligning to a target
+     * @param drive       the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param processor   the vision processor to use
+     * @param controller  the PID controller to use for aligning to a target
      */
     public AlignToContourTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF controller) {
         this(passthrough, drive, processor::getData, controller);
@@ -81,9 +81,9 @@ public class AlignToContourTask extends Task {
      * TeleOp constructor.
      *
      * @param passthrough the pose velocity passthrough for the drivetrain
-     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param supplier   a supplier source that will provide contour data
-     * @param controller the PID controller to use for aligning to a target
+     * @param drive       the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param supplier    a supplier source that will provide contour data
+     * @param controller  the PID controller to use for aligning to a target
      */
     public AlignToContourTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF controller) {
         if (drive instanceof BunyipsSubsystem)

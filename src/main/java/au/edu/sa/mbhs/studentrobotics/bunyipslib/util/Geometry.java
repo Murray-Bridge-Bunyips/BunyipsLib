@@ -158,4 +158,15 @@ public final class Geometry {
     public static double distBetween(@NonNull Vector2d a, @NonNull Vector2d b) {
         return Math.hypot(b.x - a.x, b.y - a.y);
     }
+
+    /**
+     * Returns a user-friendly representation of a {@link Pose2d}.
+     *
+     * @param pose the pose to convert to a user-friendly (heading in degrees) string
+     * @return the user-friendly string
+     */
+    @NonNull
+    public static String toString(@NonNull Pose2d pose) {
+        return "Pose2d(x=" + pose.position.x + ", y=" + pose.position.y + ", r=" + Math.toDegrees(pose.heading.toDouble()) + "°)";
+    }
 }

@@ -42,11 +42,10 @@ public class AlignToAprilTagTask extends Task {
      * The target tag to align to. -1 for any tag.
      */
     public static int TARGET_TAG = -1;
-
-    private Supplier<PoseVelocity2d> passthrough;
     private final Moveable drive;
     private final AprilTag at;
     private final PIDF controller;
+    private Supplier<PoseVelocity2d> passthrough;
     private boolean hasCalculated;
 
     /**

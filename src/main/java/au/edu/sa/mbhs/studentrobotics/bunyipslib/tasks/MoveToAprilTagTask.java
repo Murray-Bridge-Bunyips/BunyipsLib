@@ -107,9 +107,9 @@ public class MoveToAprilTagTask extends Task {
      * TeleOp constructor with default values.
      *
      * @param passthrough the pose velocity passthrough for the drivetrain
-     * @param drive     the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param aprilTag  the AprilTag processor to use
-     * @param targetTag the tag to target. -1 for any tag
+     * @param drive       the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param aprilTag    the AprilTag processor to use
+     * @param targetTag   the tag to target. -1 for any tag
      */
     public MoveToAprilTagTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull AprilTag aprilTag, @SuppressLint("LambdaLast") int targetTag) {
         if (drive instanceof BunyipsSubsystem)
@@ -254,9 +254,9 @@ public class MoveToAprilTagTask extends Task {
         headingError = camPose.bearing * TURN_GAIN;
 
         drive.setPower(Geometry.vel(
-                    Range.clip(rangeError, -MAX_AUTO_SPEED, MAX_AUTO_SPEED),
-                    Range.clip(yawError, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE),
-                    Range.clip(headingError, -MAX_AUTO_TURN, MAX_AUTO_TURN)
+                Range.clip(rangeError, -MAX_AUTO_SPEED, MAX_AUTO_SPEED),
+                Range.clip(yawError, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE),
+                Range.clip(headingError, -MAX_AUTO_TURN, MAX_AUTO_TURN)
         ));
 
         Pose2d poseEstimate = drive.getPose();
