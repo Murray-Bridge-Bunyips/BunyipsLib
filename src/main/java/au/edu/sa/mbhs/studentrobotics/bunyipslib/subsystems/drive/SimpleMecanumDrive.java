@@ -75,10 +75,10 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         speedY = Mathf.clamp(speedY, -1, 1);
         speedR = Mathf.clamp(speedR, -1, 1);
 
-        // Convert from Robot to Cartesian form
+        // Convert from Robot to Cartesian form by rotating 90 degrees counter-clockwise
+        double cX = -speedY;
         //noinspection SuspiciousNameCombination
-        double cX = speedY;
-        double cY = -speedX;
+        double cY = speedX;
         double cR = -speedR;
 
         if (localizer != null) {

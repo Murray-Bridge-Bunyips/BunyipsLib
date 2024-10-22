@@ -14,6 +14,9 @@ import com.acmerobotics.roadrunner.Vector2d;
  * The Robot Coordinate System is a 2D coordinate system where the x-axis goes up/forward (pos X) and the y-axis goes left (pos Y), and
  * the angles are measured anti-clockwise from the positive x-axis. This is the coordinate system used by the RoadRunner library,
  * and perfectly models a <a href="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Unit_circle_angles_color.svg/1024px-Unit_circle_angles_color.svg.png">Unit Circle</a>.
+ * <p>
+ * In general, using a simplified rotation matrix, converting to Robot space involves rotating the Cartesian coordinates by 90 degrees clockwise (x,y,r) -> (y,-x,-r).
+ * Conversion back to Cartesian space involves rotating the Robot coordinates by 90 degrees anti-clockwise (x,y,r) -> (-y,x,-r).
  *
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
@@ -23,6 +26,8 @@ public final class Cartesian {
     }
 
     /**
+     * Rotates these Cartesian coordinates by 90 degrees clockwise and converts them to a Robot Vector.
+     *
      * @param cartesianXVel   the Cartesian x velocity
      * @param cartesianYVel   the Cartesian y velocity
      * @param cartesianAngVel the Cartesian clockwise heading velocity
@@ -35,16 +40,8 @@ public final class Cartesian {
     }
 
     /**
-     * @param cartesianVec the Cartesian vector to convert to Robot form
-     * @return the Robot vector representation of the Cartesian vector
-     */
-    @NonNull
-    public static Vector2d toVec(@NonNull Vector2d cartesianVec) {
-        // noinspection SuspiciousNameCombination
-        return new Vector2d(cartesianVec.y, -cartesianVec.x);
-    }
-
-    /**
+     * Rotates these Cartesian coordinates by 90 degrees clockwise and converts them to a Robot Vector.
+     *
      * @param cartesianX the Cartesian x coordinate
      * @param cartesianY the Cartesian y coordinate
      * @return the Robot vector representation of the Cartesian vector
