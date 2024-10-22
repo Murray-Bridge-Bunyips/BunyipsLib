@@ -24,6 +24,7 @@ public class Encoder {
     private double lastTimestamp, veloEstimate, accel, lastVelo;
     private boolean overflowCorrection;
     private Supplier<DcMotorSimple.Direction> directionSupplier;
+    private int accumulation;
 
     /**
      * The encoder object for the motor.
@@ -70,6 +71,7 @@ public class Encoder {
      */
     public int getPosition() {
         int currentPosition = (getOperationalDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * position.get();
+        accumulation += currentPosition - lastPosition;
         if (currentPosition != lastPosition) {
             double currentTime = System.nanoTime() / 1.0E9;
             double dt = currentTime - lastTimestamp;
@@ -77,7 +79,7 @@ public class Encoder {
             lastPosition = currentPosition;
             lastTimestamp = currentTime;
         }
-        return currentPosition - resetVal;
+        return accumulation - resetVal;
     }
 
     /**
@@ -85,6 +87,16 @@ public class Encoder {
      */
     public void reset() {
         resetVal += getPosition();
+    }
+
+    /**
+     * Sets the current (known) position of the encoder to this value.
+     *
+     * @param position the known position to set this encoder to
+     */
+    public void setKnownPosition(int position) {
+        resetVal = 0;
+        accumulation = position;
     }
 
     /**
