@@ -9,7 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
- * Control a set of two servos together.
+ * Controls a set of two servos together to one of two static setpoints for each servo.
  *
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
