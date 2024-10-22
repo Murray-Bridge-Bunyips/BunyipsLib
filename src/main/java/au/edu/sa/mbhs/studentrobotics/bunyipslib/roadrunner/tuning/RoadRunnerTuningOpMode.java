@@ -115,7 +115,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
                 // We don't want to expose the motors on the subsystem directly, we'll just use reflection here.
                 // The DriveView constructor is fairly limited in what can be adjusted, including the requirement for
-                // a strict LazyIMU when it is locked to using hardwareMap. This explains why a separate IMU config
+                // a strict LazyIMU when it is locked to using h. This explains why a separate IMU config
                 // is used.
                 Class<?> mdClass = md.getClass();
                 Field leftFrontField, leftBackField, rightFrontField, rightBackField, lazyImuField;
@@ -142,7 +142,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     rightBack = (DcMotorEx) rightBackField.get(md);
                     lazyImu = (LazyImu) lazyImuField.get(md);
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Unable to access objects on MecanumDrive!");
+                    throw new RuntimeException("Unable to access objects on MecanumDrive! This shouldn't happen!");
                 }
 
                 Constants c = md.getConstants();
@@ -153,7 +153,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                         c.getMotionProfile().maxWheelVel,
                         c.getMotionProfile().minProfileAccel,
                         c.getMotionProfile().maxProfileAccel,
-                        hardwareMap.getAll(LynxModule.class),
+                        h.getAll(LynxModule.class),
                         Arrays.asList(
                                 leftFront,
                                 leftBack
@@ -167,7 +167,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                         parEncs,
                         perpEncs,
                         lazyImu,
-                        hardwareMap.voltageSensor.iterator().next(),
+                        h.voltageSensor.iterator().next(),
                         () -> new MotorFeedforward(c.getMotionProfile().kS,
                                 c.getMotionProfile().kV / c.getDriveModel().inPerTick,
                                 c.getMotionProfile().kA / c.getDriveModel().inPerTick)
@@ -216,7 +216,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     rightMotors = (List<DcMotorEx>) rightMotorsField.get(td);
                     lazyImu = (LazyImu) lazyImuField.get(td);
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Unable to access the objects on TankDrive!");
+                    throw new RuntimeException("Unable to access the objects on TankDrive! This shouldn't happen!");
                 }
 
                 Constants c = drive.getConstants();
@@ -227,7 +227,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                         c.getMotionProfile().maxWheelVel,
                         c.getMotionProfile().minProfileAccel,
                         c.getMotionProfile().maxProfileAccel,
-                        hardwareMap.getAll(LynxModule.class),
+                        h.getAll(LynxModule.class),
                         leftMotors,
                         rightMotors,
                         leftEncs,
@@ -235,7 +235,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                         parEncs,
                         perpEncs,
                         lazyImu,
-                        hardwareMap.voltageSensor.iterator().next(),
+                        h.voltageSensor.iterator().next(),
                         () -> new MotorFeedforward(c.getMotionProfile().kS,
                                 c.getMotionProfile().kV / c.getDriveModel().inPerTick,
                                 c.getMotionProfile().kA / c.getDriveModel().inPerTick)
@@ -305,7 +305,32 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             // We're delegating the OpMode, however, runBlocking calls do not know that motor powers must be updated,
             // so we call periodic in the background to mitigate this.
             Threads.startLoop("RR Tuning Drive Update Executor", drive::periodic);
-            ((LinearOpMode) selection[0]).runOpMode();
+
+            //noinspection ExtractMethodRecommender
+            LinearOpMode opMode = (LinearOpMode) selection[0];
+            try {
+                //noinspection DataFlowIssue
+                Class<?> opModeInternal = getClass().getSuperclass().getSuperclass().getSuperclass().getSuperclass();
+                //noinspection DataFlowIssue
+                Field started = opModeInternal.getDeclaredField("isStarted");
+                // We need to force start the OpMode that will execute, although we miss the init step we can wait
+                // here instead.
+                started.setAccessible(true);
+                started.set(opMode, true);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException("Internal error while starting OpMode. This shouldn't happen!");
+            }
+            opMode.gamepad1 = gamepad1;
+            opMode.gamepad2 = gamepad2;
+            opMode.hardwareMap = hardwareMap;
+            opMode.telemetry = out;
+
+            out.setCaptionValueSeparator(": ");
+            out.addData(Text.html().bold(selection[0].getClass().getSimpleName()).toString(), "Ready. Press play to start.");
+            out.update();
+            waitForStart();
+
+            opMode.runOpMode();
         } finally {
             Threads.stopAll();
         }
