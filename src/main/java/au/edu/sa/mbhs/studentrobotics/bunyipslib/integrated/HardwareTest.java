@@ -57,13 +57,13 @@ public final class HardwareTest extends BunyipsOpMode {
 
     /** @noinspection ExtractMethodRecommender*/
     @Override
+    @SuppressWarnings("unchecked")
     protected void onInit() {
         Map<String, List<HardwareDevice>> hardware;
         hardwareMap.logDevices();
         try {
             Field allDevicesMapField = HardwareMap.class.getDeclaredField("allDevicesMap");
             allDevicesMapField.setAccessible(true);
-            //noinspection unchecked
             hardware = (Map<String, List<HardwareDevice>>) allDevicesMapField.get(hardwareMap);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new EmergencyStop("Failed to access HardwareMap!");
