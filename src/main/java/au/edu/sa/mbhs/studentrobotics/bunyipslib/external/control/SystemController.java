@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import java.util.Arrays;
 
 /**
- * Marker interface that represents a control algorithm (PID, feedforward, etc).
+ * Generic interface that represents a control algorithm (PID, feedforward, etc).
  * <p>
  * This interface may not always represent the same behaviour in different contexts, such as open-loop and closed
  * loop control. Therefore, it is important to validate which controllers are being used within a control system
@@ -15,36 +15,8 @@ import java.util.Arrays;
  * @author Lucas Bubner, 2024
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface SystemController {
-    /**
-     * Gets the current coefficients for this controller.
-     * The return of this method is expected to be in the same order and length as the set method.
-     *
-     * @return an array of coefficients for this controller
-     */
-    @NonNull
-    double[] getCoefficients();
-
-    /**
-     * Sets the coefficients for this controller.
-     * The order of the coefficients is expected to be the same as the return of the get method,
-     * specified internally by the controller.
-     *
-     * @param coeffs a list of coefficients to set this controller to
-     */
-    void setCoefficients(@NonNull double[] coeffs);
-
-    /**
-     * Sets the coefficients for this controller.
-     * The order of the coefficients is expected to be the same as the return of the get method,
-     * specified internally by the controller.
-     *
-     * @param coeffs a list of coefficients to set this controller to
-     */
-    default void setCoefficients(@NonNull Double... coeffs) {
-        setCoefficients(Arrays.stream(coeffs).mapToDouble(Double::doubleValue).toArray());
-    }
-
     /**
      * Calculate the next output of this control algorithm.
      *
@@ -55,7 +27,46 @@ public interface SystemController {
     double calculate(double process, double setpoint);
 
     /**
-     * Reset this controller back to an un-accumulated state, if applicable.
+     * Gets the current coefficients for this controller.
+     * The return of this method is expected to be in the same order and length as the set method.
+     * On anonymous controllers, this method may return an empty array.
+     *
+     * @return an array of coefficients for this controller
      */
-    void reset();
+    @NonNull
+    default double[] getCoefficients() {
+        return new double[0];
+    }
+
+    /**
+     * Sets the coefficients for this controller.
+     * The order of the coefficients is expected to be the same as the return of the get method,
+     * specified internally by the controller.
+     * On anonymous controllers, this method may be a no-op.
+     *
+     * @param coeffs a list of coefficients to set this controller to
+     */
+    default void setCoefficients(@NonNull double[] coeffs) {
+        // Default impl, no-op
+    }
+
+    /**
+     * Sets the coefficients for this controller.
+     * The order of the coefficients is expected to be the same as the return of the get method,
+     * specified internally by the controller.
+     * On anonymous controllers, this method may be a no-op.
+     *
+     * @param coeffs a list of coefficients to set this controller to
+     */
+    default void setCoefficients(@NonNull Double... coeffs) {
+        setCoefficients(Arrays.stream(coeffs).mapToDouble(Double::doubleValue).toArray());
+    }
+
+    /**
+     * Reset this controller back to an un-accumulated state, if applicable.
+     * This method is not required to be implemented, and may be a no-op.
+     */
+    default void reset() {
+        // Default impl, no-op
+    }
 }

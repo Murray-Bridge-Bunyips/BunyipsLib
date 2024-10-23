@@ -221,9 +221,4 @@ public class ArmFeedforward implements SystemController {
     public double calculate(double positionRadians, double velocityRadiansPerSecond) {
         return calculate(Radians.of(positionRadians), RadiansPerSecond.of(velocityRadiansPerSecond));
     }
-
-    @Override
-    public void reset() {
-        // no-op
-    }
 }

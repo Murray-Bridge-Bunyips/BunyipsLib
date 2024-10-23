@@ -92,11 +92,6 @@ public class ElevatorFeedforward implements SystemController {
         return kS * Math.signum(velocity) + kG + kV * velocity + kA * acceleration;
     }
 
-    @Override
-    public void reset() {
-        // no-op
-    }
-
     /**
      * Calculates the feedforward from the gains and velocity setpoint (acceleration is assumed to
      * be zero).

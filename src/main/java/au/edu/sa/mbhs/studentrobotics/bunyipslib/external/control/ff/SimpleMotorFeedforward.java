@@ -81,11 +81,6 @@ public class SimpleMotorFeedforward implements SystemController {
         return kS * Math.signum(velocity) + kV * velocity + kA * acceleration;
     }
 
-    @Override
-    public void reset() {
-        // no-op
-    }
-
     // Rearranging the main equation from the calculate() method yields the
     // formulas for the methods below:
 

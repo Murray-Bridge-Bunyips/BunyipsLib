@@ -62,6 +62,7 @@ public class Switch extends BunyipsSubsystem {
      * @param closePosition the closed position to respect
      * @return this
      */
+    @NonNull
     public Switch setBounds(double openPosition, double closePosition) {
         this.openPosition = Mathf.clamp(openPosition, 0, 1);
         this.closePosition = Mathf.clamp(closePosition, 0, 1);
@@ -74,6 +75,7 @@ public class Switch extends BunyipsSubsystem {
      * @param openPosition the open position to respect
      * @return this
      */
+    @NonNull
     public Switch setOpenBound(double openPosition) {
         this.openPosition = Mathf.clamp(openPosition, 0, 1);
         return this;
@@ -85,6 +87,7 @@ public class Switch extends BunyipsSubsystem {
      * @param closePosition the closed position to respect
      * @return this
      */
+    @NonNull
     public Switch setClosedBound(double closePosition) {
         this.closePosition = Mathf.clamp(closePosition, 0, 1);
         return this;
@@ -95,6 +98,7 @@ public class Switch extends BunyipsSubsystem {
      *
      * @return this
      */
+    @NonNull
     public Switch open() {
         target = openPosition;
         return this;
@@ -105,6 +109,7 @@ public class Switch extends BunyipsSubsystem {
      *
      * @return this
      */
+    @NonNull
     public Switch close() {
         target = closePosition;
         return this;
@@ -116,6 +121,7 @@ public class Switch extends BunyipsSubsystem {
      *
      * @return this
      */
+    @NonNull
     public Switch toggle() {
         double pos = servo.getPosition();
         if (pos == openPosition) {
@@ -143,6 +149,7 @@ public class Switch extends BunyipsSubsystem {
      *
      * @param position the position to set to, clipped between open and close
      */
+    @NonNull
     public Switch setPositionClipped(double position) {
         target = Mathf.clamp(position, Math.min(openPosition, closePosition), Math.max(openPosition, closePosition));
         return this;
@@ -167,6 +174,7 @@ public class Switch extends BunyipsSubsystem {
      *
      * @param position the raw position to send to the servo
      */
+    @NonNull
     public Switch setPosition(double position) {
         target = Mathf.clamp(position, 0, 1);
         return this;
