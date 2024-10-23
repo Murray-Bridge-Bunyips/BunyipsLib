@@ -32,8 +32,8 @@ public class IntrinsicMecanumLocalizer implements Localizer {
     /**
      * Create a new IntrinsicMecanumLocalizer.
      *
-     * @param params the coefficients used in calculating the intrinsic Mecanum pose
-     * @param imu    the IMU to use for heading information
+     * @param params      the coefficients used in calculating the intrinsic Mecanum pose
+     * @param imu         the IMU to use for heading information
      * @param motorPowers a four-wide double array supplier that supplies the current motor powers, in the form
      *                    {frontLeft, backLeft, backRight, frontRight}
      */

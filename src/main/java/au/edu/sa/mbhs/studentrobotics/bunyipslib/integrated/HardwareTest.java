@@ -55,7 +55,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
 public final class HardwareTest extends BunyipsOpMode {
     private TelemetryMenu menu;
 
-    /** @noinspection ExtractMethodRecommender*/
+    /**
+     * @noinspection ExtractMethodRecommender
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected void onInit() {

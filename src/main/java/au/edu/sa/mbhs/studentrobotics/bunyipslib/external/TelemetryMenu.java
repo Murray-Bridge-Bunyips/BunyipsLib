@@ -564,7 +564,7 @@ public class TelemetryMenu {
         /**
          * Create a new DynamicItem.
          *
-         * @param title  the static name of this option
+         * @param title       the static name of this option
          * @param displayText a function that returns the display value for this option
          */
         public DynamicItem(@NonNull String title, @NonNull Supplier<?> displayText) {
@@ -626,7 +626,7 @@ public class TelemetryMenu {
          * Set the colours for the active and inactive states of this option.
          * Defaults to white and green for inactive and active states, respectively.
          *
-         * @param activeColour the colour to display when this option is active
+         * @param activeColour   the colour to display when this option is active
          * @param inactiveColour the colour to display when this option is inactive
          * @return this
          */
