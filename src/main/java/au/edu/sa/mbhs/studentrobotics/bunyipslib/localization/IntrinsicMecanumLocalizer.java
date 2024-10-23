@@ -1,23 +1,17 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.MecanumKinematics;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.DriveModel;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
 
 /**
  * An estimation-based Mecanum localizer that uses no encoders and only the IMU for heading. This is the bare configuration
@@ -28,58 +22,35 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
  */
 public class IntrinsicMecanumLocalizer implements Localizer {
     private final Params params;
-    private final MecanumDrive drive;
     private final ElapsedTime timer = new ElapsedTime();
     private final MecanumKinematics kinematics;
-    private final double imuOffset;
-
+    private final IMULocalizer imu;
     private final double[] lastMotorPos = new double[4];
     private final double[] runningMotorPos = new double[4];
-    private double lastHeading = 0;
-
-    private Supplier<PoseVelocity2d> input;
-    private Supplier<double[]> powers;
+    private final Supplier<double[]> powers;
 
     /**
      * Create a new IntrinsicMecanumLocalizer.
      *
      * @param params the coefficients used in calculating the intrinsic Mecanum pose
-     * @param drive        the drive instance (assumed to be Mecanum/conforms to Mecanum equations). Power info will be
-     *                     extracted from the drive.
+     * @param imu    the IMU to use for heading information
+     * @param motorPowers a four-wide double array supplier that supplies the current motor powers, in the form
+     *                    {frontLeft, backLeft, backRight, frontRight}
      */
-    public IntrinsicMecanumLocalizer(@NonNull Params params, @NonNull MecanumDrive drive) {
+    public IntrinsicMecanumLocalizer(@NonNull Params params, @NonNull IMU imu, @NonNull Supplier<double[]> motorPowers) {
         this.params = params;
-        this.drive = drive;
-        DriveModel model = drive.getConstants().getDriveModel();
-        kinematics = new MecanumKinematics(model.inPerTick * model.trackWidthTicks,
-                model.inPerTick / model.lateralInPerTick);
-        powers = drive::getMotorPowers;
-        imuOffset = drive.getPose().heading.toDouble();
-    }
-
-    /**
-     * Create a new IntrinsicMecanumLocalizer.
-     *
-     * @param params the coefficients used in calculating the intrinsic Mecanum pose
-     * @param drive        the drive instance (assumed to be Mecanum/conforms to Mecanum equations)
-     * @param driveInput   the robot pose input (x forward, y left, heading anticlockwise) of the drive
-     */
-    public IntrinsicMecanumLocalizer(@NonNull Params params, @NonNull MecanumDrive drive, @NonNull Supplier<PoseVelocity2d> driveInput) {
-        this.params = params;
-        this.drive = drive;
-        DriveModel model = drive.getConstants().getDriveModel();
-        kinematics = new MecanumKinematics(model.inPerTick * model.trackWidthTicks,
-                model.inPerTick / model.lateralInPerTick);
-        input = driveInput;
-        imuOffset = drive.getPose().heading.toDouble();
+        this.imu = new IMULocalizer(imu);
+        kinematics = new MecanumKinematics(1);
+        powers = motorPowers;
     }
 
     @NonNull
     @Override
     public Twist2dDual<Time> update() {
-        double[] wheelInputs = input != null
-                ? forwardKinematics(input.get())
-                : getClampedPowers(powers.get());
+        double[] wheelInputs = powers.get();
+        for (int i = 0; i < 4; i++) {
+            wheelInputs[i] = Math.abs(wheelInputs[i]) >= params.BREAKAWAY_SPEEDS[i % 2] ? wheelInputs[i] : 0;
+        }
 
         // Use a delta time strategy to calculate a running total
         double deltaTime = timer.seconds();
@@ -92,9 +63,6 @@ public class IntrinsicMecanumLocalizer implements Localizer {
             wheelDeltas.add(runningMotorPos[i] - lastMotorPos[i]);
         }
 
-        double heading = Mathf.angleModulus(Radians.of(drive.getPose().heading.toDouble() - imuOffset)).in(Radians);
-        double headingDelta = Mathf.angleModulus(Radians.of(heading - lastHeading)).in(Radians);
-
         Twist2dDual<Time> robotPoseDelta = kinematics.forward(new MecanumKinematics.WheelIncrements<>(
                 DualNum.constant(wheelDeltas.get(0), 2),
                 DualNum.constant(wheelDeltas.get(1), 2),
@@ -104,39 +72,12 @@ public class IntrinsicMecanumLocalizer implements Localizer {
 
         // Update for deltas
         System.arraycopy(runningMotorPos, 0, lastMotorPos, 0, 4);
-        lastHeading = heading;
         timer.reset();
 
         return new Twist2dDual<>(
                 robotPoseDelta.line,
-                DualNum.cons(headingDelta, robotPoseDelta.angle.drop(1))
+                imu.update().angle
         );
-    }
-
-    private double[] forwardKinematics(PoseVelocity2d input) {
-        double[] cartesianInputs = {input.linearVel.y, -input.linearVel.x, -input.angVel};
-        // Should reject anything below the breakaway speeds
-        double cX = Math.abs(cartesianInputs[0]) >= params.BREAKAWAY_SPEEDS[1] ? cartesianInputs[0] : 0;
-        double cY = Math.abs(cartesianInputs[1]) >= params.BREAKAWAY_SPEEDS[0] ? cartesianInputs[1] : 0;
-        double cR = Math.abs(cartesianInputs[2]) >= params.BREAKAWAY_SPEEDS[2] ? cartesianInputs[2] : 0;
-
-        // Standard Mecanum drive equations
-        double denom = Math.max(Math.abs(cY) + Math.abs(cX) + Math.abs(cR), 1);
-        return new double[]{
-                (cY + cX + cR) / denom, // Front left
-                (cY - cX + cR) / denom, // Back left
-                (cY + cX - cR) / denom, // Back right
-                (cY - cX - cR) / denom, // Front right
-        };
-    }
-
-    private double[] getClampedPowers(double[] wheelPowers) {
-        // We already have the powers, so all we need to do is clamp
-        // with an alternation of forward and strafe breakaway speeds
-        for (int i = 0; i < 4; i++) {
-            wheelPowers[i] = Math.abs(wheelPowers[i]) >= params.BREAKAWAY_SPEEDS[i % 2] ? wheelPowers[i] : 0;
-        }
-        return wheelPowers;
     }
 
     /**
