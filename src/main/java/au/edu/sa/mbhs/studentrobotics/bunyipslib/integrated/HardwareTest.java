@@ -156,11 +156,23 @@ public final class HardwareTest extends BunyipsOpMode {
                         servo.setPosition(a ? Mathf.scale(-gamepad1.lsy, -1, 1, 0, 1) : curr);
                         return curr;
                     });
+                    TelemetryMenu.StaticClickableOption setToZero = new TelemetryMenu.StaticClickableOption("Set to 0") {
+                        @Override
+                        protected void onClick() {
+                            servo.setPosition(0);
+                        }
+                    };
+                    TelemetryMenu.StaticClickableOption setToOne = new TelemetryMenu.StaticClickableOption("Set to 1") {
+                        @Override
+                        protected void onClick() {
+                            servo.setPosition(1);
+                        }
+                    };
                     TelemetryMenu.InteractiveToggle directionControl = new TelemetryMenu.InteractiveToggle("Direction", false, a -> {
                         servo.setDirection(a ? Servo.Direction.FORWARD : Servo.Direction.REVERSE);
                         return servo.getDirection();
                     }).withColours("white", "white");
-                    dev.addChildren(enabledControl, positionControl, directionControl);
+                    dev.addChildren(enabledControl, positionControl, setToZero, setToOne, directionControl);
                 }
 
                 if (device instanceof TouchSensorMultiplexer) {
