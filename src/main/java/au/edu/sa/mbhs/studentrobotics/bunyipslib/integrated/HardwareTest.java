@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -279,6 +280,31 @@ public final class HardwareTest extends BunyipsOpMode {
                         return led.isLightOn();
                     }).withColours("green", "red");
                     dev.addChild(state);
+                }
+
+                if (device instanceof RevBlinkinLedDriver) {
+                    // We can also control Blinkin devices
+                    RevBlinkinLedDriver blinkin = (RevBlinkinLedDriver) device;
+                    TelemetryMenu.StaticClickableOption off = new TelemetryMenu.StaticClickableOption("Turn Off") {
+                        @Override
+                        protected void onClick() {
+                            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                        }
+                    };
+                    TelemetryMenu.StaticClickableOption white = new TelemetryMenu.StaticClickableOption("To White") {
+                        @Override
+                        protected void onClick() {
+                            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+                        }
+                    };
+                    TelemetryMenu.EnumOption pattern = new TelemetryMenu.EnumOption("Pattern Select", RevBlinkinLedDriver.BlinkinPattern.values());
+                    TelemetryMenu.StaticClickableOption applicator = new TelemetryMenu.StaticClickableOption("Apply Pattern") {
+                        @Override
+                        protected void onClick() {
+                            blinkin.setPattern((RevBlinkinLedDriver.BlinkinPattern) pattern.getValue());
+                        }
+                    };
+                    dev.addChildren(off, white, pattern, applicator);
                 }
 
                 if (device instanceof AccelerationSensor) {
