@@ -27,7 +27,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
  * @since 4.0.0
  */
 public class IntrinsicMecanumLocalizer implements Localizer {
-    private final Coefficients coefficients;
+    private final Params params;
     private final MecanumDrive drive;
     private final ElapsedTime timer = new ElapsedTime();
     private final MecanumKinematics kinematics;
@@ -43,12 +43,12 @@ public class IntrinsicMecanumLocalizer implements Localizer {
     /**
      * Create a new IntrinsicMecanumLocalizer.
      *
-     * @param coefficients the coefficients used in calculating the intrinsic Mecanum pose
+     * @param params the coefficients used in calculating the intrinsic Mecanum pose
      * @param drive        the drive instance (assumed to be Mecanum/conforms to Mecanum equations). Power info will be
      *                     extracted from the drive.
      */
-    public IntrinsicMecanumLocalizer(@NonNull Coefficients coefficients, @NonNull MecanumDrive drive) {
-        this.coefficients = coefficients;
+    public IntrinsicMecanumLocalizer(@NonNull Params params, @NonNull MecanumDrive drive) {
+        this.params = params;
         this.drive = drive;
         DriveModel model = drive.getConstants().getDriveModel();
         kinematics = new MecanumKinematics(model.inPerTick * model.trackWidthTicks,
@@ -60,12 +60,12 @@ public class IntrinsicMecanumLocalizer implements Localizer {
     /**
      * Create a new IntrinsicMecanumLocalizer.
      *
-     * @param coefficients the coefficients used in calculating the intrinsic Mecanum pose
+     * @param params the coefficients used in calculating the intrinsic Mecanum pose
      * @param drive        the drive instance (assumed to be Mecanum/conforms to Mecanum equations)
      * @param driveInput   the robot pose input (x forward, y left, heading anticlockwise) of the drive
      */
-    public IntrinsicMecanumLocalizer(@NonNull Coefficients coefficients, @NonNull MecanumDrive drive, @NonNull Supplier<PoseVelocity2d> driveInput) {
-        this.coefficients = coefficients;
+    public IntrinsicMecanumLocalizer(@NonNull Params params, @NonNull MecanumDrive drive, @NonNull Supplier<PoseVelocity2d> driveInput) {
+        this.params = params;
         this.drive = drive;
         DriveModel model = drive.getConstants().getDriveModel();
         kinematics = new MecanumKinematics(model.inPerTick * model.trackWidthTicks,
@@ -78,13 +78,13 @@ public class IntrinsicMecanumLocalizer implements Localizer {
     @Override
     public Twist2dDual<Time> update() {
         double[] wheelInputs = input != null
-                ? getWheelPowers(input.get())
+                ? forwardKinematics(input.get())
                 : getClampedPowers(powers.get());
 
         // Use a delta time strategy to calculate a running total
         double deltaTime = timer.seconds();
         for (int i = 0; i < 4; i++) {
-            runningMotorPos[i] += wheelInputs[i] * deltaTime * coefficients.MULTIPLIER;
+            runningMotorPos[i] += wheelInputs[i] * deltaTime * params.MULTIPLIER;
         }
 
         List<Double> wheelDeltas = new ArrayList<>();
@@ -113,12 +113,12 @@ public class IntrinsicMecanumLocalizer implements Localizer {
         );
     }
 
-    private double[] getWheelPowers(PoseVelocity2d input) {
+    private double[] forwardKinematics(PoseVelocity2d input) {
         double[] cartesianInputs = {input.linearVel.y, -input.linearVel.x, -input.angVel};
         // Should reject anything below the breakaway speeds
-        double cX = Math.abs(cartesianInputs[0]) >= coefficients.BREAKAWAY_SPEEDS[1] ? cartesianInputs[0] : 0;
-        double cY = Math.abs(cartesianInputs[1]) >= coefficients.BREAKAWAY_SPEEDS[0] ? cartesianInputs[1] : 0;
-        double cR = Math.abs(cartesianInputs[2]) >= coefficients.BREAKAWAY_SPEEDS[2] ? cartesianInputs[2] : 0;
+        double cX = Math.abs(cartesianInputs[0]) >= params.BREAKAWAY_SPEEDS[1] ? cartesianInputs[0] : 0;
+        double cY = Math.abs(cartesianInputs[1]) >= params.BREAKAWAY_SPEEDS[0] ? cartesianInputs[1] : 0;
+        double cR = Math.abs(cartesianInputs[2]) >= params.BREAKAWAY_SPEEDS[2] ? cartesianInputs[2] : 0;
 
         // Standard Mecanum drive equations
         double denom = Math.max(Math.abs(cY) + Math.abs(cX) + Math.abs(cR), 1);
@@ -134,15 +134,15 @@ public class IntrinsicMecanumLocalizer implements Localizer {
         // We already have the powers, so all we need to do is clamp
         // with an alternation of forward and strafe breakaway speeds
         for (int i = 0; i < 4; i++) {
-            wheelPowers[i] = Math.abs(wheelPowers[i]) >= coefficients.BREAKAWAY_SPEEDS[i % 2] ? wheelPowers[i] : 0;
+            wheelPowers[i] = Math.abs(wheelPowers[i]) >= params.BREAKAWAY_SPEEDS[i % 2] ? wheelPowers[i] : 0;
         }
         return wheelPowers;
     }
 
     /**
-     * Coefficients used in calculating the intrinsic Mecanum pose.
+     * Parameters used in calculating the intrinsic Mecanum pose.
      */
-    public static class Coefficients {
+    public static class Params {
         /**
          * The general multiplier for the Mecanum vector estimation.
          */
@@ -158,18 +158,19 @@ public class IntrinsicMecanumLocalizer implements Localizer {
          * Utility builder for intrinsic Mecanum pose estimation coefficients.
          */
         public static class Builder {
-            private final Coefficients coeffs = new Coefficients();
+            private final Params params = new Params();
 
             /**
-             * Set the general multiplier for the Mecanum vector estimation.
+             * Set the general wheel multiplier for the Mecanum vector estimation.
              *
              * @param multiplier the general multiplier for wheel positions. Will need empirical tuning in the same
-             *                   way you would tune the multiplier for a deadwheel localizer.
+             *                   way you would tune the multiplier for a localizer, by measuring the actual distance
+             *                   travelled over a distance divided by the reported distance.
              * @return this builder
              */
             @NonNull
             public Builder setMultiplier(double multiplier) {
-                coeffs.MULTIPLIER = multiplier;
+                params.MULTIPLIER = multiplier;
                 return this;
             }
 
@@ -183,7 +184,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
              */
             @NonNull
             public Builder setBreakawaySpeeds(double forward, double strafe) {
-                coeffs.BREAKAWAY_SPEEDS = new double[]{forward, strafe};
+                params.BREAKAWAY_SPEEDS = new double[]{forward, strafe};
                 return this;
             }
 
@@ -193,8 +194,8 @@ public class IntrinsicMecanumLocalizer implements Localizer {
              * @return the coefficients
              */
             @NonNull
-            public Coefficients build() {
-                return coeffs;
+            public Params build() {
+                return params;
             }
         }
     }
