@@ -78,6 +78,7 @@ public class Motor implements DcMotorEx {
     private SystemController rueController;
     private Pair<Double, Double> rueInfo = null;
 
+    private int rawTargetPosition = 0;
     private double powerDeltaTolerance = 0;
     private double lastPower = 0;
     private long refreshRateNanos = 0;
@@ -103,7 +104,7 @@ public class Motor implements DcMotorEx {
         encoder = new Encoder(() -> controller.getMotorCurrentPosition(port), () -> controller.getMotorVelocity(port));
         encoder.setDirection(getOperationalDirection());
         encoder.trackDirection(this::getOperationalDirection);
-        setTargetPosition(getCurrentPosition());
+        rawTargetPosition = getCurrentPosition();
     }
 
     /**
@@ -742,7 +743,7 @@ public class Motor implements DcMotorEx {
     @Override
     public synchronized int getTargetPosition() {
         // May as well let the motor controller manage target position, there is nothing interfering with doing so
-        return controller.getMotorTargetPosition(port) * (getOperationalDirection() == Direction.FORWARD ? 1 : -1);
+        return rawTargetPosition * (getOperationalDirection() == Direction.FORWARD ? 1 : -1);
     }
 
     /**
@@ -769,7 +770,7 @@ public class Motor implements DcMotorEx {
      */
     @Override
     public synchronized void setTargetPosition(int position) {
-        controller.setMotorTargetPosition(port, position * (getOperationalDirection() == Direction.FORWARD ? 1 : -1));
+        rawTargetPosition = position * (getOperationalDirection() == Direction.FORWARD ? 1 : -1);
     }
 
     /**
