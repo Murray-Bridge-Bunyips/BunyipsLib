@@ -30,6 +30,10 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Stack;
 import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * Utility for creating interactive menus through {@link Telemetry}.
@@ -170,10 +174,8 @@ public class TelemetryMenu {
         aPrev = a;
         bPrev = b;
 
-        String menu = buildMenu(children);
-
         // Add it to telemetry
-        telemetry.addLine(menu);
+        telemetry.addLine(buildMenu(children));
     }
 
     @NonNull
@@ -191,19 +193,17 @@ public class TelemetryMenu {
 
         // Now actually add the menu options. We start by adding the name of the current menu level.
         builder.append("<font face=monospace>");
-        builder.append("Current Menu: ").append(currentLevel.name).append("\n");
+        builder.append("Menu: ").append(currentLevel.name).append("\n");
 
         // Now we loop through all the child elements of this level and add them
         for (int i = 0; i < children.size(); i++) {
-            // Separator for FtcDashboard which inlines everything
-            builder.append("<font color=gray face=monospace>|</font>");
             // If the selection pointer is at this index, put a green dot in the box :)
             if (selectedIdx == i) {
-                builder.append("[<font color=green face=monospace>•</font>] ");
+                builder.append("[<font color=green face=monospace>•</font>]: ");
             }
             // Otherwise, just put an empty box
             else {
-                builder.append("[ ] ");
+                builder.append("[ ]: ");
             }
 
             // Figure out who the selection pointer is pointing at :eyes:
@@ -256,7 +256,6 @@ public class TelemetryMenu {
          *
          * @param child the child element to add
          */
-        @SuppressWarnings("ClassEscapesDefinedScope")
         public void addChild(@NonNull Element child) {
             child.setParent(this);
             children.add(child);
@@ -267,8 +266,7 @@ public class TelemetryMenu {
          *
          * @param childrenElems the children to add
          */
-        @SuppressWarnings("ClassEscapesDefinedScope")
-        public void addChildren(@NonNull Element[] childrenElems) {
+        public void addChildren(@NonNull Element... childrenElems) {
             for (Element e : childrenElems) {
                 e.setParent(this);
                 children.add(e);
@@ -516,21 +514,21 @@ public class TelemetryMenu {
      * A menu item backed by a simple string.
      */
     public static class StaticItem extends OptionElement {
-        private final String name;
+        private final Object name;
 
         /**
          * Create a new StaticItem.
          *
          * @param name the name of this option
          */
-        public StaticItem(@NonNull String name) {
+        public StaticItem(@NonNull Object name) {
             this.name = name;
         }
 
         @NonNull
         @Override
         protected String getDisplayText() {
-            return name;
+            return name.toString();
         }
     }
 
@@ -554,9 +552,119 @@ public class TelemetryMenu {
     }
 
     /**
+     * A menu item backed by a string that can be adjusted by the user.
+     *
+     * @author Lucas Bubner, 2024
+     * @since 6.0.0
+     */
+    public static class DynamicItem extends Element {
+        private final String title;
+        private final Supplier<?> displayText;
+
+        /**
+         * Create a new DynamicItem.
+         *
+         * @param title  the static name of this option
+         * @param displayText a function that returns the display value for this option
+         */
+        public DynamicItem(@NonNull String title, @NonNull Supplier<?> displayText) {
+            this.title = title;
+            this.displayText = displayText;
+        }
+
+        @NonNull
+        @Override
+        protected String getDisplayText() {
+            return Text.format("%: %", title, displayText.get());
+        }
+    }
+
+    /**
+     * A menu element that has an attached functional interface hook for the current selected state.
+     *
+     * @author Lucas Bubner, 2024
+     * @since 6.0.0
+     */
+    public static class InteractiveToggle extends OptionElement {
+        private final String title;
+        private final Function<Boolean, ?> executor;
+        private final boolean def;
+        private BooleanSupplier reset;
+        private String activeColour = "green";
+        private String inactiveColour = "white";
+        private boolean active;
+
+        /**
+         * Create a new InteractiveOption.
+         *
+         * @param title    the static name of this option
+         * @param executor a function that returns the display text for this option, with the supplied parameter being the current state;
+         *                 this parameter allows you to perform operations continuously while the option is active/inactive.
+         * @param def      the default state of this option
+         */
+        public InteractiveToggle(@NonNull String title, boolean def, @NonNull Function<Boolean, ?> executor) {
+            this.title = title;
+            this.executor = executor;
+            this.def = def;
+            active = def;
+        }
+
+        /**
+         * Sets a supplier that determines whether this option should be returned to default state.
+         * Useful for options that should not be interacted with under certain conditions.
+         *
+         * @param defState the supplier that determines whether this option should be reset to default state
+         * @return this
+         */
+        @NonNull
+        public InteractiveToggle resetIf(@NonNull BooleanSupplier defState) {
+            reset = defState;
+            return this;
+        }
+
+        /**
+         * Set the colours for the active and inactive states of this option.
+         * Defaults to white and green for inactive and active states, respectively.
+         *
+         * @param activeColour the colour to display when this option is active
+         * @param inactiveColour the colour to display when this option is inactive
+         * @return this
+         */
+        @NonNull
+        public InteractiveToggle withColours(@NonNull String activeColour, @NonNull String inactiveColour) {
+            this.activeColour = activeColour;
+            this.inactiveColour = inactiveColour;
+            return this;
+        }
+
+        @Override
+        protected void onClick() {
+            active = !active;
+        }
+
+        @Override
+        protected void onLeftInput() {
+            active = false;
+        }
+
+        @Override
+        protected void onRightInput() {
+            active = true;
+        }
+
+        @NonNull
+        @Override
+        protected String getDisplayText() {
+            if (reset != null && reset.getAsBoolean())
+                active = def;
+            return Text.format("<font color='%'><b>%</b>: %</font>", active ? activeColour : inactiveColour, title, executor.apply(active));
+        }
+    }
+
+    /**
      * A generic child component that has a parent and a backing string.
      */
-    private abstract static class Element {
+    public abstract static class Element {
         private MenuElement parent;
 
         protected void setParent(MenuElement parent) {
