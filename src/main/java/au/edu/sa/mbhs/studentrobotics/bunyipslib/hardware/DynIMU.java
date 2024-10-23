@@ -33,7 +33,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  */
 public class DynIMU implements IMU {
     private final IMU imu;
-    private final Parameters initParameters;
+    private final RevHubOrientationOnRobot orientation;
     private boolean triedInit;
     private double timeoutMs = 500;
 
@@ -42,10 +42,10 @@ public class DynIMU implements IMU {
      *
      * @param uninitializedIMU the {@link IMU} instance that is <b>not yet initialised</b>.
      *                         Do not manually call {@link #initialize(Parameters)} on this IMU before passing it here.
-     * @param initParameters   the parameters to use when initialising the IMU.
+     * @param orientation      the orientation of the IMU relative to the robot.
      */
-    public DynIMU(@NonNull IMU uninitializedIMU, @NonNull Parameters initParameters) {
-        this.initParameters = initParameters;
+    public DynIMU(@NonNull IMU uninitializedIMU, @NonNull RevHubOrientationOnRobot orientation) {
+        this.orientation = orientation;
         imu = uninitializedIMU;
     }
 
@@ -127,7 +127,7 @@ public class DynIMU implements IMU {
             public void close() {
                 Dbg.warn(getClass(), "DynIMU.none() was accessed for close.");
             }
-        }, new Parameters(new RevHubOrientationOnRobot(Quaternion.identityQuaternion())));
+        }, new RevHubOrientationOnRobot(Quaternion.identityQuaternion()));
     }
 
     /**
@@ -144,9 +144,10 @@ public class DynIMU implements IMU {
 
     private void tryInit() {
         if (triedInit) return;
+        triedInit = true;
 
         Dbg.log(getClass(), "Dynamic IMU initialisation in progress...");
-        if (!imu.initialize(initParameters))
+        if (!imu.initialize(new Parameters(orientation)))
             RobotLog.addGlobalWarningMessage("DynIMU failed to initialise the IMU!");
 
         long start = System.nanoTime();
@@ -155,14 +156,13 @@ public class DynIMU implements IMU {
             Quaternion q = imu.getRobotOrientationAsQuaternion();
             if (q.acquisitionTime != 0) {
                 FlightRecorder.write("IMU_INIT", new ImuInitMessage(imu.getDeviceName(), start, System.nanoTime(), false));
+                Dbg.logv(getClass(), "IMU initialised.");
                 return;
             }
         } while (timer.milliseconds() < timeoutMs);
 
         FlightRecorder.write("IMU_INIT", new ImuInitMessage(imu.getDeviceName(), start, System.nanoTime(), true));
         RobotLog.addGlobalWarningMessage("DynIMU continues to return invalid data after " + timeoutMs + " ms!");
-
-        triedInit = true;
     }
 
     @Override

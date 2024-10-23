@@ -53,8 +53,9 @@ public class Condition implements BooleanSupplier {
      * <p>
      * This is useful for ensuring that a condition is true for a certain amount of time before acting on it.
      * <p>
-     * On rising/falling edge detection, the delay will be applied to the raw condition itself, before
-     * edge detection is performed and outputted through the accessors.
+     * On rising/falling edge detection, the delay will be applied to the edge condition, such that
+     * this supplier will return true for one iteration after delay has passed for rising, and for falling
+     * will fire after the delay has passed after the condition has transitioned from true to false and has remained false.
      *
      * @param delay the delay to apply to the condition. Zero or negative values will disable the delay (default).
      * @return this Condition with the delay applied
@@ -134,11 +135,12 @@ public class Condition implements BooleanSupplier {
      * @return {@code true} if the condition was last true, {@code false} otherwise.
      */
     public boolean getFallingEdge() {
-        boolean currentState = timed(condition.getAsBoolean());
-        if (!currentState && lastState) {
+        boolean currentState = condition.getAsBoolean();
+        if (!currentState && timed(lastState)) {
             lastState = false;
             return true;
         } else if (currentState) {
+            capture = System.nanoTime();
             lastState = true;
         }
         return false;
