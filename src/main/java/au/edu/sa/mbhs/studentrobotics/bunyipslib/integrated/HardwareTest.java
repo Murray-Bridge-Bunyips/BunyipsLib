@@ -1,7 +1,10 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AccelerationSensor;
@@ -14,12 +17,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.LightSensor;
+import com.qualcomm.robotcore.hardware.OrientationSensor;
 import com.qualcomm.robotcore.hardware.PWMOutput;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -30,10 +35,15 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -79,10 +89,11 @@ public final class HardwareTest extends BunyipsOpMode {
             TelemetryMenu.MenuElement deviceMapping = new TelemetryMenu.MenuElement(entry.getKey(), false);
             // Each device in the category may have multiple mappings, so we add them to the category
             for (HardwareDevice device : entry.getValue()) {
-                TelemetryMenu.MenuElement dev = new TelemetryMenu.MenuElement(device.getDeviceName(), false);
+                TelemetryMenu.MenuElement dev = new TelemetryMenu.MenuElement(entry.getKey() + " (" + device.getDeviceName() + ", v" + device.getVersion() + ")", false);
                 // For each device, we add hardware-specific information
                 TelemetryMenu.StaticItem deviceType = new TelemetryMenu.StaticItem("Manufacturer: " + device.getManufacturer());
-                dev.addChild(deviceType);
+                TelemetryMenu.StaticItem connInfo = new TelemetryMenu.StaticItem("Connection Info: " + device.getConnectionInfo());
+                dev.addChildren(deviceType, connInfo);
 
                 if (device instanceof DcMotorSimple) {
                     DcMotorSimple motor = (DcMotorSimple) device;
@@ -253,6 +264,36 @@ public final class HardwareTest extends BunyipsOpMode {
                     dev.addChildren(notice, orientation, angVel);
                 }
 
+                // We can also initialise the BNO055IMU type since it has extra data compared to simply the universal IMU
+                if (device instanceof BNO055IMU) {
+                    BNO055IMU imu = (BNO055IMU) device;
+                    // We can initialise the IMU with default parameters for testing purposes
+                    BNO055IMU.Parameters params = new BNO055IMU.Parameters();
+                    params.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+                    imu.initialize(params);
+                    imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
+                    TelemetryMenu.StaticItem notice = new TelemetryMenu.StaticItem("IMU is initialised with default parameters (C, deg, ms/s/s)");
+                    TelemetryMenu.DynamicItem systemStatus = new TelemetryMenu.DynamicItem("System Status", imu::getSystemStatus);
+                    TelemetryMenu.DynamicItem calibStatus = new TelemetryMenu.DynamicItem("Calibration Status", imu::getCalibrationStatus);
+                    TelemetryMenu.DynamicItem error = new TelemetryMenu.DynamicItem("System Error", imu::getSystemError);
+                    TelemetryMenu.DynamicItem isSystemCalibrated = new TelemetryMenu.DynamicItem("System Calibrated?", imu::isSystemCalibrated);
+                    TelemetryMenu.DynamicItem isGyroCalibrated = new TelemetryMenu.DynamicItem("Gyro Calibrated?", imu::isGyroCalibrated);
+                    TelemetryMenu.DynamicItem isAccelerometerCalibrated = new TelemetryMenu.DynamicItem("Accelerometer Calibrated?", imu::isAccelerometerCalibrated);
+                    TelemetryMenu.DynamicItem isMagnetometerCalibrated = new TelemetryMenu.DynamicItem("Magnetometer Calibrated?", imu::isMagnetometerCalibrated);
+                    TelemetryMenu.DynamicItem angularOrientation = new TelemetryMenu.DynamicItem("Angular Orientation", imu::getAngularOrientation);
+                    TelemetryMenu.DynamicItem position = new TelemetryMenu.DynamicItem("Position", imu::getPosition);
+                    TelemetryMenu.DynamicItem velocity = new TelemetryMenu.DynamicItem("Velocity", imu::getVelocity);
+                    TelemetryMenu.DynamicItem acceleration = new TelemetryMenu.DynamicItem("Acceleration", imu::getAcceleration);
+                    TelemetryMenu.DynamicItem overallAcceleration = new TelemetryMenu.DynamicItem("Overall Acceleration", imu::getOverallAcceleration);
+                    TelemetryMenu.DynamicItem linearAcceleration = new TelemetryMenu.DynamicItem("Linear Acceleration", imu::getLinearAcceleration);
+                    TelemetryMenu.DynamicItem gravity = new TelemetryMenu.DynamicItem("Gravity", imu::getGravity);
+                    TelemetryMenu.DynamicItem angVel = new TelemetryMenu.DynamicItem("Angular Velocity", imu::getAngularVelocity);
+                    TelemetryMenu.DynamicItem temperature = new TelemetryMenu.DynamicItem("Temperature", () -> imu.getTemperature().temperature);
+                    TelemetryMenu.DynamicItem magneticFlux = new TelemetryMenu.DynamicItem("Magnetic Flux", imu::getMagneticFieldStrength);
+                    dev.addChildren(notice, systemStatus, calibStatus, error, isSystemCalibrated, isGyroCalibrated, isAccelerometerCalibrated, isMagnetometerCalibrated, angularOrientation, position, velocity, acceleration, overallAcceleration, linearAcceleration, gravity, angVel, temperature, magneticFlux);
+                }
+
                 if (device instanceof DistanceSensor) {
                     // Distance sensors are simple and only require a distance reading
                     DistanceSensor distance = (DistanceSensor) device;
@@ -413,7 +454,72 @@ public final class HardwareTest extends BunyipsOpMode {
                     dev.addChild(voltageValue);
                 }
 
-                // Finally, we add the device to the category
+                // We're also able to add some info based on the SparkFun OTOS, since we can actually parse the I2C
+                // without doing some magic
+                if (device instanceof SparkFunOTOS) {
+                    SparkFunOTOS otos = (SparkFunOTOS) device;
+                    TelemetryMenu.MenuElement warnings = new TelemetryMenu.MenuElement("Warnings", false);
+                    TelemetryMenu.DynamicItem warnTilt = new TelemetryMenu.DynamicItem("Tilt Warning", () -> otos.getStatus().warnTiltAngle);
+                    TelemetryMenu.DynamicItem warnTrack = new TelemetryMenu.DynamicItem("Tracking Warning", () -> otos.getStatus().warnOpticalTracking);
+                    TelemetryMenu.DynamicItem errPaa = new TelemetryMenu.DynamicItem("PAA Error", () -> otos.getStatus().errorPaa);
+                    TelemetryMenu.DynamicItem errLsm = new TelemetryMenu.DynamicItem("LSM Error", () -> otos.getStatus().errorLsm);
+                    warnings.addChildren(warnTilt, warnTrack, errPaa, errLsm);
+                    TelemetryMenu.DynamicItem linearScalar = new TelemetryMenu.DynamicItem("Linear Scalar", otos::getLinearScalar);
+                    TelemetryMenu.DynamicItem angularScalar = new TelemetryMenu.DynamicItem("Angular Scalar", otos::getAngularScalar);
+                    TelemetryMenu.StaticClickableOption selfTest = new TelemetryMenu.StaticClickableOption("Run Self Test") {
+                        @Override
+                        protected void onClick() {
+                            telemetry.log("OTOS Self Test: %", otos.selfTest() ? "PASS" : "FAIL");
+                        }
+                    };
+                    TelemetryMenu.StaticClickableOption calibrateIMU = new TelemetryMenu.StaticClickableOption("Calibrate IMU") {
+                        @Override
+                        protected void onClick() {
+                            otos.calibrateImu(255, false);
+                        }
+                    };
+                    TelemetryMenu.DynamicItem imuCalibrationStatus = new TelemetryMenu.DynamicItem("IMU Calibration Samples Remaining", otos::getImuCalibrationProgress);
+                    TelemetryMenu.StaticClickableOption resetTracking = new TelemetryMenu.StaticClickableOption("Reset Tracking") {
+                        @Override
+                        protected void onClick() {
+                            otos.resetTracking();
+                        }
+                    };
+                    TelemetryMenu.DynamicItem posX = new TelemetryMenu.DynamicItem("Position X", () -> otos.getPosition().x);
+                    TelemetryMenu.DynamicItem posY = new TelemetryMenu.DynamicItem("Position Y", () -> otos.getPosition().y);
+                    TelemetryMenu.DynamicItem posTheta = new TelemetryMenu.DynamicItem("Position H", () -> otos.getPosition().h);
+                    TelemetryMenu.DynamicItem velX = new TelemetryMenu.DynamicItem("Velocity X", () -> otos.getVelocity().x);
+                    TelemetryMenu.DynamicItem velY = new TelemetryMenu.DynamicItem("Velocity Y", () -> otos.getVelocity().y);
+                    TelemetryMenu.DynamicItem velTheta = new TelemetryMenu.DynamicItem("Velocity H", () -> otos.getVelocity().h);
+                    TelemetryMenu.DynamicItem accX = new TelemetryMenu.DynamicItem("Acceleration X", () -> otos.getAcceleration().x);
+                    TelemetryMenu.DynamicItem accY = new TelemetryMenu.DynamicItem("Acceleration Y", () -> otos.getAcceleration().y);
+                    TelemetryMenu.DynamicItem accTheta = new TelemetryMenu.DynamicItem("Acceleration H", () -> otos.getAcceleration().h);
+                    dev.addChildren(warnings, linearScalar, angularScalar, selfTest, calibrateIMU, imuCalibrationStatus, resetTracking, posX, posY, posTheta, velX, velY, velTheta, accX, accY, accTheta);
+                }
+
+                if (device instanceof OctoQuad) {
+                    OctoQuad octo = (OctoQuad) device;
+                    TelemetryMenu.DynamicItem position = new TelemetryMenu.DynamicItem("Positions", () -> Arrays.toString(octo.readAllPositions()));
+                    TelemetryMenu.DynamicItem velocity = new TelemetryMenu.DynamicItem("Velocities", () -> Arrays.toString(octo.readAllVelocities()));
+                    dev.addChildren(position, velocity);
+                }
+
+                if (device instanceof Gyroscope) {
+                    Gyroscope gyro = (Gyroscope) device;
+                    TelemetryMenu.DynamicItem angularVelocity = new TelemetryMenu.DynamicItem("Angular Velocity (deg/s)", () -> gyro.getAngularVelocity(AngleUnit.DEGREES));
+                    dev.addChild(angularVelocity);
+                }
+
+                if (device instanceof OrientationSensor) {
+                    OrientationSensor sensor = (OrientationSensor) device;
+                    TelemetryMenu.DynamicItem ori = new TelemetryMenu.DynamicItem("Orientation (ext, XYZ, deg)", () -> sensor.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES));
+                    dev.addChild(ori);
+                }
+
+                // Finally, we add the device to the category.
+                // We skip vision devices as they can be tested with VisionTest or for Limelights with the testing class/dashboard
+                // We also skip other devices (mostly I2C) since their testing requirement is fairly niche and has to be
+                // manually implemented, manual tests can be written if required.
                 deviceMapping.addChild(dev);
             }
             root.addChild(deviceMapping);
