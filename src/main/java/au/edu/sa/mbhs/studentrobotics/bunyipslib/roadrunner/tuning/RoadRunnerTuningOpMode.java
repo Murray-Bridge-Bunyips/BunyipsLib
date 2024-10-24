@@ -302,10 +302,6 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
         out.setOpModeStatus(Text.html().bold(selection[0].getClass().getSimpleName()).toString());
         out.update();
         try {
-            // We're delegating the OpMode, however, runBlocking calls do not know that motor powers must be updated,
-            // so we call periodic in the background to mitigate this.
-            Threads.startLoop("RR Tuning Drive Update Executor", drive::periodic);
-
             //noinspection ExtractMethodRecommender
             LinearOpMode opMode = (LinearOpMode) selection[0];
             try {
@@ -329,6 +325,8 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             out.addData(Text.html().bold(selection[0].getClass().getSimpleName()).toString(), "Ready. Press play to start.");
             out.update();
             waitForStart();
+
+            // TODO: ability to access dynamic tuning
 
             opMode.runOpMode();
         } finally {

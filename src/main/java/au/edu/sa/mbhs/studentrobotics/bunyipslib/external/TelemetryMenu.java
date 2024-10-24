@@ -657,7 +657,7 @@ public class TelemetryMenu {
         protected String getDisplayText() {
             if (reset != null && reset.getAsBoolean())
                 active = def;
-            return Text.format("<font color='%'><b>%</b>: %</font>", active ? activeColour : inactiveColour, title, executor.apply(active));
+            return Text.format("<font color='%' face='monospace'><b>%</b>: %</font>", active ? activeColour : inactiveColour, title, executor.apply(active));
         }
     }
 

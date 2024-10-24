@@ -10,6 +10,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TwoWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.TankDrive;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup;
 
 /**
  * Internal RoadRunner ManualFeedbackTuner tuning OpMode.
@@ -54,10 +56,14 @@ public final class ManualFeedbackTuner extends LinearOpMode {
 
         while (opModeIsActive()) {
             Actions.runBlocking(
-                    drive.makeTrajectory(new Pose2d(0, 0, 0))
-                            .lineToX(DISTANCE)
-                            .lineToX(0)
-                            .build());
+                    new DeadlineTaskGroup(
+                            drive.makeTrajectory(new Pose2d(0, 0, 0))
+                                    .lineToX(DISTANCE)
+                                    .lineToX(0)
+                                    .build(),
+                            new ContinuousTask(drive::periodic)
+                    )
+            );
         }
     }
 }

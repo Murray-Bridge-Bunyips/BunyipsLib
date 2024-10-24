@@ -30,6 +30,7 @@ public final class LocalizationTest extends LinearOpMode {
                     ),
                     -gamepad1.right_stick_x
             ));
+            drive.periodic();
         }
     }
 }
