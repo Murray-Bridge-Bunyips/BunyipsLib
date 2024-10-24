@@ -474,18 +474,19 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a line segment with linear heading interpolation.
          *
-         * @param endPose    the end pose
+         * @param endVec     the end vector
          * @param vectorUnit units of the supplied vector
+         * @param angle      the angle to linear interpolate to
          * @param angleUnit  units of the supplied angle
          * @return this
          */
         @NonNull
-        public PathMaker lineToLinearHeading(@NonNull Pose2d endPose, @NonNull Distance vectorUnit, @NonNull Angle angleUnit) {
+        public PathMaker lineToLinearHeading(@NonNull Vector2d endVec, @NonNull Distance vectorUnit, double angle, @NonNull Angle angleUnit) {
             buildInstructions.add((b) ->
                     b.lineToLinearHeading(new Pose2d(
-                            vectorUnit.of(endPose.position.x).in(Inches),
-                            vectorUnit.of(endPose.position.y).in(Inches),
-                            angleUnit.of(endPose.heading.toDouble()).in(Radians)
+                            vectorUnit.of(endVec.x).in(Inches),
+                            vectorUnit.of(endVec.y).in(Inches),
+                            angleUnit.of(angle).in(Radians)
                     ))
             );
             return this;
@@ -494,18 +495,19 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a line segment with spline heading interpolation.
          *
-         * @param endPose    the end pose
+         * @param endVec     the end vector
          * @param vectorUnit units of the supplied vector
+         * @param angle      the angle to spline interpolate to
          * @param angleUnit  units of the supplied angle
          * @return this
          */
         @NonNull
-        public PathMaker lineToSplineHeading(@NonNull Pose2d endPose, @NonNull Distance vectorUnit, @NonNull Angle angleUnit) {
+        public PathMaker lineToSplineHeading(@NonNull Vector2d endVec, @NonNull Distance vectorUnit, double angle, @NonNull Angle angleUnit) {
             buildInstructions.add((b) ->
                     b.lineToSplineHeading(new Pose2d(
-                            vectorUnit.of(endPose.position.x).in(Inches),
-                            vectorUnit.of(endPose.position.y).in(Inches),
-                            angleUnit.of(endPose.heading.toDouble()).in(Radians)
+                            vectorUnit.of(endVec.x).in(Inches),
+                            vectorUnit.of(endVec.y).in(Inches),
+                            angleUnit.of(angle).in(Radians)
                     ))
             );
             return this;
@@ -614,20 +616,21 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a spline segment with linear heading interpolation.
          *
-         * @param endPose        the end pose
-         * @param vectorUnit     units of the supplied vector in the end pose
+         * @param endVec         the end vector
+         * @param vectorUnit     units of the supplied vector
+         * @param angle          the angle to linear interpolate to
          * @param angleUnit      units of the supplied angle in the end pose
          * @param endTangent     the end tangent
          * @param endTangentUnit units of the supplied angle for the end tangent
          * @return this
          */
         @NonNull
-        public PathMaker splineToLinearHeading(@NonNull Pose2d endPose, @NonNull Distance vectorUnit, @NonNull Angle angleUnit, double endTangent, @NonNull Angle endTangentUnit) {
+        public PathMaker splineToLinearHeading(@NonNull Vector2d endVec, @NonNull Distance vectorUnit, double angle, @NonNull Angle angleUnit, double endTangent, @NonNull Angle endTangentUnit) {
             buildInstructions.add((b) ->
                     b.splineToLinearHeading(new Pose2d(
-                            vectorUnit.of(endPose.position.x).in(Inches),
-                            vectorUnit.of(endPose.position.y).in(Inches),
-                            angleUnit.of(endPose.heading.toDouble()).in(Radians)
+                            vectorUnit.of(endVec.x).in(Inches),
+                            vectorUnit.of(endVec.y).in(Inches),
+                            angleUnit.of(angle).in(Radians)
                     ), endTangentUnit.of(endTangent).in(Radians))
             );
             return this;
@@ -636,20 +639,21 @@ public class PurePursuit implements Runnable {
         /**
          * Adds a spline segment with spline heading interpolation.
          *
-         * @param endPose        the end pose
-         * @param vectorUnit     units of the supplied vector in the end pose
+         * @param endVec         the end vector
+         * @param vectorUnit     units of the supplied vector
+         * @param angle          the angle to linear interpolate to
          * @param angleUnit      units of the supplied angle in the end pose
          * @param endTangent     the end tangent
          * @param endTangentUnit units of the supplied angle for the end tangent
          * @return this
          */
         @NonNull
-        public PathMaker splineToSplineHeading(@NonNull Pose2d endPose, @NonNull Distance vectorUnit, @NonNull Angle angleUnit, double endTangent, @NonNull Angle endTangentUnit) {
+        public PathMaker splineToSplineHeading(@NonNull Vector2d endVec, @NonNull Distance vectorUnit, double angle, @NonNull Angle angleUnit, double endTangent, @NonNull Angle endTangentUnit) {
             buildInstructions.add((b) ->
                     b.splineToSplineHeading(new Pose2d(
-                            vectorUnit.of(endPose.position.x).in(Inches),
-                            vectorUnit.of(endPose.position.y).in(Inches),
-                            angleUnit.of(endPose.heading.toDouble()).in(Radians)
+                            vectorUnit.of(endVec.x).in(Inches),
+                            vectorUnit.of(endVec.y).in(Inches),
+                            angleUnit.of(angle).in(Radians)
                     ), endTangentUnit.of(endTangent).in(Radians))
             );
             return this;
