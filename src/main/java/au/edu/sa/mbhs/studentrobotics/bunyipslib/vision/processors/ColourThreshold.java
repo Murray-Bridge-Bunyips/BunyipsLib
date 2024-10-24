@@ -6,7 +6,8 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -30,7 +31,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
  * @see ColourSensor
  * @since 1.0.0-pre
  */
-@Config
 public abstract class ColourThreshold extends Processor<ContourData> {
     /**
      * The thickness of the border to draw around the biggest contour.
@@ -65,6 +65,8 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public ColourThreshold(@NonNull ColourSpace colourSpace) {
         this.colourSpace = colourSpace;
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     public abstract double getContourAreaMinPercent();

@@ -6,8 +6,9 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Rad
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -54,7 +55,6 @@ import kotlin.UninitializedPropertyAccessException;
  * @author Lucas Bubner, 2024
  * @since 5.1.0
  */
-@Config
 public class PurePursuit implements Runnable {
     /**
      * Inches of how far apart guesses are made along the path for projecting the current robot pose on the path.
@@ -106,6 +106,9 @@ public class PurePursuit implements Runnable {
             opMode.onActiveLoop(this);
             Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode.");
         });
+
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     /**

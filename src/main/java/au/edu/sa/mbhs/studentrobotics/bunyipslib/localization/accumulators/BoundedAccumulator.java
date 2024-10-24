@@ -2,7 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
@@ -23,7 +24,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Field;
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-@Config
 public class BoundedAccumulator extends Accumulator {
     /**
      * Maximum bounds (FTC field)
@@ -42,6 +42,8 @@ public class BoundedAccumulator extends Accumulator {
     public BoundedAccumulator(@NonNull Measure<Distance> robotRadius) {
         robotBoundingBox = new Rect(new Vector2d(-robotRadius.magnitude(), -robotRadius.magnitude()),
                 new Vector2d(robotRadius.magnitude(), robotRadius.magnitude()), robotRadius.unit());
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     /**

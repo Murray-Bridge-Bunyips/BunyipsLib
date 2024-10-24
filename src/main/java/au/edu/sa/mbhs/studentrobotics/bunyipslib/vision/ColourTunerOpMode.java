@@ -5,7 +5,8 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Mil
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.opencv.core.Scalar;
@@ -28,7 +29,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThresho
  * @author Lucas Bubner, 2024
  * @since 3.4.0
  */
-@Config
 public abstract class ColourTunerOpMode extends BunyipsOpMode {
     /**
      * The scalars used for the current processor.
@@ -73,6 +73,8 @@ public abstract class ColourTunerOpMode extends BunyipsOpMode {
         vision.init(processors);
         vision.startPreview();
         changeToProcessor(0);
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     private void changeToProcessor(int index) {

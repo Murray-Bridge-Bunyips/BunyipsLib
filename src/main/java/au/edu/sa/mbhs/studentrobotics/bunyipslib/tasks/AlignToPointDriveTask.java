@@ -3,7 +3,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Rotation2d;
@@ -28,7 +29,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * @author Lucas Bubner, 2024
  * @since 4.1.0
  */
-@Config
 public class AlignToPointDriveTask extends ForeverTask {
     /**
      * The tolerance at which the robot will stop trying to align to a point if it is within this radius to the point.
@@ -69,6 +69,8 @@ public class AlignToPointDriveTask extends ForeverTask {
         Vector2d currentTarget = point.get();
         withName("Align To Point: " + currentTarget);
         lastPoint = currentTarget;
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     /**

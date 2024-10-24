@@ -2,7 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
@@ -20,7 +21,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  * @author Lucas Bubner, 2024
  * @since 4.0.0
  */
-@Config
 public class SwitchableLocalizer implements Localizer {
     /**
      * Whether the fallback localizer should be used.
@@ -44,6 +44,8 @@ public class SwitchableLocalizer implements Localizer {
         USING_FALLBACK_LOCALIZER = false;
         this.main = main;
         this.fallback = fallback;
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     /**

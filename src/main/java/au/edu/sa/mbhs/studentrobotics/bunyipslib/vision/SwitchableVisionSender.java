@@ -4,7 +4,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamServer;
 
@@ -32,7 +32,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
  * @since 1.0.0-pre
  */
 @SuppressWarnings("rawtypes")
-@Config
 public class SwitchableVisionSender implements Runnable {
     /**
      * Can be changed dynamically via FtcDashboard. This is the processor feed
@@ -62,6 +61,9 @@ public class SwitchableVisionSender implements Runnable {
      *                      can be added through {@link #addInstance}.
      */
     public SwitchableVisionSender(@NonNull Vision firstInstance) {
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
+
         instances.add(firstInstance);
 
         // CameraStreamServer will be supplying a raw feed to the DS without this thread

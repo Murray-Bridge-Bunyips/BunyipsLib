@@ -2,6 +2,9 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.centerstage;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
+
 import org.opencv.core.Scalar;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
@@ -13,7 +16,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThresho
  *
  * @since 1.0.0-pre
  */
-//@Config
 public class PurplePixel extends ColourThreshold {
     /**
      * Lower bounds for the YCrCb colour space.
@@ -43,6 +45,8 @@ public class PurplePixel extends ColourThreshold {
      */
     public PurplePixel() {
         super(ColourSpace.YCrCb);
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     @NonNull

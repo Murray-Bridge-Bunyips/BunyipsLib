@@ -70,19 +70,18 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final TurnConstraints defaultTurnConstraints;
     private final VelConstraint defaultVelConstraint;
     private final AccelConstraint defaultAccelConstraint;
-
     private final VoltageSensor voltageSensor;
     private final LazyImu lazyImu;
     private final List<DcMotorEx> leftMotors, rightMotors;
-
     private final DriveModel model;
     private final MotionProfile profile;
-    private final TankGains gains;
-
     private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);
     private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", 50_000_000);
     private final DownsampledWriter tankCommandWriter = new DownsampledWriter("TANK_COMMAND", 50_000_000);
-
+    /**
+     * Gains used for tank drive control.
+     */
+    public TankGains gains;
     private Localizer localizer;
     private Accumulator accumulator;
     private volatile double leftPower;
@@ -161,14 +160,22 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @return this
      */
     @NonNull
+    @Override
     public TankDrive withLocalizer(@NonNull Localizer localizer) {
         this.localizer = localizer;
         return this;
     }
 
     @NonNull
+    @Override
     public Localizer getLocalizer() {
         return localizer;
+    }
+
+    @NonNull
+    @Override
+    public Accumulator getAccumulator() {
+        return accumulator;
     }
 
     /**
@@ -179,6 +186,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @return this
      */
     @NonNull
+    @Override
     public TankDrive withAccumulator(@NonNull Accumulator accumulator) {
         this.accumulator.copyTo(accumulator);
         this.accumulator = accumulator;

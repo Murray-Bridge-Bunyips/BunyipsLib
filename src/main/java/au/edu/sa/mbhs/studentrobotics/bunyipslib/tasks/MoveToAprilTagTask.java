@@ -7,7 +7,8 @@ import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -37,7 +38,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.AprilTag;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-@Config
 public class MoveToAprilTagTask extends Task {
     /**
      * The desired distance from the tag.
@@ -101,6 +101,8 @@ public class MoveToAprilTagTask extends Task {
         this.aprilTag = aprilTag;
         TARGET_TAG = targetTag;
         withName("Move to AprilTag");
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     /**
@@ -119,6 +121,8 @@ public class MoveToAprilTagTask extends Task {
         this.passthrough = passthrough;
         TARGET_TAG = targetTag;
         withName("Move to AprilTag");
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     /**

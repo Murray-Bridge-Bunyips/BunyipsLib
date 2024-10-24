@@ -2,8 +2,9 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
@@ -26,7 +27,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-@Config
 public class Accumulator implements Localizable {
     /**
      * The maximum pose history length that should be stored in an accumulator.
@@ -48,6 +48,8 @@ public class Accumulator implements Localizable {
     public Accumulator(@NonNull Pose2d initialPose) {
         pose = initialPose;
         Storage.memory().lastKnownPosition = initialPose;
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     /**
@@ -55,7 +57,7 @@ public class Accumulator implements Localizable {
      * Useful for constructing an accumulator that will be overridden by replacing an Accumulator.
      */
     public Accumulator() {
-        pose = Storage.memory().lastKnownPosition;
+        this(Storage.memory().lastKnownPosition);
     }
 
     /**

@@ -22,7 +22,7 @@ public class DriveModel {
      * The ratio of inches per encoder tick for lateral movement.
      * Not required for a differential drive.
      */
-    public double lateralInPerTick = Double.MAX_VALUE;
+    public double lateralInPerTick;
     /**
      * The track width in encoder ticks.
      */
@@ -43,7 +43,7 @@ public class DriveModel {
         @NonNull
         public Builder setInPerTick(double inPerTick) {
             model.inPerTick = inPerTick;
-            if (model.lateralInPerTick == Double.MAX_VALUE) model.lateralInPerTick = inPerTick;
+            if (model.lateralInPerTick == 0) model.lateralInPerTick = inPerTick;
             return this;
         }
 

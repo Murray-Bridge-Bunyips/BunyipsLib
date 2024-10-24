@@ -7,7 +7,8 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -28,7 +29,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  * @author Lucas Bubner, 2024
  * @since 4.1.0
  */
-@Config
 public class DebugMode extends BunyipsComponent implements Runnable {
     /**
      * The threshold at which {@link #whenRobotRolled(IMU, TriggerAction)} will trigger for the pitch and roll angles.
@@ -46,6 +46,8 @@ public class DebugMode extends BunyipsComponent implements Runnable {
     public DebugMode() {
         require(opMode).onActiveLoop(this);
         Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode.");
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     /**

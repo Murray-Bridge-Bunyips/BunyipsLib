@@ -2,7 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -28,7 +29,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-@Config
 public class MoveToContourTask extends Task {
     /**
      * The PIDF coefficients for the translational controller.
@@ -72,6 +72,8 @@ public class MoveToContourTask extends Task {
         translationController.getPIDFController().updatePIDF(TRANSLATIONAL_PIDF);
         rotationController.getPIDFController().updatePIDF(ROTATIONAL_PIDF);
         withName("Move to Contour");
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     /**
@@ -107,6 +109,8 @@ public class MoveToContourTask extends Task {
         translationController.getPIDFController().updatePIDF(TRANSLATIONAL_PIDF);
         rotationController.getPIDFController().updatePIDF(ROTATIONAL_PIDF);
         withName("Move to Contour");
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
     }
 
     /**

@@ -24,10 +24,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path.Path;
 @Config
 public final class Dashboard {
     /**
-     * Inches for sampled path drawing resolution.
-     */
-    public static double DEFAULT_RESOLUTION = 2.0;
-    /**
      * The radius of the robot for drawing.
      */
     public static double ROBOT_RADIUS = 9;
@@ -84,7 +80,7 @@ public final class Dashboard {
      * @param path   path to draw
      */
     public static void drawSampledPath(@NonNull Canvas canvas, @NonNull Path path) {
-        drawSampledPath(canvas, path, DEFAULT_RESOLUTION);
+        drawSampledPath(canvas, path, 2);
     }
 
     /**
@@ -94,8 +90,6 @@ public final class Dashboard {
      * @param pose   robot pose
      */
     public static void drawRobot(@NonNull Canvas canvas, @NonNull Pose2d pose) {
-        final double ROBOT_RADIUS = 9;
-
         canvas.setStrokeWidth(1);
         canvas.strokeCircle(pose.position.x, pose.position.y, ROBOT_RADIUS);
 

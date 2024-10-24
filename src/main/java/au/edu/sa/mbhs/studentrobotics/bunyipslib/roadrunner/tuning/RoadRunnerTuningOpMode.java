@@ -1,9 +1,11 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.tuning;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.ftc.AngularRampLogger;
@@ -41,6 +43,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TwoWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.Constants;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.DriveModel;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.MecanumGains;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.MotionProfile;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.TankGains;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.TankDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
@@ -67,8 +73,31 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-@Config
 public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
+    // Intermediary fields for the tuning process. These are used to store the values of the tuning process, and are
+    // initially populated with the values from the drive instance. They are used to allow for dynamic adjustment
+    // of the values used in the tuning process.
+    /**
+     * Intermediary field for the drive model used in tuning.
+     */
+    @NonNull
+    public static DriveModel TUNING_DRIVE_MODEL = new DriveModel.Builder().build();
+    /**
+     * Intermediary field for the motion profile used in tuning.
+     */
+    @NonNull
+    public static MotionProfile TUNING_MOTION_PROFILE = new MotionProfile.Builder().build();
+    /**
+     * Intermediary field for the mecanum gains used in tuning.
+     */
+    @Nullable
+    public static MecanumGains TUNING_MECANUM_GAINS;
+    /**
+     * Intermediary field for the tank gains used in tuning.
+     */
+    @Nullable
+    public static TankGains TUNING_TANK_GAINS;
+
     /**
      * Instantiate hardware and return the fully configured RoadRunner drive instance to use for tuning.
      * <p>
@@ -115,8 +144,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
                 // We don't want to expose the motors on the subsystem directly, we'll just use reflection here.
                 // The DriveView constructor is fairly limited in what can be adjusted, including the requirement for
-                // a strict LazyIMU when it is locked to using h. This explains why a separate IMU config
-                // is used.
+                // a strict LazyIMU, which is why on the drive classes only is where LazyImu instances are used.
                 Class<?> mdClass = md.getClass();
                 Field leftFrontField, leftBackField, rightFrontField, rightBackField, lazyImuField;
                 try {
@@ -146,13 +174,17 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 }
 
                 Constants c = md.getConstants();
+                TUNING_DRIVE_MODEL = c.getDriveModel();
+                TUNING_MOTION_PROFILE = c.getMotionProfile();
+                TUNING_MECANUM_GAINS = md.gains;
+                Threads.startLoop("Update Mecanum Gains", Milliseconds.of(500), () -> md.gains = TUNING_MECANUM_GAINS);
                 assert lazyImu != null;
                 return new DriveView(
                         DriveType.MECANUM,
-                        c.getDriveModel().inPerTick,
-                        c.getMotionProfile().maxWheelVel,
-                        c.getMotionProfile().minProfileAccel,
-                        c.getMotionProfile().maxProfileAccel,
+                        TUNING_DRIVE_MODEL.inPerTick,
+                        TUNING_MOTION_PROFILE.maxWheelVel,
+                        TUNING_MOTION_PROFILE.minProfileAccel,
+                        TUNING_MOTION_PROFILE.maxProfileAccel,
                         h.getAll(LynxModule.class),
                         Arrays.asList(
                                 leftFront,
@@ -168,9 +200,9 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                         perpEncs,
                         lazyImu,
                         h.voltageSensor.iterator().next(),
-                        () -> new MotorFeedforward(c.getMotionProfile().kS,
-                                c.getMotionProfile().kV / c.getDriveModel().inPerTick,
-                                c.getMotionProfile().kA / c.getDriveModel().inPerTick)
+                        () -> new MotorFeedforward(TUNING_MOTION_PROFILE.kS,
+                                TUNING_MOTION_PROFILE.kV / TUNING_DRIVE_MODEL.inPerTick,
+                                TUNING_MOTION_PROFILE.kA / TUNING_DRIVE_MODEL.inPerTick)
                 );
             };
         } else if (drive instanceof TankDrive) {
@@ -220,13 +252,17 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 }
 
                 Constants c = drive.getConstants();
+                TUNING_DRIVE_MODEL = c.getDriveModel();
+                TUNING_MOTION_PROFILE = c.getMotionProfile();
+                TUNING_TANK_GAINS = td.gains;
+                Threads.startLoop("Update Tank Gains", Milliseconds.of(500), () -> td.gains = TUNING_TANK_GAINS);
                 assert leftMotors != null && rightMotors != null && lazyImu != null;
                 return new DriveView(
                         DriveType.TANK,
-                        c.getDriveModel().inPerTick,
-                        c.getMotionProfile().maxWheelVel,
-                        c.getMotionProfile().minProfileAccel,
-                        c.getMotionProfile().maxProfileAccel,
+                        TUNING_DRIVE_MODEL.inPerTick,
+                        TUNING_MOTION_PROFILE.maxWheelVel,
+                        TUNING_MOTION_PROFILE.minProfileAccel,
+                        TUNING_MOTION_PROFILE.maxProfileAccel,
                         h.getAll(LynxModule.class),
                         leftMotors,
                         rightMotors,
@@ -236,9 +272,9 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                         perpEncs,
                         lazyImu,
                         h.voltageSensor.iterator().next(),
-                        () -> new MotorFeedforward(c.getMotionProfile().kS,
-                                c.getMotionProfile().kV / c.getDriveModel().inPerTick,
-                                c.getMotionProfile().kA / c.getDriveModel().inPerTick)
+                        () -> new MotorFeedforward(TUNING_MOTION_PROFILE.kS,
+                                TUNING_MOTION_PROFILE.kV / TUNING_DRIVE_MODEL.inPerTick,
+                                TUNING_MOTION_PROFILE.kA / TUNING_DRIVE_MODEL.inPerTick)
                 );
             };
         } else {
@@ -269,7 +305,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     MecanumMotorDirectionDebugger.class,
                     ManualFeedbackTuner.class
             )) {
-                configRoot.putVariable(c.getSimpleName(), ReflectionConfig.createVariableFromClass(c));
+                configRoot.putVariable("[RR] " + c.getSimpleName(), ReflectionConfig.createVariableFromClass(c));
             }
         });
 
@@ -324,9 +360,11 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             out.setCaptionValueSeparator(": ");
             out.addData(Text.html().bold(selection[0].getClass().getSimpleName()).toString(), "Ready. Press play to start.");
             out.update();
-            waitForStart();
 
-            // TODO: ability to access dynamic tuning
+            FtcDashboard.getInstance().withConfigRoot(configRoot ->
+                    configRoot.putVariable("[RR] Tuning Parameters", ReflectionConfig.createVariableFromClass(getClass())));
+
+            waitForStart();
 
             opMode.runOpMode();
         } finally {

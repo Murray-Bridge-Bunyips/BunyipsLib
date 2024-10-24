@@ -8,8 +8,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.ThreeWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TwoWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.TankDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup;
 
@@ -32,14 +30,7 @@ public final class ManualFeedbackTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Localizer localizer;
-        if (drive instanceof TankDrive) {
-            localizer = ((TankDrive) drive).getLocalizer();
-        } else if (drive instanceof MecanumDrive) {
-            localizer = ((MecanumDrive) drive).getLocalizer();
-        } else {
-            throw new RuntimeException("Unknown drive type!");
-        }
+        Localizer localizer = drive.getLocalizer();
         if (localizer instanceof TwoWheelLocalizer) {
             TwoWheelLocalizer l = (TwoWheelLocalizer) localizer;
             if (l.params.perpXTicks == 0 && l.params.parYTicks == 0) {

@@ -71,7 +71,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final TurnConstraints defaultTurnConstraints;
     private final VelConstraint defaultVelConstraint;
     private final AccelConstraint defaultAccelConstraint;
-
     private final VoltageSensor voltageSensor;
     // Unfortunately we have to expose lazyImu directly on both RR drives as they are required for tuning,
     // the LazyImu interface is not exposed on the localizers as they should be constructed by simply calling .get()
@@ -81,15 +80,15 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final DcMotorEx leftBack;
     private final DcMotorEx rightBack;
     private final DcMotorEx rightFront;
-
     private final DriveModel model;
     private final MotionProfile profile;
-    private final MecanumGains gains;
-
     private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);
     private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", 50_000_000);
     private final DownsampledWriter mecanumCommandWriter = new DownsampledWriter("MECANUM_COMMAND", 50_000_000);
-
+    /**
+     * Gains used for holonomic drive control.
+     */
+    public MecanumGains gains;
     private Localizer localizer;
     private Accumulator accumulator;
     private ErrorThresholds errorThresholds = ErrorThresholds.DEFAULT;
@@ -172,12 +171,14 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @return this
      */
     @NonNull
+    @Override
     public MecanumDrive withLocalizer(@NonNull Localizer localizer) {
         this.localizer = localizer;
         return this;
     }
 
     @NonNull
+    @Override
     public Localizer getLocalizer() {
         if (localizer == null) {
             localizer = new MecanumLocalizer(model, leftFront, leftBack, rightBack, rightFront, lazyImu.get());
@@ -193,10 +194,17 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @return this
      */
     @NonNull
+    @Override
     public MecanumDrive withAccumulator(@NonNull Accumulator accumulator) {
         this.accumulator.copyTo(accumulator);
         this.accumulator = accumulator;
         return this;
+    }
+
+    @NonNull
+    @Override
+    public Accumulator getAccumulator() {
+        return accumulator;
     }
 
     /**
