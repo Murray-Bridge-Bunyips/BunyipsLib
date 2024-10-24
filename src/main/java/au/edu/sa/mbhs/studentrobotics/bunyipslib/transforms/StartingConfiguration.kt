@@ -68,9 +68,9 @@ object StartingConfiguration {
             val xZeroInch = -72.0 * origin.directionMultiplier * alliance.directionMultiplier
             val yZeroInch = -60.0 * alliance.directionMultiplier
             return Pose2d(
-                xZeroInch + horizontalTranslation.`in`(Inches) * origin.directionMultiplier * alliance.directionMultiplier,
-                yZeroInch - backwardTranslation.`in`(Inches) * alliance.directionMultiplier,
-                alliance.directionMultiplier * Math.PI / 2.0 + ccwRotation.`in`(Radians)
+                xZeroInch + horizontalTranslation.to(Inches) * origin.directionMultiplier * alliance.directionMultiplier,
+                yZeroInch - backwardTranslation.to(Inches) * alliance.directionMultiplier,
+                alliance.directionMultiplier * Math.PI / 2.0 + ccwRotation.to(Radians)
             )
         }
 
@@ -139,7 +139,7 @@ object StartingConfiguration {
                 Text.upper(lowCaseAlliance.substring(0, 1))
                         + lowCaseAlliance.substring(1),
                 if (horizontalTranslation.unit().equals(FieldTiles)) {
-                    val tileValue = Mathf.round(horizontalTranslation.`in`(FieldTiles) + 0.5, 1)
+                    val tileValue = Mathf.round(horizontalTranslation.to(FieldTiles) + 0.5, 1)
                     // Will want to only display 1 digit if we can for brevity
                     "Tile <b>#${if (tileValue % 1.0 == 0.0) tileValue.toInt() else tileValue}</b>"
                 } else {
@@ -152,7 +152,7 @@ object StartingConfiguration {
                     ""
                 },
                 if (ccwRotation.magnitude() != 0.0) {
-                    ", ↺ ${ccwRotation.`in`(Degrees)}°"
+                    ", ↺ ${ccwRotation.to(Degrees)}°"
                 } else {
                     ""
                 }
@@ -261,7 +261,7 @@ object StartingConfiguration {
         fun tile(tileFromOrigin: Double): PrebuiltPosition {
             if (tileFromOrigin < 0.5 || tileFromOrigin > 6.5)
                 throw OutOfRangeException(LocalizedFormats.OUT_OF_RANGE_SIMPLE, tileFromOrigin, 0.5, 6.5)
-            translate(FieldTiles.one().divide(2.0).plus(FieldTiles.one().times(tileFromOrigin - 1.0)))
+            translate(FieldTiles.one() / 2.0 + FieldTiles.one() * (tileFromOrigin - 1.0))
             return PrebuiltPosition()
         }
 
@@ -270,7 +270,7 @@ object StartingConfiguration {
          * This translation is positioned in the vertical center of the field tile, starting from the side of the origin.
          */
         fun translate(translationFromOrigin: Measure<Distance>): PrebuiltPosition {
-            val mag = abs(translationFromOrigin.`in`(Feet))
+            val mag = abs(translationFromOrigin.to(Feet))
             if (mag > 12.0)
                 throw NumberIsTooLargeException(mag, 12, true)
             horizontalTranslation = translationFromOrigin

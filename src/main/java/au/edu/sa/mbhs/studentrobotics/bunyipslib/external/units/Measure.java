@@ -101,7 +101,7 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * Converts this measure to a measure with a different unit of the same type, eg minutes to
      * seconds. Converting to the same unit is equivalent to calling {@link #magnitude()}.
      * <p>
-     * For Kotlin users, calling this method can be done with the notation {@code `in`}
+     * For Kotlin users, calling this method can be done with the notation {@code to}
      * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
      * or by calling the alias {@code to}.
      *
@@ -212,7 +212,7 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @see #times(double)
      */
     @NonNull
-    default Measure<U> divide(double divisor) {
+    default Measure<U> div(double divisor) {
         return times(1 / divisor);
     }
 
@@ -225,12 +225,12 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @return the resulting measure
      */
     @NonNull
-    default <U2 extends Unit<U2>> Measure<?> divide(@NonNull Measure<U2> other) {
+    default <U2 extends Unit<U2>> Measure<?> div(@NonNull Measure<U2> other) {
         if (unit().getBaseUnit().equals(other.unit().getBaseUnit())) {
             return Units.Value.ofBaseUnits(baseUnitMagnitude() / other.baseUnitMagnitude());
         }
         if (other.unit() instanceof Dimensionless) {
-            return divide(other.baseUnitMagnitude());
+            return div(other.baseUnitMagnitude());
         }
         if (other.unit() instanceof Velocity) {
             Velocity<?> velocity = (Velocity<?>) other.unit();
@@ -326,6 +326,16 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
     @NonNull
     default Measure<U> negate() {
         return times(-1);
+    }
+
+    /**
+     * Negates this measure and returns the result.
+     *
+     * @return the resulting measure
+     */
+    @NonNull
+    default Measure<U> unaryMinus() {
+        return negate();
     }
 
     /**

@@ -56,7 +56,7 @@ object EncoderTicks {
     @JvmStatic
     fun fromAngle(angle: Measure<Angle>, ticksPerRevolution: Number, reduction: Double): Int {
         // Equation: angle (in revolutions) * ticksPerRevolution * reduction = ticks
-        return (angle.`in`(Revolutions) * ticksPerRevolution.toDouble() * reduction).roundToInt()
+        return (angle.to(Revolutions) * ticksPerRevolution.toDouble() * reduction).roundToInt()
     }
 
     /**
@@ -101,7 +101,7 @@ object EncoderTicks {
         // Equation: distance * ticksPerRevolution / circumference (2*pi*r_m) = ticks
         return distance
             .times(ticksPerRevolution.toDouble())
-            .divide(wheelDiameter.times(Math.PI))
+            .div(wheelDiameter.times(Math.PI))
             .times(reduction)
             .magnitude()
             .roundToInt()

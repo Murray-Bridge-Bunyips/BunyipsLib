@@ -629,7 +629,7 @@ public class Scheduler extends BunyipsComponent {
          * This will delay the activation of the task by the specified amount of time of the condition remaining true.
          * If this method is called multiple times, the last time directive will be used.
          * <p>
-         * For Kotlin users, calling this method can be done with the notation {@code `in`}
+         * For Kotlin users, calling this method can be done with the notation {@code to}
          * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
          * or by calling the alias {@code after}.
          *

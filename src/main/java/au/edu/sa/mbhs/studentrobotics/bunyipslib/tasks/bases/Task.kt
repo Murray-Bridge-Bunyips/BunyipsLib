@@ -179,7 +179,7 @@ abstract class Task(
     /**
      * Compose this task into a [RaceTaskGroup] with a [WaitUntilTask] based on this condition.
      */
-    fun until(condition: BooleanSupplier): RaceTaskGroup {
+    infix fun until(condition: BooleanSupplier): RaceTaskGroup {
         val task = WaitUntilTask(condition)
         task.withName("$name supervisor")
         return RaceTaskGroup(this, task)
@@ -194,10 +194,18 @@ abstract class Task(
     }
 
     /**
+     * Compose this task into a [SequentialTaskGroup] with the supplied task
+     * to run before this one.
+     */
+    infix fun after(otherTask: Task): SequentialTaskGroup {
+        return SequentialTaskGroup(otherTask, this)
+    }
+
+    /**
      * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable],
      * queued to run before this task starts.
      */
-    fun after(runnable: Runnable): SequentialTaskGroup {
+    infix fun after(runnable: Runnable): SequentialTaskGroup {
         val task = RunTask(runnable)
         task.withName("$name hook")
         return SequentialTaskGroup(task, this)
@@ -212,10 +220,18 @@ abstract class Task(
     }
 
     /**
+     * Compose this task into a [SequentialTaskGroup] with the supplied task
+     * to follow after this one.
+     */
+    infix fun then(otherTask: Task): SequentialTaskGroup {
+        return SequentialTaskGroup(this, otherTask)
+    }
+
+    /**
      * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable],
      * queued to run when this task finishes.
      */
-    fun then(runnable: Runnable): SequentialTaskGroup {
+    infix fun then(runnable: Runnable): SequentialTaskGroup {
         val task = RunTask(runnable)
         task.withName("$name callback")
         return SequentialTaskGroup(this, task)
@@ -230,6 +246,14 @@ abstract class Task(
     }
 
     /**
+     * Compose this task into a [ParallelTaskGroup] with the supplied task
+     * to run alongside this one.
+     */
+    infix fun with(otherTask: Task): ParallelTaskGroup {
+        return ParallelTaskGroup(this, otherTask)
+    }
+
+    /**
      * Compose this task into a [RaceTaskGroup] with the supplied tasks
      * to run all of these tasks until one finishes.
      */
@@ -238,11 +262,27 @@ abstract class Task(
     }
 
     /**
+     * Compose this task into a [RaceTaskGroup] with the supplied task
+     * to run alongside this one until one finishes.
+     */
+    infix fun race(otherTask: Task): RaceTaskGroup {
+        return RaceTaskGroup(this, otherTask)
+    }
+
+    /**
      * Compose this task into a [DeadlineTaskGroup] with the supplied tasks
      * to run these extra tasks until this task is done.
      */
     fun during(vararg otherTasks: Task): DeadlineTaskGroup {
         return DeadlineTaskGroup(this, *otherTasks)
+    }
+
+    /**
+     * Compose this task into a [DeadlineTaskGroup] with the supplied task
+     * to run alongside this one until this task is done.
+     */
+    infix fun during(otherTask: Task): DeadlineTaskGroup {
+        return DeadlineTaskGroup(this, otherTask)
     }
 
     /**
@@ -370,7 +410,7 @@ abstract class Task(
         if (taskFinished) return finisherFired
 
         val startCalled = startTime != 0L
-        val timeoutFinished = timeout.magnitude() != 0.0 && System.nanoTime() > startTime + timeout.`in`(Nanoseconds)
+        val timeoutFinished = timeout.magnitude() != 0.0 && System.nanoTime() > startTime + timeout.to(Nanoseconds)
         var userCondition = false
         Exceptions.runUserMethod({ userCondition = isTaskFinished() }, opMode)
 
