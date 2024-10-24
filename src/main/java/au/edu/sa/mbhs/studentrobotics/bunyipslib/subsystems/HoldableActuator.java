@@ -68,6 +68,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     private Encoder encoder;
     private TouchSensor topSwitch;
     private TouchSensor bottomSwitch;
+    private int homingDirection = -1;
     private boolean zeroed;
     private boolean userLatch;
     private double userPower;
@@ -413,7 +414,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 break;
             case HOMING:
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                motorPower = -MOVING_POWER;
+                motorPower = MOVING_POWER * Math.signum(homingDirection);
                 opMode(o -> o.telemetry.add("%: <font color='yellow'><b>HOMING</b></font> [%tps]", this, Math.round(encoder.getVelocity())));
                 break;
             case USER_POWER:
@@ -600,6 +601,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     }
                     motor.setCurrentAlert(OVERCURRENT.in(Amps), CurrentUnit.AMPS);
                     zeroHits = 0;
+                    homingDirection = -1;
                     inputMode = Mode.HOMING;
                 }
 
@@ -663,6 +665,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     }
                     motor.setCurrentAlert(OVERCURRENT.in(Amps), CurrentUnit.AMPS);
                     zeroHits = 0;
+                    homingDirection = 1;
                     inputMode = Mode.HOMING;
                 }
 
