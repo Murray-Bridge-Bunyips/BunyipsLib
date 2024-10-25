@@ -81,6 +81,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     /**
      * Gains used for tank drive control.
      */
+    @NonNull
     public TankGains gains;
     private Localizer localizer;
     private Accumulator accumulator;

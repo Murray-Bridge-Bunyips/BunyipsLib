@@ -97,6 +97,17 @@ abstract class Task(
     }
 
     /**
+     * Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.
+     * This task is scheduled with default override behaviour.
+     *
+     * @param subsystem The subsystem to elect as the runner of this task
+     * @return this task
+     */
+    infix fun on(subsystem: BunyipsSubsystem): Task {
+        return onSubsystem(subsystem)
+    }
+
+    /**
      * Return whether this task has elected a dependency on a subsystem or not.
      */
     fun hasDependency(): Boolean {
@@ -149,6 +160,13 @@ abstract class Task(
         }
         this.name = name
         return this
+    }
+
+    /**
+     * Set the name of this task to be displayed in the OpMode.
+     */
+    infix fun named(name: String): Task {
+        return withName(name)
     }
 
     /**

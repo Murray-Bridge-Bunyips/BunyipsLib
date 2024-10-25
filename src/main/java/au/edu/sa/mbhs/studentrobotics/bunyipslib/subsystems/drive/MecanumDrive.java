@@ -88,6 +88,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     /**
      * Gains used for holonomic drive control.
      */
+    @NonNull
     public MecanumGains gains;
     private Localizer localizer;
     private Accumulator accumulator;
