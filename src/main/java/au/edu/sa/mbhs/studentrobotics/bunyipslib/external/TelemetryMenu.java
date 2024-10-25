@@ -535,14 +535,29 @@ public class TelemetryMenu {
     /**
      * A menu item that may be clicked by the user.
      */
-    public abstract static class StaticClickableOption extends OptionElement {
+    public static class StaticClickableOption extends OptionElement {
         private final String name;
+        private Runnable onClick;
 
         protected StaticClickableOption(@NonNull String name) {
             this.name = name;
         }
 
-        protected abstract void onClick();
+        /**
+         * Create a new StaticClickableOption.
+         *
+         * @param name  the name of this option
+         * @param onClick the action to perform when this option is clicked
+         */
+        public StaticClickableOption(@NonNull String name, Runnable onClick) {
+            this.name = name;
+            this.onClick = onClick;
+        }
+
+        protected void onClick() {
+            if (onClick != null)
+                onClick.run();
+        }
 
         @NonNull
         @Override

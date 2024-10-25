@@ -170,18 +170,8 @@ public final class HardwareTest extends BunyipsOpMode {
                         servo.setPosition(a ? Mathf.scale(-gamepad1.lsy, -1, 1, 0, 1) : curr);
                         return curr;
                     });
-                    TelemetryMenu.StaticClickableOption setToZero = new TelemetryMenu.StaticClickableOption("Set to 0") {
-                        @Override
-                        protected void onClick() {
-                            servo.setPosition(0);
-                        }
-                    };
-                    TelemetryMenu.StaticClickableOption setToOne = new TelemetryMenu.StaticClickableOption("Set to 1") {
-                        @Override
-                        protected void onClick() {
-                            servo.setPosition(1);
-                        }
-                    };
+                    TelemetryMenu.StaticClickableOption setToZero = new TelemetryMenu.StaticClickableOption("Set to 0", () -> servo.setPosition(0));
+                    TelemetryMenu.StaticClickableOption setToOne = new TelemetryMenu.StaticClickableOption("Set to 1", () -> servo.setPosition(1));
                     TelemetryMenu.InteractiveToggle directionControl = new TelemetryMenu.InteractiveToggle("Direction", false, a -> {
                         servo.setDirection(a ? Servo.Direction.FORWARD : Servo.Direction.REVERSE);
                         return servo.getDirection();
@@ -328,25 +318,10 @@ public final class HardwareTest extends BunyipsOpMode {
                 if (device instanceof RevBlinkinLedDriver) {
                     // We can also control Blinkin devices
                     RevBlinkinLedDriver blinkin = (RevBlinkinLedDriver) device;
-                    TelemetryMenu.StaticClickableOption off = new TelemetryMenu.StaticClickableOption("Turn Off") {
-                        @Override
-                        protected void onClick() {
-                            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                        }
-                    };
-                    TelemetryMenu.StaticClickableOption white = new TelemetryMenu.StaticClickableOption("To White") {
-                        @Override
-                        protected void onClick() {
-                            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
-                        }
-                    };
+                    TelemetryMenu.StaticClickableOption off = new TelemetryMenu.StaticClickableOption("Turn Off", () -> blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK));
+                    TelemetryMenu.StaticClickableOption white = new TelemetryMenu.StaticClickableOption("To White", () -> blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE));
                     TelemetryMenu.EnumOption pattern = new TelemetryMenu.EnumOption("Pattern Select", RevBlinkinLedDriver.BlinkinPattern.values());
-                    TelemetryMenu.StaticClickableOption applicator = new TelemetryMenu.StaticClickableOption("Apply Pattern") {
-                        @Override
-                        protected void onClick() {
-                            blinkin.setPattern((RevBlinkinLedDriver.BlinkinPattern) pattern.getValue());
-                        }
-                    };
+                    TelemetryMenu.StaticClickableOption applicator = new TelemetryMenu.StaticClickableOption("Apply Pattern", () -> blinkin.setPattern((RevBlinkinLedDriver.BlinkinPattern) pattern.getValue()));
                     dev.addChildren(off, white, pattern, applicator);
                 }
 
@@ -362,18 +337,8 @@ public final class HardwareTest extends BunyipsOpMode {
                     CompassSensor compass = (CompassSensor) device;
                     TelemetryMenu.DynamicItem status = new TelemetryMenu.DynamicItem("Status", compass::status);
                     TelemetryMenu.DynamicItem direction = new TelemetryMenu.DynamicItem("Direction (deg)", compass::getDirection);
-                    TelemetryMenu.StaticClickableOption measurement = new TelemetryMenu.StaticClickableOption("Measurement Mode") {
-                        @Override
-                        protected void onClick() {
-                            compass.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE);
-                        }
-                    };
-                    TelemetryMenu.StaticClickableOption calibration = new TelemetryMenu.StaticClickableOption("Calibration Mode") {
-                        @Override
-                        protected void onClick() {
-                            compass.setMode(CompassSensor.CompassMode.CALIBRATION_MODE);
-                        }
-                    };
+                    TelemetryMenu.StaticClickableOption measurement = new TelemetryMenu.StaticClickableOption("Measurement Mode", () -> compass.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE));
+                    TelemetryMenu.StaticClickableOption calibration = new TelemetryMenu.StaticClickableOption("Calibration Mode", () -> compass.setMode(CompassSensor.CompassMode.CALIBRATION_MODE));
                     TelemetryMenu.DynamicItem calibrationStatus = new TelemetryMenu.DynamicItem("Calibration Failed?", compass::calibrationFailed);
                     dev.addChildren(direction);
                 }
@@ -391,26 +356,20 @@ public final class HardwareTest extends BunyipsOpMode {
                         return res;
                     };
                     TelemetryMenu.DynamicItem status = new TelemetryMenu.DynamicItem("Status", () -> ignoreSupport.apply(gyro::status));
-                    TelemetryMenu.StaticClickableOption calibrate = new TelemetryMenu.StaticClickableOption("Calibrate") {
-                        @Override
-                        protected void onClick() {
-                            try {
-                                gyro.calibrate();
-                            } catch (UnsupportedOperationException ignored) {
-                                // no-op
-                            }
+                    TelemetryMenu.StaticClickableOption calibrate = new TelemetryMenu.StaticClickableOption("Calibrate", () -> {
+                        try {
+                            gyro.calibrate();
+                        } catch (UnsupportedOperationException ignored) {
+                            // no-op
                         }
-                    };
-                    TelemetryMenu.StaticClickableOption resetZIntegrator = new TelemetryMenu.StaticClickableOption("Reset Z Integrator") {
-                        @Override
-                        protected void onClick() {
-                            try {
-                                gyro.resetZAxisIntegrator();
-                            } catch (UnsupportedOperationException ignored) {
-                                // no-op
-                            }
+                    });
+                    TelemetryMenu.StaticClickableOption resetZIntegrator = new TelemetryMenu.StaticClickableOption("Reset Z Integrator", () -> {
+                        try {
+                            gyro.resetZAxisIntegrator();
+                        } catch (UnsupportedOperationException ignored) {
+                            // no-op
                         }
-                    };
+                    });
                     TelemetryMenu.DynamicItem calibrating = new TelemetryMenu.DynamicItem("Is Calibrating?", () -> ignoreSupport.apply(gyro::isCalibrating));
                     TelemetryMenu.DynamicItem heading = new TelemetryMenu.DynamicItem("Heading (deg)", () -> ignoreSupport.apply(gyro::getHeading));
                     TelemetryMenu.DynamicItem rotationFraction = new TelemetryMenu.DynamicItem("Rotation Fraction", () -> ignoreSupport.apply(gyro::getRotationFraction));
