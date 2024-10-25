@@ -157,7 +157,7 @@ public class AlignToPointDriveTask extends ForeverTask {
         headingInput = Mathf.clamp(headingInput, -maxRotation, maxRotation);
 
         // If we're at a discontinuity, we can't really do much so we should stop rotating
-        if (Double.isNaN(headingInput) || Mathf.isNear(0, Geometry.distBetween(drive.getPose().position, point), VECTOR_DELTA_CUTOFF_INCHES))
+        if (Double.isNaN(headingInput) || Mathf.isNear(0, Geometry.distTo(drive.getPose().position, point), VECTOR_DELTA_CUTOFF_INCHES))
             headingInput = 0;
 
         // Combine the x/y velocity with our derived angular velocity

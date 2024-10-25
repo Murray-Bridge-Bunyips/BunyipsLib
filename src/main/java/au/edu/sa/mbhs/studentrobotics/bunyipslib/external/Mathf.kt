@@ -584,6 +584,26 @@ object Mathf {
     }
 
     /**
+     * Convert radians to degrees.
+     *
+     * @return The value in degrees.
+     */
+    @JvmStatic
+    fun Number.radToDeg(): Double {
+        return Math.toDegrees(this.toDouble())
+    }
+
+    /**
+     * Convert degrees to radians.
+     *
+     * @return The value in radians.
+     */
+    @JvmStatic
+    fun Number.degToRad(): Double {
+        return Math.toRadians(this.toDouble())
+    }
+
+    /**
      * Find the intersection between a line and a circle.
      *
      * @param p1     The first point of the line.

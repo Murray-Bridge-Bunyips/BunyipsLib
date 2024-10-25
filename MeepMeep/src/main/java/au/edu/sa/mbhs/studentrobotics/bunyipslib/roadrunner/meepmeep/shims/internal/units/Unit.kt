@@ -157,6 +157,22 @@ open class Unit<U : Unit<U>>(
         infix fun <U : Unit<U>> Number.of(unit: Unit<U>): Measure<U> {
             return unit.of(this.toDouble())
         }
+
+        /**
+         * Converts a magnitude in terms of this unit to a magnitude in terms of another unit of the same
+         * dimension.
+         *
+         * ```
+         * Inches.convertTo(144, Feet) // 12.0
+         * Kilograms.convertTo(1, Pounds) // 2.20462
+         * ```
+         *
+         * @param conversion a pair of the magnitude and the unit to convert to
+         * @return the corresponding value in terms of the other unit.
+         */
+        infix fun <U : Unit<U>> Unit<U>.from(conversion: Pair<Double, Unit<U>>): Double {
+            return convertFrom(conversion.first, conversion.second)
+        }
     }
 
     /**

@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units
 
-import android.annotation.SuppressLint
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.ImmutableMeasure.Companion.ofBaseUnits
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.ImmutableMeasure.Companion.ofRelativeUnits
 import java.util.Objects
@@ -22,7 +21,7 @@ open class Unit<U : Unit<U>>(
     toBaseConverter: UnaryFunction,
     fromBaseConverter: UnaryFunction,
     name: String,
-    @SuppressLint("LambdaLast") symbol: String
+    symbol: String
 ) {
     /**
      * Gets the conversion function used to convert values to base unit terms. This generally
@@ -39,6 +38,7 @@ open class Unit<U : Unit<U>>(
      * @return the conversion function
      */
     val converterFromBase: UnaryFunction = Objects.requireNonNull(fromBaseConverter)
+
     /**
      * Gets the base unit of measurement that this unit is derived from. If the unit is the base unit,
      * the unit will be returned.
@@ -158,6 +158,22 @@ open class Unit<U : Unit<U>>(
          */
         infix fun <U : Unit<U>> Number.of(unit: Unit<U>): Measure<U> {
             return unit.of(this.toDouble())
+        }
+
+        /**
+         * Converts a magnitude in terms of this unit to a magnitude in terms of another unit of the same
+         * dimension.
+         *
+         * ```
+         * Inches.convertTo(144, Feet) // 12.0
+         * Kilograms.convertTo(1, Pounds) // 2.20462
+         * ```
+         *
+         * @param conversion a pair of the magnitude and the unit to convert to
+         * @return the corresponding value in terms of the other unit.
+         */
+        infix fun <U : Unit<U>> Unit<U>.from(conversion: Pair<Double, Unit<U>>): Double {
+            return convertFrom(conversion.first, conversion.second)
         }
     }
 

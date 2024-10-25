@@ -260,7 +260,7 @@ public class PurePursuit implements Runnable {
         lookahead = currentPath.get(pathProjection + laRadius.in(Inches));
 
         // Swap to P2P at the end of the path
-        boolean isCloseToEnd = Geometry.distBetween(
+        boolean isCloseToEnd = Geometry.distTo(
                 currentPath.get(pathProjection).position,
                 currentPath.end().position
         ) < P2P_AT_END_INCHES;
@@ -323,7 +323,7 @@ public class PurePursuit implements Runnable {
         // to the end position. This is a simple check that is not perfect but is good enough for most cases, as
         // paths that go to the same point should probably be split into separate paths.
         // Note: intersecting paths don't work very nicely
-        if (Geometry.distBetween(currentPose.position, currentPath.end().position) < tolerance.in(Inches) &&
+        if (Geometry.distTo(currentPose.position, currentPath.end().position) < tolerance.in(Inches) &&
                 Mathf.isNear(
                         Mathf.wrap(currentPose.heading.toDouble(), -Math.PI, Math.PI),
                         Mathf.wrap(currentPath.end().heading.toDouble(), -Math.PI, Math.PI),

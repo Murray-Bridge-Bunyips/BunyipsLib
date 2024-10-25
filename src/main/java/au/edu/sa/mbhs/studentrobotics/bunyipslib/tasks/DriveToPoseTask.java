@@ -131,7 +131,7 @@ public class DriveToPoseTask extends Task {
     }
 
     public boolean isVectorNear() {
-        return Mathf.isNear(0, Geometry.distBetween(localizer.get().position, targetPose.position), vectorTolerance.in(Inches));
+        return Mathf.isNear(0, Geometry.distTo(localizer.get().position, targetPose.position), vectorTolerance.in(Inches));
     }
 
     public boolean isHeadingNear() {

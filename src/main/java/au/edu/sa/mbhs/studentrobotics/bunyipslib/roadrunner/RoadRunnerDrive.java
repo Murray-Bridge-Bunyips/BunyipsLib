@@ -135,7 +135,7 @@ public interface RoadRunnerDrive extends Moveable {
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull Vector2d startVec, @NonNull Distance distUnit, double ang, @NonNull Angle angUnit) {
-        return new TaskBuilder(getConstants(), Geometry.unitPose(startVec, distUnit, ang, angUnit), new IdentityPoseMap());
+        return new TaskBuilder(getConstants(), Geometry.poseFrom(startVec, distUnit, ang, angUnit), new IdentityPoseMap());
     }
 
     /**
@@ -151,6 +151,6 @@ public interface RoadRunnerDrive extends Moveable {
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull Vector2d startVec, @NonNull Distance distUnit, double ang, @NonNull Angle angUnit, @NonNull PoseMap poseMap) {
-        return new TaskBuilder(getConstants(), Geometry.unitPose(startVec, distUnit, ang, angUnit), poseMap);
+        return new TaskBuilder(getConstants(), Geometry.poseFrom(startVec, distUnit, ang, angUnit), poseMap);
     }
 }
