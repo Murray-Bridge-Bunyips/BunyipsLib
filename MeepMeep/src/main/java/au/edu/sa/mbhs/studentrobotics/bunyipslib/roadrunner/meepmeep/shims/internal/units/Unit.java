@@ -15,7 +15,6 @@ import java.util.Objects;
  * @param <U> the self type, e.g. {@code class SomeUnit extends Unit<SomeUnit>}
  * @since 1.0.0-pre
  */
-@SuppressWarnings("UnknownNullness")
 public class Unit<U extends Unit<U>> {
     private final UnaryFunction toBaseConverter;
     private final UnaryFunction fromBaseConverter;
@@ -42,7 +41,7 @@ public class Unit<U extends Unit<U>> {
             UnaryFunction toBaseConverter,
             UnaryFunction fromBaseConverter,
             String name,
-            @SuppressWarnings("LambdaLast") String symbol) {
+            String symbol) {
         this.baseUnit = baseUnit == null ? (U) this : baseUnit;
         this.toBaseConverter = Objects.requireNonNull(toBaseConverter);
         this.fromBaseConverter = Objects.requireNonNull(fromBaseConverter);
@@ -138,6 +137,7 @@ public class Unit<U extends Unit<U>> {
      *
      * @return the conversion function
      */
+
     public UnaryFunction getConverterToBase() {
         return toBaseConverter;
     }
@@ -148,6 +148,7 @@ public class Unit<U extends Unit<U>> {
      *
      * @return the conversion function
      */
+
     public UnaryFunction getConverterFromBase() {
         return fromBaseConverter;
     }
@@ -159,6 +160,7 @@ public class Unit<U extends Unit<U>> {
      * @param magnitude the magnitude of the measure to create
      * @return the measure
      */
+
     public Measure<U> of(double magnitude) {
         if (magnitude == 0) {
             // reuse static object
@@ -168,7 +170,7 @@ public class Unit<U extends Unit<U>> {
             // reuse static object
             return one();
         }
-        return ImmutableMeasure.ofRelativeUnits(magnitude, this);
+        return ImmutableMeasure.Companion.ofRelativeUnits(magnitude, this);
     }
 
     /**
@@ -178,8 +180,9 @@ public class Unit<U extends Unit<U>> {
      * @param baseUnitMagnitude the magnitude of the measure in terms of the base unit
      * @return the measure
      */
+
     public Measure<U> ofBaseUnits(double baseUnitMagnitude) {
-        return ImmutableMeasure.ofBaseUnits(baseUnitMagnitude, this);
+        return ImmutableMeasure.Companion.ofBaseUnits(baseUnitMagnitude, this);
     }
 
     /**
@@ -187,10 +190,11 @@ public class Unit<U extends Unit<U>> {
      *
      * @return the zero-valued measure
      */
+
     public Measure<U> zero() {
         // lazy init because 'this' is null in object initialization
         if (zero == null) {
-            zero = ImmutableMeasure.ofRelativeUnits(0, this);
+            zero = ImmutableMeasure.Companion.ofRelativeUnits(0, this);
         }
         return zero;
     }
@@ -200,10 +204,11 @@ public class Unit<U extends Unit<U>> {
      *
      * @return the 1-valued measure
      */
+
     public Measure<U> one() {
         // lazy init because 'this' is null in object initialization
         if (one == null) {
-            one = ImmutableMeasure.ofRelativeUnits(1, this);
+            one = ImmutableMeasure.Companion.ofRelativeUnits(1, this);
         }
         return one;
     }
@@ -221,6 +226,7 @@ public class Unit<U extends Unit<U>> {
      * @param period the time period of the velocity, such as seconds or milliseconds
      * @return a velocity unit corresponding to the rate of change of this unit over time
      */
+
     public Velocity<U> per(Time period) {
         return Velocity.combine(this, period);
     }
@@ -237,6 +243,7 @@ public class Unit<U extends Unit<U>> {
      * @param denominator the denominator of the proportional unit
      * @return a combined proportional unit
      */
+
     @SuppressWarnings("unchecked")
     public <D extends Unit<D>> Per<U, D> per(D denominator) {
         return Per.combine((U) this, denominator);
@@ -254,6 +261,7 @@ public class Unit<U extends Unit<U>> {
      * @param other the unit to multiply by
      * @return a combined unit equivalent to this unit multiplied by the other
      */
+
     @SuppressWarnings("unchecked")
     public <U2 extends Unit<U2>> Mult<U, U2> mult(U2 other) {
         return Mult.combine((U) this, other);
@@ -306,6 +314,7 @@ public class Unit<U extends Unit<U>> {
      *
      * @return the unit's name
      */
+
     public String name() {
         return name;
     }
@@ -315,9 +324,11 @@ public class Unit<U extends Unit<U>> {
      *
      * @return the unit's symbol
      */
+
     public String symbol() {
         return symbol;
     }
+
 
     @Override
     public String toString() {

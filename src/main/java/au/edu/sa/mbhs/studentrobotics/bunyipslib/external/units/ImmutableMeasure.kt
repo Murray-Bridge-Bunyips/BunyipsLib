@@ -14,7 +14,8 @@ import java.util.Objects
  * @param <U> the unit type of the measure
  * @since 1.0.0-pre
 </U> */
-class ImmutableMeasure<U : Unit<U>> internal constructor(magnitude: Double, baseUnitMagnitude: Double, unit: Unit<U>) : Measure<U> {
+class ImmutableMeasure<U : Unit<U>> internal constructor(magnitude: Double, baseUnitMagnitude: Double, unit: Unit<U>) :
+    Measure<U> {
     private val magnitude: Double
     private val baseUnitMagnitude: Double
     private val unit: U

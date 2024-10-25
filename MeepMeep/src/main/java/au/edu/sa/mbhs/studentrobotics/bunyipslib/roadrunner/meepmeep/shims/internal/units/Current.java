@@ -4,6 +4,7 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
 
+
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Watts;
 
 /**
@@ -17,7 +18,6 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shim
  *
  * @since 1.0.0-pre
  */
-@SuppressWarnings("UnknownNullness")
 public class Current extends Unit<Current> {
     /**
      * @noinspection SameParameterValue

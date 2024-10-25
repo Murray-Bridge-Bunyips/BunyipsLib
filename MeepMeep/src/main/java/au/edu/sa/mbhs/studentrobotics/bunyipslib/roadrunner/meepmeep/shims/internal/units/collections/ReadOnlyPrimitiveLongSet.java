@@ -15,7 +15,6 @@ import java.util.stream.LongStream;
  *
  * @since 1.0.0-pre
  */
-@SuppressWarnings("UnknownNullness")
 public class ReadOnlyPrimitiveLongSet implements Iterable<Long> {
     private final long[] values;
 

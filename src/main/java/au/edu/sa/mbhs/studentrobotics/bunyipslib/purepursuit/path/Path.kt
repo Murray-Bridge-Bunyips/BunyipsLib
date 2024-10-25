@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.approx
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry
 import com.acmerobotics.roadrunner.Pose2d

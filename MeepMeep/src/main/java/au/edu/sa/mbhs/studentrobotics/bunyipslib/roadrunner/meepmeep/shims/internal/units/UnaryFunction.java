@@ -15,7 +15,6 @@ import java.util.Objects;
  *
  * @since 1.0.0-pre
  */
-@SuppressWarnings("UnknownNullness")
 @FunctionalInterface
 public interface UnaryFunction {
     /**
@@ -65,6 +64,7 @@ public interface UnaryFunction {
      * @param next the next operation to pipe to
      * @return the composite function g(f(x))
      */
+
     default UnaryFunction pipeTo(UnaryFunction next) {
         Objects.requireNonNull(next, "The next operation in the chain must be provided");
 
@@ -77,6 +77,7 @@ public interface UnaryFunction {
      * @param multiplier the function to multiply this one by
      * @return the composite function f(x) * g(x)
      */
+
     default UnaryFunction mult(UnaryFunction multiplier) {
         Objects.requireNonNull(multiplier, "A multiplier function must be provided");
 
@@ -89,6 +90,7 @@ public interface UnaryFunction {
      * @param multiplier the constant value to multiply this function's results by
      * @return the composite function k * f(x)
      */
+
     default UnaryFunction mult(double multiplier) {
         return x -> apply(x) * multiplier;
     }
@@ -99,6 +101,7 @@ public interface UnaryFunction {
      * @param divisor the function to divide this one by
      * @return the composite function f(x) / g(x)
      */
+
     default UnaryFunction div(UnaryFunction divisor) {
         Objects.requireNonNull(divisor, "A divisor function must be provided");
 
@@ -122,6 +125,7 @@ public interface UnaryFunction {
      * @param divisor the constant value to divide this function's results by
      * @return the composite function 1/k * f(x)
      */
+
     default UnaryFunction div(double divisor) {
         return x -> apply(x) / divisor;
     }
@@ -132,6 +136,7 @@ public interface UnaryFunction {
      * @param exponent the function to exponentiate this function's results by
      * @return the composite function f(x) ^ g(x)
      */
+
     default UnaryFunction exp(UnaryFunction exponent) {
         Objects.requireNonNull(exponent, "An exponent function must be provided");
 
@@ -144,6 +149,7 @@ public interface UnaryFunction {
      * @param exponent the constant value to exponentiate this function's results by
      * @return the composite function f(x) ^ k
      */
+
     default UnaryFunction exp(double exponent) {
         return x -> Math.pow(apply(x), exponent);
     }

@@ -56,7 +56,7 @@ object EncoderTicks {
     @JvmStatic
     fun fromAngle(angle: Measure<Angle>, ticksPerRevolution: Number, reduction: Double): Int {
         // Equation: angle (in revolutions) * ticksPerRevolution * reduction = ticks
-        return (angle.to(Revolutions) * ticksPerRevolution.toDouble() * reduction).roundToInt()
+        return ((angle to Revolutions) * ticksPerRevolution.toDouble() * reduction).roundToInt()
     }
 
     /**

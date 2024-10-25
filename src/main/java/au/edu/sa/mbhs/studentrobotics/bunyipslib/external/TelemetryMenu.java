@@ -546,7 +546,7 @@ public class TelemetryMenu {
         /**
          * Create a new StaticClickableOption.
          *
-         * @param name  the name of this option
+         * @param name    the name of this option
          * @param onClick the action to perform when this option is clicked
          */
         public StaticClickableOption(@NonNull String name, Runnable onClick) {

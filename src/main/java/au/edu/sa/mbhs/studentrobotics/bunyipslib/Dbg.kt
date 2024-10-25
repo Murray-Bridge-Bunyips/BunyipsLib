@@ -316,7 +316,7 @@ object Dbg {
             Exceptions.getCallingUserCodeFunction(),
             "Stamped at: T+%s",
             if (BunyipsOpMode.isRunning)
-                BunyipsOpMode.instance.timer.elapsedTime().to(Seconds)
+                BunyipsOpMode.instance.timer.elapsedTime() to Seconds
             else
                 "?"
         )

@@ -19,7 +19,6 @@ import java.util.Objects;
  * @param <U> the type of the unit
  * @since 1.0.0-pre
  */
-@SuppressWarnings("UnknownNullness")
 public final class UnitBuilder<U extends Unit<U>> {
     private final U base;
     private UnaryFunction fromBaseVal = UnaryFunction.IDENTITY;
@@ -84,6 +83,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param offset the offset
      * @return this builder
      */
+
     public UnitBuilder<U> offset(double offset) {
         toBaseVal = derivedValue -> derivedValue + offset;
         fromBaseVal = baseValue -> baseValue - offset;
@@ -99,6 +99,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param maxBase the maximum output value (does not have to be absolute)
      * @return a builder object used to define the output range
      */
+
     public MappingBuilder mappingInputRange(double minBase, double maxBase) {
         return new MappingBuilder(minBase, maxBase);
     }
@@ -110,6 +111,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param fromBase the conversion function
      * @return the unit builder, for continued chaining
      */
+
     public UnitBuilder<U> fromBase(UnaryFunction fromBase) {
         fromBaseVal = Objects.requireNonNull(fromBase, "fromBase function cannot be null");
         return this;
@@ -122,6 +124,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param toBase the conversion function
      * @return the unit builder, for continued chaining
      */
+
     public UnitBuilder<U> toBase(UnaryFunction toBase) {
         toBaseVal = Objects.requireNonNull(toBase, "toBase function cannot be null");
         return this;
@@ -133,6 +136,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param name the new name
      * @return the unit builder, for continued chaining
      */
+
     public UnitBuilder<U> named(String name) {
         nameVal = name;
         return this;
@@ -144,6 +148,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param symbol the new symbol
      * @return the unit builder, for continued chaining
      */
+
     public UnitBuilder<U> symbol(String symbol) {
         symbolVal = symbol;
         return this;
@@ -159,6 +164,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      *                 the derived unit corresponds to
      * @return the unit builder, for continued chaining
      */
+
     public UnitBuilder<U> splitInto(double fraction) {
         if (fraction == 0) {
             throw new IllegalArgumentException("Fraction must be nonzero");
@@ -175,6 +181,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      *                    of 1 in the derived unit
      * @return the unit builder, for continued chaining
      */
+
     public UnitBuilder<U> aggregate(double aggregation) {
         if (aggregation == 0) {
             throw new IllegalArgumentException("Aggregation amount must be nonzero");
@@ -265,7 +272,7 @@ public final class UnitBuilder<U extends Unit<U>> {
                 UnaryFunction toBaseUnits,
                 UnaryFunction fromBaseUnits,
                 String name,
-                @SuppressWarnings("LambdaLast") String symbol);
+                String symbol);
     }
 
     /**
@@ -287,6 +294,7 @@ public final class UnitBuilder<U extends Unit<U>> {
          * @param maxOutput the maximum output value (does not have to be absolute)
          * @return the unit builder, for continued chaining
          */
+
         public UnitBuilder<U> toOutputRange(double minOutput, double maxOutput) {
             fromBaseVal = x -> mapValue(x, minInput, maxInput, minOutput, maxOutput);
             toBaseVal = y -> mapValue(y, minOutput, maxOutput, minInput, maxInput);

@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
@@ -279,7 +278,7 @@ class DualTelemetry @JvmOverloads constructor(
         var prepend = ""
         if (movingAverageTimer != null)
             prepend = "<small><font color='$logBracketColor'>[</font>T+${
-                Math.round(movingAverageTimer.elapsedTime().to(Seconds))
+                Math.round(movingAverageTimer.elapsedTime() to Seconds)
             }s<font color='$logBracketColor'>]</font></small> "
         opMode.telemetry.log().add(prepend + msg)
         synchronized(dashboardItems) {
@@ -336,7 +335,7 @@ class DualTelemetry @JvmOverloads constructor(
 
         // Requeue new overhead status message
         val loopTime = movingAverageTimer?.let {
-            it.movingAverageLoopTime().to(Milliseconds) round 2
+            it.movingAverageLoopTime() to Milliseconds round 2
         } ?: 0.0
         val loopsSec = movingAverageTimer?.let {
             val loopsPerSec = it.loopsPer(Second)
@@ -358,7 +357,7 @@ class DualTelemetry @JvmOverloads constructor(
         } else {
             // For LinearOpModes we can suppress any alerts during init as this is the heavy phase of the OpMode
             val noSuppression = opMode !is LinearOpMode || !opMode.opModeInInit()
-            if (noSuppression && loopTime >= loopSpeedSlowAlert.to(Milliseconds)) {
+            if (noSuppression && loopTime >= loopSpeedSlowAlert to Milliseconds) {
                 overheadStatus.append("<font color='yellow'>").append(loopTime).append("ms</font>")
             } else {
                 overheadStatus.append(loopTime).append("ms")

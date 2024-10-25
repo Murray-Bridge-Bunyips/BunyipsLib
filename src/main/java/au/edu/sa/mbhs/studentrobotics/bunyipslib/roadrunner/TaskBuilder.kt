@@ -80,7 +80,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      * Waits [t] time units of [unit].
      */
     @JvmOverloads
-    fun waitFor(t: Double, unit: Time = Seconds) = apply { waitSeconds(unit.of(t).to(Seconds)) }
+    fun waitFor(t: Double, unit: Time = Seconds) = apply { waitSeconds(unit.of(t) to Seconds) }
 
     /**
      * Schedules action [a] to execute in parallel starting at a displacement [ds] after the last trajectory segment.
@@ -90,7 +90,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     @JvmOverloads
     fun afterDisp(ds: Double, unit: Distance = Inches, a: Action) =
-        apply { builder = builder.afterDisp(unit.of(ds).to(Inches), a) }
+        apply { builder = builder.afterDisp(unit.of(ds) to Inches, a) }
 
     /**
      * Schedules function [f] to execute in parallel starting at a displacement [ds] after the last trajectory segment.
@@ -108,7 +108,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     @JvmOverloads
     fun afterTime(dt: Double, unit: Time = Seconds, a: Action) =
-        apply { builder = builder.afterTime(unit.of(dt).to(Seconds), a) }
+        apply { builder = builder.afterTime(unit.of(dt) to Seconds, a) }
 
     /**
      * Schedules function [f] to execute in parallel starting [dt] seconds after the last trajectory segment, turn, or
@@ -128,7 +128,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     @JvmOverloads
     fun setTangent(r: Double, unit: Angle = Radians) =
-        apply { builder = builder.setTangent(unit.of(r).to(Radians)) }
+        apply { builder = builder.setTangent(unit.of(r) to Radians) }
 
     /**
      * Set the reversed tangent state of the builder.
@@ -140,7 +140,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     @JvmOverloads
     fun turn(angle: Double, unit: Angle = Radians) =
-        apply { builder = builder.turn(unit.of(angle).to(Radians), turnConstraints) }
+        apply { builder = builder.turn(unit.of(angle) to Radians, turnConstraints) }
 
     /**
      * Turn the robot to the [heading], specified as a [Rotation2d] in radians.
@@ -152,14 +152,14 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     @JvmOverloads
     fun turnTo(heading: Double, unit: Angle = Radians) =
-        apply { builder = builder.turnTo(unit.of(heading).to(Radians), turnConstraints) }
+        apply { builder = builder.turnTo(unit.of(heading) to Radians, turnConstraints) }
 
     /**
      * Move to the specified [posX] coordinate in the direction of the current heading.
      */
     @JvmOverloads
     fun lineToX(posX: Double, unit: Distance = Inches) =
-        apply { builder = builder.lineToX(unit.of(posX).to(Inches), velConstraints, accelConstraints) }
+        apply { builder = builder.lineToX(unit.of(posX) to Inches, velConstraints, accelConstraints) }
 
     /**
      * Move to the specified [posX] coordinate in the direction of the current heading.
@@ -167,7 +167,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     @JvmOverloads
     fun lineToXConstantHeading(posX: Double, unit: Distance = Inches) =
         apply {
-            builder = builder.lineToXConstantHeading(unit.of(posX).to(Inches), velConstraints, accelConstraints)
+            builder = builder.lineToXConstantHeading(unit.of(posX) to Inches, velConstraints, accelConstraints)
         }
 
     /**
@@ -178,7 +178,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun lineToXLinearHeading(posX: Double, posUnit: Distance = Inches, heading: Rotation2d) =
         apply {
             builder = builder.lineToXLinearHeading(
-                posUnit.of(posX).to(Inches),
+                posUnit.of(posX) to Inches,
                 heading,
                 velConstraints,
                 accelConstraints
@@ -193,8 +193,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun lineToXLinearHeading(posX: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
         apply {
             builder = builder.lineToXLinearHeading(
-                posUnit.of(posX).to(Inches),
-                headingUnit.of(heading).to(Radians),
+                posUnit.of(posX) to Inches,
+                headingUnit.of(heading) to Radians,
                 velConstraints,
                 accelConstraints
             )
@@ -208,7 +208,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun lineToXSplineHeading(posX: Double, posUnit: Distance = Inches, heading: Rotation2d) =
         apply {
             builder = builder.lineToXSplineHeading(
-                posUnit.of(posX).to(Inches),
+                posUnit.of(posX) to Inches,
                 heading,
                 velConstraints,
                 accelConstraints
@@ -223,8 +223,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun lineToXSplineHeading(posX: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
         apply {
             builder = builder.lineToXSplineHeading(
-                posUnit.of(posX).to(Inches),
-                headingUnit.of(heading).to(Radians),
+                posUnit.of(posX) to Inches,
+                headingUnit.of(heading) to Radians,
                 velConstraints,
                 accelConstraints
             )
@@ -235,7 +235,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     @JvmOverloads
     fun lineToY(posY: Double, unit: Distance = Inches) =
-        apply { builder = builder.lineToY(unit.of(posY).to(Inches), velConstraints, accelConstraints) }
+        apply { builder = builder.lineToY(unit.of(posY) to Inches, velConstraints, accelConstraints) }
 
     /**
      * Move to the specified [posY] coordinate in the direction of the current heading.
@@ -243,7 +243,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     @JvmOverloads
     fun lineToYConstantHeading(posY: Double, unit: Distance = Inches) =
         apply {
-            builder = builder.lineToYConstantHeading(unit.of(posY).to(Inches), velConstraints, accelConstraints)
+            builder = builder.lineToYConstantHeading(unit.of(posY) to Inches, velConstraints, accelConstraints)
         }
 
     /**
@@ -254,7 +254,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun lineToYLinearHeading(posY: Double, posUnit: Distance = Inches, heading: Rotation2d) =
         apply {
             builder = builder.lineToYLinearHeading(
-                posUnit.of(posY).to(Inches),
+                posUnit.of(posY) to Inches,
                 heading,
                 velConstraints,
                 accelConstraints
@@ -269,8 +269,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun lineToYLinearHeading(posY: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
         apply {
             builder = builder.lineToYLinearHeading(
-                posUnit.of(posY).to(Inches),
-                headingUnit.of(heading).to(Radians),
+                posUnit.of(posY) to Inches,
+                headingUnit.of(heading) to Radians,
                 velConstraints,
                 accelConstraints
             )
@@ -284,7 +284,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun lineToYSplineHeading(posY: Double, posUnit: Distance = Inches, heading: Rotation2d) =
         apply {
             builder = builder.lineToYSplineHeading(
-                posUnit.of(posY).to(Inches),
+                posUnit.of(posY) to Inches,
                 heading,
                 velConstraints,
                 accelConstraints
@@ -299,8 +299,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun lineToYSplineHeading(posY: Double, posUnit: Distance = Inches, heading: Double, headingUnit: Angle = Radians) =
         apply {
             builder = builder.lineToYSplineHeading(
-                posUnit.of(posY).to(Inches),
-                headingUnit.of(heading).to(Radians),
+                posUnit.of(posY) to Inches,
+                headingUnit.of(heading) to Radians,
                 velConstraints,
                 accelConstraints
             )
@@ -313,7 +313,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun strafeTo(pos: Vector2d, unit: Distance = Inches) =
         apply {
             builder = builder.strafeTo(
-                Vector2d(unit.of(pos.x).to(Inches), unit.of(pos.y).to(Inches)),
+                Vector2d(unit.of(pos.x) to Inches, unit.of(pos.y) to Inches),
                 velConstraints,
                 accelConstraints
             )
@@ -326,7 +326,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun strafeToConstantHeading(pos: Vector2d, unit: Distance = Inches) =
         apply {
             builder = builder.strafeToConstantHeading(
-                Vector2d(unit.of(pos.x).to(Inches), unit.of(pos.y).to(Inches)),
+                Vector2d(unit.of(pos.x) to Inches, unit.of(pos.y) to Inches),
                 velConstraints,
                 accelConstraints
             )
@@ -340,8 +340,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         apply {
             builder = builder.strafeToLinearHeading(
                 Vector2d(
-                    posUnit.of(pos.x).to(Inches),
-                    posUnit.of(pos.y).to(Inches)
+                    posUnit.of(pos.x) to Inches,
+                    posUnit.of(pos.y) to Inches
                 ), heading, velConstraints, accelConstraints
             )
         }
@@ -359,9 +359,9 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         apply {
             builder = builder.strafeToLinearHeading(
                 Vector2d(
-                    posUnit.of(pos.x).to(Inches),
-                    posUnit.of(pos.y).to(Inches)
-                ), headingUnit.of(heading).to(Radians), velConstraints, accelConstraints
+                    posUnit.of(pos.x) to Inches,
+                    posUnit.of(pos.y) to Inches
+                ), headingUnit.of(heading) to Radians, velConstraints, accelConstraints
             )
         }
 
@@ -373,8 +373,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         apply {
             builder = builder.strafeToSplineHeading(
                 Vector2d(
-                    posUnit.of(pos.x).to(Inches),
-                    posUnit.of(pos.y).to(Inches)
+                    posUnit.of(pos.x) to Inches,
+                    posUnit.of(pos.y) to Inches
                 ), heading, velConstraints, accelConstraints
             )
         }
@@ -392,9 +392,9 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         apply {
             builder = builder.strafeToSplineHeading(
                 Vector2d(
-                    posUnit.of(pos.x).to(Inches),
-                    posUnit.of(pos.y).to(Inches)
-                ), headingUnit.of(heading).to(Radians), velConstraints, accelConstraints
+                    posUnit.of(pos.x) to Inches,
+                    posUnit.of(pos.y) to Inches
+                ), headingUnit.of(heading) to Radians, velConstraints, accelConstraints
             )
         }
 
@@ -405,7 +405,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun splineTo(pos: Vector2d, unit: Distance = Inches, tangent: Rotation2d) =
         apply {
             builder = builder.splineTo(
-                Vector2d(unit.of(pos.x).to(Inches), unit.of(pos.y).to(Inches)),
+                Vector2d(unit.of(pos.x) to Inches, unit.of(pos.y) to Inches),
                 tangent,
                 velConstraints,
                 accelConstraints
@@ -419,8 +419,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun splineTo(pos: Vector2d, unit: Distance = Inches, tangent: Double, tangentUnit: Angle = Radians) =
         apply {
             builder = builder.splineTo(
-                Vector2d(unit.of(pos.x).to(Inches), unit.of(pos.y).to(Inches)),
-                tangentUnit.of(tangent).to(Radians),
+                Vector2d(unit.of(pos.x) to Inches, unit.of(pos.y) to Inches),
+                tangentUnit.of(tangent) to Radians,
                 velConstraints,
                 accelConstraints
             )
@@ -433,7 +433,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun splineToConstantHeading(pos: Vector2d, unit: Distance = Inches, tangent: Rotation2d) =
         apply {
             builder = builder.splineToConstantHeading(
-                Vector2d(unit.of(pos.x).to(Inches), unit.of(pos.y).to(Inches)),
+                Vector2d(unit.of(pos.x) to Inches, unit.of(pos.y) to Inches),
                 tangent,
                 velConstraints,
                 accelConstraints
@@ -447,8 +447,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
     fun splineToConstantHeading(pos: Vector2d, unit: Distance = Inches, tangent: Double, tangentUnit: Angle = Radians) =
         apply {
             builder = builder.splineToConstantHeading(
-                Vector2d(unit.of(pos.x).to(Inches), unit.of(pos.y).to(Inches)),
-                tangentUnit.of(tangent).to(Radians),
+                Vector2d(unit.of(pos.x) to Inches, unit.of(pos.y) to Inches),
+                tangentUnit.of(tangent) to Radians,
                 velConstraints,
                 accelConstraints
             )
@@ -468,9 +468,9 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         apply {
             builder = builder.splineToLinearHeading(
                 Pose2d(
-                    vectorUnit.of(vector.x).to(Inches),
-                    vectorUnit.of(vector.y).to(Inches),
-                    headingUnit.of(heading).to(Radians)
+                    vectorUnit.of(vector.x) to Inches,
+                    vectorUnit.of(vector.y) to Inches,
+                    headingUnit.of(heading) to Radians
                 ), tangent, velConstraints, accelConstraints
             )
         }
@@ -490,10 +490,10 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         apply {
             builder = builder.splineToLinearHeading(
                 Pose2d(
-                    vectorUnit.of(vector.x).to(Inches),
-                    vectorUnit.of(vector.y).to(Inches),
-                    headingUnit.of(heading).to(Radians)
-                ), tangentUnit.of(tangent).to(Radians), velConstraints, accelConstraints
+                    vectorUnit.of(vector.x) to Inches,
+                    vectorUnit.of(vector.y) to Inches,
+                    headingUnit.of(heading) to Radians
+                ), tangentUnit.of(tangent) to Radians, velConstraints, accelConstraints
             )
         }
 
@@ -511,9 +511,9 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         apply {
             builder = builder.splineToSplineHeading(
                 Pose2d(
-                    vectorUnit.of(vector.x).to(Inches),
-                    vectorUnit.of(vector.y).to(Inches),
-                    headingUnit.of(heading).to(Radians)
+                    vectorUnit.of(vector.x) to Inches,
+                    vectorUnit.of(vector.y) to Inches,
+                    headingUnit.of(heading) to Radians
                 ), tangent, velConstraints, accelConstraints
             )
         }
@@ -533,10 +533,10 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         apply {
             builder = builder.splineToSplineHeading(
                 Pose2d(
-                    vectorUnit.of(vector.x).to(Inches),
-                    vectorUnit.of(vector.y).to(Inches),
-                    headingUnit.of(heading).to(Radians)
-                ), tangentUnit.of(tangent).to(Radians), velConstraints, accelConstraints
+                    vectorUnit.of(vector.x) to Inches,
+                    vectorUnit.of(vector.y) to Inches,
+                    headingUnit.of(heading) to Radians
+                ), tangentUnit.of(tangent) to Radians, velConstraints, accelConstraints
             )
         }
 
@@ -553,8 +553,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
             builder = builder.splineToLinearHeading(
                 Pose2d(
                     Vector2d(
-                        vectorUnit.of(poseHeadingRad.position.x).to(Inches),
-                        vectorUnit.of(poseHeadingRad.position.y).to(Inches)
+                        vectorUnit.of(poseHeadingRad.position.x) to Inches,
+                        vectorUnit.of(poseHeadingRad.position.y) to Inches
                     ),
                     poseHeadingRad.heading
                 ), tangent, velConstraints, accelConstraints
@@ -575,11 +575,11 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
             builder = builder.splineToLinearHeading(
                 Pose2d(
                     Vector2d(
-                        vectorUnit.of(poseHeadingRad.position.x).to(Inches),
-                        vectorUnit.of(poseHeadingRad.position.y).to(Inches)
+                        vectorUnit.of(poseHeadingRad.position.x) to Inches,
+                        vectorUnit.of(poseHeadingRad.position.y) to Inches
                     ),
                     poseHeadingRad.heading
-                ), tangentUnit.of(tangent).to(Radians), velConstraints, accelConstraints
+                ), tangentUnit.of(tangent) to Radians, velConstraints, accelConstraints
             )
         }
 
@@ -596,8 +596,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
             builder = builder.splineToSplineHeading(
                 Pose2d(
                     Vector2d(
-                        vectorUnit.of(poseHeadingRad.position.x).to(Inches),
-                        vectorUnit.of(poseHeadingRad.position.y).to(Inches)
+                        vectorUnit.of(poseHeadingRad.position.x) to Inches,
+                        vectorUnit.of(poseHeadingRad.position.y) to Inches
                     ),
                     poseHeadingRad.heading
                 ),
@@ -619,11 +619,11 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
             builder = builder.splineToSplineHeading(
                 Pose2d(
                     Vector2d(
-                        vectorUnit.of(poseHeadingRad.position.x).to(Inches),
-                        vectorUnit.of(poseHeadingRad.position.y).to(Inches)
+                        vectorUnit.of(poseHeadingRad.position.x) to Inches,
+                        vectorUnit.of(poseHeadingRad.position.y) to Inches
                     ),
                     poseHeadingRad.heading
-                ), tangentUnit.of(tangent).to(Radians), velConstraints, accelConstraints
+                ), tangentUnit.of(tangent) to Radians, velConstraints, accelConstraints
             )
         }
 

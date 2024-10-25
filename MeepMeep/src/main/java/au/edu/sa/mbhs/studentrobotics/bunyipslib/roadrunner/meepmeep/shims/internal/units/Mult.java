@@ -4,6 +4,7 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
 
+
 import java.util.Objects;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.collections.LongToObjectHashMap;
@@ -17,7 +18,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
  * @param <B> the type of the second unit in the result
  * @since 1.0.0-pre
  */
-@SuppressWarnings("UnknownNullness")
 public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>> {
     @SuppressWarnings("rawtypes")
     private static final LongToObjectHashMap<Mult> cache = new LongToObjectHashMap<>();

@@ -410,7 +410,7 @@ abstract class Task(
         if (taskFinished) return finisherFired
 
         val startCalled = startTime != 0L
-        val timeoutFinished = timeout.magnitude() != 0.0 && System.nanoTime() > startTime + timeout.to(Nanoseconds)
+        val timeoutFinished = timeout.magnitude() != 0.0 && System.nanoTime() > startTime + (timeout to Nanoseconds)
         var userCondition = false
         Exceptions.runUserMethod({ userCondition = isTaskFinished() }, opMode)
 

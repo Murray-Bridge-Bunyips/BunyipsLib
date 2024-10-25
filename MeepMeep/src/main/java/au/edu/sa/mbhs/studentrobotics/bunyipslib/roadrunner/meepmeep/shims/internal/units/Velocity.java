@@ -22,7 +22,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
  * @param <D> the distance unit, such as {@link Angle} or {@link Distance}
  * @since 1.0.0-pre
  */
-@SuppressWarnings("UnknownNullness")
 public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
     /**
      * Stores velocity units that were created ad-hoc using {@link #combine(Unit, Time, String,
@@ -88,6 +87,7 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
      * @param symbol    the symbol of the new velocity unit
      * @return the new unit
      */
+
     @SuppressWarnings("unchecked")
     public static <D extends Unit<D>> Velocity<D> combine(
             Unit<D> numerator, Time period, String name, String symbol) {
@@ -126,6 +126,7 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
      * @param period    the period for unit time
      * @return the new unit
      */
+
     @SuppressWarnings("unchecked")
     public static <D extends Unit<D>> Velocity<D> combine(Unit<D> numerator, Time period) {
         long key = cacheKey(numerator, period);
@@ -155,6 +156,7 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
      *
      * @return the period unit
      */
+
     public Time getPeriod() {
         return period;
     }
@@ -164,6 +166,7 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
      *
      * @return the reciprocal
      */
+
     public Per<Time, D> reciprocal() {
         return period.per(unit);
     }

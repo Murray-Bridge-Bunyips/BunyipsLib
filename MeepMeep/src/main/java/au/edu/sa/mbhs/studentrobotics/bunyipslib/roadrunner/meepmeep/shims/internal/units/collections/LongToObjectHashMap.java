@@ -15,7 +15,6 @@ import java.util.Collection;
  * @param <V> the type of the values stored in the map
  * @since 1.0.0-pre
  */
-@SuppressWarnings("UnknownNullness")
 public class LongToObjectHashMap<V> {
     private static final int INITIAL_SIZE = 0;
     private static final int INITIAL_CAPACITY = 8; // NOTE: Must be a power of two
@@ -206,6 +205,7 @@ public class LongToObjectHashMap<V> {
      *
      * @return a read-only set of keys
      */
+
     public ReadOnlyPrimitiveLongSet keySet() {
         // Copy the sparse key array into a compact array
         long[] keys = new long[size];
@@ -226,6 +226,7 @@ public class LongToObjectHashMap<V> {
      *
      * @return a read-only collection of values
      */
+
     public Collection<V> values() {
         Collection<V> vals = new ArrayList<>();
         for (int bucket = 0; bucket < capacity; bucket++) {

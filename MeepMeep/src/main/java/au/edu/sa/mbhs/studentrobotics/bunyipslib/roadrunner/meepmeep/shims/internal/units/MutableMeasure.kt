@@ -1,116 +1,57 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units
 
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
-
-import java.util.Objects;
+import java.util.Objects
 
 /**
- * A specialization of {@link Measure} that allows for mutability. This is intended to be used for
+ * A specialization of [Measure] that allows for mutability. This is intended to be used for
  * memory use reasons (such as on the memory-restricted roboRIO 1 or 2 or SBC coprocessors) and
  * should NOT be exposed in the public API for a class that uses it.
  *
- * <p>The advantage of using this class is to reuse one instance of a measurement object, as opposed
+ *
+ * The advantage of using this class is to reuse one instance of a measurement object, as opposed
  * to instantiating a new immutable instance every time an operation is performed. This will reduce
  * memory pressure, but comes at the cost of increased code complexity and sensitivity to race
  * conditions if misused.
  *
- * <p>Any unsafe methods are prefixed with {@code mut_*}, such as {@link #mut_plus(Measure)} or
- * {@link #mut_replace(Measure)}. These methods will change the internal state of the measurement
+ *
+ * Any unsafe methods are prefixed with `mut_*`, such as [mut_plus] or
+ * [mut_replace]. These methods will change the internal state of the measurement
  * object, and as such can be dangerous to use. They are primarily intended for use to track
  * internal state of things like sensors
  *
  * @param <U> the type of the unit of measure
  * @since 1.0.0-pre
- */
-@SuppressWarnings("UnknownNullness")
-public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
-    private double magnitudeVal;
-    private double baseUnitMagnitudeVal;
-    private U unitVal;
-
-    private MutableMeasure(double initialMagnitude, double baseUnitMagnitude, U unit) {
-        magnitudeVal = initialMagnitude;
-        baseUnitMagnitudeVal = baseUnitMagnitude;
-        unitVal = unit;
+</U> */
+@Suppress("FunctionName")
+class MutableMeasure<U : Unit<U>> private constructor(
+    private var magnitudeVal: Double,
+    private var baseUnitMagnitudeVal: Double,
+    private var unitVal: U
+) : Measure<U> {
+    override fun magnitude(): Double {
+        return magnitudeVal
     }
 
-    /**
-     * Creates a new mutable measure that is a copy of the given one.
-     *
-     * @param <U>     the type of the units of measure
-     * @param measure the measure to create a mutable copy of
-     * @return a new mutable measure with an initial state equal to the given measure
-     */
-    public static <U extends Unit<U>> MutableMeasure<U> mutable(Measure<U> measure) {
-        return new MutableMeasure<>(measure.magnitude(), measure.baseUnitMagnitude(), measure.unit());
+    override fun baseUnitMagnitude(): Double {
+        return baseUnitMagnitudeVal
     }
 
-    /**
-     * Creates a new mutable measure with a magnitude of 0 in the given unit.
-     *
-     * @param <U>  the type of the units of measure
-     * @param unit the unit of measure
-     * @return a new mutable measure
-     */
-    public static <U extends Unit<U>> MutableMeasure<U> zero(U unit) {
-        return mutable(unit.zero());
-    }
-
-    /**
-     * Creates a new mutable measure in the given unit with a magnitude equal to the given one in base
-     * units.
-     *
-     * @param <U>               the type of the units of measure
-     * @param baseUnitMagnitude the magnitude of the measure, in terms of the base unit of measure
-     * @param unit              the unit of measure
-     * @return a new mutable measure
-     */
-    public static <U extends Unit<U>> MutableMeasure<U> ofBaseUnits(
-            double baseUnitMagnitude, U unit) {
-        return new MutableMeasure<>(unit.fromBaseUnits(baseUnitMagnitude), baseUnitMagnitude, unit);
-    }
-
-    /**
-     * Creates a new mutable measure in the given unit with a magnitude in terms of that unit.
-     *
-     * @param <U>               the type of the units of measure
-     * @param relativeMagnitude the magnitude of the measure
-     * @param unit              the unit of measure
-     * @return a new mutable measure
-     */
-    public static <U extends Unit<U>> MutableMeasure<U> ofRelativeUnits(
-            double relativeMagnitude, U unit) {
-        return new MutableMeasure<>(relativeMagnitude, unit.toBaseUnits(relativeMagnitude), unit);
-    }
-
-    @Override
-    public double magnitude() {
-        return magnitudeVal;
-    }
-
-    @Override
-    public double baseUnitMagnitude() {
-        return baseUnitMagnitudeVal;
-    }
-
-    @Override
-    public U unit() {
-        return unitVal;
+    override fun unit(): U {
+        return unitVal
     }
 
     // UNSAFE
-
     /**
-     * Sets the new magnitude of the measurement. The magnitude must be in terms of the {@link
-     * #unit()}.
+     * Sets the new magnitude of the measurement. The magnitude must be in terms of the unit.
      *
      * @param magnitude the new magnitude of the measurement
      */
-    public void mut_setMagnitude(double magnitude) {
-        magnitudeVal = magnitude;
-        baseUnitMagnitudeVal = unitVal.toBaseUnits(magnitude);
+    fun mut_setMagnitude(magnitude: Double) {
+        magnitudeVal = magnitude
+        baseUnitMagnitudeVal = unitVal.toBaseUnits(magnitude)
     }
 
     /**
@@ -119,9 +60,9 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      *
      * @param baseUnitMagnitude the new magnitude of the measurement
      */
-    public void mut_setBaseUnitMagnitude(double baseUnitMagnitude) {
-        baseUnitMagnitudeVal = baseUnitMagnitude;
-        magnitudeVal = unitVal.fromBaseUnits(baseUnitMagnitude);
+    fun mut_setBaseUnitMagnitude(baseUnitMagnitude: Double) {
+        baseUnitMagnitudeVal = baseUnitMagnitude
+        magnitudeVal = unitVal.fromBaseUnits(baseUnitMagnitude)
     }
 
     /**
@@ -130,11 +71,11 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param other the other measure to copy values from
      * @return this measure
      */
-    public MutableMeasure<U> mut_replace(Measure<U> other) {
-        magnitudeVal = other.magnitude();
-        baseUnitMagnitudeVal = other.baseUnitMagnitude();
-        unitVal = other.unit();
-        return this;
+    fun mut_replace(other: Measure<U>): MutableMeasure<U> {
+        magnitudeVal = other.magnitude()
+        baseUnitMagnitudeVal = other.baseUnitMagnitude()
+        unitVal = other.unit()
+        return this
     }
 
     /**
@@ -144,24 +85,24 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param unit      the new unit
      * @return this measure
      */
-    public MutableMeasure<U> mut_replace(double magnitude, U unit) {
-        magnitudeVal = magnitude;
-        baseUnitMagnitudeVal = unit.toBaseUnits(magnitude);
-        unitVal = unit;
-        return this;
+    fun mut_replace(magnitude: Double, unit: U): MutableMeasure<U> {
+        magnitudeVal = magnitude
+        baseUnitMagnitudeVal = unit.toBaseUnits(magnitude)
+        unitVal = unit
+        return this
     }
 
     /**
      * Increments the current magnitude of the measure by the given value. The value must be in terms
-     * of the current {@link #unit() unit}.
+     * of the current unit.
      *
      * @param raw the raw value to accumulate by
      * @return the measure
      */
-    public MutableMeasure<U> mut_acc(double raw) {
-        magnitudeVal += raw;
-        baseUnitMagnitudeVal += unitVal.toBaseUnits(raw);
-        return this;
+    fun mut_acc(raw: Double): MutableMeasure<U> {
+        magnitudeVal += raw
+        baseUnitMagnitudeVal += unitVal.toBaseUnits(raw)
+        return this
     }
 
     /**
@@ -170,17 +111,16 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param other the measure whose value should be added to this one
      * @return the measure
      */
-    public MutableMeasure<U> mut_acc(Measure<U> other) {
-        baseUnitMagnitudeVal += other.baseUnitMagnitude();
+    fun mut_acc(other: Measure<U>): MutableMeasure<U> {
+        baseUnitMagnitudeVal += other.baseUnitMagnitude()
 
         // can't naively use magnitude += other.in(unit) because the units may not
         // be scalar multiples (eg adding 0C to 100K should result in 373.15K, not 100K)
-        magnitudeVal = unitVal.fromBaseUnits(baseUnitMagnitudeVal);
-        return this;
+        magnitudeVal = unitVal.fromBaseUnits(baseUnitMagnitudeVal)
+        return this
     }
 
     // Math
-
     /**
      * Adds another measurement to this one. This will mutate the object instead of generating a new
      * measurement object.
@@ -188,22 +128,22 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param other the measurement to add
      * @return this measure
      */
-    public MutableMeasure<U> mut_plus(Measure<U> other) {
-        return mut_plus(other.magnitude(), other.unit());
+    fun mut_plus(other: Measure<U>): MutableMeasure<U> {
+        return mut_plus(other.magnitude(), other.unit())
     }
 
     /**
      * Adds another measurement to this one. This will mutate the object instead of generating a new
-     * measurement object. This is a denormalized version of {@link #mut_plus(Measure)} to avoid
-     * having to wrap raw numbers in a {@code Measure} object and pay for an object allocation.
+     * measurement object. This is a denormalized version of [mut_plus] to avoid
+     * having to wrap raw numbers in a `Measure` object and pay for an object allocation.
      *
      * @param magnitude the magnitude of the other measurement.
      * @param unit      the unit of the other measurement
      * @return this measure
      */
-    public MutableMeasure<U> mut_plus(double magnitude, U unit) {
-        mut_setBaseUnitMagnitude(baseUnitMagnitudeVal + unit.toBaseUnits(magnitude));
-        return this;
+    fun mut_plus(magnitude: Double, unit: U): MutableMeasure<U> {
+        mut_setBaseUnitMagnitude(baseUnitMagnitudeVal + unit.toBaseUnits(magnitude))
+        return this
     }
 
     /**
@@ -213,21 +153,21 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param other the measurement to add
      * @return this measure
      */
-    public MutableMeasure<U> mut_minus(Measure<U> other) {
-        return mut_minus(other.magnitude(), other.unit());
+    fun mut_minus(other: Measure<U>): MutableMeasure<U> {
+        return mut_minus(other.magnitude(), other.unit())
     }
 
     /**
      * Subtracts another measurement to this one. This will mutate the object instead of generating a
-     * new measurement object. This is a denormalized version of {@link #mut_minus(Measure)} to avoid
-     * having to wrap raw numbers in a {@code Measure} object and pay for an object allocation.
+     * new measurement object. This is a denormalized version of [mut_minus] to avoid
+     * having to wrap raw numbers in a `Measure` object and pay for an object allocation.
      *
      * @param magnitude the magnitude of the other measurement.
      * @param unit      the unit of the other measurement
      * @return this measure
      */
-    public MutableMeasure<U> mut_minus(double magnitude, U unit) {
-        return mut_plus(-magnitude, unit);
+    fun mut_minus(magnitude: Double, unit: U): MutableMeasure<U> {
+        return mut_plus(-magnitude, unit)
     }
 
     /**
@@ -237,9 +177,9 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param multiplier the multiplier to scale the measurement by
      * @return this measure
      */
-    public MutableMeasure<U> mut_times(double multiplier) {
-        mut_setBaseUnitMagnitude(baseUnitMagnitudeVal * multiplier);
-        return this;
+    fun mut_times(multiplier: Double): MutableMeasure<U> {
+        mut_setBaseUnitMagnitude(baseUnitMagnitudeVal * multiplier)
+        return this
     }
 
     /**
@@ -249,8 +189,8 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param multiplier the multiplier to scale the measurement by
      * @return this measure
      */
-    public MutableMeasure<U> mut_times(Measure<? extends Dimensionless> multiplier) {
-        return mut_times(multiplier.baseUnitMagnitude());
+    fun mut_times(multiplier: Measure<out Dimensionless>): MutableMeasure<U> {
+        return mut_times(multiplier.baseUnitMagnitude())
     }
 
     /**
@@ -260,9 +200,9 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param divisor the divisor to scale the measurement by
      * @return this measure
      */
-    public MutableMeasure<U> mut_divide(double divisor) {
-        mut_setBaseUnitMagnitude(baseUnitMagnitudeVal / divisor);
-        return this;
+    fun mut_divide(divisor: Double): MutableMeasure<U> {
+        mut_setBaseUnitMagnitude(baseUnitMagnitudeVal / divisor)
+        return this
     }
 
     /**
@@ -272,34 +212,82 @@ public final class MutableMeasure<U extends Unit<U>> implements Measure<U> {
      * @param divisor the divisor to scale the measurement by
      * @return this measure
      */
-    public MutableMeasure<U> mut_divide(Measure<? extends Dimensionless> divisor) {
-        return mut_divide(divisor.baseUnitMagnitude());
+    fun mut_divide(divisor: Measure<out Dimensionless>): MutableMeasure<U> {
+        return mut_divide(divisor.baseUnitMagnitude())
     }
 
-    @Override
-    public Measure<U> copy() {
-        return new ImmutableMeasure<>(magnitudeVal, baseUnitMagnitudeVal, unitVal);
+    override fun copy(): Measure<U> {
+        return ImmutableMeasure(magnitudeVal, baseUnitMagnitudeVal, unitVal)
     }
 
-    @Override
-    public String toString() {
-        return toShortString();
+    override fun toString(): String {
+        return toShortString()
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
         }
-        if (!(o instanceof Measure)) {
-            return false;
+        if (other !is Measure<*>) {
+            return false
         }
-        Measure<?> that = (Measure<?>) o;
-        return Objects.equals(unitVal, that.unit()) && isEquivalent(that);
+        return unitVal == other.unit() && isEquivalent(other)
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(magnitudeVal, unitVal);
+    override fun hashCode(): Int {
+        return Objects.hash(magnitudeVal, unitVal)
+    }
+
+    companion object {
+        /**
+         * Creates a new mutable measure that is a copy of the given one.
+         *
+         * @param <U>     the type of the units of measure
+         * @param measure the measure to create a mutable copy of
+         * @return a new mutable measure with an initial state equal to the given measure
+        </U> */
+        fun <U : Unit<U>> mutable(measure: Measure<U>): MutableMeasure<U> {
+            return MutableMeasure(measure.magnitude(), measure.baseUnitMagnitude(), measure.unit())
+        }
+
+        /**
+         * Creates a new mutable measure with a magnitude of 0 in the given unit.
+         *
+         * @param <U>  the type of the units of measure
+         * @param unit the unit of measure
+         * @return a new mutable measure
+        </U> */
+        fun <U : Unit<U>> zero(unit: U): MutableMeasure<U> {
+            return mutable(unit.zero())
+        }
+
+        /**
+         * Creates a new mutable measure in the given unit with a magnitude equal to the given one in base
+         * units.
+         *
+         * @param <U>               the type of the units of measure
+         * @param baseUnitMagnitude the magnitude of the measure, in terms of the base unit of measure
+         * @param unit              the unit of measure
+         * @return a new mutable measure
+        </U> */
+        fun <U : Unit<U>> ofBaseUnits(
+            baseUnitMagnitude: Double, unit: U
+        ): MutableMeasure<U> {
+            return MutableMeasure(unit.fromBaseUnits(baseUnitMagnitude), baseUnitMagnitude, unit)
+        }
+
+        /**
+         * Creates a new mutable measure in the given unit with a magnitude in terms of that unit.
+         *
+         * @param <U>               the type of the units of measure
+         * @param relativeMagnitude the magnitude of the measure
+         * @param unit              the unit of measure
+         * @return a new mutable measure
+        </U> */
+        fun <U : Unit<U>> ofRelativeUnits(
+            relativeMagnitude: Double, unit: U
+        ): MutableMeasure<U> {
+            return MutableMeasure(relativeMagnitude, unit.toBaseUnits(relativeMagnitude), unit)
+        }
     }
 }
