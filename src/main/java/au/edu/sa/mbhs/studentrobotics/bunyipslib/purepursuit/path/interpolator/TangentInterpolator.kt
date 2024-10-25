@@ -1,6 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path.interpolator
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.wrapRadians
 
 /**
  * Tangent (system) interpolator for tank/differential and other nonholonomic drives.
@@ -13,7 +13,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
 class TangentInterpolator @JvmOverloads constructor(
     internal val offset: Double = 0.0
 ) : HeadingInterpolator() {
-    override fun internalGet(s: Double, t: Double) = Mathf.normaliseRadians(offset + curve.tangentAngle(s, t))
+    override fun internalGet(s: Double, t: Double) = (offset + curve.tangentAngle(s, t)).wrapRadians()
 
     override fun internalDeriv(s: Double, t: Double) = curve.tangentAngleDeriv(s, t)
 

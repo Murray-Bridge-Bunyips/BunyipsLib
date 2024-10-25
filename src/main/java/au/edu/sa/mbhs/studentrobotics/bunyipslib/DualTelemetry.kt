@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds
@@ -335,11 +336,11 @@ class DualTelemetry @JvmOverloads constructor(
 
         // Requeue new overhead status message
         val loopTime = movingAverageTimer?.let {
-            Mathf.round(it.movingAverageLoopTime().to(Milliseconds), 2)
+            it.movingAverageLoopTime().to(Milliseconds) round 2
         } ?: 0.0
         val loopsSec = movingAverageTimer?.let {
             val loopsPerSec = it.loopsPer(Second)
-            if (!loopsPerSec.isNaN()) Mathf.round(loopsPerSec, 1) else 0.0
+            if (!loopsPerSec.isNaN()) loopsPerSec round 1 else 0.0
         } ?: 0.0
         val elapsedTime = movingAverageTimer?.elapsedTime()?.to(Seconds)?.roundToInt()?.toString() ?: "?"
         val status = if (overrideStatus != null) overrideStatus.toString() else opModeStatus

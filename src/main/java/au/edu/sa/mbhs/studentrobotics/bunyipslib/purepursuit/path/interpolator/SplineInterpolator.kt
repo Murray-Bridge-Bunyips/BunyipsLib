@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path.interpolator
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.wrapRadians
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.wrapDeltaRadians
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path.ParametricCurve
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path.QuinticPolynomial
 
@@ -37,7 +38,7 @@ class SplineInterpolator @JvmOverloads constructor(
 
         val len = curve.length()
 
-        val headingDelta = Mathf.radianModulus(endHeading - startHeading)
+        val headingDelta = (endHeading - startHeading).wrapDeltaRadians()
 
         headingSpline = QuinticPolynomial(
             0.0,
@@ -50,7 +51,7 @@ class SplineInterpolator @JvmOverloads constructor(
     }
 
     override fun internalGet(s: Double, t: Double) =
-        Mathf.normaliseRadians(startHeading + headingSpline[s / curve.length()])
+        (startHeading + headingSpline[s / curve.length()]).wrapRadians()
 
     override fun internalDeriv(s: Double, t: Double): Double {
         val len = curve.length()

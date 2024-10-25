@@ -1,6 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.approx
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry
 import com.acmerobotics.roadrunner.Vector2d
 import kotlin.math.abs
@@ -95,7 +95,7 @@ class QuinticSpline(
         val w2 = (v2 - v3) * 2.0
         val det = w1.x * w2.y - w2.x * w1.y
         val chord = Geometry.distBetween(v1, v3)
-        return if (Mathf.approximatelyEquals(det, 0.0)) {
+        return if (det approx 0.0) {
             chord
         } else {
             val x1 = v1.x * v1.x + v1.y * v1.y

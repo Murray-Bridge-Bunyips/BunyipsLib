@@ -153,7 +153,7 @@ public class DriveToPoseTask extends Task {
         double twistedYError = -error.line.x * sin + error.line.y * cos;
 
         // Wrap target angle between -pi and pi for optimal turns
-        double angleError = Mathf.inputModulus(error.angle, -Math.PI, Math.PI);
+        double angleError = Mathf.wrap(error.angle, -Math.PI, Math.PI);
         // When the angle is near the modulus boundary, lock towards a definitive full rotation to avoid oscillations
         if (Mathf.isNear(Math.abs(angleError), Math.PI, 0.1))
             angleError = -Math.PI * Math.signum(error.angle);

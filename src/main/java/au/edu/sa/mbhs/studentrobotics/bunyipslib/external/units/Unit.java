@@ -174,7 +174,7 @@ public class Unit<U extends Unit<U>> {
             // reuse static object
             return one();
         }
-        return ImmutableMeasure.ofRelativeUnits(magnitude, this);
+        return ImmutableMeasure.Companion.ofRelativeUnits(magnitude, this);
     }
 
     /**
@@ -186,7 +186,7 @@ public class Unit<U extends Unit<U>> {
      */
     @NonNull
     public Measure<U> ofBaseUnits(double baseUnitMagnitude) {
-        return ImmutableMeasure.ofBaseUnits(baseUnitMagnitude, this);
+        return ImmutableMeasure.Companion.ofBaseUnits(baseUnitMagnitude, this);
     }
 
     /**
@@ -198,7 +198,7 @@ public class Unit<U extends Unit<U>> {
     public Measure<U> zero() {
         // lazy init because 'this' is null in object initialization
         if (zero == null) {
-            zero = ImmutableMeasure.ofRelativeUnits(0, this);
+            zero = ImmutableMeasure.Companion.ofRelativeUnits(0, this);
         }
         return zero;
     }
@@ -212,7 +212,7 @@ public class Unit<U extends Unit<U>> {
     public Measure<U> one() {
         // lazy init because 'this' is null in object initialization
         if (one == null) {
-            one = ImmutableMeasure.ofRelativeUnits(1, this);
+            one = ImmutableMeasure.Companion.ofRelativeUnits(1, this);
         }
         return one;
     }

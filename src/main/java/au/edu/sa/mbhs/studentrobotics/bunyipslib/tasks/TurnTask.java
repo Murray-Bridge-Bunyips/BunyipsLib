@@ -69,7 +69,7 @@ public class TurnTask extends Task {
         this.powerIn = powerIn;
         this.poseEstimate = poseEstimate;
         setDelta = delta;
-        unmodifiedAngRad = Mathf.angleModulus(angle).in(Radians);
+        unmodifiedAngRad = Mathf.wrapDelta(angle).in(Radians);
         // Sane defaults
         pidf = new PController(3);
         tolerance = Degrees.of(1);
@@ -128,21 +128,21 @@ public class TurnTask extends Task {
     @Override
     protected void init() {
         angRad = setDelta
-                ? Mathf.inputModulus(poseEstimate.get().heading.toDouble() + unmodifiedAngRad, -Math.PI, Math.PI)
+                ? Mathf.wrap(poseEstimate.get().heading.toDouble() + unmodifiedAngRad, -Math.PI, Math.PI)
                 : unmodifiedAngRad;
     }
 
     @Override
     protected void periodic() {
         Pose2d pose = poseEstimate.get();
-        double errRad = Mathf.inputModulus(pose.heading.toDouble(), -Math.PI, Math.PI) - angRad;
-        powerIn.accept(Geometry.vel(0, 0, pidf.calculate(Mathf.inputModulus(errRad, -Math.PI, Math.PI), 0)));
+        double errRad = Mathf.wrap(pose.heading.toDouble(), -Math.PI, Math.PI) - angRad;
+        powerIn.accept(Geometry.vel(0, 0, pidf.calculate(Mathf.wrap(errRad, -Math.PI, Math.PI), 0)));
         fieldOverlay.setStroke("#4CAF50");
         Dashboard.drawRobot(fieldOverlay, new Pose2d(pose.position, angRad));
     }
 
     @Override
     protected boolean isTaskFinished() {
-        return Mathf.isNear(Mathf.inputModulus(poseEstimate.get().heading.toDouble(), -Math.PI, Math.PI), angRad, tolerance.in(Radians));
+        return Mathf.isNear(Mathf.wrap(poseEstimate.get().heading.toDouble(), -Math.PI, Math.PI), angRad, tolerance.in(Radians));
     }
 }

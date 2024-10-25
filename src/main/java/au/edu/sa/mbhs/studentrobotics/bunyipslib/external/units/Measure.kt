@@ -1,219 +1,153 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units
 
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
-
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
-
-import android.annotation.SuppressLint;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import java.util.Locale;
+import java.util.Locale
+import kotlin.math.abs
 
 /**
  * A measure holds the magnitude and unit of some dimension, such as distance, time, or speed. Two
- * measures with the same <i>unit</i> and <i>magnitude</i> are effectively equivalent objects.
+ * measures with the same *unit* and *magnitude* are effectively equivalent objects.
  *
  * @param <U> the unit type of the measure
  * @since 1.0.0-pre
  */
-public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
-    /**
-     * The threshold for two measures to be considered equivalent if converted to the same unit. This
-     * is only needed due to floating-point error.
-     */
-    double EQUIVALENCE_THRESHOLD = 1.0e-12;
-
-    /**
-     * Returns the measure with the absolute value closest to positive infinity.
-     *
-     * @param <U>      the type of the units of the measures
-     * @param measures the set of measures to compare
-     * @return the measure with the greatest positive magnitude, or null if no measures were provided
-     */
-    @Nullable
-    @SafeVarargs
-    static <U extends Unit<U>> Measure<U> max(@NonNull Measure<U>... measures) {
-        if (measures.length == 0) {
-            return null; // nothing to compare
-        }
-
-        Measure<U> max = null;
-        for (Measure<U> measure : measures) {
-            if (max == null || measure.gt(max)) {
-                max = measure;
-            }
-        }
-
-        return max;
-    }
-
-    /**
-     * Returns the measure with the absolute value closest to negative infinity.
-     *
-     * @param <U>      the type of the units of the measures
-     * @param measures the set of measures to compare
-     * @return the measure with the greatest negative magnitude
-     */
-    @Nullable
-    @SafeVarargs
-    static <U extends Unit<U>> Measure<U> min(@NonNull Measure<U>... measures) {
-        if (measures.length == 0) {
-            return null; // nothing to compare
-        }
-
-        Measure<U> max = null;
-        for (Measure<U> measure : measures) {
-            if (max == null || measure.lt(max)) {
-                max = measure;
-            }
-        }
-
-        return max;
-    }
-
+interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
     /**
      * Gets the unitless magnitude of this measure.
      *
-     * @return the magnitude in terms of {@link #unit() the unit}.
+     * @return the magnitude in terms of this unit.
      */
-    double magnitude();
+    fun magnitude(): Double
 
     /**
      * Gets the magnitude of this measure in terms of the base unit. If the unit is the base unit for
-     * its system of measure, then the value will be equivalent to {@link #magnitude()}.
+     * its system of measure, then the value will be equivalent to [magnitude].
      *
      * @return the magnitude in terms of the base unit
      */
-    double baseUnitMagnitude();
+    fun baseUnitMagnitude(): Double
 
     /**
      * Gets the units of this measure.
      *
      * @return the unit
      */
-    U unit();
+    fun unit(): U
 
     /**
      * Converts this measure to a measure with a different unit of the same type, eg minutes to
-     * seconds. Converting to the same unit is equivalent to calling {@link #magnitude()}.
-     * <p>
-     * For Kotlin users, calling this method can be done with the notation {@code to}
-     * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
-     * or by calling the alias {@code to}.
+     * seconds. Converting to the same unit is equivalent to calling [magnitude].
      *
-     * <pre>
-     *   Meters.of(12).in(Feet) // 39.3701
-     *   Seconds.of(15).in(Minutes) // 0.25
-     * </pre>
+     * For Kotlin users, calling this method can be done with the notation \`in\`
+     * (see [here](https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin)),
+     * or by calling the alias `to`.
+     *
+     * ```
+     * Meters.of(12).in(Feet) // 39.3701
+     * Seconds.of(15).in(Minutes) // 0.25
+     * ```
      *
      * @param unit the unit to convert this measure to
      * @return the value of this measure in the given unit
      */
-    @SuppressLint("NoHardKeywords")
-    default double in(@NonNull Unit<U> unit) {
-        if (unit().equals(unit)) {
-            return magnitude();
+    infix fun `in`(unit: Unit<U>): Double {
+        return if (unit() == unit) {
+            magnitude()
         } else {
-            return unit.fromBaseUnits(baseUnitMagnitude());
+            unit.fromBaseUnits(baseUnitMagnitude())
         }
     }
 
     /**
      * Converts this measure to a measure with a different unit of the same type, eg minutes to
-     * seconds. Converting to the same unit is equivalent to calling {@link #magnitude()}.
+     * seconds. Converting to the same unit is equivalent to calling [magnitude].
      *
-     * <pre>
-     *   Meters.of(12).in(Feet) // 39.3701
-     *   Seconds.of(15).in(Minutes) // 0.25
-     * </pre>
+     * ```
+     * Meters.of(12).in(Feet) // 39.3701
+     * Seconds.of(15).in(Minutes) // 0.25
+     * ```
      *
      * @param unit the unit to convert this measure to
      * @return the value of this measure in the given unit
      */
-    default double to(@NonNull Unit<U> unit) {
-        return in(unit);
+    infix fun to(unit: Unit<U>): Double {
+        return `in`(unit)
     }
 
     /**
      * Multiplies this measurement by some constant multiplier and returns the result. The magnitude
-     * of the result will be the <i>base</i> magnitude multiplied by the scalar value. If the measure
+     * of the result will be the *base* magnitude multiplied by the scalar value. If the measure
      * uses a unit with a non-linear relation to its base unit (such as Fahrenheit for temperature),
-     * then the result will only be a multiple <i>in terms of the base unit</i>.
+     * then the result will only be a multiple *in terms of the base unit*.
      *
      * @param multiplier the constant to multiply by
      * @return the resulting measure
      */
-    @NonNull
-    default Measure<U> times(double multiplier) {
-        return ImmutableMeasure.ofBaseUnits(baseUnitMagnitude() * multiplier, unit());
+    operator fun times(multiplier: Double): Measure<U> {
+        return ImmutableMeasure.ofBaseUnits(baseUnitMagnitude() * multiplier, unit())
     }
 
     /**
      * Generates a new measure that is equal to this measure multiplied by another. Some dimensional
-     * analysis is performed to reduce the units down somewhat; for example, multiplying a {@code
-     * Measure<Time>} by a {@code Measure<Velocity<Distance>>} will return just a {@code
-     * Measure<Distance>} instead of the naive {@code Measure<Mult<Time, Velocity<Distance>>}. This is
+     * analysis is performed to reduce the units down somewhat; for example, multiplying a `Measure<Time>` by a `Measure<Velocity<Distance>>` will return just a `Measure<Distance>` instead of the naive `Measure<Mult<Time, Velocity<Distance>>`. This is
      * not guaranteed to perform perfect dimensional analysis.
      *
      * @param <U2>  the type of the other measure to multiply by
      * @param other the unit to multiply by
      * @return the multiplicative unit
-     */
-    @NonNull
-    @SuppressWarnings("unchecked")
-    default <U2 extends Unit<U2>> Measure<?> times(@NonNull Measure<U2> other) {
-        if (other.unit() instanceof Dimensionless) {
+    </U2> */
+    operator fun <U2 : Unit<U2>> times(other: Measure<U2>): Measure<*> {
+        if (other.unit() is Dimensionless) {
             // scalar multiplication
-            return times(other.baseUnitMagnitude());
+            return times(other.baseUnitMagnitude())
         }
 
-        if (unit() instanceof Per
-                && other.unit().getBaseUnit().equals(((Per<?, ?>) unit()).denominator().getBaseUnit())) {
+        if (unit() is Per<*, *>
+            && other.unit().baseUnit == (unit() as Per<*, *>).denominator().baseUnit
+        ) {
             // denominator of the Per cancels out, return with just the units of the numerator
-            Unit<?> numerator = ((Per<?, ?>) unit()).numerator();
-            return numerator.ofBaseUnits(baseUnitMagnitude() * other.baseUnitMagnitude());
-        } else if (unit() instanceof Velocity && other.unit().getBaseUnit().equals(Seconds)) {
+            val numerator = (unit() as Per<*, *>).numerator()
+            return numerator.ofBaseUnits(baseUnitMagnitude() * other.baseUnitMagnitude())
+        } else if (unit() is Velocity<*> && other.unit().baseUnit == Units.Seconds) {
             // Multiplying a velocity by a time, return the scalar unit (eg Distance)
-            Unit<?> numerator = ((Velocity<?>) unit()).getUnit();
-            return numerator.ofBaseUnits(baseUnitMagnitude() * other.baseUnitMagnitude());
-        } else if (other.unit() instanceof Per
-                && unit().getBaseUnit().equals(((Per<?, ?>) other.unit()).denominator().getBaseUnit())) {
-            Unit<?> numerator = ((Per<?, ?>) other.unit()).numerator();
-            return numerator.ofBaseUnits(baseUnitMagnitude() * other.baseUnitMagnitude());
-        } else if (unit() instanceof Per
-                && other.unit() instanceof Per
-                && ((Per<?, ?>) unit())
+            val numerator = (unit() as Velocity<*>).unit
+            return numerator.ofBaseUnits(baseUnitMagnitude() * other.baseUnitMagnitude())
+        } else if (other.unit() is Per<*, *>
+            && unit().baseUnit == (other.unit() as Per<*, *>).denominator().baseUnit
+        ) {
+            val numerator = (other.unit() as Per<*, *>).numerator()
+            return numerator.ofBaseUnits(baseUnitMagnitude() * other.baseUnitMagnitude())
+        } else if (unit() is Per<*, *>
+            && other.unit() is Per<*, *>
+            && ((unit() as Per<*, *>)
                 .denominator()
-                .getBaseUnit()
-                .equals(((Per<?, U>) other.unit()).numerator().getBaseUnit())
-                && ((Per<?, ?>) unit())
+                .baseUnit == (other.unit() as Per<*, *>).numerator().baseUnit)
+            && ((unit() as Per<*, *>)
                 .numerator()
-                .getBaseUnit()
-                .equals(((Per<?, ?>) other.unit()).denominator().getBaseUnit())) {
+                .baseUnit
+                    == (other.unit() as Per<*, *>).denominator().baseUnit)
+        ) {
             // multiplying eg meters per second * milliseconds per foot
             // return a scalar
-            return Units.Value.of(baseUnitMagnitude() * other.baseUnitMagnitude());
+            return Units.Value.of(baseUnitMagnitude() * other.baseUnitMagnitude())
         }
 
         // Dimensional analysis fallthrough, do a basic unit multiplication
-        return unit().mult(other.unit()).ofBaseUnits(baseUnitMagnitude() * other.baseUnitMagnitude());
+        return unit().mult(other.unit()).ofBaseUnits(baseUnitMagnitude() * other.baseUnitMagnitude())
     }
 
     /**
      * Divides this measurement by some constant divisor and returns the result. This is equivalent to
-     * {@code times(1 / divisor)}
+     * `times(1 / divisor)`
      *
      * @param divisor the constant to divide by
      * @return the resulting measure
-     * @see #times(double)
+     * @see .times
      */
-    @NonNull
-    default Measure<U> div(double divisor) {
-        return times(1 / divisor);
+    operator fun div(divisor: Double): Measure<U> {
+        return times(1 / divisor)
     }
 
     /**
@@ -223,77 +157,73 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @param <U2>  the type of the other measure to multiply by
      * @param other the unit to multiply by
      * @return the resulting measure
-     */
-    @NonNull
-    default <U2 extends Unit<U2>> Measure<?> div(@NonNull Measure<U2> other) {
-        if (unit().getBaseUnit().equals(other.unit().getBaseUnit())) {
-            return Units.Value.ofBaseUnits(baseUnitMagnitude() / other.baseUnitMagnitude());
+    </U2> */
+    operator fun <U2 : Unit<U2>> div(other: Measure<U2>): Measure<*> {
+        if (unit().baseUnit == other.unit().baseUnit) {
+            return Units.Value.ofBaseUnits(baseUnitMagnitude() / other.baseUnitMagnitude())
         }
-        if (other.unit() instanceof Dimensionless) {
-            return div(other.baseUnitMagnitude());
+        if (other.unit() is Dimensionless) {
+            return div(other.baseUnitMagnitude())
         }
-        if (other.unit() instanceof Velocity) {
-            Velocity<?> velocity = (Velocity<?>) other.unit();
-            if (velocity.getUnit().getBaseUnit().equals(unit().getBaseUnit())) {
-                return times(velocity.reciprocal().ofBaseUnits(1 / other.baseUnitMagnitude()));
+        if (other.unit() is Velocity<*>) {
+            val velocity = other.unit() as Velocity<*>
+            if (velocity.unit.baseUnit == unit().baseUnit) {
+                return times(velocity.reciprocal().ofBaseUnits(1 / other.baseUnitMagnitude()))
             }
         }
-        if (other.unit() instanceof Per) {
-            Per<?, ?> per = (Per<?, ?>) other.unit();
-            if (per.numerator().getBaseUnit().equals(unit().getBaseUnit())) {
-                return times(per.reciprocal().ofBaseUnits(1 / other.baseUnitMagnitude()));
+        if (other.unit() is Per<*, *>) {
+            val per = other.unit() as Per<*, *>
+            if (per.numerator().baseUnit == unit().baseUnit) {
+                return times(per.reciprocal().ofBaseUnits(1 / other.baseUnitMagnitude()))
             }
         }
-        return unit().per(other.unit()).ofBaseUnits(baseUnitMagnitude() / other.baseUnitMagnitude());
+        return unit().per(other.unit()).ofBaseUnits(baseUnitMagnitude() / other.baseUnitMagnitude())
     }
 
     /**
      * Creates a velocity measure by dividing this one by a time period measure.
      *
-     * <pre>
-     *   Meters.of(1).per(Second) // Measure&lt;Velocity&lt;Distance&gt;&gt;
-     * </pre>
+     * ```
+     * Meters.of(1).per(Second) // Measure<Velocity<Distance>>
+     * ```
      *
      * @param period the time period to divide by.
      * @return the velocity result
      */
-    @NonNull
-    default Measure<Velocity<U>> per(@NonNull Measure<Time> period) {
-        Velocity<U> newUnit = unit().per(period.unit());
-        return ImmutableMeasure.ofBaseUnits(baseUnitMagnitude() / period.baseUnitMagnitude(), newUnit);
+    infix fun per(period: Measure<Time>): Measure<Velocity<U>> {
+        val newUnit = unit().per(period.unit())
+        return ImmutableMeasure.ofBaseUnits(baseUnitMagnitude() / period.baseUnitMagnitude(), newUnit)
     }
 
     /**
      * Creates a relational measure equivalent to this one per some other unit.
      *
-     * <pre>
-     *   Volts.of(1.05).per(Meter) // V/m, potential PID constant
-     * </pre>
+     * ```
+     * Volts.of(1.05).per(Meter) // V/m, potential PID constant
+     * ```
      *
      * @param <U2>        the type of the denominator unit
      * @param denominator the denominator unit being divided by
      * @return the relational measure
      */
-    @NonNull
-    default <U2 extends Unit<U2>> Measure<Per<U, U2>> per(U2 denominator) {
-        Per<U, U2> newUnit = unit().per(denominator);
-        return newUnit.of(magnitude());
+    infix fun <U2 : Unit<U2>?> per(denominator: U2): Measure<Per<U, U2>> {
+        val newUnit = unit().per(denominator)
+        return newUnit.of(magnitude())
     }
 
     /**
      * Creates a velocity measure equivalent to this one per a unit of time.
      *
-     * <pre>
-     *   Radians.of(3.14).per(Second) // Velocity&lt;Angle&gt; equivalent to RadiansPerSecond.of(3.14)
-     * </pre>
+     * ```
+     * Radians.of(3.14).per(Second) // Velocity&lt;Angle&gt; equivalent to RadiansPerSecond.of(3.14)
+     * ```
      *
      * @param time the unit of time
      * @return the velocity measure
      */
-    @NonNull
-    default Measure<Velocity<U>> per(@NonNull Time time) {
-        Velocity<U> newUnit = unit().per(time);
-        return newUnit.of(magnitude());
+    infix fun per(time: Time): Measure<Velocity<U>> {
+        val newUnit = unit().per(time)
+        return newUnit.of(magnitude())
     }
 
     /**
@@ -302,9 +232,8 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @param other the measure to add to this one
      * @return a new measure containing the result
      */
-    @NonNull
-    default Measure<U> plus(@NonNull Measure<U> other) {
-        return unit().ofBaseUnits(baseUnitMagnitude() + other.baseUnitMagnitude());
+    operator fun plus(other: Measure<U>): Measure<U> {
+        return unit().ofBaseUnits(baseUnitMagnitude() + other.baseUnitMagnitude())
     }
 
     /**
@@ -313,9 +242,8 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @param other the measure to subtract from this one
      * @return a new measure containing the result
      */
-    @NonNull
-    default Measure<U> minus(@NonNull Measure<U> other) {
-        return unit().ofBaseUnits(baseUnitMagnitude() - other.baseUnitMagnitude());
+    operator fun minus(other: Measure<U>): Measure<U> {
+        return unit().ofBaseUnits(baseUnitMagnitude() - other.baseUnitMagnitude())
     }
 
     /**
@@ -323,9 +251,8 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      *
      * @return the resulting measure
      */
-    @NonNull
-    default Measure<U> negate() {
-        return times(-1);
+    fun negate(): Measure<U> {
+        return times(-1.0)
     }
 
     /**
@@ -333,9 +260,8 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      *
      * @return the resulting measure
      */
-    @NonNull
-    default Measure<U> unaryMinus() {
-        return negate();
+    operator fun unaryMinus(): Measure<U> {
+        return negate()
     }
 
     /**
@@ -344,62 +270,57 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      *
      * @return the copied measure
      */
-    @NonNull
-    Measure<U> copy();
+    fun copy(): Measure<U>
 
     /**
      * Creates a new mutable copy of this measure.
      *
      * @return a mutable measure initialized to be identical to this measure
      */
-    @NonNull
-    default MutableMeasure<U> mutableCopy() {
-        return MutableMeasure.mutable(this);
+    fun mutableCopy(): MutableMeasure<U> {
+        return MutableMeasure.mutable(this)
     }
 
     /**
      * Checks if this measure is near another measure of the same unit. Provide a variance threshold
      * for use for a +/- scalar, such as 0.05 for +/- 5%.
      *
-     * <pre>
-     *   Inches.of(11).isNear(Inches.of(10), 0.1) // true
-     *   Inches.of(12).isNear(Inches.of(10), 0.1) // false
-     * </pre>
+     * ```
+     * Inches.of(11).isNear(Inches.of(10), 0.1) // true
+     * Inches.of(12).isNear(Inches.of(10), 0.1) // false
+     * ```
      *
-     * @param other             the other measurement to compare against
      * @param varianceThreshold the acceptable variance threshold, in terms of an acceptable +/- error
-     *                          range multiplier. Checking if a value is within 10% means a value of 0.1 should be passed;
-     *                          checking if a value is within 1% means a value of 0.01 should be passed, and so on.
+     * range multiplier. Checking if a value is within 10% means a value of 0.1 should be passed;
+     * checking if a value is within 1% means a value of 0.01 should be passed, and so on.
      * @return true if this unit is near the other measure, otherwise false
      */
-    default boolean isNear(@NonNull Measure<?> other, double varianceThreshold) {
-        if (!unit().getBaseUnit().equivalent(other.unit().getBaseUnit())) {
-            return false; // Disjoint units, not compatible
+    infix fun Measure<*>.isNear(varianceThreshold: Double): Boolean {
+        if (!unit().baseUnit.equivalent(this.unit().baseUnit)) {
+            return false // Disjoint units, not compatible
         }
 
         // Absolute so negative inputs are calculated correctly
-        double tolerance = Math.abs(other.baseUnitMagnitude() * varianceThreshold);
+        val tolerance = abs(this.baseUnitMagnitude() * varianceThreshold)
 
-        return Math.abs(baseUnitMagnitude() - other.baseUnitMagnitude()) <= tolerance;
+        return abs(baseUnitMagnitude() - this.baseUnitMagnitude()) <= tolerance
     }
 
     /**
      * Checks if this measure is near another measure of the same unit, with a specified tolerance of
      * the same unit.
      *
-     * <pre>
-     *     Meters.of(1).isNear(Meters.of(1.2), Millimeters.of(300)) // true
-     *     Degrees.of(90).isNear(Rotations.of(0.5), Degrees.of(45)) // false
-     * </pre>
+     * ```
+     * Meters.of(1).isNear(Meters.of(1.2), Millimeters.of(300)) // true
+     * Degrees.of(90).isNear(Rotations.of(0.5), Degrees.of(45)) // false
+     * ```
      *
-     * @param other     the other measure to compare against.
      * @param tolerance the tolerance allowed in which the two measures are defined as near each
-     *                  other.
+     * other.
      * @return true if this unit is near the other measure, otherwise false.
      */
-    default boolean isNear(@NonNull Measure<U> other, @NonNull Measure<U> tolerance) {
-        return Math.abs(baseUnitMagnitude() - other.baseUnitMagnitude())
-                <= Math.abs(tolerance.baseUnitMagnitude());
+    infix fun Measure<U>.isNear(tolerance: Measure<U>): Boolean {
+        return abs(baseUnitMagnitude() - this.baseUnitMagnitude()) <= abs(tolerance.baseUnitMagnitude())
     }
 
     /**
@@ -408,17 +329,16 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @param other the measure to compare to
      * @return true if this measure is equivalent, false otherwise
      */
-    default boolean isEquivalent(@NonNull Measure<?> other) {
-        if (!unit().getBaseUnit().equals(other.unit().getBaseUnit())) {
-            return false; // Disjoint units, not compatible
+    infix fun isEquivalent(other: Measure<*>): Boolean {
+        if (unit().baseUnit != other.unit().baseUnit) {
+            return false // Disjoint units, not compatible
         }
 
-        return Math.abs(baseUnitMagnitude() - other.baseUnitMagnitude()) <= EQUIVALENCE_THRESHOLD;
+        return abs(baseUnitMagnitude() - other.baseUnitMagnitude()) <= EQUIVALENCE_THRESHOLD
     }
 
-    @Override
-    default int compareTo(Measure<U> o) {
-        return Double.compare(baseUnitMagnitude(), o.baseUnitMagnitude());
+    override infix fun compareTo(other: Measure<U>): Int {
+        return baseUnitMagnitude().compareTo(other.baseUnitMagnitude())
     }
 
     /**
@@ -427,8 +347,8 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @param o the other measure to compare to
      * @return true if this measure has a greater equivalent magnitude, false otherwise
      */
-    default boolean gt(@NonNull Measure<U> o) {
-        return compareTo(o) > 0;
+    infix fun gt(o: Measure<U>): Boolean {
+        return compareTo(o) > 0
     }
 
     /**
@@ -437,8 +357,8 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @param o the other measure to compare to
      * @return true if this measure has an equal or greater equivalent magnitude, false otherwise
      */
-    default boolean gte(@NonNull Measure<U> o) {
-        return compareTo(o) > 0 || isEquivalent(o);
+    infix fun gte(o: Measure<U>): Boolean {
+        return compareTo(o) > 0 || isEquivalent(o)
     }
 
     /**
@@ -447,8 +367,8 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @param o the other measure to compare to
      * @return true if this measure has a lesser equivalent magnitude, false otherwise
      */
-    default boolean lt(@NonNull Measure<U> o) {
-        return compareTo(o) < 0;
+    infix fun lt(o: Measure<U>): Boolean {
+        return compareTo(o) < 0
     }
 
     /**
@@ -457,8 +377,8 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      * @param o the other measure to compare to
      * @return true if this measure has an equal or lesser equivalent magnitude, false otherwise
      */
-    default boolean lte(@NonNull Measure<U> o) {
-        return compareTo(o) < 0 || isEquivalent(o);
+    infix fun lte(o: Measure<U>): Boolean {
+        return compareTo(o) < 0 || isEquivalent(o)
     }
 
     /**
@@ -468,10 +388,9 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      *
      * @return the scientific shorthand form representation of this measurement
      */
-    @NonNull
-    default String toScientificString() {
+    fun toScientificString(): String {
         // eg 1.234e+04 V/m (1234 Volt per Meter in long form)
-        return String.format(Locale.getDefault(), "%.3e %s", magnitude(), unit().symbol());
+        return String.format(Locale.getDefault(), "%.3e %s", magnitude(), unit().symbol())
     }
 
     /**
@@ -481,14 +400,14 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      *
      * @return the short/default form representation of this measurement
      */
-    @NonNull
-    default String toShortString() {
+    fun toShortString(): String {
         // BunyipsLib change: The old short string for most applications did not fit purpose, since all values in FTC
         // are fairly small quantity and large values are already represented in scientific notation. Short string
         // now gives the magnitude in full (old method exists in toScientificString()).
 
         // eg 1234 V/m (1.234e+04 V/m in scientific form)
-        return String.format(Locale.getDefault(), "%s %s", magnitude(), unit().symbol());
+
+        return String.format(Locale.getDefault(), "%s %s", magnitude(), unit().symbol())
     }
 
     /**
@@ -498,9 +417,62 @@ public interface Measure<U extends Unit<U>> extends Comparable<Measure<U>> {
      *
      * @return the long form representation of this measurement
      */
-    @NonNull
-    default String toLongString() {
+    fun toLongString(): String {
         // eg 1234 Volt per Meter (1.234e+04 V/m in scientific form)
-        return String.format("%s %s", magnitude(), unit().name());
+        return String.format("%s %s", magnitude(), unit().name())
+    }
+
+    companion object {
+        /**
+         * Returns the measure with the absolute value closest to positive infinity.
+         *
+         * @param <U>      the type of the units of the measures
+         * @param measures the set of measures to compare
+         * @return the measure with the greatest positive magnitude, or null if no measures were provided
+        </U> */
+        @SafeVarargs
+        fun <U : Unit<U>> max(vararg measures: Measure<U>): Measure<U>? {
+            if (measures.isEmpty()) {
+                return null // nothing to compare
+            }
+
+            var max: Measure<U>? = null
+            for (measure in measures) {
+                if (max == null || measure.gt(max)) {
+                    max = measure
+                }
+            }
+
+            return max
+        }
+
+        /**
+         * Returns the measure with the absolute value closest to negative infinity.
+         *
+         * @param <U>      the type of the units of the measures
+         * @param measures the set of measures to compare
+         * @return the measure with the greatest negative magnitude
+        </U> */
+        @SafeVarargs
+        fun <U : Unit<U>> min(vararg measures: Measure<U>): Measure<U>? {
+            if (measures.isEmpty()) {
+                return null // nothing to compare
+            }
+
+            var max: Measure<U>? = null
+            for (measure in measures) {
+                if (max == null || measure.lt(max)) {
+                    max = measure
+                }
+            }
+
+            return max
+        }
+
+        /**
+         * The threshold for two measures to be considered equivalent if converted to the same unit. This
+         * is only needed due to floating-point error.
+         */
+        const val EQUIVALENCE_THRESHOLD: Double = 1.0e-12
     }
 }

@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
@@ -20,7 +21,7 @@ class MessageTask(time: Measure<Time>, private val message: String) : Task(time)
     }
 
     private fun buildString(): String {
-        return Text.format("%/%s: %", Mathf.round(deltaTime.to(Seconds), 1), timeout.to(Seconds), message)
+        return Text.format("%/%s: %", deltaTime to Seconds round 1, timeout to Seconds, message)
     }
 
     override fun init() {

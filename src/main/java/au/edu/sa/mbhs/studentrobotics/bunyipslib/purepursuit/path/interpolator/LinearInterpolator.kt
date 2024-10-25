@@ -1,6 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path.interpolator
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.wrapRadians
 
 /**
  * Linear heading interpolator for time-optimal transitions between poses.
@@ -13,7 +13,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
  */
 class LinearInterpolator(private val startHeading: Double, private val angle: Double) : HeadingInterpolator() {
     override fun internalGet(s: Double, t: Double) =
-        Mathf.normaliseRadians(startHeading + s / curve.length() * angle)
+        (startHeading + s / curve.length() * angle).wrapRadians()
 
     override fun internalDeriv(s: Double, t: Double) = angle / curve.length()
 

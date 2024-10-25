@@ -1,91 +1,75 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.external;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.external
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
-
-import android.util.Pair;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.acmerobotics.roadrunner.Vector2d;
-
-import org.apache.commons.math3.util.FastMath;
-import org.apache.commons.math3.util.MathUtils;
-
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import com.acmerobotics.roadrunner.Vector2d
+import org.apache.commons.math3.util.FastMath
+import org.apache.commons.math3.util.MathUtils
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
 
 /**
  * Extended math utility functions.
- * <p>
+ *
  * This class is effectively a combination of the math found in WPILib's
- * <a href="https://github.com/wpilibsuite/allwpilib/blob/dc4c63568a2adbc2acfb5d6a420750236074b6aa/wpimath/src/main/java/edu/wpi/first/math/MathUtil.java">MathUtil</a>
- * and Unity's <a href="https://github.com/Unity-Technologies/UnityCsReference/blob/22a9cc4540dc5efa28ad9f02cd12b37b4b1a21c7/Runtime/Export/Math/Mathf.cs">Mathf</a> features,
+ * [MathUtil](https://github.com/wpilibsuite/allwpilib/blob/dc4c63568a2adbc2acfb5d6a420750236074b6aa/wpimath/src/main/java/edu/wpi/first/math/MathUtil.java)
+ * and Unity's [Mathf](https://github.com/Unity-Technologies/UnityCsReference/blob/22a9cc4540dc5efa28ad9f02cd12b37b4b1a21c7/Runtime/Export/Math/Mathf.cs) features,
  * adjusted to use WPIUnits and custom classes.
- * <p>
- * This class internally uses the Apache Commons {@link FastMath} methods.
+ *
+ * This class internally uses the Apache Commons [FastMath] methods.
  *
  * @see Math
  * @see FastMath
  * @see MathUtils
  * @since 1.0.0-pre
  */
-public final class Mathf {
-    private Mathf() {
-    }
-
+object Mathf {
     /**
      * Round a number to a certain number of decimal points.
      *
-     * @param num      The number to round
-     * @param thDigits The number of decimal places to use after the decimal point
-     * @return The rounded number, or 0 if the number is null
-     */
-    public static double round(@Nullable Number num, int thDigits) {
-        return round(num, thDigits, -1);
-    }
-
-    /**
-     * Round a number to a certain number of decimal points.
-     *
-     * @param num      The number to round
      * @param thDigits The number of decimal places to use after the decimal point
      * @param sigFigs  The number of significant figures to use
      * @return The rounded number, or 0 if the number is null, or 0 if the number is null
      */
-    public static double round(@Nullable Number num, int thDigits, int sigFigs) {
-        if (num == null)
-            return 0;
-        double n = num.doubleValue();
-        if (thDigits == 0)
-            return Math.round(n);
-        BigDecimal bd = new BigDecimal(Double.toString(n));
-        bd = bd.setScale(thDigits, RoundingMode.HALF_UP);
-        if (sigFigs != -1)
-            bd = bd.round(new MathContext(sigFigs, RoundingMode.HALF_UP));
-        return bd.doubleValue();
+    @JvmOverloads
+    @JvmStatic
+    fun Number?.round(thDigits: Int, sigFigs: Int = -1): Double {
+        if (this == null) return 0.0
+        val n = this.toDouble()
+        if (thDigits == 0) return Math.round(n).toDouble()
+        var bd = BigDecimal(n.toString())
+        bd = bd.setScale(thDigits, RoundingMode.HALF_UP)
+        if (sigFigs != -1) bd = bd.round(MathContext(sigFigs, RoundingMode.HALF_UP))
+        return bd.toDouble()
+    }
+
+    /**
+     * Round a number to a certain number of decimal points.
+     *
+     * @param thDigits The number of decimal places to use after the decimal point
+     * @return The rounded number, or 0 if the number is null, or 0 if the number is null
+     */
+    @JvmStatic
+    @JvmName("roundInfix")
+    infix fun Number?.round(thDigits: Int): Double {
+        return round(thDigits, -1)
     }
 
     /**
      * Checks if two values are approximately equal, such that floating point errors are accounted for.
      *
-     * @param a the first number
-     * @param b the second number
+     * @param other the other number
      * @return whether the two numbers are approximately equal by an epsilon of 1e-6
      */
-    public static boolean approximatelyEquals(@NonNull Number a, @NonNull Number b) {
-        return FastMath.abs(a.doubleValue() - b.doubleValue()) < 1.0e-6;
+    @JvmStatic
+    infix fun Number.approx(other: Number): Boolean {
+        return FastMath.abs(this.toDouble() - other.toDouble()) < 1.0e-6
     }
 
     /**
@@ -96,98 +80,128 @@ public final class Mathf {
      * @param c Constant.
      * @return List of real roots.
      */
-    @NonNull
-    public static List<Double> solveQuadratic(@NonNull Number a, @NonNull Number b, @NonNull Number c) {
-        double a_d = a.doubleValue(), b_d = b.doubleValue(), c_d = c.doubleValue();
+    @JvmStatic
+    fun solveQuadratic(a: Number, b: Number, c: Number): List<Double> {
+        val aD = a.toDouble()
+        val bD = b.toDouble()
+        val cD = c.toDouble()
         // Discriminant b^2-4ac
-        double disc = b_d * b_d - 4 * a_d * c_d;
-        if (approximatelyEquals(disc, 0)) {
+        val disc = bD * bD - 4 * aD * cD
+        if (disc approx 0) {
             // One solution which is the same as setting x=0 for a linear function
-            return Collections.singletonList(-b_d / (2 * a_d));
+            return listOf(-bD / (2 * aD))
         }
         if (disc < 0) {
             // No real solutions
-            return Collections.emptyList();
+            return emptyList()
         }
         // Solutions at (-b \pm \sqrt{b^2-4ac}) / 2a
-        return Arrays.asList(
-                (-b_d + FastMath.sqrt(disc)) / 2 * a_d,
-                (-b_d - FastMath.sqrt(disc)) / 2 * a_d
-        );
+        return listOf(
+            (-bD + FastMath.sqrt(disc)) / 2 * aD,
+            (-bD - FastMath.sqrt(disc)) / 2 * aD
+        )
     }
 
     /**
-     * Normalizes the given angle to be within the range of [0, 2pi) radians [0, 360) degrees.
+     * Normalizes the given angle to be within the range of [0, 2pi) radians or [0, 360) degrees.
      *
-     * @param angle The angle to normalize.
      * @return The normalized angle.
      */
-    @NonNull
-    public static Measure<Angle> normaliseAngle(@NonNull Measure<Angle> angle) {
-        double ang = angle.in(Radians) % MathUtils.TWO_PI;
-        return Radians.of((ang + MathUtils.TWO_PI) % MathUtils.TWO_PI);
+    @JvmStatic
+    fun Measure<Angle>.wrap(): Measure<Angle> {
+        val ang = (this to Radians) % MathUtils.TWO_PI
+        return Radians.of((ang + MathUtils.TWO_PI) % MathUtils.TWO_PI)
     }
 
     /**
      * Normalizes the given radians to be within the range [0, 2pi).
      *
-     * @param angrad The angle in radians.
      * @return The normalized radians in the range [0, 2pi)
      */
-    public static double normaliseRadians(@NonNull Number angrad) {
-        double ang = angrad.doubleValue() % MathUtils.TWO_PI;
-        return (ang + MathUtils.TWO_PI) % MathUtils.TWO_PI;
+    @JvmStatic
+    fun Number.wrapRadians(): Double {
+        val ang = this.toDouble() % MathUtils.TWO_PI
+        return (ang + MathUtils.TWO_PI) % MathUtils.TWO_PI
     }
 
     /**
      * Returns value clamped between low and high boundaries.
      *
-     * @param value Value to clamp.
      * @param low   The lower boundary to which to clamp value.
      * @param high  The higher boundary to which to clamp value.
      * @return The clamped value.
      */
-    public static double clamp(@NonNull Number value, @NonNull Number low, @NonNull Number high) {
-        return FastMath.max(low.doubleValue(), FastMath.min(value.doubleValue(), high.doubleValue()));
+    @JvmStatic
+    fun Number.clamp(low: Number, high: Number): Double {
+        return FastMath.max(low.toDouble(), FastMath.min(this.toDouble(), high.toDouble()))
     }
 
     /**
-     * Scale a number in the range of {@code x1} to {@code x2}, to the range of {@code y1} to {@code y2}.
+     * Returns value clamped between low and high boundaries.
      *
-     * @param n  number to scale
+     * @param range The range to which to clamp value.
+     * @return The clamped value.
+     */
+    @JvmStatic
+    infix fun Number.clamp(range: ClosedFloatingPointRange<Double>): Double {
+        return FastMath.max(range.start, FastMath.min(this.toDouble(), range.endInclusive))
+    }
+
+    /**
+     * Scale a number in the range of `x1` to `x2`, to the range of `y1` to `y2`.
+     *
      * @param x1 lower bound range of n
      * @param x2 upper bound range of n
      * @param y1 lower bound of scale
      * @param y2 upper bound of scale
      * @return a double scaled to a value between y1 and y2, inclusive
      */
-    public static double scale(@NonNull Number n, @NonNull Number x1, @NonNull Number x2, @NonNull Number y1, @NonNull Number y2) {
-        double n_d = n.doubleValue(), x1_d = x1.doubleValue(), x2_d = x2.doubleValue(), y1_d = y1.doubleValue(), y2_d = y2.doubleValue();
-        double m = (y1_d - y2_d) / (x1_d - x2_d);
-        double c = y1_d - x1_d * (y1_d - y2_d) / (x1_d - x2_d);
+    @JvmStatic
+    fun Number.scale(x1: Number, x2: Number, y1: Number, y2: Number): Double {
+        val x1D = x1.toDouble()
+        val x2D = x2.toDouble()
+        val y1D = y1.toDouble()
+        val y2D = y2.toDouble()
+        val m = (y1D - y2D) / (x1D - x2D)
+        val c = y1D - x1D * (y1D - y2D) / (x1D - x2D)
         // y = mx + c
-        return m * n.doubleValue() + c;
+        return m * this.toDouble() + c
+    }
+
+    /**
+     * Scale a number in the range of `x1` to `x2`, to the range of `y1` to `y2`.
+     *
+     * @param x1x2 range of n
+     * @param y1y2 range of scale
+     * @return a double scaled to a value between y1 and y2, inclusive
+     */
+    @JvmStatic
+    fun Number.scale(x1x2: ClosedFloatingPointRange<Double>, y1y2: ClosedFloatingPointRange<Double>): Double {
+        return this.scale(x1x2.start, x1x2.endInclusive, y1y2.start, y1y2.endInclusive)
     }
 
     /**
      * Returns 0.0 if the given value is within the specified range around zero. The remaining range
      * between the deadband and the maximum magnitude is scaled from 0.0 to the maximum magnitude.
      *
-     * @param value        Value to clip.
      * @param deadband     Range around zero.
      * @param maxMagnitude The maximum magnitude of the input. Can be infinite.
      * @return The value after the deadband is applied.
      */
-    public static double applyDeadband(@NonNull Number value, @NonNull Number deadband, @NonNull Number maxMagnitude) {
-        double value_d = value.doubleValue(), deadband_d = deadband.doubleValue(), maxMagnitude_d = maxMagnitude.doubleValue();
-        if (FastMath.abs(value_d) > deadband_d) {
-            if (maxMagnitude_d / deadband_d > 1.0e12) {
+    @JvmStatic
+    @JvmOverloads
+    fun Number.applyDeadband(deadband: Number, maxMagnitude: Number = 1): Double {
+        val valueD = this.toDouble()
+        val deadbandD = deadband.toDouble()
+        val maxMagnitudeD = maxMagnitude.toDouble()
+        if (FastMath.abs(valueD) > deadbandD) {
+            if (maxMagnitudeD / deadbandD > 1.0e12) {
                 // If max magnitude is sufficiently large, the implementation encounters
                 // round-off error.  Implementing the limiting behavior directly avoids
                 // the problem.
-                return value_d > 0.0 ? value_d - deadband_d : value_d + deadband_d;
+                return if (valueD > 0.0) valueD - deadbandD else valueD + deadbandD
             }
-            if (value_d > 0.0) {
+            return if (valueD > 0.0) {
                 // Map deadband to 0 and map max to max.
                 //
                 // y - y₁ = m(x - x₁)
@@ -203,7 +217,7 @@ public final class Mathf {
                 // y = (max - 0)/(max - deadband) (x - deadband) + 0
                 // y = max/(max - deadband) (x - deadband)
                 // y = max (x - deadband)/(max - deadband)
-                return maxMagnitude_d * (value_d - deadband_d) / (maxMagnitude_d - deadband_d);
+                maxMagnitudeD * (valueD - deadbandD) / (maxMagnitudeD - deadbandD)
             } else {
                 // Map -deadband to 0 and map -max to -max.
                 //
@@ -220,67 +234,81 @@ public final class Mathf {
                 // y = (-max - 0)/(-max + deadband) (x + deadband) + 0
                 // y = max/(max - deadband) (x + deadband)
                 // y = max (x + deadband)/(max - deadband)
-                return maxMagnitude_d * (value_d + deadband_d) / (maxMagnitude_d - deadband_d);
+                maxMagnitudeD * (valueD + deadbandD) / (maxMagnitudeD - deadbandD)
             }
         } else {
-            return 0.0;
+            return 0.0
         }
     }
 
     /**
      * Returns 0.0 if the given value is within the specified range around zero. The remaining range
-     * between the deadband and 1.0 is scaled from 0.0 to 1.0.
+     * between the deadband and the maximum magnitude is scaled from 0.0 to the maximum magnitude.
+     * Maximal magnitude is 1 for this infix overload.
      *
-     * @param value    Value to clip.
-     * @param deadband Range around zero.
+     * @param deadband     Range around zero.
      * @return The value after the deadband is applied.
      */
-    public static double applyDeadband(@NonNull Number value, @NonNull Number deadband) {
-        return applyDeadband(value, deadband, 1);
+    @JvmStatic
+    @JvmName("applyDeadbandInfix")
+    infix fun Number.applyDeadband(deadband: Number): Double {
+        return this.applyDeadband(deadband, 1)
     }
 
     /**
      * Returns modulus of input.
      *
-     * @param input        Input value to wrap.
      * @param minimumInput The minimum value expected from the input.
      * @param maximumInput The maximum value expected from the input.
      * @return The wrapped value.
      */
-    public static double inputModulus(@NonNull Number input, @NonNull Number minimumInput, @NonNull Number maximumInput) {
-        double input_d = input.doubleValue(), minimumInput_d = minimumInput.doubleValue(), maximumInput_d = maximumInput.doubleValue();
-        double modulus = maximumInput_d - minimumInput_d;
+    @JvmStatic
+    fun Number.wrap(minimumInput: Number, maximumInput: Number): Double {
+        var inputD = this.toDouble()
+        val minimumInputD = minimumInput.toDouble()
+        val maximumInputD = maximumInput.toDouble()
+        val modulus = maximumInputD - minimumInputD
 
         // Wrap input if it's above the maximum input
-        int numMax = (int) ((input_d - minimumInput_d) / modulus);
-        input_d -= numMax * modulus;
+        val numMax = ((inputD - minimumInputD) / modulus).toInt()
+        inputD -= numMax * modulus
 
         // Wrap input if it's below the minimum input
-        int numMin = (int) ((input_d - maximumInput_d) / modulus);
-        input_d -= numMin * modulus;
+        val numMin = ((inputD - maximumInputD) / modulus).toInt()
+        inputD -= numMin * modulus
 
-        return input_d;
+        return inputD
+    }
+
+    /**
+     * Returns modulus of input.
+     *
+     * @param range The range of the input.
+     * @return The wrapped value.
+     */
+    @JvmStatic
+    infix fun Number.wrap(range: ClosedFloatingPointRange<Double>): Double {
+        return this.wrap(range.start, range.endInclusive)
     }
 
     /**
      * Wraps an angle to the range -pi to pi radians.
      *
-     * @param angle Angle to wrap.
      * @return The wrapped angle.
      */
-    @NonNull
-    public static Measure<Angle> angleModulus(@NonNull Measure<Angle> angle) {
-        return Radians.of(inputModulus(angle.in(Radians), -FastMath.PI, FastMath.PI));
+    @JvmStatic
+    fun Measure<Angle>.wrapDelta(): Measure<Angle> {
+        return Radians.of(this to Radians wrap (-FastMath.PI..FastMath.PI))
     }
 
     /**
      * Wraps radians to the range -pi to pi.
      *
-     * @param angrad The angle in radians to wrap
      * @return Wrapped angle between -pi and pi
      */
-    public static double radianModulus(@NonNull Number angrad) {
-        return inputModulus(angrad, -FastMath.PI, FastMath.PI);
+    @JvmStatic
+    fun Number.wrapDeltaRadians(): Double {
+        return this wrap (-FastMath.PI..FastMath.PI)
     }
 
     /**
@@ -291,8 +319,20 @@ public final class Mathf {
      * @param t          How far between the two values to interpolate. This is clamped to [0, 1].
      * @return The interpolated value.
      */
-    public static double interpolate(@NonNull Number startValue, @NonNull Number endValue, @NonNull Number t) {
-        return startValue.doubleValue() + (endValue.doubleValue() - startValue.doubleValue()) * clamp(t, 0, 1);
+    @JvmStatic
+    fun lerp(startValue: Number, endValue: Number, t: Number): Double {
+        return startValue.toDouble() + (endValue.toDouble() - startValue.toDouble()) * (t clamp (0.0..1.0))
+    }
+
+    /**
+     * Perform linear interpolation between two values.
+     *
+     * @param t          How far between the two values to interpolate. This is clamped to [0, 1].
+     * @return The interpolated value.
+     */
+    @JvmStatic
+    infix fun ClosedFloatingPointRange<Double>.lerp(t: Number): Double {
+        return lerp(this.start, this.endInclusive, t)
     }
 
     /**
@@ -303,12 +343,24 @@ public final class Mathf {
      * @param t          How far between the two values to interpolate.
      * @return The interpolated value.
      */
-    public static double interpolateUnclamped(@NonNull Number startValue, @NonNull Number endValue, @NonNull Number t) {
-        return startValue.doubleValue() + (endValue.doubleValue() - startValue.doubleValue()) * t.doubleValue();
+    @JvmStatic
+    fun lerpUnclamped(startValue: Number, endValue: Number, t: Number): Double {
+        return startValue.toDouble() + (endValue.toDouble() - startValue.toDouble()) * t.toDouble()
     }
 
     /**
-     * Perform linear interpolation like {@link #interpolate(Number, Number, Number)}, but interpolates correctly when
+     * Perform linear interpolation between two values.
+     *
+     * @param t          How far between the two values to interpolate.
+     * @return The interpolated value.
+     */
+    @JvmStatic
+    infix fun ClosedFloatingPointRange<Double>.lerpUnclamped(t: Number): Double {
+        return lerpUnclamped(this.start, this.endInclusive, t)
+    }
+
+    /**
+     * Perform linear interpolation like [lerp], but interpolates correctly when
      * they wrap around 1 revolution (360 degrees).
      *
      * @param a The start angle.
@@ -316,44 +368,54 @@ public final class Mathf {
      * @param t The interpolation parameter.
      * @return The interpolated value.
      */
-    @NonNull
-    public static Measure<Angle> interpolateAngle(@NonNull Measure<Angle> a, @NonNull Measure<Angle> b, @NonNull Number t) {
-        double delta = repeat(b.in(Degrees) - a.in(Degrees), 360);
-        if (delta > 180)
-            delta -= 360;
-        return Degrees.of(a.in(Degrees) + delta * clamp(t, 0, 1));
+    @JvmStatic
+    fun lerp(a: Measure<Angle>, b: Measure<Angle>, t: Number): Measure<Angle> {
+        var delta = ((b to Degrees) - (a to Degrees)) repeat 360
+        if (delta > 180) delta -= 360.0
+        return Degrees.of((a to Degrees) + delta * (t clamp (0.0..1.0)))
     }
 
     /**
-     * Moves a value {@code current} towards {@code target}.
+     * Perform linear interpolation like [lerp], but interpolates correctly when
+     * they wrap around 1 revolution (360 degrees).
      *
-     * @param current  The current value.
+     * @param t The interpolation parameter.
+     * @return The interpolated value.
+     */
+    @JvmStatic
+    fun Pair<Measure<Angle>, Measure<Angle>>.lerp(t: Number): Measure<Angle> {
+        return lerp(first, second, t)
+    }
+
+    /**
+     * Moves a current value towards `target`.
+     *
      * @param target   The value to move towards.
      * @param maxDelta The maximum change that should be applied to the value.
      * @return The new value.
      */
-    public static double moveTowards(@NonNull Number current, @NonNull Number target, @NonNull Number maxDelta) {
-        double current_d = current.doubleValue(), target_d = target.doubleValue(), maxDelta_d = maxDelta.doubleValue();
-        if (FastMath.abs(target_d - current_d) <= maxDelta_d)
-            return target_d;
-        return current_d + FastMath.signum(target_d - current_d) * maxDelta_d;
+    @JvmStatic
+    fun Number.moveTowards(target: Number, maxDelta: Number): Double {
+        val currentD = this.toDouble()
+        val targetD = target.toDouble()
+        val maxDeltaD = maxDelta.toDouble()
+        if (FastMath.abs(targetD - currentD) <= maxDeltaD) return targetD
+        return currentD + FastMath.signum(targetD - currentD) * maxDeltaD
     }
 
     /**
-     * Same as {@link #moveTowards(Number, Number, Number)}, but makes sure the values interpolate correctly when they
+     * Same as [moveTowards], but makes sure the values interpolate correctly when they
      * wrap around 1 revolution (360 degrees).
      *
-     * @param current  The current angle.
      * @param target   The angle to move towards.
      * @param maxDelta The maximum change that should be applied to the value.
      * @return The new value.
      */
-    @NonNull
-    public static Measure<Angle> moveTowardsAngle(@NonNull Measure<Angle> current, @NonNull Measure<Angle> target, @NonNull Measure<Angle> maxDelta) {
-        Measure<Angle> delta = deltaAngle(current, target);
-        if (maxDelta.negate().lt(delta) && delta.lt(maxDelta))
-            return target;
-        return Degrees.of(moveTowards(current.in(Degrees), current.plus(delta).in(Degrees), maxDelta.in(Degrees)));
+    @JvmStatic
+    fun Measure<Angle>.moveTowards(target: Measure<Angle>, maxDelta: Measure<Angle>): Measure<Angle> {
+        val delta = this wrapDelta target
+        if (maxDelta.negate().lt(delta) && delta.lt(maxDelta)) return target
+        return Degrees.of((this to Degrees).moveTowards((this + delta) to Degrees, maxDelta to Degrees))
     }
 
     /**
@@ -364,132 +426,161 @@ public final class Mathf {
      * @param t    The interpolation value between the two.
      * @return The smooth step value.
      */
-    public static double smoothStep(@NonNull Number from, @NonNull Number to, @NonNull Number t) {
-        double newT = clamp(t, 0, 1);
-        newT = -2.0F * newT * newT * newT + 3.0F * newT * newT;
-        return to.doubleValue() * newT + from.doubleValue() * (1.0 - newT);
+    @JvmStatic
+    fun smoothStep(from: Number, to: Number, t: Number): Double {
+        var newT = t clamp (0.0..1.0)
+        newT = -2.0f * newT * newT * newT + 3.0f * newT * newT
+        return to.toDouble() * newT + from.toDouble() * (1.0 - newT)
+    }
+
+    /**
+     * Interpolates between min and max with smoothing at the limits.
+     *
+     * @param t    The interpolation value between the two.
+     * @return The smooth step value.
+     */
+    @JvmStatic
+    fun ClosedFloatingPointRange<Double>.smoothStep(t: Number): Double {
+        var newT = t clamp (0.0..1.0)
+        newT = -2.0f * newT * newT * newT + 3.0f * newT * newT
+        return this.start * newT + this.endInclusive * (1.0 - newT)
     }
 
     /**
      * Applies gamma correction to a given value within a specified range.
      *
-     * @param value  the input value to be gamma corrected
      * @param absMax the maximum absolute value allowed in the input range
      * @param gamma  the gamma value for correction
      * @return the gamma corrected value
      */
-    public static double gamma(@NonNull Number value, @NonNull Number absMax, @NonNull Number gamma) {
-        double value_d = value.doubleValue(), absMax_d = absMax.doubleValue(), gamma_d = gamma.doubleValue();
-        boolean negative = value_d < 0.0;
-        double absVal = FastMath.abs(value_d);
-        if (absVal > absMax_d)
-            return negative ? -absVal : absVal;
-        double result = FastMath.pow(absVal / absMax_d, gamma_d) * absMax_d;
-        return negative ? -result : result;
+    @JvmStatic
+    fun Number.gamma(absMax: Number, gamma: Number): Double {
+        val valueD = this.toDouble()
+        val absMaxD = absMax.toDouble()
+        val gammaD = gamma.toDouble()
+        val negative = valueD < 0.0
+        val absVal = FastMath.abs(valueD)
+        if (absVal > absMaxD) return if (negative) -absVal else absVal
+        val result = FastMath.pow(absVal / absMaxD, gammaD) * absMaxD
+        return if (negative) -result else result
     }
 
     /**
      * Gradually changes a value towards a desired goal over time.
      *
-     * @param current         The current position.
      * @param target          The position we want to be at.
      * @param currentVelocity The current velocity of the current position moving towards the target.
-     *                        This ref is modified by this function and should be passed back into it on subsequent calls.
+     * This ref is modified by this function and should be passed back into it on subsequent calls.
      * @param smoothTime      Approximately the time it will take to reach the target.
      * @param maxVelocity     The maximum velocity that may be achieved when moving current->target.
      * @param deltaTime       The time since the last call to this method.
      * @return The new position following the smooth damp. The new velocity is stored in the currentVelocity reference,
      * for when this method is called again. Any clamping of this value to minimum limits is left to your discretion.
      */
-    public static double smoothDamp(@NonNull Number current, @NonNull Number target, @NonNull Reference<Double> currentVelocity, @NonNull Measure<Time> smoothTime, @NonNull Number maxVelocity, @NonNull Measure<Time> deltaTime) {
-        double current_d = current.doubleValue(), target_d = target.doubleValue(), maxVelocity_d = maxVelocity.doubleValue();
+    @JvmStatic
+    fun Number.smoothDamp(
+        target: Number,
+        currentVelocity: Reference<Double>,
+        smoothTime: Measure<Time>,
+        maxVelocity: Number,
+        deltaTime: Measure<Time>
+    ): Double {
+        val currentD = this.toDouble()
+        val targetD = target.toDouble()
+        val maxVelocityD = maxVelocity.toDouble()
 
-        double t = smoothTime.in(Seconds);
-        double dt = deltaTime.in(Seconds);
-        double omega = 2.0 / t;
+        val t = smoothTime to Seconds
+        val dt = deltaTime to Seconds
+        val omega = 2.0 / t
 
         // Exponential decay function
-        double x = omega * dt;
-        double exp = 1.0 / (1.0 + x + 0.48 * x * x + 0.235 * x * x * x);
-        double delta = current_d - target_d;
+        val x = omega * dt
+        val exp = 1.0 / (1.0 + x + 0.48 * x * x + 0.235 * x * x * x)
+        var delta = currentD - targetD
 
         // Clamp maximum speed
-        double maxDelta = maxVelocity_d * t;
-        delta = clamp(delta, -maxDelta, maxDelta);
+        val maxDelta = maxVelocityD * t
+        delta = delta clamp (-maxDelta..maxDelta)
 
         // Calculate new velocity and output of the current position
-        currentVelocity.ifNotPresent(() -> currentVelocity.set(0.0));
-        double temp = (currentVelocity.require() + omega * delta) * dt;
-        currentVelocity.set((currentVelocity.require() - omega * temp) * exp);
-        double output = (current_d - delta) + (delta + temp) * exp;
+        currentVelocity.ifNotPresent { currentVelocity.set(0.0) }
+        val temp = (currentVelocity.require() + omega * delta) * dt
+        currentVelocity.set((currentVelocity.require() - omega * temp) * exp)
+        var output = (currentD - delta) + (delta + temp) * exp
 
         // Prevent overshooting
-        if (target_d - current_d > 0.0 == output > target_d) {
-            output = target_d;
-            currentVelocity.set((output - target_d) / dt);
+        if (targetD - currentD > 0.0 == output > targetD) {
+            output = targetD
+            currentVelocity.set((output - targetD) / dt)
         }
 
-        return output;
+        return output
     }
 
     /**
      * Gradually changes an angle towards a desired goal over time.
      *
-     * @param current         The current angle.
      * @param target          The angle we want to be at.
      * @param currentVelocity The current angular velocity of the current position moving towards the target.
-     *                        This ref is modified by this function and should be passed back into it on subsequent calls.
+     * This ref is modified by this function and should be passed back into it on subsequent calls.
      * @param smoothTime      Approximately the time it will take to reach the target.
      * @param maxVelocity     The maximum velocity that may be achieved when moving current->target.
      * @param deltaTime       The time since the last call to this method.
      * @return The new angle following the smooth damp. The new ang. velocity is stored in the currentVelocity reference,
      * for when this method is called again. Any clamping of this value to minimum limits is left to your discretion.
      */
-
-    @NonNull
-    public static Measure<Angle> smoothDampAngle(@NonNull Measure<Angle> current, @NonNull Measure<Angle> target, @NonNull Reference<Double> currentVelocity, @NonNull Measure<Time> smoothTime, @NonNull Number maxVelocity, @NonNull Measure<Time> deltaTime) {
-        double res = smoothDamp(current.in(Degrees), current.plus(deltaAngle(current, target)).in(Degrees), currentVelocity, smoothTime, maxVelocity, deltaTime);
-        return Degrees.of(res);
+    @JvmStatic
+    fun Measure<Angle>.smoothDamp(
+        target: Measure<Angle>,
+        currentVelocity: Reference<Double>,
+        smoothTime: Measure<Time>,
+        maxVelocity: Number,
+        deltaTime: Measure<Time>
+    ): Measure<Angle> {
+        val res = (this to Degrees).smoothDamp(
+            (this + this wrapDelta target) to Degrees,
+            currentVelocity, smoothTime, maxVelocity, deltaTime
+        )
+        return Degrees.of(res)
     }
 
     /**
-     * Loops the value t, so that it is never larger than length and never smaller than 0.
+     * Loops the value, so that it is never larger than length and never smaller than 0.
      *
-     * @param t      The value to loop.
      * @param length The length of the loop.
      * @return The looped value.
      */
-    public static double repeat(@NonNull Number t, @NonNull Number length) {
-        double t_d = t.doubleValue(), length_d = length.doubleValue();
-        return clamp(t_d - FastMath.floor(t_d / length_d) * length_d, 0.0f, length_d);
+    @JvmStatic
+    infix fun Number.repeat(length: Number): Double {
+        val tD = this.toDouble()
+        val lengthD = length.toDouble()
+        return (tD - FastMath.floor(tD / lengthD) * lengthD) clamp (0.0..lengthD)
     }
 
     /**
      * PingPongs (bounces) the value t, so that it is never larger than length and never smaller than 0.
      *
-     * @param t      The value to pingpong.
      * @param length The length of the pingpong.
      * @return The pingponged value.
      */
-    public static double pingPong(@NonNull Number t, @NonNull Number length) {
-        double length_d = length.doubleValue();
-        double repeat = repeat(t, length_d * 2.0);
-        return length_d - FastMath.abs(repeat - length_d);
+    @JvmStatic
+    infix fun Number.pingPong(length: Number): Double {
+        val lengthD = length.toDouble()
+        val repeat = this repeat (lengthD * 2.0)
+        return lengthD - FastMath.abs(repeat - lengthD)
     }
 
     /**
      * Calculates the shortest difference between two given angles.
      *
-     * @param current The current angle.
      * @param target  The target angle.
      * @return The shortest difference between the two angles.
      */
-    @NonNull
-    public static Measure<Angle> deltaAngle(@NonNull Measure<Angle> current, @NonNull Measure<Angle> target) {
-        double delta = repeat(target.minus(current).in(Degrees), 360.0);
-        if (delta > 180.0F)
-            delta -= 360.0F;
-        return Degrees.of(delta);
+    @JvmStatic
+    infix fun Measure<Angle>.wrapDelta(target: Measure<Angle>): Measure<Angle> {
+        var delta = ((target - this) to Degrees) repeat 360
+        if (delta > 180.0f) delta -= 360.0
+        return Degrees.of(delta)
     }
 
     /**
@@ -502,20 +593,22 @@ public final class Mathf {
      * @return The intersection points.
      * @throws NoInterceptException If no intercepts are found.
      */
-    @NonNull
-    public static Pair<Vector2d, Vector2d> lineCircleIntersection(@NonNull Vector2d p1, @NonNull Vector2d p2, @NonNull Vector2d center, @NonNull Number radius) throws NoInterceptException {
-        double dx = p2.x - p1.x;
-        double dy = p2.y - p1.y;
-        double a = dx * dx + dy * dy;
-        double b = 2 * (dx * (p1.x - center.x) + dy * (p1.y - center.y));
-        double c = center.x * center.x + center.y * center.y + p1.x * p1.x + p1.y * p1.y - 2 * (center.x * p1.x + center.y * p1.y) - radius.doubleValue() * radius.doubleValue();
-        List<Double> solutions = solveQuadratic(a, b, c);
+    @JvmStatic
+    @Throws(NoInterceptException::class)
+    fun lineCircleIntersection(p1: Vector2d, p2: Vector2d, center: Vector2d, radius: Number): Pair<Vector2d, Vector2d> {
+        val dx = p2.x - p1.x
+        val dy = p2.y - p1.y
+        val a = dx * dx + dy * dy
+        val b = 2 * (dx * (p1.x - center.x) + dy * (p1.y - center.y))
+        val c =
+            center.x * center.x + center.y * center.y + p1.x * p1.x + p1.y * p1.y - 2 * (center.x * p1.x + center.y * p1.y) - radius.toDouble() * radius.toDouble()
+        val solutions = solveQuadratic(a, b, c)
         if (solutions.isEmpty()) {
-            throw new NoInterceptException();
+            throw NoInterceptException()
         }
-        double t1 = solutions.get(0);
-        double t2 = solutions.size() == 2 ? solutions.get(1) : t1;
-        return new Pair<>(new Vector2d(p1.x + t1 * dx, p1.y + t1 * dy), new Vector2d(p1.x + t2 * dx, p1.y + t2 * dy));
+        val t1 = solutions[0]
+        val t2 = if (solutions.size == 2) solutions[1] else t1
+        return Pair(Vector2d(p1.x + t1 * dx, p1.y + t1 * dy), Vector2d(p1.x + t2 * dx, p1.y + t2 * dy))
     }
 
     /**
@@ -528,23 +621,30 @@ public final class Mathf {
      * @return The intersection points.
      * @throws NoInterceptException If no intercepts are found.
      */
-    @NonNull
-    public static Pair<Vector2d, Vector2d> lineSegmentCircleIntersection(@NonNull Vector2d p1, @NonNull Vector2d p2, @NonNull Vector2d center, @NonNull Number radius) throws NoInterceptException {
-        double dx = p2.x - p1.x;
-        double dy = p2.y - p1.y;
-        double a = dx * dx + dy * dy;
-        double b = 2 * (dx * (p1.x - center.x) + dy * (p1.y - center.y));
-        double c = center.x * center.x + center.y * center.y + p1.x * p1.x + p1.y * p1.y - 2 * (center.x * p1.x + center.y * p1.y) - radius.doubleValue() * radius.doubleValue();
-        List<Double> solutions = solveQuadratic(a, b, c);
+    @JvmStatic
+    @Throws(NoInterceptException::class)
+    fun lineSegmentCircleIntersection(
+        p1: Vector2d,
+        p2: Vector2d,
+        center: Vector2d,
+        radius: Number
+    ): Pair<Vector2d, Vector2d> {
+        val dx = p2.x - p1.x
+        val dy = p2.y - p1.y
+        val a = dx * dx + dy * dy
+        val b = 2 * (dx * (p1.x - center.x) + dy * (p1.y - center.y))
+        val c =
+            center.x * center.x + center.y * center.y + p1.x * p1.x + p1.y * p1.y - 2 * (center.x * p1.x + center.y * p1.y) - radius.toDouble() * radius.toDouble()
+        val solutions = solveQuadratic(a, b, c)
         if (solutions.isEmpty()) {
-            throw new NoInterceptException();
+            throw NoInterceptException()
         }
-        double t1 = solutions.get(0);
-        double t2 = solutions.size() == 2 ? solutions.get(1) : t1;
+        val t1 = solutions[0]
+        val t2 = if (solutions.size == 2) solutions[1] else t1
         if ((t1 < 0 || t1 > 1) && (t2 < 0 || t2 > 1)) {
-            throw new NoInterceptException();
+            throw NoInterceptException()
         }
-        return new Pair<>(new Vector2d(p1.x + t1 * dx, p1.y + t1 * dy), new Vector2d(p1.x + t2 * dx, p1.y + t2 * dy));
+        return Pair(Vector2d(p1.x + t1 * dx, p1.y + t1 * dy), Vector2d(p1.x + t2 * dx, p1.y + t2 * dy))
     }
 
     /**
@@ -557,22 +657,23 @@ public final class Mathf {
      * @return The intersection point.
      * @throws NoInterceptException If no intercept is found.
      */
-    @NonNull
-    public static Vector2d lineIntersection(@NonNull Vector2d p1, @NonNull Vector2d p2, @NonNull Vector2d p3, @NonNull Vector2d p4) throws NoInterceptException {
-        double bx = p2.x - p1.x;
-        double by = p2.y - p1.y;
-        double dx = p4.x - p3.x;
-        double dy = p4.y - p3.y;
+    @JvmStatic
+    @Throws(NoInterceptException::class)
+    fun lineIntersection(p1: Vector2d, p2: Vector2d, p3: Vector2d, p4: Vector2d): Vector2d {
+        val bx = p2.x - p1.x
+        val by = p2.y - p1.y
+        val dx = p4.x - p3.x
+        val dy = p4.y - p3.y
 
-        double bDotDPerp = bx * dy - by * dx;
-        if (bDotDPerp == 0) {
-            throw new NoInterceptException();
+        val bDotDPerp = bx * dy - by * dx
+        if (bDotDPerp == 0.0) {
+            throw NoInterceptException()
         }
-        double cx = p3.x - p1.x;
-        double cy = p3.y - p1.y;
-        double t = (cx * dy - cy * dx) / bDotDPerp;
+        val cx = p3.x - p1.x
+        val cy = p3.y - p1.y
+        val t = (cx * dy - cy * dx) / bDotDPerp
 
-        return new Vector2d(p1.x + t * bx, p1.y + t * by);
+        return Vector2d(p1.x + t * bx, p1.y + t * by)
     }
 
     /**
@@ -585,71 +686,70 @@ public final class Mathf {
      * @return The intersection point.
      * @throws NoInterceptException If no intercept is found.
      */
-    @NonNull
-    public static Vector2d lineSegmentIntersection(@NonNull Vector2d p1, @NonNull Vector2d p2, @NonNull Vector2d p3, @NonNull Vector2d p4) throws NoInterceptException {
-        double bx = p2.x - p1.x;
-        double by = p2.y - p1.y;
-        double dx = p4.x - p3.x;
-        double dy = p4.y - p3.y;
+    @JvmStatic
+    @Throws(NoInterceptException::class)
+    fun lineSegmentIntersection(p1: Vector2d, p2: Vector2d, p3: Vector2d, p4: Vector2d): Vector2d {
+        val bx = p2.x - p1.x
+        val by = p2.y - p1.y
+        val dx = p4.x - p3.x
+        val dy = p4.y - p3.y
 
-        double bDotDPerp = bx * dy - by * dx;
-        if (bDotDPerp == 0) {
-            throw new NoInterceptException();
+        val bDotDPerp = bx * dy - by * dx
+        if (bDotDPerp == 0.0) {
+            throw NoInterceptException()
         }
-        double cx = p3.x - p1.x;
-        double cy = p3.y - p1.y;
-        double t = (cx * dy - cy * dx) / bDotDPerp;
+        val cx = p3.x - p1.x
+        val cy = p3.y - p1.y
+        val t = (cx * dy - cy * dx) / bDotDPerp
         if (t < 0 || t > 1) {
-            throw new NoInterceptException();
+            throw NoInterceptException()
         }
-        double u = (cx * by - cy * bx) / bDotDPerp;
+        val u = (cx * by - cy * bx) / bDotDPerp
         if (u < 0 || u > 1) {
-            throw new NoInterceptException();
+            throw NoInterceptException()
         }
 
-        return new Vector2d(p1.x + t * bx, p1.y + t * by);
+        return Vector2d(p1.x + t * bx, p1.y + t * by)
     }
 
     /**
      * Returns the next power of two that is equal to or larger than the specified value.
      *
-     * @param value The value.
      * @return The next power of two.
      */
-    public static int nextPowerOfTwo(int value) {
-        int i = value;
-        i -= 1;
-        i |= i >> 16;
-        i |= i >> 8;
-        i |= i >> 4;
-        i |= i >> 2;
-        i |= i >> 1;
-        return i + 1;
+    @JvmStatic
+    fun Int.nextPowerOfTwo(): Int {
+        var i = this
+        i -= 1
+        i = i or (i shr 16)
+        i = i or (i shr 8)
+        i = i or (i shr 4)
+        i = i or (i shr 2)
+        i = i or (i shr 1)
+        return i + 1
     }
 
     /**
      * Returns the closest power of two that is equal to or larger than the specified value.
      *
-     * @param value The value.
      * @return The closest power of two.
      */
-    public static int closestPowerOfTwo(int value) {
-        int nextPower = nextPowerOfTwo(value);
-        int prevPower = nextPower >> 1;
-        if (value - prevPower < nextPower - value)
-            return prevPower;
-        else
-            return nextPower;
+    @JvmStatic
+    fun Int.closestPowerOfTwo(): Int {
+        val nextPower = this.nextPowerOfTwo()
+        val prevPower = nextPower shr 1
+        return if (this - prevPower < nextPower - this) prevPower
+        else nextPower
     }
 
     /**
      * Returns whether the given value is a power of two.
      *
-     * @param value The value.
      * @return Whether the value is a power of two.
      */
-    public static boolean isPowerOfTwo(int value) {
-        return (value & (value - 1)) == 0;
+    @JvmStatic
+    fun Int.isPowerOfTwo(): Boolean {
+        return (this and (this - 1)) == 0
     }
 
     /**
@@ -660,72 +760,83 @@ public final class Mathf {
      * @param q          Query.
      * @return Interpolant in range [0, 1].
      */
-    public static double inverseInterpolate(@NonNull Number startValue, @NonNull Number endValue, @NonNull Number q) {
-        double startValue_d = startValue.doubleValue();
-        double totalRange = endValue.doubleValue() - startValue_d;
+    @JvmStatic
+    fun inverseLerp(startValue: Number, endValue: Number, q: Number): Double {
+        val startValueD = startValue.toDouble()
+        val totalRange = endValue.toDouble() - startValueD
         if (totalRange <= 0) {
-            return 0.0;
+            return 0.0
         }
-        double queryToStart = q.doubleValue() - startValue_d;
+        val queryToStart = q.toDouble() - startValueD
         if (queryToStart <= 0) {
-            return 0.0;
+            return 0.0
         }
-        return queryToStart / totalRange;
+        return queryToStart / totalRange
+    }
+
+    /**
+     * Return where within interpolation range [0, 1] q is between the start and end pair.
+     *
+     * @param q          Query.
+     * @return Interpolant in range [0, 1].
+     */
+    @JvmStatic
+    fun ClosedFloatingPointRange<Double>.inverseLerp(q: Number): Double {
+        val startValueD = this.start
+        val totalRange = this.endInclusive - startValueD
+        if (totalRange <= 0) {
+            return 0.0
+        }
+        val queryToStart = q.toDouble() - startValueD
+        if (queryToStart <= 0) {
+            return 0.0
+        }
+        return queryToStart / totalRange
     }
 
     /**
      * Checks if the given value matches an expected value within a certain tolerance.
      *
      * @param expected  The expected value
-     * @param actual    The actual value
      * @param tolerance The allowed difference between the actual and the expected value
      * @return Whether or not the actual value is within the allowed tolerance
      */
-    public static boolean isNear(@NonNull Number expected, @NonNull Number actual, @NonNull Number tolerance) {
-        double tolerance_d = tolerance.doubleValue();
-        if (tolerance_d < 0) {
-            throw new IllegalArgumentException("Tolerance must be a non-negative number!");
-        }
-        return FastMath.abs(expected.doubleValue() - actual.doubleValue()) < tolerance_d;
+    @JvmStatic
+    fun Number.isNear(expected: Number, tolerance: Number): Boolean {
+        val toleranceD = tolerance.toDouble()
+        require(!(toleranceD < 0)) { "Tolerance must be a non-negative number!" }
+        return FastMath.abs(expected.toDouble() - this.toDouble()) < toleranceD
     }
 
     /**
      * Checks if the given value matches an expected value within a certain tolerance. Supports
      * continuous input for cases like absolute encoders.
      *
-     * <p>Continuous input means that the min and max value are considered to be the same point, and
+     *
+     * Continuous input means that the min and max value are considered to be the same point, and
      * tolerances can be checked across them. A common example would be for absolute encoders: calling
      * isNear(2, 359, 5, 0, 360) returns true because 359 is 1 away from 360 (which is treated as the
      * same as 0) and 2 is 2 away from 0, adding up to an error of 3 degrees, which is within the
      * given tolerance of 5.
      *
      * @param expected  The expected value
-     * @param actual    The actual value
      * @param tolerance The allowed difference between the actual and the expected value
      * @param min       Smallest value before wrapping around to the largest value
      * @param max       Largest value before wrapping around to the smallest value
      * @return Whether or not the actual value is within the allowed tolerance
      */
-    public static boolean isNear(@NonNull Number expected, @NonNull Number actual, @NonNull Number tolerance, @NonNull Number min, @NonNull Number max) {
-        double tolerance_d = tolerance.doubleValue();
-        if (tolerance_d < 0) {
-            throw new IllegalArgumentException("Tolerance must be a non-negative number!");
-        }
+    @JvmStatic
+    fun Number.isNear(expected: Number, tolerance: Number, min: Number, max: Number): Boolean {
+        val toleranceD = tolerance.toDouble()
+        require(!(toleranceD < 0)) { "Tolerance must be a non-negative number!" }
         // Max error is exactly halfway between the min and max
-        double errorBound = (max.doubleValue() - min.doubleValue()) / 2.0;
-        double error = inputModulus(expected.doubleValue() - actual.doubleValue(), -errorBound, errorBound);
-        return FastMath.abs(error) < tolerance_d;
+        val errorBound = (max.toDouble() - min.toDouble()) / 2.0
+        val error = (expected.toDouble() - this.toDouble()) wrap (-errorBound..errorBound)
+        return FastMath.abs(error) < toleranceD
     }
 
     /**
      * Exception thrown if no intercept is found when using the intersection methods of this class.
      */
-    public static class NoInterceptException extends RuntimeException {
-        /**
-         * Create a new NoInterceptException.
-         */
-        public NoInterceptException() {
-            super("No intercept found");
-        }
-    }
+    class NoInterceptException : RuntimeException("No intercept found")
 }

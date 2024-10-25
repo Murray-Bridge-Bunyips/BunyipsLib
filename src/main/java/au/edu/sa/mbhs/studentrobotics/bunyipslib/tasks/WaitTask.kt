@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
@@ -25,8 +26,8 @@ class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = true) :
         if (showTelemetry)
             opMode?.telemetry?.add(
                 "Waiting %/% seconds...",
-                Mathf.round(deltaTime.to(Seconds), 1),
-                timeout.to(Seconds)
+                deltaTime to Seconds round 1,
+                timeout to Seconds
             )
     }
 

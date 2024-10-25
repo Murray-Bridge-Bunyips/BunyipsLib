@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration
@@ -168,7 +169,7 @@ class UserSelection<T : Any>(
         require(opMode).telemetry.addDashboard(
             "<small>USR</small>",
             if (result == null) "No selection" else "${selectedButton.name} -> $opModeName@T+${
-                Mathf.round(require(opMode).timer.elapsedTime().to(Seconds), 1)
+                require(opMode).timer.elapsedTime() to Seconds round 1
             }s"
         )
 

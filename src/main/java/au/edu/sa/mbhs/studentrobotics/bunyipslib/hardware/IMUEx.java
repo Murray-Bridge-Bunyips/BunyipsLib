@@ -310,13 +310,13 @@ public class IMUEx implements IMU, Runnable {
 
         angleSumDeg += yawDelta * yawDeltaMultiplier;
         Measure<Angle> totalYaw = Degrees.of(angleSumDeg).plus(yawOffset);
-        Measure<Angle> signedClamp = Mathf.angleModulus(totalYaw);
+        Measure<Angle> signedClamp = Mathf.wrapDelta(totalYaw);
 
         // Only apply YawDomain to the yaw field
         if (domain == YawDomain.SIGNED) {
             yaw = signedClamp;
         } else if (domain == YawDomain.UNSIGNED) {
-            yaw = Mathf.normaliseAngle(totalYaw);
+            yaw = Mathf.wrap(totalYaw);
         } else {
             // Unrestricted domain
             yaw = totalYaw;

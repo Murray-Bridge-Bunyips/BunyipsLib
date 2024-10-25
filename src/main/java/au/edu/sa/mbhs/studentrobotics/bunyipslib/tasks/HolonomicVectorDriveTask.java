@@ -209,7 +209,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      * @param heading the angle to rotate to, will be wrapped from [0, 2pi] radians
      */
     public void setHeadingTarget(@NonNull Measure<Angle> heading) {
-        headingLock = Mathf.normaliseAngle(heading).in(Radians);
+        headingLock = Mathf.wrap(heading).in(Radians);
     }
 
     /**
@@ -278,7 +278,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         double twistedYError = -xLockedError * sin + yLockedError * cos;
 
         // Wrap to [-pi, pi] and hard lock at boundary to ensure no oscillations
-        double angle = Mathf.inputModulus(rLockedError, -Math.PI, Math.PI);
+        double angle = Mathf.wrap(rLockedError, -Math.PI, Math.PI);
         if (Mathf.isNear(Math.abs(angle), Math.PI, 0.1))
             angle = -Math.PI * Math.signum(rLockedError);
 

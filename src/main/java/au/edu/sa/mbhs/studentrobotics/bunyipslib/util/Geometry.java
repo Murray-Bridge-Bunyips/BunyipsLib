@@ -118,9 +118,9 @@ public final class Geometry {
      * @return whether the two poses are equal within the epsilon value 1e-6
      */
     public static boolean epsilonEquals(@NonNull Pose2d a, @NonNull Pose2d b) {
-        return Mathf.approximatelyEquals(a.position.x, b.position.x)
-                && Mathf.approximatelyEquals(a.position.y, b.position.y)
-                && Mathf.approximatelyEquals(a.heading.toDouble(), b.heading.toDouble());
+        return Mathf.approx(a.position.x, b.position.x)
+                && Mathf.approx(a.position.y, b.position.y)
+                && Mathf.approx(a.heading.toDouble(), b.heading.toDouble());
     }
 
     /**
@@ -131,9 +131,9 @@ public final class Geometry {
      * @return whether the two poses are equal within the epsilon value 1e-6 and heading radius
      */
     public static boolean epsilonEqualsHeading(@NonNull Pose2d a, @NonNull Pose2d b) {
-        return Mathf.approximatelyEquals(a.position.x, b.position.x)
-                && Mathf.approximatelyEquals(a.position.y, b.position.y)
-                && Mathf.approximatelyEquals(Mathf.radianModulus(a.heading.toDouble() - b.heading.toDouble()), 0);
+        return Mathf.approx(a.position.x, b.position.x)
+                && Mathf.approx(a.position.y, b.position.y)
+                && Mathf.approx(Mathf.wrapDeltaRadians(a.heading.toDouble() - b.heading.toDouble()), 0);
     }
 
     /**
@@ -144,8 +144,8 @@ public final class Geometry {
      * @return whether the two vectors are equal within the epsilon value 1e-6
      */
     public static boolean epsilonEquals(@NonNull Vector2d a, @NonNull Vector2d b) {
-        return Mathf.approximatelyEquals(a.x, b.x)
-                && Mathf.approximatelyEquals(a.y, b.y);
+        return Mathf.approx(a.x, b.x)
+                && Mathf.approx(a.y, b.y);
     }
 
     /**

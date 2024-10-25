@@ -1,6 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
@@ -68,9 +68,9 @@ object StartingConfiguration {
             val xZeroInch = -72.0 * origin.directionMultiplier * alliance.directionMultiplier
             val yZeroInch = -60.0 * alliance.directionMultiplier
             return Pose2d(
-                xZeroInch + horizontalTranslation.to(Inches) * origin.directionMultiplier * alliance.directionMultiplier,
-                yZeroInch - backwardTranslation.to(Inches) * alliance.directionMultiplier,
-                alliance.directionMultiplier * Math.PI / 2.0 + ccwRotation.to(Radians)
+                xZeroInch + (horizontalTranslation to Inches) * origin.directionMultiplier * alliance.directionMultiplier,
+                yZeroInch - (backwardTranslation to Inches) * alliance.directionMultiplier,
+                alliance.directionMultiplier * Math.PI / 2.0 + (ccwRotation to Radians)
             )
         }
 
@@ -138,8 +138,8 @@ object StartingConfiguration {
                 if (isRed) "red" else "#3863ff",
                 Text.upper(lowCaseAlliance.substring(0, 1))
                         + lowCaseAlliance.substring(1),
-                if (horizontalTranslation.unit().equals(FieldTiles)) {
-                    val tileValue = Mathf.round(horizontalTranslation.to(FieldTiles) + 0.5, 1)
+                if (horizontalTranslation.unit() == FieldTiles) {
+                    val tileValue = ((horizontalTranslation to FieldTiles) + 0.5) round 1
                     // Will want to only display 1 digit if we can for brevity
                     "Tile <b>#${if (tileValue % 1.0 == 0.0) tileValue.toInt() else tileValue}</b>"
                 } else {
@@ -152,7 +152,7 @@ object StartingConfiguration {
                     ""
                 },
                 if (ccwRotation.magnitude() != 0.0) {
-                    ", ↺ ${ccwRotation.to(Degrees)}°"
+                    ", ↺ ${ccwRotation to Degrees}°"
                 } else {
                     ""
                 }
@@ -270,7 +270,7 @@ object StartingConfiguration {
          * This translation is positioned in the vertical center of the field tile, starting from the side of the origin.
          */
         fun translate(translationFromOrigin: Measure<Distance>): PrebuiltPosition {
-            val mag = abs(translationFromOrigin.to(Feet))
+            val mag = abs(translationFromOrigin to Feet)
             if (mag > 12.0)
                 throw NumberIsTooLargeException(mag, 12, true)
             horizontalTranslation = translationFromOrigin

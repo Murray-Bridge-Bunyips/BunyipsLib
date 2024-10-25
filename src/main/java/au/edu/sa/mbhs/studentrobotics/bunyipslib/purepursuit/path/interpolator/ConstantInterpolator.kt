@@ -1,6 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path.interpolator
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.wrapRadians
 
 /**
  * Constant heading interpolator used for arbitrary holonomic translations.
@@ -11,7 +11,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
  * @since 6.0.0
  */
 class ConstantInterpolator(val heading: Double) : HeadingInterpolator() {
-    override fun internalGet(s: Double, t: Double): Double = Mathf.normaliseRadians(heading)
+    override fun internalGet(s: Double, t: Double): Double = heading.wrapRadians()
 
     override fun internalDeriv(s: Double, t: Double) = 0.0
 

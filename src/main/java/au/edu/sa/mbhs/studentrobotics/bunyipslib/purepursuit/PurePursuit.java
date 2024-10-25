@@ -273,7 +273,7 @@ public class PurePursuit implements Runnable {
 
         // Wrap angle between -180 to 180 degrees, heading is calculated by projecting the current
         // pose onto the path to get the best target that the path is desiring near this point
-        double headingError = Mathf.inputModulus(lookahead.heading.toDouble() - currentPose.heading.toDouble(), -Math.PI, Math.PI);
+        double headingError = Mathf.wrap(lookahead.heading.toDouble() - currentPose.heading.toDouble(), -Math.PI, Math.PI);
         if (Mathf.isNear(Math.abs(headingError), Math.PI, 0.1))
             headingError = Math.PI;
 
@@ -325,8 +325,8 @@ public class PurePursuit implements Runnable {
         // Note: intersecting paths don't work very nicely
         if (Geometry.distBetween(currentPose.position, currentPath.end().position) < tolerance.in(Inches) &&
                 Mathf.isNear(
-                        Mathf.inputModulus(currentPose.heading.toDouble(), -Math.PI, Math.PI),
-                        Mathf.inputModulus(currentPath.end().heading.toDouble(), -Math.PI, Math.PI),
+                        Mathf.wrap(currentPose.heading.toDouble(), -Math.PI, Math.PI),
+                        Mathf.wrap(currentPath.end().heading.toDouble(), -Math.PI, Math.PI),
                         angleTolerance.in(Radians)
                 )) {
             // Stop motors and release path
@@ -403,7 +403,7 @@ public class PurePursuit implements Runnable {
          */
         @NonNull
         public PathMaker reversed() {
-            startTangent = () -> Mathf.normaliseAngle(Radians.of(startPose.get().heading.toDouble() + Math.PI));
+            startTangent = () -> Mathf.wrap(Radians.of(startPose.get().heading.toDouble() + Math.PI));
             return this;
         }
 
@@ -416,7 +416,7 @@ public class PurePursuit implements Runnable {
          */
         @NonNull
         public PathMaker withStartTangent(double tangent, @NonNull Angle unit) {
-            startTangent = () -> Mathf.normaliseAngle(unit.of(tangent));
+            startTangent = () -> Mathf.wrap(unit.of(tangent));
             return this;
         }
 
