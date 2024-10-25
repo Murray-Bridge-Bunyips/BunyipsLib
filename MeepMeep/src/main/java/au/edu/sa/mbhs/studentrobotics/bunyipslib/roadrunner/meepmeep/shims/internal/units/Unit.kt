@@ -16,21 +16,7 @@ import kotlin.math.abs
  * @since 1.0.0-pre
  */
 open class Unit<U : Unit<U>>(
-    /**
-     * Gets the base unit of measurement that this unit is derived from. If the unit is the base unit,
-     * the unit will be returned.
-     *
-     * ```
-     * Unit baseUnit = new Unit(null, ...);
-     * baseUnit.getBaseUnit(); // returns baseUnit
-     * Unit derivedUnit = new Unit(baseUnit, ...);
-     * derivedUnit.getBaseUnit(); // returns baseUnit
-     * ```
-     *
-     * @return the base unit
-     */
-    @JvmField
-    val baseUnit: U,
+    baseUnit: U?,
     toBaseConverter: UnaryFunction,
     fromBaseConverter: UnaryFunction,
     name: String,
@@ -51,6 +37,22 @@ open class Unit<U : Unit<U>>(
      * @return the conversion function
      */
     val converterFromBase: UnaryFunction = Objects.requireNonNull(fromBaseConverter)
+    /**
+     * Gets the base unit of measurement that this unit is derived from. If the unit is the base unit,
+     * the unit will be returned.
+     *
+     * ```
+     * Unit baseUnit = new Unit(null, ...);
+     * baseUnit.getBaseUnit(); // returns baseUnit
+     * Unit derivedUnit = new Unit(baseUnit, ...);
+     * derivedUnit.getBaseUnit(); // returns baseUnit
+     * ```
+     *
+     * @return the base unit
+     */
+    @Suppress("LeakingThis", "UNCHECKED_CAST")
+    @JvmField
+    val baseUnit: U = baseUnit ?: this as U
 
     private val name: String = Objects.requireNonNull(name)
     private val symbol: String = Objects.requireNonNull(symbol)
@@ -67,7 +69,7 @@ open class Unit<U : Unit<U>>(
      * @param name               the name of the unit. This should be a singular noun (so "Meter", not "Meters")
      * @param symbol             the short symbol for the unit, such as "m" for meters or "lb." for pounds
      */
-    protected constructor(baseUnit: U, baseUnitEquivalent: Double, name: String, symbol: String) : this(
+    protected constructor(baseUnit: U?, baseUnitEquivalent: Double, name: String, symbol: String) : this(
         baseUnit,
         { x: Double -> x * baseUnitEquivalent },
         { x: Double -> x / baseUnitEquivalent }, name, symbol
