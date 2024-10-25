@@ -41,6 +41,17 @@ public class InterpolatedLookupTable {
     }
 
     /**
+     * Adds a control point to the lookup table.
+     *
+     * @param input  x
+     * @param output y
+     */
+    public void set(double input, double output) {
+        mX.add(input);
+        mY.add(output);
+    }
+
+    /**
      * Creates a monotone cubic spline from a given set of control points.
      * <p>
      * The spline is guaranteed to pass through each control point exactly. Moreover, assuming the control points are
@@ -48,7 +59,6 @@ public class InterpolatedLookupTable {
      *
      * @throws IllegalArgumentException if the X or Y arrays are null, have different lengths or have fewer than 2 values.
      */
-    //public static LUTWithInterpolator createLUT(List<Double> x, List<Double> y) {
     public void createLUT() {
         List<Double> x = mX;
         List<Double> y = mY;

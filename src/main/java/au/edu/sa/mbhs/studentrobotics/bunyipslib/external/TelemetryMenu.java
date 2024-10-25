@@ -174,13 +174,8 @@ public class TelemetryMenu {
         aPrev = a;
         bPrev = b;
 
-        // Add it to telemetry
-        telemetry.addLine(buildMenu(children));
-    }
-
-    @NonNull
-    private String buildMenu(ArrayList<Element> children) {
         // Start building the text display.
+        //noinspection ExtractMethodRecommender
         StringBuilder builder = new StringBuilder();
         // First, we add the static directions for gamepad operation
         builder.append("<font color='#119af5' face=monospace>");
@@ -226,7 +221,8 @@ public class TelemetryMenu {
         builder.append("</font>");
 
         // Build the string!!!! :nerd:
-        return builder.toString();
+        // and add it to telemetry
+        telemetry.addLine(builder.toString());
     }
 
     /**

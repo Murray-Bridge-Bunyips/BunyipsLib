@@ -14,8 +14,9 @@ import java.util.TreeMap;
  * @since 1.0.0-pre
  */
 public class LookupTable<T extends Number, R> extends TreeMap<T, R> {
-
     /**
+     * Adds a key-value pair to the lookup table.
+     *
      * @param key the input key
      * @param out the output value
      */
@@ -29,7 +30,7 @@ public class LookupTable<T extends Number, R> extends TreeMap<T, R> {
      * @param key the input key
      * @return the closest value to the input key
      */
-    public R getClosest(T key) {
+    public R get(T key) {
         Map.Entry<T, R> ceil = ceilingEntry(key);
         Map.Entry<T, R> floor = floorEntry(key);
 
@@ -46,5 +47,4 @@ public class LookupTable<T extends Number, R> extends TreeMap<T, R> {
             return null;
         }
     }
-
 }
