@@ -157,7 +157,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
      * @param <U2>  the type of the other measure to multiply by
      * @param other the unit to multiply by
      * @return the resulting measure
-    </U2> */
+     */
     operator fun <U2 : Unit<U2>> div(other: Measure<U2>): Measure<*> {
         if (unit().baseUnit == other.unit().baseUnit) {
             return Units.Value.ofBaseUnits(baseUnitMagnitude() / other.baseUnitMagnitude())
@@ -296,14 +296,16 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
      * @return true if this unit is near the other measure, otherwise false
      */
     infix fun Measure<*>.isNear(varianceThreshold: Double): Boolean {
-        if (!unit().baseUnit.equivalent(this.unit().baseUnit)) {
+        @Suppress("LABEL_RESOLVE_WILL_CHANGE")
+        if (!this@Measure.unit().baseUnit.equivalent(this.unit().baseUnit)) {
             return false // Disjoint units, not compatible
         }
 
         // Absolute so negative inputs are calculated correctly
         val tolerance = abs(this.baseUnitMagnitude() * varianceThreshold)
 
-        return abs(baseUnitMagnitude() - this.baseUnitMagnitude()) <= tolerance
+        @Suppress("LABEL_RESOLVE_WILL_CHANGE")
+        return abs(this@Measure.baseUnitMagnitude() - this.baseUnitMagnitude()) <= tolerance
     }
 
     /**
@@ -320,7 +322,8 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
      * @return true if this unit is near the other measure, otherwise false.
      */
     infix fun Measure<U>.isNear(tolerance: Measure<U>): Boolean {
-        return abs(baseUnitMagnitude() - this.baseUnitMagnitude()) <= abs(tolerance.baseUnitMagnitude())
+        @Suppress("LABEL_RESOLVE_WILL_CHANGE")
+        return abs(this@Measure.baseUnitMagnitude() - this.baseUnitMagnitude()) <= abs(tolerance.baseUnitMagnitude())
     }
 
     /**
@@ -430,6 +433,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
          * @param measures the set of measures to compare
          * @return the measure with the greatest positive magnitude, or null if no measures were provided
          */
+        @JvmStatic
         @SafeVarargs
         fun <U : Unit<U>> max(vararg measures: Measure<U>): Measure<U>? {
             if (measures.isEmpty()) {
@@ -453,6 +457,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
          * @param measures the set of measures to compare
          * @return the measure with the greatest negative magnitude
          */
+        @JvmStatic
         @SafeVarargs
         fun <U : Unit<U>> min(vararg measures: Measure<U>): Measure<U>? {
             if (measures.isEmpty()) {

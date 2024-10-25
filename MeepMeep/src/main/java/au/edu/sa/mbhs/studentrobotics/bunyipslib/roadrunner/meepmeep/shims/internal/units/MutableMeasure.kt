@@ -246,6 +246,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
          * @param measure the measure to create a mutable copy of
          * @return a new mutable measure with an initial state equal to the given measure
          */
+        @JvmStatic
         fun <U : Unit<U>> mutable(measure: Measure<U>): MutableMeasure<U> {
             return MutableMeasure(measure.magnitude(), measure.baseUnitMagnitude(), measure.unit())
         }
@@ -257,6 +258,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
          * @param unit the unit of measure
          * @return a new mutable measure
          */
+        @JvmStatic
         fun <U : Unit<U>> zero(unit: U): MutableMeasure<U> {
             return mutable(unit.zero())
         }
@@ -270,6 +272,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
          * @param unit              the unit of measure
          * @return a new mutable measure
          */
+        @JvmStatic
         fun <U : Unit<U>> ofBaseUnits(
             baseUnitMagnitude: Double, unit: U
         ): MutableMeasure<U> {
@@ -284,6 +287,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
          * @param unit              the unit of measure
          * @return a new mutable measure
          */
+        @JvmStatic
         fun <U : Unit<U>> ofRelativeUnits(
             relativeMagnitude: Double, unit: U
         ): MutableMeasure<U> {
