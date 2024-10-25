@@ -36,7 +36,7 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
         super(
                 unit.isBaseUnit() && period.isBaseUnit()
                         ? null
-                        : combine(unit.getBaseUnit(), period.getBaseUnit()),
+                        : combine(unit.baseUnit, period.baseUnit),
                 unit.toBaseUnits(1) / period.toBaseUnits(1),
                 name,
                 symbol);

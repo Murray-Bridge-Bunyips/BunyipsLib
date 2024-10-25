@@ -42,7 +42,7 @@ public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
         super(
                 numerator.isBaseUnit() && denominator.isBaseUnit()
                         ? null
-                        : combine(numerator.getBaseUnit(), denominator.getBaseUnit()),
+                        : combine(numerator.baseUnit, denominator.baseUnit),
                 numerator.toBaseUnits(1) / denominator.toBaseUnits(1),
                 numerator.name() + " per " + denominator.name(),
                 numerator.symbol() + "/" + denominator.symbol());
@@ -124,17 +124,17 @@ public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object other) {
+        if (this == other) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (other == null || getClass() != other.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
+        if (!super.equals(other)) {
             return false;
         }
-        Per<?, ?> per = (Per<?, ?>) o;
+        Per<?, ?> per = (Per<?, ?>) other;
         return Objects.equals(numerator, per.numerator)
                 && Objects.equals(denominator, per.denominator);
     }

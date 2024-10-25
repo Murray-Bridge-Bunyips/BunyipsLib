@@ -5,6 +5,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
 
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Objects;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.collections.LongToObjectHashMap;
@@ -33,7 +35,7 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
      */
     protected Mult(A a, B b) {
         super(
-                a.isBaseUnit() && b.isBaseUnit() ? null : combine(a.getBaseUnit(), b.getBaseUnit()),
+                a.isBaseUnit() && b.isBaseUnit() ? null : combine(a.baseUnit, b.baseUnit),
                 a.toBaseUnits(1) * b.toBaseUnits(1),
                 a.name() + "-" + b.name(),
                 a.symbol() + "*" + b.symbol());
@@ -99,6 +101,7 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
     }
 
     @Override
+    @NotNull
     public String toString() {
         return "(" + unitA.toString() + " * " + unitB.toString() + ")";
     }

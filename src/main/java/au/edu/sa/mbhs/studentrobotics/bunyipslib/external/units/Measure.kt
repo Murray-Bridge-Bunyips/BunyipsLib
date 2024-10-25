@@ -206,7 +206,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
      * @param denominator the denominator unit being divided by
      * @return the relational measure
      */
-    infix fun <U2 : Unit<U2>?> per(denominator: U2): Measure<Per<U, U2>> {
+    infix fun <U2 : Unit<U2>> per(denominator: U2): Measure<Per<U, U2>> {
         val newUnit = unit().per(denominator)
         return newUnit.of(magnitude())
     }
@@ -429,7 +429,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
          * @param <U>      the type of the units of the measures
          * @param measures the set of measures to compare
          * @return the measure with the greatest positive magnitude, or null if no measures were provided
-        </U> */
+         */
         @SafeVarargs
         fun <U : Unit<U>> max(vararg measures: Measure<U>): Measure<U>? {
             if (measures.isEmpty()) {
@@ -452,7 +452,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
          * @param <U>      the type of the units of the measures
          * @param measures the set of measures to compare
          * @return the measure with the greatest negative magnitude
-        </U> */
+         */
         @SafeVarargs
         fun <U : Unit<U>> min(vararg measures: Measure<U>): Measure<U>? {
             if (measures.isEmpty()) {

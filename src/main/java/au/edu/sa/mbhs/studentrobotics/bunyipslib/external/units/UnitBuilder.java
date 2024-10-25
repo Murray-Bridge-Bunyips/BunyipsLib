@@ -209,7 +209,7 @@ public final class UnitBuilder<U extends Unit<U>> {
         Objects.requireNonNull(symbolVal, "new unit symbol was not set");
 
         return constructor.create(
-                base.getBaseUnit(),
+                base.baseUnit,
                 toBaseVal.pipeTo(base.getConverterToBase()),
                 base.getConverterFromBase().pipeTo(fromBaseVal),
                 nameVal,

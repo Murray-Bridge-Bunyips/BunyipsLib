@@ -24,7 +24,7 @@ import java.util.Objects
  *
  * @param <U> the type of the unit of measure
  * @since 1.0.0-pre
-</U> */
+ */
 @Suppress("FunctionName")
 class MutableMeasure<U : Unit<U>> private constructor(
     private var magnitudeVal: Double,
@@ -224,14 +224,14 @@ class MutableMeasure<U : Unit<U>> private constructor(
         return toShortString()
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (o !is Measure<*>) {
+        if (other !is Measure<*>) {
             return false
         }
-        return unitVal == o.unit() && isEquivalent(o)
+        return unitVal == other.unit() && isEquivalent(other)
     }
 
     override fun hashCode(): Int {
@@ -245,7 +245,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
          * @param <U>     the type of the units of measure
          * @param measure the measure to create a mutable copy of
          * @return a new mutable measure with an initial state equal to the given measure
-        </U> */
+         */
         fun <U : Unit<U>> mutable(measure: Measure<U>): MutableMeasure<U> {
             return MutableMeasure(measure.magnitude(), measure.baseUnitMagnitude(), measure.unit())
         }
@@ -256,7 +256,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
          * @param <U>  the type of the units of measure
          * @param unit the unit of measure
          * @return a new mutable measure
-        </U> */
+         */
         fun <U : Unit<U>> zero(unit: U): MutableMeasure<U> {
             return mutable(unit.zero())
         }
@@ -269,7 +269,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
          * @param baseUnitMagnitude the magnitude of the measure, in terms of the base unit of measure
          * @param unit              the unit of measure
          * @return a new mutable measure
-        </U> */
+         */
         fun <U : Unit<U>> ofBaseUnits(
             baseUnitMagnitude: Double, unit: U
         ): MutableMeasure<U> {
@@ -283,7 +283,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
          * @param relativeMagnitude the magnitude of the measure
          * @param unit              the unit of measure
          * @return a new mutable measure
-        </U> */
+         */
         fun <U : Unit<U>> ofRelativeUnits(
             relativeMagnitude: Double, unit: U
         ): MutableMeasure<U> {

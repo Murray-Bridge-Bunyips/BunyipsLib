@@ -36,11 +36,11 @@ class BunyipsLibBotBuilder(private val meepMeep: MeepMeep) {
     }
 
     fun setWidth(width: Double, unit: Distance) = apply {
-        this.width = unit.of(width).`in`(Inches)
+        this.width = unit.of(width) to Inches
     }
 
     fun setHeight(height: Double, unit: Distance) = apply {
-        this.height = unit.of(height).`in`(Inches)
+        this.height = unit.of(height) to Inches
     }
 
     fun setStartPose(pose: Pose2d) = apply {
@@ -62,23 +62,23 @@ class BunyipsLibBotBuilder(private val meepMeep: MeepMeep) {
     }
 
     fun setMaxVel(maxVel: Double, unit: Velocity<Distance>) = apply {
-        constraints = constraints.copy(maxVel = unit.of(maxVel).`in`(InchesPerSecond))
+        constraints = constraints.copy(maxVel = unit.of(maxVel) to InchesPerSecond)
     }
 
     fun setMaxAccel(maxAccel: Double, unit: Velocity<Velocity<Distance>>) = apply {
-        constraints = constraints.copy(maxAccel = unit.of(maxAccel).`in`(InchesPerSecondPerSecond))
+        constraints = constraints.copy(maxAccel = unit.of(maxAccel) to InchesPerSecondPerSecond)
     }
 
     fun setMaxAngVel(maxAngVel: Double, unit: Velocity<Angle>) = apply {
-        constraints = constraints.copy(maxAngVel = unit.of(maxAngVel).`in`(RadiansPerSecond))
+        constraints = constraints.copy(maxAngVel = unit.of(maxAngVel) to RadiansPerSecond)
     }
 
     fun setMaxAngAccel(maxAngAccel: Double, unit: Velocity<Velocity<Angle>>) = apply {
-        constraints = constraints.copy(maxAngAccel = unit.of(maxAngAccel).`in`(RadiansPerSecondPerSecond))
+        constraints = constraints.copy(maxAngAccel = unit.of(maxAngAccel) to RadiansPerSecondPerSecond)
     }
 
     fun setTrackWidth(trackWidth: Double, unit: Distance) = apply {
-        constraints = constraints.copy(trackWidth = unit.of(trackWidth).`in`(Inches))
+        constraints = constraints.copy(trackWidth = unit.of(trackWidth) to Inches)
     }
 
     fun setOpacity(opacity: Double) = apply {

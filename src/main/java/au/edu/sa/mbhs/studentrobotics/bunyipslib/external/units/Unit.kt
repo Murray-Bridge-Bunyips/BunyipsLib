@@ -1,97 +1,87 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units
 
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
-
-import android.annotation.SuppressLint;
-
-import androidx.annotation.NonNull;
-
-import java.util.Objects;
+import android.annotation.SuppressLint
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.ImmutableMeasure.Companion.ofBaseUnits
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.ImmutableMeasure.Companion.ofRelativeUnits
+import java.util.Objects
+import kotlin.math.abs
 
 /**
  * Unit of measurement that defines a quantity, such as grams, meters, or seconds.
  *
- * <p>This is the base class for units. Actual units (such as {@link Units#Grams} and {@link
- * Units#Meters}) can be found in the {@link Units} class.
+ * This is the base class for units. Actual units (such as [Units.Grams] and [ ][Units.Meters]) can be found in the [Units] class.
  *
- * @param <U> the self type, e.g. {@code class SomeUnit extends Unit<SomeUnit>}
+ * @param <U> the self type, e.g. `class SomeUnit extends Unit<SomeUnit>`
  * @since 1.0.0-pre
  */
-public class Unit<U extends Unit<U>> {
-    private final UnaryFunction toBaseConverter;
-    private final UnaryFunction fromBaseConverter;
-
-    private final U baseUnit;
-    private final String name;
-    private final String symbol;
-    private Measure<U> zero;
-    private Measure<U> one;
+open class Unit<U : Unit<U>>(
+    /**
+     * Gets the base unit of measurement that this unit is derived from. If the unit is the base unit,
+     * the unit will be returned.
+     *
+     * ```
+     * Unit baseUnit = new Unit(null, ...);
+     * baseUnit.getBaseUnit(); // returns baseUnit
+     * Unit derivedUnit = new Unit(baseUnit, ...);
+     * derivedUnit.getBaseUnit(); // returns baseUnit
+     * ```
+     *
+     * @return the base unit
+     */
+    @JvmField
+    val baseUnit: U,
+    toBaseConverter: UnaryFunction,
+    fromBaseConverter: UnaryFunction,
+    name: String,
+    @SuppressLint("LambdaLast") symbol: String
+) {
+    /**
+     * Gets the conversion function used to convert values to base unit terms. This generally
+     * shouldn't need to be used directly; prefer [toBaseUnits] instead.
+     *
+     * @return the conversion function
+     */
+    val converterToBase: UnaryFunction = Objects.requireNonNull(toBaseConverter)
 
     /**
-     * Creates a new unit defined by its relationship to some base unit.
+     * Gets the conversion function used to convert values to terms of this unit. This generally
+     * shouldn't need to be used directly; prefer [fromBaseUnits] instead.
      *
-     * @param baseUnit          the base unit, e.g. Meters for distances. Set this to {@code null} if the unit
-     *                          being constructed is its own base unit
-     * @param toBaseConverter   a function for converting units of this type to the base unit
-     * @param fromBaseConverter a function for converting units of the base unit to this one
-     * @param name              the name of the unit. This should be a singular noun (so "Meter", not "Meters")
-     * @param symbol            the short symbol for the unit, such as "m" for meters or "lb." for pounds
+     * @return the conversion function
      */
-    @SuppressWarnings("unchecked")
-    protected Unit(
-            U baseUnit,
-            @NonNull UnaryFunction toBaseConverter,
-            @NonNull UnaryFunction fromBaseConverter,
-            @NonNull String name,
-            @SuppressLint("LambdaLast") @NonNull String symbol) {
-        this.baseUnit = baseUnit == null ? (U) this : baseUnit;
-        this.toBaseConverter = Objects.requireNonNull(toBaseConverter);
-        this.fromBaseConverter = Objects.requireNonNull(fromBaseConverter);
-        this.name = Objects.requireNonNull(name);
-        this.symbol = Objects.requireNonNull(symbol);
-    }
+    val converterFromBase: UnaryFunction = Objects.requireNonNull(fromBaseConverter)
+
+    private val name: String = Objects.requireNonNull(name)
+    private val symbol: String = Objects.requireNonNull(symbol)
+    private var zero: Measure<U>? = null
+    private var one: Measure<U>? = null
 
     /**
      * Creates a new unit with the given name and multiplier to the base unit.
      *
      * @param baseUnit           the base unit, e.g. Meters for distances
      * @param baseUnitEquivalent the multiplier to convert this unit to the base unit of this type.
-     *                           For example, meters has a multiplier of 1, mm has a multiplier of 1e3, and km has
-     *                           multiplier of 1e-3.
+     * For example, meters has a multiplier of 1, mm has a multiplier of 1e3, and km has
+     * multiplier of 1e-3.
      * @param name               the name of the unit. This should be a singular noun (so "Meter", not "Meters")
      * @param symbol             the short symbol for the unit, such as "m" for meters or "lb." for pounds
      */
-    protected Unit(U baseUnit, double baseUnitEquivalent, @NonNull String name, @NonNull String symbol) {
-        this(baseUnit, x -> x * baseUnitEquivalent, x -> x / baseUnitEquivalent, name, symbol);
-    }
-
-    /**
-     * Gets the base unit of measurement that this unit is derived from. If the unit is the base unit,
-     * the unit will be returned.
-     *
-     * <pre>{@code
-     *   Unit baseUnit = new Unit(null, ...);
-     *   baseUnit.getBaseUnit(); // returns baseUnit
-     *
-     *   Unit derivedUnit = new Unit(baseUnit, ...);
-     *   derivedUnit.getBaseUnit(); // returns baseUnit
-     * }</pre>
-     *
-     * @return the base unit
-     */
-    public U getBaseUnit() {
-        return baseUnit;
-    }
+    protected constructor(baseUnit: U, baseUnitEquivalent: Double, name: String, symbol: String) : this(
+        baseUnit,
+        { x: Double -> x * baseUnitEquivalent },
+        { x: Double -> x / baseUnitEquivalent }, name, symbol
+    )
 
     /**
      * Checks if this unit is the base unit for its own system of measurement.
      *
      * @return true if this is the base unit, false if not
      */
-    public boolean isBaseUnit() {
-        return equals(baseUnit);
+    fun isBaseUnit(): Boolean {
+        return equals(baseUnit)
     }
 
     /**
@@ -100,8 +90,8 @@ public class Unit<U extends Unit<U>> {
      * @param valueInBaseUnits the value in base units to convert
      * @return the equivalent value in terms of this unit
      */
-    public double fromBaseUnits(double valueInBaseUnits) {
-        return fromBaseConverter.apply(valueInBaseUnits);
+    fun fromBaseUnits(valueInBaseUnits: Double): Double {
+        return converterFromBase.apply(valueInBaseUnits)
     }
 
     /**
@@ -110,71 +100,63 @@ public class Unit<U extends Unit<U>> {
      * @param valueInNativeUnits the value in terms of this unit to convert
      * @return the equivalent value in terms of the base unit
      */
-    public double toBaseUnits(double valueInNativeUnits) {
-        return toBaseConverter.apply(valueInNativeUnits);
+    fun toBaseUnits(valueInNativeUnits: Double): Double {
+        return converterToBase.apply(valueInNativeUnits)
     }
 
     /**
      * Converts a magnitude in terms of another unit of the same dimension to a magnitude in terms of
      * this unit.
      *
-     * <pre>
-     *   Inches.convertFrom(12, Feet) // 144.0
-     *   Kilograms.convertFrom(2.2, Pounds) // 0.9979024
-     * </pre>
+     * ```
+     * Inches.convertFrom(12, Feet) // 144.0
+     * Kilograms.convertFrom(2.2, Pounds) // 0.9979024
+     * ```
      *
      * @param magnitude a magnitude measured in another unit
      * @param otherUnit the unit to convert the magnitude to
      * @return the corresponding value in terms of this unit.
      */
-    public double convertFrom(double magnitude, @NonNull Unit<U> otherUnit) {
+    fun convertFrom(magnitude: Double, otherUnit: Unit<U>): Double {
         if (equivalent(otherUnit)) {
             // same unit, don't bother converting
-            return magnitude;
+            return magnitude
         }
-        return fromBaseUnits(otherUnit.toBaseUnits(magnitude));
-    }
-
-    /**
-     * Gets the conversion function used to convert values to base unit terms. This generally
-     * shouldn't need to be used directly; prefer {@link #toBaseUnits(double)} instead.
-     *
-     * @return the conversion function
-     */
-    @NonNull
-    public UnaryFunction getConverterToBase() {
-        return toBaseConverter;
-    }
-
-    /**
-     * Gets the conversion function used to convert values to terms of this unit. This generally
-     * shouldn't need to be used directly; prefer {@link #fromBaseUnits(double)} instead.
-     *
-     * @return the conversion function
-     */
-    @NonNull
-    public UnaryFunction getConverterFromBase() {
-        return fromBaseConverter;
+        return fromBaseUnits(otherUnit.toBaseUnits(magnitude))
     }
 
     /**
      * Creates a new measure of this unit with the given value. The resulting measure is
-     * <i>immutable</i> and cannot have its value modified.
+     * *immutable* and cannot have its value modified.
      *
      * @param magnitude the magnitude of the measure to create
      * @return the measure
      */
-    @NonNull
-    public Measure<U> of(double magnitude) {
-        if (magnitude == 0) {
+    infix fun of(magnitude: Double): Measure<U> {
+        if (magnitude == 0.0) {
             // reuse static object
-            return zero();
+            return zero()
         }
-        if (magnitude == 1) {
+        if (magnitude == 1.0) {
             // reuse static object
-            return one();
+            return one()
         }
-        return ImmutableMeasure.Companion.ofRelativeUnits(magnitude, this);
+        return ofRelativeUnits(
+            magnitude,
+            this
+        )
+    }
+
+    companion object {
+        /**
+         * Creates a new measure of this unit with the given value. The resulting measure is
+         * *immutable* and cannot have its value modified.
+         *
+         * @return the measure object as associated with the given number
+         */
+        infix fun <U : Unit<U>> Number.of(unit: Unit<U>): Measure<U> {
+            return unit.of(this.toDouble())
+        }
     }
 
     /**
@@ -184,9 +166,11 @@ public class Unit<U extends Unit<U>> {
      * @param baseUnitMagnitude the magnitude of the measure in terms of the base unit
      * @return the measure
      */
-    @NonNull
-    public Measure<U> ofBaseUnits(double baseUnitMagnitude) {
-        return ImmutableMeasure.Companion.ofBaseUnits(baseUnitMagnitude, this);
+    infix fun ofBaseUnits(baseUnitMagnitude: Double): Measure<U> {
+        return ofBaseUnits(
+            baseUnitMagnitude,
+            this
+        )
     }
 
     /**
@@ -194,13 +178,15 @@ public class Unit<U extends Unit<U>> {
      *
      * @return the zero-valued measure
      */
-    @NonNull
-    public Measure<U> zero() {
+    fun zero(): Measure<U> {
         // lazy init because 'this' is null in object initialization
         if (zero == null) {
-            zero = ImmutableMeasure.Companion.ofRelativeUnits(0, this);
+            zero = ofRelativeUnits(
+                0.0,
+                this
+            )
         }
-        return zero;
+        return zero as Measure<U>
     }
 
     /**
@@ -208,109 +194,105 @@ public class Unit<U extends Unit<U>> {
      *
      * @return the 1-valued measure
      */
-    @NonNull
-    public Measure<U> one() {
+    fun one(): Measure<U> {
         // lazy init because 'this' is null in object initialization
         if (one == null) {
-            one = ImmutableMeasure.Companion.ofRelativeUnits(1, this);
+            one = ofRelativeUnits(
+                1.0,
+                this
+            )
         }
-        return one;
+        return one as Measure<U>
     }
 
     /**
      * Creates a velocity unit derived from this one. Can be chained to denote velocity, acceleration,
      * jerk, etc.
      *
-     * <pre>
-     *   Meters.per(Second) // linear velocity
-     *   Kilograms.per(Second) // mass flow
-     *   Feet.per(Second).per(Second).of(32) // roughly 1G of acceleration
-     * </pre>
+     * ```
+     * Meters.per(Second) // linear velocity
+     * Kilograms.per(Second) // mass flow
+     * Feet.per(Second).per(Second).of(32) // roughly 1G of acceleration
+     * ```
      *
      * @param period the time period of the velocity, such as seconds or milliseconds
      * @return a velocity unit corresponding to the rate of change of this unit over time
      */
-    @NonNull
-    public Velocity<U> per(@NonNull Time period) {
-        return Velocity.combine(this, period);
+    infix fun per(period: Time): Velocity<U> {
+        return Velocity.combine(this, period)
     }
 
     /**
      * Takes this unit and creates a new proportional unit where this unit is the numerator and the
      * given denominator is the denominator.
      *
-     * <pre>
-     *   Volts.per(Meter) // V/m
-     * </pre>
+     * ```
+     * Volts.per(Meter) // V/m
+     * ```
      *
      * @param <D>         the type of the denominator units
      * @param denominator the denominator of the proportional unit
      * @return a combined proportional unit
      */
-    @NonNull
-    @SuppressWarnings("unchecked")
-    public <D extends Unit<D>> Per<U, D> per(D denominator) {
-        return Per.combine((U) this, denominator);
+    infix fun <D : Unit<D>> per(denominator: D): Per<U, D> {
+        @Suppress("UNCHECKED_CAST")
+        return Per.combine(this as U, denominator)
     }
 
     /**
      * Takes this unit and creates a new combinatory unit equivalent to this unit multiplied by
      * another.
      *
-     * <pre>
-     *   Volts.mult(Meter) // V*m
-     * </pre>
+     * ```
+     * Volts.mult(Meter) // V*m
+     * ```
      *
      * @param <U2>  the type of the unit to multiply by
      * @param other the unit to multiply by
      * @return a combined unit equivalent to this unit multiplied by the other
-     */
-    @NonNull
-    @SuppressWarnings("unchecked")
-    public <U2 extends Unit<U2>> Mult<U, U2> mult(U2 other) {
-        return Mult.combine((U) this, other);
+    </U2> */
+    infix fun <U2 : Unit<U2>> mult(other: U2): Mult<U, U2> {
+        @Suppress("UNCHECKED_CAST")
+        return Mult.combine(this as U, other)
     }
 
     /**
      * Checks if this unit is equivalent to another one. Equivalence is determined by both units
      * having the same base type and treat the same base unit magnitude as the same magnitude in their
-     * own units, to within {@link Measure#EQUIVALENCE_THRESHOLD}.
+     * own units, to within [Measure.EQUIVALENCE_THRESHOLD].
      *
      * @param other the unit to compare to.
      * @return true if both units are equivalent, false if not
      */
-    public boolean equivalent(@NonNull Unit<?> other) {
-        if (!getClass().equals(other.getClass())) {
+    infix fun equivalent(other: Unit<*>): Boolean {
+        if (javaClass != other.javaClass) {
             // different unit types, not compatible
-            return false;
+            return false
         }
 
-        double arbitrary = 16_777.214; // 2^24 / 1e3
+        val arbitrary = 16777.214 // 2^24 / 1e3
 
-        return Math.abs(
-                fromBaseConverter.apply(arbitrary)
-                        - other.fromBaseConverter.apply(arbitrary))
-                <= Measure.EQUIVALENCE_THRESHOLD
-                && Math.abs(
-                toBaseConverter.apply(arbitrary) - other.toBaseConverter.apply(arbitrary))
-                <= Measure.EQUIVALENCE_THRESHOLD;
+        return abs(
+            converterFromBase.apply(arbitrary)
+                    - other.converterFromBase.apply(arbitrary)
+        ) <= Measure.EQUIVALENCE_THRESHOLD
+                && abs(
+            converterToBase.apply(arbitrary) - other.converterToBase.apply(arbitrary)
+        ) <= Measure.EQUIVALENCE_THRESHOLD
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+    override operator fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
         }
-        if (!(o instanceof Unit)) {
-            return false;
+        if (other !is Unit<*>) {
+            return false
         }
-        Unit<?> that = (Unit<?>) o;
-        return name.equals(that.name) && symbol.equals(that.symbol) && equivalent(that);
+        return name == other.name && symbol == other.symbol && equivalent(other)
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(toBaseConverter, fromBaseConverter, name, symbol);
+    override fun hashCode(): Int {
+        return Objects.hash(converterToBase, converterFromBase, name, symbol)
     }
 
     /**
@@ -318,9 +300,8 @@ public class Unit<U extends Unit<U>> {
      *
      * @return the unit's name
      */
-    @NonNull
-    public String name() {
-        return name;
+    fun name(): String {
+        return name
     }
 
     /**
@@ -328,14 +309,11 @@ public class Unit<U extends Unit<U>> {
      *
      * @return the unit's symbol
      */
-    @NonNull
-    public String symbol() {
-        return symbol;
+    fun symbol(): String {
+        return symbol
     }
 
-    @NonNull
-    @Override
-    public String toString() {
-        return name();
+    override fun toString(): String {
+        return name()
     }
 }

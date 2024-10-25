@@ -34,7 +34,7 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
      */
     protected Mult(A a, B b) {
         super(
-                a.isBaseUnit() && b.isBaseUnit() ? null : combine(a.getBaseUnit(), b.getBaseUnit()),
+                a.isBaseUnit() && b.isBaseUnit() ? null : combine(a.baseUnit, b.baseUnit),
                 a.toBaseUnits(1) * b.toBaseUnits(1),
                 a.name() + "-" + b.name(),
                 a.symbol() + "*" + b.symbol());
@@ -107,17 +107,17 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object other) {
+        if (this == other) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (other == null || getClass() != other.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
+        if (!super.equals(other)) {
             return false;
         }
-        Mult<?, ?> mult = (Mult<?, ?>) o;
+        Mult<?, ?> mult = (Mult<?, ?>) other;
         return Objects.equals(unitA, mult.unitA) && Objects.equals(unitB, mult.unitB);
     }
 

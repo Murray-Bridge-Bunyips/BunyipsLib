@@ -38,7 +38,7 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
         super(
                 unit.isBaseUnit() && period.isBaseUnit()
                         ? null
-                        : combine(unit.getBaseUnit(), period.getBaseUnit()),
+                        : combine(unit.baseUnit, period.baseUnit),
                 unit.toBaseUnits(1) / period.toBaseUnits(1),
                 name,
                 symbol);
@@ -174,17 +174,17 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object other) {
+        if (this == other) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (other == null || getClass() != other.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
+        if (!super.equals(other)) {
             return false;
         }
-        Velocity<?> velocity = (Velocity<?>) o;
+        Velocity<?> velocity = (Velocity<?>) other;
         return unit.equals(velocity.unit) && period.equals(velocity.period);
     }
 
