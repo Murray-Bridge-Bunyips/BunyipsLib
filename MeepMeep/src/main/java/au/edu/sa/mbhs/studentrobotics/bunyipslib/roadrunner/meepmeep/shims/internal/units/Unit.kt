@@ -37,6 +37,7 @@ open class Unit<U : Unit<U>>(
      * @return the conversion function
      */
     val converterFromBase: UnaryFunction = Objects.requireNonNull(fromBaseConverter)
+
     /**
      * Gets the base unit of measurement that this unit is derived from. If the unit is the base unit,
      * the unit will be returned.

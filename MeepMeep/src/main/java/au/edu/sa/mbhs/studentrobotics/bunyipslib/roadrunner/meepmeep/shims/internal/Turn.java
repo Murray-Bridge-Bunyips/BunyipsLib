@@ -14,19 +14,21 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-@SuppressWarnings("UnknownNullness")
 public final class Turn {
     /**
      * Specified maximum angular velocity in radians per second.
      */
+
     public Double maxAngVelRadsPerSec;
     /**
      * Specified minimum angular acceleration in radians per second squared.
      */
+
     public Double minAngAccelRadsPerSecSquared;
     /**
      * Specified maximum angular acceleration in radians per second squared.
      */
+
     public Double maxAngAccelRadsPerSecSquared;
 
     private Turn(Double maxAngVelRadsPerSec, Double minAngAccelRadsPerSecSquared, Double maxAngAccelRadsPerSecSquared) {
@@ -42,7 +44,8 @@ public final class Turn {
      * @param unit      The unit of the maximum angular velocity.
      * @return The new Turn object.
      */
-    public static Turn ofMaxAngVel(double maxAngVel, Velocity<Angle> unit) {
+
+    public static Turn ofMaxVel(double maxAngVel, Velocity<Angle> unit) {
         return new Turn(unit.of(maxAngVel).in(RadiansPerSecond), null, null);
     }
 
@@ -53,7 +56,8 @@ public final class Turn {
      * @param unit        The unit of the minimum angular acceleration.
      * @return The new Turn object.
      */
-    public static Turn ofMinAngAccel(double minAngAccel, Velocity<Velocity<Angle>> unit) {
+
+    public static Turn ofMinAccel(double minAngAccel, Velocity<Velocity<Angle>> unit) {
         return new Turn(null, unit.of(minAngAccel).in(RadiansPerSecondPerSecond), null);
     }
 
@@ -64,7 +68,8 @@ public final class Turn {
      * @param unit        The unit of the maximum angular acceleration.
      * @return The new Turn object.
      */
-    public static Turn ofMaxAngAccel(double maxAngAccel, Velocity<Velocity<Angle>> unit) {
+
+    public static Turn ofMaxAccel(double maxAngAccel, Velocity<Velocity<Angle>> unit) {
         return new Turn(null, null, unit.of(maxAngAccel).in(RadiansPerSecondPerSecond));
     }
 
@@ -75,7 +80,8 @@ public final class Turn {
      * @param unit      The unit of the maximum angular velocity.
      * @return The new Turn object.
      */
-    public Turn andMaxAngVel(double maxAngVel, Velocity<Angle> unit) {
+
+    public Turn andMaxVel(double maxAngVel, Velocity<Angle> unit) {
         return new Turn(unit.of(maxAngVel).in(RadiansPerSecond), minAngAccelRadsPerSecSquared, maxAngAccelRadsPerSecSquared);
     }
 
@@ -86,7 +92,8 @@ public final class Turn {
      * @param unit        The unit of the minimum angular acceleration.
      * @return The new Turn object.
      */
-    public Turn andMinAngAccel(double minAngAccel, Velocity<Velocity<Angle>> unit) {
+
+    public Turn andMinAccel(double minAngAccel, Velocity<Velocity<Angle>> unit) {
         return new Turn(maxAngVelRadsPerSec, unit.of(minAngAccel).in(RadiansPerSecondPerSecond), maxAngAccelRadsPerSecSquared);
     }
 
@@ -97,7 +104,8 @@ public final class Turn {
      * @param unit        The unit of the maximum angular acceleration.
      * @return The new Turn object.
      */
-    public Turn andMaxAngAccel(double maxAngAccel, Velocity<Velocity<Angle>> unit) {
+
+    public Turn andMaxAccel(double maxAngAccel, Velocity<Velocity<Angle>> unit) {
         return new Turn(maxAngVelRadsPerSec, minAngAccelRadsPerSecSquared, unit.of(maxAngAccel).in(RadiansPerSecondPerSecond));
     }
 
@@ -107,6 +115,7 @@ public final class Turn {
      * @param defaultConstraints The default constraints to use if no constraints are specified.
      * @return The built TurnConstraints object.
      */
+
     public TurnConstraints getOrDefault(TurnConstraints defaultConstraints) {
         return new TurnConstraints(
                 maxAngVelRadsPerSec == null ? defaultConstraints.maxAngVel : maxAngVelRadsPerSec,

@@ -48,7 +48,7 @@ public final class Vel {
      * @return The new Vel object.
      */
     @NonNull
-    public static Vel ofMaxVel(double maxVel, @NonNull Velocity<Distance> unit) {
+    public static Vel ofMax(double maxVel, @NonNull Velocity<Distance> unit) {
         return new Vel(unit.of(maxVel).in(InchesPerSecond), null);
     }
 
@@ -60,7 +60,7 @@ public final class Vel {
      * @return The new Vel object.
      */
     @NonNull
-    public static Vel ofMaxAngVel(double maxAngVel, @NonNull Velocity<Angle> unit) {
+    public static Vel ofMaxAng(double maxAngVel, @NonNull Velocity<Angle> unit) {
         return new Vel(null, unit.of(maxAngVel).in(RadiansPerSecond));
     }
 
@@ -72,7 +72,7 @@ public final class Vel {
      * @return The new Vel object.
      */
     @NonNull
-    public Vel andMaxVel(double maxVel, @NonNull Velocity<Distance> unit) {
+    public Vel andMax(double maxVel, @NonNull Velocity<Distance> unit) {
         return new Vel(unit.of(maxVel).in(InchesPerSecond), maxAngVelRadsPerSec);
     }
 
@@ -84,7 +84,7 @@ public final class Vel {
      * @return The new Vel object.
      */
     @NonNull
-    public Vel andMaxAngVel(double maxAngVel, @NonNull Velocity<Angle> unit) {
+    public Vel andMaxAng(double maxAngVel, @NonNull Velocity<Angle> unit) {
         return new Vel(maxVelInchesPerSec, unit.of(maxAngVel).in(RadiansPerSecond));
     }
 

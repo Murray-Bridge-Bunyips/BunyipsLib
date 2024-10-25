@@ -48,7 +48,7 @@ public final class Turn {
      * @return The new Turn object.
      */
     @NonNull
-    public static Turn ofMaxAngVel(double maxAngVel, @NonNull Velocity<Angle> unit) {
+    public static Turn ofMaxVel(double maxAngVel, @NonNull Velocity<Angle> unit) {
         return new Turn(unit.of(maxAngVel).in(RadiansPerSecond), null, null);
     }
 
@@ -60,7 +60,7 @@ public final class Turn {
      * @return The new Turn object.
      */
     @NonNull
-    public static Turn ofMinAngAccel(double minAngAccel, @NonNull Velocity<Velocity<Angle>> unit) {
+    public static Turn ofMinAccel(double minAngAccel, @NonNull Velocity<Velocity<Angle>> unit) {
         return new Turn(null, unit.of(minAngAccel).in(RadiansPerSecondPerSecond), null);
     }
 
@@ -72,7 +72,7 @@ public final class Turn {
      * @return The new Turn object.
      */
     @NonNull
-    public static Turn ofMaxAngAccel(double maxAngAccel, @NonNull Velocity<Velocity<Angle>> unit) {
+    public static Turn ofMaxAccel(double maxAngAccel, @NonNull Velocity<Velocity<Angle>> unit) {
         return new Turn(null, null, unit.of(maxAngAccel).in(RadiansPerSecondPerSecond));
     }
 
@@ -84,7 +84,7 @@ public final class Turn {
      * @return The new Turn object.
      */
     @NonNull
-    public Turn andMaxAngVel(double maxAngVel, @NonNull Velocity<Angle> unit) {
+    public Turn andMaxVel(double maxAngVel, @NonNull Velocity<Angle> unit) {
         return new Turn(unit.of(maxAngVel).in(RadiansPerSecond), minAngAccelRadsPerSecSquared, maxAngAccelRadsPerSecSquared);
     }
 
@@ -96,7 +96,7 @@ public final class Turn {
      * @return The new Turn object.
      */
     @NonNull
-    public Turn andMinAngAccel(double minAngAccel, @NonNull Velocity<Velocity<Angle>> unit) {
+    public Turn andMinAccel(double minAngAccel, @NonNull Velocity<Velocity<Angle>> unit) {
         return new Turn(maxAngVelRadsPerSec, unit.of(minAngAccel).in(RadiansPerSecondPerSecond), maxAngAccelRadsPerSecSquared);
     }
 
@@ -108,7 +108,7 @@ public final class Turn {
      * @return The new Turn object.
      */
     @NonNull
-    public Turn andMaxAngAccel(double maxAngAccel, @NonNull Velocity<Velocity<Angle>> unit) {
+    public Turn andMaxAccel(double maxAngAccel, @NonNull Velocity<Velocity<Angle>> unit) {
         return new Turn(maxAngVelRadsPerSec, minAngAccelRadsPerSecSquared, unit.of(maxAngAccel).in(RadiansPerSecondPerSecond));
     }
 
