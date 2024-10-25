@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.ftc.AngularRampLogger;
 import com.acmerobotics.roadrunner.ftc.DeadWheelDirectionDebugger;
@@ -120,7 +121,6 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     @Override
     @SuppressWarnings("unchecked")
     public final void runOpMode() throws InterruptedException {
-        DualTelemetry out = new DualTelemetry(this, null, "RR Tuning");
         RoadRunnerDrive drive = Objects.requireNonNull(getDrive(), "getDrive() returned null");
 
         DriveViewFactory dvf;
@@ -359,20 +359,17 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     () -> selection[0] = modes[finalI]);
         }
         root.addChildren(opModes);
-        TelemetryMenu menu = new TelemetryMenu(out, root);
+        TelemetryMenu menu = new TelemetryMenu(telemetry, root);
 
         while (selection[0] == null && opModeInInit()) {
             menu.loop(gamepad1);
-            out.add("Select an option above to run tuning for using <font face='monospace'>gamepad1</font>. Restart the OpMode to pick a different mode.");
-            out.update();
         }
 
-        out.clearAll();
-        if (selection[0] == null) return;
+        telemetry.clearAll();
+        telemetry.update();
+        if (selection[0] == null)
+            return;
 
-        // Defer the OpMode to the tuning OpMode now, it is confirmed to be safe to cast
-        out.setOpModeStatus(Text.html().bold(selection[0].getClass().getSimpleName()).toString());
-        out.update();
         try {
             //noinspection ExtractMethodRecommender
             LinearOpMode opMode = (LinearOpMode) selection[0];
@@ -391,17 +388,21 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             opMode.gamepad1 = gamepad1;
             opMode.gamepad2 = gamepad2;
             opMode.hardwareMap = hardwareMap;
-            opMode.telemetry = telemetry;
+            if (opMode instanceof ForwardPushTest || opMode instanceof LateralPushTest) {
+                opMode.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+            } else {
+                opMode.telemetry = telemetry;
+            }
 
-            out.setCaptionValueSeparator(": ");
-            out.addData(Text.html().bold(selection[0].getClass().getSimpleName()).toString(), "Ready. Press play to start.");
-            out.update();
+            telemetry.setCaptionValueSeparator(": ");
+            telemetry.addData(Text.html().bold(selection[0].getClass().getSimpleName()).toString(), "Ready. Press play to start.");
+            telemetry.update();
 
             FtcDashboard.getInstance().withConfigRoot(configRoot ->
                     configRoot.putVariable("[RR] Tuning Parameters", ReflectionConfig.createVariableFromClass(getClass())));
 
             waitForStart();
-            out.update();
+            telemetry.update();
 
             opMode.runOpMode();
         } finally {
