@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
@@ -26,6 +27,7 @@ public final class SplineTest extends LinearOpMode {
     public void runOpMode() {
         drive.setPose(Geometry.zeroPose());
 
+        Dashboard.USING_SYNCED_PACKETS = true;
         waitForStart();
 
         Actions.runBlocking(
@@ -34,7 +36,8 @@ public final class SplineTest extends LinearOpMode {
                                 .splineTo(new Vector2d(30, 30), Math.PI / 2)
                                 .splineTo(new Vector2d(0, 60), Math.PI)
                                 .build(),
-                        new ContinuousTask(drive::periodic)
+                        new ContinuousTask(drive::periodic),
+                        new ContinuousTask(Dashboard::sendAndClearSyncedPackets)
                 )
         );
     }

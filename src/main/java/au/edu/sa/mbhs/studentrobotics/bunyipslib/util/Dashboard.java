@@ -24,9 +24,18 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path.Path;
 @Config
 public final class Dashboard {
     /**
-     * The radius of the robot for drawing.
+     * The radius of the robot for drawing in inches.
      */
     public static double ROBOT_RADIUS = 9;
+    /**
+     * Enable to sync all packet operations to send a single packet at the time of {@link #sendAndClearSyncedPackets()}
+     * being called. This is not required for usages of {@link DualTelemetry}, since synchronisation happens internally,
+     * however, for custom implementations where various packets are sent, this serves as a useful option.
+     * <p>
+     * Packet syncing will only occur for usages of {@link #usePacket(Consumer)}.
+     */
+    public static boolean USING_SYNCED_PACKETS = false;
+    private static volatile TelemetryPacket accumulatedPacket = null;
 
     private Dashboard() {
     }
@@ -101,17 +110,42 @@ public final class Dashboard {
 
     /**
      * Obtain a reference to a dashboard packet through an active {@link BunyipsOpMode}
-     * or by creating a new packet to automatically send to FtcDashboard.
+     * or by creating a new packet to automatically send to FtcDashboard. Optionally allows packet synchronisation
+     * through {@link #USING_SYNCED_PACKETS} and {@link #sendAndClearSyncedPackets()}.
      *
-     * @param packetOperations the operations to perform on the packet, this packet will be auto-sent
+     * @param packetOperations the operations to perform on the packet, this packet will be managed
      *                         by this method or via the available {@link DualTelemetry} instance
      */
     public static void usePacket(@NonNull Consumer<TelemetryPacket> packetOperations) {
         BunyipsOpMode opMode = BunyipsOpMode.isRunning() ? BunyipsOpMode.getInstance() : null;
-        TelemetryPacket packet = opMode == null ? new TelemetryPacket() : opMode.telemetry.getDashboardPacket();
+        TelemetryPacket packet;
+        synchronized (Dashboard.class) {
+            if (!USING_SYNCED_PACKETS) {
+                packet = opMode == null ? new TelemetryPacket() : opMode.telemetry.getDashboardPacket();
+            } else if (accumulatedPacket == null) {
+                packet = new TelemetryPacket();
+            } else {
+                packet = accumulatedPacket;
+            }
+        }
         // User operations, the packet may be sent manually here or automatically via BOM
         packetOperations.accept(packet);
-        if (opMode == null)
+        if (opMode == null && !USING_SYNCED_PACKETS)
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
+    }
+
+    /**
+     * Call to dispatch a synced packet update following the enabling of synced packets via {@link #USING_SYNCED_PACKETS}.
+     * This ensures only one packet gets sent at a time avoiding overwriting.
+     * <p>
+     * No-ops if synced packets are not enabled.
+     */
+    public static void sendAndClearSyncedPackets() {
+        synchronized (Dashboard.class) {
+            if (!USING_SYNCED_PACKETS || accumulatedPacket == null)
+                return;
+            FtcDashboard.getInstance().sendTelemetryPacket(accumulatedPacket);
+            accumulatedPacket = null;
+        }
     }
 }
