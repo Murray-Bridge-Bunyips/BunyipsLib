@@ -19,7 +19,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemControll
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
@@ -52,16 +51,13 @@ public class DriveToPoseTask extends Task {
     /**
      * Run the Drive To Pose Task on a drive instance.
      *
-     * @param timeout           The maximum time the task can run for.
      * @param driveInstance     The drive instance to run this task with. If this instance is also a BunyipsSubsystem, this task will be auto-attached.
      * @param targetPose        The target pose to drive to.
      * @param forwardController The system/PID controller for x.
      * @param strafeController  The system/PID controller for y.
      * @param headingController The system/PID controller for heading.
      */
-    public DriveToPoseTask(@NonNull Measure<Time> timeout, @NonNull Moveable driveInstance,
-                           @NonNull Pose2d targetPose, @NonNull SystemController forwardController, @NonNull SystemController strafeController, @SuppressLint("LambdaLast") @NonNull SystemController headingController) {
-        super(timeout);
+    public DriveToPoseTask(@NonNull Moveable driveInstance, @NonNull Pose2d targetPose, @NonNull SystemController forwardController, @NonNull SystemController strafeController, @SuppressLint("LambdaLast") @NonNull SystemController headingController) {
         if (driveInstance instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) driveInstance, true);
         drive = driveInstance;
@@ -144,6 +140,7 @@ public class DriveToPoseTask extends Task {
         // Apply PID and twist
         double forwardPower, strafePower;
         if (!isVectorNear()) {
+            // Normalise vector to maintain the heading interpolation ratio
             double mag = Math.hypot(error.position.x, error.position.y);
             forwardPower = -forwardController.calculate(error.position.x / mag, 0);
             strafePower = -strafeController.calculate(error.position.y / mag, 0);
