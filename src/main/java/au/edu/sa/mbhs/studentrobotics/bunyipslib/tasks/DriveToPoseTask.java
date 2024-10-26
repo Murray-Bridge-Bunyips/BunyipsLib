@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Centimeters;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
@@ -10,7 +9,6 @@ import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Twist2d;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -42,14 +40,14 @@ public class DriveToPoseTask extends Task {
     private final SystemController forwardController;
     private final SystemController strafeController;
     private final SystemController headingController;
-    private final Supplier<Pose2d> localizer;
+    private final Supplier<Pose2d> accumulator;
 
     private double MAX_FORWARD_SPEED = 1.0;
     private double MAX_STRAFE_SPEED = 1.0;
     private double MAX_ROTATION_SPEED = 1.0;
 
-    private Measure<Angle> headingTolerance = Degrees.of(2);
-    private Measure<Distance> vectorTolerance = Centimeters.of(5);
+    private Measure<Angle> headingTolerance = Degrees.one();
+    private Measure<Distance> vectorTolerance = Inches.one();
 
     /**
      * Run the Drive To Pose Task on a drive instance.
@@ -67,12 +65,12 @@ public class DriveToPoseTask extends Task {
         if (driveInstance instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) driveInstance, true);
         drive = driveInstance;
-        localizer = () -> Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance for P2P to work!");
+        accumulator = () -> Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance for P2P to work!");
         this.targetPose = targetPose;
         this.forwardController = forwardController;
         this.strafeController = strafeController;
         this.headingController = headingController;
-        withName("Drive To Pose: " + targetPose);
+        withName("Drive To Pose: " + Geometry.toUserString(targetPose));
     }
 
     /**
@@ -131,37 +129,35 @@ public class DriveToPoseTask extends Task {
     }
 
     public boolean isVectorNear() {
-        return Mathf.isNear(0, Geometry.distTo(localizer.get().position, targetPose.position), vectorTolerance.in(Inches));
+        return Mathf.isNear(0, Geometry.distTo(accumulator.get().position, targetPose.position), vectorTolerance.in(Inches));
     }
 
     public boolean isHeadingNear() {
-        return Mathf.isNear(targetPose.heading.toDouble(), localizer.get().heading.toDouble(), headingTolerance.in(Radians));
+        return Mathf.isNear(targetPose.heading.toDouble(), accumulator.get().heading.toDouble(), headingTolerance.in(Radians));
     }
 
     @Override
     protected void periodic() {
-        Pose2d estimatedPose = localizer.get();
-        Twist2d error = targetPose.minus(estimatedPose);
-
-        // Twist the error vector to be relative to the robot's heading, as rotations of the robot are not
-        // accounted for in the RoadRunner pose estimate
-        double cos = Math.cos(estimatedPose.heading.toDouble());
-        double sin = Math.sin(estimatedPose.heading.toDouble());
-
-        // Transform error vector to robot's coordinate frame
-        double twistedXError = error.line.x * cos + error.line.y * sin;
-        double twistedYError = -error.line.x * sin + error.line.y * cos;
-
-        // Wrap target angle between -pi and pi for optimal turns
-        double angleError = Mathf.wrap(error.angle, -Math.PI, Math.PI);
-        // When the angle is near the modulus boundary, lock towards a definitive full rotation to avoid oscillations
-        if (Mathf.isNear(Math.abs(angleError), Math.PI, 0.1))
-            angleError = -Math.PI * Math.signum(error.angle);
+        Pose2d estimatedPose = accumulator.get();
+        Pose2d error = targetPose.minusExp(estimatedPose);
 
         // Apply PID and twist
-        double forwardPower = -forwardController.calculate(twistedXError, 0);
-        double strafePower = -strafeController.calculate(twistedYError, 0);
-        double headingPower = -headingController.calculate(angleError, 0);
+        double forwardPower, strafePower;
+        if (!isVectorNear()) {
+            double mag = Math.hypot(error.position.x, error.position.y);
+            forwardPower = -forwardController.calculate(error.position.x / mag, 0);
+            strafePower = -strafeController.calculate(error.position.y / mag, 0);
+        } else {
+            forwardPower = 0;
+            strafePower = 0;
+        }
+
+        double headingPower;
+        if (!isHeadingNear()) {
+            headingPower = -headingController.calculate(error.heading.toDouble(), 0);
+        } else {
+            headingPower = 0;
+        }
 
         drive.setPower(Geometry.vel(
                 Mathf.clamp(forwardPower, -MAX_FORWARD_SPEED, MAX_FORWARD_SPEED),

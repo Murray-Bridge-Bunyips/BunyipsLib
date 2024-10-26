@@ -454,16 +454,10 @@ class Scheduler : BunyipsComponent() {
      */
     inner class ScheduledTask(val originalRunCondition: Condition) {
         @JvmField
-        val runCondition: () -> Boolean
-
-        @JvmField
-        var taskToRun: Task = IdleTask()
-
-        @JvmField
-        var debouncing: Boolean = false
-
-        @JvmField
-        var stopCondition: (() -> Boolean)? = null
+        internal var taskToRun: Task = IdleTask()
+        internal val runCondition: () -> Boolean
+        internal var debouncing: Boolean = false
+        internal var stopCondition: (() -> Boolean)? = null
 
         private val and = ArrayList<BooleanSupplier>()
         private val or = ArrayList<BooleanSupplier>()

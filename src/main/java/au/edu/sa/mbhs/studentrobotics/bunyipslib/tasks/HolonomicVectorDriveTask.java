@@ -232,6 +232,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
     @Override
     protected void periodic() {
+        // TODO: needs fixing
         Pose2d current = Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance in order to use the HolonomicVectorDriveTask!");
 
         PoseVelocity2d v = vel.get();
