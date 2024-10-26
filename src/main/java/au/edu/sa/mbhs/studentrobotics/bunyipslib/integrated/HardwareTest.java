@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -40,7 +41,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.TempUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -284,6 +287,26 @@ public final class HardwareTest extends BunyipsOpMode {
                     dev.addChildren(notice, systemStatus, calibStatus, error, isSystemCalibrated, isGyroCalibrated, isAccelerometerCalibrated, isMagnetometerCalibrated, angularOrientation, position, velocity, acceleration, overallAcceleration, linearAcceleration, gravity, angVel, temperature, magneticFlux);
                 }
 
+                if (device instanceof LynxModule) {
+                    // Control and Expansion Hubs
+                    LynxModule lynx = (LynxModule) device;
+                    TelemetryMenu.DynamicItem firmwareVersion = new TelemetryMenu.DynamicItem("Firmware Version", lynx::getFirmwareVersionString);
+                    TelemetryMenu.DynamicItem current = new TelemetryMenu.DynamicItem("Current (A)", () -> lynx.getCurrent(CurrentUnit.AMPS));
+                    TelemetryMenu.DynamicItem gpioBusCurrent = new TelemetryMenu.DynamicItem("GPIO Bus Current (A)", () -> lynx.getGpioBusCurrent(CurrentUnit.AMPS));
+                    TelemetryMenu.DynamicItem i2cBusCurrent = new TelemetryMenu.DynamicItem("I2C Bus Current (A)", () -> lynx.getI2cBusCurrent(CurrentUnit.AMPS));
+                    TelemetryMenu.DynamicItem inputVoltage = new TelemetryMenu.DynamicItem("Input Voltage (V)", () -> lynx.getInputVoltage(VoltageUnit.VOLTS));
+                    TelemetryMenu.DynamicItem auxVoltage = new TelemetryMenu.DynamicItem("Auxiliary Voltage (V)", () -> lynx.getAuxiliaryVoltage(VoltageUnit.VOLTS));
+                    TelemetryMenu.DynamicItem temperature = new TelemetryMenu.DynamicItem("Temperature (C)", () -> lynx.getTemperature(TempUnit.CELSIUS));
+                    TelemetryMenu.EnumOption ledPattern = new TelemetryMenu.EnumOption("LED Pattern", Color.values());
+                    TelemetryMenu.StaticClickableOption applyPattern = new TelemetryMenu.StaticClickableOption("Apply Pattern", () -> {
+                        Color color = (Color) ledPattern.getValue();
+                        lynx.setConstant(color.color);
+                    });
+                    TelemetryMenu.StaticClickableOption reset = new TelemetryMenu.StaticClickableOption("Reset",
+                            () -> lynx.setPattern(LynxModule.blinkerPolicy.getIdlePattern(lynx)));
+                    dev.addChildren(firmwareVersion, current, gpioBusCurrent, i2cBusCurrent, inputVoltage, auxVoltage, temperature, ledPattern, applyPattern, reset);
+                }
+
                 if (device instanceof DistanceSensor) {
                     // Distance sensors are simple and only require a distance reading
                     DistanceSensor distance = (DistanceSensor) device;
@@ -491,5 +514,25 @@ public final class HardwareTest extends BunyipsOpMode {
         if (gamepad1.back)
             emergencyStop();
         menu.loop(gamepad1);
+    }
+
+    private enum Color {
+        BLACK(0xFF000000),
+        DKGRAY(0xFF444444),
+        GRAY(0xFF888888),
+        LTGRAY(0xFFCCCCCC),
+        WHITE(0xFFFFFFFF),
+        RED(0xFFFF0000),
+        GREEN(0xFF00FF00),
+        BLUE(0xFF0000FF),
+        YELLOW(0xFFFFFF00),
+        CYAN(0xFF00FFFF),
+        MAGENTA(0xFFFF00FF);
+
+        public final int color;
+
+        Color(int color) {
+            this.color = color;
+        }
     }
 }
