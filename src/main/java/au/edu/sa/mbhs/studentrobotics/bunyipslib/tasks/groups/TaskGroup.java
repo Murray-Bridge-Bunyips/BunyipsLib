@@ -14,7 +14,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
@@ -87,7 +86,6 @@ public abstract class TaskGroup extends Task {
         });
         // Otherwise we can just run the task outright
         if (!task.hasDependency()) {
-            Scheduler.addTaskReport(toString(), false, task.toString(), Mathf.round(task.getDeltaTime().in(Seconds), 1), task.getTimeout().in(Seconds));
             task.run();
         }
     }

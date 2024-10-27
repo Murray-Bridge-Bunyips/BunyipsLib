@@ -5,17 +5,18 @@ import androidx.annotation.NonNull;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
 
 /**
- * A task to run continuously and will never finish.
+ * A task to run continuously and will never finish on its own.
  * <p>
- * {@code new ContinuousTask(() -> telemetry.add("I will run forever"));}
+ * {@code new ContinuousTask(() -> telemetry.add("I will run forever until something interrupts me"));}
  *
+ * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
 public class ContinuousTask extends ForeverTask {
     private final Runnable callback;
 
     /**
-     * A simple callback to run forever.
+     * A simple callback to run continuously.
      *
      * @param callback the task to run continuously
      */

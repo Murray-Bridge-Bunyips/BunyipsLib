@@ -125,7 +125,7 @@ abstract class Task(
     /**
      * Mute task reports from the Scheduler.
      */
-    fun withMutedReports(): Task {
+    fun muteReports(): Task {
         mutedReport = true
         return this
     }

@@ -2,6 +2,15 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
@@ -12,16 +21,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.function.Supplier;
-
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
  * TeleOp drive task to align to a global field coordinate using a localizer and PID.
@@ -38,7 +37,8 @@ public class AlignToPointDriveTask extends ForeverTask {
     /**
      * Default controller to use for aligning to a point.
      */
-    public static SystemController DEFAULT_CONTROLLER = new PDController(1, 0.0001);
+    // Using a high gain controller due to the integrated feedforward in the heading
+    public static SystemController DEFAULT_CONTROLLER = new PController(8);
 
     static {
         ((PIDFController) DEFAULT_CONTROLLER).setTolerance(Math.toRadians(1));
@@ -157,7 +157,7 @@ public class AlignToPointDriveTask extends ForeverTask {
         // Difference between the target vector and the bot's position
         Vector2d difference = point.minus(poseEstimate.position);
         // Obtain the target angle for feedback and derivative for feedforward
-        double theta = difference.angleCast().toDouble();
+        Rotation2d theta = difference.angleCast();
 
         // Not technically omega because its power. This is the derivative of atan2
         double thetaFF = Rotation2d.exp(-Math.PI / 2)
@@ -165,7 +165,7 @@ public class AlignToPointDriveTask extends ForeverTask {
 
         // Set desired angular velocity to the heading controller output + angular
         // velocity feedforward
-        double headingInput = controller.calculate(poseEstimate.heading.toDouble(), theta) + thetaFF;
+        double headingInput = -controller.calculate(theta.minus(poseEstimate.heading), 0) + thetaFF;
         headingInput = Mathf.clamp(headingInput, -maxRotation, maxRotation);
 
         // If we're at a discontinuity, we can't really do much so we should stop rotating
