@@ -129,7 +129,7 @@ public class DriveToPoseTask extends Task {
     }
 
     public boolean isHeadingNear() {
-        return Mathf.isNear(targetPose.heading.toDouble(), accumulator.get().heading.toDouble(), headingTolerance.in(Radians));
+        return Mathf.isNear(Mathf.wrapRadians(targetPose.heading.toDouble()), Mathf.wrapRadians(accumulator.get().heading.toDouble()), headingTolerance.in(Radians));
     }
 
     @Override
