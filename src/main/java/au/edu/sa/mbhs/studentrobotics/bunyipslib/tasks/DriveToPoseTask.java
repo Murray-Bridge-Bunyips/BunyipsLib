@@ -51,13 +51,13 @@ public class DriveToPoseTask extends Task {
     /**
      * Run the Drive To Pose Task on a drive instance.
      *
-     * @param driveInstance     The drive instance to run this task with. If this instance is also a BunyipsSubsystem, this task will be auto-attached.
      * @param targetPose        The target pose to drive to.
+     * @param driveInstance     The drive instance to run this task with. If this instance is also a BunyipsSubsystem, this task will be auto-attached.
      * @param forwardController The system/PID controller for x.
      * @param strafeController  The system/PID controller for y.
      * @param headingController The system/PID controller for heading.
      */
-    public DriveToPoseTask(@NonNull Moveable driveInstance, @NonNull Pose2d targetPose, @NonNull SystemController forwardController, @NonNull SystemController strafeController, @SuppressLint("LambdaLast") @NonNull SystemController headingController) {
+    public DriveToPoseTask(@NonNull Pose2d targetPose, @NonNull Moveable driveInstance, @NonNull SystemController forwardController, @NonNull SystemController strafeController, @SuppressLint("LambdaLast") @NonNull SystemController headingController) {
         if (driveInstance instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) driveInstance, true);
         drive = driveInstance;
