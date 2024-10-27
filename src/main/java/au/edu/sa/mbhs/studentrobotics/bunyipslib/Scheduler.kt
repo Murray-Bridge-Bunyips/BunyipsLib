@@ -452,9 +452,8 @@ class Scheduler : BunyipsComponent() {
     /**
      * A task that will run when a condition is met.
      */
-    inner class ScheduledTask(val originalRunCondition: Condition) {
-        @JvmField
-        internal var taskToRun: Task = IdleTask()
+    inner class ScheduledTask(private val originalRunCondition: Condition) {
+        var taskToRun: Task = IdleTask()
         internal val runCondition: () -> Boolean
         internal var debouncing: Boolean = false
         internal var stopCondition: (() -> Boolean)? = null

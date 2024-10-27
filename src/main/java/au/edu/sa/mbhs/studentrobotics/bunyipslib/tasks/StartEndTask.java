@@ -17,8 +17,8 @@ public class StartEndTask extends Task {
     /**
      * Create a new StartEndTask.
      *
-     * @param onStart        the callback to run when the task starts
-     * @param onFinish       the callback to run when the task finishes
+     * @param onStart  the callback to run when the task starts
+     * @param onFinish the callback to run when the task finishes
      */
     public StartEndTask(@NonNull Runnable onStart, @NonNull Runnable onFinish) {
         this.onStart = onStart;

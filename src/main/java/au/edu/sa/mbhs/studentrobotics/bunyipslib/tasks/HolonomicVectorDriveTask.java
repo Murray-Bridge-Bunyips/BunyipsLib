@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -64,10 +65,10 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     private final ElapsedTime vectorLocker = new ElapsedTime();
     private final ElapsedTime headingLocker = new ElapsedTime();
     private Vector2d vectorLock = null;
-    private Double headingLock = null;
+    private Rotation2d headingLock = null;
 
-    // Default admissible error of 2 inches and 1 degree, waiting 300ms for the pose to stabilise
-    private Pose2d toleranceInchRad = new Pose2d(2, 2, Math.toRadians(1));
+    // Default admissible error of 1 inch and 1 degree, waiting 300ms for the pose to stabilise
+    private Pose2d toleranceInchRad = new Pose2d(1, 1, Math.toRadians(1));
     private Measure<Time> lockingTimeout = Milliseconds.of(300);
 
     /**
@@ -209,7 +210,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      * @param heading the angle to rotate to, will be wrapped from [0, 2pi] radians
      */
     public void setHeadingTarget(@NonNull Measure<Angle> heading) {
-        headingLock = Mathf.wrap(heading).in(Radians);
+        headingLock = Rotation2d.exp(Mathf.wrap(heading).in(Radians));
     }
 
     /**
@@ -217,11 +218,10 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      * and is to try and hold position here. Note that user input will override this lock, this
      * simply tells the task to respect this value as the locking value.
      *
-     * @param forwardX Forward X component of the locking vector
-     * @param strafeY  Strafe Y component of the locking vector
+     * @param vectorInches the target position to move to, in inches
      */
-    public void setVectorTarget(@NonNull Measure<Distance> forwardX, @NonNull Measure<Distance> strafeY) {
-        vectorLock = new Vector2d(forwardX.in(Inches), strafeY.in(Inches));
+    public void setVectorTarget(@NonNull Vector2d vectorInches) {
+        vectorLock = vectorInches;
     }
 
     @Override
@@ -232,38 +232,28 @@ public class HolonomicVectorDriveTask extends ForeverTask {
 
     @Override
     protected void periodic() {
-        // TODO: needs fixing
         Pose2d current = Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance in order to use the HolonomicVectorDriveTask!");
 
         PoseVelocity2d v = vel.get();
-        double userX = v.linearVel.x;
-        double userY = v.linearVel.y;
-        double userR = v.angVel;
-
-        double cos = Math.cos(current.heading.toDouble());
-        double sin = Math.sin(current.heading.toDouble());
-
         if (fieldCentricEnabled.getAsBoolean()) {
             // Field-centric inputs that will be rotated before any processing
-            double tempX = userX;
-            userX = userY * sin + userX * cos;
-            userY = userY * cos - tempX * sin;
+            v = current.heading.inverse().times(v);
         }
 
         // Rising edge detections for pose locking
-        if (userX == 0 && userY == 0 && vectorLock == null && vectorLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
+        if (v.linearVel.x == 0 && v.linearVel.y == 0 && vectorLock == null && vectorLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
             vectorLock = current.position;
             // We also reset the controllers as the integral term may be incorrect due to a new target
             xController.reset();
             yController.reset();
-        } else if (userX != 0 || userY != 0) {
+        } else if (v.linearVel.x != 0 || v.linearVel.y != 0) {
             vectorLock = null;
             vectorLocker.reset();
         }
-        if (userR == 0 && headingLock == null && headingLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
-            headingLock = current.heading.toDouble();
+        if (v.angVel == 0 && headingLock == null && headingLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {
+            headingLock = current.heading;
             rController.reset();
-        } else if (userR != 0) {
+        } else if (v.angVel != 0) {
             headingLock = null;
             headingLocker.reset();
         }
@@ -272,21 +262,12 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         // If we are not locked, the error will be 0, and our error should clamp to zero if it's under the threshold
         double xLockedError = vectorLock == null || Mathf.isNear(vectorLock.x, current.position.x, toleranceInchRad.position.x) ? 0 : vectorLock.x - current.position.x;
         double yLockedError = vectorLock == null || Mathf.isNear(vectorLock.y, current.position.y, toleranceInchRad.position.y) ? 0 : vectorLock.y - current.position.y;
-        double rLockedError = headingLock == null || Mathf.isNear(headingLock, current.heading.toDouble(), toleranceInchRad.heading.toDouble()) ? 0 : headingLock - current.heading.toDouble();
-
-        // Rotate error to robot's coordinate frame
-        double twistedXError = xLockedError * cos + yLockedError * sin;
-        double twistedYError = -xLockedError * sin + yLockedError * cos;
-
-        // Wrap to [-pi, pi] and hard lock at boundary to ensure no oscillations
-        double angle = Mathf.wrap(rLockedError, -Math.PI, Math.PI);
-        if (Mathf.isNear(Math.abs(angle), Math.PI, 0.1))
-            angle = -Math.PI * Math.signum(rLockedError);
-
+        double rLockedError = headingLock == null || Mathf.isNear(headingLock.minus(current.heading), 0, toleranceInchRad.heading.toDouble()) ? 0 : headingLock.minus(current.heading);
+        Vector2d rotError = current.heading.inverse().times(new Vector2d(xLockedError, yLockedError));
         drive.setPower(Geometry.vel(
-                vectorLock != null ? -xController.calculate(twistedXError) : userX,
-                vectorLock != null ? -yController.calculate(twistedYError) : userY,
-                headingLock != null ? -rController.calculate(angle) : userR
+                vectorLock != null ? -xController.calculate(rotError.x) : v.linearVel.x,
+                vectorLock != null ? -yController.calculate(rotError.y) : v.linearVel.y,
+                headingLock != null ? -rController.calculate(rLockedError) : v.angVel
         ));
 
         fieldOverlay.setStroke("#c91c00");
