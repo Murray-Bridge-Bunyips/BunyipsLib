@@ -195,6 +195,13 @@ abstract class Task(
     }
 
     /**
+     * Set the timeout of this task dynamically and return the task.
+     */
+    infix fun timeout(timeout: Measure<Time>): Task {
+        return withTimeout(timeout)
+    }
+
+    /**
      * Compose this task into a [RaceTaskGroup] with a [WaitUntilTask] based on this condition.
      */
     infix fun until(condition: BooleanSupplier): RaceTaskGroup {

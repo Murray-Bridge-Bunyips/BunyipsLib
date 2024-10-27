@@ -17,8 +17,6 @@ import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
@@ -51,14 +49,12 @@ public class AlignToAprilTagTask extends Task {
     /**
      * Autonomous constructor.
      *
-     * @param timeout    the timeout for the task
      * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param at         the AprilTag processor to use
      * @param targetTag  the tag to align to, -1 for any tag
      * @param controller the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(@NonNull Measure<Time> timeout, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
-        super(timeout);
+    public AlignToAprilTagTask(@NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;

@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 
 import java.util.function.BooleanSupplier;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
@@ -16,18 +14,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
  */
 public class WaitUntilTask extends Task {
     private final BooleanSupplier condition;
-
-    /**
-     * Create a new WaitUntilTask with a maximum timeout and given condition.
-     *
-     * @param timeout   max timeout
-     * @param condition the condition to wait for true
-     */
-    public WaitUntilTask(@NonNull Measure<Time> timeout, @NonNull BooleanSupplier condition) {
-        super(timeout);
-        this.condition = condition;
-        withName("Wait Until");
-    }
 
     /**
      * Create a new WaitUntilTask with the given condition.

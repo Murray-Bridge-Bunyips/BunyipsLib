@@ -9,7 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 /**
  * A task to run for a timeout.
  * <p>
- * {@code new RunForTask(5, arm::spin, () -> { // optional finish callback });}
+ * {@code new RunForTask(Seconds.of(5), arm::spin, () -> { // optional finish callback });}
  *
  * @since 1.0.0-pre
  */

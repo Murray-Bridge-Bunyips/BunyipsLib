@@ -14,8 +14,6 @@ import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
@@ -92,14 +90,12 @@ public class MoveToContourTask extends Task {
     /**
      * Autonomous constructor.
      *
-     * @param timeout               the maximum timeout for the task
      * @param drive                 the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param supplier              a supplier source that will provide contour data
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(@NonNull Measure<Time> timeout, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
-        super(timeout);
+    public MoveToContourTask(@NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
@@ -142,14 +138,13 @@ public class MoveToContourTask extends Task {
     /**
      * Autonomous constructor.
      *
-     * @param timeout               the maximum timeout for the task
      * @param drive                 the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param processor             the vision processor to use
      * @param translationController the PID controller for the translational movement
      * @param rotationController    the PID controller for the rotational movement
      */
-    public MoveToContourTask(@NonNull Measure<Time> timeout, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
-        this(timeout, drive, processor::getData, translationController, rotationController);
+    public MoveToContourTask(@NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
+        this(drive, processor::getData, translationController, rotationController);
     }
 
     /**
