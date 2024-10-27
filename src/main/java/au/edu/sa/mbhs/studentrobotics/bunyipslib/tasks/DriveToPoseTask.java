@@ -44,7 +44,7 @@ public class DriveToPoseTask extends Task {
     /**
      * Default controller to use for the r (rotation) axis.
      */
-    public static SystemController DEFAULT_R_CONTROLLER = new PDController(1, 0.0001);
+    public static SystemController DEFAULT_R_CONTROLLER = new PDController(3, 0.0001);
 
     private final Moveable drive;
     private final Pose2d targetPose;
@@ -175,7 +175,7 @@ public class DriveToPoseTask extends Task {
     }
 
     public boolean isHeadingNear() {
-        return Mathf.isNear(Mathf.wrapRadians(targetPose.heading.toDouble()), Mathf.wrapRadians(accumulator.get().heading.toDouble()), headingTolerance.in(Radians));
+        return Mathf.isNear(0, targetPose.heading.minus(accumulator.get().heading), headingTolerance.in(Radians));
     }
 
     @Override
