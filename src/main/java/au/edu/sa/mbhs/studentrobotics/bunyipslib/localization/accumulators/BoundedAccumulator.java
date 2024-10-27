@@ -85,6 +85,7 @@ public class BoundedAccumulator extends Accumulator {
                     Math.min(Math.max(currentPose.position.y, bounds.point1.y + robotBoundingBox.point2.y), bounds.point2.y - robotBoundingBox.point2.y)
             );
             currentPose = new Pose2d(newPos, currentPose.heading);
+            // TODO: velocity zeroing
         }
 
         for (Rect rect : restrictedAreas) {
