@@ -40,7 +40,7 @@ public class DynamicTask extends Task {
     public DynamicTask(@NonNull Supplier<Task> lazyTask) {
         this.lazyTask = lazyTask;
         // We're not actually a task, so we'll let the inner task manage reports
-        withMutedReports();
+        muteReports();
         super.withName(UNCONSTRUCTED_NAME);
     }
 

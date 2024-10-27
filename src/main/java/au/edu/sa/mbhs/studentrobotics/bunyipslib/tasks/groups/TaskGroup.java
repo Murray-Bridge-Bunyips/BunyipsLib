@@ -12,7 +12,6 @@ import java.util.List;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.AutonomousBunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
@@ -37,7 +36,7 @@ public abstract class TaskGroup extends Task {
         super(maxTimeout);
         this.tasks.addAll(Arrays.asList(tasks));
         if (tasks.length == 0) {
-            throw new EmergencyStop(getClass().getSimpleName() + " created with no tasks.");
+            throw new IllegalArgumentException(getClass().getSimpleName() + " created with no tasks.");
         }
         StringBuilder taskNames = new StringBuilder();
         taskNames.append(getClass().getSimpleName().replace("TaskGroup", ""));
