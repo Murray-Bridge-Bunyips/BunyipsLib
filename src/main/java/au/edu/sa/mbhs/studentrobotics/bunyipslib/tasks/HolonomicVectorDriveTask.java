@@ -20,9 +20,9 @@ import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
@@ -54,16 +54,27 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * @since 4.0.0
  */
 public class HolonomicVectorDriveTask extends ForeverTask {
+    /**
+     * Default controller to use for the x (forward) axis.
+     */
+    public static SystemController DEFAULT_X_CONTROLLER = new PController(0.1);
+    /**
+     * Default controller to use for the y (strafe) axis.
+     */
+    public static SystemController DEFAULT_Y_CONTROLLER = new PController(0.1);
+    /**
+     * Default controller to use for the r (rotation) axis.
+     */
+    public static SystemController DEFAULT_R_CONTROLLER = new PDController(1, 0.0001);
+
     private final Moveable drive;
     private final Supplier<PoseVelocity2d> vel;
     private final BooleanSupplier fieldCentricEnabled;
-
-    private final PIDController xController;
-    private final PIDController yController;
-    private final PIDController rController;
-
     private final ElapsedTime vectorLocker = new ElapsedTime();
     private final ElapsedTime headingLocker = new ElapsedTime();
+    private SystemController xController;
+    private SystemController yController;
+    private SystemController rController;
     private Vector2d vectorLock = null;
     private Rotation2d headingLock = null;
 
@@ -87,10 +98,9 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         this.vel = vel;
         this.fieldCentricEnabled = fieldCentricEnabled;
 
-        // Sane defaults
-        xController = new PController(0.1);
-        yController = new PController(0.1);
-        rController = new PDController(1, 0.0001);
+        xController = DEFAULT_X_CONTROLLER;
+        yController = DEFAULT_Y_CONTROLLER;
+        rController = DEFAULT_R_CONTROLLER;
 
         withName("Holonomic Vector Control");
     }
@@ -135,31 +145,38 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     }
 
     /**
-     * Set the translational PID coefficients. By default it is set to your drive coefficients PID.
+     * Sets the controller for the x (forward) axis.
      *
-     * @param kp proportional
-     * @param ki integral
-     * @param kd derivative
+     * @param x the controller to use
      * @return this
      */
     @NonNull
-    public HolonomicVectorDriveTask withTranslationalPID(double kp, double ki, double kd) {
-        xController.setPID(kp, ki, kd);
-        yController.setPID(kp, ki, kd);
+    public HolonomicVectorDriveTask withXController(@NonNull SystemController x) {
+        xController = x;
         return this;
     }
 
     /**
-     * Set the rotational PID coefficients. By default it is set to your drive coefficients PID.
+     * Sets the controller for the y (strafe) axis.
      *
-     * @param kp proportional
-     * @param ki integral
-     * @param kd derivative
+     * @param y the controller to use
      * @return this
      */
     @NonNull
-    public HolonomicVectorDriveTask withRotationalPID(double kp, double ki, double kd) {
-        rController.setPID(kp, ki, kd);
+    public HolonomicVectorDriveTask withYController(@NonNull SystemController y) {
+        yController = y;
+        return this;
+    }
+
+    /**
+     * Sets the controller for the r (rotation) axis.
+     *
+     * @param r the controller to use
+     * @return this
+     */
+    @NonNull
+    public HolonomicVectorDriveTask withRController(@NonNull SystemController r) {
+        rController = r;
         return this;
     }
 
@@ -265,9 +282,9 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         double rLockedError = headingLock == null || Mathf.isNear(headingLock.minus(current.heading), 0, toleranceInchRad.heading.toDouble()) ? 0 : headingLock.minus(current.heading);
         Vector2d rotError = current.heading.inverse().times(new Vector2d(xLockedError, yLockedError));
         drive.setPower(Geometry.vel(
-                vectorLock != null ? -xController.calculate(rotError.x) : v.linearVel.x,
-                vectorLock != null ? -yController.calculate(rotError.y) : v.linearVel.y,
-                headingLock != null ? -rController.calculate(rLockedError) : v.angVel
+                vectorLock != null ? -xController.calculate(rotError.x, 0) : v.linearVel.x,
+                vectorLock != null ? -yController.calculate(rotError.y, 0) : v.linearVel.y,
+                headingLock != null ? -rController.calculate(rLockedError, 0) : v.angVel
         ));
 
         fieldOverlay.setStroke("#c91c00");

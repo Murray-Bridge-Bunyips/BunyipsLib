@@ -19,6 +19,7 @@ import java.util.function.Supplier;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
@@ -35,12 +36,21 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * @since 5.1.0
  */
 public class TurnTask extends Task {
+    /**
+     * Default controller to use for turning.
+     */
+    public static SystemController DEFAULT_CONTROLLER = new PController(3);
+
+    static {
+        ((PController) DEFAULT_CONTROLLER).setTolerance(Math.toRadians(1));
+    }
+
     private final Consumer<PoseVelocity2d> powerIn;
     private final Supplier<Pose2d> poseEstimate;
     private final boolean setDelta;
     private final double unmodifiedAngRad;
     private double angRad;
-    private PIDF pidf;
+    private SystemController controller;
     private Measure<Angle> tolerance;
 
     /**
@@ -70,8 +80,7 @@ public class TurnTask extends Task {
         this.poseEstimate = poseEstimate;
         setDelta = delta;
         unmodifiedAngRad = Mathf.wrapDelta(angle).in(Radians);
-        // Sane defaults
-        pidf = new PController(3);
+        controller = DEFAULT_CONTROLLER;
         tolerance = Degrees.of(1);
     }
 
@@ -98,15 +107,15 @@ public class TurnTask extends Task {
     }
 
     /**
-     * Set the PIDF controller to use for turning.
+     * Set the controller to use for turning.
      * By default, a P controller with a gain of 3 is used.
      *
-     * @param pidf the PIDF controller to use
+     * @param controller the system controller to use
      * @return this
      */
     @NonNull
-    public TurnTask withPIDF(@NonNull PIDF pidf) {
-        this.pidf = pidf;
+    public TurnTask withController(@NonNull PIDF controller) {
+        this.controller = controller;
         return this;
     }
 
@@ -136,7 +145,7 @@ public class TurnTask extends Task {
     protected void periodic() {
         Pose2d pose = poseEstimate.get();
         double errRad = Mathf.wrap(pose.heading.toDouble(), -Math.PI, Math.PI) - angRad;
-        powerIn.accept(Geometry.vel(0, 0, pidf.calculate(Mathf.wrap(errRad, -Math.PI, Math.PI), 0)));
+        powerIn.accept(Geometry.vel(0, 0, controller.calculate(Mathf.wrap(errRad, -Math.PI, Math.PI), 0)));
         fieldOverlay.setStroke("#4CAF50");
         Dashboard.drawRobot(fieldOverlay, new Pose2d(pose.position, angRad));
     }

@@ -4,8 +4,6 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Deg
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
-import android.annotation.SuppressLint;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Pose2d;
@@ -16,6 +14,7 @@ import java.util.function.Supplier;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
@@ -34,16 +33,30 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * @since 3.3.0
  */
 public class DriveToPoseTask extends Task {
+    /**
+     * Default controller to use for the x (forward) axis.
+     */
+    public static SystemController DEFAULT_X_CONTROLLER = new PDController(1, 0.0001);
+    /**
+     * Default controller to use for the y (strafe) axis.
+     */
+    public static SystemController DEFAULT_Y_CONTROLLER = new PDController(1, 0.0001);
+    /**
+     * Default controller to use for the r (rotation) axis.
+     */
+    public static SystemController DEFAULT_R_CONTROLLER = new PDController(1, 0.0001);
+
     private final Moveable drive;
     private final Pose2d targetPose;
-    private final SystemController forwardController;
-    private final SystemController strafeController;
-    private final SystemController headingController;
     private final Supplier<Pose2d> accumulator;
 
     private double MAX_FORWARD_SPEED = 1.0;
     private double MAX_STRAFE_SPEED = 1.0;
     private double MAX_ROTATION_SPEED = 1.0;
+
+    private SystemController xController;
+    private SystemController yController;
+    private SystemController rController;
 
     private Measure<Angle> headingTolerance = Degrees.one();
     private Measure<Distance> vectorTolerance = Inches.one();
@@ -51,22 +64,55 @@ public class DriveToPoseTask extends Task {
     /**
      * Run the Drive To Pose Task on a drive instance.
      *
-     * @param targetPose        The target pose to drive to.
-     * @param driveInstance     The drive instance to run this task with. If this instance is also a BunyipsSubsystem, this task will be auto-attached.
-     * @param forwardController The system/PID controller for x.
-     * @param strafeController  The system/PID controller for y.
-     * @param headingController The system/PID controller for heading.
+     * @param targetPose    The target pose to drive to.
+     * @param driveInstance The drive instance to run this task with. If this instance is also a BunyipsSubsystem, this task will be auto-attached.
      */
-    public DriveToPoseTask(@NonNull Pose2d targetPose, @NonNull Moveable driveInstance, @NonNull SystemController forwardController, @NonNull SystemController strafeController, @SuppressLint("LambdaLast") @NonNull SystemController headingController) {
+    public DriveToPoseTask(@NonNull Pose2d targetPose, @NonNull Moveable driveInstance) {
         if (driveInstance instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) driveInstance, true);
         drive = driveInstance;
         accumulator = () -> Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance for P2P to work!");
         this.targetPose = targetPose;
-        this.forwardController = forwardController;
-        this.strafeController = strafeController;
-        this.headingController = headingController;
+        xController = DEFAULT_X_CONTROLLER;
+        yController = DEFAULT_Y_CONTROLLER;
+        rController = DEFAULT_R_CONTROLLER;
         withName("Drive To Pose: " + Geometry.toUserString(targetPose));
+    }
+
+    /**
+     * Sets the controller for the x (forward) axis.
+     *
+     * @param x the controller to use
+     * @return this
+     */
+    @NonNull
+    public DriveToPoseTask withXController(@NonNull SystemController x) {
+        xController = x;
+        return this;
+    }
+
+    /**
+     * Sets the controller for the y (strafe) axis.
+     *
+     * @param y the controller to use
+     * @return this
+     */
+    @NonNull
+    public DriveToPoseTask withYController(@NonNull SystemController y) {
+        yController = y;
+        return this;
+    }
+
+    /**
+     * Sets the controller for the r (rotation) axis.
+     *
+     * @param r the controller to use
+     * @return this
+     */
+    @NonNull
+    public DriveToPoseTask withRController(@NonNull SystemController r) {
+        rController = r;
+        return this;
     }
 
     /**
@@ -142,8 +188,8 @@ public class DriveToPoseTask extends Task {
         if (!isVectorNear()) {
             // Normalise vector to maintain the heading interpolation ratio
             double mag = Math.hypot(error.position.x, error.position.y);
-            forwardPower = -forwardController.calculate(error.position.x / mag, 0);
-            strafePower = -strafeController.calculate(error.position.y / mag, 0);
+            forwardPower = -xController.calculate(error.position.x / mag, 0);
+            strafePower = -yController.calculate(error.position.y / mag, 0);
         } else {
             forwardPower = 0;
             strafePower = 0;
@@ -151,7 +197,7 @@ public class DriveToPoseTask extends Task {
 
         double headingPower;
         if (!isHeadingNear()) {
-            headingPower = -headingController.calculate(error.heading.toDouble(), 0);
+            headingPower = -rController.calculate(error.heading.toDouble(), 0);
         } else {
             headingPower = 0;
         }

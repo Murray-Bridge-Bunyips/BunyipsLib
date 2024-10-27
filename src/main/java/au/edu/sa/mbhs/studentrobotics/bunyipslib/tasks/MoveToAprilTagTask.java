@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
@@ -44,33 +45,29 @@ public class MoveToAprilTagTask extends Task {
     @NonNull
     public static Measure<Distance> DESIRED_DISTANCE = Meters.of(1);
     /**
-     * The speed gain for the distance error.
-     */
-    public static double SPEED_GAIN = 0.03;
-    /**
-     * The strafe gain for the yaw error.
-     */
-    public static double STRAFE_GAIN = 0.015;
-    /**
-     * The turn gain for the heading error.
-     */
-    public static double TURN_GAIN = 0.01;
-    /**
      * The maximum speed the robot can move at.
      */
-    public static double MAX_AUTO_SPEED = 0.5;
+    public static double MAX_X_SPEED = 0.5;
     /**
      * The maximum strafe the robot can move at.
      */
-    public static double MAX_AUTO_STRAFE = 0.5;
+    public static double MAX_Y_SPEED = 0.5;
     /**
      * The maximum turn the robot can move at.
      */
-    public static double MAX_AUTO_TURN = 0.3;
+    public static double MAX_R_SPEED = 0.3;
     /**
-     * Tolerance of the error for the robot to stop the task in an Autonomous context.
+     * Tolerance of the X error for the robot to stop the task in an Autonomous context.
      */
-    public static double AUTO_FINISH_ERROR_TOLERANCE = 0.1;
+    public static double X_TOLERANCE = 0.1;
+    /**
+     * Tolerance of the Y error for the robot to stop the task in an Autonomous context.
+     */
+    public static double Y_TOLERANCE = 0.1;
+    /**
+     * Tolerance of the R error for the robot to stop the task in an Autonomous context.
+     */
+    public static double R_TOLERANCE = 0.1;
     /**
      * The tag to target. -1 for any tag.
      */
@@ -78,7 +75,11 @@ public class MoveToAprilTagTask extends Task {
 
     private final Moveable drive;
     private final AprilTag aprilTag;
+
     private Supplier<PoseVelocity2d> passthrough;
+    private SystemController xController;
+    private SystemController yController;
+    private SystemController rController;
 
     private double rangeError;
     private double yawError;
@@ -147,38 +148,38 @@ public class MoveToAprilTagTask extends Task {
     }
 
     /**
-     * Set the forward speed gain for the distance error.
+     * Set the controller for the x (forward) axis.
      *
-     * @param speedGain the speed gain for the distance error
+     * @param x the controller to use
      * @return this
      */
     @NonNull
-    public MoveToAprilTagTask withSpeedGain(double speedGain) {
-        SPEED_GAIN = speedGain;
+    public MoveToAprilTagTask withXController(@NonNull SystemController x) {
+        xController = x;
         return this;
     }
 
     /**
-     * Set the strafe gain for the yaw error.
+     * Set the controller for the y (strafe) axis.
      *
-     * @param strafeGain the strafe gain for the yaw error
+     * @param y the controller to use
      * @return this
      */
     @NonNull
-    public MoveToAprilTagTask withStrafeGain(double strafeGain) {
-        STRAFE_GAIN = strafeGain;
+    public MoveToAprilTagTask withYController(@NonNull SystemController y) {
+        yController = y;
         return this;
     }
 
     /**
-     * Set the turn gain for the heading error.
+     * Set the controller for the r (rotation) axis.
      *
-     * @param turnGain the turn gain for the heading error
+     * @param r the controller to use
      * @return this
      */
     @NonNull
-    public MoveToAprilTagTask withTurnGain(double turnGain) {
-        TURN_GAIN = turnGain;
+    public MoveToAprilTagTask withRController(@NonNull SystemController r) {
+        rController = r;
         return this;
     }
 
@@ -189,8 +190,8 @@ public class MoveToAprilTagTask extends Task {
      * @return this
      */
     @NonNull
-    public MoveToAprilTagTask withMaxAutoSpeed(double maxAutoSpeed) {
-        MAX_AUTO_SPEED = maxAutoSpeed;
+    public MoveToAprilTagTask withMaxXSpeed(double maxAutoSpeed) {
+        MAX_X_SPEED = maxAutoSpeed;
         return this;
     }
 
@@ -201,8 +202,8 @@ public class MoveToAprilTagTask extends Task {
      * @return this
      */
     @NonNull
-    public MoveToAprilTagTask withMaxAutoStrafe(double maxAutoStrafe) {
-        MAX_AUTO_STRAFE = maxAutoStrafe;
+    public MoveToAprilTagTask withMaxYSpeed(double maxAutoStrafe) {
+        MAX_Y_SPEED = maxAutoStrafe;
         return this;
     }
 
@@ -213,8 +214,8 @@ public class MoveToAprilTagTask extends Task {
      * @return this
      */
     @NonNull
-    public MoveToAprilTagTask withMaxAutoTurn(double maxAutoTurn) {
-        MAX_AUTO_TURN = maxAutoTurn;
+    public MoveToAprilTagTask withMaxRSpeed(double maxAutoTurn) {
+        MAX_R_SPEED = maxAutoTurn;
         return this;
     }
 
@@ -250,14 +251,14 @@ public class MoveToAprilTagTask extends Task {
 
         assert target.get().getFtcPose().isPresent() && target.get().getMetadata().isPresent();
         AprilTagPoseFtc camPose = target.get().getFtcPose().get();
-        rangeError = (camPose.range - DESIRED_DISTANCE.in(Inches)) * SPEED_GAIN;
-        yawError = -camPose.yaw * STRAFE_GAIN;
-        headingError = camPose.bearing * TURN_GAIN;
+        rangeError = camPose.range - DESIRED_DISTANCE.in(Inches);
+        yawError = -camPose.yaw;
+        headingError = camPose.bearing;
 
         drive.setPower(Geometry.vel(
-                Range.clip(rangeError, -MAX_AUTO_SPEED, MAX_AUTO_SPEED),
-                Range.clip(yawError, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE),
-                Range.clip(headingError, -MAX_AUTO_TURN, MAX_AUTO_TURN)
+                Range.clip(-xController.calculate(rangeError, 0), -MAX_X_SPEED, MAX_X_SPEED),
+                Range.clip(-yController.calculate(yawError, 0), -MAX_Y_SPEED, MAX_Y_SPEED),
+                Range.clip(-rController.calculate(headingError, 0), -MAX_R_SPEED, MAX_R_SPEED)
         ));
 
         Pose2d poseEstimate = drive.getPose();
@@ -276,6 +277,6 @@ public class MoveToAprilTagTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return passthrough == null && Math.abs(rangeError) < AUTO_FINISH_ERROR_TOLERANCE && Math.abs(yawError) < AUTO_FINISH_ERROR_TOLERANCE && Math.abs(headingError) < AUTO_FINISH_ERROR_TOLERANCE;
+        return passthrough == null && Math.abs(rangeError) < X_TOLERANCE && Math.abs(yawError) < Y_TOLERANCE && Math.abs(headingError) < R_TOLERANCE;
     }
 }

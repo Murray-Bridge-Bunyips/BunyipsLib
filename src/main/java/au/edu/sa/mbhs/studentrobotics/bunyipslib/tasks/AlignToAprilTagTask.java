@@ -1,13 +1,13 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 
@@ -16,7 +16,9 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
@@ -32,39 +34,34 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.AprilTag;
  */
 public class AlignToAprilTagTask extends Task {
     /**
-     * PIDF coefficients for the alignment controller.
+     * Tolerance for the R error to be considered at the setpoint.
      */
-    @NonNull
-    public static PIDFCoefficients coeffs = new PIDFCoefficients();
+    public static double R_TOLERANCE = 0.1;
     /**
      * The target tag to align to. -1 for any tag.
      */
     public static int TARGET_TAG = -1;
+    /**
+     * Default controller to use for the rotation axis.
+     */
+    public static SystemController DEFAULT_CONTROLLER = new PDController(1, 0.0001);
+
     private final Moveable drive;
     private final AprilTag at;
-    private final PIDF controller;
-    private Supplier<PoseVelocity2d> passthrough;
-    private boolean hasCalculated;
+    private final Supplier<PoseVelocity2d> passthrough;
+
+    private SystemController controller;
+    private Double bearing;
 
     /**
      * Autonomous constructor.
      *
-     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param at         the AprilTag processor to use
-     * @param targetTag  the tag to align to, -1 for any tag
-     * @param controller the PID controller to use for aligning to a target
+     * @param drive     the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param at        the AprilTag processor to use
+     * @param targetTag the tag to align to, -1 for any tag
      */
-    public AlignToAprilTagTask(@NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
-        if (drive instanceof BunyipsSubsystem)
-            onSubsystem((BunyipsSubsystem) drive, false);
-        this.drive = drive;
-        this.at = at;
-        TARGET_TAG = targetTag;
-        this.controller = controller;
-        controller.getPIDFController().setPIDF(coeffs);
-        withName("Align To AprilTag");
-        FtcDashboard.getInstance().withConfigRoot(c ->
-                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
+    public AlignToAprilTagTask(@NonNull Moveable drive, @NonNull AprilTag at, int targetTag) {
+        this((Supplier<PoseVelocity2d>) null, drive, at, targetTag);
     }
 
     /**
@@ -74,18 +71,15 @@ public class AlignToAprilTagTask extends Task {
      * @param drive       the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param at          the AprilTag processor to use
      * @param targetTag   the tag to align to, -1 for any tag
-     * @param controller  the PID controller to use for aligning to a target
      */
-    public AlignToAprilTagTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
-        super(INFINITE_TIMEOUT);
+    public AlignToAprilTagTask(@Nullable Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
         this.at = at;
         TARGET_TAG = targetTag;
         this.passthrough = passthrough;
-        this.controller = controller;
-        controller.getPIDFController().updatePIDF(coeffs);
+        controller = DEFAULT_CONTROLLER;
         withName("Align To AprilTag");
         FtcDashboard.getInstance().withConfigRoot(c ->
                 c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
@@ -94,28 +88,36 @@ public class AlignToAprilTagTask extends Task {
     /**
      * Constructor for AlignToAprilTagTask using a default Mecanum binding.
      *
-     * @param driver     The gamepad to use for driving
-     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param at         The AprilTag processor to use
-     * @param targetTag  The tag to align to, -1 for any tag
-     * @param controller The PID controller to use for aligning to a target
+     * @param driver    The gamepad to use for driving
+     * @param drive     the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param at        The AprilTag processor to use
+     * @param targetTag The tag to align to, -1 for any tag
      */
-    public AlignToAprilTagTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag, @NonNull PIDF controller) {
-        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, at, targetTag, controller);
+    public AlignToAprilTagTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag) {
+        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, at, targetTag);
+    }
+
+    /**
+     * Set the controller for the rotation axis.
+     *
+     * @param r the controller to use
+     * @return this
+     */
+    @NonNull
+    public AlignToAprilTagTask withRController(@NonNull SystemController r) {
+        controller = r;
+        return this;
     }
 
     @Override
     protected void init() {
-        hasCalculated = false;
+        bearing = null;
         if (!at.isAttached())
             throw new RuntimeException("Vision processor was initialised without being attached to the vision system");
     }
 
     @Override
     protected void periodic() {
-        // FtcDashboard live tuning
-        controller.getPIDFController().setPIDF(coeffs);
-
         PoseVelocity2d vel = Geometry.zeroVel();
         if (passthrough != null)
             vel = passthrough.get();
@@ -130,11 +132,11 @@ public class AlignToAprilTagTask extends Task {
         }
 
         assert target.get().getFtcPose().isPresent() && target.get().getMetadata().isPresent();
+        bearing = target.get().getFtcPose().get().bearing;
         drive.setPower(new PoseVelocity2d(
                 vel.linearVel,
-                -controller.calculate(target.get().getFtcPose().get().bearing, 0.0)
+                -controller.calculate(bearing, 0.0)
         ));
-        hasCalculated = true;
 
         Pose2d poseEstimate = drive.getPose();
         if (poseEstimate == null)
@@ -152,6 +154,6 @@ public class AlignToAprilTagTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return passthrough == null && hasCalculated && controller.getPIDFController().atSetPoint();
+        return passthrough == null && bearing != null && Mathf.isNear(bearing, 0, R_TOLERANCE);
     }
 }

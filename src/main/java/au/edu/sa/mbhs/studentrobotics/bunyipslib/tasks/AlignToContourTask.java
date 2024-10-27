@@ -1,23 +1,23 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.Processor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
 
 /**
@@ -28,51 +28,19 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
  */
 public class AlignToContourTask extends Task {
     /**
-     * PIDF coefficients for the alignment controller.
+     * The tolerance for the R error to be considered at the setpoint.
      */
-    @NonNull
-    public static PIDFCoefficients COEFFS = new PIDFCoefficients();
+    public static double R_TOLERANCE = 0.1;
+    /**
+     * Default controller to use for the rotation axis.
+     */
+    public static SystemController DEFAULT_CONTROLLER = new PDController(1, 0.0001);
 
     private final Moveable drive;
     private final Supplier<List<ContourData>> contours;
-    private final PIDF controller;
-    private boolean hasCalculated;
-    private Supplier<PoseVelocity2d> passthrough;
-
-    /**
-     * TeleOp constructor.
-     *
-     * @param passthrough the pose velocity passthrough for the drivetrain
-     * @param drive       the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param processor   the vision processor to use
-     * @param controller  the PID controller to use for aligning to a target
-     */
-    public AlignToContourTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF controller) {
-        this(passthrough, drive, processor::getData, controller);
-    }
-
-    /**
-     * TeleOp constructor using a default Mecanum binding.
-     *
-     * @param driver     the gamepad to use for driving
-     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param processor  the vision processor to use
-     * @param controller the PID controller to use for aligning to a target
-     */
-    public AlignToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF controller) {
-        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, processor::getData, controller);
-    }
-
-    /**
-     * Autonomous constructor.
-     *
-     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param processor  the vision processor to use
-     * @param controller the PID controller to use for aligning to a target
-     */
-    public AlignToContourTask(@NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF controller) {
-        this(drive, processor::getData, controller);
-    }
+    private final Supplier<PoseVelocity2d> passthrough;
+    private SystemController controller;
+    private Double yaw;
 
     /**
      * TeleOp constructor.
@@ -80,16 +48,14 @@ public class AlignToContourTask extends Task {
      * @param passthrough the pose velocity passthrough for the drivetrain
      * @param drive       the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
      * @param supplier    a supplier source that will provide contour data
-     * @param controller  the PID controller to use for aligning to a target
      */
-    public AlignToContourTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF controller) {
+    public AlignToContourTask(@Nullable Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
         contours = supplier;
-        this.controller = controller;
         this.passthrough = passthrough;
-        controller.getPIDFController().updatePIDF(COEFFS);
+        controller = DEFAULT_CONTROLLER;
         withName("Align To Contour");
         FtcDashboard.getInstance().withConfigRoot(c ->
                 c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
@@ -98,44 +64,43 @@ public class AlignToContourTask extends Task {
     /**
      * TeleOp constructor using a default Mecanum binding.
      *
-     * @param driver     the gamepad to use for driving
-     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param supplier   a supplier source that will provide contour data
-     * @param controller the PID controller to use for aligning to a target
+     * @param driver   the gamepad to use for driving
+     * @param drive    the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param supplier a supplier source that will provide contour data
      */
-    public AlignToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF controller) {
-        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, supplier, controller);
+    public AlignToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier) {
+        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, supplier);
     }
 
     /**
      * Autonomous constructor.
      *
-     * @param drive      the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param supplier   a supplier source that will provide contour data
-     * @param controller the PID controller to use for aligning to a target
+     * @param drive    the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param supplier a supplier source that will provide contour data
      */
-    public AlignToContourTask(@NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF controller) {
-        if (drive instanceof BunyipsSubsystem)
-            onSubsystem((BunyipsSubsystem) drive, false);
-        this.drive = drive;
-        contours = supplier;
-        this.controller = controller;
-        controller.getPIDFController().updatePIDF(COEFFS);
-        withName("Align To Contour");
-        FtcDashboard.getInstance().withConfigRoot(c ->
-                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
+    public AlignToContourTask(@NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier) {
+        this((Supplier<PoseVelocity2d>) null, drive, supplier);
+    }
+
+    /**
+     * Set the controller for the rotation axis.
+     *
+     * @param r the controller to use
+     * @return this
+     */
+    @NonNull
+    public AlignToContourTask withController(@NonNull SystemController r) {
+        controller = r;
+        return this;
     }
 
     @Override
     protected void init() {
-        hasCalculated = false;
+        yaw = null;
     }
 
     @Override
     protected void periodic() {
-        // FtcDashboard live tuning
-        controller.getPIDFController().setPIDF(COEFFS);
-
         PoseVelocity2d vel = Geometry.zeroVel();
         if (passthrough != null)
             vel = passthrough.get();
@@ -144,11 +109,11 @@ public class AlignToContourTask extends Task {
         ContourData biggestContour = ContourData.getLargest(data);
 
         if (biggestContour != null) {
+            yaw = biggestContour.getYaw();
             drive.setPower(new PoseVelocity2d(
                     vel.linearVel,
-                    controller.calculate(biggestContour.getYaw(), 0.0)
+                    controller.calculate(yaw, 0.0)
             ));
-            hasCalculated = true;
         } else {
             drive.setPower(vel);
         }
@@ -156,6 +121,6 @@ public class AlignToContourTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return passthrough == null && hasCalculated && controller.getPIDFController().atSetPoint();
+        return passthrough == null && yaw != null && Math.abs(yaw) < R_TOLERANCE;
     }
 }

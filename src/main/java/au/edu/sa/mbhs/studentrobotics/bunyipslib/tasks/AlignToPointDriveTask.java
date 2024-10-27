@@ -15,8 +15,9 @@ import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
@@ -34,13 +35,21 @@ public class AlignToPointDriveTask extends ForeverTask {
      * The tolerance at which the robot will stop trying to align to a point if it is within this radius to the point.
      */
     public static double VECTOR_DELTA_CUTOFF_INCHES = 6;
+    /**
+     * Default controller to use for aligning to a point.
+     */
+    public static SystemController DEFAULT_CONTROLLER = new PDController(1, 0.0001);
 
-    private final SystemController controller;
+    static {
+        ((PIDFController) DEFAULT_CONTROLLER).setTolerance(Math.toRadians(1));
+    }
+
     private final Moveable drive;
 
     private final Supplier<Vector2d> passthrough;
     private final Supplier<Vector2d> pointSupplier;
 
+    private SystemController controller;
     private double maxRotation = 1;
     private Vector2d lastPoint;
     private boolean fieldCentric;
@@ -48,24 +57,17 @@ public class AlignToPointDriveTask extends ForeverTask {
     /**
      * Construct a new pass-through AlignToPointTask.
      *
-     * @param passthrough        the robot linear velocity pass-through
-     * @param drive              drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
-     * @param rotationController rotation PID controller to use
-     * @param point              the point to align to in field space, will use the drive's pose estimate for current position
+     * @param point       the point to align to in field space, will use the drive's pose estimate for current position
+     * @param passthrough the robot linear velocity pass-through
+     * @param drive       drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      */
-    public AlignToPointDriveTask(@Nullable Supplier<Vector2d> passthrough, @NonNull Moveable drive, @NonNull SystemController rotationController, @NonNull Supplier<Vector2d> point) {
+    public AlignToPointDriveTask(@NonNull Supplier<Vector2d> point, @Nullable Supplier<Vector2d> passthrough, @NonNull Moveable drive) {
         this.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         pointSupplier = point;
-        controller = rotationController;
-        if (controller instanceof PIDF) {
-            // Default tolerance is too low, will set minimum bound
-            ((PIDF) controller).getPIDFController()
-                    .setTolerance(Math.max(Math.toRadians(1), ((PIDF) controller).getPIDFController().getTolerance()[0]));
-        }
+        controller = DEFAULT_CONTROLLER;
         this.passthrough = passthrough;
-
         Vector2d currentTarget = point.get();
         withName("Align To Point: " + currentTarget);
         lastPoint = currentTarget;
@@ -76,13 +78,12 @@ public class AlignToPointDriveTask extends ForeverTask {
     /**
      * Construct a new controller-based pass-through AlignToPointTask.
      *
-     * @param passthroughTranslation the controller where the left stick will be used to pass translation pose
-     * @param rotationController     rotation PID controller to use
-     * @param drive                  drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      * @param point                  the point to align to in field space, will use the drive's pose estimate for current position
+     * @param passthroughTranslation the controller where the left stick will be used to pass translation pose
+     * @param drive                  drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      */
-    public AlignToPointDriveTask(@NonNull Gamepad passthroughTranslation, @NonNull Moveable drive, @NonNull PIDF rotationController, @NonNull Supplier<Vector2d> point) {
-        this(() -> Controls.vec(passthroughTranslation.left_stick_x, passthroughTranslation.left_stick_y), drive, rotationController, point);
+    public AlignToPointDriveTask(@NonNull Supplier<Vector2d> point, @NonNull Gamepad passthroughTranslation, @NonNull Moveable drive) {
+        this(point, () -> Controls.vec(passthroughTranslation.left_stick_x, passthroughTranslation.left_stick_y), drive);
     }
 
     /**
@@ -92,12 +93,23 @@ public class AlignToPointDriveTask extends ForeverTask {
      * this is a TeleOp task with no end condition. Alternative solutions exist for aligning to a point in Autonomous
      * (e.g. by method of {@link TurnTask}, as this task is designed for dynamic conditions to continuous alignment).
      *
-     * @param drive              drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
-     * @param rotationController rotation PID controller to use
-     * @param point              the point to align to in field space, will use the drive's pose estimate for current position
+     * @param point the point to align to in field space, will use the drive's pose estimate for current position
+     * @param drive drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      */
-    public AlignToPointDriveTask(@NonNull Moveable drive, @NonNull PIDF rotationController, @NonNull Supplier<Vector2d> point) {
-        this((Supplier<Vector2d>) null, drive, rotationController, point);
+    public AlignToPointDriveTask(@NonNull Supplier<Vector2d> point, @NonNull Moveable drive) {
+        this(point, (Supplier<Vector2d>) null, drive);
+    }
+
+    /**
+     * Set the controller to use for aligning to the point.
+     *
+     * @param controller the controller to use
+     * @return this
+     */
+    @NonNull
+    public AlignToPointDriveTask withController(@NonNull SystemController controller) {
+        this.controller = controller;
+        return this;
     }
 
     /**

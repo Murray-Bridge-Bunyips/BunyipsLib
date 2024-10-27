@@ -1,24 +1,24 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.util.Range;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.Processor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
 
 /**
@@ -29,46 +29,49 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
  */
 public class MoveToContourTask extends Task {
     /**
-     * The PIDF coefficients for the translational controller.
-     */
-    @NonNull
-    public static PIDFCoefficients TRANSLATIONAL_PIDF = new PIDFCoefficients();
-    /**
-     * The PIDF coefficients for the rotational controller.
-     */
-    @NonNull
-    public static PIDFCoefficients ROTATIONAL_PIDF = new PIDFCoefficients();
-    /**
      * The target position of the pixel on the camera pitch axis.
      */
     public static double PITCH_TARGET = 0.0;
+    /**
+     * The tolerance of the pitch target to the real pitch.
+     */
+    public static double X_TOLERANCE = 0.01;
+    /**
+     * The tolerance of the yaw target to the real yaw.
+     */
+    public static double R_TOLERANCE = 0.01;
+    /**
+     * Default controller to use for the x (forward) axis.
+     */
+    public static SystemController DEFAULT_X_CONTROLLER = new PDController(1, 0.0001);
+    /**
+     * Default controller to use for the r (rotation) axis.
+     */
+    public static SystemController DEFAULT_R_CONTROLLER = new PDController(1, 0.0001);
 
     private final Moveable drive;
     private final Supplier<List<ContourData>> contours;
-    private final PIDF translationController;
-    private final PIDF rotationController;
-    private boolean hasCalculated;
-    private Supplier<PoseVelocity2d> passthrough;
+    private final Supplier<PoseVelocity2d> passthrough;
+
+    private SystemController xController;
+    private SystemController rController;
+    private ContourData biggestContour;
 
     /**
      * TeleOp constructor.
      *
-     * @param passthrough           the pose velocity passthrough for the drivetrain
-     * @param drive                 the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param supplier              a supplier source that will provide contour data
-     * @param translationController the PID controller for the translational movement
-     * @param rotationController    the PID controller for the rotational movement
+     * @param passthrough the pose velocity passthrough for the drivetrain
+     * @param drive       the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param supplier    a supplier source that will provide contour data
      */
-    public MoveToContourTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
+    public MoveToContourTask(@Nullable Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier) {
         if (drive instanceof BunyipsSubsystem)
             onSubsystem((BunyipsSubsystem) drive, false);
         this.drive = drive;
         contours = supplier;
         this.passthrough = passthrough;
-        this.translationController = translationController;
-        this.rotationController = rotationController;
-        translationController.getPIDFController().updatePIDF(TRANSLATIONAL_PIDF);
-        rotationController.getPIDFController().updatePIDF(ROTATIONAL_PIDF);
+        xController = DEFAULT_X_CONTROLLER;
+        rController = DEFAULT_R_CONTROLLER;
         withName("Move to Contour");
         FtcDashboard.getInstance().withConfigRoot(c ->
                 c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
@@ -77,74 +80,46 @@ public class MoveToContourTask extends Task {
     /**
      * TeleOp constructor using a default Mecanum binding.
      *
-     * @param driver                the gamepad to use for driving
-     * @param drive                 the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param supplier              a supplier source that will provide contour data
-     * @param translationController the PID controller for the translational movement
-     * @param rotationController    the PID controller for the rotational movement
+     * @param driver   the gamepad to use for driving
+     * @param drive    the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param supplier a supplier source that will provide contour data
      */
-    public MoveToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
-        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, supplier, translationController, rotationController);
+    public MoveToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier) {
+        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, supplier);
     }
 
     /**
      * Autonomous constructor.
      *
-     * @param drive                 the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param supplier              a supplier source that will provide contour data
-     * @param translationController the PID controller for the translational movement
-     * @param rotationController    the PID controller for the rotational movement
+     * @param drive    the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
+     * @param supplier a supplier source that will provide contour data
      */
-    public MoveToContourTask(@NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
-        if (drive instanceof BunyipsSubsystem)
-            onSubsystem((BunyipsSubsystem) drive, false);
-        this.drive = drive;
-        contours = supplier;
-        this.translationController = translationController;
-        this.rotationController = rotationController;
-        translationController.getPIDFController().updatePIDF(TRANSLATIONAL_PIDF);
-        rotationController.getPIDFController().updatePIDF(ROTATIONAL_PIDF);
-        withName("Move to Contour");
-        FtcDashboard.getInstance().withConfigRoot(c ->
-                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
+    public MoveToContourTask(@NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier) {
+        this((Supplier<PoseVelocity2d>) null, drive, supplier);
     }
 
     /**
-     * TeleOp constructor.
+     * Set the controller for the x (forward) axis.
      *
-     * @param passthrough           the pose velocity passthrough for the drivetrain
-     * @param drive                 the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param processor             the vision processor to use
-     * @param translationController the PID controller for the translational movement
-     * @param rotationController    the PID controller for the rotational movement
+     * @param x the controller to use
+     * @return this
      */
-    public MoveToContourTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
-        this(passthrough, drive, processor::getData, translationController, rotationController);
+    @NonNull
+    public MoveToContourTask withXController(@NonNull SystemController x) {
+        xController = x;
+        return this;
     }
 
     /**
-     * TeleOp constructor using a default Mecanum binding.
+     * Set the controller for the r (rotation) axis.
      *
-     * @param driver                the gamepad to use for driving
-     * @param drive                 the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param processor             the vision processor to use
-     * @param translationController the PID controller for the translational movement
-     * @param rotationController    the PID controller for the rotational movement
+     * @param r the controller to use
+     * @return this
      */
-    public MoveToContourTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
-        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, processor::getData, translationController, rotationController);
-    }
-
-    /**
-     * Autonomous constructor.
-     *
-     * @param drive                 the drivetrain to use, which may be a BunyipsSubsystem that will auto-attach
-     * @param processor             the vision processor to use
-     * @param translationController the PID controller for the translational movement
-     * @param rotationController    the PID controller for the rotational movement
-     */
-    public MoveToContourTask(@NonNull Moveable drive, @NonNull Processor<ContourData> processor, @NonNull PIDF translationController, @NonNull PIDF rotationController) {
-        this(drive, processor::getData, translationController, rotationController);
+    @NonNull
+    public MoveToContourTask withRController(@NonNull SystemController r) {
+        rController = r;
+        return this;
     }
 
     /**
@@ -161,31 +136,26 @@ public class MoveToContourTask extends Task {
 
     @Override
     protected void init() {
-        hasCalculated = false;
+        biggestContour = null;
     }
 
     @Override
     protected void periodic() {
-        // FtcDashboard live tuning
-        translationController.getPIDFController().setPIDF(TRANSLATIONAL_PIDF);
-        rotationController.getPIDFController().setPIDF(ROTATIONAL_PIDF);
-
         PoseVelocity2d vel = Geometry.zeroVel();
         if (passthrough != null)
             vel = passthrough.get();
 
         List<ContourData> data = contours.get();
-        ContourData biggestContour = ContourData.getLargest(data);
+        biggestContour = ContourData.getLargest(data);
 
         if (biggestContour != null) {
             drive.setPower(
                     Geometry.vel(
-                            -translationController.calculate(biggestContour.getPitch(), Range.clip(PITCH_TARGET, -1.0, 1.0)),
+                            -xController.calculate(biggestContour.getPitch(), Mathf.clamp(PITCH_TARGET, -1.0, 1.0)),
                             vel.linearVel.y,
-                            rotationController.calculate(biggestContour.getYaw(), 0.0)
+                            rController.calculate(biggestContour.getYaw(), 0.0)
                     )
             );
-            hasCalculated = true;
         } else {
             drive.setPower(vel);
         }
@@ -193,6 +163,6 @@ public class MoveToContourTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return passthrough == null && hasCalculated && translationController.getPIDFController().atSetPoint() && rotationController.getPIDFController().atSetPoint();
+        return passthrough == null && biggestContour != null && Mathf.isNear(biggestContour.getPitch(), PITCH_TARGET, X_TOLERANCE) && Mathf.isNear(biggestContour.getYaw(), 0.0, R_TOLERANCE);
     }
 }
