@@ -35,6 +35,19 @@ public class MecanumGains {
      */
     public double headingVelGain = 0.0;
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "MecanumGains{" +
+                "axialGain=" + axialGain +
+                ", lateralGain=" + lateralGain +
+                ", headingGain=" + headingGain +
+                ", axialVelGain=" + axialVelGain +
+                ", lateralVelGain=" + lateralVelGain +
+                ", headingVelGain=" + headingVelGain +
+                '}';
+    }
+
     /**
      * Builder class to assist in creating a MecanumGains.
      */

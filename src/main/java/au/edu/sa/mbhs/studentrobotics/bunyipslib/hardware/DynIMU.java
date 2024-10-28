@@ -50,84 +50,98 @@ public class DynIMU implements IMU {
     }
 
     /**
-     * Creates a DynIMU with no IMU attached. This is useful if you know for a fact that you will never need to use the
+     * Creates an IMU with no IMU attached. This is useful if you know for a fact that you will never need to use the
      * IMU, but still need to pass an IMU object to a method.
      *
-     * @return a DynIMU object that will always return invalid zero data, do be cautious that accessing this object in
-     * a method that would require the presence of an IMU will log warnings and potentially cause issues.
+     * @return an IMU object that will always return invalid zero data, do be cautious that accessing this object in
+     * a method that would require the presence of an IMU will cause warnings and potentially cause issues.
      */
     @NonNull
-    public static DynIMU none() {
-        return new DynIMU(new IMU() {
+    public static IMU none() {
+        return new IMU() {
+            private final boolean[] warned = new boolean[12];
+
             @Override
             public boolean initialize(Parameters parameters) {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for initialisation.");
+                if (!warned[0]) Dbg.warn("DynIMU.none() was accessed for initialisation.");
+                warned[0] = true;
                 return false;
             }
 
             @Override
             public void resetYaw() {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for yaw reset.");
+                if (!warned[1]) Dbg.warn("DynIMU.none() was accessed for yaw reset.");
+                warned[1] = true;
             }
 
             @Override
             public YawPitchRollAngles getRobotYawPitchRollAngles() {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for yaw pitch roll angles.");
+                if (!warned[2]) Dbg.warn("DynIMU.none() was accessed for yaw pitch roll angles.");
+                warned[2] = true;
                 return new YawPitchRollAngles(AngleUnit.DEGREES, 0, 0, 0, 0);
             }
 
             @Override
             public Orientation getRobotOrientation(AxesReference reference, AxesOrder order, AngleUnit angleUnit) {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for orientation.");
+                if (!warned[3]) Dbg.warn("DynIMU.none() was accessed for orientation.");
+                warned[3] = true;
                 return new Orientation();
             }
 
             @Override
             public Quaternion getRobotOrientationAsQuaternion() {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for orientation as quaternion.");
+                if (!warned[4]) Dbg.warn("DynIMU.none() was accessed for orientation as quaternion.");
+                warned[4] = true;
                 return new Quaternion();
             }
 
             @Override
             public AngularVelocity getRobotAngularVelocity(AngleUnit angleUnit) {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for angular velocity.");
+                if (!warned[5]) Dbg.warn("DynIMU.none() was accessed for angular velocity.");
+                warned[5] = true;
                 return new AngularVelocity();
             }
 
             @Override
             public Manufacturer getManufacturer() {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for manufacturer.");
+                if (!warned[6]) Dbg.warn("DynIMU.none() was accessed for manufacturer.");
+                warned[6] = true;
                 return Manufacturer.Unknown;
             }
 
             @Override
             public String getDeviceName() {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for device name.");
+                if (!warned[7]) Dbg.warn("DynIMU.none() was accessed for device name.");
+                warned[7] = true;
                 return "DynIMU.none()";
             }
 
             @Override
             public String getConnectionInfo() {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for connection info.");
+                if (!warned[8]) Dbg.warn("DynIMU.none() was accessed for connection info.");
+                warned[8] = true;
                 return "DynIMU.none()";
             }
 
             @Override
             public int getVersion() {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for version.");
+                if (!warned[9]) Dbg.warn("DynIMU.none() was accessed for version.");
+                warned[9] = true;
                 return 0;
             }
 
             @Override
             public void resetDeviceConfigurationForOpMode() {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for device configuration reset.");
+                if (!warned[10]) Dbg.warn("DynIMU.none() was accessed for device configuration reset.");
+                warned[10] = true;
             }
 
             @Override
             public void close() {
-                Dbg.warn(getClass(), "DynIMU.none() was accessed for close.");
+                if (!warned[11]) Dbg.warn("DynIMU.none() was accessed for close.");
+                warned[11] = true;
             }
-        }, new RevHubOrientationOnRobot(Quaternion.identityQuaternion()));
+        };
     }
 
     /**
@@ -146,7 +160,7 @@ public class DynIMU implements IMU {
         if (triedInit) return;
         triedInit = true;
 
-        Dbg.log(getClass(), "Dynamic IMU initialisation in progress...");
+        Dbg.log("Dynamic IMU initialisation in progress...");
         if (!imu.initialize(new Parameters(orientation)))
             RobotLog.addGlobalWarningMessage("DynIMU failed to initialise the IMU!");
 
@@ -156,7 +170,7 @@ public class DynIMU implements IMU {
             Quaternion q = imu.getRobotOrientationAsQuaternion();
             if (q.acquisitionTime != 0) {
                 FlightRecorder.write("IMU_INIT", new ImuInitMessage(imu.getDeviceName(), start, System.nanoTime(), false));
-                Dbg.logv(getClass(), "IMU initialised.");
+                Dbg.logv("IMU initialised.");
                 return;
             }
         } while (timer.milliseconds() < timeoutMs);
@@ -168,7 +182,7 @@ public class DynIMU implements IMU {
     @Override
     public boolean initialize(@NonNull Parameters parameters) {
         // We can't really crash since this is still legal usage, but we should warn the user.
-        Dbg.warn(getClass(), "Manual IMU initialisation was started on a DynIMU object. This is invalid usage!");
+        Dbg.warn("Manual IMU initialisation was started on a DynIMU object. This is invalid usage!");
         return imu.initialize(parameters);
     }
 

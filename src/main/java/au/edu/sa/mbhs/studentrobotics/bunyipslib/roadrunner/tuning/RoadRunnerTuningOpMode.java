@@ -27,6 +27,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,9 +46,12 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TwoWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.Constants;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.DriveModel;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.MotionProfile;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.TankDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 
@@ -75,37 +80,42 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     // Intermediary fields for the tuning process. These are used to store the values of the tuning process, and are
     // initially populated with the values from the drive instance. They are used to allow for dynamic adjustment
     // of the values used in the tuning process.
-    public double tuningMotionProfile_kS;
-    public double tuningMotionProfile_kV;
-    public double tuningMotionProfile_kA;
-    public double tuningMotionProfile_maxWheelVel;
-    public double tuningMotionProfile_minProfileAccel;
-    public double tuningMotionProfile_maxProfileAccel;
+    public static double tuningMotionProfile_kS = -1;
+    public static double tuningMotionProfile_kV = -1;
+    public static double tuningMotionProfile_kA = -1;
+    public static double tuningMotionProfile_maxWheelVel = -1;
+    public static double tuningMotionProfile_minProfileAccel = -1;
+    public static double tuningMotionProfile_maxProfileAccel = -1;
 
-    public double tuningDriveModel_inPerTick;
-    public double tuningDriveModel_trackWidthTicks;
+    // Even though these three are not used in the tuning process, they are still stored here for completeness.
+    public static double tuningMotionProfile_maxAngVel = -1;
+    public static double tuningMotionProfile_maxAngAccel = -1;
+    public static double tuningDriveModel_lateralInPerTick = -1;
 
-    @Nullable
-    public Double tuningMecanumGains_axialGain;
-    @Nullable
-    public Double tuningMecanumGains_lateralGain;
-    @Nullable
-    public Double tuningMecanumGains_headingGain;
-    @Nullable
-    public Double tuningMecanumGains_axialVelGain;
-    @Nullable
-    public Double tuningMecanumGains_lateralVelGain;
-    @Nullable
-    public Double tuningMecanumGains_headingVelGain;
+    public static double tuningDriveModel_inPerTick = -1;
+    public static double tuningDriveModel_trackWidthTicks = -1;
 
     @Nullable
-    public Double tuningTankGains_ramseteZeta;
+    public static Double tuningMecanumGains_axialGain;
     @Nullable
-    public Double tuningTankGains_ramseteBBar;
+    public static Double tuningMecanumGains_lateralGain;
     @Nullable
-    public Double tuningTankGains_turnGain;
+    public static Double tuningMecanumGains_headingGain;
     @Nullable
-    public Double tuningTankGains_turnVelGain;
+    public static Double tuningMecanumGains_axialVelGain;
+    @Nullable
+    public static Double tuningMecanumGains_lateralVelGain;
+    @Nullable
+    public static Double tuningMecanumGains_headingVelGain;
+
+    @Nullable
+    public static Double tuningTankGains_ramseteZeta;
+    @Nullable
+    public static Double tuningTankGains_ramseteBBar;
+    @Nullable
+    public static Double tuningTankGains_turnGain;
+    @Nullable
+    public static Double tuningTankGains_turnVelGain;
 
     /**
      * Instantiate hardware and return the fully configured RoadRunner drive instance to use for tuning.
@@ -121,6 +131,11 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     @Override
     @SuppressWarnings("unchecked")
     public final void runOpMode() throws InterruptedException {
+        Storage.resetAllStaticFieldsForOpMode();
+
+        // Still need to send some telemetry to the dashboard, instead of using DualTelemetry which is overkill
+        // for this purpose, we'll just use MultipleTelemetry.
+        Telemetry fusedTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         RoadRunnerDrive drive = Objects.requireNonNull(getDrive(), "getDrive() returned null");
 
         DriveViewFactory dvf;
@@ -188,7 +203,10 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 tuningMotionProfile_maxWheelVel = c.getMotionProfile().maxWheelVel;
                 tuningMotionProfile_minProfileAccel = c.getMotionProfile().minProfileAccel;
                 tuningMotionProfile_maxProfileAccel = c.getMotionProfile().maxProfileAccel;
+                tuningMotionProfile_maxAngVel = c.getMotionProfile().maxAngVel;
+                tuningMotionProfile_maxAngAccel = c.getMotionProfile().maxAngAccel;
                 tuningDriveModel_inPerTick = c.getDriveModel().inPerTick;
+                tuningDriveModel_lateralInPerTick = c.getDriveModel().lateralInPerTick;
                 tuningDriveModel_trackWidthTicks = c.getDriveModel().trackWidthTicks;
                 tuningMecanumGains_axialGain = md.gains.axialGain;
                 tuningMecanumGains_lateralGain = md.gains.lateralGain;
@@ -196,13 +214,26 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 tuningMecanumGains_axialVelGain = md.gains.axialVelGain;
                 tuningMecanumGains_lateralVelGain = md.gains.lateralVelGain;
                 tuningMecanumGains_headingVelGain = md.gains.headingVelGain;
-                Threads.startLoop("Update Mecanum Gains", Milliseconds.of(500), () -> {
+                Threads.startLoop("Update Tuning Parameters (Mecanum)", Milliseconds.of(500), () -> {
                     md.gains.axialGain = tuningMecanumGains_axialGain;
                     md.gains.lateralGain = tuningMecanumGains_lateralGain;
                     md.gains.headingGain = tuningMecanumGains_headingGain;
                     md.gains.axialVelGain = tuningMecanumGains_axialVelGain;
                     md.gains.lateralVelGain = tuningMecanumGains_lateralVelGain;
                     md.gains.headingVelGain = tuningMecanumGains_headingVelGain;
+                    DriveModel dm = md.getConstants().getDriveModel();
+                    dm.inPerTick = tuningDriveModel_inPerTick;
+                    dm.lateralInPerTick = tuningDriveModel_lateralInPerTick;
+                    dm.trackWidthTicks = tuningDriveModel_trackWidthTicks;
+                    MotionProfile mp = md.getConstants().getMotionProfile();
+                    mp.kS = tuningMotionProfile_kS;
+                    mp.kV = tuningMotionProfile_kV;
+                    mp.kA = tuningMotionProfile_kA;
+                    mp.maxWheelVel = tuningMotionProfile_maxWheelVel;
+                    mp.minProfileAccel = tuningMotionProfile_minProfileAccel;
+                    mp.maxProfileAccel = tuningMotionProfile_maxProfileAccel;
+                    mp.maxAngVel = tuningMotionProfile_maxAngVel;
+                    mp.maxAngAccel = tuningMotionProfile_maxAngAccel;
                 });
                 assert lazyImu != null;
                 return new DriveView(
@@ -284,17 +315,31 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 tuningMotionProfile_maxWheelVel = c.getMotionProfile().maxWheelVel;
                 tuningMotionProfile_minProfileAccel = c.getMotionProfile().minProfileAccel;
                 tuningMotionProfile_maxProfileAccel = c.getMotionProfile().maxProfileAccel;
+                tuningMotionProfile_maxAngVel = c.getMotionProfile().maxAngVel;
+                tuningMotionProfile_maxAngAccel = c.getMotionProfile().maxAngAccel;
                 tuningDriveModel_inPerTick = c.getDriveModel().inPerTick;
                 tuningDriveModel_trackWidthTicks = c.getDriveModel().trackWidthTicks;
                 tuningTankGains_ramseteZeta = td.gains.ramseteZeta;
                 tuningTankGains_ramseteBBar = td.gains.ramseteBBar;
                 tuningTankGains_turnGain = td.gains.turnGain;
                 tuningTankGains_turnVelGain = td.gains.turnVelGain;
-                Threads.startLoop("Update Tank Gains", Milliseconds.of(500), () -> {
+                Threads.startLoop("Update Tuning Parameters (Tank)", Milliseconds.of(500), () -> {
                     td.gains.ramseteZeta = tuningTankGains_ramseteZeta;
                     td.gains.ramseteBBar = tuningTankGains_ramseteBBar;
                     td.gains.turnGain = tuningTankGains_turnGain;
                     td.gains.turnVelGain = tuningTankGains_turnVelGain;
+                    DriveModel dm = td.getConstants().getDriveModel();
+                    dm.inPerTick = tuningDriveModel_inPerTick;
+                    dm.trackWidthTicks = tuningDriveModel_trackWidthTicks;
+                    MotionProfile mp = td.getConstants().getMotionProfile();
+                    mp.kS = tuningMotionProfile_kS;
+                    mp.kV = tuningMotionProfile_kV;
+                    mp.kA = tuningMotionProfile_kA;
+                    mp.maxWheelVel = tuningMotionProfile_maxWheelVel;
+                    mp.minProfileAccel = tuningMotionProfile_minProfileAccel;
+                    mp.maxProfileAccel = tuningMotionProfile_maxProfileAccel;
+                    mp.maxAngVel = tuningMotionProfile_maxAngVel;
+                    mp.maxAngAccel = tuningMotionProfile_maxAngAccel;
                 });
                 assert leftMotors != null && rightMotors != null && lazyImu != null;
                 return new DriveView(
@@ -321,7 +366,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             throw new RuntimeException("Unknown RoadRunnerDrive type!");
         }
 
-        TelemetryMenu.MenuElement root = new TelemetryMenu.MenuElement("Tuning OpMode Selection", true);
+        TelemetryMenu.MenuElement root = new TelemetryMenu.MenuElement("RoadRunner Tuning Selection", true);
         LinearOpMode[] modes = {
                 new AngularRampLogger(dvf),
                 new ForwardPushTest(dvf),
@@ -359,14 +404,14 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     () -> selection[0] = modes[finalI]);
         }
         root.addChildren(opModes);
-        TelemetryMenu menu = new TelemetryMenu(telemetry, root);
+        TelemetryMenu menu = new TelemetryMenu(fusedTelemetry, root);
 
         while (selection[0] == null && opModeInInit()) {
             menu.loop(gamepad1);
+            fusedTelemetry.update();
         }
 
-        telemetry.clearAll();
-        telemetry.update();
+        fusedTelemetry.clearAll();
         if (selection[0] == null)
             return;
 
@@ -389,20 +434,30 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             opMode.gamepad2 = gamepad2;
             opMode.hardwareMap = hardwareMap;
             if (opMode instanceof ForwardPushTest || opMode instanceof LateralPushTest) {
-                opMode.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+                // These OpModes report telemetry but not to the dashboard for whatever reason, so we'll just use
+                // our own fused telemetry instance.
+                opMode.telemetry = fusedTelemetry;
             } else {
                 opMode.telemetry = telemetry;
             }
 
-            telemetry.setCaptionValueSeparator(": ");
-            telemetry.addData(Text.html().bold(selection[0].getClass().getSimpleName()).toString(), "Ready. Press play to start.");
-            telemetry.update();
+            fusedTelemetry.setCaptionValueSeparator(": ");
+            fusedTelemetry.addData(Text.html().bold(selection[0].getClass().getSimpleName()).toString(), "Ready.");
+            fusedTelemetry.update();
 
             FtcDashboard.getInstance().withConfigRoot(configRoot ->
                     configRoot.putVariable("[RR] Tuning Parameters", ReflectionConfig.createVariableFromClass(getClass())));
 
             waitForStart();
-            telemetry.update();
+            if (isStopRequested())
+                return;
+
+            // Quickly construct the DriveView even for OpModes that don't need it, though still required for FtcDashboard tuning.
+            // This mostly applies to the ManualFeedbackTuner and allows the constants on the drive to be adjusted.
+            if (opMode instanceof ManualFeedbackTuner || opMode instanceof SplineTest || opMode instanceof LocalizationTest) {
+                // Ensures the update loop is started for the gains
+                dvf.make(hardwareMap);
+            }
 
             opMode.runOpMode();
         } finally {

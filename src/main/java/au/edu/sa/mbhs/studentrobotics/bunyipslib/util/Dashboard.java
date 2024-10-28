@@ -32,12 +32,21 @@ public final class Dashboard {
      * being called. This is not required for usages of {@link DualTelemetry}, since synchronisation happens internally,
      * however, for custom implementations where various packets are sent, this serves as a useful option.
      * <p>
-     * Packet syncing will only occur for usages of {@link #usePacket(Consumer)}.
+     * Packet syncing will only occur for usages of {@link #usePacket(Consumer)}. Do note that packets will not
+     * be sent automatically if this is enabled, {@link #sendAndClearSyncedPackets()} must be called manually.
      */
     public static boolean USING_SYNCED_PACKETS = false;
-    private static volatile TelemetryPacket accumulatedPacket = null;
+    private static volatile TelemetryPacket accumulatedPacket = new TelemetryPacket();
 
     private Dashboard() {
+    }
+
+    /**
+     * Reset all static fields for an OpMode.
+     */
+    public static void resetForOpMode() {
+        USING_SYNCED_PACKETS = false;
+        accumulatedPacket = new TelemetryPacket();
     }
 
     /**
@@ -122,8 +131,6 @@ public final class Dashboard {
         synchronized (Dashboard.class) {
             if (!USING_SYNCED_PACKETS) {
                 packet = opMode == null ? new TelemetryPacket() : opMode.telemetry.getDashboardPacket();
-            } else if (accumulatedPacket == null) {
-                packet = new TelemetryPacket();
             } else {
                 packet = accumulatedPacket;
             }
@@ -142,10 +149,10 @@ public final class Dashboard {
      */
     public static void sendAndClearSyncedPackets() {
         synchronized (Dashboard.class) {
-            if (!USING_SYNCED_PACKETS || accumulatedPacket == null)
+            if (!USING_SYNCED_PACKETS)
                 return;
             FtcDashboard.getInstance().sendTelemetryPacket(accumulatedPacket);
-            accumulatedPacket = null;
+            accumulatedPacket = new TelemetryPacket();
         }
     }
 }

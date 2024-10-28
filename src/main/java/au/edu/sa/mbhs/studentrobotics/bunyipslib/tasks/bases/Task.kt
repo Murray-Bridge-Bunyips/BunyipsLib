@@ -15,7 +15,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.ParallelTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.RaceTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.SequentialTaskGroup
-import com.acmerobotics.dashboard.FtcDashboard
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
@@ -345,26 +345,27 @@ abstract class Task(
      * Should be called by your polling loop to run the task and manage all state properly.
      */
     final override fun run() {
-        p = opMode?.telemetry?.getDashboardPacket() ?: TelemetryPacket()
-        fieldOverlay = p.fieldOverlay()
-        if (startTime == 0L) {
-            Exceptions.runUserMethod(::init, opMode)
-            startTime = System.nanoTime()
-            // Must poll finished on the first iteration to ensure that the task does not overrun
-            pollFinished()
+        Dashboard.usePacket {
+            p = it
+            fieldOverlay = it.fieldOverlay()
+            if (startTime == 0L) {
+                Exceptions.runUserMethod(::init, opMode)
+                startTime = System.nanoTime()
+                // Must poll finished on the first iteration to ensure that the task does not overrun
+                pollFinished()
+            }
+            // Here we check the taskFinished condition but don't call pollFinished(), to ensure that the task is only
+            // updated with latest finish information at the user's discretion (excluding the first-call requirement)
+            if (taskFinished && !finisherFired) {
+                Exceptions.runUserMethod(::onFinish, opMode)
+                if (!isFinished())
+                    Exceptions.runUserMethod(::onInterrupt, opMode)
+                finisherFired = true
+            }
+            // Don't run the task if it is finished as a safety guard
+            if (isFinished()) return@usePacket
+            Exceptions.runUserMethod(::periodic, opMode)
         }
-        // Here we check the taskFinished condition but don't call pollFinished(), to ensure that the task is only
-        // updated with latest finish information at the user's discretion (excluding the first-call requirement)
-        if (taskFinished && !finisherFired) {
-            Exceptions.runUserMethod(::onFinish, opMode)
-            if (!isFinished())
-                Exceptions.runUserMethod(::onInterrupt, opMode)
-            finisherFired = true
-        }
-        // Don't run the task if it is finished as a safety guard
-        if (isFinished()) return
-        Exceptions.runUserMethod(::periodic, opMode)
-        if (opMode == null) FtcDashboard.getInstance().sendTelemetryPacket(p)
     }
 
     /**

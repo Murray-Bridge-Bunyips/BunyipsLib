@@ -28,6 +28,16 @@ public class DriveModel {
      */
     public double trackWidthTicks;
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "DriveModel{" +
+                "inPerTick=" + inPerTick +
+                ", lateralInPerTick=" + lateralInPerTick +
+                ", trackWidthTicks=" + trackWidthTicks +
+                '}';
+    }
+
     /**
      * Builder class to assist in creating a DriveModel.
      */

@@ -62,6 +62,7 @@ public final class Storage {
         Tasks.resetForOpMode();
         ColourLocator.resetForOpMode();
         ColourSensor.resetForOpMode();
+        Dashboard.resetForOpMode();
     }
 
     /**

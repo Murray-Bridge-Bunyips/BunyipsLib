@@ -31,6 +31,17 @@ public class TankGains {
      */
     public double turnVelGain = 0.0;
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "TankGains{" +
+                "ramseteZeta=" + ramseteZeta +
+                ", ramseteBBar=" + ramseteBBar +
+                ", turnGain=" + turnGain +
+                ", turnVelGain=" + turnVelGain +
+                '}';
+    }
+
     /**
      * Builder class to assist in creating a TankGains.
      */

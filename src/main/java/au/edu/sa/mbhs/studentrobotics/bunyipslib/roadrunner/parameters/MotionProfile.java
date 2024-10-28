@@ -54,6 +54,21 @@ public class MotionProfile {
      */
     public double maxAngAccel = Math.PI;
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "DriveProfile{" +
+                "kS=" + kS +
+                ", kV=" + kV +
+                ", kA=" + kA +
+                ", maxWheelVel=" + maxWheelVel +
+                ", minProfileAccel=" + minProfileAccel +
+                ", maxProfileAccel=" + maxProfileAccel +
+                ", maxAngVel=" + maxAngVel +
+                ", maxAngAccel=" + maxAngAccel +
+                '}';
+    }
+
     /**
      * Builder class to assist in creating a DriveProfile.
      */
