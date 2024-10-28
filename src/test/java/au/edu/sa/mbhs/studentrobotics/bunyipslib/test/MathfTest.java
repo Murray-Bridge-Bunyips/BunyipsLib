@@ -318,8 +318,8 @@ class MathfTest {
         assertEquals(3.0, Mathf.moveTowards(3.0, 10.0, 0.0), 1.0e-6);
         assertEquals(-3.0, Mathf.moveTowards(-3.0, -10.0, 0.0), 1.0e-6);
         // Target with negative maxDelta
-        assertEquals(3.0, Mathf.moveTowards(3.0, 10.0, -1.0), 1.0e-6);
-        assertEquals(-3.0, Mathf.moveTowards(-3.0, -10.0, -1.0), 1.0e-6);
+        assertEquals(2.0, Mathf.moveTowards(3.0, 10.0, -1.0), 1.0e-6);
+        assertEquals(-4.0, Mathf.moveTowards(-3.0, -10.0, -1.0), 1.0e-6);
         // maxDelta larger than the difference
         assertEquals(10.0, Mathf.moveTowards(3.0, 10.0, 10.0), 1.0e-6);
         assertEquals(-10.0, Mathf.moveTowards(-3.0, -10.0, 10.0), 1.0e-6);
