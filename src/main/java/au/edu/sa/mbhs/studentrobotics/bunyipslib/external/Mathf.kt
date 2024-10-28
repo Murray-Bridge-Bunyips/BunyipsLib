@@ -97,8 +97,8 @@ object Mathf {
         }
         // Solutions at (-b \pm \sqrt{b^2-4ac}) / 2a
         return listOf(
-            (-bD + FastMath.sqrt(disc)) / 2 * aD,
-            (-bD - FastMath.sqrt(disc)) / 2 * aD
+            (-bD + FastMath.sqrt(disc)) / (2 * aD),
+            (-bD - FastMath.sqrt(disc)) / (2 * aD)
         )
     }
 
@@ -391,7 +391,7 @@ object Mathf {
      * Moves a current value towards `target`.
      *
      * @param target   The value to move towards.
-     * @param maxDelta The maximum change that should be applied to the value.
+     * @param maxDelta The (positive) maximum change that should be applied to the value.
      * @return The new value.
      */
     @JvmStatic
@@ -399,6 +399,8 @@ object Mathf {
         val currentD = this.toDouble()
         val targetD = target.toDouble()
         val maxDeltaD = maxDelta.toDouble()
+        // Check direction of delta, if it's invalid then return the current value
+        if (maxDeltaD < 0) return currentD
         if (FastMath.abs(targetD - currentD) <= maxDeltaD) return targetD
         return currentD + FastMath.signum(targetD - currentD) * maxDeltaD
     }
