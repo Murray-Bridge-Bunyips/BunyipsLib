@@ -399,7 +399,7 @@ object Mathf {
         val currentD = this.toDouble()
         val targetD = target.toDouble()
         val maxDeltaD = maxDelta.toDouble()
-        if (FastMath.abs(targetD - currentD) <= maxDeltaD) return targetD
+        if (FastMath.abs(targetD - currentD) <= FastMath.abs(maxDeltaD)) return targetD
         return currentD + FastMath.signum(targetD - currentD) * maxDeltaD
     }
 
