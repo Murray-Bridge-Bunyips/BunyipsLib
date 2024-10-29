@@ -71,6 +71,7 @@ public final class Tasks {
     private static final ArrayList<Task> registeredTasks = new ArrayList<>();
 
     private Tasks() {
+        throw new AssertionError("This is a utility class");
     }
 
     static void resetForOpMode() {

@@ -42,6 +42,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
  */
 public final class Voltage {
     private Voltage() {
+        throw new AssertionError("This is a utility class");
     }
 
     /**

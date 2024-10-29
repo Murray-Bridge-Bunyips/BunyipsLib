@@ -28,6 +28,7 @@ public final class Threads {
             Exceptions.handle(e, BunyipsOpMode.isRunning() ? BunyipsOpMode.getInstance().telemetry::log : null);
 
     private Threads() {
+        throw new AssertionError("This is a utility class");
     }
 
     /**

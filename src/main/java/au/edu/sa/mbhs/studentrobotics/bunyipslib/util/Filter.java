@@ -18,7 +18,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
  */
 public final class Filter {
     private Filter() {
-        // No instances
+        throw new AssertionError("This is a utility class");
     }
 
     /**

@@ -18,6 +18,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
  */
 public final class Text {
     private Text() {
+        throw new AssertionError("This is a utility class");
     }
 
     /**

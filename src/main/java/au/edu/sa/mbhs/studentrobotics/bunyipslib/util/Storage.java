@@ -49,6 +49,7 @@ public final class Storage {
     private static Filesystem filesystem = null;
 
     private Storage() {
+        throw new AssertionError("This is a utility class");
     }
 
     /**

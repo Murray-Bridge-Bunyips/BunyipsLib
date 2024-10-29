@@ -27,6 +27,7 @@ public final class Field {
     public static final Rect MAX_BOUNDS = new Rect(new Vector2d(-72, -72), new Vector2d(72, 72), Inches);
 
     private Field() {
+        throw new AssertionError("This is a utility class");
     }
 
     /**

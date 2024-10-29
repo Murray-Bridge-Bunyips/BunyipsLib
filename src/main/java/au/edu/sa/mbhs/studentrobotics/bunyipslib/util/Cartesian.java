@@ -23,6 +23,7 @@ import com.acmerobotics.roadrunner.Vector2d;
  */
 public final class Cartesian {
     private Cartesian() {
+        throw new AssertionError("This is a utility class");
     }
 
     /**

@@ -17,6 +17,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
  */
 public final class NullSafety {
     private NullSafety() {
+        throw new AssertionError("This is a utility class");
     }
 
     /**

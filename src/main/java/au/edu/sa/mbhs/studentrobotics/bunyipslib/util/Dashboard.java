@@ -38,6 +38,7 @@ public final class Dashboard {
     private static volatile TelemetryPacket accumulatedPacket = new TelemetryPacket();
 
     private Dashboard() {
+        throw new AssertionError("This is a utility class");
     }
 
     /**
