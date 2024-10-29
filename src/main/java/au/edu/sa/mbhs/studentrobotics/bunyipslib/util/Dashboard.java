@@ -14,7 +14,6 @@ import java.util.function.Consumer;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.purepursuit.path.Path;
 
 /**
  * Set of helper functions for drawing on the FtcDashboard canvas.
@@ -68,37 +67,6 @@ public final class Dashboard {
         }
 
         canvas.strokePolyline(xPoints, yPoints);
-    }
-
-    /**
-     * Draw a path along sampled intervals.
-     *
-     * @param canvas     dashboard canvas
-     * @param path       path to draw
-     * @param resolution distance units; presumed inches
-     */
-    public static void drawSampledPath(@NonNull Canvas canvas, @NonNull Path path, double resolution) {
-        int samples = (int) Math.ceil(path.length() / resolution);
-        double[] xPoints = new double[samples];
-        double[] yPoints = new double[samples];
-        double dx = path.length() / (samples - 1);
-        for (int i = 0; i < samples; i++) {
-            double displacement = i * dx;
-            Pose2d pose = path.get(displacement);
-            xPoints[i] = pose.position.x;
-            yPoints[i] = pose.position.y;
-        }
-        canvas.strokePolyline(xPoints, yPoints);
-    }
-
-    /**
-     * Draw a path along default sampled intervals.
-     *
-     * @param canvas dashboard canvas
-     * @param path   path to draw
-     */
-    public static void drawSampledPath(@NonNull Canvas canvas, @NonNull Path path) {
-        drawSampledPath(canvas, path, 2);
     }
 
     /**
