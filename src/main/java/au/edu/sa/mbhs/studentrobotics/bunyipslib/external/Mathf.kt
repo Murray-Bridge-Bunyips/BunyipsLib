@@ -110,7 +110,7 @@ object Mathf {
     @JvmStatic
     fun Measure<Angle>.wrap(): Measure<Angle> {
         val ang = (this to Radians) % MathUtils.TWO_PI
-        return Radians.of((ang + MathUtils.TWO_PI) % MathUtils.TWO_PI)
+        return Degrees.of(((ang + MathUtils.TWO_PI) % MathUtils.TWO_PI).radToDeg())
     }
 
     /**
@@ -298,7 +298,7 @@ object Mathf {
      */
     @JvmStatic
     fun Measure<Angle>.wrapDelta(): Measure<Angle> {
-        return Radians.of(this to Radians wrap (-FastMath.PI..FastMath.PI))
+        return Degrees.of(this to Degrees wrap (-180.0..180.0))
     }
 
     /**
@@ -408,7 +408,7 @@ object Mathf {
      * wrap around 1 revolution (360 degrees).
      *
      * @param target   The angle to move towards.
-     * @param maxDelta The maximum change that should be applied to the value.
+     * @param maxDelta The maximum change that should be applied to the value. Negative values will push the current value away from the target for potential convergence of wrapped numbers.
      * @return The new value.
      */
     @JvmStatic
@@ -858,5 +858,5 @@ object Mathf {
     /**
      * Exception thrown if no intercept is found when using the intersection methods of this class.
      */
-    class NoInterceptException : RuntimeException("No intercept found")
+    class NoInterceptException : RuntimeException("Intercept calculation failed due to no intercepts or an edge case.")
 }
