@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.test;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.test.math;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -9,7 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.LookupTable;
 
 class LookupTableTest {
     @Test
-    void getClosest() {
+    void testGetClosest() {
         LookupTable<Double, Integer> lut = new LookupTable<>();
         lut.add(0.0, 0);
         lut.add(1.0, 1);
@@ -22,7 +22,7 @@ class LookupTableTest {
     }
 
     @Test
-    void empty() {
+    void testEmpty() {
         assertNull(new LookupTable<Integer, Integer>().get(0));
     }
 }

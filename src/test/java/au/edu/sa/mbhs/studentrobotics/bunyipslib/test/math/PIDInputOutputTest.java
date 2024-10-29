@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.test;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.test.math;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,7 +18,7 @@ class PIDInputOutputTest {
     }
 
     @Test
-    void proportionalGainOutputTest() {
+    void testProportionalGainOutputTest() {
         controller.setP(4);
 
         controller.setSetPoint(1000);
@@ -29,7 +29,7 @@ class PIDInputOutputTest {
     }
 
     @Test
-    void integralGainOutputTest() {
+    void testIntegralGainOutputTest() {
         controller.setI(4);
         controller.setIntegrationBounds(-180, 180);
 
@@ -43,7 +43,7 @@ class PIDInputOutputTest {
     }
 
     @Test
-    void derivativeGainOutputTest() {
+    void testDerivativeGainOutputTest() {
         controller.setD(4);
 
         controller.setSetPoint(1000);
@@ -56,7 +56,7 @@ class PIDInputOutputTest {
     }
 
     @Test
-    void errorTolerancePeriodTest() {
+    void testErrorTolerancePeriodTest() {
         controller.setP(0.5);
         assertEquals(0, controller.getPeriod());
         assertEquals(0, controller.getVelocityError());

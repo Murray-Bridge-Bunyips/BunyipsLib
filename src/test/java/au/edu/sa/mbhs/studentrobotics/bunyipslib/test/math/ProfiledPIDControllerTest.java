@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.test;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.test.math;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

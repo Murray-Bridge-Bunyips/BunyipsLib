@@ -96,6 +96,7 @@ public class Controller extends Gamepad {
      */
     public Controller(@NonNull Gamepad gamepad) {
         sdk = gamepad;
+        copy(gamepad);
         update();
     }
 
@@ -302,9 +303,8 @@ public class Controller extends Gamepad {
      */
     public boolean getDebounced(@NonNull Controls button) {
         boolean buttonPressed = get(button);
-        // Default value will be true as it won't be in the map, to avoid debouncing a value that was never pressed
-        boolean isPressed = Boolean.TRUE.equals(debounces.getOrDefault(button, true));
-        if (buttonPressed && !isPressed) {
+        boolean pressedPreviously = Boolean.TRUE.equals(debounces.getOrDefault(button, false));
+        if (buttonPressed && !pressedPreviously) {
             debounces.put(button, true);
             return true;
         } else if (!buttonPressed) {
