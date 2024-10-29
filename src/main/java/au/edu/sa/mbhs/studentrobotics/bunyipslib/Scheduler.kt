@@ -711,12 +711,5 @@ class Scheduler : BunyipsComponent() {
             report += if (timeoutSec == 0.0) "s" else "/" + timeoutSec + "s"
             reports.add("$report</small>")
         }
-
-        /**
-         * `getDebounced` extension for [Controller].
-         */
-        infix fun Controller.rising(button: Controls): Boolean {
-            return this.getDebounced(button)
-        }
     }
 }

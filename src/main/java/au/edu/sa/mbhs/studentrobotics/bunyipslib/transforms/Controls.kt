@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian
 import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Vector2d
@@ -257,6 +258,13 @@ enum class Controls {
                 AnalogGroup.TRIGGERS -> arrayOf(Analog.LEFT_TRIGGER, Analog.RIGHT_TRIGGER)
                 AnalogGroup.ALL -> Analog.values()
             }
+        }
+
+        /**
+         * `getDebounced` extension for [Controller].
+         */
+        infix fun Controller.rising(button: Controls): Boolean {
+            return this.getDebounced(button)
         }
     }
 }
