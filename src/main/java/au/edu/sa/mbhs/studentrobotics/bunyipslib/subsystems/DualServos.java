@@ -58,6 +58,17 @@ public class DualServos extends BunyipsSubsystem {
     }
 
     /**
+     * Create a new DualServos with default open and close positions.
+     * This relies that your servos are configured at the hardware level to move in the correct directions.
+     *
+     * @param left  the left servo
+     * @param right the right servo
+     */
+    public DualServos(@NonNull Servo left, @NonNull Servo right) {
+        this(left, right, 0, 1, 0, 1);
+    }
+
+    /**
      * Toggle the state of the servos.
      *
      * @param servo the servo to toggle

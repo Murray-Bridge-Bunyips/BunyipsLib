@@ -159,7 +159,9 @@ public class Motor implements DcMotorEx {
      *
      * @param controller the controller to use, recommended to use a closed-loop controller such as PID
      */
-    public void setRunToPositionController(@NonNull SystemController controller) {
+    public void setRunToPositionController(@Nullable SystemController controller) {
+        if (controller == null)
+            return;
         rtpController = controller;
         if (rtpController instanceof PIDF)
             ((PIDF) rtpController).getPIDFController().setTolerance(LynxConstants.DEFAULT_TARGET_POSITION_TOLERANCE);
@@ -188,7 +190,7 @@ public class Motor implements DcMotorEx {
      *
      * @param controller the controller to use, recommended to use a PIDFF controller.
      */
-    public void setRunUsingEncoderController(@NonNull SystemController controller) {
+    public void setRunUsingEncoderController(@Nullable SystemController controller) {
         setRunUsingEncoderController(1, getMotorType().getAchieveableMaxTicksPerSecond(), controller);
     }
 
@@ -209,7 +211,9 @@ public class Motor implements DcMotorEx {
      * @param maxAchievableTicksPerSecond your motor's spec for how many ticks/sec it can reach
      * @param controller                  the controller to use, recommended to use a PIDFF controller.
      */
-    public void setRunUsingEncoderController(double bufferFraction, double maxAchievableTicksPerSecond, @NonNull SystemController controller) {
+    public void setRunUsingEncoderController(double bufferFraction, double maxAchievableTicksPerSecond, @Nullable SystemController controller) {
+        if (controller == null)
+            return;
         if (bufferFraction <= 0 || bufferFraction > 1) {
             throw new OutOfRangeException(LocalizedFormats.OUT_OF_RANGE_LEFT, bufferFraction, 0, 1);
         }

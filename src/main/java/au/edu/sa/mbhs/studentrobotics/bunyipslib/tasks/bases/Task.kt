@@ -512,5 +512,12 @@ abstract class Task(
         fun defer(taskBuilder: () -> Task): DynamicTask {
             return DynamicTask(taskBuilder)
         }
+
+        /**
+         * Default task setter extension for [BunyipsSubsystem] to set the default task of a subsystem.
+         */
+        infix fun BunyipsSubsystem.default(defaultTask: Task) {
+            this.setDefaultTask(defaultTask)
+        }
     }
 }
