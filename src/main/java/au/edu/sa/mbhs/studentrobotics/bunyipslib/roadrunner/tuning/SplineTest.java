@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.tuning;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -32,7 +33,7 @@ public final class SplineTest extends LinearOpMode {
 
         Actions.runBlocking(
                 new DeadlineTaskGroup(
-                        drive.makeTrajectory()
+                        drive.makeTrajectory(new Pose2d(0, 0, 0))
                                 .splineTo(new Vector2d(30, 30), Math.PI / 2)
                                 .splineTo(new Vector2d(0, 60), Math.PI)
                                 .build(),

@@ -9,6 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Velocity
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import kotlin.math.roundToInt
 
 /**
@@ -18,6 +19,20 @@ import kotlin.math.roundToInt
  * @since 3.0.0
  */
 object EncoderTicks {
+    /**
+     * Utility for debugging an encoder on telemetry with current encoder/power information.
+     *
+     * @param motor The motor to debug. Will be prepended by the HardwareDevice name.
+     * @param telemetry The telemetry to debug to.
+     */
+    @JvmStatic
+    fun debug(motor: DcMotor, telemetry: Telemetry) {
+        telemetry.addData("[${motor.deviceName}] Current Position", motor.currentPosition)
+        telemetry.addData("[${motor.deviceName}] Target Position", motor.targetPosition)
+        telemetry.addData("[${motor.deviceName}] Velocity", (motor as DcMotorEx).velocity)
+        telemetry.addData("[${motor.deviceName}] Power", motor.power)
+    }
+
     /**
      * Converts encoder ticks to inches for use in calculation with a Localizer.
      *

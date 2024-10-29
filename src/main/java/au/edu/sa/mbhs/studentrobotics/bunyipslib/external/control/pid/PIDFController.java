@@ -168,6 +168,13 @@ public class PIDFController implements PIDF {
         return new double[]{kP, kI, kD, kF};
     }
 
+    /**
+     * <b>Note!</b> These coefficients will always be ordered in the following way:
+     * kP, kI, kD, kF. Omission of values will drop up to the last value kP for a PController, however, do note
+     * in a PD controller the second term will be kI, not kD. PID/PD/P controllers are simply PIDF controllers
+     * with omitted values.
+     * @inheritDoc
+     */
     @Override
     public void setCoefficients(@NonNull double[] coeffs) {
         if (coeffs.length < 1) {

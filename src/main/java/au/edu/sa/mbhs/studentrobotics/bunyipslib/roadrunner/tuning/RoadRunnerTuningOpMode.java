@@ -197,24 +197,32 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 }
 
                 Constants c = md.getConstants();
-                tuningMotionProfile_kS = c.getMotionProfile().kS;
-                tuningMotionProfile_kV = c.getMotionProfile().kV;
-                tuningMotionProfile_kA = c.getMotionProfile().kA;
-                tuningMotionProfile_maxWheelVel = c.getMotionProfile().maxWheelVel;
-                tuningMotionProfile_minProfileAccel = c.getMotionProfile().minProfileAccel;
-                tuningMotionProfile_maxProfileAccel = c.getMotionProfile().maxProfileAccel;
-                tuningMotionProfile_maxAngVel = c.getMotionProfile().maxAngVel;
-                tuningMotionProfile_maxAngAccel = c.getMotionProfile().maxAngAccel;
-                tuningDriveModel_inPerTick = c.getDriveModel().inPerTick;
-                tuningDriveModel_lateralInPerTick = c.getDriveModel().lateralInPerTick;
-                tuningDriveModel_trackWidthTicks = c.getDriveModel().trackWidthTicks;
-                tuningMecanumGains_axialGain = md.gains.axialGain;
-                tuningMecanumGains_lateralGain = md.gains.lateralGain;
-                tuningMecanumGains_headingGain = md.gains.headingGain;
-                tuningMecanumGains_axialVelGain = md.gains.axialVelGain;
-                tuningMecanumGains_lateralVelGain = md.gains.lateralVelGain;
-                tuningMecanumGains_headingVelGain = md.gains.headingVelGain;
+                // Update only once for init to prevent re-init from rewriting
+                if (tuningMotionProfile_kS == -1) {
+                    tuningMotionProfile_kS = c.getMotionProfile().kS;
+                    tuningMotionProfile_kV = c.getMotionProfile().kV;
+                    tuningMotionProfile_kA = c.getMotionProfile().kA;
+                    tuningMotionProfile_maxWheelVel = c.getMotionProfile().maxWheelVel;
+                    tuningMotionProfile_minProfileAccel = c.getMotionProfile().minProfileAccel;
+                    tuningMotionProfile_maxProfileAccel = c.getMotionProfile().maxProfileAccel;
+                    tuningMotionProfile_maxAngVel = c.getMotionProfile().maxAngVel;
+                    tuningMotionProfile_maxAngAccel = c.getMotionProfile().maxAngAccel;
+                    tuningDriveModel_inPerTick = c.getDriveModel().inPerTick;
+                    tuningDriveModel_lateralInPerTick = c.getDriveModel().lateralInPerTick;
+                    tuningDriveModel_trackWidthTicks = c.getDriveModel().trackWidthTicks;
+                }
+                if (tuningMecanumGains_axialGain == null) {
+                    tuningMecanumGains_axialGain = md.gains.axialGain;
+                    tuningMecanumGains_lateralGain = md.gains.lateralGain;
+                    tuningMecanumGains_headingGain = md.gains.headingGain;
+                    tuningMecanumGains_axialVelGain = md.gains.axialVelGain;
+                    tuningMecanumGains_lateralVelGain = md.gains.lateralVelGain;
+                    tuningMecanumGains_headingVelGain = md.gains.headingVelGain;
+                }
                 Threads.startLoop("Update Tuning Parameters (Mecanum)", Milliseconds.of(500), () -> {
+                    assert tuningMecanumGains_axialGain != null && tuningMecanumGains_lateralGain != null &&
+                            tuningMecanumGains_headingGain != null && tuningMecanumGains_axialVelGain != null &&
+                            tuningMecanumGains_lateralVelGain != null && tuningMecanumGains_headingVelGain != null;
                     md.gains.axialGain = tuningMecanumGains_axialGain;
                     md.gains.lateralGain = tuningMecanumGains_lateralGain;
                     md.gains.headingGain = tuningMecanumGains_headingGain;
@@ -309,21 +317,27 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 }
 
                 Constants c = drive.getConstants();
-                tuningMotionProfile_kS = c.getMotionProfile().kS;
-                tuningMotionProfile_kV = c.getMotionProfile().kV;
-                tuningMotionProfile_kA = c.getMotionProfile().kA;
-                tuningMotionProfile_maxWheelVel = c.getMotionProfile().maxWheelVel;
-                tuningMotionProfile_minProfileAccel = c.getMotionProfile().minProfileAccel;
-                tuningMotionProfile_maxProfileAccel = c.getMotionProfile().maxProfileAccel;
-                tuningMotionProfile_maxAngVel = c.getMotionProfile().maxAngVel;
-                tuningMotionProfile_maxAngAccel = c.getMotionProfile().maxAngAccel;
-                tuningDriveModel_inPerTick = c.getDriveModel().inPerTick;
-                tuningDriveModel_trackWidthTicks = c.getDriveModel().trackWidthTicks;
-                tuningTankGains_ramseteZeta = td.gains.ramseteZeta;
-                tuningTankGains_ramseteBBar = td.gains.ramseteBBar;
-                tuningTankGains_turnGain = td.gains.turnGain;
-                tuningTankGains_turnVelGain = td.gains.turnVelGain;
+                if (tuningMotionProfile_kS == -1) {
+                    tuningMotionProfile_kS = c.getMotionProfile().kS;
+                    tuningMotionProfile_kV = c.getMotionProfile().kV;
+                    tuningMotionProfile_kA = c.getMotionProfile().kA;
+                    tuningMotionProfile_maxWheelVel = c.getMotionProfile().maxWheelVel;
+                    tuningMotionProfile_minProfileAccel = c.getMotionProfile().minProfileAccel;
+                    tuningMotionProfile_maxProfileAccel = c.getMotionProfile().maxProfileAccel;
+                    tuningMotionProfile_maxAngVel = c.getMotionProfile().maxAngVel;
+                    tuningMotionProfile_maxAngAccel = c.getMotionProfile().maxAngAccel;
+                    tuningDriveModel_inPerTick = c.getDriveModel().inPerTick;
+                    tuningDriveModel_trackWidthTicks = c.getDriveModel().trackWidthTicks;
+                }
+                if (tuningTankGains_ramseteZeta == null) {
+                    tuningTankGains_ramseteZeta = td.gains.ramseteZeta;
+                    tuningTankGains_ramseteBBar = td.gains.ramseteBBar;
+                    tuningTankGains_turnGain = td.gains.turnGain;
+                    tuningTankGains_turnVelGain = td.gains.turnVelGain;
+                }
                 Threads.startLoop("Update Tuning Parameters (Tank)", Milliseconds.of(500), () -> {
+                    assert tuningTankGains_ramseteZeta != null && tuningTankGains_ramseteBBar != null &&
+                            tuningTankGains_turnGain != null && tuningTankGains_turnVelGain != null;
                     td.gains.ramseteZeta = tuningTankGains_ramseteZeta;
                     td.gains.ramseteBBar = tuningTankGains_ramseteBBar;
                     td.gains.turnGain = tuningTankGains_turnGain;
