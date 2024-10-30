@@ -1,13 +1,22 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.approx
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.lerp
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.moveTowards
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.radToDeg
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.smoothDamp
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.wrapDeltaRadians
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
+import com.acmerobotics.roadrunner.Rotation2d
 import com.acmerobotics.roadrunner.Twist2d
 import com.acmerobotics.roadrunner.Vector2d
 import kotlin.math.hypot
@@ -161,5 +170,98 @@ object Geometry {
     @JvmStatic
     fun Pose2d.toUserString(): String {
         return "Pose2d(x=" + this.position.x + ", y=" + this.position.y + ", r=" + Math.toDegrees(this.heading.toDouble()) + "°)"
+    }
+
+    /**
+     * Linearly interpolate between two vectors.
+     * The [t] parameter is not clamped between 0-1.
+     */
+    @JvmStatic
+    fun Vector2d.lerp(other: Vector2d, t: Double): Vector2d {
+        return Vector2d(this.x + (other.x - this.x) * t, this.y + (other.y - this.y) * t)
+    }
+
+    /**
+     * Linearly interpolate between two poses.
+     * The [t] parameter is not clamped between 0-1.
+     */
+    @JvmStatic
+    fun Pose2d.lerp(other: Pose2d, t: Double): Pose2d {
+        return Pose2d(
+            this.position.lerp(other.position, t),
+            this.heading.lerp(other.heading, t)
+        )
+    }
+
+    /**
+     * Linearly interpolate between two rotations.
+     * The [t] parameter is not clamped between 0-1.
+     * Rotation value will take the shortest path.
+     */
+    @JvmStatic
+    fun Rotation2d.lerp(other: Rotation2d, t: Double): Rotation2d {
+        return Rotation2d.exp((Radians.of(this.log()) to Radians.of(other.log()) lerp t to Radians))
+    }
+
+    /**
+     * Move a vector towards another vector by a step size.
+     */
+    @JvmStatic
+    fun Vector2d.moveTowards(other: Vector2d, stepSizeInches: Double): Vector2d {
+        return Vector2d(
+            this.x.moveTowards(other.x, stepSizeInches),
+            this.y.moveTowards(other.y, stepSizeInches)
+        )
+    }
+
+    /**
+     * Move a pose towards another pose by a step size.
+     */
+    @JvmStatic
+    fun Pose2d.moveTowards(other: Pose2d, stepSizeInches: Double, stepSizeRad: Double): Pose2d {
+        return Pose2d(
+            this.position.moveTowards(other.position, stepSizeInches),
+            this.heading.moveTowards(other.heading, Radians.of(stepSizeRad))
+        )
+    }
+
+    /**
+     * Move a rotation towards another rotation by a step size.
+     */
+    @JvmStatic
+    fun Rotation2d.moveTowards(other: Rotation2d, stepSize: Measure<Angle>): Rotation2d {
+        return Rotation2d.exp((Radians.of(this.log()).moveTowards(Radians.of(other.log()), stepSize) to Radians))
+    }
+
+    /**
+     * Smoothly damp a vector towards another vector.
+     */
+    @JvmStatic
+    fun Vector2d.smoothDamp(target: Vector2d, currentVelocity: Reference<Double>, smoothTime: Measure<Time>, maxVelocity: Number, deltaTime: Measure<Time>): Vector2d {
+        return Vector2d(
+            this.x.smoothDamp(target.x, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime),
+            this.y.smoothDamp(target.y, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime)
+        )
+    }
+
+    /**
+     * Smoothly damp a pose towards another pose.
+     * Velocity will be in degrees per second.
+     */
+    @JvmStatic
+    fun Pose2d.smoothDamp(target: Pose2d, currentVelocity: Reference<Double>, smoothTime: Measure<Time>, maxVelocity: Number, deltaTime: Measure<Time>): Pose2d {
+        return Pose2d(
+            this.position.smoothDamp(target.position, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime),
+            this.heading.smoothDamp(target.heading, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime)
+        )
+    }
+
+    /**
+     * Smoothly damp a rotation towards another rotation.
+     * Velocity will be in degrees per second.
+     */
+    @JvmStatic
+    fun Rotation2d.smoothDamp(target: Rotation2d, currentVelocity: Reference<Double>, smoothTime: Measure<Time>, maxVelocity: Number, deltaTime: Measure<Time>): Rotation2d {
+        return Rotation2d.exp(Degrees.of(this.log().radToDeg()).smoothDamp(Degrees.of(target.log().radToDeg()), currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime) to Radians)
     }
 }

@@ -383,7 +383,7 @@ object Mathf {
      * @return The interpolated value.
      */
     @JvmStatic
-    fun Pair<Measure<Angle>, Measure<Angle>>.lerp(t: Number): Measure<Angle> {
+    infix fun Pair<Measure<Angle>, Measure<Angle>>.lerp(t: Number): Measure<Angle> {
         return lerp(first, second, t)
     }
 
