@@ -29,6 +29,7 @@ public class MotionProfile {
     public double kV = 0;
     /**
      * Acceleration feedforward gain in tick units.
+     * Assumed as zero if using the MecanumDrive path follower.
      */
     public double kA = 0;
 

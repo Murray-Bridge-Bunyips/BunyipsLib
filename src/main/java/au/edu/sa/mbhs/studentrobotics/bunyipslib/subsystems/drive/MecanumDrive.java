@@ -12,6 +12,9 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
+import com.acmerobotics.roadrunner.Arclength;
+import com.acmerobotics.roadrunner.DisplacementProfile;
+import com.acmerobotics.roadrunner.DisplacementTrajectory;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.HolonomicController;
 import com.acmerobotics.roadrunner.MecanumKinematics;
@@ -36,6 +39,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Arrays;
 import java.util.List;
@@ -346,7 +350,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                 model,
                 profile,
                 TurnTask::new,
-                FollowTrajectoryTask::new,
+                gains.pathFollowingEnabled ? FollowDisplacementTrajectoryTask::new : FollowTimedTrajectoryTask::new,
                 new TrajectoryBuilderParams(
                         1.0e-6,
                         new ProfileParams(
@@ -359,9 +363,128 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     /**
-     * A task that will execute a RoadRunner trajectory on a Mecanum drive.
+     * A task that will execute a RoadRunner trajectory on a Mecanum drive using a path follower approach.
      */
-    public final class FollowTrajectoryTask extends Task {
+    public final class FollowDisplacementTrajectoryTask extends Task {
+        private final DisplacementTrajectory displacementTrajectory;
+        private final double[] xPoints, yPoints;
+        private Pose2d error = Geometry.zeroPose();
+        private ElapsedTime stab;
+        private PoseVelocity2d robotVelRobot = Geometry.zeroVel();
+        private double s;
+
+        /**
+         * Create a new FollowDisplacementTrajectoryTask.
+         *
+         * @param t the trajectory to follow with a path follower
+         */
+        public FollowDisplacementTrajectoryTask(@NonNull TimeTrajectory t) {
+            displacementTrajectory = new DisplacementTrajectory(t.path, t.profile.dispProfile);
+            List<Double> disps = com.acmerobotics.roadrunner.Math.range(
+                    0, t.path.length(),
+                    Math.max(2, (int) Math.ceil(t.path.length() / 2)));
+            xPoints = new double[disps.size()];
+            yPoints = new double[disps.size()];
+            for (int i = 0; i < disps.size(); i++) {
+                Pose2d p = t.path.get(disps.get(i), 1).value();
+                xPoints[i] = p.position.x;
+                yPoints[i] = p.position.y;
+            }
+        }
+
+        @Override
+        protected void periodic() {
+            fieldOverlay.setStroke("#4CAF507A");
+            fieldOverlay.setStrokeWidth(1);
+            fieldOverlay.strokePolyline(xPoints, yPoints);
+
+            Pose2d actualPose = accumulator.getPose();
+            robotVelRobot = accumulator.getVelocity();
+
+            s = displacementTrajectory.project(actualPose.position, s);
+            // Internally reparameterises from respect to displacement to respect to time
+            Pose2dDual<Time> txWorldTarget = displacementTrajectory.get(s);
+            targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
+
+            PoseVelocity2dDual<Time> feedbackCommand = new HolonomicController(
+                    gains.axialGain, gains.lateralGain, gains.headingGain,
+                    gains.axialVelGain, gains.lateralVelGain, gains.headingVelGain
+            )
+                    .compute(txWorldTarget, actualPose, robotVelRobot);
+            driveCommandWriter.write(new DriveCommandMessage(feedbackCommand));
+
+            double voltage = voltageSensor.getVoltage();
+
+            Pose2dDual<Arclength> displacement = displacementTrajectory.path.get(s, 3);
+            double maxVel = Double.POSITIVE_INFINITY;
+            for (DualNum<Arclength> wheelVel : kinematics.inverse(displacement.velocity()).all()) {
+                double feedforwardVoltage = profile.kS + profile.kV * wheelVel.value();
+                maxVel = Math.min(maxVel, voltage / feedforwardVoltage);
+            }
+            maxVel = Math.min(maxVel, voltage / profile.kV);
+
+            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(
+                    new PoseVelocity2dDual<>(
+                            displacement.velocity().linearVel.reparam(DualNum.constant(maxVel, 1)),
+                            displacement.velocity().angVel.reparam(DualNum.constant(profile.maxAngVel, 1))
+                    )
+            );
+            MotorFeedforward feedforward = new MotorFeedforward(profile.kS,
+                    profile.kV / model.inPerTick, profile.kA / model.inPerTick);
+            leftFrontPower = feedforward.compute(wheelVels.leftFront) / voltage;
+            leftBackPower = feedforward.compute(wheelVels.leftBack) / voltage;
+            rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
+            rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
+            mecanumCommandWriter.write(new MecanumCommandMessage(
+                    voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
+            ));
+
+            error = txWorldTarget.value().minusExp(actualPose);
+            p.put("xError", error.position.x);
+            p.put("yError", error.position.y);
+            p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
+
+            Canvas c = p.fieldOverlay();
+            c.setStrokeWidth(1);
+
+            c.setStroke("#4CAF50");
+            Dashboard.drawRobot(c, txWorldTarget.value());
+
+            c.setStroke("#4CAF50FF");
+            c.setStrokeWidth(1);
+            c.strokePolyline(xPoints, yPoints);
+        }
+
+        @Override
+        protected boolean isTaskFinished() {
+            boolean displacement = s >= displacementTrajectory.length();
+            if (displacement && stab == null) {
+                stab = new ElapsedTime();
+            } else if (!displacement) {
+                stab = null;
+            }
+            boolean stablilised = stab != null &&
+                    ((error.position.norm() < errorThresholds.getMaxTranslationalError().in(Inches)
+                    && robotVelRobot.linearVel.norm() < errorThresholds.getMinVelStab().in(InchesPerSecond)
+                    && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
+                    && robotVelRobot.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond))
+                    || stab.seconds() > errorThresholds.getStabilizationTimeout().in(Seconds));
+            return displacement && stablilised;
+        }
+
+        @Override
+        protected void onFinish() {
+            leftFrontPower = 0;
+            leftBackPower = 0;
+            rightBackPower = 0;
+            rightFrontPower = 0;
+        }
+    }
+
+    /**
+     * A task that will execute a time-based RoadRunner trajectory on a Mecanum drive.
+     */
+    public final class FollowTimedTrajectoryTask extends Task {
         private final TimeTrajectory timeTrajectory;
         private final double[] xPoints, yPoints;
         private Pose2d error = Geometry.zeroPose();
@@ -370,11 +493,11 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         private double t;
 
         /**
-         * Create a new FollowTrajectoryTask.
+         * Create a new FollowTimedTrajectoryTask.
          *
-         * @param t the trajectory to follow
+         * @param t the trajectory to follow with a time-based approach (default)
          */
-        public FollowTrajectoryTask(@NonNull TimeTrajectory t) {
+        public FollowTimedTrajectoryTask(@NonNull TimeTrajectory t) {
             timeTrajectory = t;
 
             List<Double> disps = com.acmerobotics.roadrunner.Math.range(
