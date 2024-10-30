@@ -2,7 +2,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.test.math;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.FieldTiles;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
@@ -154,7 +153,7 @@ class GeometryTest {
     @Test
     void testSmoothDampPose() {
         Pose2d a = new Pose2d(0, 0, 0);
-        Pose2d b = new Pose2d(10, 10,  Math.PI);
+        Pose2d b = new Pose2d(10, 10, Math.PI);
         Reference<Double> v = new Reference<>(0.0);
 
         for (int i = 0; i < 5; i++)

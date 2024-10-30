@@ -237,7 +237,13 @@ object Geometry {
      * Smoothly damp a vector towards another vector.
      */
     @JvmStatic
-    fun Vector2d.smoothDamp(target: Vector2d, currentVelocity: Reference<Double>, smoothTime: Measure<Time>, maxVelocity: Number, deltaTime: Measure<Time>): Vector2d {
+    fun Vector2d.smoothDamp(
+        target: Vector2d,
+        currentVelocity: Reference<Double>,
+        smoothTime: Measure<Time>,
+        maxVelocity: Number,
+        deltaTime: Measure<Time>
+    ): Vector2d {
         return Vector2d(
             this.x.smoothDamp(target.x, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime),
             this.y.smoothDamp(target.y, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime)
@@ -249,7 +255,13 @@ object Geometry {
      * Velocity will be in degrees per second.
      */
     @JvmStatic
-    fun Pose2d.smoothDamp(target: Pose2d, currentVelocity: Reference<Double>, smoothTime: Measure<Time>, maxVelocity: Number, deltaTime: Measure<Time>): Pose2d {
+    fun Pose2d.smoothDamp(
+        target: Pose2d,
+        currentVelocity: Reference<Double>,
+        smoothTime: Measure<Time>,
+        maxVelocity: Number,
+        deltaTime: Measure<Time>
+    ): Pose2d {
         return Pose2d(
             this.position.smoothDamp(target.position, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime),
             this.heading.smoothDamp(target.heading, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime)
@@ -261,7 +273,21 @@ object Geometry {
      * Velocity will be in degrees per second.
      */
     @JvmStatic
-    fun Rotation2d.smoothDamp(target: Rotation2d, currentVelocity: Reference<Double>, smoothTime: Measure<Time>, maxVelocity: Number, deltaTime: Measure<Time>): Rotation2d {
-        return Rotation2d.exp(Degrees.of(this.log().radToDeg()).smoothDamp(Degrees.of(target.log().radToDeg()), currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime) to Radians)
+    fun Rotation2d.smoothDamp(
+        target: Rotation2d,
+        currentVelocity: Reference<Double>,
+        smoothTime: Measure<Time>,
+        maxVelocity: Number,
+        deltaTime: Measure<Time>
+    ): Rotation2d {
+        return Rotation2d.exp(
+            Degrees.of(this.log().radToDeg()).smoothDamp(
+                Degrees.of(target.log().radToDeg()),
+                currentVelocity,
+                smoothTime,
+                maxVelocity.toDouble(),
+                deltaTime
+            ) to Radians
+        )
     }
 }
