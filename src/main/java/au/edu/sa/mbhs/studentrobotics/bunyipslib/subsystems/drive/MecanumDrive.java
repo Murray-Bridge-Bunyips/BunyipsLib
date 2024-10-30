@@ -13,7 +13,6 @@ import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.Arclength;
-import com.acmerobotics.roadrunner.DisplacementProfile;
 import com.acmerobotics.roadrunner.DisplacementTrajectory;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.HolonomicController;
@@ -403,7 +402,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
             s = displacementTrajectory.project(actualPose.position, s);
             // Internally reparameterises from respect to displacement to respect to time
-            Pose2dDual<Time> txWorldTarget = displacementTrajectory.get(s);
+            Pose2dDual<Time> txWorldTarget = displacementTrajectory.get(s); // TODO: check projection
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             PoseVelocity2dDual<Time> feedbackCommand = new HolonomicController(
@@ -415,20 +414,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
             double voltage = voltageSensor.getVoltage();
 
+            // TODO: calculate max feedforward power
             Pose2dDual<Arclength> displacement = displacementTrajectory.path.get(s, 3);
-            double maxVel = Double.POSITIVE_INFINITY;
-            for (DualNum<Arclength> wheelVel : kinematics.inverse(displacement.velocity()).all()) {
-                double feedforwardVoltage = profile.kS + profile.kV * wheelVel.value();
-                maxVel = Math.min(maxVel, voltage / feedforwardVoltage);
-            }
-            maxVel = Math.min(maxVel, voltage / profile.kV);
 
-            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(
-                    new PoseVelocity2dDual<>(
-                            displacement.velocity().linearVel.reparam(DualNum.constant(maxVel, 1)),
-                            displacement.velocity().angVel.reparam(DualNum.constant(profile.maxAngVel, 1))
-                    )
-            );
+            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(feedbackCommand);
             MotorFeedforward feedforward = new MotorFeedforward(profile.kS,
                     profile.kV / model.inPerTick, profile.kA / model.inPerTick);
             leftFrontPower = feedforward.compute(wheelVels.leftFront) / voltage;
