@@ -40,7 +40,7 @@ object Mathf {
     @JvmOverloads
     @JvmStatic
     fun Number?.round(thDigits: Int, sigFigs: Int = -1): Double {
-        if (this == null) return 0.0
+        if (this == null || this.toDouble().isNaN()) return 0.0
         val n = this.toDouble()
         if (thDigits == 0) return Math.round(n).toDouble()
         var bd = BigDecimal(n.toString())

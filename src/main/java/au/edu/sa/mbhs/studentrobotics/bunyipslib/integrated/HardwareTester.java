@@ -62,6 +62,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
+// TODO: convert to opmode manager
 // Using same group as FtcDashbord to fit with other constantly enabled OpModes
 @TeleOp(name = "Hardware Tester", group = "dash")
 public final class HardwareTester extends BunyipsOpMode {

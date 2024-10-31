@@ -27,10 +27,10 @@ object EncoderTicks {
      */
     @JvmStatic
     fun debug(motor: DcMotor, telemetry: Telemetry) {
-        telemetry.addData("[${motor.deviceName}] Current Position", motor.currentPosition)
-        telemetry.addData("[${motor.deviceName}] Target Position", motor.targetPosition)
-        telemetry.addData("[${motor.deviceName}] Velocity", (motor as DcMotorEx).velocity)
-        telemetry.addData("[${motor.deviceName}] Power", motor.power)
+        telemetry.addData("[${motor.connectionInfo}] Current Position", motor.currentPosition)
+        telemetry.addData("[${motor.connectionInfo}] Target Position", motor.targetPosition)
+        telemetry.addData("[${motor.connectionInfo}] Velocity", (motor as DcMotorEx).velocity)
+        telemetry.addData("[${motor.connectionInfo}] Power", motor.power)
     }
 
     /**

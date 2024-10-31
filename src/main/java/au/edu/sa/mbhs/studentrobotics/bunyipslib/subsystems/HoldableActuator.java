@@ -89,9 +89,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         this.motor = (DcMotorEx) motor;
         // Always default to BRAKE because HoldableActuators are meant to hold
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // Assumes current arm position is the zero position, the user may home manually if required using setInitTask
-        this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.motor.setTargetPosition(0);
+        this.motor.setTargetPosition(this.motor.getCurrentPosition());
         this.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.motor.setPower(HOLDING_POWER);
         // Encoder instance is used for awareness of the encoder position, we generally don't care about direction
@@ -360,6 +358,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @see #disableHomingOvercurrent()
      */
     @NonNull
+    // TODO: dt in here
     public HoldableActuator enableUserSetpointControl(@NonNull DoubleSupplier setpointDeltaMultiplier) {
         this.setpointDeltaMultiplier = setpointDeltaMultiplier;
         userControlsSetpoint = true;
