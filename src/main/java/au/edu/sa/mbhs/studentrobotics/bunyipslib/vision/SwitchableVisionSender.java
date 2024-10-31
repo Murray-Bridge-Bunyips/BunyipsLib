@@ -4,7 +4,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamServer;
 
@@ -13,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 
 /**
  * Utility component to switch between different feeds and processors with FtcDashboard and the DS "Camera Stream".
@@ -61,8 +61,7 @@ public class SwitchableVisionSender implements Runnable {
      *                      can be added through {@link #addInstance}.
      */
     public SwitchableVisionSender(@NonNull Vision firstInstance) {
-        FtcDashboard.getInstance().withConfigRoot(c ->
-                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
+        Dashboard.enableConfig(getClass());
 
         instances.add(firstInstance);
 

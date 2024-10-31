@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -16,8 +17,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 
 /**
- * Set of helper functions for drawing on the FtcDashboard canvas.
+ * Set of helper functions for drawing on the FtcDashboard canvas and operating various FtcDashboard functions.
  *
+ * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
 @Config
@@ -84,6 +86,16 @@ public final class Dashboard {
         Vector2d p1 = pose.position.plus(halfv);
         Vector2d p2 = p1.plus(halfv);
         canvas.strokeLine(p1.x, p1.y, p2.x, p2.y);
+    }
+
+    /**
+     * Send a class to the dashboard for configuration, much as if the class was annotated with {@link Config}.
+     *
+     * @param clazz the class to send
+     */
+    public static void enableConfig(Class<?> clazz) {
+        FtcDashboard.getInstance().withConfigRoot(c ->
+                c.putVariable(clazz.getSimpleName(), ReflectionConfig.createVariableFromClass(clazz)));
     }
 
     /**

@@ -12,7 +12,6 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
-import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.DisplacementTrajectory;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.HolonomicController;
@@ -70,6 +69,11 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
  * @since 6.0.0
  */
 public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
+    /**
+     * The lookahead distance used for the current implementation of the path following mode of this MecanumDrive.
+     */
+    public static final double STATIC_PATH_PROJECTION_LOOKAHEAD_INCHES = 6.0;
+
     private final MecanumKinematics kinematics;
     private final TurnConstraints defaultTurnConstraints;
     private final VelConstraint defaultVelConstraint;
@@ -148,6 +152,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         this.rightBack = (DcMotorEx) rightBack;
         this.rightFront = (DcMotorEx) rightFront;
         this.lazyImu = lazyImu;
+
+        Dashboard.enableConfig(getClass());
     }
 
     /**
@@ -402,7 +408,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
             s = displacementTrajectory.project(actualPose.position, s);
             // Internally reparameterises from respect to displacement to respect to time
-            Pose2dDual<Time> txWorldTarget = displacementTrajectory.get(s); // TODO: check projection
+            // Future: currently using a static lookahead, should be improved in the future to something more dynamic
+            Pose2dDual<Time> txWorldTarget = displacementTrajectory.get(s + STATIC_PATH_PROJECTION_LOOKAHEAD_INCHES);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             PoseVelocity2dDual<Time> feedbackCommand = new HolonomicController(
@@ -414,8 +421,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
             double voltage = voltageSensor.getVoltage();
 
-            // TODO: calculate max feedforward power
-            Pose2dDual<Arclength> displacement = displacementTrajectory.path.get(s, 3);
+            // Future: calculate max feedforward power
+//            Pose2dDual<Arclength> displacement = displacementTrajectory.path.get(s, 3);
 
             MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(feedbackCommand);
             MotorFeedforward feedforward = new MotorFeedforward(profile.kS,

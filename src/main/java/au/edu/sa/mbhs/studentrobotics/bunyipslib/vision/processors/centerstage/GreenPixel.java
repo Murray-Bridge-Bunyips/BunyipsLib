@@ -2,11 +2,9 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.centerstage;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
-
 import org.opencv.core.Scalar;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
 
 /**
@@ -45,8 +43,7 @@ public class GreenPixel extends ColourThreshold {
      */
     public GreenPixel() {
         super(ColourSpace.YCrCb);
-        FtcDashboard.getInstance().withConfigRoot(c ->
-                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
+        Dashboard.enableConfig(getClass());
     }
 
     @NonNull

@@ -7,13 +7,11 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
-
 import org.opencv.core.Mat;
 
 import java.util.ArrayList;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.Processor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
 
@@ -39,8 +37,7 @@ public class MultiColourThreshold extends Processor<ContourData> {
      * @param thresholdProcessors the colour processors to use
      */
     public MultiColourThreshold(@NonNull ColourThreshold... thresholdProcessors) {
-        FtcDashboard.getInstance().withConfigRoot(c ->
-                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
+        Dashboard.enableConfig(getClass());
         for (ColourThreshold processor : thresholdProcessors) {
             colourProcessors.add(new Pair<>(processor, new Mat()));
         }

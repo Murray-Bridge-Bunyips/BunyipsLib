@@ -2,8 +2,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
@@ -18,6 +16,7 @@ import java.util.List;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Rect;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Field;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
@@ -60,8 +59,7 @@ public class BoundedAccumulator extends Accumulator {
     public BoundedAccumulator(@NonNull Measure<Distance> robotRadius) {
         robotBoundingBox = new Rect(new Vector2d(-robotRadius.magnitude(), -robotRadius.magnitude()),
                 new Vector2d(robotRadius.magnitude(), robotRadius.magnitude()), robotRadius.unit());
-        FtcDashboard.getInstance().withConfigRoot(c ->
-                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
+        Dashboard.enableConfig(getClass());
     }
 
     /**
@@ -113,7 +111,7 @@ public class BoundedAccumulator extends Accumulator {
                 double newY = currentPose.position.y;
 
                 // Recalculate the new position to be the nearest edge of the bounding box
-                // Note: Cases where the robot is in the corner of the area perform a bit strangely as
+                // Future: Cases where the robot is in the corner of the area perform a bit strangely as
                 // they are snapped to the nearest corner of the bounding box
                 if (currentPose.position.x < area.point1.x || currentPose.position.x > area.point2.x) {
                     if (currentPose.position.x < area.point1.x) {

@@ -6,9 +6,6 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -22,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.Processor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
 
@@ -68,8 +66,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     @SuppressWarnings("ConstructorNotProtectedInAbstractClass")
     public ColourThreshold(@NonNull ColourSpace colourSpace) {
         this.colourSpace = colourSpace;
-        FtcDashboard.getInstance().withConfigRoot(c ->
-                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
+        Dashboard.enableConfig(getClass());
     }
 
     public abstract double getContourAreaMinPercent();

@@ -7,8 +7,6 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -21,6 +19,7 @@ import java.util.function.BooleanSupplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 
 /**
  * A collection of {@link BunyipsOpMode} debug features intended for use in a testing environment, including
@@ -46,8 +45,7 @@ public class DebugMode extends BunyipsComponent implements Runnable {
     public DebugMode() {
         require(opMode).onActiveLoop(this);
         Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode.");
-        FtcDashboard.getInstance().withConfigRoot(c ->
-                c.putVariable(getClass().getSimpleName(), ReflectionConfig.createVariableFromClass(getClass())));
+        Dashboard.enableConfig(getClass());
     }
 
     /**
