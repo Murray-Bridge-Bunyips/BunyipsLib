@@ -1,13 +1,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
-import androidx.annotation.NonNull;
-
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
-
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
  * Reset OpMode to clear any BunyipsOpMode-set robot controller lights.
@@ -15,43 +10,13 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
  * @author Lucas Bubner, 2024
  * @since 3.4.0
  */
-public final class ResetRobotControllerLights {
-    private static boolean suppress = false;
-
-    private ResetRobotControllerLights() {
-    }
-
-    /**
-     * Call before start to suppress the OpMode from appearing in the OpMode list.
-     */
-    public static void suppressOpMode() {
-        suppress = true;
-    }
-
-    /**
-     * Register the OpMode.
-     *
-     * @param manager The OpModeManager to register the OpMode with.
-     */
-    @OpModeRegistrar
-    public static void registerOpMode(@NonNull OpModeManager manager) {
-        if (suppress)
-            return;
-        manager.register(
-                new OpModeMeta.Builder()
-                        .setName("Reset Robot Controller Lights")
-                        .setFlavor(OpModeMeta.Flavor.TELEOP)
-                        // Using the FtcDashboard group to keep the OpMode out of the way
-                        .setGroup("dash")
-                        .build(),
-                new LinearOpMode() {
-                    @Override
-                    public void runOpMode() {
-                        hardwareMap.getAll(LynxModule.class).forEach((c) ->
-                                c.setPattern(LynxModule.blinkerPolicy.getIdlePattern(c)));
-                        terminateOpModeNow();
-                    }
-                }
-        );
+// Using same group as FtcDashbord to fit with other constantly enabled OpModes
+@TeleOp(name = "Reset Robot Controller Lights", group = "dash")
+public final class ResetRobotControllerLights extends LinearOpMode {
+    @Override
+    public void runOpMode() {
+        hardwareMap.getAll(LynxModule.class).forEach((c) ->
+                c.setPattern(LynxModule.blinkerPolicy.getIdlePattern(c)));
+        terminateOpModeNow();
     }
 }

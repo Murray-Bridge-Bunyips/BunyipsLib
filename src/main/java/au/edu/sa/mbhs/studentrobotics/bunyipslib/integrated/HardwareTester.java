@@ -6,7 +6,6 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -58,14 +57,14 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
 
 /**
- * Dynamic OpMode to test hardware functionality of all non-I2C {@link HardwareDevice} objects.
+ * Dynamic OpMode to test hardware functionality of most {@link HardwareDevice} objects.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-@TeleOp(name = "Hardware Tester", group = "BunyipsLib")
-@Disabled
-public final class HardwareTest extends BunyipsOpMode {
+// Using same group as FtcDashbord to fit with other constantly enabled OpModes
+@TeleOp(name = "Hardware Tester", group = "dash")
+public final class HardwareTester extends BunyipsOpMode {
     private TelemetryMenu menu;
 
     /**
@@ -499,7 +498,7 @@ public final class HardwareTest extends BunyipsOpMode {
                 }
 
                 // Finally, we add the device to the category.
-                // We skip vision devices as they can be tested with VisionTest or for Limelights with the testing class/dashboard
+                // We skip vision devices as they are better tested independently
                 // We also skip other devices (mostly I2C) since their testing requirement is fairly niche and has to be
                 // manually implemented, manual tests can be written if required.
                 deviceMapping.addChild(dev);

@@ -259,6 +259,6 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
 
     // Optional init method from VisionProcessor
     @Override
-    public void init(int width, int height, @NonNull CameraCalibration calibration) {
+    public void init(int width, int height, @Nullable CameraCalibration calibration) {
     }
 }
