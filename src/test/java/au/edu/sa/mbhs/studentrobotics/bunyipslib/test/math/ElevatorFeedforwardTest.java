@@ -12,12 +12,15 @@ class ElevatorFeedforwardTest {
     private static final double kv = 1.5;
     private static final double ka = 2;
 
-    private final ElevatorFeedforward elevatorFF = new ElevatorFeedforward(ks, kg, kv, ka);
+    private double vel = 0;
+    private final ElevatorFeedforward elevatorFF = new ElevatorFeedforward(ks, kg, kv, ka, () -> vel, () -> 0);
 
     @Test
     void testCalculate() {
-        assertEquals(1, elevatorFF.calculate(0), 0.002);
-        assertEquals(4.5, elevatorFF.calculate(2), 0.002);
+        vel = 0;
+        assertEquals(1, elevatorFF.calculate(), 0.002);
+        vel = 2;
+        assertEquals(4.5, elevatorFF.calculate(), 0.002);
     }
 
     @Test
