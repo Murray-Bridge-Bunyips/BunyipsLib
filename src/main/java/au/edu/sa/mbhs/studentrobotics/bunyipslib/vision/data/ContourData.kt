@@ -1,7 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data
 
 import android.util.Size
-import org.opencv.core.Rect
+import org.opencv.core.RotatedRect
 
 /**
  * Data class for storing contour data from a ColourThreshold.
@@ -9,9 +9,9 @@ import org.opencv.core.Rect
  */
 data class ContourData(
     /**
-     * The bounding rectangle of the contour.
+     * The rectangle representing this contour.
      */
-    val boundingRect: Rect,
+    val rect: RotatedRect,
     /**
      * The area of the contour.
      */
@@ -33,23 +33,28 @@ data class ContourData(
      */
     val centerY: Double,
     /**
-     * The yaw of the contour in degrees.
+     * The measured yaw of the contour.
      */
     val yaw: Double,
     /**
-     * The pitch of the contour in degrees.
+     * The measured pitch of the contour.
      */
-    val pitch: Double
+    val pitch: Double,
+    /**
+     * The measured angle of the contour in degrees.
+     */
+    val angDeg: Double,
 ) : VisionData() {
-    constructor(cameraResolution: Size, boundingRect: Rect) : this(
-        boundingRect,
-        boundingRect.area(),
-        boundingRect.area() / (cameraResolution.width * cameraResolution.height) * 100.0,
-        boundingRect.width.toDouble() / boundingRect.height.toDouble(),
-        boundingRect.x + boundingRect.width / 2.0,
-        boundingRect.y + boundingRect.height / 2.0,
-        (((boundingRect.x + boundingRect.width / 2.0) - cameraResolution.width / 2.0) / (cameraResolution.width / 2.0)),
-        -(((boundingRect.y + boundingRect.height / 2.0) - cameraResolution.height / 2.0) / (cameraResolution.height / 2.0))
+    constructor(cameraResolution: Size, rect: RotatedRect) : this(
+        rect,
+        rect.boundingRect().area(),
+        rect.boundingRect().area() / (cameraResolution.width * cameraResolution.height) * 100.0,
+        rect.boundingRect().width.toDouble() / rect.boundingRect().height.toDouble(),
+        rect.boundingRect().x + rect.boundingRect().width / 2.0,
+        rect.boundingRect().y + rect.boundingRect().height / 2.0,
+        (((rect.boundingRect().x + rect.boundingRect().width / 2.0) - cameraResolution.width / 2.0) / (cameraResolution.width / 2.0)),
+        -(((rect.boundingRect().y + rect.boundingRect().height / 2.0) - cameraResolution.height / 2.0) / (cameraResolution.height / 2.0)),
+        ang(rect.angle, rect.size.width, rect.size.height)
     )
 
     companion object {
@@ -59,6 +64,13 @@ data class ContourData(
         @JvmStatic
         fun getLargest(contours: List<ContourData>): ContourData? {
             return contours.maxByOrNull { it.area }
+        }
+
+        private fun ang(angDeg: Double, width: Double, height: Double): Double {
+            var ang = angDeg
+            if (width < height)
+                ang += 90.0
+            return -ang + 180.0
         }
     }
 }

@@ -70,7 +70,7 @@ data class ColourBlob(
     fun toContourData(): ContourData {
         if (cameraDimensions == null)
             throw IllegalStateException("Camera dimensions for this ColourBlob data instance were not provided on construction, meaning it is not possible to convert this to a ContourData.")
-        return ContourData(cameraDimensions!!, boxFit.boundingRect())
+        return ContourData(cameraDimensions!!, boxFit)
     }
 
     /**
