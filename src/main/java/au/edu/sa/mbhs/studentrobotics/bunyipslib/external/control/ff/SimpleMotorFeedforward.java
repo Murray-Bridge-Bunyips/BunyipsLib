@@ -9,6 +9,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff;
 
 import androidx.annotation.NonNull;
 
+import java.util.function.DoubleSupplier;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 
 /**
@@ -19,33 +21,28 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemControll
  * @since 3.5.0
  */
 public class SimpleMotorFeedforward implements SystemController {
+    private final DoubleSupplier velocitySupplier;
+    private final DoubleSupplier accelerationSupplier;
     private double kS;
     private double kV;
     private double kA;
 
     /**
-     * Creates a new SimpleMotorFeedforward with the specified gains.  Units of the gain values
-     * will dictate units of the computed feedforward.
+     * Creates a new SimpleMotorFeedforward with the specified gains and suppliers for the setpoints.
      *
-     * @param kS The static gain.
-     * @param kV The velocity gain.
-     * @param kA The acceleration gain.
+     * @param kS           The static gain.
+     * @param kV           The velocity gain.
+     * @param kA           The acceleration gain.
+     * @param velocity     The current velocity of the motor.
+     * @param acceleration The current acceleration of the motor.
      */
-    public SimpleMotorFeedforward(double kS, double kV, double kA) {
+    public SimpleMotorFeedforward(double kS, double kV, double kA, @NonNull DoubleSupplier velocity, @NonNull DoubleSupplier acceleration) {
         this.kS = kS;
         this.kV = kV;
         this.kA = kA;
-    }
 
-    /**
-     * Creates a new SimpleMotorFeedforward with the specified gains.  Acceleration gain is
-     * defaulted to zero.  Units of the gain values will dictate units of the computed feedforward.
-     *
-     * @param kS The static gain.
-     * @param kV The velocity gain.
-     */
-    public SimpleMotorFeedforward(double kS, double kV) {
-        this(kS, kV, 0);
+        velocitySupplier = velocity;
+        accelerationSupplier = acceleration;
     }
 
     /**
@@ -72,28 +69,27 @@ public class SimpleMotorFeedforward implements SystemController {
     /**
      * Calculates the feedforward from the gains and setpoints.
      *
-     * @param velocity     The velocity setpoint.
-     * @param acceleration The acceleration setpoint.
+     * @return The computed feedforward.
+     */
+    public double calculate() {
+        double velocity = velocitySupplier.getAsDouble();
+        return kS * Math.signum(velocity) + kV * velocity + kA * accelerationSupplier.getAsDouble();
+    }
+
+    /**
+     * Calculates the feedforward from the gains and setpoints.
+     *
+     * @param current ignored for a feedforward calculation
+     * @param target  ignored for a feedforward calculation
      * @return The computed feedforward.
      */
     @Override
-    public double calculate(double velocity, double acceleration) {
-        return kS * Math.signum(velocity) + kV * velocity + kA * acceleration;
+    public double calculate(double current, double target) {
+        return calculate();
     }
 
     // Rearranging the main equation from the calculate() method yields the
     // formulas for the methods below:
-
-    /**
-     * Calculates the feedforward from the gains and velocity setpoint (acceleration is assumed to
-     * be zero).
-     *
-     * @param velocity The velocity setpoint.
-     * @return The computed feedforward.
-     */
-    public double calculate(double velocity) {
-        return calculate(velocity, 0);
-    }
 
     /**
      * Calculates the maximum achievable velocity given a maximum voltage supply

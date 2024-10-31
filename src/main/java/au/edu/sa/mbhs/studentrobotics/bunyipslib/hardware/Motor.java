@@ -34,8 +34,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.Encoder;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EncoderTicks;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.InterpolatedLookupTable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDFFController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.SimpleMotorFeedforward;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
@@ -163,8 +161,8 @@ public class Motor implements DcMotorEx {
         if (controller == null)
             return;
         rtpController = controller;
-        if (rtpController instanceof PIDF)
-            ((PIDF) rtpController).getPIDFController().setTolerance(LynxConstants.DEFAULT_TARGET_POSITION_TOLERANCE);
+        if (rtpController.pidf().isPresent())
+            rtpController.pidf().get().setTolerance(LynxConstants.DEFAULT_TARGET_POSITION_TOLERANCE);
     }
 
     /**
@@ -378,16 +376,16 @@ public class Motor implements DcMotorEx {
         if (mode == DcMotor.RunMode.RUN_TO_POSITION) {
             if (rtpController == null) {
                 setRunToPositionController(new PIDFController(pidfCoefficients.p, pidfCoefficients.i, pidfCoefficients.d, pidfCoefficients.f));
-            } else if (rtpController instanceof PIDF) {
-                ((PIDF) rtpController).getPIDFController().setPIDF(pidfCoefficients);
+            } else if (rtpController.pidf().isPresent()) {
+                rtpController.pidf().get().setPIDF(pidfCoefficients);
             } else {
                 throw new UnsupportedOperationException("Can't access information on the currently used RTP controller. This is because the currently set controller is not a PIDF or PIDF-derived controller, which makes this method incapable of setting these coefficients.");
             }
         } else if (mode == DcMotor.RunMode.RUN_USING_ENCODER) {
             if (rueController == null) {
                 setRunUsingEncoderController(1, getMotorType().getAchieveableMaxTicksPerSecond(), new PIDFController(pidfCoefficients.p, pidfCoefficients.i, pidfCoefficients.d, pidfCoefficients.f));
-            } else if (rueController instanceof PIDF) {
-                ((PIDF) rueController).getPIDFController().setPIDF(pidfCoefficients);
+            } else if (rueController.pidf().isPresent()) {
+                rueController.pidf().get().setPIDF(pidfCoefficients);
             } else {
                 throw new UnsupportedOperationException("Can't access information on the currently used RUE controller. This is because the currently set controller is not a PIDF or PIDF-derived controller, which makes this method incapable of setting these coefficients.");
             }
@@ -409,8 +407,8 @@ public class Motor implements DcMotorEx {
     public void setVelocityPIDFCoefficients(double p, double i, double d, double f) {
         if (rueController == null) {
             setRunUsingEncoderController(1, getMotorType().getAchieveableMaxTicksPerSecond(), new PIDFController(p, i, d, f));
-        } else if (rueController instanceof PIDF) {
-            ((PIDF) rueController).getPIDFController().setPIDF(p, i, d, f);
+        } else if (rueController.pidf().isPresent()) {
+            rueController.pidf().get().setPIDF(p, i, d, f);
         } else {
             throw new UnsupportedOperationException("Can't access information on the currently used RUE controller. This is because the currently set controller is not a PIDF or PIDF-derived controller, which makes this method incapable of setting these coefficients.");
         }
@@ -429,10 +427,10 @@ public class Motor implements DcMotorEx {
     public void setPositionPIDFCoefficients(double p) {
         if (rtpController == null) {
             setRunToPositionController(new PController(p));
-        } else if (rtpController instanceof PIDF) {
-            PIDF controller = (PIDF) rtpController;
-            double[] coeffs = controller.getPIDFController().getCoefficients();
-            controller.getPIDFController().setPIDF(p, coeffs[1], coeffs[2], coeffs[3]);
+        } else if (rtpController.pidf().isPresent()) {
+            PIDFController controller = rtpController.pidf().get();
+            double[] coeffs = controller.getCoefficients();
+            controller.setPIDF(p, coeffs[1], coeffs[2], coeffs[3]);
         } else {
             throw new UnsupportedOperationException("Can't access information on the currently used RTP controller. This is because the currently set controller is not a PIDF or PIDF-derived controller, which makes this method incapable of setting these coefficients.");
         }
@@ -466,15 +464,15 @@ public class Motor implements DcMotorEx {
         double[] coeffs = new double[0];
         mode = mode.migrate();
         if (mode == DcMotor.RunMode.RUN_TO_POSITION) {
-            if (rtpController == null || !(rtpController instanceof PIDF)) {
+            if (rtpController == null || !rtpController.pidf().isPresent()) {
                 throw new UnsupportedOperationException("Can't access information on the currently used RTP controller. This is because the currently set controller is not a PIDF or PIDF-derived controller, or does not exist, which makes this method incapable of getting these coefficients.");
             }
-            coeffs = ((PIDF) rtpController).getPIDFController().getCoefficients();
+            coeffs = rtpController.pidf().get().getCoefficients();
         } else if (mode == DcMotor.RunMode.RUN_USING_ENCODER) {
-            if (rueController == null || !(rueController instanceof PIDF)) {
+            if (rueController == null || !rueController.pidf().isPresent()) {
                 throw new UnsupportedOperationException("Can't access information on the currently used RUE controller. This is because the currently set controller is not a PIDF or PIDF-derived controller, or does not exist, which makes this method incapable of getting these coefficients.");
             }
-            coeffs = ((PIDF) rueController).getPIDFController().getCoefficients();
+            coeffs = rueController.pidf().get().getCoefficients();
         }
         if (coeffs.length == 0) {
             throw new IllegalArgumentException("Invalid runmode");
@@ -557,8 +555,8 @@ public class Motor implements DcMotorEx {
     public int getTargetPositionTolerance() {
         // Built-in support for PIDF as it is the most common use case for RTP,
         // the Motor class does not manage target position tolerance at all
-        if (rtpController != null && rtpController instanceof PIDF) {
-            return (int) Math.ceil(((PIDF) rtpController).getPIDFController().getTolerance()[0]);
+        if (rtpController != null && rtpController.pidf().isPresent()) {
+            return (int) Math.ceil(rtpController.pidf().get().getTolerance()[0]);
         }
         throw new UnsupportedOperationException("Can't access target position information on the currently used RTP controller. It may be the case that this controller is open-loop, or not a PID controller, as any tolerance configuration should be modified by your controller, not by this method.");
     }
@@ -575,8 +573,8 @@ public class Motor implements DcMotorEx {
     @Deprecated
     @Override
     public void setTargetPositionTolerance(int tolerance) {
-        if (rtpController != null && rtpController instanceof PIDF) {
-            ((PIDF) rtpController).getPIDFController().setTolerance(tolerance);
+        if (rtpController != null && rtpController.pidf().isPresent()) {
+            rtpController.pidf().get().setTolerance(tolerance);
         }
         throw new UnsupportedOperationException("Can't access target position information on the currently used RTP controller. It may be the case that this controller is open-loop, or not a PID controller, as any tolerance configuration should be modified by your controller, not by this method.");
     }
@@ -789,8 +787,8 @@ public class Motor implements DcMotorEx {
     @Deprecated
     @Override
     public boolean isBusy() {
-        if (rtpController != null && rtpController instanceof PIDF) {
-            return mode == DcMotor.RunMode.RUN_TO_POSITION && !((PIDF) rtpController).getPIDFController().atSetPoint();
+        if (rtpController != null && rtpController.pidf().isPresent()) {
+            return mode == DcMotor.RunMode.RUN_TO_POSITION && !rtpController.pidf().get().atSetPoint();
         }
         throw new UnsupportedOperationException("Can't access target position information on the currently used RTP controller. It may be the case that this controller is open-loop, or not a PID controller, as any tolerance configuration should be modified by your controller, not by this method.");
     }
@@ -898,7 +896,8 @@ public class Motor implements DcMotorEx {
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
                     PIDController pid = new PIDController(coeffs.p, coeffs.i, coeffs.d);
-                    rueController = new PIDFFController(pid, new SimpleMotorFeedforward(coeffs.f, 0, 0), encoder);
+                    SimpleMotorFeedforward ff = new SimpleMotorFeedforward(coeffs.f, 0, 0, encoder::getVelocity, encoder::getAcceleration);
+                    rueController = pid.compose(ff, Double::sum);
                     rueInfo = new Pair<>(1.0, getMotorType().getAchieveableMaxTicksPerSecond());
                 }
                 if (!rueGains.isEmpty())
@@ -913,9 +912,7 @@ public class Motor implements DcMotorEx {
                     break;
                 }
                 double targetVel = rueInfo.first * rueInfo.second * power;
-                double output = rueController instanceof PIDFFController
-                        ? ((PIDFFController) rueController).calculateVelo(getVelocity(), targetVel)
-                        : rueController.calculate(getVelocity(), targetVel);
+                double output = rueController.calculate(getVelocity(), targetVel);
                 magnitude = output / rueInfo.second;
                 break;
             case RUN_WITHOUT_ENCODER:

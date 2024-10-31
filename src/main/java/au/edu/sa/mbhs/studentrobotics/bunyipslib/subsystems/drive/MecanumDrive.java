@@ -454,10 +454,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             }
             boolean stablilised = stab != null &&
                     ((error.position.norm() < errorThresholds.getMaxTranslationalError().in(Inches)
-                    && robotVelRobot.linearVel.norm() < errorThresholds.getMinVelStab().in(InchesPerSecond)
-                    && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
-                    && robotVelRobot.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond))
-                    || stab.seconds() > errorThresholds.getStabilizationTimeout().in(Seconds));
+                            && robotVelRobot.linearVel.norm() < errorThresholds.getMinVelStab().in(InchesPerSecond)
+                            && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
+                            && robotVelRobot.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond))
+                            || stab.seconds() > errorThresholds.getStabilizationTimeout().in(Seconds));
             return displacement && stablilised;
         }
 

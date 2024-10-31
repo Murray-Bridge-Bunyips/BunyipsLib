@@ -3,14 +3,13 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control;
 import androidx.annotation.NonNull;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.DoubleBinaryOperator;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 
 /**
- * Generic interface that represents a control algorithm (PID, feedforward, etc).
- * <p>
- * This interface may not always represent the same behaviour in different contexts, such as open-loop and closed
- * loop control. Therefore, it is important to validate which controllers are being used within a control system
- * as the protection of type-safety may cause an invalid controller to be used against one that expects a certain
- * type of response the controller is not able to provide.
+ * Generic interface that represents a controller algorithm to move a system from one state to another.
  *
  * @author Lucas Bubner, 2024
  * @since 4.0.0
@@ -18,10 +17,15 @@ import java.util.Arrays;
 @FunctionalInterface
 public interface SystemController {
     /**
+     * A null controller that does nothing.
+     */
+    SystemController NULL = (process, setpoint) -> 0;
+
+    /**
      * Calculate the next output of this control algorithm.
      *
-     * @param process  the current value or first setpoint
-     * @param setpoint the expected value or second setpoint
+     * @param process  the current value
+     * @param setpoint the expected value
      * @return process variable that should be applied to the system
      */
     double calculate(double process, double setpoint);
@@ -63,10 +67,34 @@ public interface SystemController {
     }
 
     /**
+     * Composes this controller with another controller, returning a new controller that is the composition of the two.
+     * <p>
+     * The specified BiConsumer that returns a Double is expected to be a function that indicates how the two controllers
+     * should be combined. (e.g. addition, multiplication, etc).
+     *
+     * @param other    the other controller to compose with
+     * @param combiner the function that combines the two controllers
+     * @return a new controller that is the composition of the two
+     */
+    default CompositeController compose(SystemController other, DoubleBinaryOperator combiner) {
+        return new CompositeController(this, other, combiner);
+    }
+
+    /**
      * Reset this controller back to an un-accumulated state, if applicable.
      * This method is not required to be implemented, and may be a no-op.
      */
     default void reset() {
         // Default impl, no-op
+    }
+
+    /**
+     * Get the PIDF controller associated with this controller, if applicable.
+     *
+     * @return the PIDF controller associated with this controller, if applicable
+     */
+    default Optional<PIDFController> pidf() {
+        // Default impl, no PIDF controller
+        return Optional.empty();
     }
 }

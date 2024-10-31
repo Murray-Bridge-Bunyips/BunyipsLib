@@ -4,8 +4,10 @@ import androidx.annotation.NonNull;
 
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import java.util.Optional;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 
 /**
  * This is a PID controller (https://en.wikipedia.org/wiki/PID_controller)
@@ -22,7 +24,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
  *
  * @since 1.0.0-pre
  */
-public class PIDFController implements PIDF {
+public class PIDFController implements SystemController {
     private double kP, kI, kD, kF;
     private double setPoint;
     private double measuredValue;
@@ -440,7 +442,7 @@ public class PIDFController implements PIDF {
 
     @NonNull
     @Override
-    public PIDFController getPIDFController() {
-        return this;
+    public Optional<PIDFController> pidf() {
+        return Optional.of(this);
     }
 }

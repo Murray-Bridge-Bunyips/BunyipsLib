@@ -18,7 +18,6 @@ import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
@@ -114,7 +113,7 @@ public class TurnTask extends Task {
      * @return this
      */
     @NonNull
-    public TurnTask withController(@NonNull PIDF controller) {
+    public TurnTask withController(@NonNull SystemController controller) {
         this.controller = controller;
         return this;
     }

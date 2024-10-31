@@ -9,7 +9,9 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid;
 
 import androidx.annotation.NonNull;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.PIDF;
+import java.util.Optional;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.TrapezoidProfile;
 
 /**
@@ -18,7 +20,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.TrapezoidProfi
  *
  * @since 3.5.0
  */
-public class ProfiledPIDController implements PIDF {
+public class ProfiledPIDController implements SystemController {
     private final PIDController controller;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State();
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
@@ -355,8 +357,8 @@ public class ProfiledPIDController implements PIDF {
 
     @NonNull
     @Override
-    public PIDFController getPIDFController() {
+    public Optional<PIDFController> pidf() {
         // Note: The controller as returned here will be limited in trapezoidal limitation
-        return controller;
+        return Optional.of(controller);
     }
 }

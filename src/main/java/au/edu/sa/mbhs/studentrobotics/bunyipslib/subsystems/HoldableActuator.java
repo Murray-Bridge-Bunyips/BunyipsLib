@@ -355,10 +355,10 @@ public class HoldableActuator extends BunyipsSubsystem {
      * and switches over the manual control from raw input to system controls.
      *
      * @param setpointDeltaMul the multiplicative scale to translate power into target position delta, which returns
-     *                                     the desired delta step in encoder ticks, <b>while supplying you with a delta time (dt) in seconds</b>.
-     *                                     Delta time is calculated as the time between the last two evaluations of the function. It can
-     *                                     be used to define a rate of change in the setpoint with respect to time rather than loop times.
-     *                                     E.g. 100 ticks per second ({@code (dt) -> 100 * dt}).
+     *                         the desired delta step in encoder ticks, <b>while supplying you with a delta time (dt) in seconds</b>.
+     *                         Delta time is calculated as the time between the last two evaluations of the function. It can
+     *                         be used to define a rate of change in the setpoint with respect to time rather than loop times.
+     *                         E.g. 100 ticks per second ({@code (dt) -> 100 * dt}).
      * @return this
      * @see #disableHomingOvercurrent()
      */
