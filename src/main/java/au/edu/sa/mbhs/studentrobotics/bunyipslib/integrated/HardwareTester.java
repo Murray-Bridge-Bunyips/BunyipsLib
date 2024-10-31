@@ -6,7 +6,6 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -62,9 +61,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-// TODO: convert to opmode manager
-// Using same group as FtcDashbord to fit with other constantly enabled OpModes
-@TeleOp(name = "Hardware Tester", group = "dash")
 public final class HardwareTester extends BunyipsOpMode {
     private TelemetryMenu menu;
 

@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -95,7 +96,7 @@ public class AprilTag extends Processor<AprilTagData> {
     // Untouched methods to be handled by the AprilTagProcessor
 
     @Override
-    public void init(int width, int height, @NonNull CameraCalibration calibration) {
+    public void init(int width, int height, @Nullable CameraCalibration calibration) {
         instance.init(width, height, calibration);
     }
 
