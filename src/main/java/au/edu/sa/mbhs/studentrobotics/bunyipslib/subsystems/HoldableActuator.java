@@ -23,6 +23,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Current;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
@@ -77,7 +78,8 @@ public class HoldableActuator extends BunyipsSubsystem {
     // but this functionality is disabled by default for consistency
     private boolean userControlsSetpoint;
     private Mode inputMode = Mode.USER_POWER;
-    private DoubleSupplier setpointDeltaMultiplier = () -> 1;
+    private UnaryFunction setpointDeltaMul = (dt) -> 1;
+    private double lastTime = -1;
 
     /**
      * Create a new HoldableActuator.
@@ -352,15 +354,17 @@ public class HoldableActuator extends BunyipsSubsystem {
      * This mode is useful to call on high-frequency system controllers (like those accomplished via {@link Motor},
      * and switches over the manual control from raw input to system controls.
      *
-     * @param setpointDeltaMultiplier the multiplicative scale to translate power into target position delta, which is a supplier
-     *                                to allow for any functional patterns (e.g. deltaTime). Default of {@code () -> 1}.
+     * @param setpointDeltaMul the multiplicative scale to translate power into target position delta, which returns
+     *                                     the desired delta step in encoder ticks, <b>while supplying you with a delta time (dt) in seconds</b>.
+     *                                     Delta time is calculated as the time between the last two evaluations of the function. It can
+     *                                     be used to define a rate of change in the setpoint with respect to time rather than loop times.
+     *                                     E.g. 100 ticks per second ({@code (dt) -> 100 * dt}).
      * @return this
      * @see #disableHomingOvercurrent()
      */
     @NonNull
-    // TODO: dt in here
-    public HoldableActuator enableUserSetpointControl(@NonNull DoubleSupplier setpointDeltaMultiplier) {
-        this.setpointDeltaMultiplier = setpointDeltaMultiplier;
+    public HoldableActuator enableUserSetpointControl(@NonNull UnaryFunction setpointDeltaMul) {
+        this.setpointDeltaMul = setpointDeltaMul;
         userControlsSetpoint = true;
         if (inputMode == Mode.USER_POWER)
             inputMode = Mode.USER_SETPOINT;
@@ -371,7 +375,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * Calling this method will restore the user input functionality translating into direct power on the motor.
      *
      * @return this
-     * @see #enableUserSetpointControl(DoubleSupplier)
+     * @see #enableUserSetpointControl(UnaryFunction)
      */
     @NonNull
     public HoldableActuator disableUserSetpointControl() {
@@ -434,7 +438,17 @@ public class HoldableActuator extends BunyipsSubsystem {
                 opMode(o -> o.telemetry.add("%: % at % ticks [%tps]", this, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", current, Math.round(encoder.getVelocity())));
                 break;
             case USER_SETPOINT:
-                newTarget = target + userPower * setpointDeltaMultiplier.getAsDouble();
+                double dt;
+                if (opMode != null) {
+                    dt = opMode.timer.deltaTime().in(Seconds);
+                } else {
+                    double now = System.nanoTime() / 1.0E9;
+                    if (lastTime == -1)
+                        lastTime = now;
+                    dt = now - lastTime;
+                    lastTime = now;
+                }
+                newTarget = target + userPower * setpointDeltaMul.apply(dt);
                 boolean systemResponse = motor.isBusy();
                 motorPower = (systemResponse ? MOVING_POWER : HOLDING_POWER) * Math.signum(target - current);
                 opMode(o -> o.telemetry.add("%: % at % ticks, % error [%tps]", this, !systemResponse ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, target - current, Math.round(encoder.getVelocity())));
