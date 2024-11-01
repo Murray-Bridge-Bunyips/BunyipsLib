@@ -25,8 +25,8 @@ public class ConditionalTask extends Task {
      * Create a new conditional task with the given tasks and condition.
      * Supplied tasks will be reset on init.
      *
-     * @param trueTask  the task to run if the condition is true
-     * @param falseTask the task to run if the condition is false
+     * @param trueTask        the task to run if the condition is true
+     * @param falseTask       the task to run if the condition is false
      * @param conditionOnInit the condition to evaluate on initialisation
      */
     public ConditionalTask(@NonNull Task trueTask, @NonNull Task falseTask, @NonNull BooleanSupplier conditionOnInit) {
@@ -40,8 +40,8 @@ public class ConditionalTask extends Task {
      * Create a new conditional task with the given callbacks and condition.
      * Supplied tasks will be reset on init.
      *
-     * @param onTrue    the callback to run if the condition is true
-     * @param onFalse   the callback to run if the condition is false
+     * @param onTrue          the callback to run if the condition is true
+     * @param onFalse         the callback to run if the condition is false
      * @param conditionOnInit the condition to evaluate on initialisation
      */
     public ConditionalTask(@NonNull Runnable onTrue, @NonNull Runnable onFalse, @NonNull BooleanSupplier conditionOnInit) {

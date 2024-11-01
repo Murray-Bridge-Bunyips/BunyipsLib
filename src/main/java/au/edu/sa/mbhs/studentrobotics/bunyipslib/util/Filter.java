@@ -104,16 +104,30 @@ public final class Filter {
         /**
          * Calculate a new Kalman filter estimate.
          *
-         * @param model  the current reading from the model system
-         * @param sensor the current reading from the sensor
+         * @param absModel the current absolute reading from the model system, will internally take a delta step of this model
+         * @param sensor   the current reading from the sensor
          * @return Kalman gain compensated output
          */
-        public double calculate(double model, double sensor) {
+        public double calculate(double absModel, double sensor) {
             // Since we're only dealing with scalars, we can make a lot of simplifications
             // Therefore filtered x_t=x_{t-1}+K(z_t-x_t)
-            x += model - lm;
+            x += absModel - lm;
             x += kGain * (sensor - x);
-            lm = model;
+            lm = absModel;
+            return x;
+        }
+
+        /**
+         * Calculate a new Kalman filter estimate.
+         *
+         * @param incModel the current model from the model system, supplied as an increment or delta
+         * @param sensor   the current reading from the sensor
+         * @return Kalman gain compensated output
+         */
+        public double calculateFromDelta(double incModel, double sensor) {
+            // Run calculate but don't accumulate lm
+            x += incModel;
+            x += kGain * (sensor - x);
             return x;
         }
     }

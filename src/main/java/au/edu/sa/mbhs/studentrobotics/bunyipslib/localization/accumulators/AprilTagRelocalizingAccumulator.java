@@ -136,8 +136,6 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
         if (!active)
             return;
 
-        // Future: latency compensation techniques
-
         ArrayList<AprilTagData> data = processor.getData();
         if (data.isEmpty())
             return;
@@ -146,34 +144,43 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
         for (int i = 0; i < data.size(); i++) {
             AprilTagData aprilTag = data.get(i);
             Optional<Pose3D> robotPose = aprilTag.getRobotPose();
+
             if (!robotPose.isPresent() || filters.stream().anyMatch(f -> !f.test(aprilTag))) {
                 // No luck with this ID
                 continue;
             }
 
-            Pose3D pose = robotPose.get();
+            // Future: latency compensation techniques
 
-            // Convert to Robot Coordinate System
+            // Need to convert this pose from Cartesian to Robot coordinate frames - we also don't care about
+            // the other rotational and translational properties of this pose so we ignore them
+            Pose3D pose = robotPose.get();
             // noinspection SuspiciousNameCombination
             double x = pose.getPosition().y;
             double y = -pose.getPosition().x;
-            double r = -pose.getOrientation().getYaw(AngleUnit.RADIANS);
+            double r = pose.getOrientation().getYaw(AngleUnit.RADIANS);
 
             estimates.add(new Pose2d(x, y, r));
         }
 
+        // Take averages based on all the estimates we collected
         Vector2d positionAvg = estimates.stream()
                 .map(p -> p.position)
                 .reduce(Geometry.zeroVec(), Vector2d::plus)
                 .div(estimates.size());
-        Rotation2d headingAvg = Rotation2d.exp(
-                estimates.stream()
-                        .map(p -> p.heading.toDouble())
-                        .reduce(0.0, Double::sum) / estimates.size()
-        );
+        double headingAvgRad = estimates.stream()
+                .map(p -> p.heading.toDouble())
+                .reduce(0.0, Double::sum) / estimates.size();
 
-        // TODO: kf not implemented, determine offset for optimal kf too
+        // TODO: Apply Kalman filters
+        Vector2d kfVec = positionAvg;
+        Rotation2d kfHeading = Rotation2d.exp(headingAvgRad);
+//        Vector2d kfVec = new Vector2d(
+//                xf.calculateFromDelta(pose, positionAvg.x),
+//                yf.calculateFromDelta(pose.position.y, positionAvg.y)
+//        );
+//        Rotation2d kfHeading = Rotation2d.exp(rf.calculate(pose.heading.toDouble(), headingAvgRad));
 
-        pose = new Pose2d(positionAvg, updateHeading ? headingAvg : pose.heading);
+        pose = new Pose2d(kfVec, updateHeading ? kfHeading : pose.heading);
     }
 }
