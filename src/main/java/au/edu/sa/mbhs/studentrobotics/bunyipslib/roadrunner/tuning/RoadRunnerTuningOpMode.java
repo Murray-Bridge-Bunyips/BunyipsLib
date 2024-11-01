@@ -76,7 +76,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
  * @since 6.0.0
  */
 @SuppressWarnings("MissingJavadoc")
-public abstract class RoadRunnerTuningOpMode extends LinearOpMode {// TODO: telemetry menu store index static
+public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     // Intermediary fields for the tuning process. These are used to store the values of the tuning process, and are
     // initially populated with the values from the drive instance. They are used to allow for dynamic adjustment
     // of the values used in the tuning process.
@@ -117,6 +117,8 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {// TODO: tele
     @Nullable
     public static Double tuningTankGains_turnVelGain;
 
+    private static int lastSelectedIndex;
+
     /**
      * Instantiate hardware and return the fully configured RoadRunner drive instance to use for tuning.
      * <p>
@@ -137,6 +139,14 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {// TODO: tele
         // for this purpose, we'll just use MultipleTelemetry.
         Telemetry fusedTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         RoadRunnerDrive drive = Objects.requireNonNull(getDrive(), "getDrive() returned null");
+
+        Field selectedIdxField;
+        try {
+            selectedIdxField = TelemetryMenu.class.getDeclaredField("selectedIdx");
+            selectedIdxField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException("Unable to find an internal field! This shouldn't happen!");
+        }
 
         DriveViewFactory dvf;
         if (drive instanceof MecanumDrive) {
@@ -419,10 +429,20 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {// TODO: tele
         }
         root.addChildren(opModes);
         TelemetryMenu menu = new TelemetryMenu(fusedTelemetry, root);
+        try {
+            selectedIdxField.setInt(menu, lastSelectedIndex);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Access exception! This shouldn't happen!");
+        }
 
         while (selection[0] == null && opModeInInit()) {
             menu.loop(gamepad1);
             fusedTelemetry.update();
+            try {
+                lastSelectedIndex = selectedIdxField.getInt(menu);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Access exception! This shouldn't happen!");
+            }
         }
 
         fusedTelemetry.clearAll();

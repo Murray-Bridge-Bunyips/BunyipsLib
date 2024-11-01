@@ -8,7 +8,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.ThreeWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TwoWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ConditionalTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.HolonomicDriveTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 
@@ -48,13 +50,18 @@ public final class ManualFeedbackTuner extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            // TODO: pause and stop ability for this opmode
             Actions.runBlocking(
                     new DeadlineTaskGroup(
-                            drive.makeTrajectory(new Pose2d(0, 0, 0))
-                                    .lineToX(DISTANCE)
-                                    .lineToX(0)
-                                    .build(),
+                            new ConditionalTask(
+                                    new HolonomicDriveTask(gamepad1, drive)
+                                            .until(() -> !gamepad1.right_bumper),
+                                    drive.makeTrajectory(new Pose2d(0, 0, 0))
+                                            .lineToX(DISTANCE)
+                                            .lineToX(0)
+                                            .build()
+                                            .until(() -> gamepad1.right_bumper),
+                                    () -> gamepad1.right_bumper
+                            ),
                             new ContinuousTask(drive::periodic),
                             new ContinuousTask(Dashboard::sendAndClearSyncedPackets)
                     )
