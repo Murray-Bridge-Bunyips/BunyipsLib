@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.MecanumKinematics;
@@ -66,21 +67,28 @@ public class MecanumLocalizer implements Localizer {
      * @param rightFront the front right motor
      * @param imu        the IMU to use for heading
      */
-    public MecanumLocalizer(@NonNull DriveModel driveModel, @NonNull DcMotor leftFront, @NonNull DcMotor leftBack, @NonNull DcMotor rightBack, @NonNull DcMotor rightFront, @NonNull IMU imu) {
+    public MecanumLocalizer(@NonNull DriveModel driveModel, @Nullable DcMotor leftFront, @Nullable DcMotor leftBack, @Nullable DcMotor rightBack, @Nullable DcMotor rightFront, @Nullable IMU imu) {
         kinematics = new MecanumKinematics(driveModel.inPerTick * driveModel.trackWidthTicks, driveModel.inPerTick / driveModel.lateralInPerTick);
         this.driveModel = driveModel;
-        this.leftFront = new OverflowEncoder(new RawEncoder((DcMotorEx) leftFront));
-        this.leftBack = new OverflowEncoder(new RawEncoder((DcMotorEx) leftBack));
-        this.rightBack = new OverflowEncoder(new RawEncoder((DcMotorEx) rightBack));
-        this.rightFront = new OverflowEncoder(new RawEncoder((DcMotorEx) rightFront));
+        this.leftFront = leftFront != null ? new OverflowEncoder(new RawEncoder((DcMotorEx) leftFront)) : null;
+        this.leftBack = leftBack != null ? new OverflowEncoder(new RawEncoder((DcMotorEx) leftBack)) : null;
+        this.rightBack = rightBack != null ? new OverflowEncoder(new RawEncoder((DcMotorEx) rightBack)) : null;
+        this.rightFront = rightFront != null ? new OverflowEncoder(new RawEncoder((DcMotorEx) rightFront)) : null;
         this.imu = imu;
         // Wake up the IMU if it's a DynIMU
-        imu.getRobotOrientationAsQuaternion();
+        if (imu != null)
+            imu.getRobotOrientationAsQuaternion();
     }
 
     @NonNull
     @Override
     public Twist2dDual<Time> update() {
+        if (leftFront == null || leftBack == null || rightBack == null || rightFront == null || imu == null)
+            return new Twist2dDual<>(
+                    Vector2dDual.constant(new Vector2d(0.0, 0.0), 2),
+                    DualNum.constant(0.0, 2)
+            );
+
         PositionVelocityPair leftFrontPosVel = leftFront.getPositionAndVelocity();
         PositionVelocityPair leftBackPosVel = leftBack.getPositionAndVelocity();
         PositionVelocityPair rightBackPosVel = rightBack.getPositionAndVelocity();

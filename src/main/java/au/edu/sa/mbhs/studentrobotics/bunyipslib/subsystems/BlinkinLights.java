@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
@@ -35,12 +36,13 @@ public class BlinkinLights extends BunyipsSubsystem {
      * @param lights         the LED driver to use.
      * @param defaultPattern the default pattern which will be the one this driver goes back to as a default.
      */
-    public BlinkinLights(@NonNull RevBlinkinLedDriver lights, @NonNull RevBlinkinLedDriver.BlinkinPattern defaultPattern) {
+    public BlinkinLights(@Nullable RevBlinkinLedDriver lights, @NonNull RevBlinkinLedDriver.BlinkinPattern defaultPattern) {
         this.lights = lights;
         this.defaultPattern = defaultPattern;
         currentPattern = defaultPattern;
 
         if (!assertParamsNotNull(lights)) return;
+        assert lights != null;
         lights.setPattern(this.defaultPattern);
     }
 

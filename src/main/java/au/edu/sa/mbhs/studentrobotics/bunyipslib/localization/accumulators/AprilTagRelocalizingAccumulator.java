@@ -58,7 +58,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
      * @param processor the processor to use for relocalization, assumes that the camera pose property on the builder
      *                  has been set (see {@link AprilTag#setCameraPose(AprilTagProcessor.Builder)} for a util)
      */
-    public AprilTagRelocalizingAccumulator(AprilTag processor) {
+    public AprilTagRelocalizingAccumulator(@NonNull AprilTag processor) {
         this.processor = processor;
         setKalmanGains(DEFAULT_R, DEFAULT_Q);
         Dashboard.enableConfig(getClass());
@@ -86,7 +86,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
      * @return this
      * @since 5.1.0
      */
-    public AprilTagRelocalizingAccumulator addDataFilter(Predicate<AprilTagData> filter) {
+    public AprilTagRelocalizingAccumulator addDataFilter(@NonNull Predicate<AprilTagData> filter) {
         filters.add(filter);
         return this;
     }
@@ -98,7 +98,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
      * @return this
      * @since 5.1.0
      */
-    public AprilTagRelocalizingAccumulator removeDataFilter(Predicate<AprilTagData> filter) {
+    public AprilTagRelocalizingAccumulator removeDataFilter(@NonNull Predicate<AprilTagData> filter) {
         if (!filters.remove(filter))
             Dbg.warn(getClass(), "Unable to remove filter '%', not found.", filter);
         return this;

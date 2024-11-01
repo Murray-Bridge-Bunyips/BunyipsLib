@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Rotation2d;
@@ -34,18 +35,19 @@ public class PeriodicIMUAccumulator extends Accumulator {
      * @param imu                    the imu to use for updates
      * @param relocalizationInterval the interval at which the IMU is read and updates are propagated
      */
-    public PeriodicIMUAccumulator(@NonNull IMU imu, @NonNull Measure<Time> relocalizationInterval) {
+    public PeriodicIMUAccumulator(@Nullable IMU imu, @NonNull Measure<Time> relocalizationInterval) {
         this.imu = imu;
         origin = pose.heading;
         relocalizationIntervalMs = relocalizationInterval.in(Milliseconds);
-        imu.resetYaw();
+        if (imu != null)
+            imu.resetYaw();
     }
 
     @Override
     public void accumulate(@NonNull Twist2dDual<com.acmerobotics.roadrunner.Time> twist) {
         super.accumulate(twist);
 
-        if (timer.milliseconds() >= relocalizationIntervalMs) {
+        if (imu != null && timer.milliseconds() >= relocalizationIntervalMs) {
             pose = new Pose2d(pose.position, origin.plus(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS)));
             timer.reset();
         }

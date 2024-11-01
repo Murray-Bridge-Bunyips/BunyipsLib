@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Rotation2d;
@@ -31,13 +32,18 @@ public class IMULocalizer implements Localizer {
      *
      * @param imu the imu to use
      */
-    public IMULocalizer(@NonNull IMU imu) {
+    public IMULocalizer(@Nullable IMU imu) {
         this.imu = imu;
     }
 
     @NonNull
     @Override
     public Twist2dDual<Time> update() {
+        if (imu == null)
+            return new Twist2dDual<>(
+                    Vector2dDual.constant(Geometry.zeroVec(), 2),
+                    DualNum.constant(0, 2)
+            );
         Rotation2d currentHeading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
         if (!init) {
             init = true;

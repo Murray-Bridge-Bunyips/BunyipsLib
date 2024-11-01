@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -38,7 +39,7 @@ public class DualServos extends BunyipsSubsystem {
      * @param rightClosed the right servo closed position
      * @param rightOpen   the right servo open position
      */
-    public DualServos(@NonNull Servo left, @NonNull Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
+    public DualServos(@Nullable Servo left, @Nullable Servo right, double leftClosed, double leftOpen, double rightClosed, double rightOpen) {
         if (leftClosed == leftOpen || rightClosed == rightOpen)
             throw new IllegalArgumentException("Open and close positions for either servo cannot be the same");
 
@@ -64,7 +65,7 @@ public class DualServos extends BunyipsSubsystem {
      * @param left  the left servo
      * @param right the right servo
      */
-    public DualServos(@NonNull Servo left, @NonNull Servo right) {
+    public DualServos(@Nullable Servo left, @Nullable Servo right) {
         this(left, right, 0, 1, 0, 1);
     }
 

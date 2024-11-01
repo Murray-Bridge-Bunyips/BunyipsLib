@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.MecanumKinematics;
@@ -37,7 +38,7 @@ public class IntrinsicMecanumLocalizer implements Localizer {
      * @param motorPowers a four-wide double array supplier that supplies the current motor powers, in the form
      *                    {frontLeft, backLeft, backRight, frontRight}
      */
-    public IntrinsicMecanumLocalizer(@NonNull Params params, @NonNull IMU imu, @NonNull Supplier<double[]> motorPowers) {
+    public IntrinsicMecanumLocalizer(@NonNull Params params, @Nullable IMU imu, @NonNull Supplier<double[]> motorPowers) {
         this.params = params;
         this.imu = new IMULocalizer(imu);
         kinematics = new MecanumKinematics(1);

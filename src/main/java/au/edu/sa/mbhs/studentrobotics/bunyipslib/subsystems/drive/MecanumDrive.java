@@ -7,6 +7,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Rad
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.AccelConstraint;
@@ -119,7 +120,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      * @param startPose            the starting pose of the robot
      */
-    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @NonNull DcMotor leftFront, @NonNull DcMotor leftBack, @NonNull DcMotor rightBack, @NonNull DcMotor rightFront, @NonNull LazyImu lazyImu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, @NonNull Pose2d startPose) {
+    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @Nullable DcMotor leftFront, @Nullable DcMotor leftBack, @Nullable DcMotor rightBack, @Nullable DcMotor rightFront, @Nullable LazyImu lazyImu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, @NonNull Pose2d startPose) {
         accumulator = new Accumulator(startPose);
 
         gains = mecanumGains;
@@ -141,6 +142,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         FlightRecorder.write("MECANUM_PROFILE", motionProfile);
 
         if (assertParamsNotNull(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, lazyImu, voltageSensorMapping, startPose)) {
+            assert leftFront != null && leftBack != null && rightBack != null && rightFront != null;
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -169,7 +171,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param lazyImu              the LazyImu instance to use, see the {@code getLazyImu} method of {@link RobotConfig} to construct this
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      */
-    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @NonNull DcMotor leftFront, @NonNull DcMotor leftBack, @NonNull DcMotor rightBack, @NonNull DcMotor rightFront, @NonNull LazyImu lazyImu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
+    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @Nullable DcMotor leftFront, @Nullable DcMotor leftBack, @Nullable DcMotor rightBack, @Nullable DcMotor rightFront, @Nullable LazyImu lazyImu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
         this(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, lazyImu, voltageSensorMapping, Storage.memory().lastKnownPosition);
     }
 

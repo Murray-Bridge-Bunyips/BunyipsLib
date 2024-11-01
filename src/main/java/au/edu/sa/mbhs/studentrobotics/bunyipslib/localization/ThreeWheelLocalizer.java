@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Time;
@@ -53,10 +54,10 @@ public class ThreeWheelLocalizer implements Localizer {
      * @param par1       the second parallel encoder
      * @param perp       the perpendicular encoder
      */
-    public ThreeWheelLocalizer(@NonNull DriveModel driveModel, @NonNull Params params, @NonNull RawEncoder par0, @NonNull RawEncoder par1, @NonNull RawEncoder perp) {
-        this.par0 = new OverflowEncoder(par0);
-        this.par1 = new OverflowEncoder(par1);
-        this.perp = new OverflowEncoder(perp);
+    public ThreeWheelLocalizer(@NonNull DriveModel driveModel, @NonNull Params params, @Nullable RawEncoder par0, @Nullable RawEncoder par1, @Nullable RawEncoder perp) {
+        this.par0 = par0 != null ? new OverflowEncoder(par0) : null;
+        this.par1 = par1 != null ? new OverflowEncoder(par1) : null;
+        this.perp = perp != null ? new OverflowEncoder(perp) : null;
         this.driveModel = driveModel;
         this.params = params;
 
@@ -65,6 +66,12 @@ public class ThreeWheelLocalizer implements Localizer {
 
     @NonNull
     public Twist2dDual<Time> update() {
+        if (par0 == null || par1 == null || perp == null)
+            return new Twist2dDual<>(
+                    Vector2dDual.constant(new Vector2d(0.0, 0.0), 2),
+                    DualNum.constant(0.0, 2)
+            );
+
         PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
         PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
         PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();

@@ -86,8 +86,9 @@ public class HoldableActuator extends BunyipsSubsystem {
      *
      * @param motor the motor to control
      */
-    public HoldableActuator(@NonNull DcMotor motor) {
+    public HoldableActuator(@Nullable DcMotor motor) {
         if (!assertParamsNotNull(motor)) return;
+        assert motor != null;
         this.motor = (DcMotorEx) motor;
         // Always default to BRAKE because HoldableActuators are meant to hold
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

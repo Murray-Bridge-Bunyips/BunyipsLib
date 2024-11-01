@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -38,7 +39,7 @@ public class Cannon extends BunyipsSubsystem {
      * @param closePosition the position to set the servo to when not firing
      * @param openPosition  the position to set the servo to when firing
      */
-    public Cannon(@NonNull Servo prolong, double openPosition, double closePosition) {
+    public Cannon(@Nullable Servo prolong, double openPosition, double closePosition) {
         if (openPosition == closePosition)
             throw new IllegalArgumentException("Open and close positions cannot be the same");
 
@@ -58,7 +59,7 @@ public class Cannon extends BunyipsSubsystem {
      *
      * @param prolong the servo to use
      */
-    public Cannon(@NonNull Servo prolong) {
+    public Cannon(@Nullable Servo prolong) {
         this(prolong, 1.0, 0.0);
     }
 

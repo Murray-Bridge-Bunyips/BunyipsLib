@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Rotation2d;
@@ -62,21 +63,28 @@ public class TwoWheelLocalizer implements Localizer {
      * @param perp       the perpendicular encoder
      * @param imu        the IMU to use for heading
      */
-    public TwoWheelLocalizer(@NonNull DriveModel driveModel, @NonNull Params params, @NonNull RawEncoder par, @NonNull RawEncoder perp, @NonNull IMU imu) {
+    public TwoWheelLocalizer(@NonNull DriveModel driveModel, @NonNull Params params, @Nullable RawEncoder par, @Nullable RawEncoder perp, @Nullable IMU imu) {
         this.driveModel = driveModel;
         this.params = params;
-        this.par = new OverflowEncoder(par);
-        this.perp = new OverflowEncoder(perp);
+        this.par = par != null ? new OverflowEncoder(par) : null;
+        this.perp = perp != null ? new OverflowEncoder(perp) : null;
         this.imu = imu;
 
         // Wake up the IMU if it's a DynIMU
-        imu.getRobotOrientationAsQuaternion();
+        if (imu != null)
+            imu.getRobotOrientationAsQuaternion();
 
         FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", params);
     }
 
     @NonNull
     public Twist2dDual<Time> update() {
+        if (imu == null || par == null || perp == null)
+            return new Twist2dDual<>(
+                    Vector2dDual.constant(new Vector2d(0.0, 0.0), 2),
+                    DualNum.constant(0.0, 2)
+            );
+
         PositionVelocityPair parPosVel = par.getPositionAndVelocity();
         PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
 
