@@ -111,14 +111,15 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
         }
 
         // Apply refresh rate and cache restrictions
-        if (refreshRateNanos > 0 && Math.abs(lastUpdate - System.nanoTime()) < refreshRateNanos) {
+        long now = System.nanoTime();
+        if (refreshRateNanos > 0 && Math.abs(lastUpdate - now) < refreshRateNanos) {
             return;
         }
         if (Math.abs(lastPosition - targetPosition) < positionDeltaTolerance) {
             return;
         }
 
-        lastUpdate = System.nanoTime();
+        lastUpdate = now;
         lastPosition = targetPosition;
         super.setPosition(targetPosition);
     }
