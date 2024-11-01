@@ -6,6 +6,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -33,6 +34,7 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -50,8 +52,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.MovingAverageTimer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
 
@@ -61,15 +64,19 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-public final class HardwareTester extends BunyipsOpMode {
+public final class HardwareTester extends OpMode {
     private TelemetryMenu menu;
+    private Telemetry telemetry;
+    private MovingAverageTimer timer;
 
     /**
      * @noinspection ExtractMethodRecommender
      */
     @Override
     @SuppressWarnings("unchecked")
-    protected void onInit() {
+    public void init() {
+        timer = new MovingAverageTimer();
+        telemetry = new DualTelemetry(this, timer, "<b>HardwareTester</b>");
         Map<String, List<HardwareDevice>> hardware;
         hardwareMap.logDevices();
         try {
@@ -98,7 +105,7 @@ public final class HardwareTester extends BunyipsOpMode {
                     DcMotorSimple motor = (DcMotorSimple) device;
                     // First, we map DcMotorSimple interfaces (including CRServos) to supply power and change direction
                     TelemetryMenu.InteractiveToggle powerControl = new TelemetryMenu.InteractiveToggle("Power", false, a -> {
-                        motor.setPower(a ? -gamepad1.lsy : 0);
+                        motor.setPower(a ? -gamepad1.left_stick_y : 0);
                         return motor.getPower();
                     }).resetIf(() -> gamepad1.b);
                     TelemetryMenu.InteractiveToggle directionControl = new TelemetryMenu.InteractiveToggle("Direction", false, a -> {
@@ -166,7 +173,7 @@ public final class HardwareTester extends BunyipsOpMode {
                     }).withColours("green", "red").resetIf(() -> gamepad1.b);
                     TelemetryMenu.InteractiveToggle positionControl = new TelemetryMenu.InteractiveToggle("Position", false, a -> {
                         double curr = servo.getPosition();
-                        servo.setPosition(a ? Mathf.scale(-gamepad1.lsy, -1, 1, 0, 1) : curr);
+                        servo.setPosition(a ? Mathf.scale(-gamepad1.left_stick_y, -1, 1, 0, 1) : curr);
                         return curr;
                     });
                     TelemetryMenu.StaticClickableOption setToZero = new TelemetryMenu.StaticClickableOption("Set to 0", () -> servo.setPosition(0));
@@ -447,7 +454,7 @@ public final class HardwareTester extends BunyipsOpMode {
                     TelemetryMenu.StaticClickableOption selfTest = new TelemetryMenu.StaticClickableOption("Run Self Test") {
                         @Override
                         protected void onClick() {
-                            telemetry.log("OTOS Self Test: %", otos.selfTest() ? "PASS" : "FAIL");
+                            telemetry.log().add("OTOS Self Test: %s", otos.selfTest() ? "PASS" : "FAIL");
                         }
                     };
                     TelemetryMenu.StaticClickableOption calibrateIMU = new TelemetryMenu.StaticClickableOption("Calibrate IMU") {
@@ -503,13 +510,22 @@ public final class HardwareTester extends BunyipsOpMode {
             root.addChild(deviceMapping);
         }
         menu = new TelemetryMenu(telemetry, root);
+        telemetry.addLine("Ready.");
+        telemetry.update();
+        timer.update();
     }
 
     @Override
-    protected void activeLoop() {
+    public void start() {
+        timer.reset();
+    }
+
+    @Override
+    public void loop() {
         if (gamepad1.back)
-            emergencyStop();
+            terminateOpModeNow();
         menu.loop(gamepad1);
+        timer.update();
     }
 
     private enum Color {

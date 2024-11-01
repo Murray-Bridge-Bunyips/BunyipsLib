@@ -57,6 +57,7 @@ public class DriveModel {
             return this;
         }
 
+        // TODO: averages for multiple tests?
         /**
          * Set the inches per tick for the drive as a result of movement and encoder ticks.
          *

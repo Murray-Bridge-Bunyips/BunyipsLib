@@ -48,6 +48,7 @@ public final class ManualFeedbackTuner extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            // TODO: pause and stop ability for this opmode
             Actions.runBlocking(
                     new DeadlineTaskGroup(
                             drive.makeTrajectory(new Pose2d(0, 0, 0))

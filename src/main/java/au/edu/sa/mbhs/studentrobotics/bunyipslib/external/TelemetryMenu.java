@@ -33,6 +33,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
@@ -56,7 +57,7 @@ public class TelemetryMenu {
     private int selectedIdx = 0;
 
     /**
-     * TelemetryMenu constructor
+     * TelemetryMenu constructor.
      *
      * @param telemetry pass in 'telemetry' from your OpMode
      * @param root      the root menu element
@@ -83,8 +84,9 @@ public class TelemetryMenu {
         boolean dpadDn = gamepad.dpad_down;
         boolean dpadRight = gamepad.dpad_right;
         boolean dpadLeft = gamepad.dpad_left;
-        boolean a = gamepad.a;
-        boolean b = gamepad.b;
+        // Use Controls util to prevent Start+A/B presses
+        boolean a = Controls.isSelected(gamepad, Controls.A);
+        boolean b = Controls.isSelected(gamepad, Controls.B);
 
         // Figure out who our children our at this level
         // and figure out which item is currently highlighted
