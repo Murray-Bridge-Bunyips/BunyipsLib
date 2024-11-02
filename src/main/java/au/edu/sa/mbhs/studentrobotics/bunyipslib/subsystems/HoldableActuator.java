@@ -43,10 +43,10 @@ public class HoldableActuator extends BunyipsSubsystem {
     public final Tasks tasks = new Tasks();
 
     private final HashMap<TouchSensor, Integer> switchMapping = new HashMap<>();
-    // Power to hold the actuator in place
+    // Power magnitude to hold the actuator in place
     private double HOLDING_POWER = 1.0;
-    // Power to move the actuator when in auto mode
-    private double MOVING_POWER = 0.7;
+    // Power magnitude to move the actuator when in auto mode
+    private double MOVING_POWER = 1.0;
     // Number of greater than zero velocity hits required for Home Task
     private int ZERO_HIT_THRESHOLD = 30;
     // Overcurrent for Home Task
@@ -250,34 +250,35 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     /**
-     * Set the holding power of the actuator. Note: this power is clamped by the lower and upper power clamps.
+     * Set the holding power magnitude of the actuator.
+     * Note: this power is clamped by the lower and upper power clamps.
      *
-     * @param targetPower the power to set
+     * @param targetPower the power to set (magnitude)
      * @return this
      */
     @NonNull
     public HoldableActuator withHoldingPower(double targetPower) {
-        HOLDING_POWER = targetPower;
+        HOLDING_POWER = Math.abs(targetPower);
         return this;
     }
 
     /**
-     * Set the moving power of the actuator, where a positive value will bring the arm upwards (away from bottom).
+     * Set the moving power magnitude of the actuator, where a positive value will bring the arm upwards (away from bottom).
      * Note: this power is clamped by the lower and upper power clamps.
      *
-     * @param targetPower the power to set
+     * @param targetPower the power to set (magnitude)
      * @return this
      */
     @NonNull
     public HoldableActuator withMovingPower(double targetPower) {
-        MOVING_POWER = targetPower;
+        MOVING_POWER = Math.abs(targetPower);
         return this;
     }
 
     /**
      * Set the lower power clamp of the actuator.
      *
-     * @param lowerPower the lower power clamp to set
+     * @param lowerPower the lower power clamp to set (signed)
      * @return this
      */
     @NonNull
@@ -288,7 +289,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     /**
      * Set the upper power clamp of the actuator.
      *
-     * @param upperPower the upper power clamp to set
+     * @param upperPower the upper power clamp to set (signed)
      * @return this
      */
     @NonNull
@@ -299,8 +300,8 @@ public class HoldableActuator extends BunyipsSubsystem {
     /**
      * Set the lower and upper power clamps of the actuator.
      *
-     * @param lowerPower the lower power clamp to set
-     * @param upperPower the upper power clamp to set
+     * @param lowerPower the lower power clamp to set (signed)
+     * @param upperPower the upper power clamp to set (signed)
      * @return this
      */
     @NonNull

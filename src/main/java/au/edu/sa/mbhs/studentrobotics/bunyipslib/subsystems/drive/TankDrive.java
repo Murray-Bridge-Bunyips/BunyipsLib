@@ -235,7 +235,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         Pose2d pose = accumulator.getPose();
         PoseVelocity2d poseVel = accumulator.getVelocity();
-        opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
+        opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %°(%/s)",
                 Mathf.round(pose.position.x, 1),
                 Mathf.round(poseVel.linearVel.x, 1),
                 Mathf.round(pose.position.y, 1),

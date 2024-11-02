@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.function.BooleanSupplier;
 
@@ -19,6 +20,7 @@ public class ConditionalTask extends Task {
     private final Task trueTask;
     private final Task falseTask;
     private final BooleanSupplier conditionOnInit;
+    @Nullable
     private Task task;
 
     /**
@@ -59,16 +61,18 @@ public class ConditionalTask extends Task {
 
     @Override
     protected void periodic() {
-        task.run();
+        if (task != null)
+            task.run();
     }
 
     @Override
     protected boolean isTaskFinished() {
-        return task.pollFinished();
+        return task != null && task.pollFinished();
     }
 
     @Override
     protected void onReset() {
-        task.reset();
+        if (task != null)
+            task.reset();
     }
 }

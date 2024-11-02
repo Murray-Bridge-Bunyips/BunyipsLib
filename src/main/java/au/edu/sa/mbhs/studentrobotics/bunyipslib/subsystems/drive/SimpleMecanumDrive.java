@@ -91,7 +91,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
             }
             accumulator.accumulate(twist);
 
-            opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %deg(%/s)",
+            opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %°(%/s)",
                     Mathf.round(accumulator.getPose().position.x, 1),
                     Mathf.round(accumulator.getVelocity().linearVel.x, 1),
                     Mathf.round(accumulator.getPose().position.y, 1),

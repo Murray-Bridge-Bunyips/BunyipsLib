@@ -97,4 +97,12 @@ class CompositeControllerTest {
         assertTrue(d.pidf().isPresent());
         assertEquals(d.pidf().get(), a);
     }
+
+    @Test
+    void testkG() {
+        PController p = new PController(1);
+        CompositeController c = p.compose(new ElevatorFeedforward(0.0, 0.3, 0.0, 0.0, () -> 0, () -> 0), Double::sum);
+        assertEquals(c.calculate(0, 0), 0.3);
+        assertEquals(c.calculate(0, 10), 10.3);
+    }
 }

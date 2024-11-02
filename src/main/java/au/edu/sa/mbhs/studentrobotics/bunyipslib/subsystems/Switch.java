@@ -54,7 +54,7 @@ public class Switch extends BunyipsSubsystem {
      * @param servo the servo to use
      */
     public Switch(@Nullable Servo servo) {
-        this(servo, 1, 0);
+        this(servo, 0, 1);
     }
 
     /**
@@ -203,9 +203,9 @@ public class Switch extends BunyipsSubsystem {
     @Override
     protected void periodic() {
         opMode(o -> o.telemetry.add("%: %", this, target == openPosition
-                ? "<font color='orange'><b>OPEN</b></font> (" + Mathf.round(openPosition, 1) + ")"
-                : target == closePosition ? "<font color='green'>CLOSE</font> (" + Mathf.round(closePosition, 1) + ")"
-                : "<font color='white'>" + Mathf.round(target, 2) + "/1.00</font>"));
+                ? "<font color='green'>OPEN</font> (" + Mathf.round(openPosition, 1) + ")"
+                : target == closePosition ? "<font color='yellow'>CLOSE</font> (" + Mathf.round(closePosition, 1) + ")"
+                : "<b>" + Mathf.round(target, 2) + "/1.00</b>"));
         servo.setPosition(target);
     }
 
