@@ -73,7 +73,12 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     /**
      * The lookahead distance used for the current implementation of the path following mode of this MecanumDrive.
      */
-    public static final double STATIC_PATH_PROJECTION_LOOKAHEAD_INCHES = 6.0;
+    public static double PATH_FOLLOWER_PROJECTION_LOOKAHEAD_INCHES = 6.0;
+    /**
+     * The minimum distance from endpoint of the trajectory to the projected pose to begin stabilisation for the
+     * path following mode of this MecanumDrive.
+     */
+    public static double PATH_FOLLOWER_ENDPOINT_PROJECTION_TOLERANCE_INCHES = 1.0;
 
     private final MecanumKinematics kinematics;
     private final TurnConstraints defaultTurnConstraints;
@@ -411,7 +416,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             s = displacementTrajectory.project(actualPose.position, s);
             // Internally reparameterises from respect to displacement to respect to time
             // Future: currently using a static lookahead, should be improved in the future to something more dynamic
-            Pose2dDual<Time> txWorldTarget = displacementTrajectory.get(s + STATIC_PATH_PROJECTION_LOOKAHEAD_INCHES);
+            Pose2dDual<Time> txWorldTarget = displacementTrajectory.get(s + PATH_FOLLOWER_PROJECTION_LOOKAHEAD_INCHES);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             PoseVelocity2dDual<Time> feedbackCommand = new HolonomicController(
@@ -455,7 +460,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            boolean displacement = s >= displacementTrajectory.length();
+            boolean displacement = s + PATH_FOLLOWER_ENDPOINT_PROJECTION_TOLERANCE_INCHES >= displacementTrajectory.length();
             if (displacement && stab == null) {
                 stab = new ElapsedTime();
             } else if (!displacement) {
