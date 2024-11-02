@@ -526,6 +526,7 @@ public final class HardwareTester extends OpMode {
             terminateOpModeNow();
         menu.loop(gamepad1);
         timer.update();
+        telemetry.update();
     }
 
     private enum Color {
