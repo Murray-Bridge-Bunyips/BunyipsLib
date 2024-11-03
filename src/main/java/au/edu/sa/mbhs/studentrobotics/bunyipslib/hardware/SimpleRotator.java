@@ -24,6 +24,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  */
 public class SimpleRotator implements DcMotorSimple {
     private final DcMotorSimple dms;
+    private Direction direction;
     private double maxMagnitude = 1;
     private double powerDeltaTolerance = 0;
     private double lastPower = 0;
@@ -37,6 +38,7 @@ public class SimpleRotator implements DcMotorSimple {
      */
     public SimpleRotator(DcMotorSimple dms) {
         this.dms = dms;
+        direction = dms.getDirection();
     }
 
     /**
@@ -76,17 +78,17 @@ public class SimpleRotator implements DcMotorSimple {
 
     @Override
     public Direction getDirection() {
-        return dms.getDirection();
+        return direction;
     }
 
     @Override
     public synchronized void setDirection(Direction direction) {
-        dms.setDirection(direction);
+        this.direction = direction;
     }
 
     @Override
     public synchronized double getPower() {
-        return dms.getPower();
+        return dms.getPower() * (direction == Direction.FORWARD ? 1 : -1);
     }
 
     /**
@@ -116,7 +118,7 @@ public class SimpleRotator implements DcMotorSimple {
         lastUpdate = System.nanoTime();
         lastPower = power;
         // Write to the hardware
-        dms.setPower(power);
+        dms.setPower(power * (direction == Direction.FORWARD ? 1 : -1));
     }
 
     @Override
