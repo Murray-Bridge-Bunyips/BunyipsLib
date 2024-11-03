@@ -31,7 +31,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * being handled automatically. Common scheduling that are used in the Scheduler are available here as a proxy.
      */
     @NonNull
-    public Scheduler scheduler = new Scheduler();
+    public final Scheduler scheduler = new Scheduler();
     @NonNull
     private HashSet<BunyipsSubsystem> managedSubsystems = new HashSet<>();
 
@@ -155,9 +155,9 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      *
      * @param subsystems the restrictive list of subsystems to be managed and updated by the scheduler
      */
-    public void useSubsystems(@NonNull BunyipsSubsystem... subsystems) {
+    public void use(@NonNull BunyipsSubsystem... subsystems) {
         if (!NullSafety.assertNotNull(Arrays.stream(subsystems).toArray())) {
-            throw new RuntimeException("Null subsystems were added in the useSubsystems() method!");
+            throw new RuntimeException("Null subsystems were added in the use() method!");
         }
         Collections.addAll(managedSubsystems, subsystems);
     }

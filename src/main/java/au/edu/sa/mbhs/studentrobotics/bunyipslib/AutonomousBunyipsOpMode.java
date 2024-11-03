@@ -14,10 +14,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.DynamicTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.TaskGroup;
@@ -73,10 +75,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
         // Add any queued tasks that were delayed previously and we can do now
         for (Task task : postQueue) {
-            addTask(task);
+            add(task);
         }
         for (Task task : preQueue) {
-            addTaskFirst(task);
+            addFirst(task);
         }
         preQueue.clear();
         postQueue.clear();
@@ -218,9 +220,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *
      * @param subsystems the restrictive list of subsystems to be managed and updated by ABOM
      */
-    public final void useSubsystems(@NonNull BunyipsSubsystem... subsystems) {
+    public final void use(@NonNull BunyipsSubsystem... subsystems) {
         if (!NullSafety.assertNotNull(Arrays.stream(subsystems).toArray())) {
-            throw new RuntimeException("Null subsystems were added in the useSubsystems() method!");
+            throw new RuntimeException("Null subsystems were added in the use() method!");
         }
         Collections.addAll(updatedSubsystems, subsystems);
     }
@@ -229,13 +231,12 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Call to add {@link Task} instances that will be executed sequentially during the active loop.
      *
      * @param newTask task to add to the run queue
-     * @param ack     suppress the warning that a task was added manually before onReady
      * @param <T>     the inherited task type
      * @return the added task
      */
-    public final <T extends Task> T addTask(@NonNull T newTask, boolean ack) {
+    public final <T extends Task> T add(@NonNull T newTask) {
         checkTaskForDependency(newTask);
-        if (!safeToAddTasks && !ack) {
+        if (!safeToAddTasks) {
             telemetry.log("<font color='gray'>auto:</font> <font color='yellow'>caution!</font> a task was added manually before the onReady callback");
         }
         synchronized (tasks) {
@@ -250,13 +251,15 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Call to add {@link Task} instances that will be executed sequentially during the active loop.
+     * This task will be internally wrapped into a {@link DynamicTask}.
      *
-     * @param newTask task to add to the run queue
-     * @param <T>     the inherited task type
+     * @param newDynamicTask deferred task to add to the run queue
+     * @param <T>            the inherited task type
      * @return the added task
      */
-    public final <T extends Task> T addTask(@NonNull T newTask) {
-        return addTask(newTask, false);
+    @SuppressWarnings("unchecked")
+    public final <T extends Task> T defer(@NonNull Supplier<T> newDynamicTask) {
+        return (T) add(new DynamicTask((Supplier<Task>) newDynamicTask));
     }
 
     /**
@@ -266,8 +269,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @return the added {@link RunTask}
      */
     @NonNull
-    public final RunTask addTask(@NonNull Runnable runnable) {
-        return addTask(new RunTask(runnable));
+    public final RunTask add(@NonNull Runnable runnable) {
+        return add(new RunTask(runnable));
     }
 
     /**
@@ -278,10 +281,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @return the added {@link RunTask}
      */
     @NonNull
-    public final RunTask addTask(@NonNull String name, @NonNull Runnable runnable) {
+    public final RunTask add(@NonNull String name, @NonNull Runnable runnable) {
         RunTask task = new RunTask(runnable);
         task.withName(name);
-        return addTask(task);
+        return add(task);
     }
 
     /**
@@ -294,16 +297,19 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param <T>     the inherited task type
      * @return the added task
      */
-    public final <T extends Task> T addTaskAtIndex(int index, @NonNull T newTask) {
+    public final <T extends Task> T addAtIndex(int index, @NonNull T newTask) {
         checkTaskForDependency(newTask);
         ArrayDeque<Task> tmp = new ArrayDeque<>();
+        if (!safeToAddTasks) {
+            telemetry.log("<font color='gray'>auto:</font> <font color='yellow'>caution!</font> a task was added manually before the onReady callback");
+        }
         synchronized (tasks) {
             if (index < 0) {
                 throw new IllegalArgumentException("Cannot insert task at index " + index + ", out of bounds");
             } else if (index > tasks.size()) {
                 telemetry.log(getClass(), Text.html().color("red", "task index % is out of bounds. task was added to the end."), index);
                 Dbg.error(getClass(), "Task index % out of bounds to insert task, appending task to end...", index);
-                return addTaskLast(newTask);
+                return addLast(newTask);
             }
             // Deconstruct the queue to insert the new task
             while (tasks.size() > index) {
@@ -324,6 +330,23 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
+     * Insert a task at a specific index in the queue. This is useful for adding tasks that should be run
+     * at a specific point in the autonomous sequence. Note that this function immediately produces side effects,
+     * and subsequent calls will not be able to insert tasks at the same index due to the shifting of tasks.
+     * <p>
+     * This task will be internally wrapped into a {@link DynamicTask}.
+     *
+     * @param index          the index to insert the task at, starting from 0
+     * @param newDynamicTask deferred task to add to the run queue
+     * @param <T>            the inherited task type
+     * @return the added task
+     */
+    @SuppressWarnings("unchecked")
+    public final <T extends Task> T deferAtIndex(int index, @NonNull Supplier<T> newDynamicTask) {
+        return (T) addAtIndex(index, new DynamicTask((Supplier<Task>) newDynamicTask));
+    }
+
+    /**
      * Insert an implicit RunTask at a specific index in the queue.
      *
      * @param index    the index to insert the task at, starting from 0
@@ -331,8 +354,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @return the added {@link RunTask}
      */
     @NonNull
-    public final RunTask addTaskAtIndex(int index, @NonNull Runnable runnable) {
-        return addTaskAtIndex(index, new RunTask(runnable));
+    public final RunTask addAtIndex(int index, @NonNull Runnable runnable) {
+        return addAtIndex(index, new RunTask(runnable));
     }
 
     /**
@@ -344,10 +367,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @return the added {@link RunTask}
      */
     @NonNull
-    public final RunTask addTaskAtIndex(int index, @NonNull String name, @NonNull Runnable runnable) {
+    public final RunTask addAtIndex(int index, @NonNull String name, @NonNull Runnable runnable) {
         RunTask task = new RunTask(runnable);
         task.withName(name);
-        return addTaskAtIndex(index, task);
+        return addAtIndex(index, task);
     }
 
     /**
@@ -357,19 +380,36 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param newTask          task to add to the run queue
      * @param <T>              the inherited task type
      * @return the added task
-     * @see #addTaskLast(Task)
-     * @see #addTaskFirst(Task)
+     * @see #addLast(Task)
+     * @see #addFirst(Task)
      */
-    public final <T extends Task> T addTask(@NonNull TaskPriority runQueuePriority, @NonNull T newTask) {
+    public final <T extends Task> T add(@NonNull TaskPriority runQueuePriority, @NonNull T newTask) {
         switch (runQueuePriority) {
             case FIRST:
-                return addTaskFirst(newTask);
+                return addFirst(newTask);
             case LAST:
-                return addTaskLast(newTask);
+                return addLast(newTask);
             case NORMAL:
             default:
-                return addTask(newTask);
+                return add(newTask);
         }
+    }
+
+    /**
+     * Add a task to the run queue at a specified run queue priority.
+     * <p>
+     * This task will be internally wrapped into a {@link DynamicTask}.
+     *
+     * @param runQueuePriority the run queue priority.
+     * @param newDynamicTask   deferred task to add to the run queue
+     * @param <T>              the inherited task type
+     * @return the added task
+     * @see #addLast(Task)
+     * @see #addFirst(Task)
+     */
+    @SuppressWarnings("unchecked")
+    public final <T extends Task> T defer(@NonNull TaskPriority runQueuePriority, @NonNull Supplier<T> newDynamicTask) {
+        return (T) add(runQueuePriority, new DynamicTask((Supplier<Task>) newDynamicTask));
     }
 
     /**
@@ -381,7 +421,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param <T>     the inherited task type
      * @return the added task
      */
-    public final <T extends Task> T addTaskLast(@NonNull T newTask) {
+    public final <T extends Task> T addLast(@NonNull T newTask) {
         checkTaskForDependency(newTask);
         if (!callbackReceived) {
             postQueue.add(newTask);
@@ -399,6 +439,22 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
+     * Add a task to the run queue, but after {@link #onReady(Reference, Controls)} has processed tasks. This is useful
+     * to call when working with tasks that should be queued at the very end of the autonomous, while still
+     * being able to add tasks asynchronously with user input in {@link #onReady(Reference, Controls)}.
+     * <p>
+     * This task will be internally wrapped into a {@link DynamicTask}.
+     *
+     * @param newDynamicTask deferred task to add to the run queue
+     * @param <T>            the inherited task type
+     * @return the added task
+     */
+    @SuppressWarnings("unchecked")
+    public final <T extends Task> T deferLast(@NonNull Supplier<T> newDynamicTask) {
+        return (T) addLast(new DynamicTask((Supplier<Task>) newDynamicTask));
+    }
+
+    /**
      * Add a task to the very start of the queue. This is useful to call when working with tasks that
      * should be queued at the very start of the autonomous, while still being able to add tasks
      * asynchronously with user input in {@link #onReady(Reference, Controls)}.
@@ -407,7 +463,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param <T>     the inherited task type
      * @return the added task
      */
-    public final <T extends Task> T addTaskFirst(@NonNull T newTask) {
+    public final <T extends Task> T addFirst(@NonNull T newTask) {
         checkTaskForDependency(newTask);
         if (!callbackReceived) {
             preQueue.add(newTask);
@@ -422,6 +478,22 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         taskCount++;
         telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added 1/%", newTask, getTaskTimeout(newTask), taskCount);
         return newTask;
+    }
+
+    /**
+     * Add a task to the very start of the queue. This is useful to call when working with tasks that
+     * should be queued at the very start of the autonomous, while still being able to add tasks
+     * asynchronously with user input in {@link #onReady(Reference, Controls)}.
+     * <p>
+     * This task will be internally wrapped into a {@link DynamicTask}.
+     *
+     * @param newDynamicTask deferred task to add to the run queue
+     * @param <T>            the inherited task type
+     * @return the added task
+     */
+    @SuppressWarnings("unchecked")
+    public final <T extends Task> T deferFirst(@NonNull Supplier<T> newDynamicTask) {
+        return (T) addFirst(new DynamicTask((Supplier<Task>) newDynamicTask));
     }
 
     private String getTaskTimeout(Task task) {
@@ -460,13 +532,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Removes whatever task is at the given queue position
+     * Removes whatever task is at the given queue position.
+     * <p>
      * Note: this will remove the index and shift all other tasks down, meaning that
      * tasks being added/removed will affect the index of the task you want to remove
      *
      * @param taskIndex the array index to be removed, starting from 0
      */
-    public final void removeTaskAtIndex(int taskIndex) {
+    public final void removeAtIndex(int taskIndex) {
         synchronized (tasks) {
             if (taskIndex < 0 || taskIndex >= tasks.size())
                 throw new IllegalArgumentException("Cannot remove task at index " + taskIndex + ", out of bounds");
@@ -496,13 +569,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Remove a task from the queue
+     * Remove a task from the queue.
+     * <p>
      * This assumes that the overhead OpMode has instance control over the task, as this method
      * will search for an object reference to the task and remove it from the queue
      *
      * @param task the task to be removed
      */
-    public final void removeTask(@NonNull Task task) {
+    public final void remove(@NonNull Task task) {
         synchronized (tasks) {
             if (tasks.contains(task)) {
                 tasks.remove(task);
@@ -515,9 +589,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Removes the last task in the task queue
+     * Removes the last task in the task queue.
      */
-    public final void removeTaskLast() {
+    public final void removeLast() {
         synchronized (tasks) {
             tasks.removeLast();
         }
@@ -526,9 +600,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Removes the first task in the task queue
+     * Removes the first task in the task queue.
      */
-    public final void removeTaskFirst() {
+    public final void removeFirst() {
         synchronized (tasks) {
             tasks.removeFirst();
         }
@@ -539,7 +613,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     private void checkTaskForDependency(Task task) {
         task.getDependency().ifPresent((s) -> {
             if (!updatedSubsystems.contains(s)) {
-                Dbg.warn(getClass(), "Task % has a dependency on %, but it is not being updated by the AutonomousBunyipsOpMode. This is due to a call to useSubsystems() that is not including this subsystem. Please ensure this is intended behaviour. A clearer alternative is to disable() the subsystem(s) you don't wish to update.", task, s);
+                Dbg.warn(getClass(), "Task % has a dependency on %, but it is not being updated by the AutonomousBunyipsOpMode. This is due to a call to use() that is not including this subsystem. Please ensure this is intended behaviour. A clearer alternative is to disable() the subsystem(s) you don't wish to update.", task, s);
                 telemetry.log(Text.html().color("yellow", "auto: ").text("dependency % for task % has not been updated"), s, task);
             }
         });
@@ -563,7 +637,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *             "GO_SHOOT_AND_PARK",
      *             "SABOTAGE_ALLIANCE"
      *     );
-     *     // Use `StartingPositions.use();` for using the four Robot starting positions
+     *     // See the StartingConfiguration class for advanced builder patterns of robot starting positions,
+     *     // which is the recommended way to define OpModes (OpModes themselves define objectives, not positions)
      * }</pre>
      */
     protected final void setOpModes(@Nullable List<Object> selectableOpModes) {
@@ -612,7 +687,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param selectedOpMode the OpMode selected by the user, if applicable. Will be NULL if the user does not select an OpMode (and OpModes were available).
      *                       Will be an empty reference if {@link #setOpModes(Object...)} returned null (no OpModes to select).
      * @param selectedButton the button selected by the user. Will be Controls.NONE if no selection is made or given.
-     * @see #addTask(Task)
+     * @see #add(Task)
      */
     protected abstract void onReady(@Nullable Reference<?> selectedOpMode, @Nullable Controls selectedButton);
 
@@ -622,7 +697,6 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     protected void periodic() {
     }
-
 
     /**
      * Priority representation for building tasks.
