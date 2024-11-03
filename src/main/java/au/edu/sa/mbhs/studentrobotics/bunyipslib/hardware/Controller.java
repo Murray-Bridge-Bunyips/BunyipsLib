@@ -22,7 +22,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
  * @since 1.0.0-pre
  */
 public class Controller extends Gamepad {
-
     /**
      * The SDK gamepad that this Controller wraps and takes input from.
      * This is public for advanced users who need to access the raw gamepad values, or need to access hardware

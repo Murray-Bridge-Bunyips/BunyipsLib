@@ -3,12 +3,14 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.IMUEx
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ProfiledServo
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.SimpleRotator
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import com.acmerobotics.roadrunner.ftc.LazyImu
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot
@@ -126,6 +128,11 @@ abstract class RobotConfig {
         if (ProfiledServo::class.java.isAssignableFrom(device)) {
             val servo = hardwareMap.get(Servo::class.java, name)
             return ProfiledServo(servo) as T
+        }
+        // SimpleRotator is a CRServo and DcMotorSimple drop-in replacement
+        if (SimpleRotator::class.java.isAssignableFrom(device)) {
+            val dms = hardwareMap.get(DcMotorSimple::class.java, name)
+            return SimpleRotator(dms) as T
         }
         return hardwareMap.get(device, name)
     }

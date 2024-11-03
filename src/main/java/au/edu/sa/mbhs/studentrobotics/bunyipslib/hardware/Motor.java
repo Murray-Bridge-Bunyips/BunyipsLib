@@ -1,7 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
 import android.util.Pair;
@@ -23,7 +22,6 @@ import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 import java.util.ArrayList;
@@ -41,7 +39,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDControl
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
@@ -57,7 +54,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  * @since 4.0.0
  */
 @SuppressWarnings("deprecation")
-public class Motor implements DcMotorEx {
+public class Motor extends SimpleRotator implements DcMotorEx {
     protected final DcMotorControllerEx controller;
     protected final int port;
 
@@ -65,22 +62,13 @@ public class Motor implements DcMotorEx {
     private final ArrayList<InterpolatedLookupTable> rueGains = new ArrayList<>();
 
     private final Encoder encoder;
-    private final String deviceName;
-    private final Rotation operationalRotation;
-    @NonNull
-    protected Direction direction;
     private DcMotor.RunMode mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-    private double maxMagnitude = 1;
 
     private SystemController rtpController;
     private SystemController rueController;
     private Pair<Double, Double> rueInfo = null;
 
     private int rawTargetPosition = 0;
-    private double powerDeltaTolerance = 0;
-    private double lastPower = 0;
-    private long refreshRateNanos = 0;
-    private long lastUpdate = 0;
 
     /**
      * Wrap a DcMotor to use in the Motor class.
@@ -88,42 +76,18 @@ public class Motor implements DcMotorEx {
      * @param motor the DcMotor from hardwareMap to use.
      */
     public Motor(@NonNull DcMotor motor) {
+        super(motor);
         // Take control over this motor's controller, we don't need to manage the motor configuration as that
         // should be on the controller and has been detached in the overhead DcMotor
         controller = (DcMotorControllerEx) motor.getController();
         port = motor.getPortNumber();
-        direction = motor.getDirection();
-        deviceName = motor.getDeviceName();
         // The actual motor should *always* be running in RUN_WITHOUT_ENCODER
         synchronized (controller) {
-            operationalRotation = controller.getMotorType(port).getOrientation();
             controller.setMotorMode(port, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
         encoder = new Encoder(() -> controller.getMotorCurrentPosition(port), () -> controller.getMotorVelocity(port));
-        encoder.setDirection(getOperationalDirection());
-        encoder.trackDirection(this::getOperationalDirection);
+        encoder.setDirection(getDirection());
         rawTargetPosition = getCurrentPosition();
-    }
-
-    /**
-     * Set the delta in power required to propagate a hardware write.
-     * A commanded power of 0 to the motor will ignore this threshold for safety.
-     *
-     * @param magnitude absolute magnitude of delta in power, 0/default will disable
-     */
-    public void setPowerDeltaThreshold(double magnitude) {
-        powerDeltaTolerance = Math.abs(magnitude);
-    }
-
-    /**
-     * Set the refresh rate of the motor that will be a minimum time between hardware writes.
-     * Consistent calls to {@link #setPower(double)} is required for this refresh rate to be effective.
-     * A commanded power of 0 to the motor will ignore this refresh rate for safety.
-     *
-     * @param refreshRate the refresh rate interval, <=0/default will disable
-     */
-    public void setPowerRefreshRate(@NonNull Measure<Time> refreshRate) {
-        refreshRateNanos = (long) refreshRate.in(Nanoseconds);
     }
 
     /**
@@ -745,7 +709,7 @@ public class Motor implements DcMotorEx {
     @Override
     public synchronized int getTargetPosition() {
         // May as well let the motor controller manage target position, there is nothing interfering with doing so
-        return rawTargetPosition * (getOperationalDirection() == Direction.FORWARD ? 1 : -1);
+        return rawTargetPosition * (getDirection() == Direction.FORWARD ? 1 : -1);
     }
 
     /**
@@ -772,7 +736,7 @@ public class Motor implements DcMotorEx {
      */
     @Override
     public synchronized void setTargetPosition(int position) {
-        rawTargetPosition = position * (getOperationalDirection() == Direction.FORWARD ? 1 : -1);
+        rawTargetPosition = position * (getDirection() == Direction.FORWARD ? 1 : -1);
     }
 
     /**
@@ -804,36 +768,11 @@ public class Motor implements DcMotorEx {
     public synchronized void setVelocity(double angVel, @NonNull AngleUnit unit) {
         double tpr = getMotorType().getTicksPerRev();
         if (tpr <= 0) {
-            throw new IllegalStateException(Text.format("The Ticks Per Revolution attribute has not been set for this motor (% on port %). You will have to clone the current motorType, set the ticksPerRev, and set the new motorType to the cloned copy.", deviceName, port));
+            throw new IllegalStateException(Text.format("The Ticks Per Revolution attribute has not been set for this motor (port %). You will have to clone the current motorType, set the ticksPerRev, and set the new motorType to the cloned copy.", port));
         }
         double radsPerSec = UnnormalizedAngleUnit.RADIANS.fromUnit(unit.getUnnormalized(), angVel);
         // Will assume no reduction, the user can scale the velocity on their own terms
         setVelocity(EncoderTicks.fromAngle(Radians.of(radsPerSec), (int) tpr, 1));
-    }
-
-    /**
-     * Sets the maximum power magnitude (applies for both negative and positive powers) this motor can run at.
-     * This will ensure all calls to {@link #setPower} will never exceed the maximum boundary as defined by this function.
-     * <p>
-     * Note: Further calls to {@link #setPower} that exceed the new domain will be scaled (for example, if the max power
-     * was defined as 0.8, {@code setPower(1)} will set the motor power to 0.8 in {@code RUN_WITHOUT_ENCODER} mode)
-     *
-     * @param magnitude maximum absolute magnitude of {@link #setPower}, default of 1.0 (SDK), applies bidirectionally
-     */
-    public void setMaxPower(double magnitude) {
-        maxMagnitude = Math.min(1, Math.abs(magnitude));
-    }
-
-    /**
-     * Returns the current logical direction in which this motor is set as operating.
-     *
-     * @return the current logical direction in which this motor is set as operating.
-     * @see #setDirection(Direction)
-     */
-    @NonNull
-    @Override
-    public Direction getDirection() {
-        return direction;
     }
 
     /**
@@ -847,18 +786,7 @@ public class Motor implements DcMotorEx {
         // The only directional controls we have in the Motor class is the setting of power, the encoder ticks themselves
         // are managed via the Encoder class (they should also be equal so we hook it here)
         encoder.setDirection(direction);
-        this.direction = direction;
-    }
-
-    /**
-     * Returns the current configured power level of the motor.
-     *
-     * @return the current level of the motor, a value in the interval [-1.0, 1.0]
-     * @see #setPower(double)
-     */
-    @Override
-    public synchronized double getPower() {
-        return controller.getMotorPower(port) * (getOperationalDirection() == Direction.FORWARD ? 1 : -1);
+        super.setDirection(direction);
     }
 
     /**
@@ -877,7 +805,7 @@ public class Motor implements DcMotorEx {
             case RUN_TO_POSITION:
                 if (rtpController == null) {
                     PIDFCoefficients coeffs = getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-                    String msg = Text.format("[% on port %] No RUN_TO_POSITION controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. You must set your own controller through setRunToPositionController().", deviceName, port, coeffs);
+                    String msg = Text.format("[Port %] No RUN_TO_POSITION controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. You must set your own controller through setRunToPositionController().", port, coeffs);
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
                     rtpController = new PIDFController(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
@@ -892,7 +820,7 @@ public class Motor implements DcMotorEx {
             case RUN_USING_ENCODER:
                 if (rueController == null) {
                     PIDFCoefficients coeffs = getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-                    String msg = Text.format("[% on port %] No RUN_USING_ENCODER controller was specified. This motor will be using the default PIDF coefficients to create a fallback PID and static FF controller with values from %. You must set your own controller through setRunUsingEncoderController().", deviceName, port, coeffs);
+                    String msg = Text.format("[Port %] No RUN_USING_ENCODER controller was specified. This motor will be using the default PIDF coefficients to create a fallback PID and static FF controller with values from %. You must set your own controller through setRunUsingEncoderController().", port, coeffs);
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
                     PIDController pid = new PIDController(coeffs.p, coeffs.i, coeffs.d);
@@ -919,24 +847,7 @@ public class Motor implements DcMotorEx {
                 magnitude = power;
                 break;
         }
-        // Clamp and rescale depending on the maximum magnitude
-        magnitude = Mathf.scale(Mathf.clamp(magnitude, -1, 1), -1, 1, -maxMagnitude, maxMagnitude);
-        if (magnitude != 0) {
-            // Can check refresh rate and apply cache for a non-zero power.
-            // We early return down here next to the actual hardware write to ensure the PID controllers
-            // still update (PID controllers don't take up the loop times)
-            if (refreshRateNanos > 0 && Math.abs(lastUpdate - System.nanoTime()) < refreshRateNanos) {
-                return;
-            }
-            if (powerDeltaTolerance != 0 && Math.abs(lastPower - power) < powerDeltaTolerance) {
-                return;
-            }
-        }
-        // Always update last powers to keep the system in sync
-        lastUpdate = System.nanoTime();
-        lastPower = power;
-        // Write to the hardware and apply configured direction
-        controller.setMotorPower(port, getOperationalDirection() == Direction.FORWARD ? magnitude : -magnitude);
+        super.setPower(magnitude);
     }
 
     private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
@@ -944,74 +855,6 @@ public class Motor implements DcMotorEx {
         int res = lut.testOutOfRange(curr);
         if (res == 0) return lut.get(curr);
         return res == -1 ? lut.getMin() : lut.getMax();
-    }
-
-    private Direction getOperationalDirection() {
-        return operationalRotation == Rotation.CCW ? direction.inverted() : direction;
-    }
-
-    /**
-     * Returns an indication of the manufacturer of this device.
-     *
-     * @return the device's manufacturer
-     */
-    @NonNull
-    @Override
-    public Manufacturer getManufacturer() {
-        return controller.getManufacturer();
-    }
-
-    /**
-     * Returns a string suitable for display to the user as to the type of device.
-     * Note that this is a device-type-specific name; it has nothing to do with the
-     * name by which a user might have configured the device in a robot configuration.
-     *
-     * @return device manufacturer and name
-     */
-    @NonNull
-    @Override
-    public String getDeviceName() {
-        return deviceName;
-    }
-
-    /**
-     * Get connection information about this device in a human readable format
-     *
-     * @return connection info
-     */
-    @NonNull
-    @Override
-    public String getConnectionInfo() {
-        return controller.getConnectionInfo() + "; port " + port;
-    }
-
-    /**
-     * Version
-     *
-     * @return get the version of this device
-     */
-    @Override
-    public int getVersion() {
-        return 1;
-    }
-
-    /**
-     * Resets the device's configuration to that which is expected at the beginning of an OpMode.
-     * For example, motors will reset the their direction to 'forward'.
-     */
-    @Override
-    public void resetDeviceConfigurationForOpMode() {
-        setDirection(Direction.FORWARD);
-        controller.resetDeviceConfigurationForOpMode(port);
-    }
-
-    /**
-     * Closes this device
-     */
-    @Override
-    public void close() {
-        setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
-        setPower(0);
     }
 
     /**
@@ -1057,8 +900,8 @@ public class Motor implements DcMotorEx {
          * Create the interpolated lookup tables for use in gains scheduling.
          */
         public void build() {
-            for (int i = 0; i < gains.size(); i++) {
-                gains.get(i).createLUT();
+            for (InterpolatedLookupTable lut : gains) {
+                lut.createLUT();
             }
         }
     }

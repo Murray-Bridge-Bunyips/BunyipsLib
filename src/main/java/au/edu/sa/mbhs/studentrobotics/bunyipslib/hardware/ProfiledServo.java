@@ -19,7 +19,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 
 /**
  * Extension of the extended {@link Servo} interface that allows for motion profiling via a {@link TrapezoidProfile}.
- * This extension also offers refresh rate and cache tolerance handling for loop time optimisation.
+ * This extension also offers refresh rate and position cache tolerance handling for loop time
+ * optimisation similar to an {@link SimpleRotator}.
  * <p>
  * This class serves as a drop-in replacement for the {@link Servo}, similar to {@link Motor} with the {@link DcMotor}.
  * Do note that this class cannot be casted to a {@link ServoImplEx} instance, but it does implement the extended
@@ -115,7 +116,11 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
         if (refreshRateNanos > 0 && Math.abs(lastUpdate - now) < refreshRateNanos) {
             return;
         }
-        if (Math.abs(lastPosition - targetPosition) < positionDeltaTolerance) {
+        if (Math.abs(lastPosition - targetPosition) < positionDeltaTolerance && targetPosition != 1 && targetPosition != 0) {
+            return;
+        }
+        if (targetPosition == lastPosition) {
+            // Useless operation
             return;
         }
 
