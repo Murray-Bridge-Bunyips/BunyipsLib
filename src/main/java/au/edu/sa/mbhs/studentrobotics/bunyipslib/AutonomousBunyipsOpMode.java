@@ -146,7 +146,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         }
         // Busy wait here until onReady() has processed and the callback is fully joined
         // This is safe to do as there are no main thread operations left to run
-        while (!callbackReceived) {
+        while (!callbackReceived && !isStopRequested()) {
             sleep(1);
         }
     }
