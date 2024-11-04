@@ -59,10 +59,24 @@ public class Encoder {
         directionSupplier = supplier;
     }
 
-    private DcMotorSimple.Direction getOperationalDirection() {
+    /**
+     * Gets the current direction of this encoder.
+     *
+     * @return the logical direction this encoder operates
+     */
+    public DcMotorSimple.Direction getDirection() {
         if (directionSupplier != null)
             direction = directionSupplier.get();
         return direction;
+    }
+
+    /**
+     * Sets the direction of the encoder to forward or reverse
+     *
+     * @param direction the desired direction
+     */
+    public void setDirection(@NonNull DcMotorSimple.Direction direction) {
+        this.direction = direction;
     }
 
     /**
@@ -76,7 +90,7 @@ public class Encoder {
      * @return the current position of the encoder
      */
     public int getPosition() {
-        int currentPosition = (getOperationalDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * position.get();
+        int currentPosition = (getDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * position.get();
         accumulation += currentPosition - lastPosition;
         if (currentPosition != lastPosition) {
             double currentTime = System.nanoTime() / 1.0E9;
@@ -103,15 +117,6 @@ public class Encoder {
     public void setKnownPosition(int position) {
         resetVal = 0;
         accumulation = position;
-    }
-
-    /**
-     * Sets the direction of the encoder to forward or reverse
-     *
-     * @param direction the desired direction
-     */
-    public void setDirection(@NonNull DcMotorSimple.Direction direction) {
-        this.direction = direction;
     }
 
     /**
@@ -144,7 +149,7 @@ public class Encoder {
      * @return the raw velocity of the encoder, may overflow if ticks/sec exceed 32767/sec
      */
     public double getRawVelocity() {
-        double velo = (getOperationalDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
+        double velo = (getDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
         double currentTime = System.nanoTime() / 1.0E9;
         double dt = currentTime - lastTimestamp;
         // Too small of measurements are incalculable due to floating-point error

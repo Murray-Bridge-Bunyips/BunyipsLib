@@ -55,15 +55,18 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  */
 @SuppressWarnings("deprecation")
 public class Motor extends SimpleRotator implements DcMotorEx {
+    /**
+     * The encoder object that is used for encoder readings on this motor.
+     */
+    public final Encoder encoder;
+
     protected final DcMotorControllerEx controller;
     protected final int port;
 
     private final ArrayList<InterpolatedLookupTable> rtpGains = new ArrayList<>();
     private final ArrayList<InterpolatedLookupTable> rueGains = new ArrayList<>();
 
-    private final Encoder encoder;
     private DcMotor.RunMode mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
-
     private SystemController rtpController;
     private SystemController rueController;
     private Pair<Double, Double> rueInfo = null;
@@ -85,11 +88,9 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         synchronized (controller) {
             controller.setMotorMode(port, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
-        encoder = new Encoder(
-                () -> controller.getMotorCurrentPosition(port) * (getDirection() == Direction.FORWARD ? 1 : -1),
-                () -> controller.getMotorVelocity(port) * (getDirection() == Direction.FORWARD ? 1 : -1)
-        );
+        encoder = new Encoder(() -> controller.getMotorCurrentPosition(port), () -> controller.getMotorVelocity(port));
         encoder.setDirection(getDirection());
+        encoder.trackDirection(this::getDirection);
         rawTargetPosition = getCurrentPosition();
     }
 
@@ -245,16 +246,6 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     public synchronized void resetEncoder() {
         encoder.reset();
         setTargetPosition(0);
-    }
-
-    /**
-     * Get the encoder attached to this motor.
-     *
-     * @return the encoder object that is used for encoder readings on this motor
-     */
-    @NonNull
-    public Encoder getEncoder() {
-        return encoder;
     }
 
     /**

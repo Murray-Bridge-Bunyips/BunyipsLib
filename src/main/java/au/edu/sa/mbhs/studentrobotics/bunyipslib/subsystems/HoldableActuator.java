@@ -30,8 +30,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
- * Controls a generic holdable motor, that may be actuated by a user's input
- * but will hold its position when the input is released.
+ * Controls a generic encoder motor that can be controlled through various means and commanded to hold a position.
  *
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
@@ -88,7 +87,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         // as it is handled by the motor object itself, unless we're using a Motor object then we can conveniently
         // hook into it
         if (motor instanceof Motor) {
-            encoder = ((Motor) motor).getEncoder();
+            encoder = ((Motor) motor).encoder;
         } else {
             encoder = new Encoder(this.motor::getCurrentPosition, this.motor::getVelocity);
         }
@@ -506,6 +505,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         if (motor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
             boolean overCurrent = motor.isOverCurrent();
             if (sustainedOvercurrent.seconds() >= overcurrentTime.in(Seconds) && overCurrent) {
+                Dbg.warn(getClass(), "%Warning: Stall detection (continued % A for % sec) has been activated. To prevent motor damage, the target position has been auto set to the current position (% -> %).", isDefaultName() ? "" : "(" + name + ") ", Mathf.round(motor.getCurrentAlert(CurrentUnit.AMPS), 1), Mathf.round(overcurrentTime.in(Seconds), 1), target, current);
                 newTarget = motor.getCurrentPosition();
             } else if (!overCurrent) {
                 sustainedOvercurrent.reset();
