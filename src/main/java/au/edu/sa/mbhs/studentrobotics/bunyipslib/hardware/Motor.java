@@ -85,10 +85,15 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         synchronized (controller) {
             controller.setMotorMode(port, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
-        encoder = new Encoder(() -> controller.getMotorCurrentPosition(port), () -> controller.getMotorVelocity(port));
+        encoder = new Encoder(
+                () -> controller.getMotorCurrentPosition(port) * (getDirection() == Direction.FORWARD ? 1 : -1),
+                () -> controller.getMotorVelocity(port) * (getDirection() == Direction.FORWARD ? 1 : -1)
+        );
         encoder.setDirection(getDirection());
         rawTargetPosition = getCurrentPosition();
     }
+
+    // hello i am Giulio
 
     /**
      * Call to use encoder overflow (exceeding 32767 ticks/sec) correction on {@link #getVelocity()}.

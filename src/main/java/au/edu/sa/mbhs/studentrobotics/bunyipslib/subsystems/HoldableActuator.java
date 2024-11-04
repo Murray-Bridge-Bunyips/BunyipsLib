@@ -43,28 +43,17 @@ public class HoldableActuator extends BunyipsSubsystem {
     public final Tasks tasks = new Tasks();
 
     private final HashMap<TouchSensor, Integer> switchMapping = new HashMap<>();
-    // Power magnitude to hold the actuator in place
-    private double HOLDING_POWER = 1.0;
-    // Power magnitude to move the actuator when in auto mode
-    private double MOVING_POWER = 1.0;
-    // Number of greater than zero velocity hits required for Home Task
-    private int ZERO_HIT_THRESHOLD = 30;
-    // Overcurrent for Home Task
-    private Measure<Current> OVERCURRENT = Amps.of(4);
-    // Time of which the Home Task Overcurrent needs to be exceeded
-    private Measure<Time> OVERCURRENT_TIME = Seconds.of(1.0);
-    // Maximum time spent in the Home Task before it is assumed completed
-    private Measure<Time> HOMING_TIMEOUT = Seconds.of(5);
-    // Encoder lower limit in ticks
-    private long MIN_LIMIT = -Long.MAX_VALUE;
-    // Encoder upper limit in ticks
-    private long MAX_LIMIT = Long.MAX_VALUE;
-    // Lower power clamp
-    private double LOWER_POWER = -1.0;
-    // Upper power clamp
-    private double UPPER_POWER = 1.0;
-    // Tolerance for the actuator in ticks, default 2
-    private int TOLERANCE = 2;
+    private final ElapsedTime sustainedOvercurrent = new ElapsedTime();
+    private double rtpPower = 1.0;
+    private double homePower = 0.7;
+    private int zeroHitThreshold = 30;
+    private Measure<Time> overcurrentTime;
+    private Measure<Time> homingTimeout = Seconds.of(5);
+    private long minLimit = -Long.MAX_VALUE;
+    private long maxLimit = Long.MAX_VALUE;
+    private double lowerPower = -1.0;
+    private double upperPower = 1.0;
+    private int tolerance = 2;
     private DcMotorEx motor;
     private Encoder encoder;
     private TouchSensor topSwitch;
@@ -94,7 +83,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.motor.setTargetPosition(this.motor.getCurrentPosition());
         this.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        this.motor.setPower(HOLDING_POWER);
+        this.motor.setPower(rtpPower);
         // Encoder instance is used for awareness of the encoder position, we generally don't care about direction
         // as it is handled by the motor object itself, unless we're using a Motor object then we can conveniently
         // hook into it
@@ -103,6 +92,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         } else {
             encoder = new Encoder(this.motor::getCurrentPosition, this.motor::getVelocity);
         }
+        withOvercurrent(Amps.of(8), Seconds.of(2));
     }
 
     /**
@@ -116,7 +106,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     public HoldableActuator withTolerance(int tolerance, boolean applyToMotor) {
         if (applyToMotor)
             motor.setTargetPositionTolerance(tolerance);
-        TOLERANCE = tolerance;
+        this.tolerance = tolerance;
         return this;
     }
 
@@ -130,7 +120,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withHomingZeroHits(int threshold) {
-        ZERO_HIT_THRESHOLD = threshold;
+        zeroHitThreshold = threshold;
         return this;
     }
 
@@ -145,29 +135,33 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     /**
-     * Set the overcurrent threshold for the Home Task.
-     * If this current is reached during a Home Task, for the set duration set here, the home task will end.
+     * Set the overcurrent threshold used for stall detection.
+     * <p>
+     * If this current is reached during a state where stalling is monitored, for the set duration set here, the actuator
+     * will auto-reset the motor.
      *
-     * @param current the current which if exceeded in a Home Task will finish the reset. Default is 4A.
-     * @param forTime the time the current must be exceeded for to finish the reset. Useful for filtering out momentary spikes. Default is 1s.
+     * @param current the current which if exceeded will intervene. Default is 8A.
+     * @param forTime the time the current must be exceeded for to execute the reset. Useful for filtering out momentary spikes. Default is 2s.
      * @return this
-     * @see #disableHomingOvercurrent()
+     * @see #disableOvercurrent()
      */
     @NonNull
-    public HoldableActuator withHomingOvercurrent(@NonNull Measure<Current> current, @NonNull Measure<Time> forTime) {
-        OVERCURRENT = current;
-        OVERCURRENT_TIME = forTime;
+    public HoldableActuator withOvercurrent(@NonNull Measure<Current> current, @NonNull Measure<Time> forTime) {
+        motor.setCurrentAlert(current.in(Amps), CurrentUnit.AMPS);
+        overcurrentTime = forTime;
         return this;
     }
 
     /**
-     * Disable the overcurrent threshold for the Home Task.
+     * Disable the overcurrent threshold for stall detection.
      *
      * @return this
+     * @see #withOvercurrent(Measure, Measure)
      */
     @NonNull
-    public HoldableActuator disableHomingOvercurrent() {
-        return withHomingOvercurrent(Amps.of(0), Seconds.of(0));
+    public HoldableActuator disableOvercurrent() {
+        overcurrentTime = Seconds.zero();
+        return this;
     }
 
     /**
@@ -178,7 +172,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withHomingTimeout(@NonNull Measure<Time> timeout) {
-        HOMING_TIMEOUT = timeout;
+        homingTimeout = timeout;
         return this;
     }
 
@@ -210,7 +204,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param bottomLimitSwitch the limit switch to set as the bottom switch where the arm would be "homed"
      * @return this
      * @see #disableHomingZeroHits()
-     * @see #disableHomingOvercurrent()
+     * @see #disableOvercurrent()
      */
     @NonNull
     public HoldableActuator withBottomSwitch(@NonNull TouchSensor bottomLimitSwitch) {
@@ -250,28 +244,32 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     /**
-     * Set the holding power magnitude of the actuator.
-     * Note: this power is clamped by the lower and upper power clamps.
+     * Set the auto response power magnitude of the actuator, where a positive value will bring the arm upwards (away from bottom).
+     * This value is used to scale automatic responses by the actuator. Default of 1.0.
+     * <p>
+     * Note: This power is clamped by the lower and upper power clamps.
      *
      * @param targetPower the power to set (magnitude)
      * @return this
      */
     @NonNull
-    public HoldableActuator withHoldingPower(double targetPower) {
-        HOLDING_POWER = Math.abs(targetPower);
+    public HoldableActuator withAutoPower(double targetPower) {
+        rtpPower = Math.abs(targetPower);
         return this;
     }
 
     /**
-     * Set the moving power magnitude of the actuator, where a positive value will bring the arm upwards (away from bottom).
-     * Note: this power is clamped by the lower and upper power clamps.
+     * Set the homing power magnitude of the actuator, where a positive value will bring the arm upwards (away from bottom).
+     * This power will be used as the raw power in a home or ceiling task. Default of 0.7.
+     * <p>
+     * Note: This power is clamped by the lower and upper power clamps.
      *
      * @param targetPower the power to set (magnitude)
      * @return this
      */
     @NonNull
-    public HoldableActuator withMovingPower(double targetPower) {
-        MOVING_POWER = Math.abs(targetPower);
+    public HoldableActuator withHomingPower(double targetPower) {
+        homePower = Math.abs(targetPower);
         return this;
     }
 
@@ -283,7 +281,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withLowerPowerClamp(double lowerPower) {
-        return withPowerClamps(lowerPower, UPPER_POWER);
+        return withPowerClamps(lowerPower, upperPower);
     }
 
     /**
@@ -294,7 +292,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withUpperPowerClamp(double upperPower) {
-        return withPowerClamps(LOWER_POWER, upperPower);
+        return withPowerClamps(lowerPower, upperPower);
     }
 
     /**
@@ -306,8 +304,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withPowerClamps(double lowerPower, double upperPower) {
-        LOWER_POWER = Mathf.clamp(lowerPower, -1, 1);
-        UPPER_POWER = Mathf.clamp(upperPower, -1, 1);
+        this.lowerPower = Mathf.clamp(lowerPower, -1, 1);
+        this.upperPower = Mathf.clamp(upperPower, -1, 1);
         return this;
     }
 
@@ -319,7 +317,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withLowerLimit(long minLimit) {
-        MIN_LIMIT = minLimit;
+        this.minLimit = minLimit;
         return this;
     }
 
@@ -331,7 +329,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withUpperLimit(long maxLimit) {
-        MAX_LIMIT = maxLimit;
+        this.maxLimit = maxLimit;
         return this;
     }
 
@@ -344,8 +342,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withEncoderLimits(long minLimit, long maxLimit) {
-        MIN_LIMIT = minLimit;
-        MAX_LIMIT = maxLimit;
+        this.minLimit = minLimit;
+        this.maxLimit = maxLimit;
         return this;
     }
 
@@ -362,7 +360,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      *                         be used to define a rate of change in the setpoint with respect to time rather than loop times.
      *                         E.g. 100 ticks per second ({@code (dt) -> 100 * dt}).
      * @return this
-     * @see #disableHomingOvercurrent()
+     * @see #disableOvercurrent()
      */
     @NonNull
     public HoldableActuator enableUserSetpointControl(@NonNull UnaryFunction setpointDeltaMul) {
@@ -393,7 +391,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator setPower(double p) {
-        userPower = Mathf.clamp(p, LOWER_POWER, UPPER_POWER);
+        userPower = Mathf.clamp(p, lowerPower, upperPower);
         return this;
     }
 
@@ -414,12 +412,12 @@ public class HoldableActuator extends BunyipsSubsystem {
                     setInputModeToUser();
                     break;
                 }
-                motorPower = MOVING_POWER * Math.signum(target - current);
+                motorPower = rtpPower * Math.signum(target - current);
                 opMode(o -> o.telemetry.add("%: <font color='#FF5F1F'>MOVING -> %/% ticks</font> [%tps]", this, current, target, Math.round(encoder.getVelocity())));
                 break;
             case HOMING:
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                motorPower = MOVING_POWER * Math.signum(homingDirection);
+                motorPower = homePower * Math.signum(homingDirection);
                 opMode(o -> o.telemetry.add("%: <font color='yellow'><b>HOMING</b></font> [%tps]", this, Math.round(encoder.getVelocity())));
                 break;
             case USER_POWER:
@@ -430,7 +428,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         userLatch = true;
                     }
-                    motorPower = HOLDING_POWER * Math.signum(target - current);
+                    motorPower = rtpPower * Math.signum(target - current);
                 } else {
                     userLatch = false;
                     // Move arm in accordance with the user's input
@@ -451,9 +449,8 @@ public class HoldableActuator extends BunyipsSubsystem {
                     lastTime = now;
                 }
                 newTarget = target + userPower * setpointDeltaMul.apply(dt);
-                boolean systemResponse = motor.isBusy();
-                motorPower = (systemResponse ? MOVING_POWER : HOLDING_POWER) * Math.signum(target - current);
-                opMode(o -> o.telemetry.add("%: % at % ticks, % error [%tps]", this, !systemResponse ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, target - current, Math.round(encoder.getVelocity())));
+                motorPower = rtpPower * Math.signum(target - current);
+                opMode(o -> o.telemetry.add("%: % at % ticks, % error [%tps]", this, !motor.isBusy() ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, target - current, Math.round(encoder.getVelocity())));
                 break;
         }
 
@@ -500,17 +497,26 @@ public class HoldableActuator extends BunyipsSubsystem {
             Dbg.warn(getClass(), "%Warning: Both limit switches were pressed at the same time. This indicates an impossible system state.", isDefaultName() ? "" : "(" + name + ") ");
         }
 
-        if (inputMode != Mode.HOMING && ((current < MIN_LIMIT && motorPower < 0.0) || (current > MAX_LIMIT && motorPower > 0.0))) {
+        if (inputMode != Mode.HOMING && ((current < minLimit && motorPower < 0.0) || (current > maxLimit && motorPower > 0.0))) {
             // Cancel any tasks that would move the actuator out of bounds by autonomous operation
             setInputModeToUser();
             motorPower = 0.0;
         }
 
+        if (motor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
+            boolean overCurrent = motor.isOverCurrent();
+            if (sustainedOvercurrent.seconds() >= overcurrentTime.in(Seconds) && overCurrent) {
+                newTarget = motor.getCurrentPosition();
+            } else if (!overCurrent) {
+                sustainedOvercurrent.reset();
+            }
+        }
+
         if (newTarget != -1) {
-            motor.setTargetPosition((int) Math.round(newTarget));
+            motor.setTargetPosition((int) Math.round(Mathf.clamp(newTarget, minLimit, maxLimit)));
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        motor.setPower(Mathf.clamp(motorPower, LOWER_POWER, UPPER_POWER));
+        motor.setPower(Mathf.clamp(motorPower, lowerPower, upperPower));
     }
 
     @Override
@@ -601,7 +607,7 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task home() {
-            return new Task(HOMING_TIMEOUT) {
+            return new Task(homingTimeout) {
                 private ElapsedTime overcurrentTimer;
                 private double previousAmpAlert;
                 private double zeroHits;
@@ -614,7 +620,6 @@ public class HoldableActuator extends BunyipsSubsystem {
                         finishNow();
                         return;
                     }
-                    motor.setCurrentAlert(OVERCURRENT.in(Amps), CurrentUnit.AMPS);
                     zeroHits = 0;
                     homingDirection = -1;
                     inputMode = Mode.HOMING;
@@ -622,7 +627,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
                 @Override
                 protected void periodic() {
-                    if (ZERO_HIT_THRESHOLD <= 0) return;
+                    if (zeroHitThreshold <= 0) return;
                     if (encoder.getVelocity() >= 0) {
                         zeroHits++;
                     } else {
@@ -633,21 +638,20 @@ public class HoldableActuator extends BunyipsSubsystem {
                 @Override
                 protected void onFinish() {
                     motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    motor.setCurrentAlert(previousAmpAlert, CurrentUnit.AMPS);
                     setInputModeToUser();
                 }
 
                 @Override
                 protected boolean isTaskFinished() {
                     boolean bottomedOut = bottomSwitch != null && bottomSwitch.isPressed();
-                    boolean velocityZeroed = ZERO_HIT_THRESHOLD > 0 && zeroHits >= ZERO_HIT_THRESHOLD;
-                    boolean overCurrent = OVERCURRENT.magnitude() > 0 && motor.isOverCurrent();
-                    if (OVERCURRENT_TIME.magnitude() > 0 && overCurrent && overcurrentTimer == null) {
+                    boolean velocityZeroed = zeroHitThreshold > 0 && zeroHits >= zeroHitThreshold;
+                    boolean overCurrent = overcurrentTime.magnitude() > 0 && motor.isOverCurrent();
+                    if (overcurrentTime.magnitude() > 0 && overCurrent && overcurrentTimer == null) {
                         overcurrentTimer = new ElapsedTime();
                     } else if (!overCurrent) {
                         overcurrentTimer = null;
                     }
-                    boolean sustainedOvercurrent = overcurrentTimer != null && overcurrentTimer.seconds() >= OVERCURRENT_TIME.in(Seconds);
+                    boolean sustainedOvercurrent = overcurrentTimer != null && overcurrentTimer.seconds() >= overcurrentTime.in(Seconds);
                     return inputMode != Mode.HOMING || (bottomedOut || velocityZeroed || sustainedOvercurrent);
                 }
             }.onSubsystem(HoldableActuator.this, true).withName("Return To Home");
@@ -665,7 +669,7 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task ceil() {
-            return new Task(HOMING_TIMEOUT) {
+            return new Task(homingTimeout) {
                 private ElapsedTime overcurrentTimer;
                 private double previousAmpAlert;
                 private double zeroHits;
@@ -678,7 +682,6 @@ public class HoldableActuator extends BunyipsSubsystem {
                         finishNow();
                         return;
                     }
-                    motor.setCurrentAlert(OVERCURRENT.in(Amps), CurrentUnit.AMPS);
                     zeroHits = 0;
                     homingDirection = 1;
                     inputMode = Mode.HOMING;
@@ -686,7 +689,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
                 @Override
                 protected void periodic() {
-                    if (ZERO_HIT_THRESHOLD <= 0) return;
+                    if (zeroHitThreshold <= 0) return;
                     if (encoder.getVelocity() <= 0) {
                         zeroHits++;
                     } else {
@@ -697,21 +700,20 @@ public class HoldableActuator extends BunyipsSubsystem {
                 @Override
                 protected void onFinish() {
                     motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    motor.setCurrentAlert(previousAmpAlert, CurrentUnit.AMPS);
                     setInputModeToUser();
                 }
 
                 @Override
                 protected boolean isTaskFinished() {
                     boolean toppedOut = topSwitch != null && topSwitch.isPressed();
-                    boolean velocityZeroed = ZERO_HIT_THRESHOLD > 0 && zeroHits >= ZERO_HIT_THRESHOLD;
-                    boolean overCurrent = OVERCURRENT.magnitude() > 0 && motor.isOverCurrent();
-                    if (OVERCURRENT_TIME.magnitude() > 0 && overCurrent && overcurrentTimer == null) {
+                    boolean velocityZeroed = zeroHitThreshold > 0 && zeroHits >= zeroHitThreshold;
+                    boolean overCurrent = overcurrentTime.magnitude() > 0 && motor.isOverCurrent();
+                    if (overcurrentTime.magnitude() > 0 && overCurrent && overcurrentTimer == null) {
                         overcurrentTimer = new ElapsedTime();
                     } else if (!overCurrent) {
                         overcurrentTimer = null;
                     }
-                    boolean sustainedOvercurrent = overcurrentTimer != null && overcurrentTimer.seconds() >= OVERCURRENT_TIME.in(Seconds);
+                    boolean sustainedOvercurrent = overcurrentTimer != null && overcurrentTimer.seconds() >= overcurrentTime.in(Seconds);
                     return inputMode != Mode.HOMING || (toppedOut || velocityZeroed || sustainedOvercurrent);
                 }
             }.onSubsystem(HoldableActuator.this, true).withName("Travel To Ceiling");
@@ -767,7 +769,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
                 @Override
                 public boolean isTaskFinished() {
-                    return inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), TOLERANCE));
+                    return inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), tolerance));
                 }
             }.onSubsystem(HoldableActuator.this, true).withName("Run To Position");
         }
@@ -805,7 +807,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
                 @Override
                 public boolean isTaskFinished() {
-                    return inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(target, encoder.getPosition(), TOLERANCE));
+                    return inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(target, encoder.getPosition(), tolerance));
                 }
             }.onSubsystem(HoldableActuator.this, true).withName("Run To Delta");
         }
