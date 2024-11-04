@@ -36,7 +36,7 @@ public class MotionProfile {
     /**
      * Maximum wheel velocity in inches per second.
      */
-    public double maxWheelVel = 50;
+    public double maxWheelVel = 40;
     /**
      * Lower acceleration profile limit in inches per second squared.
      */
@@ -49,7 +49,7 @@ public class MotionProfile {
     /**
      * Maximum angular velocity in radians per second. Shared with the pathing profile.
      */
-    public double maxAngVel = Math.PI;
+    public double maxAngVel = Math.toRadians(170);
     /**
      * Maximum angular acceleration in radians per second squared.
      */
