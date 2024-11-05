@@ -476,21 +476,21 @@ class MathfTest {
     }
 
     @Test
-    void testWrapDelta() {
-        assertEquals(Degrees.of(10.0).magnitude(), Mathf.wrapDelta(Degrees.of(350.0), Degrees.of(0.0)).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(10.0).magnitude(), Mathf.wrapDelta(Degrees.of(0.0), Degrees.of(10.0)).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(170.0).magnitude(), Mathf.wrapDelta(Degrees.of(10.0), Degrees.of(180.0)).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(-10.0).magnitude(), Mathf.wrapDelta(Degrees.of(10.0), Degrees.of(0.0)).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(-10.0).magnitude(), Mathf.wrapDelta(Degrees.of(0.0), Degrees.of(-10.0)).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(-170.0).magnitude(), Mathf.wrapDelta(Degrees.of(180.0), Degrees.of(10.0)).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(10.0).magnitude(), Mathf.wrapDelta(Degrees.of(350.0), Degrees.of(0.0)).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(-10.0).magnitude(), Mathf.wrapDelta(Degrees.of(0.0), Degrees.of(350.0)).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(180.0).magnitude(), Mathf.wrapDelta(Degrees.of(0.0), Degrees.of(180.0)).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(180.0).magnitude(), Mathf.wrapDelta(Degrees.of(180.0), Degrees.of(0.0)).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(10.0).magnitude(), Mathf.wrapDelta(Radians.of(Math.toRadians(350.0)), Radians.of(Math.toRadians(0.0))).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(-10.0).magnitude(), Mathf.wrapDelta(Radians.of(Math.toRadians(0.0)), Radians.of(Math.toRadians(350.0))).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(180.0).magnitude(), Mathf.wrapDelta(Radians.of(Math.toRadians(0.0)), Radians.of(Math.toRadians(180.0))).in(Degrees), 1.0e-6);
-        assertEquals(Degrees.of(180.0).magnitude(), Mathf.wrapDelta(Radians.of(Math.toRadians(180.0)), Radians.of(Math.toRadians(0.0))).in(Degrees), 1.0e-6);
+    void testDiff() {
+        assertEquals(Degrees.of(10.0).magnitude(), Mathf.diff(Degrees.of(350.0), Degrees.of(0.0)).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(10.0).magnitude(), Mathf.diff(Degrees.of(0.0), Degrees.of(10.0)).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(170.0).magnitude(), Mathf.diff(Degrees.of(10.0), Degrees.of(180.0)).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(-10.0).magnitude(), Mathf.diff(Degrees.of(10.0), Degrees.of(0.0)).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(-10.0).magnitude(), Mathf.diff(Degrees.of(0.0), Degrees.of(-10.0)).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(-170.0).magnitude(), Mathf.diff(Degrees.of(180.0), Degrees.of(10.0)).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(10.0).magnitude(), Mathf.diff(Degrees.of(350.0), Degrees.of(0.0)).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(-10.0).magnitude(), Mathf.diff(Degrees.of(0.0), Degrees.of(350.0)).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(180.0).magnitude(), Mathf.diff(Degrees.of(0.0), Degrees.of(180.0)).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(180.0).magnitude(), Mathf.diff(Degrees.of(180.0), Degrees.of(0.0)).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(10.0).magnitude(), Mathf.diff(Radians.of(Math.toRadians(350.0)), Radians.of(Math.toRadians(0.0))).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(-10.0).magnitude(), Mathf.diff(Radians.of(Math.toRadians(0.0)), Radians.of(Math.toRadians(350.0))).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(180.0).magnitude(), Mathf.diff(Radians.of(Math.toRadians(0.0)), Radians.of(Math.toRadians(180.0))).in(Degrees), 1.0e-6);
+        assertEquals(Degrees.of(180.0).magnitude(), Mathf.diff(Radians.of(Math.toRadians(180.0)), Radians.of(Math.toRadians(0.0))).in(Degrees), 1.0e-6);
     }
 
     @Test

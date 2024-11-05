@@ -413,7 +413,7 @@ object Mathf {
      */
     @JvmStatic
     fun Measure<Angle>.moveTowards(target: Measure<Angle>, maxDelta: Measure<Angle>): Measure<Angle> {
-        val delta = this wrapDelta target
+        val delta = this diff target
         if (maxDelta.negate().lt(delta) && delta.lt(maxDelta)) return target
         return Degrees.of((this to Degrees).moveTowards((this + delta) to Degrees, maxDelta to Degrees))
     }
@@ -538,7 +538,7 @@ object Mathf {
         deltaTime: Measure<Time>
     ): Measure<Angle> {
         val res = (this to Degrees).smoothDamp(
-            (this + this wrapDelta target) to Degrees,
+            (this + this diff target) to Degrees,
             currentVelocity, smoothTime, maxVelocity, deltaTime
         )
         return Degrees.of(res)
@@ -577,7 +577,7 @@ object Mathf {
      * @return The shortest difference between the two angles.
      */
     @JvmStatic
-    infix fun Measure<Angle>.wrapDelta(target: Measure<Angle>): Measure<Angle> {
+    infix fun Measure<Angle>.diff(target: Measure<Angle>): Measure<Angle> {
         var delta = ((target - this) to Degrees) repeat 360
         if (delta > 180.0f) delta -= 360.0
         return Degrees.of(delta)
