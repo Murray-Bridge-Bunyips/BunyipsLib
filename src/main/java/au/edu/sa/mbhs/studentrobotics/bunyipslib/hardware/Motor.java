@@ -89,8 +89,6 @@ public class Motor extends SimpleRotator implements DcMotorEx {
             controller.setMotorMode(port, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
         encoder = new Encoder(() -> controller.getMotorCurrentPosition(port), () -> controller.getMotorVelocity(port));
-        encoder.setDirection(getDirection());
-        encoder.trackDirection(this::getDirection);
         rawTargetPosition = getCurrentPosition();
     }
 
@@ -769,20 +767,6 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         double radsPerSec = UnnormalizedAngleUnit.RADIANS.fromUnit(unit.getUnnormalized(), angVel);
         // Will assume no reduction, the user can scale the velocity on their own terms
         setVelocity(EncoderTicks.fromAngle(Radians.of(radsPerSec), (int) tpr, 1));
-    }
-
-    /**
-     * Sets the logical direction in which this motor operates.
-     *
-     * @param direction the direction to set for this motor
-     * @see #getDirection()
-     */
-    @Override
-    public synchronized void setDirection(@NonNull Direction direction) {
-        // The only directional controls we have in the Motor class is the setting of power, the encoder ticks themselves
-        // are managed via the Encoder class (they should also be equal so we hook it here)
-        encoder.setDirection(direction);
-        super.setDirection(direction);
     }
 
     /**
