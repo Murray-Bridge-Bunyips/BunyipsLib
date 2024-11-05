@@ -56,7 +56,11 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 @SuppressWarnings("deprecation")
 public class Motor extends SimpleRotator implements DcMotorEx {
     /**
-     * The encoder object that is used for encoder readings on this motor.
+     * The encoder object that is used for position and velocity readings on this motor.
+     * <p>
+     * To reverse the directionality of the encoder, but not the output power, you can access this object
+     * and call the {@code setDirection} method on it. Calling {@code setDirection} on the motor will
+     * generally reverse the output power, not the encoder direction.
      */
     public final Encoder encoder;
 
