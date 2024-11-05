@@ -1,6 +1,9 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data
 
 import android.util.Size
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees
 import org.opencv.core.RotatedRect
 
 /**
@@ -41,9 +44,9 @@ data class ContourData(
      */
     val pitch: Double,
     /**
-     * The measured angle of the contour in degrees.
+     * The measured angle of the contour.
      */
-    val angDeg: Double,
+    val angle: Measure<Angle>,
 ) : VisionData() {
     constructor(cameraResolution: Size, rect: RotatedRect) : this(
         rect,
@@ -54,7 +57,7 @@ data class ContourData(
         rect.boundingRect().y + rect.boundingRect().height / 2.0,
         (((rect.boundingRect().x + rect.boundingRect().width / 2.0) - cameraResolution.width / 2.0) / (cameraResolution.width / 2.0)),
         -(((rect.boundingRect().y + rect.boundingRect().height / 2.0) - cameraResolution.height / 2.0) / (cameraResolution.height / 2.0)),
-        ang(rect.angle, rect.size.width, rect.size.height)
+        Degrees.of(ang(rect.angle, rect.size.width, rect.size.height))
     )
 
     companion object {
