@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Size;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 
 import org.opencv.core.Core;
@@ -80,7 +81,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     @NonNull
     public Scalar getUpper() {
-        return upperOverride == null ? setUpper() : upperOverride;
+        return upperOverride == null ? getUpperThreshold() : upperOverride;
     }
 
     /**
@@ -90,7 +91,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     public void setUpper(@NonNull Scalar upper) {
         if (!upper.equals(upperOverride)) {
-            Dbg.logd(getClass(), "Overriding upper scalar to " + upper + " from " + setUpper());
+            Dbg.logd(getClass(), "Overriding upper scalar to " + upper + " from " + getUpperThreshold());
             upperOverride = upper;
         }
     }
@@ -102,7 +103,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     @NonNull
     public Scalar getLower() {
-        return lowerOverride == null ? setLower() : lowerOverride;
+        return lowerOverride == null ? getLowerThreshold() : lowerOverride;
     }
 
     /**
@@ -112,17 +113,18 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     public void setLower(@NonNull Scalar lower) {
         if (!lower.equals(lowerOverride)) {
-            Dbg.logd(getClass(), "Overriding lower scalar to " + lower + " from " + setLower());
+            Dbg.logd(getClass(), "Overriding lower scalar to " + lower + " from " + getLowerThreshold());
             lowerOverride = lower;
         }
     }
 
     @NonNull
-    protected abstract Scalar setLower();
+    protected abstract Scalar getLowerThreshold();
 
     @NonNull
-    protected abstract Scalar setUpper();
+    protected abstract Scalar getUpperThreshold();
 
+    @ColorInt
     public abstract int getBoxColour();
 
     /**
@@ -135,7 +137,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     public void resetLower() {
         if (lowerOverride != null)
-            Dbg.logd(getClass(), "Resetting scalar to " + setLower());
+            Dbg.logd(getClass(), "Resetting scalar to " + getLowerThreshold());
         lowerOverride = null;
     }
 
@@ -144,7 +146,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     public void resetUpper() {
         if (upperOverride != null)
-            Dbg.logd(getClass(), "Resetting scalar to " + setUpper());
+            Dbg.logd(getClass(), "Resetting scalar to " + getUpperThreshold());
         upperOverride = null;
     }
 

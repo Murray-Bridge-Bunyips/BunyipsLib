@@ -21,7 +21,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.TrapezoidProfi
  * @since 3.5.0
  */
 public class ProfiledPIDController implements SystemController {
-    private final PIDController controller;
+    /**
+     * The underlying PID controller used for ProfiledPID.
+     */
+    public final PIDController controller;
     private TrapezoidProfile.State goal = new TrapezoidProfile.State();
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
     private TrapezoidProfile.Constraints constraints;

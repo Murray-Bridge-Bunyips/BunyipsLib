@@ -16,15 +16,15 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThresho
  */
 public class GreenPixel extends ColourThreshold {
     /**
-     * Lower clamp for YCrCb
+     * Lower bounds for YCrCb
      */
     @NonNull
-    public static Scalar LOWER_YCRCB = new Scalar(145, 0, 0);
+    public static Scalar LOWER_YCRCB = new Scalar(0.0, 150.0, 0.0);
     /**
-     * Upper clamp for YCrCb
+     * Upper bounds for YCrCb
      */
     @NonNull
-    public static Scalar UPPER_YCRCB = new Scalar(255, 120, 255);
+    public static Scalar UPPER_YCRCB = new Scalar(255.0, 255.0, 82.2);
     /**
      * Default minimum area for the contour
      */
@@ -64,13 +64,13 @@ public class GreenPixel extends ColourThreshold {
 
     @NonNull
     @Override
-    protected Scalar setLower() {
+    protected Scalar getLowerThreshold() {
         return LOWER_YCRCB;
     }
 
     @NonNull
     @Override
-    protected Scalar setUpper() {
+    protected Scalar getUpperThreshold() {
         return UPPER_YCRCB;
     }
 

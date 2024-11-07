@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.centerstage;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.intothedeep;
 
 import androidx.annotation.NonNull;
 
@@ -8,48 +8,39 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
 
 /**
- * Yellow pixel processor.
- * These values may not be tuned for your specific camera, lighting, or field conditions, and are tuned
- * based on our own testing. You may need to adjust these values to get the best results for your own robot.
- *
- * @since 1.0.0-pre
+ * Yellow Sample
  */
-public class YellowPixel extends ColourThreshold {
+public class YellowSample extends ColourThreshold {
     /**
-     * Lower bounds for YCrCb
+     * Lower clamp for YCrCb
      */
     @NonNull
-    public static Scalar LOWER_YCRCB = new Scalar(0.0, 150.0, 0.0);
+    public static Scalar LOWER_YCRCB = new Scalar(0, 130, 0);
     /**
-     * Upper bounds for YCrCb
+     * Upper clamp for YCrCb
      */
     @NonNull
-    public static Scalar UPPER_YCRCB = new Scalar(255.0, 255.0, 82.2);
+    public static Scalar UPPER_YCRCB = new Scalar(255, 255, 255);
     /**
-     * Default min area for detections.
+     * Default minimum area for the contour
      */
     public static double MIN_AREA = DEFAULT_MIN_AREA;
     /**
-     * Default max area for detections.
+     * Default maximum area for the contour
      */
-    public static double MAX_AREA = DEFAULT_MAX_AREA;
+    public static double MAX_AREA = 20;
     /**
-     * Whether to show the masked input on the screen.
+     * Whether to show the masked input
      */
     public static boolean SHOW_MASKED_INPUT = true;
 
     /**
-     * Using YCrCb colour space.
+     * Using YCrCb colour space
      */
-    public YellowPixel() {
+    public YellowSample() {
+        // TODO: refactor colourthreshold and integrate pnp
         super(ColourSpace.YCrCb);
         Dashboard.enableConfig(getClass());
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "yellowpixel";
     }
 
     @Override
@@ -82,5 +73,11 @@ public class YellowPixel extends ColourThreshold {
     @Override
     public boolean showMaskedInput() {
         return SHOW_MASKED_INPUT;
+    }
+
+    @Override
+    @NonNull
+    public String toString() {
+        return "yellowsample";
     }
 }

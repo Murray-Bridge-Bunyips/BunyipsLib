@@ -64,13 +64,13 @@ public class PurplePixel extends ColourThreshold {
 
     @NonNull
     @Override
-    protected Scalar setLower() {
+    protected Scalar getLowerThreshold() {
         return LOWER_YCRCB;
     }
 
     @NonNull
     @Override
-    protected Scalar setUpper() {
+    protected Scalar getUpperThreshold() {
         return UPPER_YCRCB;
     }
 

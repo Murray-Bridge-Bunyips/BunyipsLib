@@ -21,11 +21,21 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemControll
  * @since 3.5.0
  */
 public class SimpleMotorFeedforward implements SystemController {
+    /**
+     * Static gain.
+     */
+    public double kS;
+    /**
+     * Velocity gain.
+     */
+    public double kV;
+    /**
+     * Acceleration gain.
+     */
+    public double kA;
+
     private final DoubleSupplier velocitySupplier;
     private final DoubleSupplier accelerationSupplier;
-    private double kS;
-    private double kV;
-    private double kA;
 
     /**
      * Creates a new SimpleMotorFeedforward with the specified gains and suppliers for the setpoints.

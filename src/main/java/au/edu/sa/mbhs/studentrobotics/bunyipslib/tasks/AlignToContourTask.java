@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
@@ -33,7 +34,7 @@ public class AlignToContourTask extends Task {
     /**
      * Default controller to use for the rotation axis.
      */
-    public static SystemController DEFAULT_CONTROLLER = new PDController(1, 0.0001);
+    public static PIDFController DEFAULT_CONTROLLER = new PDController(1, 0.0001);
 
     private final Moveable drive;
     private final Supplier<List<ContourData>> contours;

@@ -20,6 +20,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
@@ -38,10 +39,10 @@ public class TurnTask extends Task {
     /**
      * Default controller to use for turning.
      */
-    public static SystemController DEFAULT_CONTROLLER = new PController(3);
+    public static PIDFController DEFAULT_CONTROLLER = new PController(3);
 
     static {
-        ((PController) DEFAULT_CONTROLLER).setTolerance(Math.toRadians(1));
+        DEFAULT_CONTROLLER.setTolerance(Math.toRadians(1));
     }
 
     private final Consumer<PoseVelocity2d> powerIn;

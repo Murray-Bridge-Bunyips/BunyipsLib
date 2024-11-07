@@ -25,7 +25,22 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemControll
  * @since 1.0.0-pre
  */
 public class PIDFController implements SystemController {
-    private double kP, kI, kD, kF;
+    /**
+     * Proportional gain.
+     */
+    public double kP;
+    /**
+     * Integral gain.
+     */
+    public double kI;
+    /**
+     * Derivative gain.
+     */
+    public double kD;
+    /**
+     * Feedforward gain.
+     */
+    public double kF;
     private double setPoint;
     private double measuredValue;
     private double minIntegral, maxIntegral;
