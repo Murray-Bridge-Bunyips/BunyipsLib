@@ -66,8 +66,8 @@ public class AprilTag extends Processor<AprilTagData> {
      * @param builder the builder to apply the camera pose to
      * @return the builder to set the camera pose
      */
-    public static AprilTagCameraPoseBuilder setCameraPose(AprilTagProcessor.Builder builder) {
-        return new AprilTagCameraPoseBuilder(builder);
+    public static CameraPoseBuilder setCameraPose(AprilTagProcessor.Builder builder) {
+        return new CameraPoseBuilder(builder);
     }
 
     private AprilTagProcessor.Builder makeBuilderWithCommonSettings() {
@@ -135,7 +135,7 @@ public class AprilTag extends Processor<AprilTagData> {
     /**
      * Utility for setting the camera pose for the AprilTagProcessor.
      */
-    public static class AprilTagCameraPoseBuilder {
+    public static class CameraPoseBuilder {
         private final AprilTagProcessor.Builder builder;
         private double forwardIn;
         private double rightIn;
@@ -145,11 +145,11 @@ public class AprilTag extends Processor<AprilTagData> {
         private double rollDeg;
 
         /**
-         * Construct a new AprilTagCameraPoseBuilder
+         * Construct a new CameraPoseBuilder.
          *
          * @param builder the builder to apply the camera pose to
          */
-        public AprilTagCameraPoseBuilder(AprilTagProcessor.Builder builder) {
+        public CameraPoseBuilder(AprilTagProcessor.Builder builder) {
             this.builder = builder;
         }
 
@@ -159,7 +159,7 @@ public class AprilTag extends Processor<AprilTagData> {
          * @param position the raw {@link Position} instance to use, must follow the standard FTC coordinate system
          * @return this instance
          */
-        public AprilTagCameraPoseBuilder withCameraPosition(Position position) {
+        public CameraPoseBuilder withCameraPosition(Position position) {
             forwardIn = position.x;
             // noinspection SuspiciousNameCombination
             rightIn = position.y;
@@ -176,7 +176,7 @@ public class AprilTag extends Processor<AprilTagData> {
          * @param up      the distance above the robot's center of rotation at field height (+up is up)
          * @return this instance
          */
-        public AprilTagCameraPoseBuilder withCameraPosition(Measure<Distance> forward, Measure<Distance> left, Measure<Distance> up) {
+        public CameraPoseBuilder withCameraPosition(Measure<Distance> forward, Measure<Distance> left, Measure<Distance> up) {
             forwardIn = forward.in(Inches);
             rightIn = left.negate().in(Inches);
             upIn = up.in(Inches);
@@ -189,7 +189,7 @@ public class AprilTag extends Processor<AprilTagData> {
          * @param orientation the raw {@link YawPitchRollAngles} instance to use, must follow the standard FTC coordinate system
          * @return this instance
          */
-        public AprilTagCameraPoseBuilder withCameraOrientation(YawPitchRollAngles orientation) {
+        public CameraPoseBuilder withCameraOrientation(YawPitchRollAngles orientation) {
             yawDeg = orientation.getYaw(AngleUnit.DEGREES);
             pitchDeg = orientation.getPitch(AngleUnit.DEGREES);
             rollDeg = orientation.getRoll(AngleUnit.DEGREES);
@@ -204,7 +204,7 @@ public class AprilTag extends Processor<AprilTagData> {
          * @param roll  the roll angle of the camera, zero defaults to no roll, +roll is clockwise, -roll is counterclockwise
          * @return this instance
          */
-        public AprilTagCameraPoseBuilder withCameraOrientation(Measure<Angle> yaw, Measure<Angle> pitch, Measure<Angle> roll) {
+        public CameraPoseBuilder withCameraOrientation(Measure<Angle> yaw, Measure<Angle> pitch, Measure<Angle> roll) {
             yawDeg = yaw.in(Degrees);
             pitchDeg = -90 + pitch.in(Degrees);
             rollDeg = roll.in(Degrees);
@@ -217,8 +217,19 @@ public class AprilTag extends Processor<AprilTagData> {
          * @param forward the distance forward of the robot's center of rotation (+forward is forward)
          * @return this instance
          */
-        public AprilTagCameraPoseBuilder forward(Measure<Distance> forward) {
+        public CameraPoseBuilder forward(Measure<Distance> forward) {
             forwardIn = forward.in(Inches);
+            return this;
+        }
+
+        /**
+         * Set the backward distance of the camera relative to the robot's center of rotation.
+         *
+         * @param backward the distance backward of the robot's center of rotation (+backward is backward)
+         * @return this instance
+         */
+        public CameraPoseBuilder backward(Measure<Distance> backward) {
+            forwardIn = backward.negate().in(Inches);
             return this;
         }
 
@@ -228,8 +239,19 @@ public class AprilTag extends Processor<AprilTagData> {
          * @param left the distance left of the robot's center of rotation (+left is left)
          * @return this instance
          */
-        public AprilTagCameraPoseBuilder left(Measure<Distance> left) {
+        public CameraPoseBuilder left(Measure<Distance> left) {
             rightIn = left.negate().in(Inches);
+            return this;
+        }
+
+        /**
+         * Set the right distance of the camera relative to the robot's center of rotation.
+         *
+         * @param right the distance right of the robot's center of rotation (+right is right)
+         * @return this instance
+         */
+        public CameraPoseBuilder right(Measure<Distance> right) {
+            rightIn = right.in(Inches);
             return this;
         }
 
@@ -239,8 +261,19 @@ public class AprilTag extends Processor<AprilTagData> {
          * @param up the distance above the robot's center of rotation at field height (+up is up)
          * @return this instance
          */
-        public AprilTagCameraPoseBuilder up(Measure<Distance> up) {
+        public CameraPoseBuilder up(Measure<Distance> up) {
             upIn = up.in(Inches);
+            return this;
+        }
+
+        /**
+         * Set the down distance of the camera relative to the robot's center of rotation.
+         *
+         * @param down the distance above the robot's center of rotation at field height (+down is down)
+         * @return this instance
+         */
+        public CameraPoseBuilder down(Measure<Distance> down) {
+            upIn = down.negate().in(Inches);
             return this;
         }
 
@@ -250,7 +283,7 @@ public class AprilTag extends Processor<AprilTagData> {
          * @param yaw the yaw angle of the camera, zero defaults to forward, +yaw is left, -yaw is right
          * @return this instance
          */
-        public AprilTagCameraPoseBuilder yaw(Measure<Angle> yaw) {
+        public CameraPoseBuilder yaw(Measure<Angle> yaw) {
             yawDeg = yaw.in(Degrees);
             return this;
         }
@@ -261,7 +294,7 @@ public class AprilTag extends Processor<AprilTagData> {
          * @param pitch the pitch angle of the camera, zero defaults to parallel with the ground, +pitch is up, -pitch is down
          * @return this instance
          */
-        public AprilTagCameraPoseBuilder pitch(Measure<Angle> pitch) {
+        public CameraPoseBuilder pitch(Measure<Angle> pitch) {
             pitchDeg = -90 + pitch.in(Degrees);
             return this;
         }
@@ -272,7 +305,7 @@ public class AprilTag extends Processor<AprilTagData> {
          * @param roll the roll angle of the camera, zero defaults to no roll, +roll is clockwise, -roll is counterclockwise
          * @return this instance
          */
-        public AprilTagCameraPoseBuilder roll(Measure<Angle> roll) {
+        public CameraPoseBuilder roll(Measure<Angle> roll) {
             rollDeg = roll.in(Degrees);
             return this;
         }

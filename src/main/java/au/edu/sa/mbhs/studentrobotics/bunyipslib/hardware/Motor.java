@@ -537,6 +537,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     public void setTargetPositionTolerance(int tolerance) {
         if (rtpController != null && rtpController.pidf().isPresent()) {
             rtpController.pidf().get().setTolerance(tolerance);
+            return;
         }
         throw new UnsupportedOperationException("Can't access target position information on the currently used RTP controller. It may be the case that this controller is open-loop, or not a PID controller, as any tolerance configuration should be modified by your controller, not by this method.");
     }

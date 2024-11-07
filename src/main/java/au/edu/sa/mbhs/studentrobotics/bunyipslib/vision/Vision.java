@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -74,7 +75,7 @@ public class Vision extends BunyipsSubsystem {
      * @param cameraWidth  The camera width resolution to use
      * @param cameraHeight The camera height resolution to use
      */
-    public Vision(@NonNull CameraName camera, int cameraWidth, int cameraHeight) {
+    public Vision(@Nullable CameraName camera, int cameraWidth, int cameraHeight) {
         assertParamsNotNull(camera);
         this.camera = camera;
         // Allow the user to set the camera resolution if they want
@@ -86,7 +87,7 @@ public class Vision extends BunyipsSubsystem {
      *
      * @param camera The camera to use
      */
-    public Vision(@NonNull CameraName camera) {
+    public Vision(@Nullable CameraName camera) {
         this(camera, DEFAULT_CAMERA_WIDTH, DEFAULT_CAMERA_HEIGHT);
     }
 

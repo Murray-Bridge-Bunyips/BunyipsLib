@@ -160,6 +160,8 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
             double y = -pose.getPosition().x;
             double r = pose.getOrientation().getYaw(AngleUnit.RADIANS);
 
+            // TODO: odd behaviour
+
             // We also need to rotate the entire pose by 90 degrees to match the coordinate systems up
             estimates.add(new Pose2d(Rotation2d.exp(Math.PI / 2).times(new Vector2d(x, y)), r + Math.PI / 2));
         }

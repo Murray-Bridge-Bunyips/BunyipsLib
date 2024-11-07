@@ -192,7 +192,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return this
      */
     @NonNull
-    public HoldableActuator withTopSwitch(@NonNull TouchSensor topLimitSwitch) {
+    public HoldableActuator withTopSwitch(@Nullable TouchSensor topLimitSwitch) {
+        if (topLimitSwitch == null) return this;
         topSwitch = topLimitSwitch;
         return this;
     }
@@ -206,7 +207,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @see #disableOvercurrent()
      */
     @NonNull
-    public HoldableActuator withBottomSwitch(@NonNull TouchSensor bottomLimitSwitch) {
+    public HoldableActuator withBottomSwitch(@Nullable TouchSensor bottomLimitSwitch) {
+        if (bottomLimitSwitch == null) return this;
         bottomSwitch = bottomLimitSwitch;
         return this;
     }
@@ -226,7 +228,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return this
      */
     @NonNull
-    public HoldableActuator map(@NonNull TouchSensor switchSensor, int position) {
+    public HoldableActuator map(@Nullable TouchSensor switchSensor, int position) {
+        if (switchSensor == null) return this;
         switchMapping.put(switchSensor, position);
         return this;
     }
@@ -238,7 +241,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @return the mapped position of the switch sensor, nullable if not mapped
      */
     @Nullable
-    public Integer getMappedPosition(@NonNull TouchSensor switchSensor) {
+    public Integer getMappedPosition(@Nullable TouchSensor switchSensor) {
         return switchMapping.get(switchSensor);
     }
 
