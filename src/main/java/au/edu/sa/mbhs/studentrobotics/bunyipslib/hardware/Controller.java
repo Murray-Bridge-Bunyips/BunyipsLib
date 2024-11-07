@@ -302,7 +302,8 @@ public class Controller extends Gamepad {
      */
     public boolean getDebounced(@NonNull Controls button) {
         boolean buttonPressed = get(button);
-        boolean pressedPreviously = Boolean.TRUE.equals(debounces.getOrDefault(button, true));
+        // TODO: review
+        boolean pressedPreviously = Boolean.TRUE.equals(debounces.getOrDefault(button, false));
         if (buttonPressed && !pressedPreviously) {
             debounces.put(button, true);
             return true;

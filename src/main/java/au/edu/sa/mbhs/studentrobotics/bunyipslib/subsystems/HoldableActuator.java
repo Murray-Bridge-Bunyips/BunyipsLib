@@ -542,10 +542,12 @@ public class HoldableActuator extends BunyipsSubsystem {
             }
 
             if (maxSteadyState != null) {
-                if (Mathf.isNear(current, target, tolerance)) {
+                // Steady state error will be if we're not near the target and not moving in any meaningful quantity
+                if (Mathf.isNear(current, target, tolerance) || !Mathf.isNear(encoder.getVelocity(), 0, tolerance)) {
                     sustainedTolerated.reset();
                 }
                 if (sustainedTolerated.seconds() >= maxSteadyState.in(Seconds)) {
+                    Dbg.warn(getClass(), "%Warning: Steady state error has been detected for % sec. To prevent motor damage, the target position has been auto set to the current position (% -> %).", isDefaultName() ? "" : "(" + name + ") ", Mathf.round(maxSteadyState.in(Seconds), 1), target, current);
                     newTarget = motor.getCurrentPosition();
                 }
             }

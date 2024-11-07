@@ -21,6 +21,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemControll
  * @since 3.5.0
  */
 public class ElevatorFeedforward implements SystemController {
+    private final DoubleSupplier velocitySupplier;
+    private final DoubleSupplier accelerationSupplier;
     /**
      * Static gain.
      */
@@ -37,9 +39,6 @@ public class ElevatorFeedforward implements SystemController {
      * Acceleration gain.
      */
     public double kA;
-
-    private final DoubleSupplier velocitySupplier;
-    private final DoubleSupplier accelerationSupplier;
 
     /**
      * Creates a new ElevatorFeedforward with the specified gains and suppliers for the setpoints.

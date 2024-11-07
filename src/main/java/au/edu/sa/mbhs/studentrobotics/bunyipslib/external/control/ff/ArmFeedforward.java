@@ -30,6 +30,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Voltage;
  * @since 3.5.0
  */
 public class ArmFeedforward implements SystemController {
+    private final Supplier<Measure<Angle>> position;
+    private final Supplier<Measure<Velocity<Angle>>> velocity;
+    private final Supplier<Measure<Velocity<Velocity<Angle>>>> acceleration;
     /**
      * Static gain.
      */
@@ -46,10 +49,6 @@ public class ArmFeedforward implements SystemController {
      * Acceleration gain.
      */
     public double kA;
-
-    private final Supplier<Measure<Angle>> position;
-    private final Supplier<Measure<Velocity<Angle>>> velocity;
-    private final Supplier<Measure<Velocity<Velocity<Angle>>>> acceleration;
 
     /**
      * Creates a new ArmFeedforward with the specified gains and suppliers for the setpoints.
