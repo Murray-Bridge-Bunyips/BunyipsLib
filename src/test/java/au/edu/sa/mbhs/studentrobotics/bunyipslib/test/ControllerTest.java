@@ -64,9 +64,12 @@ class ControllerTest {
 
     @Test
     void testDebounce() {
+        gamepad.x = false;
+        controller.update();
+        assertFalse(controller.getDebounced(Controls.X)); // initial condition
         gamepad.x = true;
         controller.update();
-        assertTrue(controller.getDebounced(Controls.X));
+        assertTrue(controller.getDebounced(Controls.X)); // actual debounce state
         assertFalse(controller.getDebounced(Controls.X));
         gamepad.x = false;
         controller.update();

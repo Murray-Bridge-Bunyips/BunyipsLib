@@ -10,12 +10,13 @@ import java.util.HashMap;
 import java.util.function.Predicate;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Condition;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 
 /**
  * A wrapper around a {@link Gamepad} object that provides a {@link Controls} interface and custom input calculations.
- * These gamepad objects are used natively in BunyipsOpMode, and are the drop-in replacements for gamepad1 and gamepad2.
+ * These gamepad objects are used natively in {@link BunyipsOpMode}, and are the drop-in replacements for {@code gamepad1} and {@code gamepad2}.
  *
  * @author Lucas Bubner, 2024
  * @see BunyipsOpMode
@@ -295,14 +296,17 @@ public class Controller extends Gamepad {
 
     /**
      * Check if a button is currently pressed on a gamepad, with debounce to ignore a press that was already detected
-     * upon the first call of this function and button. This is also known as "rising edge detection".
+     * upon the <b>first call of this function and button</b>. This is an implementation of rising edge detection, but also
+     * applies a check for the initial state of the button, making it useful for task toggles.
+     * <p>
+     * See the {@link Condition} class for more boolean state management.
      *
      * @param button The button to check
-     * @return True if the button is pressed and not debounced
+     * @return True if the button is pressed and not debounced by the definition of this method
      */
     public boolean getDebounced(@NonNull Controls button) {
         boolean buttonPressed = get(button);
-        boolean pressedPreviously = Boolean.TRUE.equals(debounces.getOrDefault(button, !buttonPressed));
+        boolean pressedPreviously = Boolean.TRUE.equals(debounces.getOrDefault(button, buttonPressed));
         if (buttonPressed && !pressedPreviously) {
             debounces.put(button, true);
             return true;
