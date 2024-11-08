@@ -118,8 +118,9 @@ public final class Dashboard {
         }
         // User operations, the packet may be sent manually here or automatically via BOM
         packetOperations.accept(packet);
-        if (opMode == null && !USING_SYNCED_PACKETS)
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        FtcDashboard dash = FtcDashboard.getInstance();
+        if (opMode == null && !USING_SYNCED_PACKETS && dash != null)
+            dash.sendTelemetryPacket(packet);
     }
 
     /**
