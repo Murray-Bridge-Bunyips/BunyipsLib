@@ -92,7 +92,8 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         synchronized (controller) {
             controller.setMotorMode(port, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
-        encoder = new Encoder(() -> controller.getMotorCurrentPosition(port), () -> controller.getMotorVelocity(port));
+        DcMotorEx dme = (DcMotorEx) motor;
+        encoder = new Encoder(motor::getCurrentPosition, dme::getVelocity);
         rawTargetPosition = getCurrentPosition();
     }
 
