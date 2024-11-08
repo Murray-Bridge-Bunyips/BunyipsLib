@@ -89,7 +89,7 @@ public class AprilTag extends Processor<AprilTagData> {
 
     @NonNull
     @Override
-    public String toString() {
+    public String getId() {
         return "apriltag";
     }
 

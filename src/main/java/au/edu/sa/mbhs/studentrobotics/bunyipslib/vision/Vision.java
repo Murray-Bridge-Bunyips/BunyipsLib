@@ -501,7 +501,7 @@ public class Vision extends BunyipsSubsystem {
     private static class Raw extends Processor<VisionData> {
         @NonNull
         @Override
-        public String toString() {
+        public String getId() {
             return "raw";
         }
 

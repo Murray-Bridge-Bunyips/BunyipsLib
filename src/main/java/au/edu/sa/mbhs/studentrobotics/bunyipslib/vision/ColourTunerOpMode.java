@@ -79,15 +79,15 @@ public abstract class ColourTunerOpMode extends BunyipsOpMode {
         vision.stop(processors[processorIdx]);
         // Repopulate scalars with new processor's scalars
         for (int i = 0; i < 3; i++) {
-            scalars[i] = processors[index].getLower().val[i];
-            scalars[i + 3] = processors[index].getUpper().val[i];
+            scalars[i] = processors[index].lowerThreshold.get().val[i];
+            scalars[i + 3] = processors[index].upperThreshold.get().val[i];
         }
         // Start new processor
         vision.start(processors[index]);
         vision.setPreview(processors[index]);
         // Cache the namespaces of the channel (e.g. "Red", "Green", "Blue")
         for (int i = 0; i < 3; i++) {
-            channelNames[i] = processors[index].colourSpace.getChannelName(i);
+            channelNames[i] = processors[index].colourSpace.get().getChannelName(i);
         }
     }
 
@@ -140,8 +140,8 @@ public abstract class ColourTunerOpMode extends BunyipsOpMode {
         }
 
         // Update the processor's scalars
-        processors[processorIdx].setLower(new Scalar(scalars[0], scalars[1], scalars[2]));
-        processors[processorIdx].setUpper(new Scalar(scalars[3], scalars[4], scalars[5]));
+        processors[processorIdx].setLowerThreshold(new Scalar(scalars[0], scalars[1], scalars[2]));
+        processors[processorIdx].setUpperThreshold(new Scalar(scalars[3], scalars[4], scalars[5]));
 
         // Save functionality
         if (gamepad1.getDebounced(Controls.A)) {

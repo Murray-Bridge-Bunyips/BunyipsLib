@@ -121,7 +121,7 @@ public class ColourLocator extends Processor<ColourBlob> {
 
     @NonNull
     @Override
-    public String toString() {
+    public String getId() {
         // 0-indexed
         return "colourlocator" + instanceCount;
     }

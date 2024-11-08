@@ -66,7 +66,7 @@ public class ColourSensor extends Processor<ColourSample> {
 
     @NonNull
     @Override
-    public String toString() {
+    public String getId() {
         // 0-indexed
         return "coloursensor" + instanceCount;
     }

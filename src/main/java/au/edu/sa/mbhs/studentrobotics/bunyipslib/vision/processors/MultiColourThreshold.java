@@ -51,7 +51,7 @@ public class MultiColourThreshold extends Processor<ContourData> {
 
     @NonNull
     @Override
-    public String toString() {
+    public String getId() {
         return "multicolourthreshold";
     }
 

@@ -145,9 +145,14 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
      * Unique identifier for the processor. This will be used to identify the processor
      * in the Vision system and in the FtcDashboard processor switcher.
      */
+    @NonNull
+    public abstract String getId();
+
     @Override
     @NonNull
-    public abstract String toString();
+    public final String toString() {
+        return getId();
+    }
 
     /**
      * Get the list of vision data. You should use this method as the primary way to access
