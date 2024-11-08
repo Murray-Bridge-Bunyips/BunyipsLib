@@ -15,7 +15,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
@@ -516,19 +515,19 @@ public abstract class ColourThreshold extends Processor<ContourData> {
         // Draw borders around the contours, with a thicker border for the largest contour
         ContourData biggest = ContourData.getLargest(data);
         for (ContourData contour : data) {
-            // TODO: draw rot rect
-            Rect boundingRect = contour.getRect().boundingRect();
-            canvas.drawRect(
-                    boundingRect.x,
-                    boundingRect.y,
-                    boundingRect.x + boundingRect.width,
-                    boundingRect.y + boundingRect.height,
-                    new Paint() {{
-                        setColor(boxColour.getAsInt());
-                        setStyle(Style.STROKE);
-                        setStrokeWidth(contour == biggest ? DEFAULT_BIGGEST_CONTOUR_BORDER_THICKNESS : DEFAULT_CONTOUR_BORDER_THICKNESS);
-                    }}
-            );
+            Point[] rotRectPts = new Point[4];
+            contour.getRect().points(rotRectPts);
+            for (int i = 0; i < 4; i++) {
+                canvas.drawLine(
+                        (float) rotRectPts[i].x, (float) rotRectPts[i].y,
+                        (float) rotRectPts[(i + 1) % 4].x, (float) rotRectPts[(i + 1) % 4].y,
+                        new Paint() {{
+                            setColor(boxColour.getAsInt());
+                            setStyle(Style.STROKE);
+                            setStrokeWidth(contour == biggest ? DEFAULT_BIGGEST_CONTOUR_BORDER_THICKNESS : DEFAULT_CONTOUR_BORDER_THICKNESS);
+                        }}
+                );
+            }
         }
     }
 
