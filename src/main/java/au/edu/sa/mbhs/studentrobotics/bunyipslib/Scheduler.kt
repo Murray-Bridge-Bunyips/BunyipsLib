@@ -599,7 +599,7 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         @SuppressLint("NoHardKeywords")
-        infix fun to(interval: Measure<Time>): ScheduledTask {
+        infix fun `in`(interval: Measure<Time>): ScheduledTask {
             originalRunCondition.withActiveDelay(interval)
             return this
         }
@@ -613,7 +613,7 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         infix fun after(interval: Measure<Time>): ScheduledTask {
-            return to(interval)
+            return `in`(interval)
         }
 
         /**
