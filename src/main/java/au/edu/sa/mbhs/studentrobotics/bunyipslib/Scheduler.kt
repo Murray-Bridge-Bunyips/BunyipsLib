@@ -6,7 +6,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg.warn
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask
@@ -111,12 +111,12 @@ class Scheduler : BunyipsComponent() {
         }
 
         if (!isMuted) {
-            opMode { o: BunyipsOpMode ->
+            opMode {
                 // Task count will account for tasks on subsystems that are not IdleTasks, and also subsystem tasks
                 val taskCount = (allocatedTasks.size - allocatedTasks.stream()
                     .filter { task: ScheduledTask -> task.taskToRun.hasDependency() }.count()
                         + subsystems.size - subsystems.stream().filter { obj: BunyipsSubsystem -> obj.isIdle }.count())
-                o.telemetry.add("\nManaging % task% (%s, %c) on % subsystem%",
+                it.telemetry.add("\nManaging % task% (%s, %c) on % subsystem%",
                     taskCount,
                     if (taskCount == 1L) "" else "s",
                     allocatedTasks.stream().filter { task: ScheduledTask -> task.taskToRun.hasDependency() }
@@ -127,7 +127,7 @@ class Scheduler : BunyipsComponent() {
                 )
                 for (item in reports) {
                     if (item.contains("IdleTask")) continue
-                    o.telemetry.add(item)
+                    it.telemetry.add(item)
                 }
                 for (task in allocatedTasks) {
                     if (task.taskToRun.hasDependency() // Whether the task is never run from the Scheduler (and task reports will come from the reports array)
@@ -136,10 +136,8 @@ class Scheduler : BunyipsComponent() {
                     ) {
                         continue
                     }
-                    val deltaTime =
-                        task.taskToRun.deltaTime.`in`(Units.Seconds)
-                            .round(1)
-                    o.telemetry.add(
+                    val deltaTime = task.taskToRun.deltaTime to Seconds round 1
+                    it.telemetry.add(
                         "<small><b>Scheduler</b> (c.) <font color='gray'>|</font> <b>%</b> -> %</small>",
                         task.taskToRun,
                         if (deltaTime == 0.0) "active" else deltaTime.toString() + "s"
@@ -601,7 +599,7 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         @SuppressLint("NoHardKeywords")
-        infix fun `in`(interval: Measure<Time>): ScheduledTask {
+        infix fun to(interval: Measure<Time>): ScheduledTask {
             originalRunCondition.withActiveDelay(interval)
             return this
         }
@@ -615,7 +613,7 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         infix fun after(interval: Measure<Time>): ScheduledTask {
-            return `in`(interval)
+            return to(interval)
         }
 
         /**
@@ -644,7 +642,7 @@ class Scheduler : BunyipsComponent() {
                 .append("'")
                 .append(taskToRun.toString())
                 .append("'")
-            val timeout = taskToRun.timeout.`in`(Units.Seconds)
+            val timeout = taskToRun.timeout to Seconds
             if (timeout * 1000.0 > OnceTask.EPSILON_MS) {
                 out.append(" (t=").append(timeout).append("s)")
             }
@@ -660,7 +658,7 @@ class Scheduler : BunyipsComponent() {
                 val delay = originalRunCondition.getActiveDelay()
                 if (delay.magnitude() > 0) {
                     out.append(" after ")
-                        .append(originalRunCondition.getActiveDelay().`in`(Units.Seconds).round(1))
+                        .append(originalRunCondition.getActiveDelay() to Seconds round 1)
                         .append("s")
                 }
             } else {
