@@ -315,4 +315,15 @@ public class Controller extends Gamepad {
         }
         return false;
     }
+
+    /**
+     * Call to reset the initial debounce state of {@link #getDebounced(Controls)}, allowing further calls to
+     * this method to capture the initial state of the button again. For implementations that do not call this method,
+     * the {@link #getDebounced(Controls)} method will operate as a simple rising edge detector.
+     *
+     * @param button The button to reset the debounce state of
+     */
+    public void resetDebounce(@NonNull Controls button) {
+        debounces.remove(button);
+    }
 }
