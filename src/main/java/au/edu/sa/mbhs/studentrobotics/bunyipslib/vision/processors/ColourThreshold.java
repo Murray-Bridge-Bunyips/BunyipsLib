@@ -1,34 +1,52 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Centimeters;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.util.Size;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.qualcomm.robotcore.util.RobotLog;
+
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibrationHelper;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.PlaceholderCalibratedAspectRatioMismatch;
+import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDouble;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point;
+import org.opencv.core.Point3;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.Processor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
+import kotlin.Pair;
 
 /**
  * Colour thresholding processor for a colour space, used to find colour contours in an image and to use PnP
@@ -43,6 +61,14 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
  * @since 6.0.0
  */
 public abstract class ColourThreshold extends Processor<ContourData> {
+    /**
+     * The used global length of the axes used to display PnP projections (if enabled).
+     */
+    public static double PNP_AXIS_LENGTH = 2.0;
+    /**
+     * The used global thickness of the axes used to display PnP projections (if enabled).
+     */
+    public static double PNP_AXIS_THICKNESS = 5.0;
     /**
      * The thickness of the border to draw around the biggest contour.
      */
@@ -64,11 +90,13 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     @ColorInt
     public static int DEFAULT_BOX_COLOUR = Color.WHITE;
+
     private final Mat processingMat = new Mat();
     private final Mat binaryMat = new Mat();
     private final Mat maskedInputMat = new Mat();
     private final List<MatOfPoint> contours = new ArrayList<>();
     private final Mat hierarchy = new Mat();
+
     // Required
     /**
      * The currently used Colour Space to use for lower and upper thresholds.
@@ -82,6 +110,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * The currently used upper threshold to apply to filter out contours.
      */
     public Supplier<Scalar> upperThreshold;
+
     // Optional preferences
     private IntSupplier boxColour = () -> DEFAULT_BOX_COLOUR;
     private BooleanSupplier externalContoursOnly = () -> false;
@@ -90,16 +119,22 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     private IntSupplier contourBorderThickness = () -> DEFAULT_CONTOUR_BORDER_THICKNESS;
     private IntSupplier biggestContourBorderThickness = () -> DEFAULT_BIGGEST_CONTOUR_BORDER_THICKNESS;
     private BooleanSupplier shouldShowMaskedInput = () -> true;
+
     // Optional processes
-    private IntSupplier erodeSize = () -> 0;
-    private IntSupplier dilateSize = () -> 0;
+    private DoubleSupplier erodeSize = () -> 0;
+    private DoubleSupplier dilateSize = () -> 0;
     private IntSupplier blurSizeUnnormalised = () -> 0;
-    private int lastErodeSize, lastDilateSize, lastBlurSizeUnnormalised;
+    private double lastErodeSize, lastDilateSize;
+    private int lastBlurSizeUnnormalised;
     private Mat erodeElement;
     private Mat dilateElement;
     private org.opencv.core.Size blurElement;
 
-    // TODO: pnp
+    // PnP
+    private MatOfPoint3f objectPoints;
+    private MatOfDouble distCoeffs = new MatOfDouble();
+    private double fx, fy, cx, cy;
+    private Mat cameraMatrix;
 
     /**
      * Creates a new ColourThreshold and auto-adds this class to FtcDashboard.
@@ -317,7 +352,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      *
      * @param erodeSize size of the erode element in pixels, default/<=0 is disabled
      */
-    public void setErodeSize(@NonNull IntSupplier erodeSize) {
+    public void setErodeSize(@NonNull DoubleSupplier erodeSize) {
         this.erodeSize = erodeSize;
     }
 
@@ -329,7 +364,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      *
      * @param staticErodeSize static size of the erode element in pixels, default/<=0 is disabled
      */
-    public void setErodeSize(int staticErodeSize) {
+    public void setErodeSize(double staticErodeSize) {
         erodeSize = () -> staticErodeSize;
     }
 
@@ -341,7 +376,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      *
      * @param dilateSize size of the dilate element in pixels, default/<=0 is disabled
      */
-    public void setDilateSize(@NonNull IntSupplier dilateSize) {
+    public void setDilateSize(@NonNull DoubleSupplier dilateSize) {
         this.dilateSize = dilateSize;
     }
 
@@ -353,7 +388,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      *
      * @param staticDilateSize static size of the dilate element in pixels, default/<=0 is disabled
      */
-    public void setDilateSize(int staticDilateSize) {
+    public void setDilateSize(double staticDilateSize) {
         dilateSize = () -> staticDilateSize;
     }
 
@@ -379,9 +414,57 @@ public abstract class ColourThreshold extends Processor<ContourData> {
         blurSizeUnnormalised = () -> staticBlurSizeUnnormalised;
     }
 
+    /**
+     * Sets the real world dimensions of the object(s) of the thresholded colour to be detected, measured in width and height.
+     * This is used to enable PnP (Perspective-N-Point). PnP data will be available after this method is called and the processor
+     * is active. Assumes the object is a rectangle.
+     *
+     * @param realWorldObjectWidth  the real world width of the object
+     * @param realWorldObjectHeight the real world height of the object
+     */
+    public void setPnP(Measure<Distance> realWorldObjectWidth, Measure<Distance> realWorldObjectHeight) {
+        double objectWidthCm = realWorldObjectWidth.in(Centimeters);
+        double objectHeightCm = realWorldObjectHeight.in(Centimeters);
+        objectPoints = new MatOfPoint3f(
+                new Point3(-objectWidthCm / 2, -objectHeightCm / 2, 0),
+                new Point3(objectWidthCm / 2, -objectHeightCm / 2, 0),
+                new Point3(objectWidthCm / 2, objectHeightCm / 2, 0),
+                new Point3(-objectWidthCm / 2, objectHeightCm / 2, 0)
+        );
+    }
+
+    /**
+     * Set the distortion coefficients for the camera.
+     *
+     * @param k1 k1 distortion coefficient.
+     * @param k2 k2 distortion coefficient.
+     * @param p1 p1 distortion coefficient.
+     * @param p2 p2 distortion coefficient.
+     * @param k3 k3 distortion coefficient.
+     */
+    public void setDistCoeffs(double k1, double k2, double p1, double p2, double k3) {
+        distCoeffs = new MatOfDouble(k1, k2, p1, p2, k3);
+    }
+
+    /**
+     * Set the lens intrinsics for the camera.
+     * By default, this method is not required to be called if your camera supplies this information internally.
+     *
+     * @param fx The focal length in the x direction.
+     * @param fy The focal length in the y direction.
+     * @param cx The principal point in the x direction.
+     * @param cy The principal point in the y direction.
+     */
+    public void setLensIntrinsics(double fx, double fy, double cx, double cy) {
+        this.fx = fx;
+        this.fy = fy;
+        this.cx = cx;
+        this.cy = cy;
+    }
+
     private void reinitialiseMats() {
-        int erode = erodeSize.getAsInt();
-        int dilate = dilateSize.getAsInt();
+        double erode = erodeSize.getAsDouble();
+        double dilate = dilateSize.getAsDouble();
         int blur = blurSizeUnnormalised.getAsInt();
 
         erodeElement = erode > 0
@@ -402,6 +485,68 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     @Override
     public void init(int width, int height, @Nullable CameraCalibration calibration) {
         reinitialiseMats();
+
+        // ATTEMPT 1 - If the user provided their own calibration, use that
+        if (fx != 0 && fy != 0 && cx != 0 && cy != 0) {
+            Log.d("ContourPnP", String.format("User provided their own camera calibration fx=%7.3f fy=%7.3f cx=%7.3f cy=%7.3f",
+                    fx, fy, cx, cy));
+        }
+
+        // ATTEMPT 2 - If we have valid calibration we can use, use it
+        else if (calibration != null && !calibration.isDegenerate()) // needed because we may get an all zero calibration to indicate none, instead of null
+        {
+            fx = calibration.focalLengthX;
+            fy = calibration.focalLengthY;
+            cx = calibration.principalPointX;
+            cy = calibration.principalPointY;
+
+            // Note that this might have been a scaled calibration - inform the user if so
+            if (calibration.resolutionScaledFrom != null) {
+                String msg = String.format(Locale.getDefault(), "Camera has not been calibrated for [%dx%d]; applying a scaled calibration from [%dx%d].", width, height, calibration.resolutionScaledFrom.getWidth(), calibration.resolutionScaledFrom.getHeight());
+                Log.d("ContourPnP", msg);
+                RobotLog.addGlobalWarningMessage(msg);
+            }
+            // Nope, it was a full up proper calibration - no need to pester the user about anything
+            else {
+                Log.d("ContourPnP", String.format("User did not provide a camera calibration; but we DO have a built in calibration we can use.\n [%dx%d] (NOT scaled) %s\nfx=%7.3f fy=%7.3f cx=%7.3f cy=%7.3f",
+                        calibration.getSize().getWidth(), calibration.getSize().getHeight(), calibration.getIdentity().toString(), fx, fy, cx, cy));
+            }
+        }
+
+        // Okay, we aren't going to have any calibration data we can use, but there are 2 cases to check
+        else {
+            // If we have a calibration on file, but with a wrong aspect ratio,
+            // we can't use it, but hey at least we can let the user know about it.
+            if (calibration instanceof PlaceholderCalibratedAspectRatioMismatch) {
+                StringBuilder supportedResBuilder = new StringBuilder();
+                for (CameraCalibration cal : CameraCalibrationHelper.getInstance().getCalibrations(calibration.getIdentity())) {
+                    supportedResBuilder.append(String.format(Locale.getDefault(), "[%dx%d],", cal.getSize().getWidth(), cal.getSize().getHeight()));
+                }
+                String msg = String.format(Locale.getDefault(), "Camera has not been calibrated for [%dx%d]. Pose estimates will likely be inaccurate. However, there are built in calibrations for resolutions: %s",
+                        width, height, supportedResBuilder);
+                Log.d("ContourPnP", msg);
+                RobotLog.addGlobalWarningMessage(msg);
+            }
+
+            // Nah, we got absolutely nothing
+            else {
+                String warning = "User did not provide a camera calibration, nor was a built-in calibration found for this camera. Pose estimates will likely be inaccurate.";
+                Log.d("ContourPnP", warning);
+                RobotLog.addGlobalWarningMessage(warning);
+            }
+
+            // IN EITHER CASE, set it to *something* so we don't crash the native code
+            fx = 578.272;
+            fy = 578.272;
+            cx = width / 2.0;
+            cy = height / 2.0;
+        }
+
+        cameraMatrix = new Mat(3, 3, CvType.CV_64FC1);
+        cameraMatrix.put(0, 0,
+                fx, 0, cx,
+                0, fy, cy,
+                0, 0, 1);
     }
 
     @Override
@@ -416,6 +561,27 @@ public abstract class ColourThreshold extends Processor<ContourData> {
             double max = Mathf.clamp(maxAreaPercent.getAsDouble(), 0, 100);
             if (newData.getAreaPercent() < min || newData.getAreaPercent() > max)
                 continue;
+            if (objectPoints != null) {
+                // Get the 2D image points from the detected rectangle corners
+                Point[] rectPoints = new Point[4];
+                newData.getRect().points(rectPoints);
+                // Order the image points in the same order as object points
+                Point[] orderedRectPoints = Mathf.orderPoints(rectPoints);
+                MatOfPoint2f imagePoints = new MatOfPoint2f(orderedRectPoints);
+                // Solve PnP
+                Mat rvec = new Mat();
+                Mat tvec = new Mat();
+                boolean success = Calib3d.solvePnP(
+                        objectPoints, // Object points in 3D
+                        imagePoints,  // Corresponding image points
+                        cameraMatrix,
+                        distCoeffs,
+                        rvec,
+                        tvec
+                );
+                if (success)
+                    newData.setPnp(Optional.of(new Pair<>(tvec, rvec)));
+            }
             data.add(newData);
         }
     }
@@ -426,8 +592,8 @@ public abstract class ColourThreshold extends Processor<ContourData> {
             throw new IllegalStateException("This colour threshold has not been configured properly! Ensure the colour space, lower and upper thresholds have been set using the `set` methods.");
         }
 
-        if (erodeSize.getAsInt() != lastErodeSize
-                || dilateSize.getAsInt() != lastDilateSize
+        if (erodeSize.getAsDouble() != lastErodeSize
+                || dilateSize.getAsDouble() != lastDilateSize
                 || blurSizeUnnormalised.getAsInt() != lastBlurSizeUnnormalised) {
             reinitialiseMats();
         }
@@ -527,6 +693,50 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                             setStrokeWidth(contour == biggest ? DEFAULT_BIGGEST_CONTOUR_BORDER_THICKNESS : DEFAULT_CONTOUR_BORDER_THICKNESS);
                         }}
                 );
+            }
+
+            // Draw angle on the top left corner of the contour
+            canvas.drawText(
+                    String.format(Locale.getDefault(), "%.1f°", contour.getAngle().in(Degrees)),
+                    (float) rotRectPts[1].x,
+                    (float) rotRectPts[1].y - 5,
+                    new Paint() {{
+                        setColor(boxColour.getAsInt());
+                        setTextSize(30);
+                    }}
+            );
+
+            if (objectPoints != null && contour.getPnp().isPresent()) {
+                Pair<Mat, Mat> pnp = contour.getPnp().get();
+
+                // Define the points in 3D space for the axes
+                MatOfPoint3f axisPoints = new MatOfPoint3f(
+                        new Point3(0, 0, 0),
+                        new Point3(PNP_AXIS_LENGTH, 0, 0),
+                        new Point3(0, PNP_AXIS_LENGTH, 0),
+                        new Point3(0, 0, -PNP_AXIS_LENGTH) // Z axis pointing away from the camera
+                );
+
+                // Project the 3D points to 2D image points
+                MatOfPoint2f imagePoints = new MatOfPoint2f();
+                Calib3d.projectPoints(axisPoints, pnp.getSecond(), pnp.getFirst(), cameraMatrix, distCoeffs, imagePoints);
+
+                // Draw the axis lines
+                Point[] imgPts = imagePoints.toArray();
+                for (int i = 1; i < 4; i++) {
+                    int finalI = i;
+                    canvas.drawLine(
+                            (float) imgPts[0].x,
+                            (float) imgPts[0].y,
+                            (float) imgPts[i].x,
+                            (float) imgPts[i].y,
+                            new Paint() {{
+                                setColor(finalI == 1 ? Color.RED : finalI == 2 ? Color.GREEN : Color.BLUE);
+                                setStyle(Style.STROKE);
+                                setStrokeWidth((float) PNP_AXIS_THICKNESS);
+                            }}
+                    );
+                }
             }
         }
     }

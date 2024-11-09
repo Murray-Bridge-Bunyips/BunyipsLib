@@ -10,6 +10,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import com.acmerobotics.roadrunner.Vector2d
 import org.apache.commons.math3.util.FastMath
 import org.apache.commons.math3.util.MathUtils
+import org.opencv.core.Point
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
@@ -601,6 +602,75 @@ object Mathf {
     @JvmStatic
     fun Number.degToRad(): Double {
         return Math.toRadians(this.toDouble())
+    }
+
+    /**
+     * Orders OpenCV camera points to be in the order top-left, top-right, bottom-right and bottom-left.
+     */
+    @JvmStatic
+    fun Array<Point>.orderPoints(): Array<Point?> {
+        val orderedPts: Array<Point?> = arrayOfNulls(4)
+
+        // Sum and difference of x and y coordinates
+        val sum = DoubleArray(4)
+        val diff = DoubleArray(4)
+
+        for (i in 0..3) {
+            sum[i] = this[i].x + this[i].y
+            diff[i] = this[i].y - this[i].x
+        }
+
+        // Top-left point has the smallest sum
+        val tlIndex = sum.indexOfMin()
+        orderedPts[0] = this[tlIndex]
+
+        // Bottom-right point has the largest sum
+        val brIndex = sum.indexOfMax()
+        orderedPts[2] = this[brIndex]
+
+        // Top-right point has the smallest difference
+        val trIndex = diff.indexOfMin()
+        orderedPts[1] = this[trIndex]
+
+        // Bottom-left point has the largest difference
+        val blIndex = diff.indexOfMax()
+        orderedPts[3] = this[blIndex]
+
+        return orderedPts
+    }
+
+    /**
+     * Determines the index with the lowest value in this array.
+     */
+    @JvmStatic
+    fun DoubleArray.indexOfMin(): Int {
+        var index = 0
+        var min = this[0]
+
+        for (i in 1 until this.size) {
+            if (this[i] < min) {
+                min = this[i]
+                index = i
+            }
+        }
+        return index
+    }
+
+    /**
+     * Determines the index with the highest value in this array.
+     */
+    @JvmStatic
+    fun DoubleArray.indexOfMax(): Int {
+        var index = 0
+        var max = this[0]
+
+        for (i in 1 until this.size) {
+            if (this[i] > max) {
+                max = this[i]
+                index = i
+            }
+        }
+        return index
     }
 
     /**
