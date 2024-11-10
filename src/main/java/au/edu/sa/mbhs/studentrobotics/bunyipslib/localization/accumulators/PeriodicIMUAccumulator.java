@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 
@@ -27,7 +29,7 @@ public class PeriodicIMUAccumulator extends Accumulator {
     private final ElapsedTime timer = new ElapsedTime();
     private final double relocalizationIntervalMs;
     private final IMU imu;
-    private final Rotation2d origin;
+    private Rotation2d origin;
 
     /**
      * Create a new PeriodicIMUAccumulator.
@@ -41,6 +43,15 @@ public class PeriodicIMUAccumulator extends Accumulator {
         relocalizationIntervalMs = relocalizationInterval.in(Milliseconds);
         if (imu != null)
             imu.resetYaw();
+    }
+
+    /**
+     * Sets the angle origin to use. By default this is set to the IMU field on instantiation.
+     *
+     * @param origin the origin angle for accumulation
+     */
+    public void setOrigin(Measure<Angle> origin) {
+        this.origin = Rotation2d.exp(origin.in(Radians));
     }
 
     @Override
