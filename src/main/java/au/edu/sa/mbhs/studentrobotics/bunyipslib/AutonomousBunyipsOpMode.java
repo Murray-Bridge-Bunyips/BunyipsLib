@@ -269,7 +269,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @return the added {@link RunTask}
      */
     @NonNull
-    public final RunTask add(@NonNull Runnable runnable) {
+    public final RunTask run(@NonNull Runnable runnable) {
         return add(new RunTask(runnable));
     }
 
@@ -281,7 +281,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @return the added {@link RunTask}
      */
     @NonNull
-    public final RunTask add(@NonNull String name, @NonNull Runnable runnable) {
+    public final RunTask run(@NonNull String name, @NonNull Runnable runnable) {
         RunTask task = new RunTask(runnable);
         task.withName(name);
         return add(task);

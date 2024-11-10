@@ -446,8 +446,10 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
         }
 
         fusedTelemetry.clearAll();
-        if (selection[0] == null)
-            return;
+        if (selection[0] == null) {
+            // Force select current option if none was selected
+            selection[0] = modes[lastSelectedIndex];
+        }
 
         try {
             //noinspection ExtractMethodRecommender
