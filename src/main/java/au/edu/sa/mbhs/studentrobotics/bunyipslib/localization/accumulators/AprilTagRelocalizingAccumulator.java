@@ -160,8 +160,6 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
             double y = -pose.getPosition().x;
             double r = pose.getOrientation().getYaw(AngleUnit.RADIANS);
 
-            // TODO: odd behaviour
-
             // We also need to rotate the entire pose by 90 degrees to match the coordinate systems up
             estimates.add(new Pose2d(Rotation2d.exp(Math.PI / 2).times(new Vector2d(x, y)), r + Math.PI / 2));
         }
@@ -175,10 +173,11 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
                 .map(p -> p.heading.toDouble())
                 .reduce(0.0, Double::sum) / estimates.size();
 
+        Vector2d twistedTwist = pose.heading.times(twist.value().line);
         Vector2d kfVec = new Vector2d(
                 // Use deltas supplied directly from the pose twist to avoid integrating twice and causing oscillations
-                xf.calculateFromDelta(twist.value().line.x, positionAvg.x),
-                yf.calculateFromDelta(twist.value().line.y, positionAvg.y)
+                xf.calculateFromDelta(twistedTwist.x, positionAvg.x),
+                yf.calculateFromDelta(twistedTwist.y, positionAvg.y)
         );
         // TODO: headingAvgRad has wrapping problems at pi and -pi
         Rotation2d kfHeading = Rotation2d.exp(rf.calculateFromDelta(twist.value().angle, headingAvgRad));
