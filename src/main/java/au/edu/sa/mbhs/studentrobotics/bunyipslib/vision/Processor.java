@@ -224,14 +224,14 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
         // Convert to a bitmap for FtcDashboard and DS feed
         Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
         Utils.matToBitmap(frame, b);
-        lastFrame.set(b);
         synchronized (data) {
             data.clear();
             // Run user data update
             update();
             // Run user drawing while still having a data lock
-            onFrameDraw(new Canvas(lastFrame.get()));
+            onFrameDraw(new Canvas(b));
         }
+        lastFrame.set(b);
         // User context is not needed, as processors that need it should use the data list or
         // hold a copy of the user context when supplied to them in onProcessFrame
         return null;

@@ -130,6 +130,13 @@ public final class Filter {
             x += kGain * (sensor - x);
             return x;
         }
+
+        /**
+         * Reset accumulated value to zero.
+         */
+        public void reset() {
+            x = 0;
+        }
     }
 
     /**

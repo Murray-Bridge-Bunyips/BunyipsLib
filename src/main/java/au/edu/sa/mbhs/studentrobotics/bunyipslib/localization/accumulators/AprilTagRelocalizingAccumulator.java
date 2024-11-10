@@ -49,6 +49,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
     private Filter.Kalman yf;
     private Filter.Kalman rf;
 
+    private double lastHeading;
     private boolean active = true;
     private boolean updateHeading = true;
 
@@ -179,8 +180,15 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
                 xf.calculateFromDelta(twistedTwist.x, positionAvg.x),
                 yf.calculateFromDelta(twistedTwist.y, positionAvg.y)
         );
-        // TODO: headingAvgRad has wrapping problems at pi and -pi
-        Rotation2d kfHeading = Rotation2d.exp(rf.calculateFromDelta(twist.value().angle, headingAvgRad));
+
+        double headingTwist = twist.value().angle;
+        if (Math.abs(headingAvgRad - lastHeading) > Math.PI) {
+            // If we're at the heading modulus boundary, the filter should be reset and updated with the new heading
+            headingTwist = pose.heading.inverse().log();
+            rf.reset();
+        }
+        Rotation2d kfHeading = Rotation2d.exp(rf.calculateFromDelta(headingTwist, headingAvgRad));
+        lastHeading = headingAvgRad;
 
         pose = new Pose2d(kfVec, updateHeading ? kfHeading : pose.heading);
     }
