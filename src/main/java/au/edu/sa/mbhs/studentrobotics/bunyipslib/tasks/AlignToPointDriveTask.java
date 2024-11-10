@@ -16,11 +16,15 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
+
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
 /**
  * TeleOp drive task to align to a global field coordinate using a localizer and PID.
@@ -53,6 +57,7 @@ public class AlignToPointDriveTask extends ForeverTask {
     private double maxRotation = 1;
     private Vector2d lastPoint;
     private boolean fieldCentric;
+    private Rotation2d fcOffset = Rotation2d.exp(0);
 
     /**
      * Construct a new pass-through AlignToPointTask.
@@ -135,6 +140,27 @@ public class AlignToPointDriveTask extends ForeverTask {
         return this;
     }
 
+    /**
+     * Sets an angle to use as the origin for Field-Centric driving.
+     * If this mode is not enabled on the drive task, this value won't be used for anything meaningful.
+     *
+     * @param fcOffset the offset angle (usually the current robot heading) to add to the vector heading rotation
+     */
+    public void setFieldCentricOffset(Measure<Angle> fcOffset) {
+        this.fcOffset = Rotation2d.exp(fcOffset.in(Radians));
+    }
+
+    /**
+     * Sets the origin angle for Field-Centric driving to the drive pose of the robot (effectively resetting the offset).
+     * This is the most common use case for resetting the offset of FC operations.
+     * If this mode is not enabled on the drive task, this value won't be used for anything meaningful.
+     *
+     * @param drivePose the current pose of the drive that will be used to zero out the field centric origin
+     */
+    public void resetFieldCentricOrigin(Pose2d drivePose) {
+        fcOffset = drivePose.heading;
+    }
+
     @Override
     protected void periodic() {
         // https://github.com/NoahBres/road-runner-quickstart/blob/advanced-examples/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/drive/advanced/TeleOpAlignWithPoint.java
@@ -151,7 +177,7 @@ public class AlignToPointDriveTask extends ForeverTask {
         // Create a vector from the x/y inputs which is the field relative movement
         // Then, rotate that vector by the inverse of that heading for field centric control
         Vector2d fieldFrameInput = passthrough.get();
-        Vector2d robotFrameInput = poseEstimate.heading.inverse().times(fieldFrameInput);
+        Vector2d robotFrameInput = poseEstimate.heading.inverse().times(fcOffset).times(fieldFrameInput);
 
         // Difference between the target vector and the bot's position
         Vector2d difference = point.minus(poseEstimate.position);

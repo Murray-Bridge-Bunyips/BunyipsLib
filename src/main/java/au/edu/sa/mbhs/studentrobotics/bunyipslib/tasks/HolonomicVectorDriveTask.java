@@ -252,6 +252,17 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         this.fcOffset = Rotation2d.exp(fcOffset.in(Radians));
     }
 
+    /**
+     * Sets the origin angle for Field-Centric driving to the drive pose of the robot (effectively resetting the offset).
+     * This is the most common use case for resetting the offset of FC operations.
+     * If this mode is not enabled on the drive task, this value won't be used for anything meaningful.
+     *
+     * @param drivePose the current pose of the drive that will be used to zero out the field centric origin
+     */
+    public void resetFieldCentricOrigin(Pose2d drivePose) {
+        fcOffset = drivePose.heading;
+    }
+
     @Override
     protected void init() {
         vectorLocker.reset();
