@@ -77,6 +77,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     private SystemController rController;
     private Vector2d vectorLock = null;
     private Rotation2d headingLock = null;
+    private Rotation2d fcOffset = Rotation2d.exp(0);
 
     // Default admissible error of 1 inch and 1 degree, waiting 300ms for the pose to stabilise
     private Pose2d toleranceInchRad = new Pose2d(1, 1, Math.toRadians(1));
@@ -241,6 +242,16 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         vectorLock = vectorInches;
     }
 
+    /**
+     * Sets an angle to use as the origin for Field-Centric driving.
+     * If this mode is not enabled on the drive task, this value won't be used for anything meaningful.
+     *
+     * @param fcOffset the offset angle (usually the current robot heading) to add to the vector heading rotation
+     */
+    public void setFieldCentricOffset(Measure<Angle> fcOffset) {
+        this.fcOffset = Rotation2d.exp(fcOffset.in(Radians));
+    }
+
     @Override
     protected void init() {
         vectorLocker.reset();
@@ -256,7 +267,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
         PoseVelocity2d v = vel.get();
         if (fieldCentricEnabled.getAsBoolean()) {
             // Field-centric inputs that will be rotated before any processing
-            v = current.heading.inverse().times(v);
+            v = current.heading.inverse().times(fcOffset).times(v);
         }
 
         // Rising edge detections for pose locking

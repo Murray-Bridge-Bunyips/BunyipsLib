@@ -1,9 +1,12 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.Objects;
@@ -11,6 +14,8 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
@@ -28,6 +33,7 @@ public class HolonomicDriveTask extends ForeverTask {
     private final Moveable drive;
     private final Supplier<PoseVelocity2d> vel;
     private final BooleanSupplier fieldCentricEnabled;
+    private Rotation2d fcOffset = Rotation2d.exp(0);
 
     /**
      * Constructor for HolonomicDriveTask.
@@ -88,11 +94,21 @@ public class HolonomicDriveTask extends ForeverTask {
         this(driver, drive, () -> false);
     }
 
+    /**
+     * Sets an angle to use as the origin for Field-Centric driving.
+     * If this mode is not enabled on the drive task, this value won't be used for anything meaningful.
+     *
+     * @param fcOffset the offset angle (usually the current robot heading) to add to the vector heading rotation
+     */
+    public void setFieldCentricOffset(Measure<Angle> fcOffset) {
+        this.fcOffset = Rotation2d.exp(fcOffset.in(Radians));
+    }
+
     @Override
     protected void periodic() {
         if (fieldCentricEnabled.getAsBoolean()) {
             Pose2d currentPose = Objects.requireNonNull(drive.getPose(), "A heading localizer must be attached to the drive instance to allow for Field-Centric driving!");
-            drive.setPower(currentPose.heading.inverse().times(vel.get()));
+            drive.setPower(currentPose.heading.inverse().times(fcOffset).times(vel.get()));
             return;
         }
         drive.setPower(vel.get());
