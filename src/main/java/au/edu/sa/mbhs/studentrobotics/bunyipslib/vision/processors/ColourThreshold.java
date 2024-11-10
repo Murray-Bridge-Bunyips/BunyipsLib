@@ -561,7 +561,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
             double max = Mathf.clamp(maxAreaPercent.getAsDouble(), 0, 100);
             if (newData.getAreaPercent() < min || newData.getAreaPercent() > max)
                 continue;
-            if (objectPoints != null) {
+            if (objectPoints != null && cameraMatrix != null) {
                 // Get the 2D image points from the detected rectangle corners
                 Point[] rectPoints = new Point[4];
                 newData.getRect().points(rectPoints);

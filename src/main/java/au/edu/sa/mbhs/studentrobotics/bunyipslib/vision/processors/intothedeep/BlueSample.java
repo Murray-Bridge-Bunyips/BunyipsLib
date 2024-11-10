@@ -11,32 +11,32 @@ import org.opencv.core.Scalar;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
 
 /**
- * Yellow sample processor.
+ * Blue sample processor.
  * These values may not be tuned for your specific camera, lighting, or field conditions, and are tuned
  * based on our own testing. You may need to adjust these values to get the best results for your own robot.
  *
  * @since 6.0.0
  */
 @SuppressWarnings("MissingJavadoc")
-public class YellowSample extends ColourThreshold {
+public class BlueSample extends ColourThreshold {
     @NonNull
-    public static Scalar LOWER_YCRCB = new Scalar(0, 150, 0);
+    public static Scalar LOWER_YCRCB = new Scalar(0, 0, 0);
     @NonNull
-    public static Scalar UPPER_YCRCB = new Scalar(255, 255, 90);
+    public static Scalar UPPER_YCRCB = new Scalar(60, 120, 200);
     public static double MIN_AREA = DEFAULT_MIN_AREA;
     public static double MAX_AREA = DEFAULT_MAX_AREA;
     public static boolean SHOW_MASKED_INPUT = true;
 
     /**
-     * Create a new Yellow Sample detector.
+     * Create a new Blue Sample detector.
      */
-    public YellowSample() {
+    public BlueSample() {
         setColourSpace(ColourSpace.YCrCb);
         setContourAreaMinPercent(() -> MIN_AREA);
         setContourAreaMaxPercent(() -> MAX_AREA);
         setLowerThreshold(() -> LOWER_YCRCB);
         setUpperThreshold(() -> UPPER_YCRCB);
-        setBoxColour(Color.YELLOW);
+        setBoxColour(Color.CYAN);
         setShowMaskedInput(() -> SHOW_MASKED_INPUT);
         setErodeSize(3.5);
         setDilateSize(3.5);
@@ -48,6 +48,6 @@ public class YellowSample extends ColourThreshold {
     @Override
     @NonNull
     public String getId() {
-        return "yellowsample";
+        return "bluesample";
     }
 }

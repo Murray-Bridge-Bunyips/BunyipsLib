@@ -505,6 +505,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 // Must propagate now as we're switching the mode
                 sustainedTolerated.reset();
+                newTarget = 0;
                 motor.setTargetPosition(0);
                 motor.setMode(prev);
                 // Ensure we only run the reset once every time the switch is pressed
@@ -554,7 +555,6 @@ public class HoldableActuator extends BunyipsSubsystem {
         }
 
         if (newTarget != -1) {
-            sustainedTolerated.reset();
             motor.setTargetPosition((int) Math.round(Mathf.clamp(newTarget, minLimit, maxLimit)));
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }

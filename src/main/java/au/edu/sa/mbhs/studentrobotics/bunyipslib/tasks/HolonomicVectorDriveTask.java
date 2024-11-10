@@ -245,6 +245,8 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     protected void init() {
         vectorLocker.reset();
         headingLocker.reset();
+        vectorLock = null;
+        headingLock = null;
     }
 
     @Override

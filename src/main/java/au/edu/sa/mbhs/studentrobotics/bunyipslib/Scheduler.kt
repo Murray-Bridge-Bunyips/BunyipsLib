@@ -514,6 +514,22 @@ class Scheduler : BunyipsComponent() {
         }
 
         /**
+         * Implicitly make a new RunTask to run as the condition is met.
+         * This callback will requeue as many times as the trigger is met.
+         *
+         * This method can only be called once per ScheduledTask, see a TaskGroup for multiple task execution.
+         * If you do not mention timing control, this task will be run immediately when the condition is met,
+         * ending immediately as it is an RunTask.
+         *
+         * @param name task name
+         * @param runnable The code to run
+         * @return Current builder for additional task parameters
+         */
+        fun run(name: String, runnable: Runnable): ScheduledTask {
+            return run(RunTask(runnable).withName(name))
+        }
+
+        /**
          * Queue a task when the condition is met, debouncing the task from queueing more than once the condition is met.
          *
          * This task will run, and a self-reset will not be propagated once the task is completed. Do note that this
