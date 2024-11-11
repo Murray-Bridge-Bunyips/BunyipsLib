@@ -563,6 +563,19 @@ abstract class BunyipsOpMode : BOMInternal() {
     }
 
     /**
+     * Add a [Runnable] to the list of runnables to be executed just before the [activeLoop].
+     * This is useful for running code that needs to be executed on the main thread, but is not
+     * a subsystem or task.
+     *
+     * This method is public to allow you to add looping code from [RobotConfig], [Task], and other contexts.
+     * This runnable will run in the in the order they were added, and duplicate Runnable instances will be ignored.
+     */
+    fun onActiveLoop(runnable: Runnable) {
+        this.runnables.add(runnable)
+        Dbg.logv("BunyipsOpMode: added an activeLoop task, % task(s) set.", this.runnables.size)
+    }
+
+    /**
      * Removes a [Runnable] that was added to the active loop via [onActiveLoop].
      * Calling this method will no-op on runnables that can't be found on the currently attached runnables,
      * and will stop executing runnables on the active loop that could be found.

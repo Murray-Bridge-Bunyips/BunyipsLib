@@ -132,6 +132,7 @@ public class Accumulator implements Localizable {
     @Override
     public final void setPose(@NonNull Pose2d newPose) {
         pose = newPose;
+        Storage.memory().lastKnownPosition = newPose;
         if (this instanceof PeriodicIMUAccumulator) {
             // Should treat this pose as the new absolute pose so we set a new IMU offset
             ((PeriodicIMUAccumulator) this).setOrigin(Radians.of(newPose.heading.log()));

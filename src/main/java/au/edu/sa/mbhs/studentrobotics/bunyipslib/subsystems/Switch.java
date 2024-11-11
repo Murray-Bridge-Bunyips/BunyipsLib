@@ -234,6 +234,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task controlDelta(@NonNull DoubleSupplier powerSupplier) {
+            // TODO: delta does not work
             return new ContinuousTask(() -> setPosition((servo != null ? servo.getPosition() : 0) + powerSupplier.getAsDouble()))
                     .onSubsystem(Switch.this, false)
                     .withName("Supplier Delta Control");
@@ -283,6 +284,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task setClipped(double position) {
+            // TODO: update strange method names
             return new RunTask(() -> setPositionClipped(position))
                     .onSubsystem(Switch.this, true)
                     .withName("Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
