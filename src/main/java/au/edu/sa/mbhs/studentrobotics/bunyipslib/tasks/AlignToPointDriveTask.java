@@ -41,8 +41,7 @@ public class AlignToPointDriveTask extends ForeverTask {
     /**
      * Default controller to use for aligning to a point.
      */
-    // Using a high gain controller due to the integrated feedforward in the heading
-    public static PIDFController DEFAULT_CONTROLLER = new PController(8);
+    public static PIDFController DEFAULT_CONTROLLER = new PController(1);
 
     static {
         DEFAULT_CONTROLLER.setTolerance(Math.toRadians(1));

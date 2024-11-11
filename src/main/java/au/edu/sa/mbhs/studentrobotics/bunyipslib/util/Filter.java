@@ -137,6 +137,15 @@ public final class Filter {
         public void reset() {
             x = 0;
         }
+
+        /**
+         * Sets the accumulated value.
+         *
+         * @param val the accumulated value to respect.
+         */
+        public void setAccumulatedValue(double val) {
+            x = val;
+        }
     }
 
     /**

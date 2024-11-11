@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
@@ -41,8 +42,7 @@ public class MoveToAprilTagTask extends Task {
     /**
      * The desired distance from the tag.
      */
-    @NonNull
-    public static Measure<Distance> DESIRED_DISTANCE = Meters.of(1);
+    public static double DESIRED_DISTANCE_INCHES = Meters.of(1).in(Inches);
     /**
      * The maximum speed the robot can move at.
      */
@@ -71,6 +71,18 @@ public class MoveToAprilTagTask extends Task {
      * The tag to target. -1 for any tag.
      */
     public static int TARGET_TAG = -1;
+    /**
+     * Default X controller
+     */
+    public static PDController DEFAULT_X_CONTROLLER = new PDController(1, 0.0001);
+    /**
+     * Default Y controller
+     */
+    public static PDController DEFAULT_Y_CONTROLLER = new PDController(1, 0.0001);
+    /**
+     * Default R controller
+     */
+    public static PDController DEFAULT_R_CONTROLLER = new PDController(0.1, 0.0001);
 
     private final Moveable drive;
     private final AprilTag aprilTag;
@@ -97,6 +109,9 @@ public class MoveToAprilTagTask extends Task {
         this.drive = drive;
         this.aprilTag = aprilTag;
         TARGET_TAG = targetTag;
+        xController = DEFAULT_X_CONTROLLER;
+        yController = DEFAULT_Y_CONTROLLER;
+        rController = DEFAULT_R_CONTROLLER;
         withName("Move to AprilTag");
         Dashboard.enableConfig(getClass());
     }
@@ -116,6 +131,9 @@ public class MoveToAprilTagTask extends Task {
         this.aprilTag = aprilTag;
         this.passthrough = passthrough;
         TARGET_TAG = targetTag;
+        xController = DEFAULT_X_CONTROLLER;
+        yController = DEFAULT_Y_CONTROLLER;
+        rController = DEFAULT_R_CONTROLLER;
         withName("Move to AprilTag");
         Dashboard.enableConfig(getClass());
     }
@@ -140,7 +158,7 @@ public class MoveToAprilTagTask extends Task {
      */
     @NonNull
     public MoveToAprilTagTask withDesiredDistance(@NonNull Measure<Distance> desiredDistance) {
-        DESIRED_DISTANCE = desiredDistance;
+        DESIRED_DISTANCE_INCHES = desiredDistance.in(Inches);
         return this;
     }
 
@@ -248,13 +266,13 @@ public class MoveToAprilTagTask extends Task {
 
         assert target.get().getFtcPose().isPresent() && target.get().getMetadata().isPresent();
         AprilTagPoseFtc camPose = target.get().getFtcPose().get();
-        rangeError = camPose.range - DESIRED_DISTANCE.in(Inches);
+        rangeError = camPose.range - DESIRED_DISTANCE_INCHES;
         yawError = -camPose.yaw;
         headingError = camPose.bearing;
 
         drive.setPower(Geometry.vel(
-                Range.clip(-xController.calculate(rangeError, 0), -MAX_X_SPEED, MAX_X_SPEED),
-                Range.clip(-yController.calculate(yawError, 0), -MAX_Y_SPEED, MAX_Y_SPEED),
+                Range.clip(xController.calculate(rangeError, 0), -MAX_X_SPEED, MAX_X_SPEED),
+                Range.clip(yController.calculate(yawError, 0), -MAX_Y_SPEED, MAX_Y_SPEED),
                 Range.clip(-rController.calculate(headingError, 0), -MAX_R_SPEED, MAX_R_SPEED)
         ));
 

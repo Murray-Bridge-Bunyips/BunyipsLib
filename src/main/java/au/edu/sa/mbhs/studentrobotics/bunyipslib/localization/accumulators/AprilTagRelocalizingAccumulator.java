@@ -39,7 +39,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
     /**
      * Default Q gain for Kalman filtering.
      */
-    public static double DEFAULT_Q = 1.0e-4;
+    public static double DEFAULT_Q = 0.01;
 
     private final AprilTag processor;
     private final HashSet<Predicate<AprilTagData>> filters = new HashSet<>();
@@ -51,7 +51,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
 
     private double lastHeading;
     private boolean active = true;
-    private boolean updateHeading = true;
+    private boolean updateHeading = false;
 
     /**
      * Create a new AprilTag relocalizing accumulator.
@@ -117,7 +117,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
     }
 
     /**
-     * Whether to set the drive pose to the vision estimate with heading information. Default is ON.
+     * Whether to set the drive pose to the vision estimate with heading information. Default is OFF.
      *
      * @param setHeadingAutomatically whether to also set the heading to the AprilTag estimate or not
      * @return this
@@ -138,8 +138,12 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
             return;
 
         ArrayList<AprilTagData> data = processor.getData();
-        if (data.isEmpty())
+        if (data.isEmpty()) {
+            xf.setAccumulatedValue(pose.position.x);
+            yf.setAccumulatedValue(pose.position.y);
+            rf.setAccumulatedValue(pose.heading.toDouble());
             return;
+        }
 
         estimates.clear();
         for (int i = 0; i < data.size(); i++) {
