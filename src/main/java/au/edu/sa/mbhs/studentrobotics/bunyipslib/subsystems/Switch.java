@@ -147,13 +147,13 @@ public class Switch extends BunyipsSubsystem {
     }
 
     /**
-     * Set a custom position that is clipped between the closed and open bounds.
+     * Set a custom position that is not affected by the closed and open bounds.
      *
-     * @param position the position to set to, clipped between open and close
+     * @param position the raw position to send to the servo
      */
     @NonNull
-    public Switch setPositionClipped(double position) {
-        target = Mathf.clamp(position, Math.min(openPosition, closePosition), Math.max(openPosition, closePosition));
+    public Switch setPositionUnclipped(double position) {
+        target = Mathf.clamp(position, 0, 1);
         return this;
     }
 
@@ -172,13 +172,13 @@ public class Switch extends BunyipsSubsystem {
     }
 
     /**
-     * Set a custom position that is not affected by the closed and open bounds.
+     * Set a custom position that is clipped between the closed and open bounds.
      *
-     * @param position the raw position to send to the servo
+     * @param position the position to set to, clipped between open and close
      */
     @NonNull
     public Switch setPosition(double position) {
-        target = Mathf.clamp(position, 0, 1);
+        target = Mathf.clamp(position, Math.min(openPosition, closePosition), Math.max(openPosition, closePosition));
         return this;
     }
 
@@ -234,8 +234,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task controlDelta(@NonNull DoubleSupplier powerSupplier) {
-            // TODO: delta does not work
-            return new ContinuousTask(() -> setPosition((servo != null ? servo.getPosition() : 0) + powerSupplier.getAsDouble()))
+            return new ContinuousTask(() -> setPosition(target + powerSupplier.getAsDouble()))
                     .onSubsystem(Switch.this, false)
                     .withName("Supplier Delta Control");
         }
@@ -277,23 +276,22 @@ public class Switch extends BunyipsSubsystem {
         }
 
         /**
-         * Set a custom position that is clipped between the closed and open bounds.
+         * Set a custom position that is not affected by the closed and open bounds.
          *
-         * @param position the position to set to, clipped between open and close
+         * @param position the raw position to send to the servo
          * @return a task to perform this action
          */
         @NonNull
-        public Task setClipped(double position) {
-            // TODO: update strange method names
-            return new RunTask(() -> setPositionClipped(position))
+        public Task setToUnclipped(double position) {
+            return new RunTask(() -> setPositionUnclipped(position))
                     .onSubsystem(Switch.this, true)
                     .withName("Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
         }
 
         /**
-         * Set a custom position that is not affected by the closed and open bounds.
+         * Set a custom position that is clipped between the closed and open bounds.
          *
-         * @param position the raw position to send to the servo
+         * @param position the position to set to, clipped between open and close
          * @return a task to perform this action
          */
         @NonNull
@@ -304,27 +302,27 @@ public class Switch extends BunyipsSubsystem {
         }
 
         /**
-         * Delta the current servo position. This task is clamped between the closed and open positions.
-         *
-         * @param delta the amount to delta the servo by
-         * @return a task to perform this action
-         */
-        @NonNull
-        public Task deltaClipped(double delta) {
-            return new RunTask(() -> setPositionClipped((servo != null ? servo.getPosition() : 0) + delta))
-                    .onSubsystem(Switch.this, true)
-                    .withName("Delta By " + delta);
-        }
-
-        /**
          * Delta the current servo position. This task is not affected by the closed and open bounds.
          *
          * @param delta the amount to delta the servo by, unclamped between the closed and open bounds
          * @return a task to perform this action
          */
         @NonNull
+        public Task deltaUnclipped(double delta) {
+            return new RunTask(() -> setPositionUnclipped((servo != null ? servo.getPosition() : 0) + delta))
+                    .onSubsystem(Switch.this, true)
+                    .withName("Delta By " + delta);
+        }
+
+        /**
+         * Delta the current servo position. This task is clamped between the closed and open positions.
+         *
+         * @param delta the amount to delta the servo by
+         * @return a task to perform this action
+         */
+        @NonNull
         public Task delta(double delta) {
-            return new RunTask(() -> setPosition((servo != null ? servo.getPosition() : 0) + delta))
+            return new RunTask(() -> setPosition(target + delta))
                     .onSubsystem(Switch.this, true)
                     .withName("Delta By " + delta);
         }
