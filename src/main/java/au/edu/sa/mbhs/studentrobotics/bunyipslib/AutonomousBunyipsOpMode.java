@@ -70,7 +70,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
         safeToAddTasks = true;
 
-        Controls selectedButton = userSelection != null ? userSelection.getSelectedButton() : null;
+        Controls selectedButton = userSelection != null ? userSelection.getSelectedButton() : Controls.NONE;
         Exceptions.runUserMethod(() -> onReady(selectedOpMode, selectedButton), this);
 
         // Add any queued tasks that were delayed previously and we can do now
@@ -689,7 +689,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param selectedButton the button selected by the user. Will be Controls.NONE if no selection is made or given.
      * @see #add(Task)
      */
-    protected abstract void onReady(@Nullable Reference<?> selectedOpMode, @Nullable Controls selectedButton);
+    protected abstract void onReady(@Nullable Reference<?> selectedOpMode, @NonNull Controls selectedButton);
 
     /**
      * Override to this method to add extra code to the activeLoop, which will be run before

@@ -220,7 +220,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withTopSwitch(@Nullable TouchSensor topLimitSwitch) {
-        if (topLimitSwitch == null) return this;
+        if (topLimitSwitch == null)
+            Dbg.error(getClass(), "%Supplied top limit switch is null! Ignoring.", isDefaultName() ? "" : "(" + name + ") ");
         topSwitch = topLimitSwitch;
         return this;
     }
@@ -235,7 +236,8 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withBottomSwitch(@Nullable TouchSensor bottomLimitSwitch) {
-        if (bottomLimitSwitch == null) return this;
+        if (bottomLimitSwitch == null)
+            Dbg.error(getClass(), "%Supplied bottom limit switch is null! Ignoring.", isDefaultName() ? "" : "(" + name + ") ");
         bottomSwitch = bottomLimitSwitch;
         return this;
     }
@@ -392,7 +394,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @see #disableOvercurrent()
      */
     @NonNull
-    public HoldableActuator enableUserSetpointControl(@Nullable UnaryFunction setpointDeltaMul) {
+    public HoldableActuator withUserSetpointControl(@Nullable UnaryFunction setpointDeltaMul) {
         userSetpointControl = setpointDeltaMul;
         if (userSetpointControl != null && inputMode == Mode.USER_POWER)
             inputMode = Mode.USER_SETPOINT;
@@ -403,7 +405,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * Calling this method will restore the user input functionality translating into direct power on the motor.
      *
      * @return this
-     * @see #enableUserSetpointControl(UnaryFunction)
+     * @see #withUserSetpointControl(UnaryFunction)
      */
     @NonNull
     public HoldableActuator disableUserSetpointControl() {

@@ -44,7 +44,7 @@ public class Switch extends BunyipsSubsystem {
         // Note: Updating must be done manually
         target = closePosition;
         withName("Switch");
-        setBounds(openPosition, closePosition);
+        withBounds(openPosition, closePosition);
         assertParamsNotNull(servo);
     }
 
@@ -65,7 +65,7 @@ public class Switch extends BunyipsSubsystem {
      * @return this
      */
     @NonNull
-    public Switch setBounds(double openPosition, double closePosition) {
+    public Switch withBounds(double openPosition, double closePosition) {
         this.openPosition = Mathf.clamp(openPosition, 0, 1);
         this.closePosition = Mathf.clamp(closePosition, 0, 1);
         return this;
@@ -78,7 +78,7 @@ public class Switch extends BunyipsSubsystem {
      * @return this
      */
     @NonNull
-    public Switch setOpenBound(double openPosition) {
+    public Switch withOpenBound(double openPosition) {
         this.openPosition = Mathf.clamp(openPosition, 0, 1);
         return this;
     }
@@ -90,7 +90,7 @@ public class Switch extends BunyipsSubsystem {
      * @return this
      */
     @NonNull
-    public Switch setClosedBound(double closePosition) {
+    public Switch withClosedBound(double closePosition) {
         this.closePosition = Mathf.clamp(closePosition, 0, 1);
         return this;
     }
@@ -125,19 +125,18 @@ public class Switch extends BunyipsSubsystem {
      */
     @NonNull
     public Switch toggle() {
-        double pos = servo.getPosition();
-        if (pos == openPosition) {
+        if (target == openPosition) {
             close();
             return this;
         }
-        if (pos == closePosition) {
+        if (target == closePosition) {
             open();
             return this;
         }
 
         // Snap to the closest open or closed position
-        double distanceToOpen = Math.abs(pos - openPosition);
-        double distanceToClose = Math.abs(pos - closePosition);
+        double distanceToOpen = Math.abs(target - openPosition);
+        double distanceToClose = Math.abs(target - closePosition);
         if (distanceToOpen < distanceToClose) {
             open();
         } else {
@@ -309,7 +308,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task deltaUnclipped(double delta) {
-            return new RunTask(() -> setPositionUnclipped((servo != null ? servo.getPosition() : 0) + delta))
+            return new RunTask(() -> setPositionUnclipped(target + delta))
                     .onSubsystem(Switch.this, true)
                     .withName("Delta By " + delta);
         }
