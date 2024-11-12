@@ -8,12 +8,20 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.RadiansPerSecond
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.RadiansPerSecondPerSecond
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Velocity
+import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.ProfileAccelConstraint
+import com.acmerobotics.roadrunner.ProfileParams
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder
+import com.acmerobotics.roadrunner.TrajectoryBuilderParams
+import com.acmerobotics.roadrunner.TurnConstraints
 import com.noahbres.meepmeep.MeepMeep
 import com.noahbres.meepmeep.core.colorscheme.ColorScheme
 import com.noahbres.meepmeep.roadrunner.Constraints
 import com.noahbres.meepmeep.roadrunner.DriveTrainType
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity
+import com.noahbres.meepmeep.roadrunner.entity.TrajectoryActionStub
+import com.noahbres.meepmeep.roadrunner.entity.TurnActionStub
 
 @Suppress("KDocMissingDocumentation")
 class BunyipsLibBotBuilder(private val meepMeep: MeepMeep) {
@@ -101,7 +109,33 @@ class BunyipsLibBotBuilder(private val meepMeep: MeepMeep) {
         driveTrainType, false
     ).also {
         MeepMeepInternal.drive.__internalSetup(
-            { p -> it.drive.actionBuilder(p) },
+            { p, m ->
+                val velConstraintField = it.drive::class.java.getDeclaredField("velConstraint")
+                velConstraintField.isAccessible = true
+                val velConstraint = velConstraintField.get(it.drive) as MinVelConstraint
+                val accelConstraintField = it.drive::class.java.getDeclaredField("accelConstraint")
+                accelConstraintField.isAccessible = true
+                val accelConstraint = accelConstraintField.get(it.drive) as ProfileAccelConstraint
+                TrajectoryActionBuilder(
+                    ::TurnActionStub,
+                    ::TrajectoryActionStub,
+                    TrajectoryBuilderParams(
+                        1e-6,
+                        ProfileParams(
+                            0.25, 0.1, 1e-2
+                        )
+                    ),
+                    p, 0.0,
+                    TurnConstraints(
+                        constraints.maxAngVel,
+                        -constraints.maxAngAccel,
+                        constraints.maxAngAccel,
+                    ),
+                    velConstraint,
+                    accelConstraint,
+                    m
+                )
+            },
             { constraints },
             { driveTrainType },
             { a -> it.runAction(a) })
