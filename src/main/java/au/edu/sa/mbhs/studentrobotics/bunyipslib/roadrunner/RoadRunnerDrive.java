@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.IdentityPoseMap;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PoseMap;
 import com.acmerobotics.roadrunner.Vector2d;
 
@@ -87,15 +88,22 @@ public interface RoadRunnerDrive extends Moveable {
     }
 
     /**
-     * Begin building a RoadRunner trajectory from the last-known robot position when this method is called.
+     * Begin building a RoadRunner trajectory from the <b>inverse (PoseMap piped)</b> last-known robot position when this method is called.
      * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
      *
-     * @param poseMap the PoseMap to use for this builder
+     * @param poseMap the PoseMap to use for this builder, note that the implicit last-known position is used and
+     *                automatically passed into the PoseMap now to later 'invert' it. This assumes your PoseMap is idempotent to inversion.
+     *                For most mappings, this will result in the absolute last-known position being used as the starting pose, which
+     *                is usually the case when you are trying to use the current position of the robot.
+     *                If you wish the PoseMap to apply normally, consider using the other makeTrajectory methods
+     *                and manually passing the last-known position from {@link Storage}.
      * @return extended RoadRunner trajectory task builder
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull PoseMap poseMap) {
-        return new TaskBuilder(getConstants(), Storage.memory().lastKnownPosition, poseMap);
+        // Map the last known position using the PoseMap, will be mapped back to the last known position later, assuming
+        // that this PoseMap is idempotent to inversion.
+        return new TaskBuilder(getConstants(), poseMap.map(Pose2dDual.constant(Storage.memory().lastKnownPosition, 1)).value(), poseMap);
     }
 
     /**
