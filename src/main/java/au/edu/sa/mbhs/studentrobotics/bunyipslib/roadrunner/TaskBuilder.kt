@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.AutonomousBunyipsOpMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
@@ -37,7 +38,12 @@ import com.acmerobotics.roadrunner.VelConstraint
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: PoseMap) {
+class TaskBuilder @JvmOverloads constructor(
+    private val constants: Constants,
+    startPose: Pose2d,
+    poseMap: PoseMap,
+    private val caller: RoadRunnerDrive? = null
+) {
     private var turnConstraints = constants.baseTurnConstraints
     private var velConstraints = constants.baseVelConstraint
     private var accelConstraints = constants.baseAccelConstraint
@@ -639,7 +645,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         val lastPoseUnmapped = lastPoseUnmappedField.get(builder) as Pose2d
         val lastTangent = lastTangentField.get(builder) as Rotation2d
 
-        return TaskBuilder(constants, lastPoseUnmapped, builder.poseMap).setTangent(lastTangent)
+        return TaskBuilder(constants, lastPoseUnmapped, builder.poseMap, caller).setTangent(lastTangent)
     }
 
     /**
@@ -727,6 +733,8 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
         it.withName(name)
         if (timeout != null)
             it.withTimeout(timeout!!)
+        if (caller != null && caller is BunyipsSubsystem)
+            it.onSubsystem(caller)
     }
 
     /**
