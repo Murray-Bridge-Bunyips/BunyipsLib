@@ -6,7 +6,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -64,17 +64,14 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-public final class HardwareTester extends OpMode {
+public final class HardwareTester extends LinearOpMode {
     private TelemetryMenu menu;
     private Telemetry telemetry;
     private MovingAverageTimer timer;
 
-    /**
-     * @noinspection ExtractMethodRecommender
-     */
     @Override
-    @SuppressWarnings("unchecked")
-    public void init() {
+    @SuppressWarnings({"unchecked", "ExtractMethodRecommender"})
+    public void runOpMode() {
         timer = new MovingAverageTimer();
         telemetry = new DualTelemetry(this, timer, "<b>HardwareTester</b>");
         Map<String, List<HardwareDevice>> hardware;
@@ -513,20 +510,18 @@ public final class HardwareTester extends OpMode {
         telemetry.addLine("Ready.");
         telemetry.update();
         timer.update();
-    }
 
-    @Override
-    public void start() {
+        waitForStart();
+
         timer.reset();
-    }
 
-    @Override
-    public void loop() {
-        if (gamepad1.back)
-            terminateOpModeNow();
-        menu.loop(gamepad1);
-        timer.update();
-        telemetry.update();
+        while (opModeIsActive()) {
+            if (gamepad1.back)
+                terminateOpModeNow();
+            menu.loop(gamepad1);
+            timer.update();
+            telemetry.update();
+        }
     }
 
     private enum Color {
