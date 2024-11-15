@@ -6,7 +6,9 @@ import android.util.Pair;
 import android.util.Size;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.opencv.core.Mat;
 
 import java.util.ArrayList;
@@ -53,6 +55,14 @@ public class MultiColourThreshold extends Processor<ContourData> {
     @Override
     public String getId() {
         return "multicolourthreshold";
+    }
+
+    @Override
+    public void init(int width, int height, @Nullable CameraCalibration calibration) {
+        super.init(width, height, calibration);
+        for (Pair<ColourThreshold, Mat> processor : colourProcessors) {
+            processor.first.init(width, height, calibration);
+        }
     }
 
     @Override

@@ -486,6 +486,10 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     public void init(int width, int height, @Nullable CameraCalibration calibration) {
         reinitialiseMats();
 
+        // No point in initialising camera intrinsics if we aren't going to use PnP
+        if (objectPoints == null)
+            return;
+
         // ATTEMPT 1 - If the user provided their own calibration, use that
         if (fx != 0 && fy != 0 && cx != 0 && cy != 0) {
             Log.d("ContourPnP", String.format("User provided their own camera calibration fx=%7.3f fy=%7.3f cx=%7.3f cy=%7.3f",
@@ -522,7 +526,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                 for (CameraCalibration cal : CameraCalibrationHelper.getInstance().getCalibrations(calibration.getIdentity())) {
                     supportedResBuilder.append(String.format(Locale.getDefault(), "[%dx%d],", cal.getSize().getWidth(), cal.getSize().getHeight()));
                 }
-                String msg = String.format(Locale.getDefault(), "Camera has not been calibrated for [%dx%d]. Pose estimates will likely be inaccurate. However, there are built in calibrations for resolutions: %s",
+                String msg = String.format(Locale.getDefault(), "Camera has not been calibrated for [%dx%d]. PnP will likely be inaccurate. However, there are built in calibrations for resolutions: %s",
                         width, height, supportedResBuilder);
                 Log.d("ContourPnP", msg);
                 RobotLog.addGlobalWarningMessage(msg);
@@ -530,7 +534,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
 
             // Nah, we got absolutely nothing
             else {
-                String warning = "User did not provide a camera calibration, nor was a built-in calibration found for this camera. Pose estimates will likely be inaccurate.";
+                String warning = "User did not provide a camera calibration, nor was a built-in calibration found for this camera. PnP will likely be inaccurate.";
                 Log.d("ContourPnP", warning);
                 RobotLog.addGlobalWarningMessage(warning);
             }
