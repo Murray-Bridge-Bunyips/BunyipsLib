@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Volts;
 
 import android.util.Pair;
 
@@ -14,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -39,6 +41,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDControl
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Voltage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
@@ -73,6 +76,8 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     private SystemController rtpController;
     private SystemController rueController;
     private Pair<Double, Double> rueInfo = null;
+    private VoltageSensor nominalVoltageSensor = null;
+    private double nominalVoltage = 12.0;
 
     private int rawTargetPosition = 0;
 
@@ -97,6 +102,29 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     // hello i am Giulio
+
+    /**
+     * Sets a voltage sensor to use for nominal power calculation.
+     * See {@link #setNominalVoltage(Measure)} to set a nominal voltage directly, defaults to 12V.
+     *
+     * @param nominalVoltageSensor the sensor to use for nominal voltage calculation
+     */
+    public void setNominalVoltageSensor(VoltageSensor nominalVoltageSensor) {
+        this.nominalVoltageSensor = nominalVoltageSensor;
+    }
+
+    /**
+     * Sets the nominal voltage to use for power calculations.
+     * The equation used is {@code applied = power * (nominalVoltage / sensorVoltage)}.
+     * <p>
+     * A voltage sensor <b>must</b> be set for this to work via {@link #setNominalVoltageSensor(VoltageSensor)}.
+     * This value will be ignored if no sensor is set.
+     *
+     * @param nominalVoltage the nominal voltage parameter to use, defaults to 12V
+     */
+    public void setNominalVoltage(Measure<Voltage> nominalVoltage) {
+        this.nominalVoltage = Math.abs(nominalVoltage.in(Volts));
+    }
 
     /**
      * Call to use encoder overflow (exceeding 32767 ticks/sec) correction on {@link #getVelocity()}.
@@ -832,7 +860,11 @@ public class Motor extends SimpleRotator implements DcMotorEx {
                 magnitude = power;
                 break;
         }
-        super.setPower(magnitude);
+        double mul = 1;
+        if (nominalVoltageSensor != null)
+            mul = nominalVoltage / nominalVoltageSensor.getVoltage();
+        // Clamping, rescaling, and performance optimisations occur in SimpleRotator
+        super.setPower(magnitude * mul);
     }
 
     private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
