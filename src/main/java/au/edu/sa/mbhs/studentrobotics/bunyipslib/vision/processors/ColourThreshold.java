@@ -446,6 +446,11 @@ public abstract class ColourThreshold extends Processor<ContourData> {
         distCoeffs = new MatOfDouble(k1, k2, p1, p2, k3);
     }
 
+    @NonNull
+    public MatOfDouble getDistCoeffs() {
+        return distCoeffs;
+    }
+
     /**
      * Set the lens intrinsics for the camera.
      * By default, this method is not required to be called if your camera supplies this information internally.
@@ -460,6 +465,11 @@ public abstract class ColourThreshold extends Processor<ContourData> {
         this.fy = fy;
         this.cx = cx;
         this.cy = cy;
+    }
+
+    @Nullable
+    public Mat getCameraMatrix() {
+        return cameraMatrix;
     }
 
     private void reinitialiseMats() {
