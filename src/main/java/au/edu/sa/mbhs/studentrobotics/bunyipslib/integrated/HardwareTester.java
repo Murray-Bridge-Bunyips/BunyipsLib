@@ -136,7 +136,7 @@ public final class HardwareTester extends LinearOpMode {
                     };
 
                     // Then, we can report out all the motor statistics
-                    TelemetryMenu.DynamicItem currentPosition = new TelemetryMenu.DynamicItem("Current Position (t/s)", motorEx::getCurrentPosition);
+                    TelemetryMenu.DynamicItem currentPosition = new TelemetryMenu.DynamicItem("Current Position (t)", motorEx::getCurrentPosition);
                     TelemetryMenu.DynamicItem currentVelocity = new TelemetryMenu.DynamicItem("Current Velocity (t/s)", motorEx::getVelocity);
                     TelemetryMenu.DynamicItem currentCurrent = new TelemetryMenu.DynamicItem("Current (A)", () -> motorEx.getCurrent(CurrentUnit.AMPS));
                     dev.addChildren(enabledControl, zeroPowerBehaviorControl, resetEncoder, currentPosition, currentVelocity, currentCurrent);
@@ -507,9 +507,10 @@ public final class HardwareTester extends LinearOpMode {
             root.addChild(deviceMapping);
         }
         menu = new TelemetryMenu(telemetry, root);
+        telemetry.addLine("<b>HardwareTester</b>");
         telemetry.addLine("Ready.");
-        telemetry.update();
         timer.update();
+        telemetry.update();
 
         waitForStart();
 

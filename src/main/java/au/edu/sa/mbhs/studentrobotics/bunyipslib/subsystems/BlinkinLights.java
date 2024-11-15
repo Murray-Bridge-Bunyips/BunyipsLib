@@ -4,8 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
+
+import java.lang.reflect.Field;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
@@ -26,6 +31,8 @@ public class BlinkinLights extends BunyipsSubsystem {
     public final Tasks tasks = new Tasks();
 
     private final RevBlinkinLedDriver lights;
+    private ServoControllerEx blinkinController;
+    private Integer port;
     private RevBlinkinLedDriver.BlinkinPattern defaultPattern;
     private RevBlinkinLedDriver.BlinkinPattern currentPattern;
     private RevBlinkinLedDriver.BlinkinPattern setPattern;
@@ -44,6 +51,19 @@ public class BlinkinLights extends BunyipsSubsystem {
         if (!assertParamsNotNull(lights)) return;
         assert lights != null;
         lights.setPattern(this.defaultPattern);
+
+        Field blinkinServoControllerField;
+        Field blinkinPortField;
+        try {
+            blinkinServoControllerField = lights.getClass().getDeclaredField("controller");
+            blinkinServoControllerField.setAccessible(true);
+            blinkinPortField = lights.getClass().getDeclaredField("port");
+            blinkinPortField.setAccessible(true);
+            port = blinkinPortField.getInt(lights);
+            blinkinController = (ServoControllerEx) blinkinServoControllerField.get(lights);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to access RevBlinkinLedDriver fields! This shouldn't happen!", e);
+        }
     }
 
     /**
@@ -133,6 +153,24 @@ public class BlinkinLights extends BunyipsSubsystem {
         return this;
     }
 
+    /**
+     * Set the PWM value of the lights.
+     *
+     * @param us the PWM value in microseconds
+     * @return this
+     */
+    @NonNull
+    public BlinkinLights setPwm(double us) {
+        if (port == null || blinkinController == null)
+            return this;
+        PwmControl.PwmRange range = blinkinController.getServoPwmRange(port);
+        // usPulseLower is at servo position 0
+        // usPulseUpper is at servo position 1
+        double position = (us - range.usPulseLower) / (range.usPulseUpper - range.usPulseLower);
+        blinkinController.setServoPosition(port, Mathf.clamp(position, 0, 1));
+        return this;
+    }
+
     @Override
     protected void onDisable() {
         turnOff();
@@ -149,6 +187,29 @@ public class BlinkinLights extends BunyipsSubsystem {
         if (setPattern != currentPattern) {
             lights.setPattern(currentPattern);
             setPattern = currentPattern;
+        }
+    }
+
+    /**
+     * REV Robotics Blinkin LED Driver voltage options.
+     */
+    public enum Voltage {
+        /**
+         * 5V mode
+         */
+        STRIP_5V(2125),
+        /**
+         * 12V mode
+         */
+        STRIP_12V(2145);
+
+        /**
+         * Command code to switch the strip mode to this voltage (provided by REV, in microseconds).
+         */
+        public final int pwmCommandUs;
+
+        Voltage(int us) {
+            pwmCommandUs = us;
         }
     }
 

@@ -80,8 +80,8 @@ public abstract class TaskGroup extends Task {
         // Do not manage a task if it is already attached to a subsystem being managed there
         if (attachedTasks.contains(task)) return;
         task.getDependency().ifPresent(dependency -> {
-            dependency.setCurrentTask(task);
-            attachedTasks.add(task);
+            if (dependency.setCurrentTask(task))
+                attachedTasks.add(task);
         });
         // Otherwise we can just run the task outright
         if (!task.hasDependency()) {

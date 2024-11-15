@@ -26,11 +26,12 @@ object EncoderTicks {
      * @param telemetry The telemetry to debug to.
      */
     @JvmStatic
-    fun debug(motor: DcMotor, telemetry: Telemetry) {
-        telemetry.addData("[${motor.connectionInfo}] Current Position", motor.currentPosition)
-        telemetry.addData("[${motor.connectionInfo}] Target Position", motor.targetPosition)
-        telemetry.addData("[${motor.connectionInfo}] Velocity", (motor as DcMotorEx).velocity)
-        telemetry.addData("[${motor.connectionInfo}] Power", motor.power)
+    @JvmOverloads
+    fun debug(motor: DcMotor, name: String = motor.connectionInfo, telemetry: Telemetry) {
+        telemetry.addData("$name Current Position", motor.currentPosition)
+        telemetry.addData("$name Target Position", motor.targetPosition)
+        telemetry.addData("$name Velocity", (motor as DcMotorEx).velocity)
+        telemetry.addData("$name Power", motor.power)
     }
 
     /**

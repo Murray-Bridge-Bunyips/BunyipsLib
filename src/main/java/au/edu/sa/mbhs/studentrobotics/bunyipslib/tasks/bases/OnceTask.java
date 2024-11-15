@@ -14,7 +14,7 @@ public abstract class OnceTask extends Task {
     /**
      * The epsilon value for the OnceTask timeout.
      */
-    public static final int EPSILON_MS = 10;
+    public static final int EPSILON_MS = 300;
 
     protected OnceTask() {
         // For OnceTasks, we can't have an infinite timeout but we can use a very very short one instead

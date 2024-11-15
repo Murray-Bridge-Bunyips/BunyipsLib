@@ -21,6 +21,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.DynamicTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.TaskGroup;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
@@ -285,6 +286,29 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         RunTask task = new RunTask(runnable);
         task.withName(name);
         return add(task);
+    }
+
+    /**
+     * Implicitly constructs a new {@link WaitTask} to add to the run queue.
+     *
+     * @param duration the duration to wait
+     * @return the added {@link WaitTask}
+     */
+    @NonNull
+    public final WaitTask wait(@NonNull Measure<Time> duration) {
+        return add(new WaitTask(duration));
+    }
+
+    /**
+     * Implicitly constructs a new {@link WaitTask} to add to the run queue.
+     *
+     * @param duration the duration to wait
+     * @param unit     the unit of the duration
+     * @return the added {@link WaitTask}
+     */
+    @NonNull
+    public final WaitTask wait(double duration, @NonNull Time unit) {
+        return add(new WaitTask(unit.of(duration)));
     }
 
     /**

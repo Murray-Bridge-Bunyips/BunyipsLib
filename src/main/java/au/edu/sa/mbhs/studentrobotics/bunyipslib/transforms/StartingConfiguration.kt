@@ -38,7 +38,7 @@ object StartingConfiguration {
     /**
      * Represents a position that a robot is able to start a match in.
      */
-    data class Position(
+    data class Position @JvmOverloads constructor(
         /**
          * The alliance this robot is starting in.
          */
@@ -58,7 +58,11 @@ object StartingConfiguration {
         /**
          * Counter-clockwise rotation of the robot in the starting position.
          */
-        val ccwRotation: Measure<Angle>
+        val ccwRotation: Measure<Angle>,
+        /**
+         * Read-only arbitrary user flags for this starting configuration.
+         */
+        val flags: Set<Any> = emptySet()
     ) {
         /**
          * Convert this starting configuration into the FTC Field Coordinate/RoadRunner coordinate system.
@@ -278,11 +282,15 @@ object StartingConfiguration {
         }
 
         /**
-         * A position that can hold extra attributes including rotation and forward translation.
+         * A position that can hold extra attributes including rotation and forward translation, allowing flags
+         * to be attached to the position.
+         *
          * The build method is automatically called if forgotten via the AutonomousBunyipsOpMode `setOpModes()` method, ensure
          * other implementations are aware of this potential runtime error (attempting to parse a prebuilt position).
          */
         inner class PrebuiltPosition {
+            private val flags = mutableSetOf<Any>()
+
             /**
              * Translate backward from the center of the field tile to your robot center as defined by your translate step.
              * This is to align your robot to touching the field wall.
@@ -302,10 +310,19 @@ object StartingConfiguration {
             }
 
             /**
+             * Add a flag to this starting configuration, which can be used to additionally
+             * identify the position in a custom way.
+             */
+            fun flag(flag: Any): PrebuiltPosition {
+                flags.add(flag)
+                return this
+            }
+
+            /**
              * Construct this position.
              */
             fun build(): Position {
-                return Position(alliance, origin, back, horizontalTranslation, rotation)
+                return Position(alliance, origin, back, horizontalTranslation, rotation, flags.toSet())
             }
         }
     }

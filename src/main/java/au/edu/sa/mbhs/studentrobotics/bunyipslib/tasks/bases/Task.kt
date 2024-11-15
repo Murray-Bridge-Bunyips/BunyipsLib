@@ -10,6 +10,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.DynamicTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RepeatTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitUntilTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.ParallelTaskGroup
@@ -211,6 +212,24 @@ abstract class Task(
     }
 
     /**
+     * Composes a [ParallelTaskGroup] with a [WaitTask] to run before this task.
+     * This will ensure the task runs for at least the specified time, and no-ops until the duration if it finishes early.
+     */
+    infix fun forAtLeast(waitTime: Measure<Time>): ParallelTaskGroup {
+        val task = WaitTask(waitTime)
+        task.withName("$name wait")
+        return ParallelTaskGroup(this, task)
+    }
+
+    /**
+     * Composes a [ParallelTaskGroup] with a [WaitTask] to run before this task.
+     * This will ensure the task runs for at least the specified time, and no-ops until the duration if it finishes early.
+     */
+    fun forAtLeast(waitDuration: Double, unit: Time): ParallelTaskGroup {
+        return forAtLeast(unit.of(waitDuration))
+    }
+
+    /**
      * Compose this task into a [SequentialTaskGroup] with the supplied
      * tasks to run before this one.
      */
@@ -224,6 +243,22 @@ abstract class Task(
      */
     infix fun after(otherTask: Task): SequentialTaskGroup {
         return SequentialTaskGroup(otherTask, this)
+    }
+
+    /**
+     * Composes a [WaitTask] to run before this task.
+     */
+    infix fun after(waitTime: Measure<Time>): SequentialTaskGroup {
+        val task = WaitTask(waitTime)
+        task.withName("$name wait")
+        return SequentialTaskGroup(task, this)
+    }
+
+    /**
+     * Composes a [WaitTask] to run before this task.
+     */
+    fun after(waitDuration: Double, unit: Time): SequentialTaskGroup {
+        return after(unit.of(waitDuration))
     }
 
     /**
