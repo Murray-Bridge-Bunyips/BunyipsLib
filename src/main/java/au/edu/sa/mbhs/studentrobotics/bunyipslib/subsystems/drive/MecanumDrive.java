@@ -62,6 +62,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * This class is the standard Mecanum drive class that controls a set of four mecanum wheels while
@@ -402,6 +403,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                 xPoints[i] = p.position.x;
                 yPoints[i] = p.position.y;
             }
+
+            withName(Text.format("Trajectory %::%",
+                    Geometry.toUserString(t.path.begin(1).value()),
+                    Geometry.toUserString(t.path.end(1).value())));
         }
 
         @Override
@@ -515,6 +520,9 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             }
 
             withTimeout(Seconds.of(t.duration).plus(errorThresholds.getStabilizationTimeout()));
+            withName(Text.format("Trajectory %->%",
+                    Geometry.toUserString(t.path.begin(1).value()),
+                    Geometry.toUserString(t.path.end(1).value())));
         }
 
         @Override
@@ -607,6 +615,9 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         public TurnTask(@NonNull TimeTurn turn) {
             this.turn = turn;
             withTimeout(Seconds.of(turn.duration).plus(errorThresholds.getStabilizationTimeout()));
+            withName(Text.format("Turn %°->%°",
+                    Math.toDegrees(turn.get(0).value().heading.log()),
+                    Math.toDegrees(turn.get(turn.duration).value().heading.log())));
         }
 
         @Override

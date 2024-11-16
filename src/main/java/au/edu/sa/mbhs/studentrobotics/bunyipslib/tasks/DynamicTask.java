@@ -28,7 +28,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  * @since 4.0.0
  */
 public class DynamicTask extends Task {
-    private static final String UNCONSTRUCTED_NAME = "Pending construction (dyn)";
+    private static final String UNCONSTRUCTED_NAME = " (dyn)";
     private final Supplier<Task> lazyTask;
     private Task builtTask;
 

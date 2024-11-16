@@ -58,6 +58,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * This class is the standard Tank drive class that controls two sets of parallel motors while integrating the
@@ -328,6 +329,9 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             }
 
             withTimeout(Seconds.of(t.duration));
+            withName(Text.format("Trajectory %->%",
+                    Geometry.toUserString(t.path.begin(1).value()),
+                    Geometry.toUserString(t.path.end(1).value())));
         }
 
         @Override
@@ -404,6 +408,9 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         public TurnTask(@NonNull TimeTurn turn) {
             this.turn = turn;
             withTimeout(Seconds.of(turn.duration));
+            withName(Text.format("Turn %°->%°",
+                    Math.toDegrees(turn.get(0).value().heading.log()),
+                    Math.toDegrees(turn.get(turn.duration).value().heading.log())));
         }
 
         @Override

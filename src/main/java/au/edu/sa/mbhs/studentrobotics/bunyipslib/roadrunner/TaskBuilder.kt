@@ -48,7 +48,7 @@ class TaskBuilder @JvmOverloads constructor(
     private var velConstraints = constants.baseVelConstraint
     private var accelConstraints = constants.baseAccelConstraint
     private var timeout: Measure<Time>? = null
-    private var name = "RoadRunner Drive Action"
+    private var name = "RoadRunner Action"
     private var priority = AutonomousBunyipsOpMode.TaskPriority.NORMAL
     private var builder = TrajectoryActionBuilder(
         constants.turnActionFactory,
