@@ -52,8 +52,9 @@ import kotlin.Pair;
  * Colour thresholding processor for a colour space, used to find colour contours in an image and to use PnP
  * operations.
  * <p>
- * This processor was used initially pre-SDK 10.1 to detect contours, and now serves as an alternative option which offers
- * features like PnP and FtcDashboard tuning compared to the {@link ColourLocator}.
+ * This processor serves as an advanced and more feature-rich alternative to the built-in {@link ColourLocator} processor,
+ * providing more control over the thresholding process and the ability to use PnP (Perspective-N-Point) to determine the
+ * real-world position of detected objects.
  *
  * @author Lucas Bubner, 2024
  * @see ColourLocator
