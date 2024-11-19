@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.IMUEx
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.InvertibleTouchSensor
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ProfiledServo
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.SimpleRotator
@@ -15,6 +16,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot
 import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.hardware.TouchSensor
 import java.util.function.Consumer
 
 /**
@@ -133,6 +135,11 @@ abstract class RobotConfig {
         if (SimpleRotator::class.java.isAssignableFrom(device)) {
             val dms = hardwareMap.get(DcMotorSimple::class.java, name)
             return SimpleRotator(dms) as T
+        }
+        // InvertibleTouchSensor is a drop-in replacement for TouchSensor
+        if (InvertibleTouchSensor::class.java.isAssignableFrom(device)) {
+            val touchSensor = hardwareMap.get(TouchSensor::class.java, name)
+            return InvertibleTouchSensor(touchSensor) as T
         }
         return hardwareMap.get(device, name)
     }
