@@ -6,6 +6,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Deg
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.Log;
 import android.util.Size;
 
@@ -18,6 +19,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibrationHelper;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.PlaceholderCalibratedAspectRatioMismatch;
+import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -111,6 +113,11 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * The currently used upper threshold to apply to filter out contours.
      */
     public Supplier<Scalar> upperThreshold;
+    /**
+     * Region of Interest for this colour threshold.
+     */
+    // TODO: implement this
+    public Supplier<ImageRegion> regionOfInterest = ImageRegion::entireFrame;
 
     // Optional preferences
     private IntSupplier boxColour = () -> DEFAULT_BOX_COLOUR;
@@ -163,6 +170,26 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     public void setColourSpace(@NonNull ColourSpace staticColourSpace) {
         colourSpace = () -> staticColourSpace;
+    }
+
+    /**
+     * Sets the region of interest for this colour threshold, which will only focus detections on this area.
+     * This is an optional method.
+     *
+     * @param regionOfInterest the region of interest to use, by default the entire frame
+     */
+    public void setRegionOfInterest(@NonNull Supplier<ImageRegion> regionOfInterest) {
+        this.regionOfInterest = regionOfInterest;
+    }
+
+    /**
+     * Sets the region of interest for this colour threshold, which will only focus detections on this area.
+     * This is an optional method.
+     *
+     * @param staticRegionOfInterest the static region of interest to use, by default the entire frame
+     */
+    public void setRegionOfInterest(@NonNull ImageRegion staticRegionOfInterest) {
+        regionOfInterest = () -> staticRegionOfInterest;
     }
 
     /**
@@ -570,7 +597,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
         if (cameraDimensions == null) return;
         for (MatOfPoint contour : contours) {
             Point[] points = contour.toArray();
-            ContourData newData = new ContourData(cameraDimensions, Imgproc.minAreaRect(new MatOfPoint2f(points)));
+            ContourData newData = new ContourData(cameraDimensions, points, Imgproc.minAreaRect(new MatOfPoint2f(points)));
             // Min-max bounding
             double min = Mathf.clamp(minAreaPercent.getAsDouble(), 0, 100);
             double max = Mathf.clamp(maxAreaPercent.getAsDouble(), 0, 100);
@@ -705,10 +732,23 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                         new Paint() {{
                             setColor(boxColour.getAsInt());
                             setStyle(Style.STROKE);
-                            setStrokeWidth(contour == biggest ? DEFAULT_BIGGEST_CONTOUR_BORDER_THICKNESS : DEFAULT_CONTOUR_BORDER_THICKNESS);
+                            setStrokeWidth(contour == biggest ? biggestContourBorderThickness.getAsInt() : contourBorderThickness.getAsInt());
                         }}
                 );
             }
+
+            // Trace out all contours with a thin line
+            Path path = new Path();
+            List<Point> contourPts = contour.getPoints();
+            path.moveTo((float) contourPts.get(0).x, (float) contourPts.get(0).y);
+            for (int i = 1; i < contourPts.size(); i++) {
+                path.lineTo((float) contourPts.get(i).x, (float) contourPts.get(i).y);
+            }
+            path.close();
+            canvas.drawPath(path, new Paint() {{
+                setColor(boxColour.getAsInt());
+                setStrokeWidth(contourBorderThickness.getAsInt() / 3.0f);
+            }});
 
             // Draw angle on the top left corner of the contour
             canvas.drawText(

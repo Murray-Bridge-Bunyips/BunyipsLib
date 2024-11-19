@@ -5,48 +5,54 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees
 import org.opencv.core.Mat
+import org.opencv.core.Point
 import org.opencv.core.RotatedRect
 import java.util.Optional
 
 /**
- * Data class for storing contour data from a ColourThreshold.
+ * Data class for storing rectangular OpenCV contour information.
+ *
  * @since 1.0.0-pre
  */
 data class ContourData(
     /**
-     * The rectangle representing this contour.
+     * The rectangular bounding box representing this contour.
      */
     val rect: RotatedRect,
     /**
-     * The area of the contour.
+     * The points that make up this contour.
+     */
+    val points: List<Point>,
+    /**
+     * The area of the contour bounding box.
      */
     val area: Double,
     /**
-     * The percentage of the screen the contour takes up.
+     * The percentage of the screen the contour bounding box takes up.
      */
     val areaPercent: Double,
     /**
-     * The aspect ratio of the contour.
+     * The aspect ratio of the contour bounding box.
      */
     val aspectRatio: Double,
     /**
-     * The x coordinate of the center of the contour.
+     * The x coordinate of the center of the contour bounding box.
      */
     val centerX: Double,
     /**
-     * The y coordinate of the center of the contour.
+     * The y coordinate of the center of the contour bounding box.
      */
     val centerY: Double,
     /**
-     * The measured yaw of the contour.
+     * The measured yaw of the contour bounding box.
      */
     val yaw: Double,
     /**
-     * The measured pitch of the contour.
+     * The measured pitch of the contour bounding box.
      */
     val pitch: Double,
     /**
-     * The measured angle of the contour.
+     * The measured angle of the contour bounding box.
      */
     val angle: Measure<Angle>,
     /**
@@ -55,8 +61,9 @@ data class ContourData(
     var pnp: Optional<Pair<Mat, Mat>> = Optional.empty()
 ) : VisionData() {
     @JvmOverloads
-    constructor(cameraResolution: Size, rect: RotatedRect, tvec: Mat? = null, rvec: Mat? = null) : this(
+    constructor(cameraResolution: Size, points: Array<Point>, rect: RotatedRect, tvec: Mat? = null, rvec: Mat? = null) : this(
         rect,
+        points.toList(),
         rect.boundingRect().area(),
         rect.boundingRect().area() / (cameraResolution.width * cameraResolution.height) * 100.0,
         rect.boundingRect().width.toDouble() / rect.boundingRect().height.toDouble(),
