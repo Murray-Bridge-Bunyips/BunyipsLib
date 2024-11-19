@@ -11,14 +11,14 @@ import org.opencv.core.Scalar;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
 
 /**
- * Yellow sample processor.
+ * Neutral (yellow) sample processor.
  * These values may not be tuned for your specific camera, lighting, or field conditions, and are tuned
  * based on our own testing. You may need to adjust these values to get the best results for your own robot.
  *
  * @since 6.0.0
  */
 @SuppressWarnings("MissingJavadoc")
-public class YellowSample extends ColourThreshold {
+public class NeutralSample extends ColourThreshold {
     @NonNull
     public static Scalar LOWER_YCRCB = new Scalar(0, 150, 0);
     @NonNull
@@ -28,9 +28,9 @@ public class YellowSample extends ColourThreshold {
     public static boolean SHOW_MASKED_INPUT = true;
 
     /**
-     * Create a new Yellow Sample detector.
+     * Create a new Neutral Sample detector.
      */
-    public YellowSample() {
+    public NeutralSample() {
         setColourSpace(ColourSpace.YCrCb);
         setContourAreaMinPercent(() -> MIN_AREA);
         setContourAreaMaxPercent(() -> MAX_AREA);

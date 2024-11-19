@@ -67,6 +67,13 @@ import kotlin.Pair;
  * @since 6.0.0
  */
 public abstract class ColourThreshold extends Processor<ContourData> {
+    private static final Paint borderPaint = new Paint() {{
+        setColor(Color.WHITE);
+        setAntiAlias(true);
+        setStrokeCap(Paint.Cap.BUTT);
+        setStrokeWidth(1);
+    }};
+
     /**
      * The used global length of the axes used to display PnP projections (if enabled).
      */
@@ -96,7 +103,6 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     @ColorInt
     public static int DEFAULT_BOX_COLOUR = Color.WHITE;
-
     private final Mat processingMat = new Mat();
     private final Mat binaryMat = new Mat();
     private final Mat maskedInputMat = new Mat();
@@ -119,6 +125,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
 
     // Optional preferences
     private IntSupplier boxColour = () -> DEFAULT_BOX_COLOUR;
+    private BooleanSupplier highlightContourPoints = () -> false;
     private BooleanSupplier externalContoursOnly = () -> false;
     private DoubleSupplier minAreaPercent = () -> DEFAULT_MIN_AREA;
     private DoubleSupplier maxAreaPercent = () -> DEFAULT_MAX_AREA;
@@ -231,6 +238,28 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      */
     public void setLowerThreshold(@NonNull Scalar staticLower) {
         lowerThreshold = () -> staticLower;
+    }
+
+    /**
+     * Sets whether to highlight the points of the contour on the canvas.
+     * Highlights will be the same drawing as the region of interest display.
+     * This is an optional method.
+     *
+     * @param highlight whether to highlight the points of the contour, default false
+     */
+    public void setHighlightContourPoints(@NonNull BooleanSupplier highlight) {
+        highlightContourPoints = highlight;
+    }
+
+    /**
+     * Sets whether to highlight the points of the contour on the canvas.
+     * Highlights will be the same drawing as the region of interest display.
+     * This is an optional method.
+     *
+     * @param staticHighlight whether to highlight the points of the contour, default false
+     */
+    public void setHighlightContourPoints(boolean staticHighlight) {
+        highlightContourPoints = () -> staticHighlight;
     }
 
     /**
@@ -742,6 +771,12 @@ public abstract class ColourThreshold extends Processor<ContourData> {
 
     @Override
     protected final void onFrameDraw(@NonNull Canvas canvas) {
+        // Region of interest
+        canvas.drawLine(roi.x, roi.y, roi.x + roi.width, roi.y, borderPaint);
+        canvas.drawLine(roi.x + roi.width, roi.y, roi.x + roi.width, roi.y + roi.height, borderPaint);
+        canvas.drawLine(roi.x + roi.width, roi.y + roi.height, roi.x, roi.y + roi.height, borderPaint);
+        canvas.drawLine(roi.x, roi.y + roi.height, roi.x, roi.y, borderPaint);
+
         // Draw borders around the contours, with a thicker border for the largest contour
         ContourData biggest = ContourData.getLargest(data);
         for (ContourData contour : data) {
@@ -760,18 +795,17 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                 );
             }
 
-            // Trace out all contours with a thin line
-            Path path = new Path();
-            List<Point> contourPts = contour.getPoints();
-            path.moveTo((float) contourPts.get(0).x, (float) contourPts.get(0).y);
-            for (int i = 1; i < contourPts.size(); i++) {
-                path.lineTo((float) contourPts.get(i).x, (float) contourPts.get(i).y);
+            if (highlightContourPoints.getAsBoolean()) {
+                // Trace out all contours with a thin line
+                Path path = new Path();
+                List<Point> contourPts = contour.getPoints();
+                path.moveTo((float) contourPts.get(0).x, (float) contourPts.get(0).y);
+                for (int i = 1; i < contourPts.size(); i++) {
+                    path.lineTo((float) contourPts.get(i).x, (float) contourPts.get(i).y);
+                }
+                path.close();
+                canvas.drawPath(path, borderPaint);
             }
-            path.close();
-            canvas.drawPath(path, new Paint() {{
-                setColor(boxColour.getAsInt());
-                setStrokeWidth(contourBorderThickness.getAsInt() / 3.0f);
-            }});
 
             // Draw angle on the top left corner of the contour
             canvas.drawText(
@@ -783,18 +817,6 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                         setTextSize(30);
                     }}
             );
-
-            // Region of interest
-            Paint roiPaint = new Paint() {{
-                setColor(Color.WHITE);
-                setAntiAlias(true);
-                setStrokeCap(Paint.Cap.BUTT);
-                setStrokeWidth(1);
-            }};
-            canvas.drawLine(roi.x, roi.y, roi.x + roi.width, roi.y, roiPaint);
-            canvas.drawLine(roi.x + roi.width, roi.y, roi.x + roi.width, roi.y + roi.height, roiPaint);
-            canvas.drawLine(roi.x + roi.width, roi.y + roi.height, roi.x, roi.y + roi.height, roiPaint);
-            canvas.drawLine(roi.x, roi.y + roi.height, roi.x, roi.y, roiPaint);
 
             if (objectPoints != null && contour.getPnp().isPresent()) {
                 Pair<Mat, Mat> pnp = contour.getPnp().get();

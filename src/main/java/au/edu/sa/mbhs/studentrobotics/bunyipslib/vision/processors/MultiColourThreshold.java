@@ -41,6 +41,8 @@ public class MultiColourThreshold extends Processor<ContourData> {
     public MultiColourThreshold(@NonNull ColourThreshold... thresholdProcessors) {
         Dashboard.enableConfig(getClass());
         for (ColourThreshold processor : thresholdProcessors) {
+            if (colourProcessors.stream().anyMatch(p -> p.first.toString().equals(processor.toString())))
+                throw new IllegalArgumentException("Duplicate processor with same ID: " + processor);
             colourProcessors.add(new Pair<>(processor, new Mat()));
         }
     }
