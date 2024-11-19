@@ -94,8 +94,10 @@ public final class Dashboard {
      * @param clazz the class to send
      */
     public static void enableConfig(Class<?> clazz) {
-        FtcDashboard.getInstance().withConfigRoot(c ->
-                c.putVariable(clazz.getSimpleName(), ReflectionConfig.createVariableFromClass(clazz)));
+        FtcDashboard dash = FtcDashboard.getInstance();
+        if (dash != null)
+            dash.withConfigRoot(c ->
+                    c.putVariable(clazz.getSimpleName(), ReflectionConfig.createVariableFromClass(clazz)));
     }
 
     /**

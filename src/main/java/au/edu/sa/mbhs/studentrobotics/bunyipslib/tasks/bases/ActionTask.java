@@ -24,8 +24,6 @@ public class ActionTask extends Task {
     private final Action action;
     private boolean actionFinished = false;
 
-    // TODO: RoadRunner-specific task wrapper that can snoop the timeouts and names that are set at an 'internal' level
-
     /**
      * Wrap a new {@link Action} to be a {@link Task}.
      *
