@@ -58,10 +58,10 @@ public class MultiColourThreshold extends Processor<ContourData> {
     }
 
     @Override
-    public void init(int width, int height, @Nullable CameraCalibration calibration) {
-        super.init(width, height, calibration);
+    public void init(@Nullable CameraCalibration calibration) {
+        super.init(calibration);
         for (Pair<ColourThreshold, Mat> processor : colourProcessors) {
-            processor.first.init(width, height, calibration);
+            processor.first.init(calibration);
         }
     }
 

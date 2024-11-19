@@ -88,7 +88,8 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
     }
 
     /**
-     * Determine whether the processor is attached to a Vision instance.
+     * Determine whether the processor is attached to a Vision instance or is initialised.
+     * <p>
      * Checking this is useful for processors that have been passed into tasks but cannot
      * be checked by looking directly at the vision system.
      */
@@ -100,6 +101,7 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
      * Determine whether the processor is currently started on a Vision instance.
      * This will also check if the processor is attached.
      * This will not reflect whether the Vision instance is streaming, only if the processor has been started.
+     * <p>
      * Checking this is useful for processors that have been passed into tasks but cannot
      * be checked by looking directly at the vision system.
      */
@@ -182,6 +184,8 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
     /**
      * Override this method to run any additional code that will be executed when
      * this processor is attached (via init()) by a Vision instance.
+     * <p>
+     * This method is also called on standard initialisation of the processor if it has not been already done via Vision.
      */
     protected void onAttach() {
         // no-op
@@ -262,8 +266,21 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
         // no-op
     }
 
-    // Optional init method from VisionProcessor
     @Override
-    public void init(int width, int height, @Nullable CameraCalibration calibration) {
+    public final void init(int width, int height, @Nullable CameraCalibration calibration) {
+        if (cameraDimensions == null) {
+            cameraDimensions = new Size(width, height);
+            onAttach();
+        }
+        init(calibration);
+    }
+
+    /**
+     * Optional method to implement to access the camera calibration data.
+     * To access camera dimensions, use {@link #getCameraDimensions()}.
+     *
+     * @param calibration the camera calibration data
+     */
+    public void init(@Nullable CameraCalibration calibration) {
     }
 }

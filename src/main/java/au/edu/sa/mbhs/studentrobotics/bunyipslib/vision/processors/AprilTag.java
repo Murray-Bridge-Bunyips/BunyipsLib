@@ -116,7 +116,11 @@ public class AprilTag extends Processor<AprilTagData> {
     // Untouched methods to be handled by the AprilTagProcessor
 
     @Override
-    public void init(int width, int height, @Nullable CameraCalibration calibration) {
+    public void init(@Nullable CameraCalibration calibration) {
+        Size cameraDimensions = getCameraDimensions();
+        assert cameraDimensions != null;
+        int width = cameraDimensions.getWidth();
+        int height = cameraDimensions.getHeight();
         instance.init(width, height, calibration);
     }
 

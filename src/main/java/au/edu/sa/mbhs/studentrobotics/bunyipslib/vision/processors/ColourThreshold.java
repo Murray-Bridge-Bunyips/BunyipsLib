@@ -30,9 +30,12 @@ import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point;
 import org.opencv.core.Point3;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -113,11 +116,6 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * The currently used upper threshold to apply to filter out contours.
      */
     public Supplier<Scalar> upperThreshold;
-    /**
-     * Region of Interest for this colour threshold.
-     */
-    // TODO: implement this
-    public Supplier<ImageRegion> regionOfInterest = ImageRegion::entireFrame;
 
     // Optional preferences
     private IntSupplier boxColour = () -> DEFAULT_BOX_COLOUR;
@@ -132,8 +130,11 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     private DoubleSupplier erodeSize = () -> 0;
     private DoubleSupplier dilateSize = () -> 0;
     private IntSupplier blurSizeUnnormalised = () -> 0;
+    private Supplier<ImageRegion> regionOfInterest = ImageRegion::entireFrame;
     private double lastErodeSize, lastDilateSize;
     private int lastBlurSizeUnnormalised;
+    private ImageRegion lastRegionOfInterest;
+    private Rect roi;
     private Mat erodeElement;
     private Mat dilateElement;
     private org.opencv.core.Size blurElement;
@@ -521,8 +522,13 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     }
 
     @Override
-    public void init(int width, int height, @Nullable CameraCalibration calibration) {
+    public void init(@Nullable CameraCalibration calibration) {
         reinitialiseMats();
+
+        Size cameraDimensions = getCameraDimensions();
+        assert cameraDimensions != null;
+        int width = cameraDimensions.getWidth();
+        int height = cameraDimensions.getHeight();
 
         // No point in initialising camera intrinsics if we aren't going to use PnP
         if (objectPoints == null)
@@ -596,6 +602,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
         Size cameraDimensions = getCameraDimensions();
         if (cameraDimensions == null) return;
         for (MatOfPoint contour : contours) {
+            Core.add(contour, new Scalar(roi.x, roi.y), contour);
             Point[] points = contour.toArray();
             ContourData newData = new ContourData(cameraDimensions, points, Imgproc.minAreaRect(new MatOfPoint2f(points)));
             // Min-max bounding
@@ -639,6 +646,21 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                 || blurSizeUnnormalised.getAsInt() != lastBlurSizeUnnormalised) {
             reinitialiseMats();
         }
+
+        if (lastRegionOfInterest != regionOfInterest.get()) {
+            lastRegionOfInterest = regionOfInterest.get();
+            try {
+                Method asOpenCvRectMethod = ImageRegion.class.getDeclaredMethod("asOpenCvRect", int.class, int.class);
+                asOpenCvRectMethod.setAccessible(true);
+                Size cameraDimensions = getCameraDimensions();
+                if (cameraDimensions != null)
+                    roi = (Rect) asOpenCvRectMethod.invoke(lastRegionOfInterest, cameraDimensions.getWidth(), cameraDimensions.getHeight());
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException("Failed to access an internal method, this shouldn't happen!", e);
+            }
+        }
+
+        frame = frame.submat(roi);
 
         /*
          * Converts our input mat from RGB to
@@ -733,6 +755,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                             setColor(boxColour.getAsInt());
                             setStyle(Style.STROKE);
                             setStrokeWidth(contour == biggest ? biggestContourBorderThickness.getAsInt() : contourBorderThickness.getAsInt());
+                            setAntiAlias(true);
                         }}
                 );
             }
@@ -760,6 +783,18 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                         setTextSize(30);
                     }}
             );
+
+            // Region of interest
+            Paint roiPaint = new Paint() {{
+                setColor(Color.WHITE);
+                setAntiAlias(true);
+                setStrokeCap(Paint.Cap.BUTT);
+                setStrokeWidth(1);
+            }};
+            canvas.drawLine(roi.x, roi.y, roi.x + roi.width, roi.y, roiPaint);
+            canvas.drawLine(roi.x + roi.width, roi.y, roi.x + roi.width, roi.y + roi.height, roiPaint);
+            canvas.drawLine(roi.x + roi.width, roi.y + roi.height, roi.x, roi.y + roi.height, roiPaint);
+            canvas.drawLine(roi.x, roi.y + roi.height, roi.x, roi.y, roiPaint);
 
             if (objectPoints != null && contour.getPnp().isPresent()) {
                 Pair<Mat, Mat> pnp = contour.getPnp().get();
@@ -789,6 +824,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                                 setColor(finalI == 1 ? Color.RED : finalI == 2 ? Color.GREEN : Color.BLUE);
                                 setStyle(Style.STROKE);
                                 setStrokeWidth((float) PNP_AXIS_THICKNESS);
+                                setAntiAlias(true);
                             }}
                     );
                 }

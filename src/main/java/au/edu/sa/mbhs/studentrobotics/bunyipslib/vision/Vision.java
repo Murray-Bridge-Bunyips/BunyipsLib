@@ -15,6 +15,7 @@ import org.opencv.core.Mat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -110,12 +111,12 @@ public class Vision extends BunyipsSubsystem {
     }
 
     /**
-     * Get all VisionProcessors attached to the VisionPortal.
+     * Get all VisionProcessors attached to the VisionPortal (read-only).
      */
     @NonNull
     @SuppressWarnings("rawtypes")
     public List<Processor> getAttachedProcessors() {
-        return processors;
+        return Collections.unmodifiableList(processors);
     }
 
     /**
