@@ -140,7 +140,6 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     private Supplier<ImageRegion> regionOfInterest = ImageRegion::entireFrame;
     private double lastErodeSize, lastDilateSize;
     private int lastBlurSizeUnnormalised;
-    private ImageRegion lastRegionOfInterest;
     private Rect roi;
     private Mat erodeElement;
     private Mat dilateElement;
@@ -182,7 +181,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
 
     /**
      * Sets the region of interest for this colour threshold, which will only focus detections on this area.
-     * This is an optional method.
+     * This is an optional method, and will only be updated on processor initialisation.
      *
      * @param regionOfInterest the region of interest to use, by default the entire frame
      */
@@ -559,6 +558,14 @@ public abstract class ColourThreshold extends Processor<ContourData> {
         int width = cameraDimensions.getWidth();
         int height = cameraDimensions.getHeight();
 
+        try {
+            Method asOpenCvRectMethod = ImageRegion.class.getDeclaredMethod("asOpenCvRect", int.class, int.class);
+            asOpenCvRectMethod.setAccessible(true);
+            roi = (Rect) asOpenCvRectMethod.invoke(regionOfInterest.get(), cameraDimensions.getWidth(), cameraDimensions.getHeight());
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to access an internal method, this shouldn't happen!", e);
+        }
+
         // No point in initialising camera intrinsics if we aren't going to use PnP
         if (objectPoints == null)
             return;
@@ -676,19 +683,8 @@ public abstract class ColourThreshold extends Processor<ContourData> {
             reinitialiseMats();
         }
 
-        if (lastRegionOfInterest != regionOfInterest.get()) {
-            lastRegionOfInterest = regionOfInterest.get();
-            try {
-                Method asOpenCvRectMethod = ImageRegion.class.getDeclaredMethod("asOpenCvRect", int.class, int.class);
-                asOpenCvRectMethod.setAccessible(true);
-                Size cameraDimensions = getCameraDimensions();
-                if (cameraDimensions != null)
-                    roi = (Rect) asOpenCvRectMethod.invoke(lastRegionOfInterest, cameraDimensions.getWidth(), cameraDimensions.getHeight());
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException("Failed to access an internal method, this shouldn't happen!", e);
-            }
-        }
-
+        if (roi == null)
+            return;
         frame = frame.submat(roi);
 
         /*
