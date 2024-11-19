@@ -137,6 +137,14 @@ public class Accumulator implements Localizable {
             // Should treat this pose as the new absolute pose so we set a new IMU offset
             ((PeriodicIMUAccumulator) this).setOrigin(Radians.of(newPose.heading.log()));
         }
+        if (this instanceof CustomAccumulator) {
+            // Also scan internal accumulators in composition
+            ((CustomAccumulator) this).registeredAccumulators.forEach(a -> {
+                if (a instanceof PeriodicIMUAccumulator) {
+                    ((PeriodicIMUAccumulator) a).setOrigin(Radians.of(newPose.heading.log()));
+                }
+            });
+        }
     }
 
     @NonNull

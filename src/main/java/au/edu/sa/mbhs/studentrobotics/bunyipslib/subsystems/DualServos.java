@@ -20,10 +20,10 @@ public class DualServos extends BunyipsSubsystem {
      * Tasks for DualServos.
      */
     public final Tasks tasks = new Tasks();
-    private final double LEFT_SERVO_CLOSED_POSITION;
-    private final double LEFT_SERVO_OPEN_POSITION;
-    private final double RIGHT_SERVO_CLOSED_POSITION;
-    private final double RIGHT_SERVO_OPEN_POSITION;
+    private final double leftClosed;
+    private final double leftOpen;
+    private final double rightClosed;
+    private final double rightOpen;
     private Servo left;
     private Servo right;
     private double leftServoPosition;
@@ -43,10 +43,10 @@ public class DualServos extends BunyipsSubsystem {
         if (leftClosed == leftOpen || rightClosed == rightOpen)
             throw new IllegalArgumentException("Open and close positions for either servo cannot be the same");
 
-        LEFT_SERVO_CLOSED_POSITION = leftClosed;
-        LEFT_SERVO_OPEN_POSITION = leftOpen;
-        RIGHT_SERVO_CLOSED_POSITION = rightClosed;
-        RIGHT_SERVO_OPEN_POSITION = rightOpen;
+        this.leftClosed = leftClosed;
+        this.leftOpen = leftOpen;
+        this.rightClosed = rightClosed;
+        this.rightOpen = rightOpen;
 
         if (!assertParamsNotNull(left, right)) return;
         this.left = left;
@@ -78,15 +78,15 @@ public class DualServos extends BunyipsSubsystem {
     @NonNull
     public DualServos toggle(@NonNull ServoSide servo) {
         if (servo == ServoSide.LEFT) {
-            leftServoPosition = (leftServoPosition == LEFT_SERVO_OPEN_POSITION) ? LEFT_SERVO_CLOSED_POSITION : LEFT_SERVO_OPEN_POSITION;
+            leftServoPosition = (leftServoPosition == leftOpen) ? leftClosed : leftOpen;
             return this;
         }
         if (servo == ServoSide.RIGHT) {
-            rightServoPosition = (rightServoPosition == RIGHT_SERVO_OPEN_POSITION) ? RIGHT_SERVO_CLOSED_POSITION : RIGHT_SERVO_OPEN_POSITION;
+            rightServoPosition = (rightServoPosition == rightOpen) ? rightClosed : rightOpen;
             return this;
         }
-        leftServoPosition = (leftServoPosition == LEFT_SERVO_OPEN_POSITION) ? LEFT_SERVO_CLOSED_POSITION : LEFT_SERVO_OPEN_POSITION;
-        rightServoPosition = (rightServoPosition == RIGHT_SERVO_OPEN_POSITION) ? RIGHT_SERVO_CLOSED_POSITION : RIGHT_SERVO_OPEN_POSITION;
+        leftServoPosition = (leftServoPosition == leftOpen) ? leftClosed : leftOpen;
+        rightServoPosition = (rightServoPosition == rightOpen) ? rightClosed : rightOpen;
         return this;
     }
 
@@ -99,15 +99,15 @@ public class DualServos extends BunyipsSubsystem {
     @NonNull
     public DualServos open(@NonNull ServoSide servo) {
         if (servo == ServoSide.LEFT) {
-            leftServoPosition = LEFT_SERVO_OPEN_POSITION;
+            leftServoPosition = leftOpen;
             return this;
         }
         if (servo == ServoSide.RIGHT) {
-            rightServoPosition = RIGHT_SERVO_OPEN_POSITION;
+            rightServoPosition = rightOpen;
             return this;
         }
-        leftServoPosition = LEFT_SERVO_OPEN_POSITION;
-        rightServoPosition = RIGHT_SERVO_OPEN_POSITION;
+        leftServoPosition = leftOpen;
+        rightServoPosition = rightOpen;
         return this;
     }
 
@@ -121,15 +121,15 @@ public class DualServos extends BunyipsSubsystem {
     @NonNull
     public DualServos close(@NonNull ServoSide servo) {
         if (servo == ServoSide.LEFT) {
-            leftServoPosition = LEFT_SERVO_CLOSED_POSITION;
+            leftServoPosition = leftClosed;
             return this;
         }
         if (servo == ServoSide.RIGHT) {
-            rightServoPosition = RIGHT_SERVO_CLOSED_POSITION;
+            rightServoPosition = rightClosed;
             return this;
         }
-        leftServoPosition = LEFT_SERVO_CLOSED_POSITION;
-        rightServoPosition = RIGHT_SERVO_CLOSED_POSITION;
+        leftServoPosition = leftClosed;
+        rightServoPosition = rightClosed;
         return this;
     }
 
@@ -142,11 +142,11 @@ public class DualServos extends BunyipsSubsystem {
     public boolean isOpen(@NonNull ServoSide servo) {
         switch (servo) {
             case LEFT:
-                return left.getPosition() == LEFT_SERVO_OPEN_POSITION;
+                return left.getPosition() == leftOpen;
             case RIGHT:
-                return right.getPosition() == RIGHT_SERVO_OPEN_POSITION;
+                return right.getPosition() == rightOpen;
             case BOTH:
-                return left.getPosition() == LEFT_SERVO_OPEN_POSITION && right.getPosition() == RIGHT_SERVO_OPEN_POSITION;
+                return left.getPosition() == leftOpen && right.getPosition() == rightOpen;
         }
         return false;
     }
@@ -159,8 +159,8 @@ public class DualServos extends BunyipsSubsystem {
         left.setPosition(leftServoPosition);
         right.setPosition(rightServoPosition);
         opMode(o -> o.telemetry.add("%: Left->% Right->%", this,
-                left.getPosition() == LEFT_SERVO_OPEN_POSITION ? "<font color='green'>OPEN</font>" : "<font color='yellow'>CLOSE</font>",
-                right.getPosition() == RIGHT_SERVO_OPEN_POSITION ? "<font color='green'>OPEN</font>" : "<font color='yellow'>CLOSE</font>"));
+                leftServoPosition == leftOpen ? "<font color='green'>OPEN</font>" : "<font color='yellow'>CLOSE</font>",
+                rightServoPosition == rightOpen ? "<font color='green'>OPEN</font>" : "<font color='yellow'>CLOSE</font>"));
     }
 
     /**
