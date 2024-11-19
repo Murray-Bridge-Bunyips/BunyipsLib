@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
@@ -99,6 +100,23 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         DcMotorEx dme = (DcMotorEx) motor;
         encoder = new Encoder(motor::getCurrentPosition, dme::getVelocity);
         rawTargetPosition = getCurrentPosition();
+    }
+
+    /**
+     * Utility for debugging an encoder on telemetry with current encoder/power information.
+     *
+     * @param motor     The motor to debug
+     * @param name      The name to debug as
+     * @param telemetry The telemetry to debug to
+     */
+    public static void debug(@NonNull DcMotor motor, @NonNull String name, @NonNull Telemetry telemetry) {
+        telemetry.addData(Text.format("% Position (t, port %)", name, motor.getPortNumber()), motor.getCurrentPosition());
+        telemetry.addData(Text.format("% Target (t, port %)", name, motor.getPortNumber()), motor.getTargetPosition());
+        telemetry.addData(Text.format("% Power (port %)", name, motor.getPortNumber()), motor.getPower());
+        if (motor instanceof DcMotorEx) {
+            telemetry.addData(Text.format("% Velocity (t/s, port %)", name, motor.getPortNumber()), ((DcMotorEx) motor).getVelocity());
+            telemetry.addData(Text.format("% Current (A, port %)", name, motor.getPortNumber()), ((DcMotorEx) motor).getCurrent(CurrentUnit.AMPS));
+        }
     }
 
     // hello i am Giulio

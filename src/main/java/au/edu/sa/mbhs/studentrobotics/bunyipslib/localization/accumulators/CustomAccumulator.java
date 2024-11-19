@@ -17,8 +17,8 @@ import java.util.List;
  * pose estimates.
  *
  * @author Lucas Bubner, 2024
- * @since 6.0.0
  * @see Accumulator
+ * @since 6.0.0
  */
 public abstract class CustomAccumulator extends Accumulator {
     /**
@@ -44,7 +44,7 @@ public abstract class CustomAccumulator extends Accumulator {
      * @param twist the change in position and velocity with respect to time
      */
     public abstract void accumulate(@NonNull Twist2dDual<Time> twist);
-    
+
     /**
      * Run one accumulation of the underlying accumulator to update the pose with this delta.
      * The pose and pose history on FtcDashboard will also be updated on this accumulation.

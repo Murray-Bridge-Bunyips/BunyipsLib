@@ -61,7 +61,13 @@ data class ContourData(
     var pnp: Optional<Pair<Mat, Mat>> = Optional.empty()
 ) : VisionData() {
     @JvmOverloads
-    constructor(cameraResolution: Size, points: Array<Point>, rect: RotatedRect, tvec: Mat? = null, rvec: Mat? = null) : this(
+    constructor(
+        cameraResolution: Size,
+        points: Array<Point>,
+        rect: RotatedRect,
+        tvec: Mat? = null,
+        rvec: Mat? = null
+    ) : this(
         rect,
         points.toList(),
         rect.boundingRect().area(),
