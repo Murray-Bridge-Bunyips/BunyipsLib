@@ -616,8 +616,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             this.turn = turn;
             withTimeout(Seconds.of(turn.duration).plus(errorThresholds.getStabilizationTimeout()));
             withName(Text.format("Turn %°->%°",
-                    Math.toDegrees(turn.get(0).value().heading.log()),
-                    Math.toDegrees(turn.get(turn.duration).value().heading.log())));
+                    Mathf.round(Math.toDegrees(turn.get(0).value().heading.log()), 1),
+                    Mathf.round(Math.toDegrees(turn.get(turn.duration).value().heading.log()), 1)));
         }
 
         @Override

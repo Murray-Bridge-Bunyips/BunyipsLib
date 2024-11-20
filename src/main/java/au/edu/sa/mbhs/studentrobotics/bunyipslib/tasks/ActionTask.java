@@ -75,14 +75,22 @@ public class ActionTask extends Task {
             setTimeout(task.getTimeout());
             if (action instanceof SequentialAction) {
                 SequentialAction seq = (SequentialAction) action;
-                if (seq.getInitialActions().isEmpty())
+                List<Action> initialActions = seq.getInitialActions();
+                if (initialActions.isEmpty())
                     return;
-                if (seq.getInitialActions().stream().anyMatch(a -> !(a instanceof Task))) {
+                StringBuilder name = new StringBuilder();
+                for (int i = 0; i < initialActions.size() - 1; i++) {
+                    name.append(initialActions.get(i));
+                    if (i != initialActions.size() - 2)
+                        name.append(",");
+                }
+                withName(name.toString());
+                if (initialActions.stream().anyMatch(a -> !(a instanceof Task))) {
                     setTimeout(INFINITE_TIMEOUT);
                     return;
                 }
                 setTimeout(
-                        seq.getInitialActions().stream()
+                        initialActions.stream()
                                 .filter(a -> a instanceof Task)
                                 .map(a -> ((Task) a).getTimeout())
                                 .reduce(Seconds.zero(), Measure::plus)
