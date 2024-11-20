@@ -330,8 +330,9 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
             withTimeout(Seconds.of(t.duration));
             withName(Text.format("Trajectory %->%",
-                    Geometry.toUserString(t.path.begin(1).value()),
-                    Geometry.toUserString(t.path.end(1).value())));
+                    Geometry.toUserString(t.path.begin(1).value()).replace("Pose2d", ""),
+                    Geometry.toUserString(t.path.end(1).value())).replace("Pose2d", ""));
+
         }
 
         @Override

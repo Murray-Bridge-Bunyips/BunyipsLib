@@ -169,7 +169,7 @@ object Geometry {
      */
     @JvmStatic
     fun Pose2d.toUserString(): String {
-        return "Pose2d(x=" + this.position.x + ", y=" + this.position.y + ", r=" + Math.toDegrees(this.heading.toDouble()) + "°)"
+        return "Pose2d(x=%.2f, y=%.2f, r=%.2f°)".format(this.position.x, this.position.y, Math.toDegrees(this.heading.toDouble()))
     }
 
     /**

@@ -23,7 +23,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.DynamicTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.TaskGroup;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
@@ -243,8 +242,6 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         synchronized (tasks) {
             tasks.add(newTask);
         }
-        if (newTask instanceof TaskGroup)
-            ((TaskGroup) newTask).logCreation();
         taskCount++;
         telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
         return newTask;
@@ -346,8 +343,6 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                 tasks.add(tmp.removeLast());
             }
         }
-        if (newTask instanceof TaskGroup)
-            ((TaskGroup) newTask).logCreation();
         taskCount++;
         telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> inserted %/%", newTask, getTaskTimeout(newTask), index, taskCount);
         return newTask;
@@ -455,8 +450,6 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         synchronized (tasks) {
             tasks.addLast(newTask);
         }
-        if (newTask instanceof TaskGroup)
-            ((TaskGroup) newTask).logCreation();
         taskCount++;
         telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
         return newTask;
@@ -497,8 +490,6 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         synchronized (tasks) {
             tasks.addFirst(newTask);
         }
-        if (newTask instanceof TaskGroup)
-            ((TaskGroup) newTask).logCreation();
         taskCount++;
         telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added 1/%", newTask, getTaskTimeout(newTask), taskCount);
         return newTask;

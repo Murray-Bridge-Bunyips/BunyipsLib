@@ -14,7 +14,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints.Accel
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints.Turn
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.constraints.Vel
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.Constants
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ActionTask
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ActionTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import com.acmerobotics.roadrunner.AccelConstraint
 import com.acmerobotics.roadrunner.Action
@@ -48,7 +48,7 @@ class TaskBuilder @JvmOverloads constructor(
     private var velConstraints = constants.baseVelConstraint
     private var accelConstraints = constants.baseAccelConstraint
     private var timeout: Measure<Time>? = null
-    private var name = "RoadRunner Action"
+    private var name: String? = null
     private var priority = AutonomousBunyipsOpMode.TaskPriority.NORMAL
     private var builder = TrajectoryActionBuilder(
         constants.turnActionFactory,
@@ -730,7 +730,8 @@ class TaskBuilder @JvmOverloads constructor(
      * Build the current trajectory and return it as a [Task]/[Action].
      */
     fun build() = ActionTask(builder.build()).also {
-        it.withName(name)
+        if (name != null)
+            it.withName(name)
         if (timeout != null)
             it.withTimeout(timeout!!)
         if (caller != null && caller is BunyipsSubsystem)

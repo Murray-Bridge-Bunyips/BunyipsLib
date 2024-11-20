@@ -405,8 +405,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             }
 
             withName(Text.format("Trajectory %::%",
-                    Geometry.toUserString(t.path.begin(1).value()),
-                    Geometry.toUserString(t.path.end(1).value())));
+                    Geometry.toUserString(t.path.begin(1).value()).replace("Pose2d", ""),
+                    Geometry.toUserString(t.path.end(1).value())).replace("Pose2d", ""));
         }
 
         @Override
@@ -521,8 +521,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
             withTimeout(Seconds.of(t.duration).plus(errorThresholds.getStabilizationTimeout()));
             withName(Text.format("Trajectory %->%",
-                    Geometry.toUserString(t.path.begin(1).value()),
-                    Geometry.toUserString(t.path.end(1).value())));
+                    Geometry.toUserString(t.path.begin(1).value()).replace("Pose2d", ""),
+                    Geometry.toUserString(t.path.end(1).value())).replace("Pose2d", ""));
         }
 
         @Override
