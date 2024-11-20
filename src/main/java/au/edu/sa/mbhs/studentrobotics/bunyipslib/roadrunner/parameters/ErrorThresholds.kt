@@ -36,7 +36,7 @@ data class ErrorThresholds(
          */
         @JvmField
         val DEFAULT = ErrorThresholds(
-            Seconds.of(1.0),
+            Seconds.of(0.5),
             Inches.of(2.0), InchesPerSecond.of(0.5),
             Degrees.of(1.0), DegreesPerSecond.of(5.0)
         )
