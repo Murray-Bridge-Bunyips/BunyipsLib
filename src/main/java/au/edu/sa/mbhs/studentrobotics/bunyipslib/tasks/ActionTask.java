@@ -25,7 +25,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
  * into a task at it's definition is more efficient.
  * <p>
  * Tasks built with RoadRunner drives, despite being represented with Actions are internally composed of {@link Task} instances,
- * so {@link SequentialAction} actions will also try to be unwrapped.
+ * so {@link SequentialAction} actions will also try to be unwrapped, with their full name available at init. This name
+ * is then dynamically updated to the currently running task name.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
@@ -79,9 +80,9 @@ public class ActionTask extends Task {
                 if (initialActions.isEmpty())
                     return;
                 StringBuilder name = new StringBuilder();
-                for (int i = 0; i < initialActions.size() - 1; i++) {
+                for (int i = 0; i < initialActions.size(); i++) {
                     name.append(initialActions.get(i));
-                    if (i != initialActions.size() - 2)
+                    if (i != initialActions.size() - 1)
                         name.append(",");
                 }
                 withName(name.toString());
