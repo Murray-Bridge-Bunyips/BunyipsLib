@@ -74,30 +74,33 @@ public class ActionTask extends Task {
         ifTask(task -> {
             withName(task.toString());
             setTimeout(task.getTimeout());
-            if (action instanceof SequentialAction) {
-                SequentialAction seq = (SequentialAction) action;
-                List<Action> initialActions = seq.getInitialActions();
-                if (initialActions.isEmpty())
-                    return;
-                StringBuilder name = new StringBuilder();
-                for (int i = 0; i < initialActions.size(); i++) {
-                    name.append(initialActions.get(i));
-                    if (i != initialActions.size() - 1)
-                        name.append(",");
-                }
-                withName(name.toString());
-                if (initialActions.stream().anyMatch(a -> !(a instanceof Task))) {
-                    setTimeout(INFINITE_TIMEOUT);
-                    return;
-                }
-                setTimeout(
-                        initialActions.stream()
-                                .filter(a -> a instanceof Task)
-                                .map(a -> ((Task) a).getTimeout())
-                                .reduce(Seconds.zero(), Measure::plus)
-                );
-            }
         });
+        if (action instanceof SequentialAction) {
+            SequentialAction seq = (SequentialAction) action;
+            List<Action> initialActions = seq.getInitialActions();
+            if (initialActions.isEmpty())
+                return;
+            // Set the name to the combination of all the inner actions
+            StringBuilder name = new StringBuilder();
+            for (int i = 0; i < initialActions.size(); i++) {
+                name.append(initialActions.get(i));
+                if (i != initialActions.size() - 1)
+                    name.append(",");
+            }
+            withName(name.toString());
+            // Try to set a timeout based on the sum of all the inner task timeouts, unless they are not tasks then
+            // we just use an infinite timeout
+            if (initialActions.stream().anyMatch(a -> !(a instanceof Task))) {
+                setTimeout(INFINITE_TIMEOUT);
+                return;
+            }
+            setTimeout(
+                    initialActions.stream()
+                            .filter(a -> a instanceof Task)
+                            .map(a -> ((Task) a).getTimeout())
+                            .reduce(Seconds.zero(), Measure::plus)
+            );
+        }
     }
 
     @Override
