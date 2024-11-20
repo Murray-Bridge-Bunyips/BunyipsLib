@@ -52,6 +52,7 @@ public class ActionTask extends Task {
                 throw new RuntimeException("Failed to access an internal field, this shouldn't happen!", e);
             }
             assert actions != null;
+            if (actions.isEmpty()) return;
             Action ac = actions.get(0);
             if (ac instanceof Task) {
                 t.accept((Task) ac);
@@ -74,15 +75,17 @@ public class ActionTask extends Task {
             setTimeout(task.getTimeout());
             if (action instanceof SequentialAction) {
                 SequentialAction seq = (SequentialAction) action;
+                if (seq.getInitialActions().isEmpty())
+                    return;
                 if (seq.getInitialActions().stream().anyMatch(a -> !(a instanceof Task))) {
                     setTimeout(INFINITE_TIMEOUT);
                     return;
                 }
                 setTimeout(
-                    seq.getInitialActions().stream()
-                        .filter(a -> a instanceof Task)
-                        .map(a -> ((Task) a).getTimeout())
-                        .reduce(Seconds.zero(), Measure::plus)
+                        seq.getInitialActions().stream()
+                                .filter(a -> a instanceof Task)
+                                .map(a -> ((Task) a).getTimeout())
+                                .reduce(Seconds.zero(), Measure::plus)
                 );
             }
         });
