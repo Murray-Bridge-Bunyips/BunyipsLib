@@ -35,8 +35,9 @@ public abstract class TaskGroup extends Task {
             throw new IllegalArgumentException(getClass().getSimpleName() + " created with no tasks.");
         }
         StringBuilder taskNames = new StringBuilder();
+        taskNames.append("[");
         taskNames.append(getClass().getSimpleName().replace("TaskGroup", ""));
-        taskNames.append(": ");
+        taskNames.append("] ");
         for (int i = 0; i < tasks.length - 1; i++) {
             taskNames.append(tasks[i]).append(",");
         }
