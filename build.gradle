@@ -52,7 +52,10 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 29
+    buildFeatures {
+        buildConfig = true
+    }
+    compileSdkVersion 30
     defaultConfig {
         minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion
@@ -64,8 +67,8 @@ android {
         buildConfigField "String", "SDK_VER", '"' + project.sdk_version + '"'
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     testOptions {
         unitTests.all {
@@ -89,10 +92,6 @@ tasks.dokkaHtml.configure {
                             DokkaConfiguration.Visibility.PROTECTED,
                     ]
             )
-            perPackageOption {
-                matchingRegex.set("org\\.murraybridgebunyips\\.bunyipslib\\.example\\..*")
-                suppress.set(true)
-            }
         }
     }
 }

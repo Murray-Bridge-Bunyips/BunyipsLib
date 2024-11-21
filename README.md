@@ -1,7 +1,7 @@
 ![BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/.github/blob/main/bunyipslib_banner.png)
 [![GitHub Release](https://img.shields.io/github/v/release/Murray-Bridge-Bunyips/BunyipsLib?color=darkgreen)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/releases/latest)
 [![GitHub commits since latest release](https://img.shields.io/github/commits-since/Murray-Bridge-Bunyips/BunyipsLib/latest)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/commits/master/)
-[![Recommended FTC SDK version](https://img.shields.io/static/v1?label=sdk&message=v10.1&color=orange)](https://github.com/FIRST-Tech-Challenge/FtcRobotController/tree/v10.1)
+[![Recommended FTC SDK version](https://img.shields.io/static/v1?label=sdk&message=v10.1.1&color=orange)](https://github.com/FIRST-Tech-Challenge/FtcRobotController/tree/v10.1.1)
 [![View Changelog](https://img.shields.io/static/v1?label=changelog&message=View&color=informational)](/CHANGELOG.md)<br>
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Murray-Bridge-Bunyips/BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/pulse/monthly)
 [![CodeFactor](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib/badge)](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib)<br>

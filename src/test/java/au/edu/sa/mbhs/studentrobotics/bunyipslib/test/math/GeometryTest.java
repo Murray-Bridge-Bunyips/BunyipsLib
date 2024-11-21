@@ -100,7 +100,7 @@ class GeometryTest {
     @Test
     void testToUserString() {
         Pose2d pose = new Pose2d(86.512, 44.123, Math.PI);
-        assertEquals("Pose2d(x=86.512, y=44.123, r=180.0°)", Geometry.toUserString(pose));
+        assertEquals("Pose2d(x=86.5, y=44.1, r=180.0°)", Geometry.toUserString(pose));
     }
 
     @Test
