@@ -2,6 +2,129 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v6.0.0 (2024-11-21)
+
+Major library rewrites integrating RoadRunner v1.0 and project restructure.
+
+*These changelog notes do not cover all BunyipsLib changes due to the size! For further information, see the API docs
+and view the Wiki when constructed. The Wiki, when ready, will cover all operations only following BunyipsLib >=
+v6.0.0.*
+
+### Changes
+
+**BunyipsLib v6.0.0 is fully backwards-incompatible with earlier versions of BunyipsLib, with over 230 commits being
+made since the last release. All old code using BunyipsLib must be migrated with the new namespace, classes, and
+operations.**
+
+- FTC SDK v10.1.1 integration
+    - BunyipsLib now uses Java 17 under the hood due to the SDK upgrades
+    - Android Studio Ladybug and supported Gradle must be used in order to use BunyipsLib (SDK v10.1.1)
+- Namespace updated from `org.murraybridgebunyips.bunyipslib` to `au.edu.sa.mbhs.studentrobotics.bunyipslib`
+    - This includes the moving of several files into easier, modular directories
+    - It is recommended to simply delete all BunyipsLib + RoadRunner related imports and reimport them
+- Migration of RoadRunner v0.5.6 to RoadRunner v1.0.0
+    - All previous implementations of RoadRunner have been rewritten to use the new RoadRunner v1.0 ecosystem
+    - API surface has been reworked, a system of abstractions now represents pose estimation through the `Localizer`,
+      `Accumulator` and `Moveable` interfaces
+    - Drive instances have been simplified down to only use one for different localizers (two types, two simple versions
+      equaling 4 classes)
+    - Tuning process has been kept similar to how it was done before (through a single OpMode), but now uses the
+      RoadRunner v1.0 tuning process
+    - RoadRunner processes such as the static constants has been revamped into their respective data classes (similar to
+      how it was done in BunyipsLib 5)
+    - Trajectories are now created from the drive instances, rather than using an external interface (previously
+      `RoadRunner`), with full WPIUnit support baked in through the `TaskBuilder`
+    - The drive subsystems now fully follow BunyipsLib convention for `Task` systems, where the RoadRunner `Action` is
+      now just a superclass of `Task`
+    - Some removed functionality for geometry classes in RoadRunner v1.0.0 is available as part of the `Geometry` util
+      class
+    - Several other breaking changes have been made through the integration of RoadRunner v1.0.0
+    - Further information will be maintained on the Wiki when it is written regarding RoadRunner, as there are many more
+      changes not specified here
+- `PurePursuit` has been removed
+    - The RoadRunner utilities and new path following mode work equivalently to the old "Pure Pursuit" of BunyipsLib, so
+      it has been removed
+    - See the Mecanum path-following mode (on the `MecanumGains` object) to activate a displacement trajectory mode
+- Several methods have been renamed and appended for brevity and clarity
+    - Some of these changes were made for Kotlin interoperability, such as having lambda parameters last to support the
+      SAM interface pattern
+    - See the relevant API docs of the classes to assist in migration
+- `Scheduler` has had a general rewrite to reduce code complexity and resolve some operational bugs
+- Several Cartesian conversion methods have been removed in favour of using the Robot Coordinate System with +X forward
+    - This reduces the confusion between conversions on the various new RoadRunner geometry utilities
+- `SystemController` is now a functional interface and is used across BunyipsLib as the base controller
+- This opens the range of system controllers that can be made and used
+- `Motor` is now split into a `SimpleRotator` extension, to allow for CRServos to support motor caching techniques
+- `addTask()` and variants of `AutonomousBunyipsOpMode` has been replaced with `add()`
+    - Other alias utilities including `run()`, `defer()`, and `wait()` (not of Object) now exist to accompany `add()
+- ColourThreshold now supports all the features of the built-in SDK colour processor with PnP support too
+    - This includes ContourData being changed to support the new data types
+- Several other fixes, optimisations, and API surface redesigns!
+
+### Bug fixes
+
+- `getHardware()` of `RobotConfig` now supports getting non-HardwareMap devices (such as the `RawEncoder` from
+  RoadRunner)
+- `HoldableActuator` now sets the motor to BRAKE by default
+- `Task.after()` is no longer bugged in execution order (used to act like a `then()`)
+- Fix a missing `TurnTask` overload
+- HoldableActuator no longer auto-resets the encoder on the arm on init as it discards known information
+- The target position of `Motor` is now stored locally instead of writing to the Lynx firmware
+- `BoundedAccumulator` (previously `BoundedLocalization`) now clamps velocity when a clamping operation is in progress
+- The `AprilTagPoseEstimator` has been reimplemented as the `AprilTagRelocalizingAccumulator`, with the bugs from the
+  previous version fixed (360s, weird rotations)
+- The `Filter.Kalman` now exposes more methods to deal with continuous vs discrete inputs
+- Patch initialisation issue for `MultiColourThreshold`
+- Methods on the `Switch` subsystem have been renamed for consistency with clamping bounds
+- `Controls` string representation no longer breaks the Driver Station telemetry
+- `Motor` and `Encoder` readings no longer are linked
+    - Ensure motors are running and reading the correct directions, as a FORWARD encoder may not mean it is actually
+      moving forward on the motor
+    - By default this change should not affect most hardware but brings consistency to an unnecessarily linked system
+- Fix defective `DifferentialDriveTask` passing in the wrong vector
+
+### Other features
+
+- 182+ Unit tests have been integrated into BunyipsLib
+    - These tests ensure the operations of utilities are working properly, increasing the robustness of the library
+    - Further unit tests will be created for code that should need such a test
+- MeepMeep is now a BunyipsLib-standard application built-in
+    - To use it, add MeepMeep code in the `MeepMeepRunner` file, which has full support for the RoadRunner `TaskBuilder`
+      and WPIUnits
+    - This integration allows for faster path generation, all built into BunyipsLib without needing to perform any
+      additional installation
+- RobotConfig now has a utility `getLazyImu` for getting the RoadRunner LazyImu instance used for the drive subsystems
+- Scheduler has split the task builder `inTime` and `finishIf` constructors into their own mini-builder, where calling
+  finishIf twice will compose an OR condition
+- `HardwareTester` OpMode, which allows the scanning of `HardwareMap` to provide simple controls on nearly every
+  hardware device without needing to build code
+    - This is a new built-in OpMode that sits at the bottom of the TeleOp OpMode list, and is useful for rapid testing
+      of actuators/devices
+- Several Kotlin integrations, including some classes being rewritten in Kotlin to support useful infix and extension
+  functions
+- Nullability throughout BunyipsLib has been considered and all nullable/non-nullable references have been annotated
+  with `@NonNull` or `@Nullable`
+- `Encoder` now uses a delta approach to track position, allowing new known encoder positions to be set on the fly
+- HoldableActuator can now map `TouchSensor` instances to reset the encoder to a specific position when the switch is
+  touched
+- New `Condition` class which handles rising and falling edge boolean detection (used internally by `Scheduler`)
+- `DynIMU` class to support delegating an IMU instance or using a 'null' IMU
+- Improvements to the `TelemetryMenu` children options
+- RoadRunner packets can now be synchronised to send at a single time using the new `Dashboard` util
+- New geometry utilities available as extension functions of `Mathf`
+- User setpoint control of `HoldableActuator` now provides delta time automatically through the `Function` provided
+- `HoldableActuator` now has several safety features including steady-state error detection, stall current detection,
+  and improved operator safety
+- Field-centric origins can now be set on field-centric drive tasks to set a new origin of rotation
+    - This makes it so you no longer have to reset the odometry to zero in order to zero out the rotation origin
+- `InvertibleTouchSensor`, which can invert a touch sensor's readings if they are pressed when not pressed and vice
+  versa
+- Nominal voltage compensation features for `Motor`
+- Telemetry updates and refinements for Autonomous operations
+- `resetDebounce()` method for `Controller` to reset the initial state for debounce detection
+- New INTO THE DEEP processors for `NeutralSample`, `RedSample`, and `BlueSample`
+- Plus more additional valuable features!
+
 ## v5.1.1 (2024-10-16)
 
 Hotfixes for AprilTagPoseEstimator.
