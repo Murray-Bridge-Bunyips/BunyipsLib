@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 /**
@@ -21,7 +23,7 @@ public class InvertibleTouchSensor implements TouchSensor {
      *
      * @param sensor the sensor to invert
      */
-    public InvertibleTouchSensor(TouchSensor sensor) {
+    public InvertibleTouchSensor(@androidx.annotation.NonNull TouchSensor sensor) {
         this.sensor = sensor;
     }
 
@@ -45,16 +47,19 @@ public class InvertibleTouchSensor implements TouchSensor {
         return inverted != sensor.isPressed();
     }
 
+    @androidx.annotation.NonNull
     @Override
     public Manufacturer getManufacturer() {
         return sensor.getManufacturer();
     }
 
+    @androidx.annotation.NonNull
     @Override
     public String getDeviceName() {
         return sensor.getDeviceName();
     }
 
+    @NonNull
     @Override
     public String getConnectionInfo() {
         return sensor.getConnectionInfo();

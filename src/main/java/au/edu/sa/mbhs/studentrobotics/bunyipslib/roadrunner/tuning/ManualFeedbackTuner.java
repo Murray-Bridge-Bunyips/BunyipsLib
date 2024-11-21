@@ -35,13 +35,11 @@ public final class ManualFeedbackTuner extends LinearOpMode {
     @Override
     public void runOpMode() {
         Localizer localizer = drive.getLocalizer();
-        if (localizer instanceof TwoWheelLocalizer) {
-            TwoWheelLocalizer l = (TwoWheelLocalizer) localizer;
+        if (localizer instanceof TwoWheelLocalizer l) {
             if (l.params.perpXTicks == 0 && l.params.parYTicks == 0) {
                 throw new RuntimeException("Odometry wheel locations not set! Run AngularRampLogger to tune them.");
             }
-        } else if (localizer instanceof ThreeWheelLocalizer) {
-            ThreeWheelLocalizer l = (ThreeWheelLocalizer) localizer;
+        } else if (localizer instanceof ThreeWheelLocalizer l) {
             if (l.params.perpXTicks == 0 && l.params.par0YTicks == 0 && l.params.par1YTicks == 1) {
                 throw new RuntimeException("Odometry wheel locations not set! Run AngularRampLogger to tune them.");
             }

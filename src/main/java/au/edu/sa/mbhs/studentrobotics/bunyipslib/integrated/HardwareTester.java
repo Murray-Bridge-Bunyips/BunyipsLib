@@ -70,7 +70,7 @@ public final class HardwareTester extends LinearOpMode {
     private MovingAverageTimer timer;
 
     @Override
-    @SuppressWarnings({"unchecked", "ExtractMethodRecommender"})
+    @SuppressWarnings({"unchecked", "ExtractMethodRecommender", "DataFlowIssue"})
     public void runOpMode() {
         timer = new MovingAverageTimer();
         telemetry = new DualTelemetry(this, timer, "<b>HardwareTester</b>");
@@ -98,8 +98,7 @@ public final class HardwareTester extends LinearOpMode {
                 TelemetryMenu.StaticItem connInfo = new TelemetryMenu.StaticItem("Connection Info: " + device.getConnectionInfo());
                 dev.addChildren(deviceType, connInfo);
 
-                if (device instanceof DcMotorSimple) {
-                    DcMotorSimple motor = (DcMotorSimple) device;
+                if (device instanceof DcMotorSimple motor) {
                     // First, we map DcMotorSimple interfaces (including CRServos) to supply power and change direction
                     TelemetryMenu.InteractiveToggle powerControl = new TelemetryMenu.InteractiveToggle("Power", false, a -> {
                         motor.setPower(a ? -gamepad1.left_stick_y : 0);
@@ -182,9 +181,8 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(enabledControl, positionControl, setToZero, setToOne, directionControl);
                 }
 
-                if (device instanceof TouchSensorMultiplexer) {
+                if (device instanceof TouchSensorMultiplexer mux) {
                     // TouchSensorMultiplexers are simple and only require a list of touch sensor states
-                    TouchSensorMultiplexer mux = (TouchSensorMultiplexer) device;
                     for (int i = 0; i < mux.getSwitches(); i++) {
                         int finalI = i;
                         TelemetryMenu.DynamicItem touchSensor = new TelemetryMenu.DynamicItem("Channel " + i,
@@ -193,17 +191,15 @@ public final class HardwareTester extends LinearOpMode {
                     }
                 }
 
-                if (device instanceof AnalogInput) {
+                if (device instanceof AnalogInput analog) {
                     // AnalogInputs can be represented by their voltage readings
-                    AnalogInput analog = (AnalogInput) device;
                     TelemetryMenu.DynamicItem voltage = new TelemetryMenu.DynamicItem("Voltage (V)", analog::getVoltage);
                     TelemetryMenu.DynamicItem maxVoltage = new TelemetryMenu.DynamicItem("Max Voltage (V)", analog::getMaxVoltage);
                     dev.addChildren(voltage, maxVoltage);
                 }
 
-                if (device instanceof DigitalChannel) {
+                if (device instanceof DigitalChannel digital) {
                     // DigitalChannels are represented by their state and input/output mode
-                    DigitalChannel digital = (DigitalChannel) device;
                     TelemetryMenu.InteractiveToggle state = new TelemetryMenu.InteractiveToggle("State", false, a -> {
                         digital.setState(a);
                         return digital.getState();
@@ -216,8 +212,7 @@ public final class HardwareTester extends LinearOpMode {
                 }
 
                 // OpticalDistanceSensors are simply LightSensors so we will use the same interface
-                if (device instanceof LightSensor) {
-                    LightSensor light = (LightSensor) device;
+                if (device instanceof LightSensor light) {
                     TelemetryMenu.InteractiveToggle ledControl = new TelemetryMenu.InteractiveToggle("LED", false, a -> {
                         light.enableLed(a);
                         return a;
@@ -228,17 +223,15 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(lightLevel, rawLightLevel, rawLightLevelMax);
                 }
 
-                if (device instanceof TouchSensor) {
+                if (device instanceof TouchSensor touch) {
                     // Touch sensors are only one state and are usually the most used digital sensor
-                    TouchSensor touch = (TouchSensor) device;
                     TelemetryMenu.DynamicItem state = new TelemetryMenu.DynamicItem("Pressed", touch::isPressed);
                     TelemetryMenu.DynamicItem value = new TelemetryMenu.DynamicItem("Value", touch::getValue);
                     dev.addChildren(state, value);
                 }
 
-                if (device instanceof PWMOutput) {
+                if (device instanceof PWMOutput pwm) {
                     // Adjusting PWM is a bit sketchy, but we can display the current PWM value here
-                    PWMOutput pwm = (PWMOutput) device;
                     TelemetryMenu.DynamicItem pwmValue = new TelemetryMenu.DynamicItem("PWM Output Time", pwm::getPulseWidthOutputTime);
                     TelemetryMenu.DynamicItem pwmPeriod = new TelemetryMenu.DynamicItem("PWM Period", pwm::getPulseWidthPeriod);
                     dev.addChildren(pwmValue, pwmPeriod);
@@ -246,8 +239,7 @@ public final class HardwareTester extends LinearOpMode {
 
                 // Raw I2C devices are partially useless to us in the HardwareTest (values don't mean much), so we can skip them.
                 // We'll also try to initialise the IMU with default parameters for testing purposes
-                if (device instanceof IMU) {
-                    IMU imu = (IMU) device;
+                if (device instanceof IMU imu) {
                     // Assuming the Control Hub is just sitting on the robot naturally forward
                     imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP,
                             RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)));
@@ -258,8 +250,7 @@ public final class HardwareTester extends LinearOpMode {
                 }
 
                 // We can also initialise the BNO055IMU type since it has extra data compared to simply the universal IMU
-                if (device instanceof BNO055IMU) {
-                    BNO055IMU imu = (BNO055IMU) device;
+                if (device instanceof BNO055IMU imu) {
                     // We can initialise the IMU with default parameters for testing purposes
                     BNO055IMU.Parameters params = new BNO055IMU.Parameters();
                     params.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -287,9 +278,8 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(notice, systemStatus, calibStatus, error, isSystemCalibrated, isGyroCalibrated, isAccelerometerCalibrated, isMagnetometerCalibrated, angularOrientation, position, velocity, acceleration, overallAcceleration, linearAcceleration, gravity, angVel, temperature, magneticFlux);
                 }
 
-                if (device instanceof LynxModule) {
+                if (device instanceof LynxModule lynx) {
                     // Control and Expansion Hubs
-                    LynxModule lynx = (LynxModule) device;
                     TelemetryMenu.DynamicItem firmwareVersion = new TelemetryMenu.DynamicItem("Firmware Version", lynx::getFirmwareVersionString);
                     TelemetryMenu.DynamicItem current = new TelemetryMenu.DynamicItem("Current (A)", () -> lynx.getCurrent(CurrentUnit.AMPS));
                     TelemetryMenu.DynamicItem gpioBusCurrent = new TelemetryMenu.DynamicItem("GPIO Bus Current (A)", () -> lynx.getGpioBusCurrent(CurrentUnit.AMPS));
@@ -307,16 +297,14 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(firmwareVersion, current, gpioBusCurrent, i2cBusCurrent, inputVoltage, auxVoltage, temperature, ledPattern, applyPattern, reset);
                 }
 
-                if (device instanceof DistanceSensor) {
+                if (device instanceof DistanceSensor distance) {
                     // Distance sensors are simple and only require a distance reading
-                    DistanceSensor distance = (DistanceSensor) device;
                     TelemetryMenu.DynamicItem distanceValue = new TelemetryMenu.DynamicItem("Distance (cm)", () -> distance.getDistance(DistanceUnit.CM));
                     dev.addChild(distanceValue);
                 }
 
-                if (device instanceof ColorSensor) {
+                if (device instanceof ColorSensor color) {
                     // Display all the color sensor values
-                    ColorSensor color = (ColorSensor) device;
                     TelemetryMenu.InteractiveToggle ledControl = new TelemetryMenu.InteractiveToggle("LED", false, a -> {
                         color.enableLed(a);
                         return a;
@@ -328,9 +316,8 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(ledControl, red, green, blue, alpha);
                 }
 
-                if (device instanceof LED) {
+                if (device instanceof LED led) {
                     // LEDs are simple and only require a state
-                    LED led = (LED) device;
                     TelemetryMenu.InteractiveToggle state = new TelemetryMenu.InteractiveToggle("State", false, a -> {
                         led.enable(a);
                         return led.isLightOn();
@@ -338,9 +325,8 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChild(state);
                 }
 
-                if (device instanceof RevBlinkinLedDriver) {
+                if (device instanceof RevBlinkinLedDriver blinkin) {
                     // We can also control Blinkin devices
-                    RevBlinkinLedDriver blinkin = (RevBlinkinLedDriver) device;
                     TelemetryMenu.StaticClickableOption off = new TelemetryMenu.StaticClickableOption("Turn Off", () -> blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK));
                     TelemetryMenu.StaticClickableOption white = new TelemetryMenu.StaticClickableOption("To White", () -> blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE));
                     TelemetryMenu.EnumOption pattern = new TelemetryMenu.EnumOption("Pattern Select", RevBlinkinLedDriver.BlinkinPattern.values());
@@ -348,16 +334,14 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(off, white, pattern, applicator);
                 }
 
-                if (device instanceof AccelerationSensor) {
+                if (device instanceof AccelerationSensor accel) {
                     // Other sensors we just add their data anyways since they may be useful...
-                    AccelerationSensor accel = (AccelerationSensor) device;
                     TelemetryMenu.DynamicItem status = new TelemetryMenu.DynamicItem("Status", accel::status);
                     TelemetryMenu.DynamicItem acceleration = new TelemetryMenu.DynamicItem("Acceleration (g)", accel::getAcceleration);
                     dev.addChildren(acceleration);
                 }
 
-                if (device instanceof CompassSensor) {
-                    CompassSensor compass = (CompassSensor) device;
+                if (device instanceof CompassSensor compass) {
                     TelemetryMenu.DynamicItem status = new TelemetryMenu.DynamicItem("Status", compass::status);
                     TelemetryMenu.DynamicItem direction = new TelemetryMenu.DynamicItem("Direction (deg)", compass::getDirection);
                     TelemetryMenu.StaticClickableOption measurement = new TelemetryMenu.StaticClickableOption("Measurement Mode", () -> compass.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE));
@@ -366,8 +350,7 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(direction);
                 }
 
-                if (device instanceof GyroSensor) {
-                    GyroSensor gyro = (GyroSensor) device;
+                if (device instanceof GyroSensor gyro) {
                     // GyroSensor has warnings of exceptions so we'll just ignore them and return null if they show up
                     Function<Supplier<?>, ?> ignoreSupport = (r) -> {
                         Object res = null;
@@ -402,8 +385,7 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(status, calibrate, resetZIntegrator, calibrating, heading, rotationFraction, rawX, rawY, rawZ);
                 }
 
-                if (device instanceof IrSeekerSensor) {
-                    IrSeekerSensor ir = (IrSeekerSensor) device;
+                if (device instanceof IrSeekerSensor ir) {
                     TelemetryMenu.DynamicItem signalStrength = new TelemetryMenu.DynamicItem("Signal Strength", ir::getStrength);
                     TelemetryMenu.DynamicItem signalAngle = new TelemetryMenu.DynamicItem("Signal Angle", ir::getAngle);
                     TelemetryMenu.DynamicItem signalDetectedThreshold = new TelemetryMenu.DynamicItem("Signal Detected Threshold", ir::getSignalDetectedThreshold);
@@ -423,23 +405,20 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(signalStrength, signalAngle, signalDetectedThreshold, signalDetected, mode, sensorMenu);
                 }
 
-                if (device instanceof UltrasonicSensor) {
-                    UltrasonicSensor ultra = (UltrasonicSensor) device;
+                if (device instanceof UltrasonicSensor ultra) {
                     TelemetryMenu.DynamicItem status = new TelemetryMenu.DynamicItem("Status", ultra::status);
                     TelemetryMenu.DynamicItem ultrasonicLevel = new TelemetryMenu.DynamicItem("Ultrasonic Level", ultra::getUltrasonicLevel);
                     dev.addChildren(status, ultrasonicLevel);
                 }
 
-                if (device instanceof VoltageSensor) {
-                    VoltageSensor voltage = (VoltageSensor) device;
+                if (device instanceof VoltageSensor voltage) {
                     TelemetryMenu.DynamicItem voltageValue = new TelemetryMenu.DynamicItem("Voltage (V)", voltage::getVoltage);
                     dev.addChild(voltageValue);
                 }
 
                 // We're also able to add some info based on the SparkFun OTOS, since we can actually parse the I2C
                 // without doing some magic
-                if (device instanceof SparkFunOTOS) {
-                    SparkFunOTOS otos = (SparkFunOTOS) device;
+                if (device instanceof SparkFunOTOS otos) {
                     TelemetryMenu.MenuElement warnings = new TelemetryMenu.MenuElement("Warnings", false);
                     TelemetryMenu.DynamicItem warnTilt = new TelemetryMenu.DynamicItem("Tilt Warning", () -> otos.getStatus().warnTiltAngle);
                     TelemetryMenu.DynamicItem warnTrack = new TelemetryMenu.DynamicItem("Tracking Warning", () -> otos.getStatus().warnOpticalTracking);
@@ -479,21 +458,18 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(warnings, linearScalar, angularScalar, selfTest, calibrateIMU, imuCalibrationStatus, resetTracking, posX, posY, posTheta, velX, velY, velTheta, accX, accY, accTheta);
                 }
 
-                if (device instanceof OctoQuad) {
-                    OctoQuad octo = (OctoQuad) device;
+                if (device instanceof OctoQuad octo) {
                     TelemetryMenu.DynamicItem position = new TelemetryMenu.DynamicItem("Positions", () -> Arrays.toString(octo.readAllPositions()));
                     TelemetryMenu.DynamicItem velocity = new TelemetryMenu.DynamicItem("Velocities", () -> Arrays.toString(octo.readAllVelocities()));
                     dev.addChildren(position, velocity);
                 }
 
-                if (device instanceof Gyroscope) {
-                    Gyroscope gyro = (Gyroscope) device;
+                if (device instanceof Gyroscope gyro) {
                     TelemetryMenu.DynamicItem angularVelocity = new TelemetryMenu.DynamicItem("Angular Velocity (deg/s)", () -> gyro.getAngularVelocity(AngleUnit.DEGREES));
                     dev.addChild(angularVelocity);
                 }
 
-                if (device instanceof OrientationSensor) {
-                    OrientationSensor sensor = (OrientationSensor) device;
+                if (device instanceof OrientationSensor sensor) {
                     TelemetryMenu.DynamicItem ori = new TelemetryMenu.DynamicItem("Orientation (ext, XYZ, deg)", () -> sensor.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES));
                     dev.addChild(ori);
                 }

@@ -34,6 +34,7 @@ public class AlignToContourTask extends Task {
     /**
      * Default controller to use for the rotation axis.
      */
+    @NonNull
     public static PIDFController DEFAULT_CONTROLLER = new PDController(1, 0.0001);
 
     private final Moveable drive;

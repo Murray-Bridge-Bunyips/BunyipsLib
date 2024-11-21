@@ -74,14 +74,17 @@ public class MoveToAprilTagTask extends Task {
     /**
      * Default X controller
      */
+    @NonNull
     public static PDController DEFAULT_X_CONTROLLER = new PDController(1, 0.0001);
     /**
      * Default Y controller
      */
+    @NonNull
     public static PDController DEFAULT_Y_CONTROLLER = new PDController(1, 0.0001);
     /**
      * Default R controller
      */
+    @NonNull
     public static PDController DEFAULT_R_CONTROLLER = new PDController(0.1, 0.0001);
 
     private final Moveable drive;
@@ -259,7 +262,7 @@ public class MoveToAprilTagTask extends Task {
         List<AprilTagData> data = aprilTag.getData();
 
         Optional<AprilTagData> target = data.stream().filter(t -> TARGET_TAG == -1 || t.getId() == TARGET_TAG).findFirst();
-        if (!target.isPresent() || !target.get().isInLibrary()) {
+        if (target.isEmpty() || !target.get().isInLibrary()) {
             drive.setPower(vel);
             return;
         }

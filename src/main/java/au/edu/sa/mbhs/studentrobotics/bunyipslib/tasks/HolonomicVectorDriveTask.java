@@ -57,14 +57,17 @@ public class HolonomicVectorDriveTask extends ForeverTask {
     /**
      * Default controller to use for the x (forward) axis.
      */
+    @NonNull
     public static SystemController DEFAULT_X_CONTROLLER = new PController(0.1);
     /**
      * Default controller to use for the y (strafe) axis.
      */
+    @NonNull
     public static SystemController DEFAULT_Y_CONTROLLER = new PController(0.1);
     /**
      * Default controller to use for the r (rotation) axis.
      */
+    @NonNull
     public static SystemController DEFAULT_R_CONTROLLER = new PDController(1, 0.0001);
 
     private final Moveable drive;
@@ -248,7 +251,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      *
      * @param fcOffset the offset angle (usually the current robot heading) to add to the vector heading rotation
      */
-    public void setFieldCentricOffset(Measure<Angle> fcOffset) {
+    public void setFieldCentricOffset(@NonNull Measure<Angle> fcOffset) {
         this.fcOffset = Rotation2d.exp(fcOffset.in(Radians));
     }
 
@@ -259,7 +262,7 @@ public class HolonomicVectorDriveTask extends ForeverTask {
      *
      * @param drivePose the current pose of the drive that will be used to zero out the field centric origin
      */
-    public void resetFieldCentricOrigin(Pose2d drivePose) {
+    public void resetFieldCentricOrigin(@NonNull Pose2d drivePose) {
         fcOffset = drivePose.heading;
     }
 

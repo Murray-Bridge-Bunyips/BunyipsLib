@@ -357,8 +357,7 @@ public final class Text {
         public boolean equals(Object obj) {
             if (obj == this) return true;
             if (obj.toString().equals(html.toString())) return true;
-            if (!(obj instanceof HtmlBuilder)) return false;
-            HtmlBuilder other = (HtmlBuilder) obj;
+            if (!(obj instanceof HtmlBuilder other)) return false;
             return html.toString().equals(other.html.toString());
         }
 

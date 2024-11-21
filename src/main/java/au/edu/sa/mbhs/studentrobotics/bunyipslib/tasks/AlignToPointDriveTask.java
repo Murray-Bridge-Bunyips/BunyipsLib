@@ -41,6 +41,7 @@ public class AlignToPointDriveTask extends ForeverTask {
     /**
      * Default controller to use for aligning to a point.
      */
+    @NonNull
     public static PIDFController DEFAULT_CONTROLLER = new PController(1);
 
     static {
@@ -145,7 +146,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      *
      * @param fcOffset the offset angle (usually the current robot heading) to add to the vector heading rotation
      */
-    public void setFieldCentricOffset(Measure<Angle> fcOffset) {
+    public void setFieldCentricOffset(@NonNull Measure<Angle> fcOffset) {
         this.fcOffset = Rotation2d.exp(fcOffset.in(Radians));
     }
 
@@ -156,7 +157,7 @@ public class AlignToPointDriveTask extends ForeverTask {
      *
      * @param drivePose the current pose of the drive that will be used to zero out the field centric origin
      */
-    public void resetFieldCentricOrigin(Pose2d drivePose) {
+    public void resetFieldCentricOrigin(@NonNull Pose2d drivePose) {
         fcOffset = drivePose.heading;
     }
 

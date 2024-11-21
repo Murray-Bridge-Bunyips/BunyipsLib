@@ -76,7 +76,8 @@ public interface SystemController {
      * @param combiner the function that combines the two controllers
      * @return a new controller that is the composition of the two
      */
-    default CompositeController compose(SystemController other, DoubleBinaryOperator combiner) {
+    @NonNull
+    default CompositeController compose(@NonNull SystemController other, @NonNull DoubleBinaryOperator combiner) {
         return new CompositeController(this, other, combiner);
     }
 
@@ -93,6 +94,7 @@ public interface SystemController {
      *
      * @return the PIDF controller associated with this controller, if applicable
      */
+    @NonNull
     default Optional<PIDFController> pidf() {
         // Default impl, no PIDF controller
         return Optional.empty();

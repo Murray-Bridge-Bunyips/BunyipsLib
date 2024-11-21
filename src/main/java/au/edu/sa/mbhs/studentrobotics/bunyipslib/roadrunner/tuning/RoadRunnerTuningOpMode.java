@@ -156,19 +156,16 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
                 Localizer localizer = md.getLocalizer();
-                if (localizer instanceof MecanumLocalizer) {
-                    MecanumLocalizer dl = (MecanumLocalizer) localizer;
+                if (localizer instanceof MecanumLocalizer dl) {
                     leftEncs.add(dl.leftFront);
                     leftEncs.add(dl.leftBack);
                     rightEncs.add(dl.rightFront);
                     rightEncs.add(dl.rightBack);
-                } else if (localizer instanceof ThreeWheelLocalizer) {
-                    ThreeWheelLocalizer dl = (ThreeWheelLocalizer) localizer;
+                } else if (localizer instanceof ThreeWheelLocalizer dl) {
                     parEncs.add(dl.par0);
                     parEncs.add(dl.par1);
                     perpEncs.add(dl.perp);
-                } else if (localizer instanceof TwoWheelLocalizer) {
-                    TwoWheelLocalizer dl = (TwoWheelLocalizer) localizer;
+                } else if (localizer instanceof TwoWheelLocalizer dl) {
                     parEncs.add(dl.par);
                     perpEncs.add(dl.perp);
                 } else {
@@ -287,17 +284,14 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 List<Encoder> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<Encoder> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
                 Localizer localizer = td.getLocalizer();
-                if (localizer instanceof TankLocalizer) {
-                    TankLocalizer dl = (TankLocalizer) localizer;
+                if (localizer instanceof TankLocalizer dl) {
                     leftEncs.addAll(dl.leftEncs);
                     rightEncs.addAll(dl.rightEncs);
-                } else if (localizer instanceof ThreeWheelLocalizer) {
-                    ThreeWheelLocalizer dl = (ThreeWheelLocalizer) localizer;
+                } else if (localizer instanceof ThreeWheelLocalizer dl) {
                     parEncs.add(dl.par0);
                     parEncs.add(dl.par1);
                     perpEncs.add(dl.perp);
-                } else if (localizer instanceof TwoWheelLocalizer) {
-                    TwoWheelLocalizer dl = (TwoWheelLocalizer) localizer;
+                } else if (localizer instanceof TwoWheelLocalizer dl) {
                     parEncs.add(dl.par);
                     perpEncs.add(dl.perp);
                 } else {

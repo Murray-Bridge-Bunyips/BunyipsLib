@@ -39,6 +39,7 @@ public class TurnTask extends Task {
     /**
      * Default controller to use for turning.
      */
+    @NonNull
     public static PIDFController DEFAULT_CONTROLLER = new PController(3);
 
     static {

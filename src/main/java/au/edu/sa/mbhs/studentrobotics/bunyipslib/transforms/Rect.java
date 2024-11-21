@@ -147,8 +147,7 @@ public class Rect {
     @Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        if (!(other instanceof Rect)) return false;
-        Rect it = (Rect) other;
+        if (!(other instanceof Rect it)) return false;
         return point1.equals(it.point1) && point2.equals(it.point2) && unit.equals(it.unit);
     }
 

@@ -73,6 +73,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
      * @return this
      * @since 4.1.0
      */
+    @NonNull
     public AprilTagRelocalizingAccumulator setKalmanGains(double R, double Q) {
         xf = new Filter.Kalman(R, Q);
         yf = new Filter.Kalman(R, Q);
@@ -87,6 +88,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
      * @return this
      * @since 5.1.0
      */
+    @NonNull
     public AprilTagRelocalizingAccumulator addDataFilter(@NonNull Predicate<AprilTagData> filter) {
         filters.add(filter);
         return this;
@@ -99,6 +101,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
      * @return this
      * @since 5.1.0
      */
+    @NonNull
     public AprilTagRelocalizingAccumulator removeDataFilter(@NonNull Predicate<AprilTagData> filter) {
         if (!filters.remove(filter))
             Dbg.warn(getClass(), "Unable to remove filter '%', not found.", filter);
@@ -111,6 +114,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
      * @param setPoseAutomatically whether AprilTagRelocalizingAccumulator is on
      * @return this
      */
+    @NonNull
     public AprilTagRelocalizingAccumulator setActive(boolean setPoseAutomatically) {
         active = setPoseAutomatically;
         return this;
@@ -122,6 +126,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
      * @param setHeadingAutomatically whether to also set the heading to the AprilTag estimate or not
      * @return this
      */
+    @NonNull
     public AprilTagRelocalizingAccumulator setHeadingEstimate(boolean setHeadingAutomatically) {
         updateHeading = setHeadingAutomatically;
         return this;
@@ -150,7 +155,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
             AprilTagData aprilTag = data.get(i);
             Optional<Pose3D> robotPose = aprilTag.getRobotPose();
 
-            if (!robotPose.isPresent() || filters.stream().anyMatch(f -> !f.test(aprilTag))) {
+            if (robotPose.isEmpty() || filters.stream().anyMatch(f -> !f.test(aprilTag))) {
                 // No luck with this ID
                 continue;
             }

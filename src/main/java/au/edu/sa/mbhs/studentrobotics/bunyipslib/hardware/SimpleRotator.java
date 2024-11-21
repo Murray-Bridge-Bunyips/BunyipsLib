@@ -35,7 +35,7 @@ public class SimpleRotator implements DcMotorSimple {
      *
      * @param dms the motor or CRServo instance to use
      */
-    public SimpleRotator(DcMotorSimple dms) {
+    public SimpleRotator(@NonNull DcMotorSimple dms) {
         this.dms = dms;
     }
 
@@ -74,13 +74,14 @@ public class SimpleRotator implements DcMotorSimple {
         maxMagnitude = Math.min(1, Math.abs(magnitude));
     }
 
+    @NonNull
     @Override
     public Direction getDirection() {
         return dms.getDirection();
     }
 
     @Override
-    public synchronized void setDirection(Direction direction) {
+    public synchronized void setDirection(@NonNull Direction direction) {
         dms.setDirection(direction);
     }
 
@@ -119,16 +120,19 @@ public class SimpleRotator implements DcMotorSimple {
         dms.setPower(power);
     }
 
+    @NonNull
     @Override
     public Manufacturer getManufacturer() {
         return dms.getManufacturer();
     }
 
+    @NonNull
     @Override
     public String getDeviceName() {
         return dms.getDeviceName();
     }
 
+    @NonNull
     @Override
     public String getConnectionInfo() {
         return dms.getConnectionInfo();

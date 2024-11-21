@@ -113,14 +113,17 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     /**
      * The currently used Colour Space to use for lower and upper thresholds.
      */
+    @Nullable
     public Supplier<ColourSpace> colourSpace;
     /**
      * The currently used lower threshold to apply to filter out contours.
      */
+    @Nullable
     public Supplier<Scalar> lowerThreshold;
     /**
      * The currently used upper threshold to apply to filter out contours.
      */
+    @Nullable
     public Supplier<Scalar> upperThreshold;
 
     // Optional preferences
@@ -479,7 +482,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
      * @param realWorldObjectWidth  the real world width of the object
      * @param realWorldObjectHeight the real world height of the object
      */
-    public void setPnP(Measure<Distance> realWorldObjectWidth, Measure<Distance> realWorldObjectHeight) {
+    public void setPnP(@NonNull Measure<Distance> realWorldObjectWidth, @NonNull Measure<Distance> realWorldObjectHeight) {
         double objectWidthCm = realWorldObjectWidth.in(Centimeters);
         double objectHeightCm = realWorldObjectHeight.in(Centimeters);
         objectPoints = new MatOfPoint3f(
@@ -894,18 +897,12 @@ public abstract class ColourThreshold extends Processor<ContourData> {
          */
         @NonNull
         public final String getChannelName(int idx) {
-            switch (this) {
-                case RGB:
-                    return new String[]{"Red", "Green", "Blue"}[idx];
-                case HSV:
-                    return new String[]{"Hue", "Saturation", "Value"}[idx];
-                case YCrCb:
-                    return new String[]{"Luminance", "Chrominance Red", "Chrominance Blue"}[idx];
-                case Lab:
-                    return new String[]{"Lightness", "A", "B"}[idx];
-                default:
-                    return "Unknown";
-            }
+            return switch (this) {
+                case RGB -> new String[]{"Red", "Green", "Blue"}[idx];
+                case HSV -> new String[]{"Hue", "Saturation", "Value"}[idx];
+                case YCrCb -> new String[]{"Luminance", "Chrominance Red", "Chrominance Blue"}[idx];
+                case Lab -> new String[]{"Lightness", "A", "B"}[idx];
+            };
         }
     }
 }

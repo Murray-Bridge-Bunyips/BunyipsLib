@@ -24,6 +24,7 @@ public abstract class CustomAccumulator extends Accumulator {
     /**
      * A read-only list of all accumulators registered in this CustomAccumulator.
      */
+    @NonNull
     public List<Accumulator> registeredAccumulators = Collections.unmodifiableList(new ArrayList<>());
 
     /**

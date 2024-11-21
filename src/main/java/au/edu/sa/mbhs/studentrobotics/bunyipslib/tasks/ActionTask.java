@@ -35,34 +35,6 @@ public class ActionTask extends Task {
     private final Action action;
     private boolean actionFinished = false;
 
-    @SuppressWarnings({"unchecked", "ExtractMethodRecommender"})
-    private void ifTask(Consumer<Task> t) {
-        if (action instanceof Task) {
-            t.accept((Task) action);
-            return;
-        }
-        // We can unwrap a SequentialAction to get the currently running contained task, if possible
-        if (action instanceof SequentialAction) {
-            SequentialAction seq = (SequentialAction) action;
-            List<Action> actions;
-            try {
-                Field actionsField = SequentialAction.class.getDeclaredField("actions");
-                actionsField.setAccessible(true);
-                actions = (List<Action>) actionsField.get(seq);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException("Failed to access an internal field, this shouldn't happen!", e);
-            }
-            assert actions != null;
-            if (actions.isEmpty()) return;
-            Action ac = actions.get(0);
-            if (ac instanceof Task) {
-                t.accept((Task) ac);
-            }
-        }
-        // We can't unwrap ParallelAction, so we'll just ignore it.
-        // This is because we can't have one definitive task to track the status of, since they're all running in parallel
-    }
-
     /**
      * Wrap a new {@link Action} to be a {@link Task}.
      *
@@ -75,8 +47,7 @@ public class ActionTask extends Task {
             withName(task.toString());
             setTimeout(task.getTimeout());
         });
-        if (action instanceof SequentialAction) {
-            SequentialAction seq = (SequentialAction) action;
+        if (action instanceof SequentialAction seq) {
             List<Action> initialActions = seq.getInitialActions();
             if (initialActions.isEmpty())
                 return;
@@ -101,6 +72,33 @@ public class ActionTask extends Task {
                             .reduce(Seconds.zero(), Measure::plus)
             );
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void ifTask(Consumer<Task> t) {
+        if (action instanceof Task) {
+            t.accept((Task) action);
+            return;
+        }
+        // We can unwrap a SequentialAction to get the currently running contained task, if possible
+        if (action instanceof SequentialAction seq) {
+            List<Action> actions;
+            try {
+                Field actionsField = SequentialAction.class.getDeclaredField("actions");
+                actionsField.setAccessible(true);
+                actions = (List<Action>) actionsField.get(seq);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException("Failed to access an internal field, this shouldn't happen!", e);
+            }
+            assert actions != null;
+            if (actions.isEmpty()) return;
+            Action ac = actions.get(0);
+            if (ac instanceof Task) {
+                t.accept((Task) ac);
+            }
+        }
+        // We can't unwrap ParallelAction, so we'll just ignore it.
+        // This is because we can't have one definitive task to track the status of, since they're all running in parallel
     }
 
     @Override

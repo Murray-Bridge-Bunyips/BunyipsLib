@@ -44,6 +44,7 @@ public class AlignToAprilTagTask extends Task {
     /**
      * Default controller to use for the rotation axis.
      */
+    @NonNull
     public static PIDFController DEFAULT_CONTROLLER = new PDController(0.1, 0.0001);
 
     private final Moveable drive;
@@ -125,7 +126,7 @@ public class AlignToAprilTagTask extends Task {
 
         Optional<AprilTagData> target = data.stream().filter(t -> TARGET_TAG == -1 || t.getId() == TARGET_TAG).findFirst();
 
-        if (!target.isPresent() || !target.get().isInLibrary()) {
+        if (target.isEmpty() || !target.get().isInLibrary()) {
             drive.setPower(vel);
             return;
         }

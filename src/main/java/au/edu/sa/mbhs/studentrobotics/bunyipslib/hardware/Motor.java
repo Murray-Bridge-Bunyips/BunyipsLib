@@ -127,7 +127,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      *
      * @param nominalVoltageSensor the sensor to use for nominal voltage calculation
      */
-    public void setNominalVoltageSensor(VoltageSensor nominalVoltageSensor) {
+    public void setNominalVoltageSensor(@NonNull VoltageSensor nominalVoltageSensor) {
         this.nominalVoltageSensor = nominalVoltageSensor;
     }
 
@@ -140,7 +140,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      *
      * @param nominalVoltage the nominal voltage parameter to use, defaults to 12V
      */
-    public void setNominalVoltage(Measure<Voltage> nominalVoltage) {
+    public void setNominalVoltage(@NonNull Measure<Voltage> nominalVoltage) {
         this.nominalVoltage = Math.abs(nominalVoltage.in(Volts));
     }
 
@@ -472,12 +472,12 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         double[] coeffs = new double[0];
         mode = mode.migrate();
         if (mode == DcMotor.RunMode.RUN_TO_POSITION) {
-            if (rtpController == null || !rtpController.pidf().isPresent()) {
+            if (rtpController == null || rtpController.pidf().isEmpty()) {
                 throw new UnsupportedOperationException("Can't access information on the currently used RTP controller. This is because the currently set controller is not a PIDF or PIDF-derived controller, or does not exist, which makes this method incapable of getting these coefficients.");
             }
             coeffs = rtpController.pidf().get().getCoefficients();
         } else if (mode == DcMotor.RunMode.RUN_USING_ENCODER) {
-            if (rueController == null || !rueController.pidf().isPresent()) {
+            if (rueController == null || rueController.pidf().isEmpty()) {
                 throw new UnsupportedOperationException("Can't access information on the currently used RUE controller. This is because the currently set controller is not a PIDF or PIDF-derived controller, or does not exist, which makes this method incapable of getting these coefficients.");
             }
             coeffs = rueController.pidf().get().getCoefficients();

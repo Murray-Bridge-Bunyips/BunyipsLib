@@ -98,6 +98,7 @@ public class CompositeController implements SystemController {
      *
      * @return the PIDF controller attached to this composite controller, if one exists
      */
+    @NonNull
     @Override
     public Optional<PIDFController> pidf() {
         if (first.pidf().isPresent() && second.pidf().isPresent()) {

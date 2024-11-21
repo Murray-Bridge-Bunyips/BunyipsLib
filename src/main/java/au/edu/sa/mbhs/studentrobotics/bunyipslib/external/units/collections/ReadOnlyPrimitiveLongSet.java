@@ -117,7 +117,7 @@ public class ReadOnlyPrimitiveLongSet implements Iterable<Long> {
     @NonNull
     @Override
     public Iterator<Long> iterator() {
-        return new Iterator<Long>() {
+        return new Iterator<>() {
             private int index = 0;
 
             @Override

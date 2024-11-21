@@ -55,7 +55,7 @@ android {
     buildFeatures {
         buildConfig = true
     }
-    compileSdkVersion 30
+    compileSdkVersion 34
     defaultConfig {
         minSdkVersion 24
         //noinspection ExpiredTargetSdkVersion

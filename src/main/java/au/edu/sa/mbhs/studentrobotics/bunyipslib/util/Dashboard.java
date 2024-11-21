@@ -93,7 +93,7 @@ public final class Dashboard {
      *
      * @param clazz the class to send
      */
-    public static void enableConfig(Class<?> clazz) {
+    public static void enableConfig(@NonNull Class<?> clazz) {
         FtcDashboard dash = FtcDashboard.getInstance();
         if (dash != null)
             dash.withConfigRoot(c ->

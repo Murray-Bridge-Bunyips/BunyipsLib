@@ -188,7 +188,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
             out.append("  | %\n", subsystem.toVerboseString());
             for (Scheduler.ScheduledTask task : tasks) {
                 Optional<BunyipsSubsystem> dep = task.getTaskToRun().getDependency();
-                if (!dep.isPresent() || !dep.get().equals(subsystem)) continue;
+                if (dep.isEmpty() || !dep.get().equals(subsystem)) continue;
                 out.append("    -> %\n", task);
             }
         }

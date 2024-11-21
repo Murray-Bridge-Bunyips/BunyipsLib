@@ -50,7 +50,7 @@ public class PeriodicIMUAccumulator extends Accumulator {
      *
      * @param origin the origin angle for accumulation
      */
-    public void setOrigin(Measure<Angle> origin) {
+    public void setOrigin(@NonNull Measure<Angle> origin) {
         this.origin = Rotation2d.exp(origin.in(Radians));
     }
 

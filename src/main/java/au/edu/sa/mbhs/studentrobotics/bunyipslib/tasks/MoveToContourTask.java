@@ -42,10 +42,12 @@ public class MoveToContourTask extends Task {
     /**
      * Default controller to use for the x (forward) axis.
      */
+    @NonNull
     public static SystemController DEFAULT_X_CONTROLLER = new PDController(1, 0.0001);
     /**
      * Default controller to use for the r (rotation) axis.
      */
+    @NonNull
     public static SystemController DEFAULT_R_CONTROLLER = new PDController(1, 0.0001);
 
     private final Moveable drive;

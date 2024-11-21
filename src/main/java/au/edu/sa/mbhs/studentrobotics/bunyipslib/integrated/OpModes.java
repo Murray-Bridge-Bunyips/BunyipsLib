@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 
@@ -30,7 +32,7 @@ public final class OpModes {
      * @param manager used manager
      */
     @OpModeRegistrar
-    public static void registerOpModes(OpModeManager manager) {
+    public static void registerOpModes(@NonNull OpModeManager manager) {
         if (suppressOpModes)
             return;
         manager.register(

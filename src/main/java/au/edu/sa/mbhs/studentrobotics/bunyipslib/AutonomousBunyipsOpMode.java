@@ -403,15 +403,11 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @see #addFirst(Task)
      */
     public final <T extends Task> T add(@NonNull TaskPriority runQueuePriority, @NonNull T newTask) {
-        switch (runQueuePriority) {
-            case FIRST:
-                return addFirst(newTask);
-            case LAST:
-                return addLast(newTask);
-            case NORMAL:
-            default:
-                return add(newTask);
-        }
+        return switch (runQueuePriority) {
+            case FIRST -> addFirst(newTask);
+            case LAST -> addLast(newTask);
+            default -> add(newTask);
+        };
     }
 
     /**

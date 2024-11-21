@@ -208,8 +208,7 @@ public class Reference<V> implements Supplier<V>, Consumer<V> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Reference) {
-            Reference<?> other = (Reference<?>) obj;
+        if (obj instanceof Reference<?> other) {
             return value == other.value;
         }
         return false;

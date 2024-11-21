@@ -23,33 +23,19 @@ public final class SpikeMarkBackdropId {
      * @return the backdrop ID, -1 if invalid arguments
      */
     public static int get(@NonNull Direction spikeMarkPosition, @NonNull StartingPositions robotStartingPosition) {
-        switch (robotStartingPosition) {
-            case STARTING_RED_LEFT:
-            case STARTING_RED_RIGHT:
-                switch (spikeMarkPosition) {
-                    case LEFT:
-                        return 4;
-                    case FORWARD:
-                        return 5;
-                    case RIGHT:
-                        return 6;
-                    default:
-                        return -1;
-                }
-            case STARTING_BLUE_LEFT:
-            case STARTING_BLUE_RIGHT:
-                switch (spikeMarkPosition) {
-                    case LEFT:
-                        return 1;
-                    case FORWARD:
-                        return 2;
-                    case RIGHT:
-                        return 3;
-                    default:
-                        return -1;
-                }
-            default:
-                return -1;
-        }
+        return switch (robotStartingPosition) {
+            case STARTING_RED_LEFT, STARTING_RED_RIGHT -> switch (spikeMarkPosition) {
+                case LEFT -> 4;
+                case FORWARD -> 5;
+                case RIGHT -> 6;
+                default -> -1;
+            };
+            case STARTING_BLUE_LEFT, STARTING_BLUE_RIGHT -> switch (spikeMarkPosition) {
+                case LEFT -> 1;
+                case FORWARD -> 2;
+                case RIGHT -> 3;
+                default -> -1;
+            };
+        };
     }
 }

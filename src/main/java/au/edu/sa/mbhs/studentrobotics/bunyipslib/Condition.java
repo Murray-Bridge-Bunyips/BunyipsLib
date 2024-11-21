@@ -84,15 +84,11 @@ public class Condition implements BooleanSupplier {
      */
     @Override
     public boolean getAsBoolean() {
-        switch (edge) {
-            case RISING:
-                return getRisingEdge();
-            case FALLING:
-                return getFallingEdge();
-            case ACTIVE:
-            default:
-                return getActive();
-        }
+        return switch (edge) {
+            case RISING -> getRisingEdge();
+            case FALLING -> getFallingEdge();
+            default -> getActive();
+        };
     }
 
     private boolean timed(boolean currentState) {

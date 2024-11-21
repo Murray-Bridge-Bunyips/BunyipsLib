@@ -64,6 +64,7 @@ public class Encoder {
      *
      * @return the logical direction this encoder operates
      */
+    @NonNull
     public DcMotorSimple.Direction getDirection() {
         if (directionSupplier != null)
             direction = directionSupplier.get();
