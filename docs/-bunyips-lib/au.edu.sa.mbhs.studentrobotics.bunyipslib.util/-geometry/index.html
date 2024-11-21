@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Geometry</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+<link href="../../../images/logo-icon.svg">
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../index.html">
+                            BunyipsLib
+                    </a>
+            </div>
+            <div class="library-version">
+v6.0.0-master-33a554fa            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="BunyipsLib::au.edu.sa.mbhs.studentrobotics.bunyipslib.util/Geometry///PointingToDeclaration//-325384828">
+  <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">au.edu.sa.mbhs.studentrobotics.bunyipslib.util</a><span class="delimiter">/</span><span class="current">Geometry</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Geometry</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">Geometry</a></div><p class="paragraph">Defines useful conversion methods for RoadRunner geometry types, restoring some removed methods from RoadRunner v0.5.</p><p class="paragraph">This class was created for migration purposes between RoadRunner v0.5 and v1.0, where new types were introduced and some methods removed, but these methods are still useful within BunyipsLib.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">6.0.0</p></span></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1984297396%2FFunctions%2F-325384828" anchor-label="approx" id="-1984297396%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="approx.html"><span><span>approx</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1984297396%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">.</span><a href="approx.html"><span class="token function">approx</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Compare two poses with an epsilon value.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">.</span><a href="approx.html"><span class="token function">approx</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Compare two vectors with an epsilon value.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2067658548%2FFunctions%2F-325384828" anchor-label="approxNormHeading" id="2067658548%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="approx-norm-heading.html"><span>approx</span><wbr></wbr><span>Norm</span><wbr></wbr><span><span>Heading</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2067658548%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">.</span><a href="approx-norm-heading.html"><span class="token function">approxNormHeading</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Compare two poses with an epsilon value plus a renormalisation of heading.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1623502887%2FFunctions%2F-325384828" anchor-label="distTo" id="-1623502887%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="dist-to.html"><span>dist</span><wbr></wbr><span><span>To</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1623502887%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">.</span><a href="dist-to.html"><span class="token function">distTo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief "><p class="paragraph">Calculate the distance between two vectors.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1402327829%2FFunctions%2F-325384828" anchor-label="inchesFrom" id="-1402327829%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="inches-from.html"><span>inches</span><wbr></wbr><span><span>From</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1402327829%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">.</span><a href="inches-from.html"><span class="token function">inchesFrom</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">unit<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-distance/index.html">Distance</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span></div><div class="brief "><p class="paragraph">Create a vector in the desired units to be converted to a conventional Inches unit.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="544735976%2FFunctions%2F-325384828" anchor-label="lerp" id="544735976%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="lerp.html"><span><span>lerp</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="544735976%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">.</span><a href="lerp.html"><span class="token function">lerp</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">t<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span></div><div class="brief "><p class="paragraph">Linearly interpolate between two poses. The <a href="lerp.html">t</a> parameter is not clamped between 0-1.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Rotation2d///PointingToDeclaration/">Rotation2d</span><span class="token punctuation">.</span><a href="lerp.html"><span class="token function">lerp</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Rotation2d///PointingToDeclaration/">Rotation2d</span><span class="token punctuation">, </span></span><span class="parameter ">t<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Rotation2d///PointingToDeclaration/">Rotation2d</span></div><div class="brief "><p class="paragraph">Linearly interpolate between two rotations. The <a href="lerp.html">t</a> parameter is not clamped between 0-1. Rotation value will take the shortest path.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">.</span><a href="lerp.html"><span class="token function">lerp</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">, </span></span><span class="parameter ">t<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span></div><div class="brief "><p class="paragraph">Linearly interpolate between two vectors. The <a href="lerp.html">t</a> parameter is not clamped between 0-1.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1291809912%2FFunctions%2F-325384828" anchor-label="moveTowards" id="1291809912%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="move-towards.html"><span>move</span><wbr></wbr><span><span>Towards</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1291809912%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Rotation2d///PointingToDeclaration/">Rotation2d</span><span class="token punctuation">.</span><a href="move-towards.html"><span class="token function">moveTowards</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Rotation2d///PointingToDeclaration/">Rotation2d</span><span class="token punctuation">, </span></span><span class="parameter ">stepSize<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Rotation2d///PointingToDeclaration/">Rotation2d</span></div><div class="brief "><p class="paragraph">Move a rotation towards another rotation by a step size.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">.</span><a href="move-towards.html"><span class="token function">moveTowards</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">, </span></span><span class="parameter ">stepSizeInches<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span></div><div class="brief "><p class="paragraph">Move a vector towards another vector by a step size.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">.</span><a href="move-towards.html"><span class="token function">moveTowards</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">stepSizeInches<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">stepSizeRad<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span></div><div class="brief "><p class="paragraph">Move a pose towards another pose by a step size.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="976097714%2FFunctions%2F-325384828" anchor-label="poseFrom" id="976097714%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pose-from.html"><span>pose</span><wbr></wbr><span><span>From</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="976097714%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">.</span><a href="pose-from.html"><span class="token function">poseFrom</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tUnit<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-distance/index.html">Distance</a><span class="token operator"> = </span>Inches<span class="token punctuation">, </span></span><span class="parameter ">r<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">rUnit<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-angle/index.html">Angle</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span></div><div class="brief "><p class="paragraph">Create a pose in the desired units to be converted to conventional Inches and Radians units.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1123174074%2FFunctions%2F-325384828" anchor-label="smoothDamp" id="-1123174074%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="smooth-damp.html"><span>smooth</span><wbr></wbr><span><span>Damp</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1123174074%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">.</span><a href="smooth-damp.html"><span class="token function">smoothDamp</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">target<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">, </span></span><span class="parameter ">currentVelocity<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-reference/index.html">Reference</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">smoothTime<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">maxVelocity<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html">Number</a><span class="token punctuation">, </span></span><span class="parameter ">deltaTime<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span></div><div class="brief "><p class="paragraph">Smoothly damp a pose towards another pose. Velocity will be in degrees per second.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Rotation2d///PointingToDeclaration/">Rotation2d</span><span class="token punctuation">.</span><a href="smooth-damp.html"><span class="token function">smoothDamp</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">target<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Rotation2d///PointingToDeclaration/">Rotation2d</span><span class="token punctuation">, </span></span><span class="parameter ">currentVelocity<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-reference/index.html">Reference</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">smoothTime<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">maxVelocity<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html">Number</a><span class="token punctuation">, </span></span><span class="parameter ">deltaTime<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Rotation2d///PointingToDeclaration/">Rotation2d</span></div><div class="brief "><p class="paragraph">Smoothly damp a rotation towards another rotation. Velocity will be in degrees per second.</p></div><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">.</span><a href="smooth-damp.html"><span class="token function">smoothDamp</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">target<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span><span class="token punctuation">, </span></span><span class="parameter ">currentVelocity<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-reference/index.html">Reference</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">smoothTime<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">maxVelocity<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-number/index.html">Number</a><span class="token punctuation">, </span></span><span class="parameter ">deltaTime<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span></div><div class="brief "><p class="paragraph">Smoothly damp a vector towards another vector.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-931728916%2FFunctions%2F-325384828" anchor-label="toUserString" id="-931728916%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-user-string.html"><span>to</span><wbr></wbr><span>User</span><wbr></wbr><span><span>String</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-931728916%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span><span class="token punctuation">.</span><a href="to-user-string.html"><span class="token function">toUserString</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Returns a user-friendly representation of a <span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2094540181%2FFunctions%2F-325384828" anchor-label="vel" id="-2094540181%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="vel.html"><span><span>vel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2094540181%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="vel.html"><span class="token function">vel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">xVel<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">yVel<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">angVel<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/PoseVelocity2d///PointingToDeclaration/">PoseVelocity2d</span></div><div class="brief "><p class="paragraph">Create a new <span data-unresolved-link="com.acmerobotics.roadrunner/PoseVelocity2d///PointingToDeclaration/">PoseVelocity2d</span> with x, y, and heading values.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-340217503%2FFunctions%2F-325384828" anchor-label="zeroPose" id="-340217503%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="zero-pose.html"><span>zero</span><wbr></wbr><span><span>Pose</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-340217503%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="zero-pose.html"><span class="token function">zeroPose</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span></div><div class="brief "><p class="paragraph">Create a new <span data-unresolved-link="com.acmerobotics.roadrunner/Pose2d///PointingToDeclaration/">Pose2d</span> with zero values.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-234330111%2FFunctions%2F-325384828" anchor-label="zeroTwist" id="-234330111%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="zero-twist.html"><span>zero</span><wbr></wbr><span><span>Twist</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-234330111%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="zero-twist.html"><span class="token function">zeroTwist</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Twist2d///PointingToDeclaration/">Twist2d</span></div><div class="brief "><p class="paragraph">Create a new <span data-unresolved-link="com.acmerobotics.roadrunner/Twist2d///PointingToDeclaration/">Twist2d</span> with zero values.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1851505932%2FFunctions%2F-325384828" anchor-label="zeroVec" id="-1851505932%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="zero-vec.html"><span>zero</span><wbr></wbr><span><span>Vec</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1851505932%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="zero-vec.html"><span class="token function">zeroVec</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span></div><div class="brief "><p class="paragraph">Create a new <span data-unresolved-link="com.acmerobotics.roadrunner/Vector2d///PointingToDeclaration/">Vector2d</span> with zero values.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1572327669%2FFunctions%2F-325384828" anchor-label="zeroVel" id="-1572327669%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="zero-vel.html"><span>zero</span><wbr></wbr><span><span>Vel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1572327669%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="zero-vel.html"><span class="token function">zeroVel</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/PoseVelocity2d///PointingToDeclaration/">PoseVelocity2d</span></div><div class="brief "><p class="paragraph">Create a new <span data-unresolved-link="com.acmerobotics.roadrunner/PoseVelocity2d///PointingToDeclaration/">PoseVelocity2d</span> with zero values.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

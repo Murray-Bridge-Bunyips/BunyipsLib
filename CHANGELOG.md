@@ -53,7 +53,7 @@ operations.**
 - Several Cartesian conversion methods have been removed in favour of using the Robot Coordinate System with +X forward
     - This reduces the confusion between conversions on the various new RoadRunner geometry utilities
 - `SystemController` is now a functional interface and is used across BunyipsLib as the base controller
-- This opens the range of system controllers that can be made and used
+    - This opens the range of system controllers that can be made and used
 - `Motor` is now split into a `SimpleRotator` extension, to allow for CRServos to support motor caching techniques
 - `addTask()` and variants of `AutonomousBunyipsOpMode` has been replaced with `add()`
     - Other alias utilities including `run()`, `defer()`, and `wait()` (not of Object) now exist to accompany `add()
