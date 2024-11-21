@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.opencv.core.Scalar;
 
+import java.util.function.Supplier;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
@@ -79,15 +81,21 @@ public abstract class ColourTunerOpMode extends BunyipsOpMode {
         vision.stop(processors[processorIdx]);
         // Repopulate scalars with new processor's scalars
         for (int i = 0; i < 3; i++) {
-            scalars[i] = processors[index].lowerThreshold.get().val[i];
-            scalars[i + 3] = processors[index].upperThreshold.get().val[i];
+            Supplier<Scalar> lowerThreshold = processors[index].lowerThreshold;
+            Supplier<Scalar> upperThreshold = processors[index].upperThreshold;
+            assert lowerThreshold != null;
+            assert upperThreshold != null;
+            scalars[i] = lowerThreshold.get().val[i];
+            scalars[i + 3] = upperThreshold.get().val[i];
         }
         // Start new processor
         vision.start(processors[index]);
         vision.setPreview(processors[index]);
         // Cache the namespaces of the channel (e.g. "Red", "Green", "Blue")
         for (int i = 0; i < 3; i++) {
-            channelNames[i] = processors[index].colourSpace.get().getChannelName(i);
+            Supplier<ColourThreshold.ColourSpace> colourSpace = processors[index].colourSpace;
+            assert colourSpace != null;
+            channelNames[i] = colourSpace.get().getChannelName(i);
         }
     }
 
