@@ -7,10 +7,10 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
@@ -28,17 +28,13 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
  */
 public class MoveToContourTask extends Task {
     /**
-     * The target position of the pixel on the camera pitch axis.
+     * The tolerance of the X controller for Auto.
      */
-    public static double PITCH_TARGET = 0.0;
+    public static double X_TOLERANCE = 0.05;
     /**
-     * The tolerance of the pitch target to the real pitch.
+     * The tolerance of the yaw target controller to the real yaw for Auto.
      */
-    public static double X_TOLERANCE = 0.01;
-    /**
-     * The tolerance of the yaw target to the real yaw.
-     */
-    public static double R_TOLERANCE = 0.01;
+    public static double R_TOLERANCE = 0.1;
     /**
      * Default controller to use for the x (forward) axis.
      */
@@ -54,6 +50,7 @@ public class MoveToContourTask extends Task {
     private final Supplier<List<ContourData>> contours;
     private final Supplier<PoseVelocity2d> passthrough;
 
+    private Function<ContourData, Double> errorSupplier = (c) -> c.getPitch() - 0.5;
     private SystemController xController;
     private SystemController rController;
     private ContourData biggestContour;
@@ -71,8 +68,8 @@ public class MoveToContourTask extends Task {
         this.drive = drive;
         contours = supplier;
         this.passthrough = passthrough;
-        xController = DEFAULT_X_CONTROLLER;
-        rController = DEFAULT_R_CONTROLLER;
+        withXController(DEFAULT_X_CONTROLLER);
+        withRController(DEFAULT_R_CONTROLLER);
         withName("Move to Contour");
         Dashboard.enableConfig(getClass());
     }
@@ -107,6 +104,7 @@ public class MoveToContourTask extends Task {
     @NonNull
     public MoveToContourTask withXController(@NonNull SystemController x) {
         xController = x;
+        xController.pidf().ifPresent(pid -> pid.setTolerance(X_TOLERANCE));
         return this;
     }
 
@@ -119,18 +117,20 @@ public class MoveToContourTask extends Task {
     @NonNull
     public MoveToContourTask withRController(@NonNull SystemController r) {
         rController = r;
+        rController.pidf().ifPresent(pid -> pid.setTolerance(R_TOLERANCE));
         return this;
     }
 
     /**
-     * Set the pitch target of where the pixel should be on the camera. 0.0 is the middle.
+     * Sets a custom error supplier for the forward movement of the robot.
      *
-     * @param pitchTarget the target pitch to move to
+     * @param forwardErrorSupplier the error that dictates the forward movement of the robot (whether by pitch or area, etc),
+     *                             by default this is a pitch target of 0.5 (middle of frame)
      * @return the task
      */
     @NonNull
-    public MoveToContourTask withPitchTarget(double pitchTarget) {
-        PITCH_TARGET = pitchTarget;
+    public MoveToContourTask withForwardErrorSupplier(Function<ContourData, Double> forwardErrorSupplier) {
+        errorSupplier = forwardErrorSupplier;
         return this;
     }
 
@@ -149,10 +149,9 @@ public class MoveToContourTask extends Task {
         biggestContour = ContourData.getLargest(data);
 
         if (biggestContour != null) {
-            // TODO: reconsider technique for translational alignment
             drive.setPower(
                     Geometry.vel(
-                            -xController.calculate(biggestContour.getPitch(), Mathf.clamp(PITCH_TARGET, -1.0, 1.0)),
+                            -xController.calculate(errorSupplier.apply(biggestContour), 0.0),
                             vel.linearVel.y,
                             rController.calculate(biggestContour.getYaw(), 0.0)
                     )
@@ -164,6 +163,13 @@ public class MoveToContourTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return passthrough == null && biggestContour != null && Mathf.isNear(biggestContour.getPitch(), PITCH_TARGET, X_TOLERANCE) && Mathf.isNear(biggestContour.getYaw(), 0.0, R_TOLERANCE);
+        boolean xSetpoint = true, rSetpoint = true;
+        if (xController.pidf().isPresent()) {
+            xSetpoint = xController.pidf().get().atSetPoint();
+        }
+        if (rController.pidf().isPresent()) {
+            rSetpoint = rController.pidf().get().atSetPoint();
+        }
+        return passthrough == null && biggestContour != null && xSetpoint && rSetpoint;
     }
 }
