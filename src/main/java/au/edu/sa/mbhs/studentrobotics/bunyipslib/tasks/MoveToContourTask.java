@@ -50,7 +50,7 @@ public class MoveToContourTask extends Task {
     private final Supplier<List<ContourData>> contours;
     private final Supplier<PoseVelocity2d> passthrough;
 
-    private Function<ContourData, Double> errorSupplier = ContourData::getPitch;
+    private Function<ContourData, Double> errorSupplier = c -> -c.getPitch();
     private SystemController xController;
     private SystemController rController;
     private ContourData biggestContour;
