@@ -50,7 +50,7 @@ public class MoveToContourTask extends Task {
     private final Supplier<List<ContourData>> contours;
     private final Supplier<PoseVelocity2d> passthrough;
 
-    private Function<ContourData, Double> errorSupplier = (c) -> 0.5 - c.getPitch();
+    private Function<ContourData, Double> errorSupplier = ContourData::getPitch;
     private SystemController xController;
     private SystemController rController;
     private ContourData biggestContour;
@@ -125,7 +125,7 @@ public class MoveToContourTask extends Task {
      * Sets a custom error supplier for the forward movement of the robot.
      *
      * @param forwardErrorSupplier the error that dictates the forward movement of the robot (whether by pitch or area, etc),
-     *                             by default this is a pitch target of 0.5 (middle of frame)
+     *                             by default this is a pitch target of 0.0 (middle of frame)
      * @return the task
      */
     @NonNull
