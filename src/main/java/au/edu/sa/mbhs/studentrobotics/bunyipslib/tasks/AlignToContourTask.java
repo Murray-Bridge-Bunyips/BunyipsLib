@@ -41,7 +41,7 @@ public class AlignToContourTask extends Task {
     private final Supplier<List<ContourData>> contours;
     private final Supplier<PoseVelocity2d> passthrough;
     private SystemController controller;
-    private Double yaw;
+    private ContourData biggestContour;
 
     /**
      * TeleOp constructor.
@@ -96,7 +96,7 @@ public class AlignToContourTask extends Task {
 
     @Override
     protected void init() {
-        yaw = null;
+        biggestContour = null;
     }
 
     @Override
@@ -106,13 +106,12 @@ public class AlignToContourTask extends Task {
             vel = passthrough.get();
 
         List<ContourData> data = contours.get();
-        ContourData biggestContour = ContourData.getLargest(data);
+        biggestContour = ContourData.getLargest(data);
 
         if (biggestContour != null) {
-            yaw = biggestContour.getYaw();
             drive.setPower(new PoseVelocity2d(
                     vel.linearVel,
-                    controller.calculate(yaw, 0.0)
+                    controller.calculate(biggestContour.getYaw(), 0.0)
             ));
         } else {
             drive.setPower(vel);
@@ -121,6 +120,6 @@ public class AlignToContourTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return passthrough == null && yaw != null && Math.abs(yaw) < R_TOLERANCE;
+        return passthrough == null && biggestContour != null && Math.abs(biggestContour.getYaw()) < R_TOLERANCE;
     }
 }

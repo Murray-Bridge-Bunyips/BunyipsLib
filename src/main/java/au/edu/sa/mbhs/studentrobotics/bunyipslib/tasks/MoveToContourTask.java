@@ -163,13 +163,6 @@ public class MoveToContourTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        boolean xSetpoint = true, rSetpoint = true;
-        if (xController.pidf().isPresent()) {
-            xSetpoint = xController.pidf().get().atSetPoint();
-        }
-        if (rController.pidf().isPresent()) {
-            rSetpoint = rController.pidf().get().atSetPoint();
-        }
-        return passthrough == null && biggestContour != null && xSetpoint && rSetpoint;
+        return passthrough == null && biggestContour != null && Math.abs(errorSupplier.apply(biggestContour)) < X_TOLERANCE && Math.abs(biggestContour.getYaw()) < R_TOLERANCE;
     }
 }
