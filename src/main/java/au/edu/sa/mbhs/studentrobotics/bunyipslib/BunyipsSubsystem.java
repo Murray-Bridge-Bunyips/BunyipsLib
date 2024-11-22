@@ -69,6 +69,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
 
     /**
      * Update all instances of BunyipsSubsystem that has been constructed since the last clearing.
+     * <p>
      * This is useful to call if you simply wish to update every single subsystem at the dispatch phase of your
      * hardware loop.
      */
@@ -77,6 +78,28 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             // Only update subsystems that aren't being delegated (no parent)
             if (subsystem.parent == null)
                 subsystem.update();
+        }
+    }
+
+    /**
+     * Disable all BunyipsSubsystem instances that has been constructed since the last clearing.
+     */
+    public static void disableAll() {
+        for (BunyipsSubsystem subsystem : instances) {
+            // Child subsystems will be disabled by the parents
+            if (subsystem.parent == null)
+                subsystem.disable();
+        }
+    }
+
+    /**
+     * Enable all BunyipsSubsystem instances that has been constructed since the last clearing.
+     */
+    public static void enableAll() {
+        for (BunyipsSubsystem subsystem : instances) {
+            // Child subsystems will be enabled by the parents
+            if (subsystem.parent == null)
+                subsystem.enable();
         }
     }
 
