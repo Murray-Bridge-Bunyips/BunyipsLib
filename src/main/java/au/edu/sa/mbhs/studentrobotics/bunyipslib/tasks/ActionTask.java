@@ -61,7 +61,7 @@ public class ActionTask extends Task {
             withName(name.toString());
             // Try to set a timeout based on the sum of all the inner task timeouts, unless they are not tasks then
             // we just use an infinite timeout
-            if (initialActions.stream().anyMatch(a -> !(a instanceof Task))) {
+            if (initialActions.stream().anyMatch(a -> !(a instanceof Task) || ((Task) a).getTimeout().lte(INFINITE_TIMEOUT))) {
                 setTimeout(INFINITE_TIMEOUT);
                 return;
             }
