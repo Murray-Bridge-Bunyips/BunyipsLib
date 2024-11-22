@@ -149,6 +149,7 @@ public class MoveToContourTask extends Task {
         biggestContour = ContourData.getLargest(data);
 
         if (biggestContour != null) {
+            // TODO: reconsider technique for translational alignment
             drive.setPower(
                     Geometry.vel(
                             -xController.calculate(biggestContour.getPitch(), Mathf.clamp(PITCH_TARGET, -1.0, 1.0)),
