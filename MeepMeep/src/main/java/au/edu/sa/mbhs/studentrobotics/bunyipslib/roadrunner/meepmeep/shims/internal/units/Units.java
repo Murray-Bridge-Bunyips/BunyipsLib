@@ -4,8 +4,9 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
 
+import java.util.Locale;
 
-import java.util.Locale; /**
+/**
  * Contains and exposes a set of predefined units.
  * @since 1.0.0-pre
  */
@@ -30,15 +31,13 @@ public final class Units {
     public static final Distance Millimeter = Millimeters; // Alias
 
     /** 1/100 of a {@link #Meter}. */
-    public static final Distance Centimeters =
-            derive(Meters).splitInto(100).named("Centimeter").symbol("cm").make();
+    public static final Distance Centimeters = derive(Meters).splitInto(100).named("Centimeter").symbol("cm").make();
 
     /** 1/100 of a {@link #Meter}. */
     public static final Distance Centimeter = Centimeters; // Alias
 
     /** 25.4/1000 of a {@link #Meter} and 1/12 of a {@link #Foot}. */
-    public static final Distance Inches =
-            derive(Millimeters).aggregate(25.4).named("Inch").symbol("in").make();
+    public static final Distance Inches = derive(Millimeters).aggregate(25.4).named("Inch").symbol("in").make();
 
     /** 25.4/1000 of a {@link #Meter} and 1/12 of a {@link #Foot}. */
     public static final Distance Inch = Inches; // Alias
@@ -50,8 +49,7 @@ public final class Units {
     public static final Distance FieldTile = FieldTiles; // Alias
 
     /** 304.8/1000 of a {@link #Meter}, or 12 {@link #Inches}. */
-    public static final Distance Feet =
-            derive(Inches).aggregate(12).named("Foot").symbol("ft").make();
+    public static final Distance Feet = derive(Inches).aggregate(12).named("Foot").symbol("ft").make();
 
     /** 304.8/1000 of a {@link #Meter}, or 12 {@link #Inches}. */
     public static final Distance Foot = Feet; // Alias
@@ -82,8 +80,7 @@ public final class Units {
     public static final Time Nanosecond = Nanoseconds; // Singularised alias
 
     /** 60 {@link #Seconds}. */
-    public static final Time Minutes =
-            derive(Seconds).aggregate(60).named("Minute").symbol("min").make();
+    public static final Time Minutes = derive(Seconds).aggregate(60).named("Minute").symbol("min").make();
 
     /** Alias for {@link #Minutes} to make combined unit definitions read more smoothly. */
     public static final Time Minute = Minutes; // Singularised alias
@@ -105,8 +102,11 @@ public final class Units {
      * A single turn of an object around an external axis. Numerically equivalent to {@link
      * #Rotations}, but may be semantically more expressive in certain scenarios.
      */
-    public static final Angle Revolutions =
-            derive(Radians).aggregate(2 * Math.PI).named("Revolution").symbol("R").make();
+    public static final Angle Revolutions = derive(Radians)
+            .aggregate(2 * Math.PI)
+            .named("Revolution")
+            .symbol("R")
+            .make();
 
     /**
      * A single turn of an object around an external axis. Numerically equivalent to a {@link
@@ -127,8 +127,7 @@ public final class Units {
     public static final Angle Rotation = Rotations; // Alias
 
     /** 1/360 of a turn around a circle, or 1/57.3 {@link #Radians}. */
-    public static final Angle Degrees =
-            derive(Revolutions).splitInto(360).named("Degree").symbol("°").make();
+    public static final Angle Degrees = derive(Revolutions).splitInto(360).named("Degree").symbol("°").make();
 
     /** 1/360 of a turn around a circle, or 1/57.3 {@link #Radians}. */
     public static final Angle Degree = Degrees; // Alias
@@ -151,6 +150,12 @@ public final class Units {
      * {@link #Second}.
      */
     public static final Velocity<Distance> InchesPerSecond = Inches.per(Second);
+
+    /**
+     * A unit of linear velocity equivalent to travelling at a rate of one {@link #FieldTiles Field Tile} per
+     * {@link #Second}.
+     */
+    public static final Velocity<Distance> FieldTilesPerSecond = FieldTiles.per(Second);
 
     /**
      * A unit of angular velocity equivalent to spinning at a rate of one {@link #Revolutions
@@ -187,49 +192,52 @@ public final class Units {
      * The standard SI unit of linear acceleration, equivalent to accelerating at a rate of one {@link
      * #Meters Meter} per {@link #Second} every second.
      */
-    public static final Velocity<Velocity<Distance>> MetersPerSecondPerSecond =
-            MetersPerSecond.per(Second);
+    public static final Velocity<Velocity<Distance>> MetersPerSecondPerSecond = MetersPerSecond.per(Second);
 
     /**
      * A unit of linear acceleration equivalent to accelerating at a rate of one {@link #Inch Inch}
      * per {@link #Second} every second.
      */
-    public static final Velocity<Velocity<Distance>> InchesPerSecondPerSecond =
-      InchesPerSecond.per(Second);
+    public static final Velocity<Velocity<Distance>> InchesPerSecondPerSecond = InchesPerSecond.per(Second);
+
+    /**
+     * A unit of linear acceleration equivalent to accelerating at a rate of one {@link #FieldTiles Field Tile}
+     * per {@link #Second} every second.
+     */
+    public static final Velocity<Velocity<Distance>> FieldTilesPerSecondPerSecond = FieldTilesPerSecond.per(Second);
 
     /**
      * A unit of linear acceleration equivalent to accelerating at a rate of one {@link #Foot Foot}
      * per {@link #Second} every second.
      */
-    public static final Velocity<Velocity<Distance>> FeetPerSecondPerSecond =
-      FeetPerSecond.per(Second);
+    public static final Velocity<Velocity<Distance>> FeetPerSecondPerSecond = FeetPerSecond.per(Second);
 
     /**
      * A unit of angular acceleration equivalent to accelerating at a rate of one {@link #Rotations
      * Rotation} per {@link #Second} every second.
      */
-    public static final Velocity<Velocity<Angle>> RotationsPerSecondPerSecond =
-      RotationsPerSecond.per(Second);
+    public static final Velocity<Velocity<Angle>> RotationsPerSecondPerSecond = RotationsPerSecond.per(Second);
 
     /**
      * The standard SI unit of angular acceleration, equivalent to accelerating at a rate of one
      * {@link #Radians Radian} per {@link #Second} every second.
      */
-    public static final Velocity<Velocity<Angle>> RadiansPerSecondPerSecond =
-      RadiansPerSecond.per(Second);
+    public static final Velocity<Velocity<Angle>> RadiansPerSecondPerSecond = RadiansPerSecond.per(Second);
 
     /**
      * A unit of angular acceleration equivalent to accelerating at a rate of one {@link #Degrees
      * Degree} per {@link #Second} every second.
      */
-    public static final Velocity<Velocity<Angle>> DegreesPerSecondPerSecond =
-      DegreesPerSecond.per(Second);
+    public static final Velocity<Velocity<Angle>> DegreesPerSecondPerSecond = DegreesPerSecond.per(Second);
 
     /**
      * A unit of acceleration equivalent to the pull of gravity on an object at sea level on Earth.
      */
-    public static final Velocity<Velocity<Distance>> Gs =
-            derive(MetersPerSecondPerSecond).aggregate(9.80665).named("G").symbol("G").make();
+    public static final Velocity<Velocity<Distance>> Gs = derive(MetersPerSecondPerSecond)
+            .aggregate(9.80665)
+            .named("G")
+            .symbol("G")
+            .make();
 
     // Mass
     /** The base SI unit of mass. */
@@ -249,8 +257,7 @@ public final class Units {
      * pounds-force, which is the amount of force required to accelerate an object with one pound of
      * mass at a rate of one {@link #Gs G}.
      */
-    public static final Mass Pounds =
-            derive(Grams).aggregate(453.592).named("Pound").symbol("lb.").make();
+    public static final Mass Pounds = derive(Grams).aggregate(453.592).named("Pound").symbol("lb.").make();
 
     /**
      * A unit of mass equivalent to approximately 453 {@link #Grams}. This is <i>not</i> equivalent to
@@ -260,16 +267,14 @@ public final class Units {
     public static final Mass Pound = Pounds; // Alias
 
     /** 1/16 of a {@link #Pound}. */
-    public static final Mass Ounces =
-            derive(Pounds).splitInto(16).named("Ounce").symbol("oz.").make();
+    public static final Mass Ounces = derive(Pounds).splitInto(16).named("Ounce").symbol("oz.").make();
 
     /** 1/16 of a {@link #Pound}. */
     public static final Mass Ounce = Ounces; // Alias
 
     // Moment of Inertia
     /** The base SI unit for moment of inertia. */
-    public static final Mult<Mult<Mass, Distance>, Distance> KilogramSquareMeters =
-            Kilograms.mult(Meters).mult(Meters);
+    public static final Mult<Mult<Mass, Distance>, Distance> KilogramSquareMeters = Kilograms.mult(Meters).mult(Meters);
 
     // Unitless
     /** A dimensionless unit that performs no scaling whatsoever. */
@@ -279,8 +284,7 @@ public final class Units {
      * A dimensionless unit equal to to 1/100th of a {@link #Value}. A measurement of {@code
      * Percent.of(42)} would be equivalent to {@code Value.of(0.42)}.
      */
-    public static final Dimensionless Percent =
-            derive(Value).splitInto(100).named("Percent").symbol("%").make();
+    public static final Dimensionless Percent = derive(Value).splitInto(100).named("Percent").symbol("%").make();
 
     // Voltage
     /** The base unit of electric potential. */
@@ -370,8 +374,7 @@ public final class Units {
      * A unit equal to 745.7 {@link #Watts}. May be useful when dealing with high-power gearboxes and
      * motors.
      */
-    public static final Power Horsepower =
-            derive(Watts).aggregate(745.7).named("Horsepower").symbol("HP").make();
+    public static final Power Horsepower = derive(Watts).aggregate(745.7).named("Horsepower").symbol("HP").make();
 
     // Temperature
     /**
@@ -386,20 +389,18 @@ public final class Units {
      * of water and a value of 100 corresponds to the boiling point. Electronics tend to exhibit
      * degraded performance or damage above 90 degrees Celsius.
      */
-    public static final Temperature Celsius =
-            derive(Kelvin).offset(+273.15).named("Celsius").symbol("°C").make();
+    public static final Temperature Celsius = derive(Kelvin).offset(+273.15).named("Celsius").symbol("°C").make();
 
     /**
      * The base imperial (American) unit of temperature, where a value of 32 roughly corresponds to
      * the freezing point of water and a value of 212 corresponds to the boiling point.
      */
-    public static final Temperature Fahrenheit =
-            derive(Celsius)
-                    .mappingInputRange(0, 100)
-                    .toOutputRange(32, 212)
-                    .named("Fahrenheit")
-                    .symbol("°F")
-                    .make();
+    public static final Temperature Fahrenheit = derive(Celsius)
+            .mappingInputRange(0, 100)
+            .toOutputRange(32, 212)
+            .named("Fahrenheit")
+            .symbol("°F")
+            .make();
 
     // Standard feedforward units for kV and kA.
     // kS and kG are just volts, which is already defined earlier
@@ -407,29 +408,25 @@ public final class Units {
      * A standard unit for measuring linear mechanisms' feedforward voltages based on a model of the
      * system and a desired commanded linear velocity.
      */
-    public static final Per<Voltage, Velocity<Distance>> VoltsPerMeterPerSecond =
-            Volts.per(MetersPerSecond);
+    public static final Per<Voltage, Velocity<Distance>> VoltsPerMeterPerSecond = Volts.per(MetersPerSecond);
 
     /**
      * A standard unit for measuring linear mechanisms' feedforward voltages based on a model of the
      * system and a desired commanded linear acceleration.
      */
-    public static final Per<Voltage, Velocity<Velocity<Distance>>> VoltsPerMeterPerSecondSquared =
-            Volts.per(MetersPerSecondPerSecond);
+    public static final Per<Voltage, Velocity<Velocity<Distance>>> VoltsPerMeterPerSecondSquared = Volts.per(MetersPerSecondPerSecond);
 
     /**
      * A standard unit for measuring angular mechanisms' feedforward voltages based on a model of the
      * system and a desired commanded angular velocity.
      */
-    public static final Per<Voltage, Velocity<Angle>> VoltsPerRadianPerSecond =
-            Volts.per(RadiansPerSecond);
+    public static final Per<Voltage, Velocity<Angle>> VoltsPerRadianPerSecond = Volts.per(RadiansPerSecond);
 
     /**
      * A standard unit for measuring angular mechanisms' feedforward voltages based on a model of the
      * system and a desired commanded angular acceleration.
      */
-    public static final Per<Voltage, Velocity<Velocity<Angle>>> VoltsPerRadianPerSecondSquared =
-            Volts.per(RadiansPerSecond.per(Second));
+    public static final Per<Voltage, Velocity<Velocity<Angle>>> VoltsPerRadianPerSecondSquared = Volts.per(RadiansPerSecond.per(Second));
 
     /**
      * Creates a unit equal to a thousandth of the base unit, eg Milliseconds = Milli(Units.Seconds).
@@ -452,8 +449,7 @@ public final class Units {
      * @return the milli-unit
      */
     public static <U extends Unit<U>> U Milli(Unit<U> baseUnit) {
-        return Milli(
-                baseUnit, "Milli" + baseUnit.name().toLowerCase(Locale.ROOT), "m" + baseUnit.symbol());
+        return Milli(baseUnit, "Milli" + baseUnit.name().toLowerCase(Locale.ROOT), "m" + baseUnit.symbol());
     }
 
     /**
@@ -478,8 +474,7 @@ public final class Units {
      * @return the micro-unit
      */
     public static <U extends Unit<U>> U Micro(Unit<U> baseUnit) {
-        return Micro(
-                baseUnit, "Micro" + baseUnit.name().toLowerCase(Locale.ROOT), "u" + baseUnit.symbol());
+        return Micro(baseUnit, "Micro" + baseUnit.name().toLowerCase(Locale.ROOT), "u" + baseUnit.symbol());
     }
 
     /**
@@ -503,8 +498,7 @@ public final class Units {
      * @return the kilo-unit
      */
     public static <U extends Unit<U>> U Kilo(Unit<U> baseUnit) {
-        return Kilo(
-                baseUnit, "Kilo" + baseUnit.name().toLowerCase(Locale.ROOT), "K" + baseUnit.symbol());
+        return Kilo(baseUnit, "Kilo" + baseUnit.name().toLowerCase(Locale.ROOT), "K" + baseUnit.symbol());
     }
 
     /**
