@@ -26,7 +26,7 @@ public final class Accel {
 
     public Double maxAccelInchesPerSecSquared;
 
-    private Accel( Double minAccelInchesPerSecSquared,  Double maxAccelInchesPerSecSquared) {
+    private Accel(Double minAccelInchesPerSecSquared, Double maxAccelInchesPerSecSquared) {
         this.minAccelInchesPerSecSquared = minAccelInchesPerSecSquared;
         this.maxAccelInchesPerSecSquared = maxAccelInchesPerSecSquared;
     }
@@ -39,7 +39,7 @@ public final class Accel {
      * @return The new Accel object.
      */
 
-    public static Accel ofMin(double minAccel,  Velocity<Velocity<Distance>> unit) {
+    public static Accel ofMin(double minAccel, Velocity<Velocity<Distance>> unit) {
         return new Accel(unit.of(minAccel).in(InchesPerSecondPerSecond), null);
     }
 
@@ -51,8 +51,30 @@ public final class Accel {
      * @return The new Accel object.
      */
 
-    public static Accel ofMax(double maxAccel,  Velocity<Velocity<Distance>> unit) {
+    public static Accel ofMax(double maxAccel, Velocity<Velocity<Distance>> unit) {
         return new Accel(null, unit.of(maxAccel).in(InchesPerSecondPerSecond));
+    }
+
+    /**
+     * Create a new Accel object with the specified minimum acceleration.
+     *
+     * @param minAccel The minimum acceleration constraint.
+     * @return The new Accel object.
+     */
+
+    public static Accel ofMin(Measure<Velocity<Velocity<Distance>>> minAccel) {
+        return new Accel(minAccel.in(InchesPerSecondPerSecond), null);
+    }
+
+    /**
+     * Create a new Accel object with the specified maximum acceleration.
+     *
+     * @param maxAccel The maximum acceleration constraint.
+     * @return The new Accel object.
+     */
+
+    public static Accel ofMax(Measure<Velocity<Velocity<Distance>>> maxAccel) {
+        return new Accel(null, maxAccel.in(InchesPerSecondPerSecond));
     }
 
     /**
@@ -63,7 +85,7 @@ public final class Accel {
      * @return The new Accel object.
      */
 
-    public Accel andMax(double maxAccel,  Velocity<Velocity<Distance>> unit) {
+    public Accel andMax(double maxAccel, Velocity<Velocity<Distance>> unit) {
         return new Accel(minAccelInchesPerSecSquared, unit.of(maxAccel).in(InchesPerSecondPerSecond));
     }
 
@@ -75,30 +97,8 @@ public final class Accel {
      * @return The new Accel object.
      */
 
-    public Accel andMin(double minAccel,  Velocity<Velocity<Distance>> unit) {
+    public Accel andMin(double minAccel, Velocity<Velocity<Distance>> unit) {
         return new Accel(unit.of(minAccel).in(InchesPerSecondPerSecond), maxAccelInchesPerSecSquared);
-    }
-
-    /**
-     * Create a new Accel object with the specified minimum acceleration.
-     *
-     * @param minAccel The minimum acceleration constraint.
-     * @return The new Accel object.
-     */
-
-    public static Accel ofMin( Measure<Velocity<Velocity<Distance>>> minAccel) {
-        return new Accel(minAccel.in(InchesPerSecondPerSecond), null);
-    }
-
-    /**
-     * Create a new Accel object with the specified maximum acceleration.
-     *
-     * @param maxAccel The maximum acceleration constraint.
-     * @return The new Accel object.
-     */
-
-    public static Accel ofMax( Measure<Velocity<Velocity<Distance>>> maxAccel) {
-        return new Accel(null, maxAccel.in(InchesPerSecondPerSecond));
     }
 
     /**
@@ -108,7 +108,7 @@ public final class Accel {
      * @return The new Accel object.
      */
 
-    public Accel andMax( Measure<Velocity<Velocity<Distance>>> maxAccel) {
+    public Accel andMax(Measure<Velocity<Velocity<Distance>>> maxAccel) {
         return new Accel(minAccelInchesPerSecSquared, maxAccel.in(InchesPerSecondPerSecond));
     }
 
@@ -119,7 +119,7 @@ public final class Accel {
      * @return The new Accel object.
      */
 
-    public Accel andMin( Measure<Velocity<Velocity<Distance>>> minAccel) {
+    public Accel andMin(Measure<Velocity<Velocity<Distance>>> minAccel) {
         return new Accel(minAccel.in(InchesPerSecondPerSecond), maxAccelInchesPerSecSquared);
     }
 
@@ -130,7 +130,7 @@ public final class Accel {
      * @return The built ProfileAccelConstraint object.
      */
 
-    public ProfileAccelConstraint getOrDefault( ProfileAccelConstraint defaultConstraints) {
+    public ProfileAccelConstraint getOrDefault(ProfileAccelConstraint defaultConstraints) {
         return new ProfileAccelConstraint(
                 minAccelInchesPerSecSquared == null ? defaultConstraints.minAccel : minAccelInchesPerSecSquared,
                 maxAccelInchesPerSecSquared == null ? defaultConstraints.maxAccel : maxAccelInchesPerSecSquared

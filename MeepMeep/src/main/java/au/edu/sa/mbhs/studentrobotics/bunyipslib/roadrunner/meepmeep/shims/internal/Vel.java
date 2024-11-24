@@ -64,6 +64,28 @@ public final class Vel {
     }
 
     /**
+     * Create a new Vel object with the specified maximum translation velocity.
+     *
+     * @param maxVel The maximum translation velocity.
+     * @return The new Vel object.
+     */
+
+    public static Vel ofMax(Measure<Velocity<Distance>> maxVel) {
+        return new Vel(maxVel.in(InchesPerSecond), null);
+    }
+
+    /**
+     * Create a new Vel object with the specified maximum angular velocity.
+     *
+     * @param maxAngVel The maximum angular velocity.
+     * @return The new Vel object.
+     */
+
+    public static Vel ofMaxAng(Measure<Velocity<Angle>> maxAngVel) {
+        return new Vel(null, maxAngVel.in(RadiansPerSecond));
+    }
+
+    /**
      * Compose this Vel object with a maximum translation velocity constraint.
      *
      * @param maxVel The maximum translation velocity.
@@ -85,29 +107,6 @@ public final class Vel {
 
     public Vel andMaxAng(double maxAngVel, Velocity<Angle> unit) {
         return new Vel(maxVelInchesPerSec, unit.of(maxAngVel).in(RadiansPerSecond));
-    }
-
-
-    /**
-     * Create a new Vel object with the specified maximum translation velocity.
-     *
-     * @param maxVel The maximum translation velocity.
-     * @return The new Vel object.
-     */
-
-    public static Vel ofMax(Measure<Velocity<Distance>> maxVel) {
-        return new Vel(maxVel.in(InchesPerSecond), null);
-    }
-
-    /**
-     * Create a new Vel object with the specified maximum angular velocity.
-     *
-     * @param maxAngVel The maximum angular velocity.
-     * @return The new Vel object.
-     */
-
-    public static Vel ofMaxAng(Measure<Velocity<Angle>> maxAngVel) {
-        return new Vel(null, maxAngVel.in(RadiansPerSecond));
     }
 
     /**

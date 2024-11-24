@@ -59,6 +59,28 @@ public final class Accel {
     }
 
     /**
+     * Create a new Accel object with the specified minimum acceleration.
+     *
+     * @param minAccel The minimum acceleration constraint.
+     * @return The new Accel object.
+     */
+    @NonNull
+    public static Accel ofMin(@NonNull Measure<Velocity<Velocity<Distance>>> minAccel) {
+        return new Accel(minAccel.in(InchesPerSecondPerSecond), null);
+    }
+
+    /**
+     * Create a new Accel object with the specified maximum acceleration.
+     *
+     * @param maxAccel The maximum acceleration constraint.
+     * @return The new Accel object.
+     */
+    @NonNull
+    public static Accel ofMax(@NonNull Measure<Velocity<Velocity<Distance>>> maxAccel) {
+        return new Accel(null, maxAccel.in(InchesPerSecondPerSecond));
+    }
+
+    /**
      * Compose this Accel object with a maximum acceleration constraint.
      *
      * @param maxAccel The maximum acceleration constraint.
@@ -80,28 +102,6 @@ public final class Accel {
     @NonNull
     public Accel andMin(double minAccel, @NonNull Velocity<Velocity<Distance>> unit) {
         return new Accel(unit.of(minAccel).in(InchesPerSecondPerSecond), maxAccelInchesPerSecSquared);
-    }
-
-    /**
-     * Create a new Accel object with the specified minimum acceleration.
-     *
-     * @param minAccel The minimum acceleration constraint.
-     * @return The new Accel object.
-     */
-    @NonNull
-    public static Accel ofMin(@NonNull Measure<Velocity<Velocity<Distance>>> minAccel) {
-        return new Accel(minAccel.in(InchesPerSecondPerSecond), null);
-    }
-
-    /**
-     * Create a new Accel object with the specified maximum acceleration.
-     *
-     * @param maxAccel The maximum acceleration constraint.
-     * @return The new Accel object.
-     */
-    @NonNull
-    public static Accel ofMax(@NonNull Measure<Velocity<Velocity<Distance>>> maxAccel) {
-        return new Accel(null, maxAccel.in(InchesPerSecondPerSecond));
     }
 
     /**

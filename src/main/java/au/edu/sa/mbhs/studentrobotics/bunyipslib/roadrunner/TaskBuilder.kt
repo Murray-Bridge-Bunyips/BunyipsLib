@@ -762,6 +762,9 @@ class TaskBuilder @JvmOverloads constructor(
     fun addTask(setUnmappedEndPoseRef: Reference<Pose2d>? = null) {
         if (!BunyipsOpMode.isRunning || BunyipsOpMode.instance !is AutonomousBunyipsOpMode)
             throw UninitializedPropertyAccessException("Cannot call addTask() when an active AutonomousBunyipsOpMode instance is not running!")
-        (BunyipsOpMode.instance as AutonomousBunyipsOpMode).add(priority, if (setUnmappedEndPoseRef != null) build(setUnmappedEndPoseRef) else build())
+        (BunyipsOpMode.instance as AutonomousBunyipsOpMode).add(
+            priority,
+            if (setUnmappedEndPoseRef != null) build(setUnmappedEndPoseRef) else build()
+        )
     }
 }
