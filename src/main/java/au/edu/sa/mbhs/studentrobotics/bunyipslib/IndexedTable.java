@@ -71,8 +71,13 @@ public class IndexedTable extends BunyipsComponent implements Runnable {
      * @param index the index to set
      */
     public void set(int index) {
-        if (index < 0 || index >= tableValues.length) {
-            throw new IllegalArgumentException("Index out of bounds");
+        if (index < 0) {
+            this.index = 0;
+            return;
+        }
+        if (index >= tableValues.length) {
+            this.index = tableValues.length - 1;
+            return;
         }
         this.index = index;
     }
