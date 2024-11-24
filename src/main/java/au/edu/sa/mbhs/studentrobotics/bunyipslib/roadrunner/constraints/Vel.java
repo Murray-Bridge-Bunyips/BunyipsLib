@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Velocity;
 
 /**
@@ -86,6 +87,50 @@ public final class Vel {
     @NonNull
     public Vel andMaxAng(double maxAngVel, @NonNull Velocity<Angle> unit) {
         return new Vel(maxVelInchesPerSec, unit.of(maxAngVel).in(RadiansPerSecond));
+    }
+
+    /**
+     * Create a new Vel object with the specified maximum translation velocity.
+     *
+     * @param maxVel The maximum translation velocity.
+     * @return The new Vel object.
+     */
+    @NonNull
+    public static Vel ofMax(@NonNull Measure<Velocity<Distance>> maxVel) {
+        return new Vel(maxVel.in(InchesPerSecond), null);
+    }
+
+    /**
+     * Create a new Vel object with the specified maximum angular velocity.
+     *
+     * @param maxAngVel The maximum angular velocity.
+     * @return The new Vel object.
+     */
+    @NonNull
+    public static Vel ofMaxAng(@NonNull Measure<Velocity<Angle>> maxAngVel) {
+        return new Vel(null, maxAngVel.in(RadiansPerSecond));
+    }
+
+    /**
+     * Compose this Vel object with a maximum translation velocity constraint.
+     *
+     * @param maxVel The maximum translation velocity.
+     * @return The new Vel object.
+     */
+    @NonNull
+    public Vel andMax(@NonNull Measure<Velocity<Distance>> maxVel) {
+        return new Vel(maxVel.in(InchesPerSecond), maxAngVelRadsPerSec);
+    }
+
+    /**
+     * Compose this Vel object with a maximum angular velocity constraint.
+     *
+     * @param maxAngVel The maximum angular velocity.
+     * @return The new Vel object.
+     */
+    @NonNull
+    public Vel andMaxAng(@NonNull Measure<Velocity<Angle>> maxAngVel) {
+        return new Vel(maxVelInchesPerSec, maxAngVel.in(RadiansPerSecond));
     }
 
     /**

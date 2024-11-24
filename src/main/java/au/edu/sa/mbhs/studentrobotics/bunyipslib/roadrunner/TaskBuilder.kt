@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.AutonomousBunyipsOpMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
@@ -637,6 +638,7 @@ class TaskBuilder @JvmOverloads constructor(
      * Creates a new builder with the same settings and default constraints at the current pose, tangent.
      */
     fun fresh(): TaskBuilder {
+        endTrajectory()
         val bClass = builder::class.java
         val lastPoseUnmappedField = bClass.getDeclaredField("lastPoseUnmapped")
         val lastTangentField = bClass.getDeclaredField("lastTangent")
@@ -739,15 +741,27 @@ class TaskBuilder @JvmOverloads constructor(
     }
 
     /**
+     * Build the current trajectory and return it as a [Task]/[Action].
+     * This overload also stores the last *unmapped* spliced pose in the given [Reference] object for manual chaining.
+     */
+    fun build(setUnmappedEndPoseRef: Reference<Pose2d>) = build().also {
+        endTrajectory()
+        val lastPoseField = builder::class.java.getDeclaredField("lastPoseUnmapped")
+        lastPoseField.isAccessible = true
+        setUnmappedEndPoseRef.set(lastPoseField.get(builder) as Pose2d)
+    }
+
+    /**
      * Build the current trajectory and add it to the current [AutonomousBunyipsOpMode] task queue with
-     * the settings defined in this builder.
+     * the settings defined in this builder. Optionally sets a passed [setUnmappedEndPoseRef] to the last *unmapped* spliced pose.
      *
      * This method will throw an [UninitializedPropertyAccessException] if the current [BunyipsOpMode] is not an
      * [AutonomousBunyipsOpMode] or if the [AutonomousBunyipsOpMode] is not running.
      */
-    fun addTask() {
+    @JvmOverloads
+    fun addTask(setUnmappedEndPoseRef: Reference<Pose2d>? = null) {
         if (!BunyipsOpMode.isRunning || BunyipsOpMode.instance !is AutonomousBunyipsOpMode)
             throw UninitializedPropertyAccessException("Cannot call addTask() when an active AutonomousBunyipsOpMode instance is not running!")
-        (BunyipsOpMode.instance as AutonomousBunyipsOpMode).add(priority, build())
+        (BunyipsOpMode.instance as AutonomousBunyipsOpMode).add(priority, if (setUnmappedEndPoseRef != null) build(setUnmappedEndPoseRef) else build())
     }
 }

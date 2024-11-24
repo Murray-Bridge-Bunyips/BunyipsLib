@@ -644,7 +644,7 @@ class TaskBuilder(
         lastTangentField.isAccessible = true
         val lastTangent = lastTangentField.get(builder) as Rotation2d
 
-        return TaskBuilder(builder.fresh(), baseConstraints, driveTrainType).setTangent(lastTangent)
+        return TaskBuilder(builder.endTrajectory().fresh(), baseConstraints, driveTrainType).setTangent(lastTangent)
     }
 
     /**
@@ -718,12 +718,25 @@ class TaskBuilder(
     fun build() = builder.build()
 
     /**
-     * Will attempt to auto-call `bot.runAction()` with the built task.
-     * Mimics adding the built task to the AutonomousBunyipsOpMode queue automatically.
-     * Do note only 1 action should be running at a time.
+     * Build the current trajectory and return it as a [Action].
+     * The BunyipsLib Task system does not exist in MeepMeep.
+     * This overload also stores the last *unmapped* spliced pose in the given [Reference] object for manual chaining.
      */
-    fun addTask() {
-        runActionConsumer.accept(build())
+    fun build(setUnmappedEndPoseRef: Reference<Pose2d>) = build().also {
+        endTrajectory()
+        val lastPoseField = builder::class.java.getDeclaredField("lastPoseUnmapped")
+        lastPoseField.isAccessible = true
+        setUnmappedEndPoseRef.set(lastPoseField.get(builder) as Pose2d)
+    }
+
+    /**
+     * Will attempt to auto-call `bot.runAction()` with the built task. Also replicates [setUnmappedEndPoseRef] functionality.
+     * Mimics adding the built task to the AutonomousBunyipsOpMode queue automatically.
+     * Do note only 1 action should be running at a time, and chaining addTask() calls will make a SequentialAction internally.
+     */
+    @JvmOverloads
+    fun addTask(setUnmappedEndPoseRef: Reference<Pose2d>? = null) {
+        runActionConsumer.accept(if (setUnmappedEndPoseRef != null) build(setUnmappedEndPoseRef) else build())
     }
 
     /**

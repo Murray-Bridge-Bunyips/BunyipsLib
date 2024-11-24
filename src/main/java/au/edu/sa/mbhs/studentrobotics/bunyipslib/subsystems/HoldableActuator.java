@@ -100,7 +100,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * Set the target tolerance of the actuator.
      *
      * @param tolerance    the tolerance to set in encoder ticks
-     * @param applyToMotor whether to apply this tolerance to the motor as well as the task checks
+     * @param applyToMotor whether to apply this tolerance to the motor as well as the task checks, default true
      * @return this
      */
     @NonNull
@@ -109,6 +109,18 @@ public class HoldableActuator extends BunyipsSubsystem {
             motor.setTargetPositionTolerance(tolerance);
         this.tolerance = tolerance;
         return this;
+    }
+
+    /**
+     * Set the target tolerance of the actuator.
+     * Applies the tolerance to the motor object as well as the task checks.
+     *
+     * @param tolerance the tolerance to set in encoder ticks
+     * @return this
+     */
+    @NonNull
+    public HoldableActuator withTolerance(int tolerance) {
+        return withTolerance(tolerance, true);
     }
 
     /**
