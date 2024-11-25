@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.VisionData;
 
@@ -42,7 +43,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.VisionData;
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
  */
-@Config
 public class Vision extends BunyipsSubsystem {
     /**
      * Default camera width resolution to use.
@@ -81,6 +81,7 @@ public class Vision extends BunyipsSubsystem {
         this.camera = camera;
         // Allow the user to set the camera resolution if they want
         preferredResolution = new Size(cameraWidth, cameraHeight);
+        Dashboard.enableConfig(getClass());
     }
 
     /**

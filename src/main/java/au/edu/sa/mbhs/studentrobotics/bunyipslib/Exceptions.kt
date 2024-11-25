@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
-import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.ForceStopException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -16,7 +15,6 @@ import java.util.function.Consumer
  *
  * @since 1.0.0-pre
  */
-@Config
 object Exceptions {
     /**
      * Exceptions thrown since the last reset of this set.

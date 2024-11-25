@@ -38,17 +38,11 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
  * @since 1.0.0-pre
  */
 public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
-    // Used for tasks that have no timeout to generate a "estimate to OpMode completion" metric
-    private static final double INFINITE_TASK_ASSUMED_DURATION_SECONDS = 5.0;
-
     /**
-     * This list defines OpModes that should be selectable by the user. This will then
-     * be used to determine your tasks in {@link #onReady(Reference, Controls)}.
-     * For example, you may have configurations for RED_LEFT, RED_RIGHT, BLUE_LEFT, BLUE_RIGHT.
-     * By default, this will be empty, and the user will not be prompted for a selection.
-     *
-     * @see #setOpModes(Object...)
+     * Used for tasks that have no timeout to generate a "estimate to OpMode completion" metric.
+     * Purely visual, and does not affect the actual task (hence why this field is not exposed to FtcDashboard).
      */
+    public static double INFINITE_TASK_ASSUMED_DURATION_SECONDS = 5.0;
     private final ArrayList<Reference<?>> opModes = new ArrayList<>();
     private final ConcurrentLinkedDeque<Task> tasks = new ConcurrentLinkedDeque<>();
     // Pre and post queues cannot have their tasks removed, so we can rely on their .size() methods
@@ -639,8 +633,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Call to define your OpModeSelections, if you list any, then the user will be prompted to select
-     * an OpMode before the OpMode begins. If you return null, then the user will not
+     * an OpMode before the OpMode begins. If you return null/don't call this method, then the user will not
      * be prompted for a selection, and the OpMode will move to task-ready state immediately.
+     * This determines what is to be used in the parameters of {@link #onReady(Reference, Controls)}.
+     *
      * <pre>{@code
      *     setOpModes(
      *             "GO_PARK",
