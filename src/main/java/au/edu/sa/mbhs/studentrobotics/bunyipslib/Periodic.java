@@ -13,7 +13,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  * This is useful for operations that should be delayed or slowed down, such as reading or writing to hardware.
  *
  * @author Lucas Bubner, 2024
- * @since 6.0.1
+ * @since 6.1.0
  */
 public class Periodic implements Runnable {
     private final ElapsedTime timer = new ElapsedTime();
