@@ -10,7 +10,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.canvas.Canvas
-import com.acmerobotics.dashboard.config.reflection.ReflectionConfig
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
@@ -123,12 +122,6 @@ class DualTelemetry @JvmOverloads constructor(
                 )
             }
             opMode.telemetry.log().add(infoString)
-        }
-        FtcDashboard.getInstance().withConfigRoot { c ->
-            c.putVariable(
-                javaClass.simpleName,
-                ReflectionConfig.createVariableFromClass(javaClass)
-            )
         }
     }
 
