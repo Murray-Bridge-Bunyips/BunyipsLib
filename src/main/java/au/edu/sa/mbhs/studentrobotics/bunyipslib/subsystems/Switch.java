@@ -222,7 +222,7 @@ public class Switch extends BunyipsSubsystem {
         public Task controlPosition(@NonNull DoubleSupplier positionSupplier) {
             return new ContinuousTask(() -> setPosition(positionSupplier.getAsDouble()))
                     .onSubsystem(Switch.this, false)
-                    .withName("Supplier Position Control");
+                    .withName(name + ":Supplier Position Control");
         }
 
         /**
@@ -235,7 +235,7 @@ public class Switch extends BunyipsSubsystem {
         public Task controlDelta(@NonNull DoubleSupplier powerSupplier) {
             return new ContinuousTask(() -> setPosition(target + powerSupplier.getAsDouble()))
                     .onSubsystem(Switch.this, false)
-                    .withName("Supplier Delta Control");
+                    .withName(name + ":Supplier Delta Control");
         }
 
         /**
@@ -247,7 +247,7 @@ public class Switch extends BunyipsSubsystem {
         public Task open() {
             return new RunTask(Switch.this::open)
                     .onSubsystem(Switch.this, true)
-                    .withName("Open");
+                    .withName(name + ":Open");
         }
 
         /**
@@ -259,7 +259,7 @@ public class Switch extends BunyipsSubsystem {
         public Task close() {
             return new RunTask(Switch.this::close)
                     .onSubsystem(Switch.this, true)
-                    .withName("Close");
+                    .withName(name + ":Close");
         }
 
         /**
@@ -271,7 +271,7 @@ public class Switch extends BunyipsSubsystem {
         public Task toggle() {
             return new RunTask(Switch.this::toggle)
                     .onSubsystem(Switch.this, true)
-                    .withName("Toggle");
+                    .withName(name + ":Toggle");
         }
 
         /**
@@ -284,7 +284,7 @@ public class Switch extends BunyipsSubsystem {
         public Task setToUnclipped(double position) {
             return new RunTask(() -> setPositionUnclipped(position))
                     .onSubsystem(Switch.this, true)
-                    .withName("Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
+                    .withName(name + ":Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
         }
 
         /**
@@ -297,7 +297,7 @@ public class Switch extends BunyipsSubsystem {
         public Task setTo(double position) {
             return new RunTask(() -> setPosition(position))
                     .onSubsystem(Switch.this, true)
-                    .withName("Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
+                    .withName(name + ":Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
         }
 
         /**
@@ -310,7 +310,7 @@ public class Switch extends BunyipsSubsystem {
         public Task deltaUnclipped(double delta) {
             return new RunTask(() -> setPositionUnclipped(target + delta))
                     .onSubsystem(Switch.this, true)
-                    .withName("Delta By " + delta);
+                    .withName(name + ":Delta By " + delta);
         }
 
         /**
@@ -323,7 +323,7 @@ public class Switch extends BunyipsSubsystem {
         public Task delta(double delta) {
             return new RunTask(() -> setPosition(target + delta))
                     .onSubsystem(Switch.this, true)
-                    .withName("Delta By " + delta);
+                    .withName(name + ":Delta By " + delta);
         }
     }
 }

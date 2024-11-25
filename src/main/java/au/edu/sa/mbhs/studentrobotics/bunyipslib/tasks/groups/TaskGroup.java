@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  */
 public abstract class TaskGroup extends Task {
     protected final ArrayList<Task> tasks = new ArrayList<>();
+    private final HashSet<Task> finishedTasks = new HashSet<>();
     private final HashSet<Task> attachedTasks = new HashSet<>();
 
     protected TaskGroup(@NonNull Measure<Time> maxTimeout, @NonNull Task... tasks) {
@@ -54,7 +57,11 @@ public abstract class TaskGroup extends Task {
     }
 
     protected final void executeTask(@NonNull Task task) {
-        if (task.isFinished()) return;
+        if (task.isFinished()) {
+            if (finishedTasks.add(task))
+                Dbg.logd(getClass(), "sub-task %/% (%) finished -> %s", finishedTasks.size(), tasks.size(), task, task.getDeltaTime().in(Seconds));
+            return;
+        }
         // Do not manage a task if it is already attached to a subsystem being managed there
         if (attachedTasks.contains(task)) return;
         task.getDependency().ifPresent(dependency -> {
@@ -100,5 +107,6 @@ public abstract class TaskGroup extends Task {
             task.reset();
         }
         attachedTasks.clear();
+        finishedTasks.clear();
     }
 }

@@ -619,7 +619,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         public Task setPower(double p) {
             return new RunTask(() -> HoldableActuator.this.setPower(p))
                     .onSubsystem(HoldableActuator.this, false)
-                    .withName("Set Power");
+                    .withName(name + ":Set Power");
         }
 
         /**
@@ -652,7 +652,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 public boolean isTaskFinished() {
                     return false;
                 }
-            }.onSubsystem(HoldableActuator.this, true).withName("Run For Time");
+            }.onSubsystem(HoldableActuator.this, true).withName(name + ":Run For Time");
         }
 
         /**
@@ -710,7 +710,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     boolean sustainedOvercurrent = overcurrentTimer != null && overcurrentTimer.seconds() >= overcurrentTime.in(Seconds);
                     return inputMode != Mode.HOMING || (bottomedOut || velocityZeroed || sustainedOvercurrent);
                 }
-            }.onSubsystem(HoldableActuator.this, true).withName("Return To Home");
+            }.onSubsystem(HoldableActuator.this, true).withName(name + ":Return To Home");
         }
 
         /**
@@ -772,7 +772,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     boolean sustainedOvercurrent = overcurrentTimer != null && overcurrentTimer.seconds() >= overcurrentTime.in(Seconds);
                     return inputMode != Mode.HOMING || (toppedOut || velocityZeroed || sustainedOvercurrent);
                 }
-            }.onSubsystem(HoldableActuator.this, true).withName("Travel To Ceiling");
+            }.onSubsystem(HoldableActuator.this, true).withName(name + ":Travel To Ceiling");
         }
 
         /**
@@ -791,7 +791,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 return new RunTask();
             }
             // Since this is a static mapping we can return the task
-            return goTo(position).until(limitSwitch::isPressed).withName("Run To Limit Switch");
+            return goTo(position).until(limitSwitch::isPressed).withName(name + ":Run To Limit Switch");
         }
 
         /**
@@ -828,7 +828,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 public boolean isTaskFinished() {
                     return inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), tolerance));
                 }
-            }.onSubsystem(HoldableActuator.this, true).withName("Run To Position");
+            }.onSubsystem(HoldableActuator.this, true).withName(name + ":Run To " + targetPosition + " Ticks");
         }
 
         /**
@@ -867,7 +867,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 public boolean isTaskFinished() {
                     return inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(target, encoder.getPosition(), tolerance));
                 }
-            }.onSubsystem(HoldableActuator.this, true).withName("Run To Delta");
+            }.onSubsystem(HoldableActuator.this, true).withName(name + ":Run To " + deltaPosition + " Delta Ticks");
         }
     }
 }

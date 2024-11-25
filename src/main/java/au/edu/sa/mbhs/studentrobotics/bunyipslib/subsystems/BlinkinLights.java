@@ -228,7 +228,7 @@ public class BlinkinLights extends BunyipsSubsystem {
         public Task setPatternFor(@NonNull Measure<Time> duration, @NonNull RevBlinkinLedDriver.BlinkinPattern pattern) {
             return new RunForTask(duration, () -> currentPattern = pattern, () -> currentPattern = defaultPattern)
                     .onSubsystem(BlinkinLights.this, true)
-                    .withName("Lights:" + pattern.name());
+                    .withName(name + ":" + pattern.name());
         }
     }
 }

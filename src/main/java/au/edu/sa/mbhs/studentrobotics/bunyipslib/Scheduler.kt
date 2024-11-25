@@ -739,7 +739,7 @@ class Scheduler : BunyipsComponent() {
                 "<small><b>%</b>% <font color='gray'>|</font> <b>%</b> -> %",
                 className,
                 if (isDefaultTask) " (d.)" else "",
-                taskName,
+                taskName.replace("$className:", ""),
                 deltaTimeSec
             )
             report += if (timeoutSec == 0.0) "s" else "/" + timeoutSec + "s"
