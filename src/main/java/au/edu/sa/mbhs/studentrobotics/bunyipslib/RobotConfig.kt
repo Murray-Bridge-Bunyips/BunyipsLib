@@ -59,7 +59,6 @@ abstract class RobotConfig {
         if (hasInitCalled)
             throw IllegalStateException("RobotConfig instance was already initialised.")
         Storage.memory().hardwareErrors.clear()
-        Storage.memory().unusableComponents.clear()
         this.hardwareMap = opMode.hardwareMap
         if (opMode is BunyipsOpMode) {
             Exceptions.runUserMethod(::onRuntime, opMode)

@@ -396,7 +396,6 @@ class DualTelemetry @JvmOverloads constructor(
                     }
                 }
                 when (type) {
-                    // TODO: review map duplication
                     ItemType.TELEMETRY -> packet.put(
                         if (!userTag.isNullOrBlank()) userTag else "DS${String.format("%0${padding}d", t++)}",
                         value
@@ -420,7 +419,14 @@ class DualTelemetry @JvmOverloads constructor(
                     }
                 }
             }
-            dashboardItems.clear()
+            dashboardItems.removeIf { it.first == ItemType.TELEMETRY }
+            // trim dashboardItems down to opMode.telemetry.log().capacity if it overflows
+            val logs = dashboardItems.count { it.first == ItemType.LOG }
+            if (logs > TELEMETRY_LOG_LINE_LIMIT) {
+                val toRemove = dashboardItems.filter { it.first == ItemType.LOG }
+                    .take(logs - TELEMETRY_LOG_LINE_LIMIT)
+                dashboardItems.removeAll(toRemove.toSet())
+            }
         }
 
         FtcDashboard.getInstance().sendTelemetryPacket(packet)
@@ -464,7 +470,7 @@ class DualTelemetry @JvmOverloads constructor(
     override fun clear() {
         telemetryQueue = 0
         synchronized(dashboardItems) {
-            dashboardItems.clear()
+            dashboardItems.removeIf { it.first == ItemType.TELEMETRY }
         }
         opMode.telemetry.clear()
     }
@@ -475,7 +481,7 @@ class DualTelemetry @JvmOverloads constructor(
     override fun clearAll() {
         opMode.telemetry.clearAll()
         synchronized(dashboardItems) {
-            dashboardItems.clear()
+            dashboardItems.removeIf { it.first == ItemType.TELEMETRY }
         }
         FtcDashboard.getInstance().clearTelemetry()
         telemetryQueue = 0

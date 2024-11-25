@@ -6,15 +6,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 
@@ -29,6 +30,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
  */
 public abstract class BunyipsSubsystem extends BunyipsComponent {
     private static final HashSet<BunyipsSubsystem> instances = new HashSet<>();
+    private static int idx = 0;
     private final List<BunyipsSubsystem> children = new ArrayList<>();
     /**
      * Reference to the unmodified name of this subsystem.
@@ -36,7 +38,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * @see #toString() referencing `this` to also retrieve delegation status affixed to the end of the name
      */
     @NonNull
-    protected String name = getClass().getSimpleName();
+    protected String name = getClass().getSimpleName() + idx++;
     private volatile Task currentTask;
     private volatile Task defaultTask = new IdleTask();
     private volatile boolean shouldRun = true;
@@ -65,6 +67,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public static void resetForOpMode() {
         instances.clear();
+        idx = 0;
     }
 
     /**
@@ -158,15 +161,18 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      *                   in which case the subsystem should be disabled
      * @return whether the assertion passed or failed, where you can stop the constructor if this returns false
      */
-    protected final boolean assertParamsNotNull(@NonNull Object... parameters) {
+    protected final boolean assertParamsNotNull(@Nullable Object... parameters) {
         // If a previous check has already failed, we don't need to check again otherwise we might
         // erase a previous check that failed
         if (!shouldRun) return false;
-        // assertComponentArgs will manage telemetry/impl of errors being ignored, all we need to do
-        // is check if it failed and if so, disable the subsystem
-        shouldRun = NullSafety.assertComponentArgs(toString(), getClass().getSimpleName(), parameters);
+        // Check nullability
+        shouldRun = Arrays.stream(parameters).allMatch(Objects::nonNull);
         if (!shouldRun) {
             assertionFailed = true;
+            opMode(o -> {
+                o.telemetry.addRetained("<font color='red'><b>! SUBSYSTEM FAULT</b></font>: %", toString());
+                o.telemetry.log("<font color='yellow'><b>warning!</b> <i>%</i> failed a null self-check and was auto disabled.</font>", toString());
+            });
             Dbg.error(getClass(), "%Subsystem has been disabled as assertParamsNotNull() failed.", isDefaultName() ? "" : "(" + this + ") ");
             onDisable();
         }

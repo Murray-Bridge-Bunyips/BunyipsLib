@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.ForceStopException
 import java.io.PrintWriter
@@ -40,31 +39,25 @@ object Exceptions {
      */
     @JvmStatic
     fun handle(e: Throwable, stderr: Consumer<String>?) {
-        THROWN_EXCEPTIONS.add(e)
+        var out = stderr
         Dbg.error("Exception caught! Stacktrace:")
         Dbg.sendStacktrace(e)
+        if (THROWN_EXCEPTIONS.stream().anyMatch { it.toString() == e.toString() } || !THROWN_EXCEPTIONS.add(e)) {
+            // Don't log out the same exception twice
+            out = null
+        }
         val sw = StringWriter()
         e.printStackTrace(PrintWriter(sw))
         var stack = sw.toString()
-        if (e is NullPointerException) {
-            for (component in Storage.memory().unusableComponents) {
-                if (stack.contains(component, ignoreCase = true)) {
-                    // This error is caused by a null component, which is handled by NullSafety
-                    // As such, we can swallow it from appearing on the Driver Station
-                    // Logcat will still receive this log, so we can just early exit.
-                    return
-                }
-            }
-        }
-        stderr?.accept("<font color='red'><b>exception caught! &lt;${e.localizedMessage}&gt;</b></font>")
+        out?.accept("<font color='red'><b>exception caught! &lt;${e.localizedMessage}&gt;</b></font>")
         if (e.cause != null) {
-            stderr?.accept("caused by: ${e.cause}")
+            out?.accept("caused by: ${e.cause}")
         }
         if (stack.length > MAX_DS_STACKTRACE_CHARS) {
             stack = stack.substring(0, MAX_DS_STACKTRACE_CHARS - 4)
             stack += " ..."
         }
-        stderr?.accept("<small>$stack</small>")
+        out?.accept("<small>$stack</small>")
         if (e is InterruptedException || e is ForceStopException) {
             Dbg.error("Interrupt exception called, raising to superclass...")
             // FTC SDK must handle this

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -25,7 +26,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 
@@ -221,7 +221,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param subsystems the restrictive list of subsystems to be managed and updated by ABOM
      */
     public final void use(@NonNull BunyipsSubsystem... subsystems) {
-        if (!NullSafety.assertNotNull(Arrays.stream(subsystems).toArray())) {
+        if (Arrays.stream(subsystems).anyMatch(Objects::isNull)) {
             throw new RuntimeException("Null subsystems were added in the use() method!");
         }
         Collections.addAll(updatedSubsystems, subsystems);

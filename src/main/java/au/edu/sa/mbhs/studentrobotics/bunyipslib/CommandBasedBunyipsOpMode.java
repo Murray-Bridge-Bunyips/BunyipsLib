@@ -7,11 +7,11 @@ import androidx.annotation.NonNull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.NullSafety;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
@@ -156,7 +156,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * @param subsystems the restrictive list of subsystems to be managed and updated by the scheduler
      */
     public void use(@NonNull BunyipsSubsystem... subsystems) {
-        if (!NullSafety.assertNotNull(Arrays.stream(subsystems).toArray())) {
+        if (Arrays.stream(subsystems).anyMatch(Objects::isNull)) {
             throw new RuntimeException("Null subsystems were added in the use() method!");
         }
         Collections.addAll(managedSubsystems, subsystems);
