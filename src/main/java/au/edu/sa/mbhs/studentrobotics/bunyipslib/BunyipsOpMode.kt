@@ -6,8 +6,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.*
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads
+import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.ftc.throwIfModulesAreOutdated
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.Blinker
@@ -105,7 +107,7 @@ abstract class BunyipsOpMode : BOMInternal() {
 
     private val runnables = mutableSetOf<Runnable>()
     private var gamepadExecutor: ExecutorService? = null
-    private var initTask: Runnable? = null
+    private var initTask: Action? = null
 
     companion object {
         private var _instance: BunyipsOpMode? = null
@@ -325,25 +327,27 @@ abstract class BunyipsOpMode : BOMInternal() {
                 )
             }
             // Run user-defined dynamic initialisation
+            var done = false
             while (opModeInInit() && !operationsCompleted) {
                 val curr = System.nanoTime()
-                try {
-                    robotControllers.forEach { m -> m.clearBulkCache() }
-                    // Run the user's init task, if it isn't null
-                    initTask?.run()
-                    // Run until onInitLoop returns true, and the initTask is done, or the OpMode is continued
-                    // If the initTask is a Runnable, then we need to keep running
-                    if (onInitLoop() && (initTask == null || (initTask is Task && (initTask as Task).pollFinished())))
-                        break
-                } catch (e: Exception) {
-                    ok = false
-                    telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
-                    Exceptions.handle(e, telemetry::log)
+                Dashboard.usePacket {
+                    try {
+                        robotControllers.forEach { m -> m.clearBulkCache() }
+                        // Run until onInitLoop returns true, and the initTask is done, or the OpMode is continued
+                        initTask?.preview(it.fieldOverlay())
+                        done = onInitLoop() && (initTask == null || !initTask!!.run(it))
+                    } catch (e: Exception) {
+                        ok = false
+                        telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                        Exceptions.handle(e, telemetry::log)
+                    }
                 }
                 timer.update()
                 telemetry.update()
                 if (loopSpeed.magnitude() > 0)
                     sleep(abs(((loopSpeed to Nanoseconds).toLong() - (System.nanoTime() - curr))) / 1_000_000)
+                if (done)
+                    break
             }
 
             telemetry.opModeStatus = "<font color='yellow'>finish_init</font>"
@@ -522,26 +526,26 @@ abstract class BunyipsOpMode : BOMInternal() {
     /**
      * Get the currently respected init-task that will run during `dynamic_init`.
      */
-    fun getInitTask(): Optional<Runnable> {
+    fun getInitTask(): Optional<Action> {
         return Optional.ofNullable(initTask)
     }
 
     /**
-     * Set a task that will run as an init-task. This will run
+     * Set a task (exposed as minimum type of an [Action]) that will run as an init-task. This will run
      * after your [onInit] has completed, allowing you to initialise hardware first.
      * This is an optional method, and runs alongside [onInitLoop].
      *
      * You should store any running variables inside the task itself, and keep the instance of the task
      * defined as a field in your OpMode. You can then use this value in your [onInitDone] to do
-     * what you need to after the init-task has finished. This method should be paired with [onInitDone]
-     * to do anything after the initTask has finished.
+     * what you need to after the init-task has finished, or use appropriate [Task] callbacks.
+     * This method should be paired with [onInitDone] to do anything after the initTask has finished, if desired.
      *
      * If you do not define an initTask, then running it during the `dynamic_init` phase will be skipped.
-     * Note that there can only be one init-task set. Consider a task group for multiple operations.
+     * Note that there can only be one init-task set. Consider a task/action group for multiple operations.
      *
      * @see onInitDone
      */
-    fun setInitTask(task: Runnable) {
+    fun setInitTask(task: Action) {
         if (initTask != null) {
             Dbg.warn("BunyipsOpMode: init-task has already been set to %, overriding it with %...", initTask, task)
         }

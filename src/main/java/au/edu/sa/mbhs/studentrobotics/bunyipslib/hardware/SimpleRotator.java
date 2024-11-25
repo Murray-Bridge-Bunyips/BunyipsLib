@@ -23,7 +23,11 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  * @since 6.0.0
  */
 public class SimpleRotator implements DcMotorSimple {
-    private final DcMotorSimple dms;
+    /**
+     * Underlying DcMotorSimple object.
+     * Can be used for type-casting up into the original hardware object.
+     */
+    public final DcMotorSimple actuator;
     private double maxMagnitude = 1;
     private double powerDeltaTolerance = 0;
     private double lastPower = 0;
@@ -31,12 +35,12 @@ public class SimpleRotator implements DcMotorSimple {
     private long lastUpdate = 0;
 
     /**
-     * Wrap a DcMotorSimple to use in the SimpleCachedRotator class.
+     * Wrap a DcMotorSimple to use in the SimpleRotator class.
      *
      * @param dms the motor or CRServo instance to use
      */
     public SimpleRotator(@NonNull DcMotorSimple dms) {
-        this.dms = dms;
+        actuator = dms;
     }
 
     /**
@@ -77,17 +81,17 @@ public class SimpleRotator implements DcMotorSimple {
     @NonNull
     @Override
     public Direction getDirection() {
-        return dms.getDirection();
+        return actuator.getDirection();
     }
 
     @Override
     public synchronized void setDirection(@NonNull Direction direction) {
-        dms.setDirection(direction);
+        actuator.setDirection(direction);
     }
 
     @Override
     public synchronized double getPower() {
-        return dms.getPower();
+        return actuator.getPower();
     }
 
     /**
@@ -117,39 +121,39 @@ public class SimpleRotator implements DcMotorSimple {
         lastUpdate = System.nanoTime();
         lastPower = power;
         // Write to the hardware
-        dms.setPower(power);
+        actuator.setPower(power);
     }
 
     @NonNull
     @Override
     public Manufacturer getManufacturer() {
-        return dms.getManufacturer();
+        return actuator.getManufacturer();
     }
 
     @NonNull
     @Override
     public String getDeviceName() {
-        return dms.getDeviceName();
+        return actuator.getDeviceName();
     }
 
     @NonNull
     @Override
     public String getConnectionInfo() {
-        return dms.getConnectionInfo();
+        return actuator.getConnectionInfo();
     }
 
     @Override
     public int getVersion() {
-        return dms.getVersion();
+        return actuator.getVersion();
     }
 
     @Override
     public void resetDeviceConfigurationForOpMode() {
-        dms.resetDeviceConfigurationForOpMode();
+        actuator.resetDeviceConfigurationForOpMode();
     }
 
     @Override
     public void close() {
-        dms.close();
+        actuator.close();
     }
 }

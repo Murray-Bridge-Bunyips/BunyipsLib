@@ -396,6 +396,7 @@ class DualTelemetry @JvmOverloads constructor(
                     }
                 }
                 when (type) {
+                    // TODO: review map duplication
                     ItemType.TELEMETRY -> packet.put(
                         if (!userTag.isNullOrBlank()) userTag else "DS${String.format("%0${padding}d", t++)}",
                         value

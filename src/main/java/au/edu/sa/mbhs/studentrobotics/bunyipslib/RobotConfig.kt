@@ -186,7 +186,7 @@ abstract class RobotConfig {
 
     /**
      * Returns a [LazyImu] instance to use with RoadRunner drives. The difference between a regular IMU and a LazyImu
-     * is that the LazyImu is auto-initialised only when it is required via the {@code get()} call.
+     * is that the LazyImu is auto-initialised only when it is required via the `get()` call.
      *
      * @param name the name of the IMU in HardwareMap
      * @param orientationOnRobot the IMU orientation on the robot

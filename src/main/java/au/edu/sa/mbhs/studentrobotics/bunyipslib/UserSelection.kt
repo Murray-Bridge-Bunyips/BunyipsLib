@@ -31,20 +31,20 @@ import java.util.function.Consumer
  *
  * ```
  *    // In Kotlin using a lambda function, String can be replaced with any type
- *    private val selector: UserSelection<String> = UserSelection(this, { if (it == "POV") initPOVDrive() else initFCDrive() }, "POV", "FIELD-CENTRIC")
+ *    private val selector: UserSelection<String> = UserSelection({ if (it == "POV") initPOVDrive() else initFCDrive() }, "POV", "FIELD-CENTRIC")
  *
  *    override fun onInit() {
- *      Threads.run(selector)
+ *      Threads.start(selector)
  *    }
  * ```
  *
  * ```
  *    // In Java using a callback, String can be replaced with any type
- *    private UserSelection<String> selector = new UserSelection<>(this, this::callback, "POV", "FIELD-CENTRIC");
+ *    private UserSelection<String> selector = new UserSelection<>(this::callback, "POV", "FIELD-CENTRIC");
  *
  *    @Override
  *    protected void onInit() {
- *      Threads.run(selector);
+ *      Threads.start(selector);
  *    }
  *
  *    private void callback(@Nullable String res) {
@@ -64,6 +64,7 @@ import java.util.function.Consumer
 class UserSelection<T : Any>(
     /**
      * Runs once the user has made a selection or the thread is interrupted. The result will be the selection made by the user.
+     * Can be null if the user did not make a selection.
      */
     private val callback: Consumer<T?>,
     private vararg val opmodes: T
