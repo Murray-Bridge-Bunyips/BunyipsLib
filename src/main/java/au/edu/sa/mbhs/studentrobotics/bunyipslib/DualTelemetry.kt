@@ -420,7 +420,7 @@ class DualTelemetry @JvmOverloads constructor(
                 }
             }
             dashboardItems.removeIf { it.first == ItemType.TELEMETRY }
-            // trim dashboardItems down to opMode.telemetry.log().capacity if it overflows
+            // Trim down the FtcDashboard logs to the same amount of logs as the DS
             val logs = dashboardItems.count { it.first == ItemType.LOG }
             if (logs > TELEMETRY_LOG_LINE_LIMIT) {
                 val toRemove = dashboardItems.filter { it.first == ItemType.LOG }
