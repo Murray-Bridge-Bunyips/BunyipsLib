@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup;
@@ -37,7 +38,12 @@ public final class SplineTest extends LinearOpMode {
                                 .splineTo(new Vector2d(30, 30), Math.PI / 2)
                                 .splineTo(new Vector2d(0, 60), Math.PI)
                                 .build(),
-                        new ContinuousTask(drive::periodic),
+                        new ContinuousTask(() -> {
+                            if (drive instanceof BunyipsSubsystem)
+                                ((BunyipsSubsystem) drive).update();
+                            else
+                                drive.periodic();
+                        }),
                         new ContinuousTask(Dashboard::sendAndClearSyncedPackets)
                 )
         );
