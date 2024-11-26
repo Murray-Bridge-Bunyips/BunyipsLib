@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.ThreeWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TwoWheelLocalizer;
@@ -62,7 +63,12 @@ public final class ManualFeedbackTuner extends LinearOpMode {
                                             .until(() -> gamepad1.right_bumper),
                                     () -> gamepad1.right_bumper
                             ),
-                            new ContinuousTask(drive::periodic),
+                            new ContinuousTask(() -> {
+                                if (drive instanceof BunyipsSubsystem)
+                                    ((BunyipsSubsystem) drive).update();
+                                else
+                                    drive.periodic();
+                            }),
                             new ContinuousTask(Dashboard::sendAndClearSyncedPackets)
                     )
             );
