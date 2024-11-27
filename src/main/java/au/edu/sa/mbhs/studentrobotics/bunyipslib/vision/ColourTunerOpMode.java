@@ -76,6 +76,12 @@ public abstract class ColourTunerOpMode extends BunyipsOpMode {
         Dashboard.enableConfig(getClass());
     }
 
+    @Override
+    protected final boolean onInitLoop() {
+        activeLoop();
+        return false;
+    }
+
     private void changeToProcessor(int index) {
         // Stop old processor
         vision.stop(processors[processorIdx]);
