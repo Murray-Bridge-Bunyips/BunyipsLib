@@ -69,7 +69,7 @@ abstract class RobotConfig {
             onRuntime()
             opMode.telemetry.addData(
                 "",
-                "${this.javaClass.simpleName}: Completed with ${Storage.memory().hardwareErrors.size} error(s).",
+                "${this.javaClass.simpleName}: Initialisation completed with ${Storage.memory().hardwareErrors.size} error(s).",
             )
         }
         for (error in Storage.memory().hardwareErrors) {
