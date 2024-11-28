@@ -63,7 +63,7 @@ abstract class RobotConfig {
         if (opMode is BunyipsOpMode) {
             Exceptions.runUserMethod(::onRuntime, opMode)
             opMode.t.add(
-                "<b>${this.javaClass.simpleName}</b>: Completed with ${if (Storage.memory().hardwareErrors.size > 0) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}.",
+                "<b>${this.javaClass.simpleName}</b>: Initialisation completed with ${if (Storage.memory().hardwareErrors.size > 0) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}.",
             )
         } else {
             onRuntime()
