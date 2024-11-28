@@ -243,7 +243,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                 Mathf.round(poseVel.linearVel.y, 1),
                 Mathf.round(Math.toDegrees(pose.heading.toDouble()), 1),
                 Mathf.round(Math.toDegrees(poseVel.angVel), 1)
-        ).color("gray"));
+        ).color("gray").small());
 
         for (DcMotorEx m : leftMotors) {
             m.setPower(leftPower);

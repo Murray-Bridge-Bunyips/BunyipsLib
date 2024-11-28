@@ -332,7 +332,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                 Mathf.round(poseVel.linearVel.y, 1),
                 Mathf.round(Math.toDegrees(pose.heading.toDouble()), 1),
                 Mathf.round(Math.toDegrees(poseVel.angVel), 1)
-        ).color("gray"));
+        ).color("gray").small());
 
         leftFront.setPower(leftFrontPower);
         leftBack.setPower(leftBackPower);
@@ -354,7 +354,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         rightBack.setPower(0);
         rightFront.setPower(0);
     }
-
 
     @NonNull
     @Override

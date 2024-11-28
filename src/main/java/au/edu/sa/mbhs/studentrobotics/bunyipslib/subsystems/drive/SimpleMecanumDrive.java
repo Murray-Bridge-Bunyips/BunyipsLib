@@ -98,7 +98,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
                     Mathf.round(accumulator.getVelocity().linearVel.y, 1),
                     Mathf.round(Math.toDegrees(accumulator.getPose().heading.toDouble()), 1),
                     Mathf.round(Math.toDegrees(accumulator.getVelocity().angVel), 1)
-            ).color("gray"));
+            ).color("gray").small());
         }
 
         double leftFrontPower, leftBackPower, rightBackPower, rightFrontPower;

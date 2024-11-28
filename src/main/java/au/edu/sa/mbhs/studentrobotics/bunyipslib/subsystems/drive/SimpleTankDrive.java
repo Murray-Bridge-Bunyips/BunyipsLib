@@ -110,7 +110,7 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
                     Mathf.round(accumulator.getVelocity().linearVel.y, 1),
                     Mathf.round(Math.toDegrees(accumulator.getPose().heading.toDouble()), 1),
                     Mathf.round(Math.toDegrees(accumulator.getVelocity().angVel), 1)
-            ).color("gray"));
+            ).color("gray").small());
         }
 
         TankKinematics.WheelVelocities<Time> wheelVels = new TankKinematics(2)
