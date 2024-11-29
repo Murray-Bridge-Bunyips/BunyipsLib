@@ -52,7 +52,7 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     private lateinit var overheadTelemetry: Item
-    private val dashboardItems = Collections.synchronizedSet(mutableSetOf<Pair<ItemType, Reference<String>>>())
+    private var dashboardItems = Collections.synchronizedSet(mutableSetOf<Pair<ItemType, Reference<String>>>())
     private var userPacket: TelemetryPacket = TelemetryPacket()
 
     @Volatile
@@ -412,14 +412,7 @@ class DualTelemetry @JvmOverloads constructor(
                     }
                 }
             }
-            dashboardItems.removeIf { it.first == ItemType.TELEMETRY }
-            // Trim down the FtcDashboard logs to the same amount of logs as the DS
-            val logs = dashboardItems.count { it.first == ItemType.LOG }
-            if (logs > TELEMETRY_LOG_LINE_LIMIT) {
-                val toRemove = dashboardItems.filter { it.first == ItemType.LOG }
-                    .take(logs - TELEMETRY_LOG_LINE_LIMIT)
-                dashboardItems.removeAll(toRemove.toSet())
-            }
+            clearDashboardItems()
         }
 
         FtcDashboard.getInstance().sendTelemetryPacket(packet)
@@ -457,13 +450,25 @@ class DualTelemetry @JvmOverloads constructor(
         this.dashboardCaptionValueAutoSeparator = dashboardCaptionValueAutoSeparator
     }
 
+    private fun clearDashboardItems() {
+        var i = 0
+        dashboardItems = Collections.synchronizedSet(dashboardItems.filter { item ->
+            if (item.first == ItemType.LOG) {
+                i++
+                i <= TELEMETRY_LOG_LINE_LIMIT
+            } else {
+                item.first != ItemType.TELEMETRY
+            }
+        }.toMutableSet())
+    }
+
     /**
      * Clear telemetry on the Driver Station, not including retention
      */
     override fun clear() {
         telemetryQueue = 0
         synchronized(dashboardItems) {
-            dashboardItems.removeIf { it.first == ItemType.TELEMETRY }
+            clearDashboardItems()
         }
         opMode.telemetry.clear()
     }
@@ -474,7 +479,7 @@ class DualTelemetry @JvmOverloads constructor(
     override fun clearAll() {
         opMode.telemetry.clearAll()
         synchronized(dashboardItems) {
-            dashboardItems.removeIf { it.first == ItemType.TELEMETRY }
+            dashboardItems.clear()
         }
         FtcDashboard.getInstance().clearTelemetry()
         telemetryQueue = 0
