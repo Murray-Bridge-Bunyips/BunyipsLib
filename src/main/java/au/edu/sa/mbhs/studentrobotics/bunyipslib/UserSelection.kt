@@ -123,7 +123,7 @@ class UserSelection<T : Any>(
         val topBorder = require(opMode).telemetry.addDS(attentionBorders[0])
         val mainText = require(opMode).telemetry.addDS(driverStation)
         val bottomBorder = require(opMode).telemetry.addDS(attentionBorders[0])
-        require(opMode).telemetry.addDashboard("<small>USR</small>", dashboard)
+        require(opMode).telemetry.addDashboard("USR", dashboard)
 
         // Must manually call telemetry push as the BOM may not be handling them
         // This will not clear out any other telemetry as auto clear is disabled
@@ -167,7 +167,7 @@ class UserSelection<T : Any>(
         }
 
         require(opMode).telemetry.addDashboard(
-            "<small>USR</small>",
+            "USR",
             if (result == null) "No selection" else "${selectedButton.name} -> $opModeName@T+${
                 require(opMode).timer.elapsedTime() to Seconds round 1
             }s"

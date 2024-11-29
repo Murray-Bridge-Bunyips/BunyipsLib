@@ -35,10 +35,10 @@ public class Switch extends BunyipsSubsystem {
      * Constructs a new Switch.
      *
      * @param servo         the servo to use
-     * @param openPosition  the position to set the servo to when open
      * @param closePosition the position to set the servo to when closed
+     * @param openPosition  the position to set the servo to when open
      */
-    public Switch(@Nullable Servo servo, double openPosition, double closePosition) {
+    public Switch(@Nullable Servo servo, double closePosition, double openPosition) {
         this.servo = servo;
         // Auto-close servo
         // Note: Updating must be done manually
