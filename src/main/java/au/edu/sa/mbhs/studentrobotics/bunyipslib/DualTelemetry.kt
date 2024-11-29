@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.Telemetry.DisplayFormat
 import org.firstinspires.ftc.robotcore.external.Telemetry.Item
 import java.util.Collections
+import java.util.SortedMap
 import java.util.function.BooleanSupplier
 import kotlin.math.roundToInt
 
@@ -322,6 +323,7 @@ class DualTelemetry @JvmOverloads constructor(
     /**
      * Update and push queued telemetry to the Driver Station and FtcDashboard.
      */
+    @Suppress("UNCHECKED_CAST")
     override fun update(): Boolean {
         // Update main DS telemetry
         val retVal = opMode.telemetry.update()
@@ -415,9 +417,26 @@ class DualTelemetry @JvmOverloads constructor(
             clearDashboardItems()
         }
 
-        FtcDashboard.getInstance().sendTelemetryPacket(packet)
         synchronized(userPacket) {
-            FtcDashboard.getInstance().sendTelemetryPacket(userPacket)
+            // Access all data fields from each packet
+            packet.field().operations.addAll(userPacket.field().operations)
+            packet.fieldOverlay().operations.addAll(userPacket.fieldOverlay().operations)
+            val dataField = packet.javaClass.getDeclaredField("data")
+            val logField = packet.javaClass.getDeclaredField("log")
+            dataField.isAccessible = true
+            logField.isAccessible = true
+            val dataPacket = dataField.get(packet) as SortedMap<String, String>
+            val logPacket = logField.get(packet) as MutableList<String>
+            val dataUser = dataField.get(userPacket) as SortedMap<String, String>
+            val logUser = logField.get(userPacket) as MutableList<String>
+            // Merge them all together
+            dataPacket.putAll(dataUser)
+            logPacket.addAll(logUser)
+            dataField.set(packet, dataPacket)
+            logField.set(packet, logPacket)
+
+            FtcDashboard.getInstance().sendTelemetryPacket(packet)
+
             userPacket = TelemetryPacket()
         }
 
