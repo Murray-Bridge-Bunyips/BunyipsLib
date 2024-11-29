@@ -46,8 +46,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     private final ArrayList<Reference<?>> opModes = new ArrayList<>();
     private final ConcurrentLinkedDeque<Task> tasks = new ConcurrentLinkedDeque<>();
     // Pre and post queues cannot have their tasks removed, so we can rely on their .size() methods
-    private final ArrayDeque<Task> postQueue = new ArrayDeque<>();
-    private final ArrayDeque<Task> preQueue = new ArrayDeque<>();
+    private final ConcurrentLinkedDeque<Task> postQueue = new ConcurrentLinkedDeque<>();
+    private final ConcurrentLinkedDeque<Task> preQueue = new ConcurrentLinkedDeque<>();
     @NonNull
     private HashSet<BunyipsSubsystem> updatedSubsystems = new HashSet<>();
     private int taskCount;
@@ -66,18 +66,21 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
         Controls selectedButton = userSelection != null ? userSelection.getSelectedButton() : Controls.NONE;
         Exceptions.runUserMethod(() -> onReady(selectedOpMode, selectedButton), this);
+        callbackReceived = true;
 
         // Add any queued tasks that were delayed previously and we can do now
-        for (Task task : postQueue) {
-            add(task);
+        synchronized (postQueue) {
+            for (Task task : postQueue) {
+                add(task);
+            }
+            postQueue.clear();
         }
-        for (Task task : preQueue) {
-            addFirst(task);
+        synchronized (preQueue) {
+            for (Task task : preQueue) {
+                addFirst(task);
+            }
+            preQueue.clear();
         }
-        preQueue.clear();
-        postQueue.clear();
-
-        callbackReceived = true;
 
         String timeLeft = getApproximateTimeLeft();
         Text.Builder out = Text.builder();
@@ -433,7 +436,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     public final <T extends Task> T addLast(@NonNull T newTask) {
         checkTaskForDependency(newTask);
         if (!callbackReceived) {
-            postQueue.add(newTask);
+            synchronized (postQueue) {
+                postQueue.add(newTask);
+            }
             telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> queued end-init %/%", newTask, getTaskTimeout(newTask), postQueue.size(), postQueue.size());
             return newTask;
         }
@@ -473,7 +478,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     public final <T extends Task> T addFirst(@NonNull T newTask) {
         checkTaskForDependency(newTask);
         if (!callbackReceived) {
-            preQueue.add(newTask);
+            synchronized (preQueue) {
+                preQueue.add(newTask);
+            }
             telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> queued end-init 1/%", newTask, getTaskTimeout(newTask), preQueue.size());
             return newTask;
         }

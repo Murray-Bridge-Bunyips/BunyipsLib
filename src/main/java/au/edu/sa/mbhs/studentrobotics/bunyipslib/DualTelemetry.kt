@@ -418,8 +418,7 @@ class DualTelemetry @JvmOverloads constructor(
         }
 
         synchronized(userPacket) {
-            // Access all data fields from each packet
-            packet.field().operations.addAll(userPacket.field().operations)
+            // Access all data fields from each packet, not including the field itself
             packet.fieldOverlay().operations.addAll(userPacket.fieldOverlay().operations)
             val dataField = packet.javaClass.getDeclaredField("data")
             val logField = packet.javaClass.getDeclaredField("log")
