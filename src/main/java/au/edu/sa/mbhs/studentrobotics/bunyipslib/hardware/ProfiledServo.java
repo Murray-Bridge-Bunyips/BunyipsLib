@@ -36,7 +36,7 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
     private double lastDtSec = -1;
 
     private double positionDeltaTolerance;
-    private double lastPosition;
+    private double lastPosition = -1;
     private long refreshRateNanos;
     private long lastUpdate;
 

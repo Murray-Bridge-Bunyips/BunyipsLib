@@ -509,6 +509,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             if (bottomSwitch.isPressed() && motorPower < 0) {
                 // Cancel and stop any tasks that would move the actuator out of bounds as defined by the limit switch
                 setInputModeToUser();
+                encoder.reset();
                 motorPower = 0;
                 if (target < 0)
                     newTarget = 0;
@@ -517,6 +518,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             if (bottomSwitch.isPressed() && !zeroed) {
                 DcMotor.RunMode prev = motor.getMode();
                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                encoder.reset();
                 // Must propagate now as we're switching the mode
                 sustainedTolerated.reset();
                 newTarget = 0;
