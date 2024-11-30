@@ -18,7 +18,7 @@ public class RepeatTask extends Task {
      */
     public RepeatTask(@NonNull Task task) {
         this.task = task;
-        withName(task + " (Repeat)");
+        withName(task + " (repeat)");
     }
 
     @Override

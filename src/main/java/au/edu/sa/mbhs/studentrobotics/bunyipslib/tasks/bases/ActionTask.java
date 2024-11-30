@@ -5,9 +5,11 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Sec
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -24,8 +26,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
  * into a task at it's definition is more efficient.
  * <p>
  * Tasks built with RoadRunner drives, despite being represented with Actions are internally composed of {@link Task} instances,
- * so {@link SequentialAction} actions will also try to be unwrapped, with their full name available at init. This name
- * is then dynamically updated to the currently running task name.
+ * so {@link SequentialAction} and {@link ParallelAction} actions will also try to be unwrapped, with their full name available at init.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
@@ -42,41 +43,63 @@ public class ActionTask extends Task {
     public ActionTask(@NonNull Action action) {
         this.action = action;
         withName("Action :: " + action.getClass().getSimpleName());
-        ifTask(task -> {
+        ifSingleTask(task -> {
             withName(task.toString());
             setTimeout(task.getTimeout());
         });
-        if (action instanceof SequentialAction seq) {
-            List<Action> initialActions = seq.getInitialActions();
-            if (initialActions.isEmpty())
-                return;
+        ifManyActions(actions -> {
+            if (action instanceof SequentialAction seq) {
+                // For sequential actions, try to set a timeout based on the sum of all the inner task timeouts,
+                // unless they are not tasks then we just use an infinite timeout
+                if (actions.stream().anyMatch(a -> !(a instanceof Task) || ((Task) a).getTimeout().lte(INFINITE_TIMEOUT))) {
+                    setTimeout(INFINITE_TIMEOUT);
+                    return;
+                }
+                setTimeout(
+                        actions.stream()
+                                .map(a -> ((Task) a).getTimeout())
+                                .reduce(Seconds.zero(), Measure::plus)
+                );
+            }
+            if (action instanceof ParallelAction par) {
+                // Parallel actions we can just set the timeout to the max of all the inner task timeouts, similar to above
+                if (actions.stream().anyMatch(a -> !(a instanceof Task) || ((Task) a).getTimeout().lte(INFINITE_TIMEOUT))) {
+                    setTimeout(INFINITE_TIMEOUT);
+                    return;
+                }
+                setTimeout(
+                        actions.stream()
+                                .map(a -> ((Task) a).getTimeout())
+                                .reduce(Seconds.zero(), Measure::max)
+                );
+            }
             // Set the name to the combination of all the inner actions
             StringBuilder name = new StringBuilder();
-            for (int i = 0; i < initialActions.size(); i++) {
-                name.append(initialActions.get(i));
-                if (i != initialActions.size() - 1)
+            for (int i = 0; i < actions.size(); i++) {
+                name.append(actions.get(i));
+                if (i != actions.size() - 1)
                     name.append(",");
             }
             withName(name.toString());
-            // Try to set a timeout based on the sum of all the inner task timeouts, unless they are not tasks then
-            // we just use an infinite timeout
-            if (initialActions.stream().anyMatch(a -> !(a instanceof Task) || ((Task) a).getTimeout().lte(INFINITE_TIMEOUT))) {
-                setTimeout(INFINITE_TIMEOUT);
-                return;
-            }
-            setTimeout(
-                    initialActions.stream()
-                            .filter(a -> a instanceof Task)
-                            .map(a -> ((Task) a).getTimeout())
-                            .reduce(Seconds.zero(), Measure::plus)
-            );
+        });
+    }
+
+    private void ifManyActions(Consumer<List<Action>> t) {
+        List<Action> actions = new ArrayList<>();
+        if (action instanceof SequentialAction seq) {
+            actions.addAll(seq.getInitialActions());
+        } else if (action instanceof ParallelAction par) {
+            actions.addAll(par.getInitialActions());
+        } else {
+            actions.add(action);
         }
+        t.accept(actions);
     }
 
     @SuppressWarnings("unchecked")
-    private void ifTask(Consumer<Task> t) {
-        if (action instanceof Task) {
-            t.accept((Task) action);
+    private void ifSingleTask(Consumer<Task> t) {
+        if (action instanceof Task task) {
+            t.accept(task);
             return;
         }
         // We can unwrap a SequentialAction to get the currently running contained task, if possible
@@ -96,7 +119,7 @@ public class ActionTask extends Task {
                 t.accept((Task) ac);
             }
         }
-        // We can't unwrap ParallelAction, so we'll just ignore it.
+        // We can't unwrap ParallelAction dynamically, so we'll just ignore it.
         // This is because we can't have one definitive task to track the status of, since they're all running in parallel
     }
 
@@ -104,7 +127,7 @@ public class ActionTask extends Task {
     protected void periodic() {
         action.preview(fieldOverlay);
         actionFinished = !action.run(p);
-        ifTask(task -> withName(task.toString()));
+        ifSingleTask(task -> withName(task.toString()));
     }
 
     @Override
@@ -114,12 +137,24 @@ public class ActionTask extends Task {
 
     @Override
     protected void onFinish() {
-        ifTask(Task::finishNow);
+        ifManyActions(actions -> {
+            for (Action action : actions) {
+                if (action instanceof Task task) {
+                    task.finishNow();
+                }
+            }
+        });
     }
 
     @Override
     protected void onReset() {
         actionFinished = false;
-        ifTask(Task::reset);
+        ifManyActions(actions -> {
+            for (Action action : actions) {
+                if (action instanceof Task task) {
+                    task.reset();
+                }
+            }
+        });
     }
 }
