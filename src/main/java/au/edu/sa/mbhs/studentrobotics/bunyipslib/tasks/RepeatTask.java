@@ -2,7 +2,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
 import androidx.annotation.NonNull;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
@@ -11,7 +10,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-public class RepeatTask extends ForeverTask {
+public class RepeatTask extends Task {
     private final Task task;
 
     /**
@@ -40,5 +39,10 @@ public class RepeatTask extends ForeverTask {
     @Override
     protected void onFinish() {
         task.finishNow();
+    }
+
+    @Override
+    protected boolean isTaskFinished() {
+        return false;
     }
 }

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
@@ -18,7 +18,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-public class DifferentialDriveTask extends ForeverTask {
+public class DifferentialDriveTask extends Task {
     private final Moveable drive;
     private final Gamepad gamepad;
 
@@ -44,5 +44,10 @@ public class DifferentialDriveTask extends ForeverTask {
     @Override
     protected void onFinish() {
         drive.setPower(Geometry.zeroVel());
+    }
+
+    @Override
+    protected boolean isTaskFinished() {
+        return false;
     }
 }

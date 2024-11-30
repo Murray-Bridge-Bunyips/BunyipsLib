@@ -633,28 +633,15 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task runFor(@NonNull Measure<Time> time, double pwr) {
-            return new Task(time) {
-                @Override
-                public void init() {
-                    setInputModeToUser();
-                }
-
-                @Override
-                public void periodic() {
-                    // Will hijack the user power by constantly setting it
-                    userPower = pwr;
-                }
-
-                @Override
-                public void onFinish() {
-                    userPower = 0;
-                }
-
-                @Override
-                public boolean isTaskFinished() {
-                    return false;
-                }
-            }.onSubsystem(HoldableActuator.this, true).withName(name + ":Run For Time");
+            return Task.task()
+                    .init(HoldableActuator.this::setInputModeToUser)
+                    .loop(() -> userPower = pwr)
+                    .finish(() -> userPower = 0)
+                    .on(HoldableActuator.this)
+                    .override(true)
+                    .timeout(time)
+                    .name(name + ":Run For Time")
+                    .build();
         }
 
         /**

@@ -55,7 +55,7 @@ import java.util.function.BooleanSupplier
 abstract class Task(
     /**
      * Maximum timeout of the task. If set to 0 magnitude (or a timeout-less constructor) this will serve as an indefinite task, and
-     * will only finish when isTaskFinished() returns true, or this task is manually interrupted via [finish].
+     * will only finish when [isTaskFinished] returns true, or this task is manually interrupted via [finish].
      *
      * It is encouraged unless it is for systems that require infinite tasks, that you add timeouts to ensure your tasks
      * don't get stuck, making tasks have a focus on timeout conditions.
@@ -548,6 +548,17 @@ abstract class Task(
         fun defer(taskBuilder: () -> Task): DynamicTask {
             return DynamicTask(taskBuilder)
         }
+
+        /**
+         * Utility to create a new [TaskGen] instance for building a new task.
+         */
+        @JvmStatic
+        fun task() = TaskGen()
+
+        /**
+         * DSL function to create a new [TaskGen] instance for building a new task.
+         */
+        fun task(block: TaskGen.() -> Unit) = TaskGen().apply(block).build()
 
         /**
          * Default task setter extension for [BunyipsSubsystem] to set the default task of a subsystem.

@@ -1,6 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
  * Task that runs forever but does nothing.
@@ -9,7 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
  *
  * @since 1.0.0-pre
  */
-public class IdleTask extends ForeverTask {
+public class IdleTask extends Task {
     @Override
     protected void init() {
         // Ensure the name remains the same for telemetry ignoring
@@ -22,7 +22,7 @@ public class IdleTask extends ForeverTask {
     }
 
     @Override
-    protected void onFinish() {
-        // no-op
+    protected boolean isTaskFinished() {
+        return false;
     }
 }

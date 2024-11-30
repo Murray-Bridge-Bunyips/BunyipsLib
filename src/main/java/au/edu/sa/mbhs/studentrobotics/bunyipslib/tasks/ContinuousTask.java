@@ -2,7 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
 import androidx.annotation.NonNull;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
  * A task to run continuously and will never finish on its own.
@@ -12,7 +12,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-public class ContinuousTask extends ForeverTask {
+public class ContinuousTask extends Task {
     private final Runnable callback;
 
     /**
@@ -28,5 +28,10 @@ public class ContinuousTask extends ForeverTask {
     @Override
     protected void periodic() {
         callback.run();
+    }
+
+    @Override
+    protected boolean isTaskFinished() {
+        return false;
     }
 }

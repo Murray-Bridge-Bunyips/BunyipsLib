@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Direction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
@@ -29,7 +29,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThresho
  * @author Lucas Bubner, 2024
  * @since 4.0.0
  */
-public class GetDualSplitContourTask extends ForeverTask {
+public class GetDualSplitContourTask extends Task {
     private final ElapsedTime lockoutTimer = new ElapsedTime();
     private ColourThreshold colourThreshold;
     private Measure<Time> noDetectionPersistenceTime = Seconds.of(3);
@@ -138,5 +138,10 @@ public class GetDualSplitContourTask extends ForeverTask {
     protected void onFinish() {
         if (item != null)
             require(opMode).telemetry.remove(item);
+    }
+
+    @Override
+    protected boolean isTaskFinished() {
+        return false;
     }
 }

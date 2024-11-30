@@ -18,7 +18,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ForeverTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
@@ -29,7 +29,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-public class HolonomicDriveTask extends ForeverTask {
+public class HolonomicDriveTask extends Task {
     private final Moveable drive;
     private final Supplier<PoseVelocity2d> vel;
     private final BooleanSupplier fieldCentricEnabled;
@@ -128,5 +128,10 @@ public class HolonomicDriveTask extends ForeverTask {
     @Override
     protected void onFinish() {
         drive.setPower(Geometry.zeroVel());
+    }
+
+    @Override
+    protected boolean isTaskFinished() {
+        return false;
     }
 }
