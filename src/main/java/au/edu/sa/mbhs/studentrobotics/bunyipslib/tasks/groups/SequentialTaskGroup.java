@@ -27,8 +27,9 @@ public class SequentialTaskGroup extends TaskGroup {
     public SequentialTaskGroup(@NonNull Task... tasks) {
         // Timeout will be represented by the sum of all tasks, unless one is infinite then the entire group is infinite.
         // This works for a sequential following where each task gets its own runtime
-        super(Arrays.stream(tasks).anyMatch(t -> t.getTimeout().magnitude() == 0.0) ? INFINITE_TIMEOUT :
-                Seconds.of(Arrays.stream(tasks).mapToDouble(t -> t.getTimeout().in(Seconds)).sum()), tasks);
+        withTimeout(Arrays.stream(tasks).anyMatch(t -> t.getTimeout().magnitude() == 0.0) ? INFINITE_TIMEOUT :
+                Seconds.of(Arrays.stream(tasks).mapToDouble(t -> t.getTimeout().in(Seconds)).sum()));
+        setTasks(Arrays.asList(tasks));
         currentTask = this.tasks.get(0);
     }
 

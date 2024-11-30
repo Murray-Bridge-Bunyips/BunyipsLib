@@ -84,7 +84,7 @@ public interface RoadRunnerDrive extends Moveable {
      */
     @NonNull
     default TaskBuilder makeTrajectory() {
-        return new TaskBuilder(getConstants(), Storage.memory().lastKnownPosition, new IdentityPoseMap(), this);
+        return new TaskBuilder(getConstants(), Storage.memory().lastKnownPosition, new IdentityPoseMap());
     }
 
     /**
@@ -103,7 +103,7 @@ public interface RoadRunnerDrive extends Moveable {
     default TaskBuilder makeTrajectory(@NonNull PoseMap poseMap) {
         // Map the last known position using the PoseMap, will be mapped back to the last known position later, assuming
         // that this PoseMap is idempotent to inversion.
-        return new TaskBuilder(getConstants(), poseMap.map(Pose2dDual.constant(Storage.memory().lastKnownPosition, 1)).value(), poseMap, this);
+        return new TaskBuilder(getConstants(), poseMap.map(Pose2dDual.constant(Storage.memory().lastKnownPosition, 1)).value(), poseMap);
     }
 
     /**
@@ -115,7 +115,7 @@ public interface RoadRunnerDrive extends Moveable {
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull Pose2d startPose) {
-        return new TaskBuilder(getConstants(), startPose, new IdentityPoseMap(), this);
+        return new TaskBuilder(getConstants(), startPose, new IdentityPoseMap());
     }
 
     /**
@@ -128,7 +128,7 @@ public interface RoadRunnerDrive extends Moveable {
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull Pose2d startPose, @NonNull PoseMap poseMap) {
-        return new TaskBuilder(getConstants(), startPose, poseMap, this);
+        return new TaskBuilder(getConstants(), startPose, poseMap);
     }
 
     /**
@@ -143,7 +143,7 @@ public interface RoadRunnerDrive extends Moveable {
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull Vector2d startVec, @NonNull Distance distUnit, double ang, @NonNull Angle angUnit) {
-        return new TaskBuilder(getConstants(), Geometry.poseFrom(startVec, distUnit, ang, angUnit), new IdentityPoseMap(), this);
+        return new TaskBuilder(getConstants(), Geometry.poseFrom(startVec, distUnit, ang, angUnit), new IdentityPoseMap());
     }
 
     /**
@@ -159,6 +159,6 @@ public interface RoadRunnerDrive extends Moveable {
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull Vector2d startVec, @NonNull Distance distUnit, double ang, @NonNull Angle angUnit, @NonNull PoseMap poseMap) {
-        return new TaskBuilder(getConstants(), Geometry.poseFrom(startVec, distUnit, ang, angUnit), poseMap, this);
+        return new TaskBuilder(getConstants(), Geometry.poseFrom(startVec, distUnit, ang, angUnit), poseMap);
     }
 }

@@ -19,9 +19,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * A group of tasks.
+ * <p>
  * Users must be careful to ensure they do not allocate tasks that use the same subsystems when
- * running in parallel (all task groups except SequentialTaskGroup), otherwise hardware will
- * try to take commands from multiple tasks at once, overriding each other and causing unpredictable behaviour.
+ * running in parallel (all task groups except SequentialTaskGroup), otherwise tasks will try
+ * to run on the same subsystems and cause some to get cancelled due to the subsystem being busy.
  *
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
@@ -31,20 +32,19 @@ public abstract class TaskGroup extends Task {
     private final HashSet<Task> finishedTasks = new HashSet<>();
     private final HashSet<Task> attachedTasks = new HashSet<>();
 
-    protected TaskGroup(@NonNull Measure<Time> maxTimeout, @NonNull Task... tasks) {
-        super(maxTimeout);
-        this.tasks.addAll(Arrays.asList(tasks));
-        if (tasks.length == 0) {
+    protected void setTasks(@NonNull List<Task> tasks) {
+        this.tasks.addAll(tasks);
+        if (tasks.isEmpty()) {
             throw new IllegalArgumentException(getClass().getSimpleName() + " created with no tasks.");
         }
         StringBuilder taskNames = new StringBuilder();
         taskNames.append("[");
         taskNames.append(getClass().getSimpleName().replace("TaskGroup", ""));
         taskNames.append("] ");
-        for (int i = 0; i < tasks.length - 1; i++) {
-            taskNames.append(tasks[i]).append(",");
+        for (int i = 0; i < tasks.size() - 1; i++) {
+            taskNames.append(tasks.get(i)).append(",");
         }
-        taskNames.append(tasks[tasks.length - 1]);
+        taskNames.append(tasks.get(tasks.size() - 1));
         withName(taskNames.toString());
     }
 

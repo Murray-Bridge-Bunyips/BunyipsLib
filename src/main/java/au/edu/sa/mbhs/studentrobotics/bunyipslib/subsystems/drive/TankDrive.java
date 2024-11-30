@@ -332,7 +332,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             withName(Text.format("Trajectory %->%",
                     Geometry.toUserString(t.path.begin(1).value()).replace("Pose2d", ""),
                     Geometry.toUserString(t.path.end(1).value())).replace("Pose2d", ""));
-
+            onSubsystem(TankDrive.this, true);
         }
 
         @Override
@@ -412,6 +412,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             withName(Text.format("Turn %°->%°",
                     Mathf.round(Math.toDegrees(turn.get(0).value().heading.log()), 1),
                     Mathf.round(Math.toDegrees(turn.get(turn.duration).value().heading.log()), 1)));
+            onSubsystem(TankDrive.this, true);
         }
 
         @Override

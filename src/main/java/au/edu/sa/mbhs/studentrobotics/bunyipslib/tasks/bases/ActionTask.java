@@ -12,10 +12,12 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.TaskGroup;
 
 /**
  * This task is used as a wrapper for converting base RoadRunner {@link Action} implementations
@@ -27,11 +29,12 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
  * <p>
  * Tasks built with RoadRunner drives, despite being represented with Actions are internally composed of {@link Task} instances,
  * so {@link SequentialAction} and {@link ParallelAction} actions will also try to be unwrapped, with their full name available at init.
+ * Actions that are Tasks will try to be run as closely as possible to their original {@link Task} implementation.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-public class ActionTask extends Task {
+public class ActionTask extends TaskGroup {
     private final Action action;
     private boolean actionFinished = false;
 
@@ -41,13 +44,20 @@ public class ActionTask extends Task {
      * @param action The action to wrap
      */
     public ActionTask(@NonNull Action action) {
+        allActions(a -> setTasks(a.stream()
+                .filter(t -> t instanceof Task)
+                .map(t -> (Task) t)
+                .collect(Collectors.toCollection(ArrayList::new))
+        ));
         this.action = action;
         withName("Action :: " + action.getClass().getSimpleName());
-        ifSingleTask(task -> {
-            withName(task.toString());
-            setTimeout(task.getTimeout());
+        currentAction(ac -> {
+            if (ac instanceof Task task) {
+                withName(task.toString());
+                setTimeout(task.getTimeout());
+            }
         });
-        ifManyActions(actions -> {
+        allActions(actions -> {
             if (action instanceof SequentialAction seq) {
                 // For sequential actions, try to set a timeout based on the sum of all the inner task timeouts,
                 // unless they are not tasks then we just use an infinite timeout
@@ -84,7 +94,7 @@ public class ActionTask extends Task {
         });
     }
 
-    private void ifManyActions(Consumer<List<Action>> t) {
+    private void allActions(Consumer<List<Action>> t) {
         List<Action> actions = new ArrayList<>();
         if (action instanceof SequentialAction seq) {
             actions.addAll(seq.getInitialActions());
@@ -97,11 +107,7 @@ public class ActionTask extends Task {
     }
 
     @SuppressWarnings("unchecked")
-    private void ifSingleTask(Consumer<Task> t) {
-        if (action instanceof Task task) {
-            t.accept(task);
-            return;
-        }
+    private void currentAction(Consumer<Action> t) {
         // We can unwrap a SequentialAction to get the currently running contained task, if possible
         if (action instanceof SequentialAction seq) {
             List<Action> actions;
@@ -116,18 +122,36 @@ public class ActionTask extends Task {
             if (actions.isEmpty()) return;
             Action ac = actions.get(0);
             if (ac instanceof Task) {
-                t.accept((Task) ac);
+                t.accept(ac);
             }
+        } else {
+            // We can't unwrap ParallelAction dynamically, so we'll just ignore it.
+            // This is because we can't have one definitive task to track the status of, since they're all running in parallel
+            t.accept(action);
         }
-        // We can't unwrap ParallelAction dynamically, so we'll just ignore it.
-        // This is because we can't have one definitive task to track the status of, since they're all running in parallel
     }
 
     @Override
     protected void periodic() {
         action.preview(fieldOverlay);
-        actionFinished = !action.run(p);
-        ifSingleTask(task -> withName(task.toString()));
+        currentAction(ac -> {
+            if (ac instanceof Task task) {
+                executeTask(task);
+                actionFinished = task.pollFinished();
+                withName(task.toString());
+            } else if (ac instanceof ParallelAction par) {
+                // We can still run the tasks in parallel, but we need to check if they're all finished
+                actionFinished = par.getInitialActions().stream().allMatch(a -> {
+                    if (a instanceof Task task) {
+                        executeTask(task);
+                        return task.pollFinished();
+                    }
+                    return false;
+                });
+            } else {
+                actionFinished = !action.run(p);
+            }
+        });
     }
 
     @Override
@@ -136,20 +160,9 @@ public class ActionTask extends Task {
     }
 
     @Override
-    protected void onFinish() {
-        ifManyActions(actions -> {
-            for (Action action : actions) {
-                if (action instanceof Task task) {
-                    task.finishNow();
-                }
-            }
-        });
-    }
-
-    @Override
     protected void onReset() {
         actionFinished = false;
-        ifManyActions(actions -> {
+        allActions(actions -> {
             for (Action action : actions) {
                 if (action instanceof Task task) {
                     task.reset();
