@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 /**
  * Select a task to run based on a hashmap of states and a supplier of states.
  *
+ * @author Lucas Bubner, 2024
  * @param <T> the type of the state
  * @since 1.0.0-pre
  */

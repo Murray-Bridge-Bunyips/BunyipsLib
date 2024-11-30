@@ -369,8 +369,11 @@ abstract class Task(
 
     /**
      * To run as an active loop during this task's duration.
+     * Override to implement.
      */
-    protected abstract fun periodic()
+    protected open fun periodic() {
+        // no-op
+    }
 
     /**
      * Should be called by your polling loop to run the task and manage all state properly.

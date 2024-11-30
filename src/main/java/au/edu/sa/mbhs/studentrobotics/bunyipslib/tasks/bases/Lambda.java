@@ -51,11 +51,6 @@ public class Lambda extends Task {
     }
 
     @Override
-    protected void periodic() {
-        // no-op
-    }
-
-    @Override
     protected final boolean isTaskFinished() {
         // OnceTasks may sometimes have their timeouts adjusted at runtime
         return getTimeout().lte(Milliseconds.of(EPSILON_MS));

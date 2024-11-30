@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry.Item
 
 /**
  * Relay a message in telemetry for a specific amount of time.
+ *
+ * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
 class MessageTask(time: Measure<Time>, private val message: String) : Task(time) {
