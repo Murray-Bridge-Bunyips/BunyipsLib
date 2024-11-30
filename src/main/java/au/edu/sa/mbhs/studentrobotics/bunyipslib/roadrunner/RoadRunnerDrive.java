@@ -78,7 +78,7 @@ public interface RoadRunnerDrive extends Moveable {
 
     /**
      * Begin building a RoadRunner trajectory from the last-known robot position when this method is called.
-     * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
+     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
      *
      * @return extended RoadRunner trajectory task builder
      */
@@ -89,7 +89,7 @@ public interface RoadRunnerDrive extends Moveable {
 
     /**
      * Begin building a RoadRunner trajectory from the <b>inverse (PoseMap piped)</b> last-known robot position when this method is called.
-     * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
+     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
      *
      * @param poseMap the PoseMap to use for this builder, note that the implicit last-known position is used and
      *                automatically passed into the PoseMap now to later 'invert' it. This assumes your PoseMap is idempotent to inversion.
@@ -108,7 +108,7 @@ public interface RoadRunnerDrive extends Moveable {
 
     /**
      * Begin building a RoadRunner trajectory from the supplied pose when this method is called.
-     * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
+     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
      *
      * @param startPose the pose to start the trajectory generation from
      * @return extended RoadRunner trajectory task builder
@@ -120,7 +120,7 @@ public interface RoadRunnerDrive extends Moveable {
 
     /**
      * Begin building a RoadRunner trajectory from the supplied pose when this method is called.
-     * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
+     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
      *
      * @param startPose the pose to start the trajectory generation from
      * @param poseMap   the PoseMap to use for this builder
@@ -133,7 +133,7 @@ public interface RoadRunnerDrive extends Moveable {
 
     /**
      * Begin building a RoadRunner trajectory from the supplied pose when this method is called.
-     * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
+     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
      *
      * @param startVec the vector to start the trajectory at and where the robot will be placed
      * @param distUnit the unit of distance of the start pose
@@ -148,7 +148,7 @@ public interface RoadRunnerDrive extends Moveable {
 
     /**
      * Begin building a RoadRunner trajectory from the supplied pose when this method is called.
-     * For deferring this starting pose dynamically, consider a DynamicTask (util. `Task.defer`) builder.
+     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
      *
      * @param startVec the vector to start the trajectory at and where the robot will be placed
      * @param distUnit the unit of distance of the start pose

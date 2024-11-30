@@ -209,9 +209,4 @@ public class AlignToPointDriveTask extends Task {
                 .strokeLine(point.x, point.y, point.x, poseEstimate.position.y)
                 .strokeLine(point.x, poseEstimate.position.y, poseEstimate.position.x, poseEstimate.position.y);
     }
-
-    @Override
-    protected boolean isTaskFinished() {
-        return false;
-    }
 }

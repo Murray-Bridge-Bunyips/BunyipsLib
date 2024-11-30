@@ -9,8 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.OnceTask
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.Lambda
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Analog
@@ -510,7 +509,7 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         infix fun run(runnable: Runnable): ScheduledTask {
-            return run(RunTask(runnable))
+            return run(Lambda(runnable))
         }
 
         /**
@@ -526,7 +525,7 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         fun run(name: String, runnable: Runnable): ScheduledTask {
-            return run(RunTask(runnable).withName(name))
+            return run(Lambda(runnable).withName(name))
         }
 
         /**
@@ -551,10 +550,9 @@ class Scheduler : BunyipsComponent() {
         /**
          * Implicitly make a new RunTask to run once the condition is met, debouncing the task from queueing more than once the condition is met.
          *
-         *
          * This code block will run, and a self-reset will not be propagated once the task is completed. Do note that this
          * effectively nullifies the entire trigger for the task, as it cannot auto-reset. For a Runnable that can reset itself,
-         * consider passing a [RunTask] to the [runOnce] method which will grant you access to the task's reset method.
+         * consider passing a [Lambda] to the [runOnce] method which will grant you access to the task's reset method.
          *
          * This method can only be called once per ScheduledTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
@@ -564,16 +562,15 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         infix fun runOnce(runnable: Runnable): ScheduledTask {
-            return runOnce(RunTask(runnable))
+            return runOnce(Lambda(runnable))
         }
 
         /**
          * Implicitly make a new RunTask to run once the condition is met, debouncing the task from queueing more than once the condition is met.
          *
-         *
          * This code block will run, and a self-reset will not be propagated once the task is completed. Do note that this
          * effectively nullifies the entire trigger for the task, as it cannot auto-reset. For a Runnable that can reset itself,
-         * consider passing a [RunTask] to the [runOnce] method which will grant you access to the task's reset method.
+         * consider passing a [Lambda] to the [runOnce] method which will grant you access to the task's reset method.
          *
          * This method can only be called once per ScheduledTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
@@ -584,7 +581,7 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         fun runOnce(name: String, runnable: Runnable): ScheduledTask {
-            return runOnce(RunTask(runnable).withName(name))
+            return runOnce(Lambda(runnable).withName(name))
         }
 
         /**
@@ -679,7 +676,7 @@ class Scheduler : BunyipsComponent() {
                 .append(taskToRun.toString())
                 .append("'")
             val timeout = taskToRun.timeout to Seconds
-            if (timeout * 1000.0 > OnceTask.EPSILON_MS) {
+            if (timeout * 1000.0 > Lambda.EPSILON_MS) {
                 out.append(" (t=").append(timeout).append("s)")
             }
             if (taskToRun.isOverriding()) out.append(" (overriding)")

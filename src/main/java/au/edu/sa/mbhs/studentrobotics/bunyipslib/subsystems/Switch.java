@@ -9,8 +9,7 @@ import java.util.function.DoubleSupplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
@@ -220,7 +219,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task controlPosition(@NonNull DoubleSupplier positionSupplier) {
-            return new ContinuousTask(() -> setPosition(positionSupplier.getAsDouble()))
+            return Task.task().periodic(() -> setPosition(positionSupplier.getAsDouble()))
                     .onSubsystem(Switch.this, false)
                     .withName(name + ":Supplier Position Control");
         }
@@ -233,7 +232,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task controlDelta(@NonNull DoubleSupplier powerSupplier) {
-            return new ContinuousTask(() -> setPosition(target + powerSupplier.getAsDouble()))
+            return Task.task().periodic(() -> setPosition(target + powerSupplier.getAsDouble()))
                     .onSubsystem(Switch.this, false)
                     .withName(name + ":Supplier Delta Control");
         }
@@ -245,7 +244,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task open() {
-            return new RunTask(Switch.this::open)
+            return new Lambda(Switch.this::open)
                     .onSubsystem(Switch.this, true)
                     .withName(name + ":Open");
         }
@@ -257,7 +256,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task close() {
-            return new RunTask(Switch.this::close)
+            return new Lambda(Switch.this::close)
                     .onSubsystem(Switch.this, true)
                     .withName(name + ":Close");
         }
@@ -269,7 +268,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task toggle() {
-            return new RunTask(Switch.this::toggle)
+            return new Lambda(Switch.this::toggle)
                     .onSubsystem(Switch.this, true)
                     .withName(name + ":Toggle");
         }
@@ -282,7 +281,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task setToUnclipped(double position) {
-            return new RunTask(() -> setPositionUnclipped(position))
+            return new Lambda(() -> setPositionUnclipped(position))
                     .onSubsystem(Switch.this, true)
                     .withName(name + ":Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
         }
@@ -295,7 +294,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task setTo(double position) {
-            return new RunTask(() -> setPosition(position))
+            return new Lambda(() -> setPosition(position))
                     .onSubsystem(Switch.this, true)
                     .withName(name + ":Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
         }
@@ -308,7 +307,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task deltaUnclipped(double delta) {
-            return new RunTask(() -> setPositionUnclipped(target + delta))
+            return new Lambda(() -> setPositionUnclipped(target + delta))
                     .onSubsystem(Switch.this, true)
                     .withName(name + ":Delta By " + delta);
         }
@@ -321,7 +320,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task delta(double delta) {
-            return new RunTask(() -> setPosition(target + delta))
+            return new Lambda(() -> setPosition(target + delta))
                     .onSubsystem(Switch.this, true)
                     .withName(name + ":Delta By " + delta);
         }

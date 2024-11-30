@@ -40,10 +40,4 @@ public class StartEndTask extends Task {
     protected void onFinish() {
         onFinish.run();
     }
-
-    @Override
-    protected boolean isTaskFinished() {
-        // Relying on timeout or interruption to finish
-        return false;
-    }
 }

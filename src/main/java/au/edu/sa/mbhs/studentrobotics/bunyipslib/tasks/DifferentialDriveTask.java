@@ -45,9 +45,4 @@ public class DifferentialDriveTask extends Task {
     protected void onFinish() {
         drive.setPower(Geometry.zeroVel());
     }
-
-    @Override
-    protected boolean isTaskFinished() {
-        return false;
-    }
 }

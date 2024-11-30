@@ -14,7 +14,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunForTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
@@ -226,7 +225,9 @@ public class BlinkinLights extends BunyipsSubsystem {
          */
         @NonNull
         public Task setPatternFor(@NonNull Measure<Time> duration, @NonNull RevBlinkinLedDriver.BlinkinPattern pattern) {
-            return new RunForTask(duration, () -> currentPattern = pattern, () -> currentPattern = defaultPattern)
+            return Task.task().periodic(() -> currentPattern = pattern)
+                    .onFinish(() -> currentPattern = defaultPattern)
+                    .timeout(duration)
                     .onSubsystem(BlinkinLights.this, true)
                     .withName(name + ":" + pattern.name());
         }

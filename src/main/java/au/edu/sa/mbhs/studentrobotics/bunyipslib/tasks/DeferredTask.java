@@ -21,23 +21,23 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  * <p>
  * Note some caveats of using this task is that timeout and other information related to this task is unknown until
  * this task is run once, in which this data will be updated to match the task that was built. If this task
- * is to run on a subsystem, it <b>must be declared on the inner task</b>, as DynamicTask does not have enough information
+ * is to run on a subsystem, it <b>must be declared on the inner task</b>, as DeferredTask does not have enough information
  * to know where to run, since these allocations are done at construction.
  *
  * @author Lucas Bubner, 2024
  * @since 4.0.0
  */
-public class DynamicTask extends Task {
-    private static final String UNCONSTRUCTED_NAME = " (dyn)";
+public class DeferredTask extends Task {
+    private static final String UNCONSTRUCTED_NAME = " (dfr)";
     private final Supplier<Task> lazyTask;
     private Task builtTask;
 
     /**
-     * Construct a new DynamicTask to run.
+     * Construct a new DeferredTask to run.
      *
-     * @param lazyTask the task to construct and run when the DynamicTask starts running.
+     * @param lazyTask the task to construct and run when the DeferredTask starts running.
      */
-    public DynamicTask(@NonNull Supplier<Task> lazyTask) {
+    public DeferredTask(@NonNull Supplier<Task> lazyTask) {
         this.lazyTask = lazyTask;
         // We're not actually a task, so we'll let the inner task manage reports
         muteReports();
@@ -88,7 +88,7 @@ public class DynamicTask extends Task {
     }
 
     /**
-     * Set the name of this DynamicTask. Note that "(dyn)" will be appended to indicate this task is not constructed.
+     * Set the name of this DeferredTask. Note that "(dyn)" will be appended to indicate this task is not constructed.
      * If the task is constructed, this method will no-op. Use the wrapped Task to set a name.
      */
     @NonNull

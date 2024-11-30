@@ -40,9 +40,4 @@ public class RepeatTask extends Task {
     protected void onFinish() {
         task.finishNow();
     }
-
-    @Override
-    protected boolean isTaskFinished() {
-        return false;
-    }
 }

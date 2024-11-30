@@ -8,9 +8,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ActionTask
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.DynamicTask
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.DeferredTask
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.Lambda
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RepeatTask
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitUntilTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup
@@ -267,7 +267,7 @@ abstract class Task(
      * queued to run before this task starts.
      */
     infix fun after(runnable: Runnable): SequentialTaskGroup {
-        val task = RunTask(runnable)
+        val task = Lambda(runnable)
         task.withName("$name hook")
         return SequentialTaskGroup(task, this)
     }
@@ -293,7 +293,7 @@ abstract class Task(
      * queued to run when this task finishes.
      */
     infix fun then(runnable: Runnable): SequentialTaskGroup {
-        val task = RunTask(runnable)
+        val task = Lambda(runnable)
         task.withName("$name callback")
         return SequentialTaskGroup(this, task)
     }
@@ -445,7 +445,10 @@ abstract class Task(
      * Return a boolean to this method to add custom criteria if a task should be considered finished.
      * @return bool expression indicating whether the task is finished or not, timeout and OpMode state are handled automatically.
      */
-    protected abstract fun isTaskFinished(): Boolean
+    protected open fun isTaskFinished(): Boolean {
+        // By default, tasks finish only on timeout
+        return false
+    }
 
     /**
      * Called when the task is resetting now. Override this method to add custom reset behaviour, such as resetting any
@@ -541,24 +544,24 @@ abstract class Task(
         val INFINITE_TIMEOUT: Measure<Time> = Seconds.zero()
 
         /**
-         * Utility to create a new [DynamicTask] based on the supplied task builder.
+         * Utility to create a new [DeferredTask] based on the supplied task builder.
          * Useful for constructing tasks that use data that is not available at the build time of the wrapped task.
          */
         @JvmStatic
-        fun defer(taskBuilder: () -> Task): DynamicTask {
-            return DynamicTask(taskBuilder)
+        fun defer(taskBuilder: () -> Task): DeferredTask {
+            return DeferredTask(taskBuilder)
         }
 
         /**
-         * Utility to create a new [TaskGen] instance for building a new task.
+         * Utility to create a new [DynamicTask] instance for building a new task.
          */
         @JvmStatic
-        fun task() = TaskGen()
+        fun task() = DynamicTask()
 
         /**
-         * DSL function to create a new [TaskGen] instance for building a new task.
+         * DSL function to create a new [DynamicTask] instance for building a new task.
          */
-        fun task(block: TaskGen.() -> Unit) = TaskGen().apply(block).build()
+        fun task(block: DynamicTask.() -> Unit) = DynamicTask().apply(block)
 
         /**
          * Default task setter extension for [BunyipsSubsystem] to set the default task of a subsystem.

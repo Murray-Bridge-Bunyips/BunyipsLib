@@ -139,9 +139,4 @@ public class GetDualSplitContourTask extends Task {
         if (item != null)
             require(opMode).telemetry.remove(item);
     }
-
-    @Override
-    protected boolean isTaskFinished() {
-        return false;
-    }
 }

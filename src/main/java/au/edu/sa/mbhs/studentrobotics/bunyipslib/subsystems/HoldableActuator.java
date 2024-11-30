@@ -26,8 +26,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
@@ -606,7 +605,7 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task control(@NonNull DoubleSupplier powerSupplier) {
-            return new ContinuousTask(() -> HoldableActuator.this.setPower(powerSupplier.getAsDouble()))
+            return Task.task().periodic(() -> HoldableActuator.this.setPower(powerSupplier.getAsDouble()))
                     .onSubsystem(HoldableActuator.this, false)
                     .withName("Supplier Control");
         }
@@ -619,7 +618,7 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task setPower(double p) {
-            return new RunTask(() -> HoldableActuator.this.setPower(p))
+            return new Lambda(() -> HoldableActuator.this.setPower(p))
                     .onSubsystem(HoldableActuator.this, false)
                     .withName(name + ":Set Power");
         }
@@ -635,13 +634,11 @@ public class HoldableActuator extends BunyipsSubsystem {
         public Task runFor(@NonNull Measure<Time> time, double pwr) {
             return Task.task()
                     .init(HoldableActuator.this::setInputModeToUser)
-                    .loop(() -> userPower = pwr)
-                    .finish(() -> userPower = 0)
-                    .on(HoldableActuator.this)
-                    .override(true)
+                    .periodic(() -> userPower = pwr)
+                    .onFinish(() -> userPower = 0)
+                    .onSubsystem(HoldableActuator.this, true)
                     .timeout(time)
-                    .name(name + ":Run For Time")
-                    .build();
+                    .named(name + ":Run For Time");
         }
 
         /**
@@ -777,7 +774,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             Integer position = switchMapping.get(limitSwitch);
             if (position == null) {
                 Dbg.warn(getClass(), "%Attempted to go to a limit switch that was not mapped. This task will not run.", isDefaultName() ? "" : "(" + name + ") ");
-                return new RunTask();
+                return new Lambda();
             }
             // Since this is a static mapping we can return the task
             return goTo(position).until(limitSwitch::isPressed).withName(name + ":Run To Limit Switch");
@@ -793,31 +790,18 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task goTo(int targetPosition) {
-            return new Task() {
-                @Override
-                public void init() {
-                    sustainedTolerated.reset();
-                    motor.setTargetPosition(targetPosition);
-                    // Motor power is controlled in the periodic method
-                    motor.setPower(0);
-                    inputMode = Mode.AUTO;
-                }
-
-                @Override
-                public void periodic() {
-                    // no-op
-                }
-
-                @Override
-                public void onFinish() {
-                    setInputModeToUser();
-                }
-
-                @Override
-                public boolean isTaskFinished() {
-                    return inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), tolerance));
-                }
-            }.onSubsystem(HoldableActuator.this, true).withName(name + ":Run To " + targetPosition + " Ticks");
+            return Task.task()
+                    .init(() -> {
+                        sustainedTolerated.reset();
+                        motor.setTargetPosition(targetPosition);
+                        // Motor power is controlled in the periodic method
+                        motor.setPower(0);
+                        inputMode = Mode.AUTO;
+                    })
+                    .isTaskFinished(() -> inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), tolerance)))
+                    .onFinish(HoldableActuator.this::setInputModeToUser)
+                    .onSubsystem(HoldableActuator.this, true)
+                    .withName(name + ":Run To " + targetPosition + " Ticks");
         }
 
         /**
@@ -828,35 +812,8 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task delta(int deltaPosition) {
-            // Must redefine the task since this is a deferred task
-            return new Task() {
-                private int target;
-
-                @Override
-                public void init() {
-                    target = encoder.getPosition() + deltaPosition;
-                    sustainedTolerated.reset();
-                    motor.setTargetPosition(target);
-                    // Motor power is controlled in the periodic method
-                    motor.setPower(0);
-                    inputMode = Mode.AUTO;
-                }
-
-                @Override
-                public void periodic() {
-                    // no-op
-                }
-
-                @Override
-                public void onFinish() {
-                    setInputModeToUser();
-                }
-
-                @Override
-                public boolean isTaskFinished() {
-                    return inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(target, encoder.getPosition(), tolerance));
-                }
-            }.onSubsystem(HoldableActuator.this, true).withName(name + ":Run To " + deltaPosition + " Delta Ticks");
+            return Task.defer(() -> goTo(encoder.getPosition() + deltaPosition))
+                    .withName(name + ":Run To " + deltaPosition + " Delta Ticks");
         }
     }
 }

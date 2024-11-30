@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ContinuousTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
@@ -38,13 +38,13 @@ public final class SplineTest extends LinearOpMode {
                                 .splineTo(new Vector2d(30, 30), Math.PI / 2)
                                 .splineTo(new Vector2d(0, 60), Math.PI)
                                 .build(),
-                        new ContinuousTask(() -> {
+                        Task.task().periodic(() -> {
                             if (drive instanceof BunyipsSubsystem)
                                 ((BunyipsSubsystem) drive).update();
                             else
                                 drive.periodic();
                         }),
-                        new ContinuousTask(Dashboard::sendAndClearSyncedPackets)
+                        Task.task().periodic(Dashboard::sendAndClearSyncedPackets)
                 )
         );
     }

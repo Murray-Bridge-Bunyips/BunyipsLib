@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
@@ -120,7 +120,7 @@ public class Cannon extends BunyipsSubsystem {
          */
         @NonNull
         public Task fire() {
-            return new RunTask(Cannon.this::fire).onSubsystem(Cannon.this, true).withName(name + ":Fire");
+            return new Lambda(Cannon.this::fire).onSubsystem(Cannon.this, true).withName(name + ":Fire");
         }
 
         /**
@@ -130,7 +130,7 @@ public class Cannon extends BunyipsSubsystem {
          */
         @NonNull
         public Task reset() {
-            return new RunTask(Cannon.this::reset).onSubsystem(Cannon.this, true).withName(name + ":Reset");
+            return new Lambda(Cannon.this::reset).onSubsystem(Cannon.this, true).withName(name + ":Reset");
         }
     }
 }

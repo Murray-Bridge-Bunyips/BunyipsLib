@@ -20,9 +20,4 @@ public class IdleTask extends Task {
     protected void periodic() {
         // no-op
     }
-
-    @Override
-    protected boolean isTaskFinished() {
-        return false;
-    }
 }

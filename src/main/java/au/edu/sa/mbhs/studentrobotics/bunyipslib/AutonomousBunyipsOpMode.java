@@ -20,8 +20,8 @@ import java.util.function.Supplier;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.DynamicTask;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RunTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.DeferredTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
@@ -246,7 +246,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Call to add {@link Task} instances that will be executed sequentially during the active loop.
-     * This task will be internally wrapped into a {@link DynamicTask}.
+     * This task will be internally wrapped into a {@link DeferredTask}.
      *
      * @param newDynamicTask deferred task to add to the run queue
      * @param <T>            the inherited task type
@@ -254,30 +254,30 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     @SuppressWarnings("unchecked")
     public final <T extends Task> T defer(@NonNull Supplier<T> newDynamicTask) {
-        return (T) add(new DynamicTask((Supplier<Task>) newDynamicTask));
+        return (T) add(new DeferredTask((Supplier<Task>) newDynamicTask));
     }
 
     /**
-     * Implicitly constructs a new {@link RunTask} to add to the run queue.
+     * Implicitly constructs a new {@link Lambda} to add to the run queue.
      *
      * @param runnable the code to add to the run queue to run once
-     * @return the added {@link RunTask}
+     * @return the added {@link Lambda}
      */
     @NonNull
-    public final RunTask run(@NonNull Runnable runnable) {
-        return add(new RunTask(runnable));
+    public final Lambda run(@NonNull Runnable runnable) {
+        return add(new Lambda(runnable));
     }
 
     /**
-     * Implicitly constructs a new {@link RunTask} to add to the run queue.
+     * Implicitly constructs a new {@link Lambda} to add to the run queue.
      *
      * @param name     the name of the task
      * @param runnable the code to add to the run queue to run once
-     * @return the added {@link RunTask}
+     * @return the added {@link Lambda}
      */
     @NonNull
-    public final RunTask run(@NonNull String name, @NonNull Runnable runnable) {
-        RunTask task = new RunTask(runnable);
+    public final Lambda run(@NonNull String name, @NonNull Runnable runnable) {
+        Lambda task = new Lambda(runnable);
         task.withName(name);
         return add(task);
     }
@@ -350,7 +350,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * at a specific point in the autonomous sequence. Note that this function immediately produces side effects,
      * and subsequent calls will not be able to insert tasks at the same index due to the shifting of tasks.
      * <p>
-     * This task will be internally wrapped into a {@link DynamicTask}.
+     * This task will be internally wrapped into a {@link DeferredTask}.
      *
      * @param index          the index to insert the task at, starting from 0
      * @param newDynamicTask deferred task to add to the run queue
@@ -359,7 +359,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     @SuppressWarnings("unchecked")
     public final <T extends Task> T deferAtIndex(int index, @NonNull Supplier<T> newDynamicTask) {
-        return (T) addAtIndex(index, new DynamicTask((Supplier<Task>) newDynamicTask));
+        return (T) addAtIndex(index, new DeferredTask((Supplier<Task>) newDynamicTask));
     }
 
     /**
@@ -367,11 +367,11 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *
      * @param index    the index to insert the task at, starting from 0
      * @param runnable the code to add to the run queue to run once
-     * @return the added {@link RunTask}
+     * @return the added {@link Lambda}
      */
     @NonNull
-    public final RunTask addAtIndex(int index, @NonNull Runnable runnable) {
-        return addAtIndex(index, new RunTask(runnable));
+    public final Lambda addAtIndex(int index, @NonNull Runnable runnable) {
+        return addAtIndex(index, new Lambda(runnable));
     }
 
     /**
@@ -380,11 +380,11 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * @param index    the index to insert the task at, starting from 0
      * @param name     the name of the task
      * @param runnable the code to add to the run queue to run once
-     * @return the added {@link RunTask}
+     * @return the added {@link Lambda}
      */
     @NonNull
-    public final RunTask addAtIndex(int index, @NonNull String name, @NonNull Runnable runnable) {
-        RunTask task = new RunTask(runnable);
+    public final Lambda addAtIndex(int index, @NonNull String name, @NonNull Runnable runnable) {
+        Lambda task = new Lambda(runnable);
         task.withName(name);
         return addAtIndex(index, task);
     }
@@ -410,7 +410,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     /**
      * Add a task to the run queue at a specified run queue priority.
      * <p>
-     * This task will be internally wrapped into a {@link DynamicTask}.
+     * This task will be internally wrapped into a {@link DeferredTask}.
      *
      * @param runQueuePriority the run queue priority.
      * @param newDynamicTask   deferred task to add to the run queue
@@ -421,7 +421,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     @SuppressWarnings("unchecked")
     public final <T extends Task> T defer(@NonNull TaskPriority runQueuePriority, @NonNull Supplier<T> newDynamicTask) {
-        return (T) add(runQueuePriority, new DynamicTask((Supplier<Task>) newDynamicTask));
+        return (T) add(runQueuePriority, new DeferredTask((Supplier<Task>) newDynamicTask));
     }
 
     /**
@@ -455,7 +455,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * to call when working with tasks that should be queued at the very end of the autonomous, while still
      * being able to add tasks asynchronously with user input in {@link #onReady(Reference, Controls)}.
      * <p>
-     * This task will be internally wrapped into a {@link DynamicTask}.
+     * This task will be internally wrapped into a {@link DeferredTask}.
      *
      * @param newDynamicTask deferred task to add to the run queue
      * @param <T>            the inherited task type
@@ -463,7 +463,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     @SuppressWarnings("unchecked")
     public final <T extends Task> T deferLast(@NonNull Supplier<T> newDynamicTask) {
-        return (T) addLast(new DynamicTask((Supplier<Task>) newDynamicTask));
+        return (T) addLast(new DeferredTask((Supplier<Task>) newDynamicTask));
     }
 
     /**
@@ -497,7 +497,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * should be queued at the very start of the autonomous, while still being able to add tasks
      * asynchronously with user input in {@link #onReady(Reference, Controls)}.
      * <p>
-     * This task will be internally wrapped into a {@link DynamicTask}.
+     * This task will be internally wrapped into a {@link DeferredTask}.
      *
      * @param newDynamicTask deferred task to add to the run queue
      * @param <T>            the inherited task type
@@ -505,7 +505,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     @SuppressWarnings("unchecked")
     public final <T extends Task> T deferFirst(@NonNull Supplier<T> newDynamicTask) {
-        return (T) addFirst(new DynamicTask((Supplier<Task>) newDynamicTask));
+        return (T) addFirst(new DeferredTask((Supplier<Task>) newDynamicTask));
     }
 
     private String getTaskTimeout(Task task) {
