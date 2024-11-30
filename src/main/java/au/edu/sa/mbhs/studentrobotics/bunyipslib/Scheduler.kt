@@ -9,7 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.Lambda
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Analog

@@ -1,8 +1,6 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases;
 
 import androidx.annotation.NonNull;
-
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
  * Define a callback to run when this task is started, and when it is finished.

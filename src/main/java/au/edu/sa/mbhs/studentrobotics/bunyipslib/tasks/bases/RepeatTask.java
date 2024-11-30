@@ -1,8 +1,6 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases;
 
 import androidx.annotation.NonNull;
-
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
  * A task that will auto-reset and repeat itself after it is completed.

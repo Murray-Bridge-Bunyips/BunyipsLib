@@ -7,12 +7,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ActionTask
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.DeferredTask
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.Lambda
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.RepeatTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitUntilTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.ParallelTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.RaceTaskGroup
@@ -204,10 +199,10 @@ abstract class Task(
     }
 
     /**
-     * Compose this task into a [RaceTaskGroup] with a [WaitUntilTask] based on this condition.
+     * Compose this task into a [RaceTaskGroup] with a wait condition based on this condition.
      */
     infix fun until(condition: BooleanSupplier): RaceTaskGroup {
-        val task = WaitUntilTask(condition)
+        val task = task { isFinished { condition.asBoolean } }
         task.withName("$name supervisor")
         return RaceTaskGroup(this, task)
     }

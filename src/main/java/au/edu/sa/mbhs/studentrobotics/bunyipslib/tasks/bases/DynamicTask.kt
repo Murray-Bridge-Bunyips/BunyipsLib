@@ -27,7 +27,7 @@ class DynamicTask : Task() {
     /**
      * Returning true will end the task.
      */
-    infix fun isTaskFinished(isTaskFinished: BooleanSupplier) = apply { until = { isTaskFinished.asBoolean } }
+    infix fun isFinished(isTaskFinished: BooleanSupplier) = apply { until = { isTaskFinished.asBoolean } }
 
     /**
      * Runs once when the task is finished.

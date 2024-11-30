@@ -26,7 +26,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.Lambda;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
@@ -798,7 +798,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                         motor.setPower(0);
                         inputMode = Mode.AUTO;
                     })
-                    .isTaskFinished(() -> inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), tolerance)))
+                    .isFinished(() -> inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), tolerance)))
                     .onFinish(HoldableActuator.this::setInputModeToUser)
                     .onSubsystem(HoldableActuator.this, true)
                     .withName(name + ":Run To " + targetPosition + " Ticks");

@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
@@ -12,7 +12,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**

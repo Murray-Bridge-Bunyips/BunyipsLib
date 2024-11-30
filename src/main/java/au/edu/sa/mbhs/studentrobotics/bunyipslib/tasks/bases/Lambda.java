@@ -1,16 +1,15 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 
 import androidx.annotation.NonNull;
-
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
  * A task to run a callback before immediately completing.
  * <p>
  * {@code new Lambda(() -> telemetry.add("Hello world"));}
  *
+ * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
 public class Lambda extends Task {

@@ -1,11 +1,9 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.function.BooleanSupplier;
-
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
  * Two tasks that run based on a dynamically evaluated condition.

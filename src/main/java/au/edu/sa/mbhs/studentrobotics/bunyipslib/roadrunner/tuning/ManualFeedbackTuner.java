@@ -9,7 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.ThreeWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TwoWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.ConditionalTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ConditionalTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
