@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public abstract class CustomAccumulator extends Accumulator {
      * @param accumulators the accumulators to register
      */
     public void register(@NonNull Accumulator... accumulators) {
-        registeredAccumulators.addAll(Arrays.asList(accumulators));
+        registeredAccumulators = List.of(accumulators);
     }
 
     /**
