@@ -31,18 +31,19 @@ public abstract class TaskGroup extends Task {
 
     protected void setTasks(@NonNull List<Task> tasks) {
         this.tasks.addAll(tasks);
-        if (tasks.isEmpty()) {
-            throw new IllegalArgumentException(getClass().getSimpleName() + " created with no tasks.");
-        }
-        StringBuilder taskNames = new StringBuilder();
-        taskNames.append("[");
-        taskNames.append(getClass().getSimpleName().replace("TaskGroup", ""));
-        taskNames.append("] ");
-        for (int i = 0; i < tasks.size() - 1; i++) {
-            taskNames.append(tasks.get(i)).append(",");
-        }
-        taskNames.append(tasks.get(tasks.size() - 1));
-        withName(taskNames.toString());
+        // TODO: reimpl
+//        if (tasks.isEmpty()) {
+//            throw new IllegalArgumentException(getClass().getSimpleName() + " created with no tasks.");
+//        }
+//        StringBuilder taskNames = new StringBuilder();
+//        taskNames.append("[");
+//        taskNames.append(getClass().getSimpleName().replace("TaskGroup", ""));
+//        taskNames.append("] ");
+//        for (int i = 0; i < tasks.size() - 1; i++) {
+//            taskNames.append(tasks.get(i)).append(",");
+//        }
+//        taskNames.append(tasks.get(tasks.size() - 1));
+//        withName(taskNames.toString());
     }
 
     /**
