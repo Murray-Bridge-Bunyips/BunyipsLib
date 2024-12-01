@@ -35,7 +35,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.TaskGroup;
  * @since 6.0.0
  */
 public class ActionTask extends TaskGroup {
-    private final Action action;
+    private final Action parentAction;
     private boolean actionFinished = false;
 
     /**
@@ -44,12 +44,12 @@ public class ActionTask extends TaskGroup {
      * @param action The action to wrap
      */
     public ActionTask(@NonNull Action action) {
+        parentAction = action;
         allActions(a -> setTasks(a.stream()
                 .filter(t -> t instanceof Task)
                 .map(t -> (Task) t)
-                .collect(Collectors.toCollection(ArrayList::new))
+                .collect(Collectors.toList())
         ));
-        this.action = action;
         withName("Action :: " + action.getClass().getSimpleName());
         currentAction(ac -> {
             if (ac instanceof Task task) {
@@ -58,7 +58,7 @@ public class ActionTask extends TaskGroup {
             }
         });
         allActions(actions -> {
-            if (action instanceof SequentialAction seq) {
+            if (action instanceof SequentialAction) {
                 // For sequential actions, try to set a timeout based on the sum of all the inner task timeouts,
                 // unless they are not tasks then we just use an infinite timeout
                 if (actions.stream().anyMatch(a -> !(a instanceof Task) || ((Task) a).getTimeout().lte(INFINITE_TIMEOUT))) {
@@ -71,7 +71,7 @@ public class ActionTask extends TaskGroup {
                                 .reduce(Seconds.zero(), Measure::plus)
                 );
             }
-            if (action instanceof ParallelAction par) {
+            if (action instanceof ParallelAction) {
                 // Parallel actions we can just set the timeout to the max of all the inner task timeouts, similar to above
                 if (actions.stream().anyMatch(a -> !(a instanceof Task) || ((Task) a).getTimeout().lte(INFINITE_TIMEOUT))) {
                     setTimeout(INFINITE_TIMEOUT);
@@ -96,12 +96,12 @@ public class ActionTask extends TaskGroup {
 
     private void allActions(Consumer<List<Action>> t) {
         List<Action> actions = new ArrayList<>();
-        if (action instanceof SequentialAction seq) {
+        if (parentAction instanceof SequentialAction seq) {
             actions.addAll(seq.getInitialActions());
-        } else if (action instanceof ParallelAction par) {
+        } else if (parentAction instanceof ParallelAction par) {
             actions.addAll(par.getInitialActions());
         } else {
-            actions.add(action);
+            actions.add(parentAction);
         }
         t.accept(actions);
     }
@@ -109,7 +109,7 @@ public class ActionTask extends TaskGroup {
     @SuppressWarnings("unchecked")
     private void currentAction(Consumer<Action> t) {
         // We can unwrap a SequentialAction to get the currently running contained task, if possible
-        if (action instanceof SequentialAction seq) {
+        if (parentAction instanceof SequentialAction seq) {
             List<Action> actions;
             try {
                 Field actionsField = SequentialAction.class.getDeclaredField("actions");
@@ -127,30 +127,19 @@ public class ActionTask extends TaskGroup {
         } else {
             // We can't unwrap ParallelAction dynamically, so we'll just ignore it.
             // This is because we can't have one definitive task to track the status of, since they're all running in parallel
-            t.accept(action);
+            t.accept(parentAction);
         }
     }
 
     @Override
     protected void periodic() {
-        action.preview(fieldOverlay);
+        parentAction.preview(fieldOverlay);
+        // TODO: reconsider the entire task execution system for subsystems - we really shouldn't rely on the group to do this for us
+        //         we should just be able to run the task and it will internally schedule it!
+        actionFinished = !parentAction.run(p);
         currentAction(ac -> {
-            if (ac instanceof Task task) {
-                executeTask(task);
-                actionFinished = task.pollFinished();
+            if (ac instanceof Task task)
                 withName(task.toString());
-            } else if (ac instanceof ParallelAction par) {
-                // We can still run the tasks in parallel, but we need to check if they're all finished
-                actionFinished = par.getInitialActions().stream().allMatch(a -> {
-                    if (a instanceof Task task) {
-                        executeTask(task);
-                        return task.pollFinished();
-                    }
-                    return false;
-                });
-            } else {
-                actionFinished = !action.run(p);
-            }
         });
     }
 
