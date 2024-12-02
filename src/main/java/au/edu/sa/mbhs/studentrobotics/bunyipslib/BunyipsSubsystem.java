@@ -334,12 +334,12 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final void setHighPriorityCurrentTask(@NonNull Task currentTask) {
         if (!shouldRun) {
-            Dbg.warn(getClass(), "%Subsystem is disabled, ignoring high-priority task change.", isDefaultName() ? "" : "(" + this + ") ");
+            sout(Dbg::warn, "Subsystem is disabled, ignoring high-priority task change.");
             return;
         }
         // Task will be cancelled abruptly, run the finish callback now
         if (this.currentTask != defaultTask) {
-            Dbg.warn(getClass(), "%Task changed: %(INT)->%", isDefaultName() ? "" : "(" + this + ") ", this.currentTask, currentTask);
+            sout(Dbg::warn, "Task changed: %(INT)->%", this.currentTask, currentTask);
             this.currentTask.finishNow();
         }
         currentTask.reset();

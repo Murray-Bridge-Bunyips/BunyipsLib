@@ -232,7 +232,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     @NonNull
     public HoldableActuator withTopSwitch(@Nullable TouchSensor topLimitSwitch) {
         if (topLimitSwitch == null)
-            Dbg.error(getClass(), "%Supplied top limit switch is null! Ignoring.", isDefaultName() ? "" : "(" + name + ") ");
+            sout(Dbg::error, "Supplied top limit switch is null! Ignoring.");
         topSwitch = topLimitSwitch;
         return this;
     }
@@ -248,7 +248,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     @NonNull
     public HoldableActuator withBottomSwitch(@Nullable TouchSensor bottomLimitSwitch) {
         if (bottomLimitSwitch == null)
-            Dbg.error(getClass(), "%Supplied bottom limit switch is null! Ignoring.", isDefaultName() ? "" : "(" + name + ") ");
+            sout(Dbg::error, "Supplied bottom limit switch is null! Ignoring.");
         bottomSwitch = bottomLimitSwitch;
         return this;
     }
@@ -539,7 +539,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         }
 
         if (topSwitch != null && bottomSwitch != null && topSwitch.isPressed() && bottomSwitch.isPressed()) {
-            Dbg.warn(getClass(), "%Warning: Both limit switches were pressed at the same time. This indicates an impossible system state.", isDefaultName() ? "" : "(" + name + ") ");
+            sout(Dbg::warn, "Warning: Both limit switches were pressed at the same time. This indicates an impossible system state.");
         }
 
         if (inputMode != Mode.HOMING && ((current < minLimit && motorPower < 0.0) || (current > maxLimit && motorPower > 0.0))) {
@@ -551,7 +551,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         if (motor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
             boolean overCurrent = motor.isOverCurrent();
             if (sustainedOvercurrent.seconds() >= overcurrentTime.in(Seconds) && overCurrent) {
-                Dbg.warn(getClass(), "%Warning: Stall detection (continued % A for % sec) has been activated. To prevent motor damage, the target position has been auto set to the current position (% -> %).", isDefaultName() ? "" : "(" + name + ") ", Mathf.round(motor.getCurrentAlert(CurrentUnit.AMPS), 1), Mathf.round(overcurrentTime.in(Seconds), 1), target, current);
+                sout(Dbg::warn, "Warning: Stall detection (continued % A for % sec) has been activated. To prevent motor damage, the target position has been auto set to the current position (% -> %).", Mathf.round(motor.getCurrentAlert(CurrentUnit.AMPS), 1), Mathf.round(overcurrentTime.in(Seconds), 1), target, current);
                 newTarget = motor.getCurrentPosition();
             } else if (!overCurrent) {
                 sustainedOvercurrent.reset();
@@ -563,7 +563,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     sustainedTolerated.reset();
                 }
                 if (sustainedTolerated.seconds() >= maxSteadyState.in(Seconds)) {
-                    Dbg.warn(getClass(), "%Warning: Steady state error has been detected for % sec. To prevent motor damage, the target position has been auto set to the current position (% -> %).", isDefaultName() ? "" : "(" + name + ") ", Mathf.round(maxSteadyState.in(Seconds), 1), target, current);
+                    sout(Dbg::warn, "Warning: Steady state error has been detected for % sec. To prevent motor damage, the target position has been auto set to the current position (% -> %).", Mathf.round(maxSteadyState.in(Seconds), 1), target, current);
                     newTarget = motor.getCurrentPosition();
                 }
             }
@@ -738,7 +738,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         public Task goTo(@NonNull TouchSensor limitSwitch) {
             Integer position = switchMapping.get(limitSwitch);
             if (position == null) {
-                Dbg.warn(getClass(), "%Attempted to go to a limit switch that was not mapped. This task will not run.", isDefaultName() ? "" : "(" + name + ") ");
+                sout(Dbg::error, "Attempted to go to a limit switch that was not mapped. This task will not run.");
                 return new Lambda();
             }
             // Since this is a static mapping we can return the task

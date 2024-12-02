@@ -132,7 +132,6 @@ public class Vision extends BunyipsSubsystem {
     public Vision init(@NonNull Processor... newProcessors) {
         if (visionPortal != null) {
             sout(Dbg::warn, "visionportal instance already initialised! tearing down...");
-            // TODO: continue migration to sout
             terminate();
         }
 
@@ -163,7 +162,7 @@ public class Vision extends BunyipsSubsystem {
             // An exception will be thrown if this processor is already attached to another Vision instance
             builder.addProcessor(processor);
             processor.attach(preferredResolution);
-            Dbg.logv(getClass(), "%vision processor '%' initialised.", isDefaultName() ? "" : "(" + name + ") ", processor.toString());
+            sout(Dbg::logv, "vision processor '%' initialised.", processor.toString());
         }
 
         // Since Vision is usually called from the init-cycle, we can try to fit in some telemetry
@@ -194,7 +193,7 @@ public class Vision extends BunyipsSubsystem {
             visionPortal.setProcessorEnabled(processor, false);
         }
 
-        Dbg.logv(getClass(), "%visionportal ready.", isDefaultName() ? "" : "(" + name + ") ");
+        sout(Dbg::logv, "visionportal ready.");
         return this;
     }
 
@@ -217,7 +216,7 @@ public class Vision extends BunyipsSubsystem {
                 visionPortal.getCameraState() == VisionPortal.CameraState.STOPPING_STREAM) {
             // Note if the camera state is STOPPING_STREAM, it will block the thread until the
             // stream is resumed. This is a documented operation in the SDK.
-            Dbg.logv(getClass(), "%visionportal restarting...", isDefaultName() ? "" : "(" + name + ") ");
+            sout(Dbg::logv, "visionportal restarting...");
             visionPortal.resumeStreaming();
         }
 
@@ -230,7 +229,7 @@ public class Vision extends BunyipsSubsystem {
             }
             visionPortal.setProcessorEnabled(processor, true);
             processor.setRunning(true);
-            Dbg.logv(getClass(), "%vision processor '%' started.", isDefaultName() ? "" : "(" + name + ") ", processor.toString());
+            sout(Dbg::logv, "vision processor '%' started.", processor.toString());
         }
         return this;
     }
@@ -270,7 +269,7 @@ public class Vision extends BunyipsSubsystem {
             }
             visionPortal.setProcessorEnabled(processor, false);
             processor.setRunning(false);
-            Dbg.logv(getClass(), "%vision processor '%' paused.", isDefaultName() ? "" : "(" + name + ") ", processor.toString());
+            sout(Dbg::logv, "vision processor '%' paused.", processor.toString());
         }
         return this;
     }
@@ -287,7 +286,7 @@ public class Vision extends BunyipsSubsystem {
         }
         // Pause the VisionPortal, this will stagnate any attached processors
         visionPortal.stopStreaming();
-        Dbg.logv(getClass(), "%visionportal stopped.", isDefaultName() ? "" : "(" + name + ") ");
+        sout(Dbg::logv, "visionportal stopped.");
         return this;
     }
 
@@ -334,7 +333,7 @@ public class Vision extends BunyipsSubsystem {
         }
         visionPortal.close();
         visionPortal = null;
-        Dbg.logv(getClass(), "%visionportal terminated.", isDefaultName() ? "" : "(" + name + ") ");
+        sout(Dbg::logv, "visionportal terminated.");
         return this;
     }
 
@@ -359,7 +358,7 @@ public class Vision extends BunyipsSubsystem {
                 throw new IllegalStateException("Vision: Tried to flip a processor that was not initialised!");
             }
             processor.setFlipped(!processor.isFlipped());
-            Dbg.logv(getClass(), "%vision processor '%' flipped %.", isDefaultName() ? "" : "(" + name + ") ", processor.toString(), processor.isFlipped() ? "upside-down" : "right-side up");
+            sout(Dbg::logv, "vision processor '%' flipped %.", processor.toString(), processor.isFlipped() ? "upside-down" : "right-side up");
         }
         return this;
     }
@@ -378,7 +377,7 @@ public class Vision extends BunyipsSubsystem {
         }
         for (Processor processor : processors) {
             processor.setFlipped(!processor.isFlipped());
-            Dbg.logv(getClass(), "%vision processor '%' flipped %.", isDefaultName() ? "" : "(" + name + ") ", processor.toString(), processor.isFlipped() ? "upside-down" : "right-side up");
+            sout(Dbg::logv, "vision processor '%' flipped %.", processor.toString(), processor.isFlipped() ? "upside-down" : "right-side up");
         }
         return this;
     }
