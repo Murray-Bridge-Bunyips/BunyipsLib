@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
@@ -107,6 +108,17 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     }
 
     /**
+     * Log to Logcat using smart formatting with the current subsystem name.
+     *
+     * @param logger the underlying function to log the message, such as {@link Dbg} methods.
+     * @param format the message (format string) to log
+     * @param objs   the objects to format into the message using {@link Text#format(String, Object...)}
+     */
+    protected void sout(Consumer<String> logger, String format, Object... objs) {
+        logger.accept(Text.format("[%] %%", getClass().getSimpleName(), "(" + toString().replace(getClass().getSimpleName(), "") + ") ", Text.format(format, objs)));
+    }
+
+    /**
      * @return a status string of this subsystem
      */
     @NonNull
@@ -138,10 +150,10 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     }
 
     /**
-     * @return whether the name of the subsystem has not been modified (customisable name is the same as the class name)
+     * @return whether the name of the subsystem has not been modified (customisable name is the same as the class name plus some index)
      */
     public final boolean isDefaultName() {
-        return name.equals(getClass().getSimpleName());
+        return name.matches("^" + getClass().getSimpleName() + "\\d*$");
     }
 
     /**
@@ -173,12 +185,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
                 o.telemetry.addRetained("<font color='red'><b>! SUBSYSTEM FAULT</b></font>: %", toString());
                 o.telemetry.log("<font color='yellow'><b>warning!</b> <i>%</i> failed a null self-check and was auto disabled.</font>", toString());
             });
-            Dbg.error(getClass(), "%Subsystem has been disabled as assertParamsNotNull() failed.", isDefaultName() ? "" : "(" + this + ") ");
+            sout(Dbg::error, "Subsystem has been disabled as assertParamsNotNull() failed.");
             onDisable();
         }
         return shouldRun;
     }
-
 
     /**
      * Call to delegate the update of this subsystem, usually a component of another subsystem, to this subsystem.
@@ -202,7 +213,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     public final void disable() {
         if (!shouldRun) return;
         shouldRun = false;
-        Dbg.logv(getClass(), "%Subsystem disabled via disable() call.", isDefaultName() ? "" : "(" + this + ") ");
+        sout(Dbg::logv, "Subsystem disabled via disable() call.");
         opMode(o -> o.telemetry.log(getClass(), Text.html().color("yellow", "disabled. ").small("check logcat for more info.")));
         onDisable();
         for (BunyipsSubsystem child : children)
@@ -216,7 +227,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     public final void enable() {
         if (shouldRun || assertionFailed) return;
         shouldRun = true;
-        Dbg.logv(getClass(), "%Subsystem enabled via enable() call.", isDefaultName() ? "" : "(" + this + ") ");
+        sout(Dbg::logv, "Subsystem enabled via enable() call.");
         opMode(o -> o.telemetry.log(getClass(), Text.html().color("green", "enabled. ").small("check logcat for more info.")));
         onEnable();
         for (BunyipsSubsystem child : children)
@@ -228,7 +239,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final void cancelCurrentTask() {
         if (shouldRun && currentTask != defaultTask) {
-            Dbg.logv(getClass(), "%Task changed: %<-%(INT)", isDefaultName() ? "" : "(" + this + ") ", defaultTask, currentTask);
+            sout(Dbg::logv, "Task changed: %<-%(INT)", defaultTask, currentTask);
             currentTask.finishNow();
             currentTask = defaultTask;
         }
@@ -245,11 +256,11 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (!shouldRun) return null;
         if (currentTask == null || currentTask.isFinished()) {
             if (currentTask == null) {
-                Dbg.logv(getClass(), "%Subsystem awake.", isDefaultName() ? "" : "(" + this + ") ");
+                sout(Dbg::logv, "Subsystem awake.");
                 onEnable();
             } else {
                 // Task changes are repetitive to telemetry log, will just leave the important messages to there
-                Dbg.logv(getClass(), "%Task changed: %<-%", isDefaultName() ? "" : "(" + this + ") ", defaultTask, currentTask);
+                sout(Dbg::logv, "Task changed: %<-%", defaultTask, currentTask);
             }
             currentTask = defaultTask;
         }
@@ -282,12 +293,12 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     public final boolean setCurrentTask(@NonNull Task newTask) {
         if (!shouldRun) {
-            Dbg.warn(getClass(), "%Subsystem is disabled, ignoring task change.", isDefaultName() ? "" : "(" + this + ") ");
+            sout(Dbg::warn, "Subsystem is disabled, ignoring task change.");
             return false;
         }
 
         if (currentTask == null) {
-            Dbg.warn(getClass(), "%Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated if this behaviour is not intended.", isDefaultName() ? "" : "(" + this + ") ");
+            sout(Dbg::warn, "Subsystem has not been updated with update() yet and a task was allocated - please ensure your subsystem is being updated if this behaviour is not intended.");
             currentTask = defaultTask;
         }
 
@@ -301,7 +312,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
                 setHighPriorityCurrentTask(newTask);
                 return true;
             }
-            Dbg.log(getClass(), "%Ignored task change: %->%", isDefaultName() ? "" : "(" + this + ") ", currentTask, newTask);
+            sout(Dbg::log, "Ignored task change: %->%", currentTask, newTask);
             return false;
         }
 
@@ -311,7 +322,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             defaultTask.finishNow();
             defaultTask.reset();
         }
-        Dbg.logv(getClass(), "%Task changed: %->%", isDefaultName() ? "" : "(" + this + ") ", currentTask, newTask);
+        sout(Dbg::logv, "Task changed: %->%", currentTask, newTask);
         currentTask = newTask;
         return true;
     }

@@ -53,6 +53,7 @@ public class SequentialTaskGroup extends TaskGroup {
             currentTask = tasks.get(taskIndex);
         } else {
             executeTask(currentTask);
+            withName(currentTask.toString());
         }
     }
 

@@ -131,7 +131,8 @@ public class Vision extends BunyipsSubsystem {
     @SuppressWarnings("rawtypes")
     public Vision init(@NonNull Processor... newProcessors) {
         if (visionPortal != null) {
-            Dbg.warn(getClass(), "%visionportal instance already initialised! tearing down...", isDefaultName() ? "" : "(" + name + ") ");
+            sout(Dbg::warn, "visionportal instance already initialised! tearing down...");
+            // TODO: continue migration to sout
             terminate();
         }
 
