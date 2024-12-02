@@ -123,7 +123,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      */
     @NonNull
     public final String toVerboseString() {
-        return Text.format("%%%% (%) <=> %", assertionFailed ? "[error]" : "", threadName != null ? " [async]" : "", parent != null ? " [delegated to " + parent + "]" : "", " " + name, shouldRun ? "enabled" : "disabled", getCurrentTask());
+        return Text.format("%%%% <%> (%) <=> %", assertionFailed ? "[error]" : "", threadName != null ? " [async]" : "", parent != null ? " [delegated to " + parent + "]" : "", " " + name, getClass().getSimpleName(), shouldRun ? "enabled" : "disabled", getCurrentTask());
     }
 
     /**

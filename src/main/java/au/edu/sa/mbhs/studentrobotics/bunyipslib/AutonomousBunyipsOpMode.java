@@ -84,7 +84,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
         String timeLeft = getApproximateTimeLeft();
         Text.Builder out = Text.builder();
-        out.append("[AutonomousBunyipsOpMode] onReady() called | %% task(s) queued% | % subsystems\n",
+        out.append("[AutonomousBunyipsOpMode] onReady() called | %% task(s) queued% | % subsystem(s)\n",
                 userSelection != null ? "usr: " + Text.removeHtml(String.valueOf(selectedOpMode)) + " | " : "",
                 taskCount,
                 timeLeft.isEmpty() ? "" : timeLeft + " to complete",
@@ -95,7 +95,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         }
         out.append("\n");
         for (BunyipsSubsystem subsystem : updatedSubsystems) {
-            out.append("   :: %\n", subsystem);
+            out.append("   :: %\n", subsystem.toVerboseString());
         }
         Dbg.logd(out.toString());
     }
