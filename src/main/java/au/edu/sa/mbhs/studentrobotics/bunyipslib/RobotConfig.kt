@@ -62,14 +62,12 @@ abstract class RobotConfig {
         this.hardwareMap = opMode.hardwareMap
         if (opMode is BunyipsOpMode) {
             Exceptions.runUserMethod(opMode, ::onRuntime)
-            opMode.t.add(
-                "<b>${this.javaClass.simpleName}</b>: Init completed with ${if (Storage.memory().hardwareErrors.size > 0) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}.",
-            )
+            opMode.t.add("<b>${javaClass.simpleName}</b>: Init completed with ${if (Storage.memory().hardwareErrors.size > 0) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}.",)
         } else {
             onRuntime()
             opMode.telemetry.addData(
                 "",
-                "${this.javaClass.simpleName}: Init completed with ${Storage.memory().hardwareErrors.size} error(s).",
+                "${javaClass.simpleName}: Init completed with ${Storage.memory().hardwareErrors.size} error(s).",
             )
         }
         for (error in Storage.memory().hardwareErrors) {

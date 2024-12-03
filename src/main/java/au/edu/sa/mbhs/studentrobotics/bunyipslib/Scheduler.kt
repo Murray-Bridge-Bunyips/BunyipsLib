@@ -125,9 +125,9 @@ class Scheduler : BunyipsComponent() {
                     if (task == null || task is IdleTask) continue
                     var report = Text.format(
                         "<small><b>%</b>% <font color='gray'>|</font> <b>%</b> -> %",
-                        subsystem.javaClass.simpleName,
+                        subsystem,
                         if (subsystem.isRunningDefaultTask) " (d.)" else "",
-                        task.toString().replace("${subsystem.javaClass.simpleName}:", ""),
+                        task.toString().replace("$subsystem:", ""),
                         task.deltaTime to Seconds round 1
                     )
                     val timeoutSec = task.timeout to Seconds

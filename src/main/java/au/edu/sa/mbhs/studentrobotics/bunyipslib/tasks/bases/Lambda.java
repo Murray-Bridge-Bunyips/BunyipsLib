@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
  */
 public class Lambda extends Task {
     // This value may need adjustment in combination with a SequentialTaskGroup where the timeouts are summed,
-    // however we can't tell how long a single method will execute for so we need to assume OnceTasks will only
+    // however we can't tell how long a single method will execute for so we need to assume Lambdas will only
     // do one small task.
     /**
      * The epsilon value for the Lambda timeout.
