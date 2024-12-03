@@ -372,7 +372,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         Task task = getCurrentTask();
         if (task != null) {
             if (task == defaultTask && defaultTask.poll()) {
-                throw new EmergencyStop("Default task (of " + getClass().getSimpleName() + ") should never finish!");
+                throw new EmergencyStop("Default task (of " + name + ", " + getClass().getSimpleName() + ") should never finish!");
             }
             // Run the task on our subsystem
             task.run();
