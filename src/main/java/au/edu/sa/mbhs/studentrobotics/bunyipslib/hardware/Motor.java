@@ -50,9 +50,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  * Drop-in replacement for a {@link DcMotor} that uses custom control algorithms to operate {@link DcMotor.RunMode#RUN_USING_ENCODER}
  * and {@link DcMotor.RunMode#RUN_TO_POSITION} modes. Internally integrates a gain scheduler to allow for more precise
  * system coefficients against gravity and other external forces. This class effectively wraps an entire DcMotor and
- * regulates all of the operations.
+ * regulates all the operations.
  * <p>
- * This class is designed to be down casted to a DcMotor where used, integrating with the current motor modes while
+ * This class is designed to be downcasted to a DcMotor where used, integrating with the current motor modes while
  * providing faster, predictable control systems.
  *
  * @author Lucas Bubner, 2024
@@ -164,7 +164,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * Set a system controller to use for {@link DcMotor.RunMode#RUN_TO_POSITION}.
      * <p>
      * The coefficients of this controller can be gain scheduled through {@link #scheduleRunToPositionGains()}.
-     * Otherwise, you can adjust the coefficients directly on the controller instance and they will be respected, unless
+     * Otherwise, you can adjust the coefficients directly on the controller instance, and they will be respected, unless
      * a gain scheduler is set for this controller.
      * <p>
      * Note that when using a motor with this class, the PIDF coefficients attached to the motor itself will be used only
@@ -196,7 +196,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * Set a system controller to use for {@link DcMotor.RunMode#RUN_USING_ENCODER}.
      * <p>
      * The coefficients of this controller can be gain scheduled through {@link #scheduleRunUsingEncoderGains()}.
-     * Otherwise, you can adjust the coefficients directly on the controller instance and they will be respected, unless
+     * Otherwise, you can adjust the coefficients directly on the controller instance, and they will be respected, unless
      * a gain scheduler is set for this controller.
      * <p>
      * Note that when using a motor with this class, the PIDF coefficients attached to the motor itself will be used only
@@ -215,7 +215,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * Set a system controller to use for {@link DcMotor.RunMode#RUN_USING_ENCODER}.
      * <p>
      * The coefficients of this controller can be gain scheduled through {@link #scheduleRunUsingEncoderGains()}.
-     * Otherwise, you can adjust the coefficients directly on the controller instance and they will be respected, unless
+     * Otherwise, you can adjust the coefficients directly on the controller instance, and they will be respected, unless
      * a gain scheduler is set for this controller.
      * <p>
      * Note that when using a motor with this class, the PIDF coefficients attached to the motor itself will be used only
@@ -242,7 +242,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * Set a system controller to use for {@link DcMotor.RunMode#RUN_USING_ENCODER}.
      * <p>
      * The coefficients of this controller can be gain scheduled through {@link #scheduleRunUsingEncoderGains()}.
-     * Otherwise, you can adjust the coefficients directly on the controller instance and they will be respected, unless
+     * Otherwise, you can adjust the coefficients directly on the controller instance, and they will be respected, unless
      * a gain scheduler is set for this controller.
      * <p>
      * Note that when using a motor with this class, the PIDF coefficients attached to the motor itself will be used only
@@ -552,7 +552,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
 
     /**
      * Note that this method will try to access the {@link DcMotor.RunMode#RUN_TO_POSITION} controller to access information there. This
-     * is otherwise unsupported and you should try to access the actual controller to see this information, unless
+     * is otherwise unsupported, and you should try to access the actual controller to see this information, unless
      * you are downcasting in which this will assume you are using a PIDF controller.
      *
      * @inheritDoc
@@ -572,7 +572,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
 
     /**
      * Note that this method will try to access the {@link DcMotor.RunMode#RUN_TO_POSITION} controller to access information there. This
-     * is otherwise unsupported and you should try to access the actual controller to see this information, unless
+     * is otherwise unsupported, and you should try to access the actual controller to see this information, unless
      * you are downcasting in which this will assume you are using a PIDF controller.
      *
      * @inheritDoc
@@ -770,7 +770,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * RunMode. Note further that, clearly, the motor must be equipped with an encoder in order
      * for this mode to function properly.</p>
      * <p>
-     * Additionally note that the target positioning functionality of the Motor class handles
+     * Additionally, note that the target positioning functionality of the Motor class handles
      * the propagation of target position following internally.
      *
      * @param position the desired encoder target position
@@ -787,7 +787,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
 
     /**
      * Note that this method will try to access the {@link DcMotor.RunMode#RUN_TO_POSITION} controller to access information there. This
-     * is otherwise unsupported and you should try to access the actual controller to see this information, unless
+     * is otherwise unsupported, and you should try to access the actual controller to see this information, unless
      * you are downcasting in which this will assume you are using a PID controller.
      *
      * @inheritDoc

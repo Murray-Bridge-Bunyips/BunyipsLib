@@ -143,7 +143,7 @@ public class Condition implements BooleanSupplier {
     }
 
     /**
-     * Creates a new Condition that is the logical OR of this Condition and another @link BooleanSupplier}.
+     * Creates a new Condition that is the logical OR of this Condition and another {@link BooleanSupplier}.
      *
      * @param other The other {@link BooleanSupplier} to OR with.
      * @return A new Condition that is the logical OR of this Condition and the other {@link BooleanSupplier}.
@@ -154,7 +154,7 @@ public class Condition implements BooleanSupplier {
     }
 
     /**
-     * Creates a new Condition that is the logical AND of this Condition and anot @link BooleanSupplier}.
+     * Creates a new Condition that is the logical AND of this Condition and another {@link BooleanSupplier}.
      *
      * @param other The other {@link BooleanSupplier} to AND with.
      * @return A new Condition that is the logical AND of this Condition and the other {@link BooleanSupplier}.
@@ -165,7 +165,7 @@ public class Condition implements BooleanSupplier {
     }
 
     /**
-     * Creates a new Condition that is the logical XOR of this Condition and anot @link BooleanSupplier}.
+     * Creates a new Condition that is the logical XOR of this Condition and another {@link BooleanSupplier}.
      *
      * @param other The other {@link BooleanSupplier} to XOR with.
      * @return A new Condition that is the logical XOR of this Condition and the other {@link BooleanSupplier}.

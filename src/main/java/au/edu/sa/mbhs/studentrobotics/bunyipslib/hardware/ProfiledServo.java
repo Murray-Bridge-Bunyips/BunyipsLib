@@ -23,7 +23,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  * optimisation similar to an {@link SimpleRotator}.
  * <p>
  * This class serves as a drop-in replacement for the {@link Servo}, similar to {@link Motor} with the {@link DcMotor}.
- * Do note that this class cannot be casted to a {@link ServoImplEx} instance, but it does implement the extended
+ * Do note that this class cannot be cast to a {@link ServoImplEx} instance, but it does implement the extended
  * {@link PwmControl} interface for extended operations.
  *
  * @author Lucas Bubner, 2024
@@ -168,7 +168,7 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
     }
 
     /**
-     * Individually denergizes the PWM for this particular servo
+     * Individually de-energizes the PWM for this particular servo
      *
      * @see #setPwmEnable()
      */

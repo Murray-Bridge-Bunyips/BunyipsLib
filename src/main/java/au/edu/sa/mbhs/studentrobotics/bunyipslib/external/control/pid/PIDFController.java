@@ -10,16 +10,15 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 
 /**
- * This is a PID controller (https://en.wikipedia.org/wiki/PID_controller)
- * for your robot. Internally, it performs all the calculations for you.
- * You need to tune your values to the appropriate amounts in order
- * to properly utilize these calculations.
+ * This is a <a href="https://en.wikipedia.org/wiki/PID_controller">PID controller</a> for your robot.
+ * Internally, it performs all the calculations for you.
+ * You need to tune your values to the appropriate amounts in order to properly utilise these calculations.
  * <p>
  * The equation we will use is:
- * u(t) = kP * e(t) + kI * int(0,t)[e(t')dt'] + kD * e'(t) + kF
- * where e(t) = r(t) - y(t) and r(t) is the setpoint and y(t) is the
- * measured value. If we consider e(t) the positional error, then
- * int(0,t)[e(t')dt'] is the total error and e'(t) is the velocity error.
+ * {@code u(t) = kP * e(t) + kI * int(0,t)[e(t')dt'] + kD * e'(t) + kF}
+ * where {@code e(t) = r(t) - y(t)} and {@code r(t)} is the setpoint and {@code y(t)} is the
+ * measured value. If we consider {@code e(t)} the positional error, then
+ * {@code int(0,t)[e(t')dt']} is the total error and {@code e'(t)} is the velocity error.
  * <a href="https://github.com/FTCLib/FTCLib/blob/cedc52cee1bb549324c1ca5059c5feec3c054902/core/src/main/java/com/arcrobotics/ftclib/controller/PIDFController.java">Source</a>
  *
  * @since 1.0.0-pre
@@ -244,7 +243,7 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * @return the velocity error e'(t)
+     * @return the velocity error {@code e'(t)}
      */
     public double getVelocityError() {
         return errorVal_v;
@@ -392,7 +391,7 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * Set the P coefficient on this controller
+     * Set the Proportional coefficient on this controller
      *
      * @param kp proportional
      * @return this
@@ -408,7 +407,7 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * Set the I coefficient on this controller
+     * Set the Integral coefficient on this controller
      *
      * @param ki integral
      * @return this
@@ -424,7 +423,7 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * Set the D coefficient on this controller
+     * Set the Derivative coefficient on this controller
      *
      * @param kd derivative
      * @return this
@@ -440,7 +439,7 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * Set the F coefficient on this controller
+     * Set the Feedforward coefficient on this controller
      *
      * @param kf feedforward
      * @return this

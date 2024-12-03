@@ -36,7 +36,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.VisionData;
  * as processing is on another thread and updates are managed at the discretion of the VisionPortal.
  * Once set up, Vision will automatically manage the camera stream and defined processor updates.
  * All you will need to do is collect the data from the processors and use it in your OpMode. The
- * {@code update()} method in this subsystem will simply add telemetry of the VisionPortal's status.
+ * {@link #update} method in this subsystem will simply add telemetry of the VisionPortal's status.
  *
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
@@ -58,7 +58,7 @@ public class Vision extends BunyipsSubsystem {
     private final CameraName camera;
     /**
      * A built-in raw feed Processor that will do nothing but provide the raw camera feed.
-     * Useful for debugging and testing, pass this raw field (vision.raw) to init() and start() to use it.
+     * Useful for debugging and testing, pass this raw field ({@code vision.raw}) to {@link #init} and {@link #start} to use it.
      *
      * @noinspection ClassEscapesDefinedScope (should never be used outside of this class, and checks exist for usage in other classes)
      */
@@ -122,7 +122,7 @@ public class Vision extends BunyipsSubsystem {
      * Initialises the Vision class with the specified processors.
      * This method should only be called once per OpMode. Additional calls will internally
      * terminate the VisionPortal and reinitialise it with the new processors (this is a highly expensive operation).
-     * Processors will be STOPPED by default, you must call {@code start()} after initialising.
+     * Processors will be STOPPED by default, you must call {@link #start} after initialising.
      *
      * @param newProcessors Processor instances
      * @return the vision instance
@@ -199,7 +199,7 @@ public class Vision extends BunyipsSubsystem {
 
     /**
      * Start desired processors. This method must be called before trying to extract data from
-     * the cameras, and must be already initialised with the init() method.
+     * the cameras, and must be already initialised with the {@link #init} method.
      *
      * @param attachedProcessors Processor instances
      * @return the vision instance
@@ -239,15 +239,15 @@ public class Vision extends BunyipsSubsystem {
      * <p>
      * This method should be called when hardware resources no longer
      * need to be allocated to operating the cameras, and should have the option to be re-enabled
-     * with start().
+     * with {@link #start}.
      * <p>
      * Note: The VisionPortal is automatically closed at the end of the OpMode's run time, calling
-     * stop() or terminate() is not required at the end of an OpMode.
+     * {@link #stop} or {@link #terminate} is not required at the end of an OpMode.
      * <p>
      * Passing no arguments will pause the Camera Stream (Level 3). Pausing
      * the camera stream will automatically disable any running processors. Note this may
-     * take some very small time to resume the stream if start() is called again. If you don't plan
-     * on using the camera stream again, it is recommended to call terminate() instead.
+     * take some small amount of time to resume the stream if {@link #start} is called again. If you don't plan
+     * on using the camera stream again, it is recommended to call {@link #terminate} instead.
      *
      * @param attachedProcessors Processor instances
      * @return the vision instance
@@ -292,7 +292,7 @@ public class Vision extends BunyipsSubsystem {
 
     /**
      * Get the culmination of data from all attached processors.
-     * It is recommended to instead call getData() on individual processors to get their data,
+     * It is recommended to instead call {@link Processor#getData()} on individual processors to get their data,
      * however, this method exists to provide a quick way to get all data at once.
      *
      * @return HashMap of all processor data from every attached processor
@@ -313,12 +313,12 @@ public class Vision extends BunyipsSubsystem {
      * <p>
      * Use this method when you are completely done with the VisionPortal and want to free up
      * all available resources. This method will automatically disable all processors and close
-     * the VisionPortal, and cannot be undone without calling init() again.
+     * the VisionPortal, and cannot be undone without calling {@link #init} again.
      * <p>
      * It is strongly discouraged to reinitialise the VisionPortal in the same OpMode, as this
      * takes significant time and may cause the OpMode to hang or become unresponsive. Instead,
-     * use the {@code start()} and {@code stop()} methods to enable/disable the VisionPortal.
-     * Repeated calls to {@code init()} will also cause a termination of the VisionPortal.
+     * use the {@link #start} and {@link #stop} methods to enable/disable the VisionPortal.
+     * Repeated calls to {@link #init} will also cause a termination of the VisionPortal.
      *
      * @return the vision instance
      */
@@ -406,7 +406,7 @@ public class Vision extends BunyipsSubsystem {
     /**
      * Returns the state of VisionPortal. Specifically if it is null or not.
      *
-     * @return whether the VisionPortal has been initialised with init() or not
+     * @return whether the VisionPortal has been initialised with {@link #init} or not
      */
     public boolean isInitialised() {
         return visionPortal != null;
@@ -433,7 +433,7 @@ public class Vision extends BunyipsSubsystem {
      * Without the preview active, the DS will display a raw unprocessed feed to save resources in
      * Camera Stream, and FtcDashboard will be disabled. This is the default state of Vision.
      * Activating this sender will set both FtcDashboard and the DS streams to be of a processor
-     * of your choosing, by changing a processor's name with setPreview() or via FtcDashboard.
+     * of your choosing, by changing a processor's name with {@link #setPreview} or via FtcDashboard.
      *
      * @see SwitchableVisionSender
      */
@@ -448,7 +448,7 @@ public class Vision extends BunyipsSubsystem {
     }
 
     /**
-     * Set the processor to display on FtcDashboard/DS from startPreview().
+     * Set the processor to display on FtcDashboard/DS from {@link #startPreview()}.
      * This will automatically switch the instance index, allowing an instant stream of this camera and processor combo.
      * Will no-op if this processor name is invalid.
      *
@@ -463,7 +463,7 @@ public class Vision extends BunyipsSubsystem {
     }
 
     /**
-     * Set the processor to display on FtcDashboard/DS from startPreview().
+     * Set the processor to display on FtcDashboard/DS from {@link #startPreview()}.
      * This will automatically switch the instance index, allowing an instant stream of this camera and processor combo.
      * Will no-op if this processor is invalid.
      *
@@ -476,7 +476,7 @@ public class Vision extends BunyipsSubsystem {
     }
 
     /**
-     * Optional telemetry for subsystem attachment
+     * Optional telemetry for subsystem attachment, as updates are managed by the {@link VisionPortal}.
      */
     @Override
     protected void periodic() {

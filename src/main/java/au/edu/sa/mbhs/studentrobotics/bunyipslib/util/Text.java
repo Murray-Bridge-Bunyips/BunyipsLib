@@ -23,7 +23,7 @@ public final class Text {
 
     /**
      * Format a string using only '%' placeholders.
-     * Differs from String.format() as type can be omitted.
+     * Differs from {@link String#format} as type can be omitted.
      * <p>
      * {@code format("Hello %!", "world")} -> {@code "Hello world!"}
      *

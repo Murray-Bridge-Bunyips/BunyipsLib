@@ -187,7 +187,7 @@ public class HolonomicVectorDriveTask extends Task {
     /**
      * Set the minimum pose error when in self-holding mode to activate correction for.
      *
-     * @param inchRad a pose in inches and radians that represents the admissible error for robot auto-correction
+     * @param inchRad a pose in inches and radians that represents the admissible error for robot autocorrection
      * @return this
      */
     @NonNull

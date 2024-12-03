@@ -39,13 +39,13 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
  */
 public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     /**
-     * Used for tasks that have no timeout to generate a "estimate to OpMode completion" metric.
+     * Used for tasks that have no timeout to generate an "estimate to OpMode completion" metric.
      * Purely visual, and does not affect the actual task (hence why this field is not exposed to FtcDashboard).
      */
     public static double INFINITE_TASK_ASSUMED_DURATION_SECONDS = 5.0;
     private final ArrayList<Reference<?>> opModes = new ArrayList<>();
     private final ConcurrentLinkedDeque<Task> tasks = new ConcurrentLinkedDeque<>();
-    // Pre and post queues cannot have their tasks removed, so we can rely on their .size() methods
+    // Pre- and post-queues cannot have their tasks removed, so we can rely on their .size() methods
     private final ConcurrentLinkedDeque<Task> postQueue = new ConcurrentLinkedDeque<>();
     private final ConcurrentLinkedDeque<Task> preQueue = new ConcurrentLinkedDeque<>();
     @NonNull
@@ -142,7 +142,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (isStopRequested())
             return;
         if (userSelection != null) {
-            // UserSelection will internally check opMode.isInInit() to see if it should terminate itself
+            // UserSelection will internally check opMode.isInInit() to see if it should terminate itself,
             // but we should wait here until it has actually terminated
             Threads.waitFor(userSelection, true);
         }
@@ -217,7 +217,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * the automatic collection of {@link BunyipsSubsystem}s, and allows you to determine which subsystems will be managed for
      * this OpMode.
      * <p>
-     * For most cases, using this method is not required and all you need to do is construct your subsystems and they
+     * For most cases, using this method is not required and all you need to do is construct your subsystems, and they
      * will be managed automatically. This method is for advanced cases where you don't want this behaviour to happen.
      *
      * @param subsystems the restrictive list of subsystems to be managed and updated by ABOM
@@ -368,7 +368,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Insert an implicit RunTask at a specific index in the queue.
+     * Insert an implicit {@link Lambda} at a specific index in the queue.
      *
      * @param index    the index to insert the task at, starting from 0
      * @param runnable the code to add to the run queue to run once
@@ -380,7 +380,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Insert an implicit RunTask at a specific index in the queue.
+     * Insert an implicit {@link Lambda} at a specific index in the queue.
      *
      * @param index    the index to insert the task at, starting from 0
      * @param name     the name of the task
@@ -528,7 +528,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         // Attempt to get the time left for all tasks by summing their timeouts
         double timeLeft = tasks.stream().mapToDouble(task -> {
             // We cannot extract the duration of a task that is not a Task, we will return zero instead of the assumption
-            // as they are completely out of our control and we don't even know how they function
+            // as they are completely out of our control, and we don't even know how they function
             Measure<Time> timeout = task.timeout;
             // We have to approximate and guess as we cannot determine the duration of a task that is infinite
             if (timeout.magnitude() == 0.0) {
@@ -705,7 +705,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *
      * @param selectedOpMode the OpMode selected by the user, if applicable. Will be NULL if the user does not select an OpMode (and OpModes were available).
      *                       Will be an empty reference if {@link #setOpModes(Object...)} returned null (no OpModes to select).
-     * @param selectedButton the button selected by the user. Will be Controls.NONE if no selection is made or given.
+     * @param selectedButton the button selected by the user. Will be {@link Controls#NONE} if no selection is made or given.
      * @see #add(Task)
      */
     protected abstract void onReady(@Nullable Reference<?> selectedOpMode, @NonNull Controls selectedButton);

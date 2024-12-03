@@ -153,7 +153,7 @@ public class InterpolatedLookupTable {
      *
      * @param input The X value.
      * @return The interpolated Y = f(X) value.
-     * @throws OutOfRangeException if the input is outside of the domain available by this lookup table
+     * @throws OutOfRangeException if the input is outside the domain available by this lookup table
      */
     public double get(double input) throws OutOfRangeException {
         if (!built)

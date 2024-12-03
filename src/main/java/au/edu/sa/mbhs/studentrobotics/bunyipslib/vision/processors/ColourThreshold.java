@@ -285,7 +285,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     }
 
     /**
-     * Set the lower percentage that will be used as a mininum.
+     * Set the lower percentage that will be used as a minimum.
      * This is an optional method.
      *
      * @param percent the minimum percentage of the screen the contour should be to register, default 1.2%
@@ -295,7 +295,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
     }
 
     /**
-     * Set the lower percentage that will be used as a mininum.
+     * Set the lower percentage that will be used as a minimum.
      * This is an optional method.
      *
      * @param staticPercent the static minimum percentage of the screen the contour should be to register, default 1.2%
@@ -406,7 +406,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
 
     /**
      * Sets the size of the eroding element to use during thresholding.
-     * Erosion eats away at the mask, reducing noise by eliminating super small areas, but also reduces the
+     * Erosion eats away at the mask, reducing noise by eliminating tiny areas, but also reduces the
      * contour areas of everything a little bit.
      * This is an optional method.
      *
@@ -418,7 +418,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
 
     /**
      * Sets the size of the eroding element to use during thresholding.
-     * Erosion eats away at the mask, reducing noise by eliminating super small areas, but also reduces the
+     * Erosion eats away at the mask, reducing noise by eliminating tiny areas, but also reduces the
      * contour areas of everything a little bit.
      * This is an optional method.
      *
@@ -806,7 +806,7 @@ public abstract class ColourThreshold extends Processor<ContourData> {
                 canvas.drawPath(path, borderPaint);
             }
 
-            // Draw angle on the top left corner of the contour
+            // Draw angle in the top left corner of the contour
             canvas.drawText(
                     String.format(Locale.getDefault(), "%.1f°", contour.getAngle().in(Degrees)),
                     (float) rotRectPts[1].x,

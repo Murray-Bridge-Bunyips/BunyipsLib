@@ -116,11 +116,11 @@ abstract class BunyipsOpMode : BOMInternal() {
          * The instance of the current [BunyipsOpMode]. This is set automatically by the [BunyipsOpMode] lifecycle.
          * This can be used instead of dependency injection to access the current OpMode, as it is a singleton.
          *
-         * `BunyipsComponent` (and derivatives `Task`, `BunyipsSubsystem`, etc) internally use this to grant access
+         * `BunyipsComponent` (and derivatives `Task`, `BunyipsSubsystem`, etc.) internally use this to grant access
          * to the current BunyipsOpMode through the `opMode` property.
          *
          * If you choose to access the current OpMode through this property, you must ensure that the OpMode
-         * is actively running, otherwise this property will be null and you will raise a full-crashing exception.
+         * is actively running, otherwise this property will be null, and you will raise a full-crashing exception.
          *
          * @throws UninitializedPropertyAccessException If a [BunyipsOpMode] is not running, this exception will be raised.
          * @return The instance of the current [BunyipsOpMode].
@@ -174,7 +174,7 @@ abstract class BunyipsOpMode : BOMInternal() {
     /**
      * Run code in a loop AFTER [onInit] has completed, until start is pressed on the Driver Station
      * and the init-task ([setInitTask]) is done. The boolean returned by this method will indicate the status
-     * of the imit-loop, if it returns true, the init-loop will finish early.
+     * of the init-loop, if it returns true, the init-loop will finish early.
      *
      * If not implemented and no init-task is defined, the OpMode will continue on as normal and wait for start.
      */
@@ -531,7 +531,7 @@ abstract class BunyipsOpMode : BOMInternal() {
     }
 
     /**
-     * Set a task (exposed as minimum type of an [Action]) that will run as an init-task. This will run
+     * Set a task (exposed as minimum type of [Action]) that will run as an init-task. This will run
      * after your [onInit] has completed, allowing you to initialise hardware first.
      * This is an optional method, and runs alongside [onInitLoop].
      *
@@ -558,7 +558,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * a subsystem or task.
      *
      * This method is public to allow you to add looping code from [RobotConfig], [Task], and other contexts.
-     * The runnables will run in the in the order they were added, and duplicate Runnable instances will be ignored.
+     * The runnables will run in the order they were added, and duplicate Runnable instances will be ignored.
      */
     fun onActiveLoop(vararg runnables: Runnable) {
         // Using a set to not have multiple instances of the same Runnable
@@ -572,7 +572,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * a subsystem or task.
      *
      * This method is public to allow you to add looping code from [RobotConfig], [Task], and other contexts.
-     * This runnable will run in the in the order they were added, and duplicate Runnable instances will be ignored.
+     * This runnable will run in the order they were added, and duplicate Runnable instances will be ignored.
      */
     fun onActiveLoop(runnable: Runnable) {
         this.runnables.add(runnable)

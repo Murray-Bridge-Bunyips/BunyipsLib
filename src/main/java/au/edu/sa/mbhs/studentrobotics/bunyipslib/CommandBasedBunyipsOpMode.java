@@ -150,7 +150,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * the automatic collection of {@link BunyipsSubsystem}s, and allows you to determine which subsystems will be managed for
      * this OpMode.
      * <p>
-     * For most cases, using this method is not required and all you need to do is construct your subsystems and they
+     * For most cases, using this method is not required and all you need to do is construct your subsystems, and they
      * will be managed automatically. This method is for advanced cases where you don't want this behaviour to happen.
      *
      * @param subsystems the restrictive list of subsystems to be managed and updated by the scheduler

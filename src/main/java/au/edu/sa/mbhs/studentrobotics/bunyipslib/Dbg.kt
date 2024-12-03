@@ -50,7 +50,7 @@ object Dbg {
      * Log an error message.
      * Messages will be prepended with the ERROR_PREPEND string
      * Best used in a scenario where the program cannot continue normally or at required functionality
-     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
+     * @param stck StackTraceElement with information about where this log was called (see [Exceptions.getCallingUserCodeFunction])
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
@@ -103,7 +103,7 @@ object Dbg {
      * Log a warning message.
      * Messages will be prepended with the WRN_PREPEND string
      * Best used in a scenario where the program can continue, but the user should be warned
-     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
+     * @param stck StackTraceElement with information about where this log was called (see [Exceptions.getCallingUserCodeFunction])
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
@@ -143,7 +143,7 @@ object Dbg {
     /**
      * Log an internal debug message.
      * Best used from critical classes to log internal state
-     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
+     * @param stck StackTraceElement with information about where this log was called (see [Exceptions.getCallingUserCodeFunction])
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
@@ -181,7 +181,7 @@ object Dbg {
     /**
      * Log a user message.
      * Best used to log a message or value to Logcat from user code
-     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
+     * @param stck StackTraceElement with information about where this log was called (see [Exceptions.getCallingUserCodeFunction])
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
@@ -219,7 +219,7 @@ object Dbg {
     /**
      * Log a verbose message.
      * Used from always-messages that can be omitted, such as the firing notifications of methods
-     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
+     * @param stck StackTraceElement with information about where this log was called (see [Exceptions.getCallingUserCodeFunction])
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
@@ -257,8 +257,8 @@ object Dbg {
     /**
      * Log a user message temporarily.
      * This method is marked as 'deprecated' to remind you to remove it before committing your code and for it
-     * to be picked up as part of static code analysis. It serves the same as a regular log() call.
-     * @param stck StackTraceElement with information about where this log was called (see Text.getCallingUserCodeFunction())
+     * to be picked up as part of static code analysis. It serves the same as a regular [log] call.
+     * @param stck StackTraceElement with information about where this log was called (see [Exceptions.getCallingUserCodeFunction])
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
@@ -274,7 +274,7 @@ object Dbg {
     /**
      * Log a user message temporarily.
      * This method is marked as 'deprecated' to remind you to remove it before committing your code and for it
-     * to be picked up as part of static code analysis. It serves the same as a regular log() call.
+     * to be picked up as part of static code analysis. It serves the same as a regular [log] call.
      * @param obj Class where this log was called (name will be prepended to message)
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
@@ -291,7 +291,7 @@ object Dbg {
     /**
      * Log a user message temporarily.
      * This method is marked as 'deprecated' to remind you to remove it before committing your code and for it
-     * to be picked up as part of static code analysis. It serves the same as a regular log() call.
+     * to be picked up as part of static code analysis. It serves the same as a regular [log] call.
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string
      */
@@ -306,7 +306,7 @@ object Dbg {
 
     /**
      * Log a timestamp from inside a BunyipsOpMode.
-     * This will call a log() with the current time since the last timer reset, prefixed with the last user-related
+     * This will call a [log] with the current time since the last timer reset, prefixed with the last user-related
      * function that was called.
      * If not called from a BunyipsOpMode, time information will be unknown.
      */

@@ -21,7 +21,7 @@ public class SelectTask<T> extends Task {
     /**
      * Create a new select task with the given state supplier.
      *
-     * @param stateSupplier the supplier of states to check in the when() method
+     * @param stateSupplier the supplier of states to check in the {@link #when} method
      */
     public SelectTask(@NonNull Supplier<T> stateSupplier) {
         this.stateSupplier = stateSupplier;

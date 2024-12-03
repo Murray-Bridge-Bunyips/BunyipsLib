@@ -19,7 +19,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ColourSample;
  * <p>
  * The {@link PredominantColorProcessor} acts like a "Color Sensor",
  * allowing you to define a Region of Interest (ROI) of the camera
- * stream inside of which the dominant color is found. Additionally,
+ * stream inside which the dominant color is found. Additionally,
  * said color is matched to one of the {@link PredominantColorProcessor.Swatch}s specified by
  * the user as a "best guess" at the general shade of the color.
  *

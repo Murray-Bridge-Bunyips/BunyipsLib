@@ -220,7 +220,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     }
 
     /**
-     * Re-enable a subsystem if it was previously disabled via a disable() call.
+     * Re-enable a subsystem if it was previously disabled via a {@link #disable} call.
      * This method will no-op if the assertion from {@link #assertParamsNotNull(Object...)} failed.
      */
     public final void enable() {

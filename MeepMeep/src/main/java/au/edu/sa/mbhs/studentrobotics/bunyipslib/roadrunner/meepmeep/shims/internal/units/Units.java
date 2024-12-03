@@ -281,7 +281,7 @@ public final class Units {
     public static final Dimensionless Value = BaseUnits.Value;
 
     /**
-     * A dimensionless unit equal to to 1/100th of a {@link #Value}. A measurement of {@code
+     * A dimensionless unit equal to 1/100th of a {@link #Value}. A measurement of {@code
      * Percent.of(42)} would be equivalent to {@code Value.of(0.42)}.
      */
     public static final Dimensionless Percent = derive(Value).splitInto(100).named("Percent").symbol("%").make();
@@ -429,7 +429,7 @@ public final class Units {
     public static final Per<Voltage, Velocity<Velocity<Angle>>> VoltsPerRadianPerSecondSquared = Volts.per(RadiansPerSecond.per(Second));
 
     /**
-     * Creates a unit equal to a thousandth of the base unit, eg Milliseconds = Milli(Units.Seconds).
+     * Creates a unit equal to a thousandth of the base unit, e.g. Milliseconds = Milli(Units.Seconds).
      *
      * @param <U> the type of the unit
      * @param baseUnit the unit being derived from. This does not have to be the base unit of measure
@@ -442,7 +442,7 @@ public final class Units {
     }
 
     /**
-     * Creates a unit equal to a thousandth of the base unit, eg Milliseconds = Milli(Units.Seconds).
+     * Creates a unit equal to a thousandth of the base unit, e.g. Milliseconds = Milli(Units.Seconds).
      *
      * @param <U> the type of the unit
      * @param baseUnit the unit being derived from. This does not have to be the base unit of measure
@@ -467,7 +467,7 @@ public final class Units {
     }
 
     /**
-     * Creates a unit equal to a millionth of the base unit, eg Microseconds = Micro(Units.Seconds).
+     * Creates a unit equal to a millionth of the base unit, e.g. Microseconds = Micro(Units.Seconds).
      *
      * @param <U> the type of the unit
      * @param baseUnit the unit being derived from. This does not have to be the base unit of measure
@@ -478,7 +478,7 @@ public final class Units {
     }
 
     /**
-     * Creates a unit equal to a thousand of the base unit, eg Kilograms = Kilo(Units.Grams).
+     * Creates a unit equal to a thousand of the base unit, e.g. Kilograms = Kilo(Units.Grams).
      *
      * @param <U> the type of the unit
      * @param baseUnit the unit being derived from. This does not have to be the base unit of measure
@@ -491,7 +491,7 @@ public final class Units {
     }
 
     /**
-     * Creates a unit equal to a thousand of the base unit, eg Kilograms = Kilo(Units.Grams).
+     * Creates a unit equal to a thousand of the base unit, e.g. Kilograms = Kilo(Units.Grams).
      *
      * @param <U> the type of the unit
      * @param baseUnit the unit being derived from. This does not have to be the base unit of measure

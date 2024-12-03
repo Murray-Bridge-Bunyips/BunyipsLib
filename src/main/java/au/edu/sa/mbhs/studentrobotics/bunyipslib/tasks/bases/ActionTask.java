@@ -17,7 +17,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.SequentialTaskGrou
  * of a {@link DualTelemetry} packet if running in a {@link BunyipsOpMode}, for seamless integration.
  * <p>
  * Do note that the {@link Task} implements {@link Action}, so if it is possible, directly converting the action
- * into a task at it's definition is more efficient.
+ * into a task at its definition is more efficient.
  * <p>
  * Tasks built with RoadRunner drives, despite being represented with Actions are internally composed of {@link Task} instances,
  * so {@link SequentialAction} and {@link ParallelAction} actions will also try to be unwrapped, with their full name available at init.

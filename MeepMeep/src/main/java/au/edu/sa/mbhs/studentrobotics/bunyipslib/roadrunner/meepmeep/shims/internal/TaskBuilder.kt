@@ -126,12 +126,12 @@ class TaskBuilder(
         apply { afterTime(dt, unit, InstantAction(f)) }
 
     /**
-     * Sets the tangent of thebuilder = builder.
+     * Sets the tangent of the builder to respect on the next trajectories.
      */
     fun setTangent(r: Rotation2d) = apply { builder = builder.setTangent(r) }
 
     /**
-     * Sets the tangent of thebuilder = builder.
+     * Sets the tangent of the builder to respect on the next trajectories.
      */
     @JvmOverloads
     fun setTangent(r: Double, unit: Angle = Radians) =

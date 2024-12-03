@@ -209,7 +209,7 @@ public class ProfiledPIDController implements SystemController {
     }
 
     /**
-     * Sets the error which is considered tolerable for use with atSetpoint().
+     * Sets the error which is considered tolerable for use with {@link #atSetpoint()}.
      *
      * @param positionTolerance Position error which is tolerable.
      * @return this
@@ -221,7 +221,7 @@ public class ProfiledPIDController implements SystemController {
     }
 
     /**
-     * Sets the error which is considered tolerable for use with atSetpoint().
+     * Sets the error which is considered tolerable for use with {@link #atSetpoint()}.
      *
      * @param positionTolerance Position error which is tolerable.
      * @param velocityTolerance Velocity error which is tolerable.

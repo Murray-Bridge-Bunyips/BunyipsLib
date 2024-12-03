@@ -119,7 +119,7 @@ public class MovingAverageTimer {
         } else {
             movingAverage = (double) movingTotal / ringBufferSize;
 
-            // Reset the min/max movingAverage values the each time the buffer is filled
+            // Reset the min/max movingAverage values each time the buffer is filled
             if (ringBufferIndex == 0) {
                 minMovingAverage = movingAverage;
                 maxMovingAverage = movingAverage;

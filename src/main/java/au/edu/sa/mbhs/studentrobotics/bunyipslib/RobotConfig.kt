@@ -150,7 +150,7 @@ abstract class RobotConfig {
      * lifetime of the OpMode. These errors will also be reported to telemetry.
      *
      * @param name   name of device saved in the configuration file
-     * @param device the class of the item to configure, extending HardwareDevice (DcMotorEx.class, ServoImplEx.class, etc.)
+     * @param device the class of the item to configure, `Motor.class`, `ProfiledServo.class`, `RawEncoder.class`, etc.
      * @param onSuccess a Runnable to run if the device is successfully configured, useful for setting up motor configs
      *                  without having to check for null explicitly.
      */
@@ -173,7 +173,7 @@ abstract class RobotConfig {
             Storage.memory().hardwareErrors.add(name)
             e.localizedMessage?.let { Dbg.warn(it) }
         }
-        // Run the user callback if the device was successfully configured, outside of the hardware device
+        // Run the user callback if the device was successfully configured, outside the hardware device
         // catch block as exceptions raised in onSuccess will be mishandled. We also know that the device
         // is guaranteed to no longer be null. Errors raised in onSuccess() are caught by the init() handler in a BOM.
         if (ok)

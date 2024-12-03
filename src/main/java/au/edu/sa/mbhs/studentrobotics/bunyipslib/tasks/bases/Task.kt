@@ -77,7 +77,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
         get() = Optional.ofNullable(_dependency)
 
     /**
-     * Whether the task is currently running (i.e. has been started (`init()` called) and not finished).
+     * Whether the task is currently running (i.e. has been started ([init] called) and not finished).
      */
     val isRunning: Boolean
         get() = startTime != 0L && !isFinished
@@ -102,7 +102,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
     // RoadRunner Actions compatibility, exposes the same field names as they are presented in the Action interface
     /**
      * Convenience field to get a reference to FtcDashboard's field overlay for drawing on the field.
-     * Available as soon as init() has been called for this task.
+     * Available as soon as [init] has been called for this task.
      *
      * This field is used for porting between [Action] and [Task] implementations.
      */
@@ -110,7 +110,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
 
     /**
      * Convenience field to get a reference to a [TelemetryPacket] for sending telemetry to the dashboard.
-     * Available as soon as init() has been called for this task.
+     * Available as soon as [init] has been called for this task.
      *
      * This field is used for porting between [Action] and [Task] implementations.
      */

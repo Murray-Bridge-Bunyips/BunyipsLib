@@ -340,7 +340,7 @@ public final class HardwareTester extends LinearOpMode {
                 }
 
                 if (device instanceof AccelerationSensor accel) {
-                    // Other sensors we just add their data anyways since they may be useful...
+                    // Other sensors we just add their data anyway since they may be useful...
                     TelemetryMenu.DynamicItem status = new TelemetryMenu.DynamicItem("Status", accel::status);
                     TelemetryMenu.DynamicItem acceleration = new TelemetryMenu.DynamicItem("Acceleration (g)", accel::getAcceleration);
                     dev.addChildren(acceleration);

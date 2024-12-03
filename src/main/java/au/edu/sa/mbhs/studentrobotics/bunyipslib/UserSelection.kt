@@ -24,7 +24,7 @@ import java.util.function.Consumer
  * die or similar (e.g. `Task.task().isFinished(() -> !Threads.isRunning(...))`).
  * If you do not do this, the OpMode will assume it is ready to run regardless.
  *
- * The result of this thread will be stored in the `result` property, which you can access yourself
+ * The result of this thread will be stored in the `result` property, which you can access yourself,
  * or you can attach a callback to the `callback` property to be run once the thread is complete.
  * This callback will still be run if the OpMode moves to a running state without a selection. In
  * the event a user does not make a selection, the callback result and `result` property will be
@@ -58,7 +58,7 @@ import java.util.function.Consumer
  * Updated to use dynamic button mapping and generics 04/08/23.
  * Updated to be async and removed time restriction 07/09/23.
  *
- * @param opModes Modes to map to buttons. Will be casted to strings for display and return back in type `T`.
+ * @param opModes Modes to map to buttons. Will be cast to strings for display and return back in type `T`.
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
  */

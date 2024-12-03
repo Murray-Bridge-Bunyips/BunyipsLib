@@ -105,7 +105,7 @@ public class ReadOnlyPrimitiveLongSet implements Iterable<Long> {
     }
 
     /**
-     * Creates a new array that contains all of the values in the set.
+     * Creates a new array that contains all the values in the set.
      *
      * @return an array containing all the values in the set
      */

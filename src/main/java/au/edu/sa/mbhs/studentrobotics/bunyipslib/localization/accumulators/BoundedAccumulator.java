@@ -38,7 +38,7 @@ public class BoundedAccumulator extends Accumulator {
      */
     public static double MANUAL_VELOCITY_INHIBITION_TIME = 0.5;
     /**
-     * Time in seconds to use for the delta step in deriving velocity (s'(t) = (s(t) - s(t + dt)) / dt).
+     * Time in seconds to use for the delta step in deriving velocity ({@code s'(t) = (s(t) - s(t + dt)) / dt}).
      * Too low of a resolution will cause floating point errors, while too high will cause the velocity to be inaccurate
      */
     public static double MANUAL_VELOCITY_DT_RESOLUTION = 0.1;
@@ -142,7 +142,7 @@ public class BoundedAccumulator extends Accumulator {
             // Too small of resolutions are too small for floating point calculations
             if (deltaTime.seconds() >= MANUAL_VELOCITY_DT_RESOLUTION) {
                 velocity = new PoseVelocity2d(
-                        // s'(t) and keep unaffected angular velocity
+                        // Derivative of position and keep unaffected angular velocity
                         currentPose.position.minus(lastPos).div(deltaTime.seconds()),
                         twist.velocity().value().angVel
                 );

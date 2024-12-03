@@ -133,7 +133,7 @@ object StartingConfiguration {
         }
 
         /**
-         * Returns a HTML string to represent this starting configuration.
+         * Returns an HTML string to represent this starting configuration.
          */
         override fun toString(): String {
             val lowCaseAlliance = Text.lower(alliance.name)
@@ -292,7 +292,7 @@ object StartingConfiguration {
             private val flags = mutableSetOf<Any>()
 
             /**
-             * Translate backward from the center of the field tile to your robot center as defined by your translate step.
+             * Translate backward from the center of the field tile to your robot center as defined by your translation step.
              * This is to align your robot to touching the field wall.
              */
             fun backward(translationBack: Measure<Distance>): PrebuiltPosition {

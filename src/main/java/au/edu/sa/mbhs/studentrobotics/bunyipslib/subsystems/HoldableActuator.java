@@ -152,7 +152,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * If this current is reached during a state where stalling is monitored, for the set duration set here, the actuator
      * will auto-reset the motor.
      *
-     * @param current the current which if exceeded will intervene. Default is 8A.
+     * @param current the current threshold where exceeding will intervene. Default is 8A.
      * @param forTime the time the current must be exceeded for to execute the reset. Useful for filtering out momentary spikes. Default is 2s.
      * @return this
      * @see #disableOvercurrent()
@@ -393,7 +393,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      * Calling this method will enable the user input mode to instead adjust the setpoint dynamically, rather
      * than unlocking the setpoint then relocking it when the mode transitions to holding.
      * <p>
-     * This mode is useful to call on high-frequency system controllers (like those accomplished via {@link Motor},
+     * This mode is useful to call on high-frequency system controllers, like those accomplished via {@link Motor},
      * and switches over the manual control from raw input to system controls.
      *
      * @param setpointDeltaMul the multiplicative scale to translate power into target position delta, which returns
@@ -449,7 +449,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 } catch (Exception e) {
                     // Cannot catch ActionNotSupportedException due to package protections, so we will handle a generic exception
-                    // In the event this does fail, we will fallback to the default mode.
+                    // In the event this does fail, we will fall back to the default mode.
                     setInputModeToUser();
                     break;
                 }

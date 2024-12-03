@@ -145,7 +145,7 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
     }
 
     /**
-     * Gets the major unit being measured (eg Meters for Meters per Second).
+     * Gets the major unit being measured (e.g. Meters for Meters per Second).
      *
      * @return the major unit
      */
@@ -154,7 +154,7 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
     }
 
     /**
-     * Gets the period unit of the velocity, eg Seconds or Milliseconds.
+     * Gets the period unit of the velocity, e.g. Seconds or Milliseconds.
      *
      * @return the period unit
      */

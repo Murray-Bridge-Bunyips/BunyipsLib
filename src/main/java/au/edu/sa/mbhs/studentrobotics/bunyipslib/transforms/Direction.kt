@@ -48,7 +48,7 @@ enum class Direction(
 
     companion object {
         /**
-         * Convert a Pose2d robot vector to a relative vector.
+         * Convert a [Pose2d] robot vector to a relative vector.
          */
         @JvmStatic
         fun convert(pose: Pose2d): Any {
@@ -63,7 +63,7 @@ enum class Direction(
         }
 
         /**
-         * Convert a Vector2d robot vector into a relative vector.
+         * Convert a [Vector2d] robot vector into a relative vector.
          */
         @JvmStatic
         fun convert(vector: Vector2d): Direction {

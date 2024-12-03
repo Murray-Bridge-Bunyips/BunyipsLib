@@ -16,7 +16,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
  * @since 1.0.0-pre
  */
 // Technically, angles are unitless dimensions
-// eg Mass * Distance * Velocity<Angle> is equivalent to (Mass * Distance) / Time - otherwise known
+// e.g. Mass * Distance * Velocity<Angle> is equivalent to (Mass * Distance) / Time - otherwise known
 // as Power - in other words, Velocity<Angle> is /actually/ Frequency
 public class Angle extends Unit<Angle> {
     /**

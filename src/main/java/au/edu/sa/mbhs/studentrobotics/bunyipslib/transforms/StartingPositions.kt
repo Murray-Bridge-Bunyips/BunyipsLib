@@ -6,7 +6,7 @@ import com.acmerobotics.roadrunner.Pose2d
  * Legacy enum for determining where the robot is starting on the field. This can be used to determine
  * which autonomous path to take.
  *
- * **Note**: This enum was designed around the 4 *required* starting positions as required by a Autonomous Randomisation
+ * **Note**: This enum was designed around the 4 *required* starting positions as required by an Autonomous Randomisation
  * task. In a season such as 2024-2025 INTO THE DEEP where these required positions are no longer required, the pose
  * information as granted by these enum values may be inaccurate (as they are derived from CENTERSTAGE).
  * However, this enum may still be used for differentiating between the relative position of robots in their alliance, but comes

@@ -46,10 +46,10 @@ class Scheduler : BunyipsComponent() {
         get() = subsystems.toTypedArray<BunyipsSubsystem>()
 
     /**
-     * Add subsystems to the scheduler. This will ensure the update() method of the subsystems is called, and that
+     * Add subsystems to the scheduler. This will ensure the `update()` method of the subsystems is called, and that
      * commands can be scheduled on these subsystems.
      * This is **REQUIRED** to be called if using a base implementation of Scheduler. If you are using a
-     * [CommandBasedBunyipsOpMode], see the `use()` method or rely on the automatic features during
+     * [CommandBasedBunyipsOpMode], see the [use] method or rely on the automatic features during
      * construction that will add subsystems at construction with no need to call this method.
      *
      * The base implementation of Scheduler does not access this implicit construction for finer-grain control for
@@ -503,12 +503,12 @@ class Scheduler : BunyipsComponent() {
         }
 
         /**
-         * Implicitly make a new RunTask to run as the condition is met.
+         * Implicitly make a new [Lambda] to run as the condition is met.
          * This callback will requeue as many times as the trigger is met.
          *
          * This method can only be called once per ScheduledTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
-         * ending immediately as it is an RunTask.
+         * ending immediately as it is an [Lambda].
          *
          * @param runnable The code to run
          * @return Current builder for additional task parameters
@@ -518,12 +518,12 @@ class Scheduler : BunyipsComponent() {
         }
 
         /**
-         * Implicitly make a new RunTask to run as the condition is met.
+         * Implicitly make a new [Lambda] to run as the condition is met.
          * This callback will requeue as many times as the trigger is met.
          *
          * This method can only be called once per ScheduledTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
-         * ending immediately as it is an RunTask.
+         * ending immediately as it is an [Lambda].
          *
          * @param name task name
          * @param runnable The code to run
@@ -553,7 +553,7 @@ class Scheduler : BunyipsComponent() {
         }
 
         /**
-         * Implicitly make a new RunTask to run once the condition is met, debouncing the task from queueing more than once the condition is met.
+         * Implicitly make a new [Lambda] to run once the condition is met, debouncing the task from queueing more than once the condition is met.
          *
          * This code block will run, and a self-reset will not be propagated once the task is completed. Do note that this
          * effectively nullifies the entire trigger for the task, as it cannot auto-reset. For a Runnable that can reset itself,
@@ -561,7 +561,7 @@ class Scheduler : BunyipsComponent() {
          *
          * This method can only be called once per ScheduledTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
-         * ending immediately as it is an RunTask.
+         * ending immediately as it is an [Lambda].
          *
          * @param runnable The code to run
          * @return Current builder for additional task parameters
@@ -571,7 +571,7 @@ class Scheduler : BunyipsComponent() {
         }
 
         /**
-         * Implicitly make a new RunTask to run once the condition is met, debouncing the task from queueing more than once the condition is met.
+         * Implicitly make a new [Lambda] to run once the condition is met, debouncing the task from queueing more than once the condition is met.
          *
          * This code block will run, and a self-reset will not be propagated once the task is completed. Do note that this
          * effectively nullifies the entire trigger for the task, as it cannot auto-reset. For a Runnable that can reset itself,
@@ -579,7 +579,7 @@ class Scheduler : BunyipsComponent() {
          *
          * This method can only be called once per ScheduledTask, see a TaskGroup for multiple task execution.
          * If you do not mention timing control, this task will be run immediately when the condition is met,
-         * ending immediately as it is an RunTask.
+         * ending immediately as it is an [Lambda].
          *
          * @param name task name
          * @param runnable The code to run
@@ -600,8 +600,8 @@ class Scheduler : BunyipsComponent() {
         }
 
         /**
-         * Chain an AND condition to the current conditional task.
-         * Will be evaluated after the controller condition, and before the OR conditions.
+         * Chain an `AND` condition to the current conditional task.
+         * Will be evaluated after the controller condition, and before the `OR` conditions.
          *
          * @param condition The AND condition to chain.
          * @return Current builder for additional task parameters
@@ -612,8 +612,8 @@ class Scheduler : BunyipsComponent() {
         }
 
         /**
-         * Chain an OR condition to the current conditional task.
-         * Will be evaluated after the controller and AND conditions.
+         * Chain an `OR` condition to the current conditional task.
+         * Will be evaluated after the controller and `AND` conditions.
          *
          * @param condition The OR condition to chain.
          * @return Current builder for additional task parameters
@@ -624,7 +624,7 @@ class Scheduler : BunyipsComponent() {
         }
 
         /**
-         * Run a task assigned to in run() in a certain amount of time of the condition remaining true.
+         * Run a task assigned to in [run] in a certain amount of time of the condition remaining true.
          * This will delay the activation of the task by the specified amount of time of the condition remaining true.
          * If this method is called multiple times, the last time directive will be used.
          *
@@ -642,7 +642,7 @@ class Scheduler : BunyipsComponent() {
         }
 
         /**
-         * Run a task assigned to in run() in a certain amount of time of the condition remaining true.
+         * Run a task assigned to in [run] in a certain amount of time of the condition remaining true.
          * This will delay the activation of the task by the specified amount of time of the condition remaining true.
          * If this method is called multiple times, the last time directive will be used.
          *
@@ -654,7 +654,7 @@ class Scheduler : BunyipsComponent() {
         }
 
         /**
-         * Run the task assigned to in run() until this condition is met. Once this condition is met, the task will
+         * Run the task assigned to in [run] until this condition is met. Once this condition is met, the task will
          * be forcefully stopped and the scheduler will move on. This is useful for continuous tasks.
          * If this method is called multiple times, an OR condition will be composed with the last condition.
          *

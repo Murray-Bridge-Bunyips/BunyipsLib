@@ -124,7 +124,7 @@ public class MoveToContourTask extends Task {
     /**
      * Sets a custom error supplier for the forward movement of the robot.
      *
-     * @param forwardErrorSupplier the error that dictates the forward movement of the robot (whether by pitch or area, etc),
+     * @param forwardErrorSupplier the error that dictates the forward movement of the robot (whether by pitch or area, etc.),
      *                             by default this is a pitch target of 0.0 (middle of frame)
      * @return the task
      */

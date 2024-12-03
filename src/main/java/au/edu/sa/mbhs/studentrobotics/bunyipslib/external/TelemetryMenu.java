@@ -79,7 +79,7 @@ public class TelemetryMenu {
      */
     public void loop(@NonNull Gamepad gamepad) {
         // Capture current state of the gamepad buttons we care about;
-        // We can only look once or we risk a race condition
+        // We can only look once, or we risk a race condition
         boolean dpadUp = gamepad.dpad_up;
         boolean dpadDn = gamepad.dpad_down;
         boolean dpadRight = gamepad.dpad_right;

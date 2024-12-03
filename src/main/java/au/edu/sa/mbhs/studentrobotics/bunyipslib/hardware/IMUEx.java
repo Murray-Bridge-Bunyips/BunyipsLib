@@ -201,7 +201,7 @@ public class IMUEx implements IMU, Runnable {
 
     /**
      * Sets the domain range of what the {@link #yaw} field will return. By default, this is set to the expected
-     * behaviour of [-180, 180) degrees, but can be adjusted here to one of the {@link YawDomain} options.
+     * behaviour of {@code [-180, 180)} degrees, but can be adjusted here to one of the {@link YawDomain} options.
      * Note that this yaw domain will only apply to the {@link #yaw} field, not in the IMU interface overrides.
      *
      * @param newDomain the new domain of the {@link #yaw} property
@@ -238,7 +238,7 @@ public class IMUEx implements IMU, Runnable {
     }
 
     /**
-     * Update the class fields and method return values with newest information from the IMU.
+     * Update the class fields and method return values with the newest information from the IMU.
      * This method will no-op if updates have been delegated via {@link #startThread()}.
      */
     @Override
@@ -329,7 +329,7 @@ public class IMUEx implements IMU, Runnable {
         quaternion = Quaternion.fromMatrix(rawOrientation.getRotationMatrix(), rawOrientation.acquisitionTime);
 
         // These fields are also bound by the [-180, 180) degree domain but can be converted with Mathf utilities.
-        // IMUEx provides a built in utility for the yaw, as it is a common use case and usually you wouldn't need
+        // IMUEx provides a built-in utility for the yaw, as it is a common use case, and usually you wouldn't need
         // to use these fields in a different domain. Note that the yaw field is the only element affected
         // by the yaw domain restriction.
         pitch = Degrees.of(rawOrientation.firstAngle);

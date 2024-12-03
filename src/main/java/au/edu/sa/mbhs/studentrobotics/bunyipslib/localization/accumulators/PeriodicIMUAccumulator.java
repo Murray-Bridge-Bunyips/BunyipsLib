@@ -47,7 +47,7 @@ public class PeriodicIMUAccumulator extends Accumulator {
     }
 
     /**
-     * Sets the angle origin to use. By default this is set to the IMU field on instantiation.
+     * Sets the angle origin to use. By default, this is set to the IMU field on instantiation.
      *
      * @param origin the origin angle for accumulation
      */

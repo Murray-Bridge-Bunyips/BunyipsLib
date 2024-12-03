@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.Gamepad
  */
 @Suppress("KDocMissingDocumentation")
 enum class Controls {
-    // Guide button not included due to volatility as it may be caught by the app
+    // The guide button not included due to volatility as it may be caught by the app
     A, B, X, Y, START, BACK, DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT, LEFT_BUMPER, RIGHT_BUMPER, LEFT_STICK_BUTTON, RIGHT_STICK_BUTTON, NONE;
 
     /**

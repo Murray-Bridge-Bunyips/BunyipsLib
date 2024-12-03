@@ -7,15 +7,12 @@ import java.util.Objects
 
 /**
  * A specialization of [Measure] that allows for mutability. This is intended to be used for
- * memory use reasons (such as on the memory-restricted roboRIO 1 or 2 or SBC coprocessors) and
- * should NOT be exposed in the public API for a class that uses it.
- *
+ * memory use reasons and should NOT be exposed in the public API for a class that uses it.
  *
  * The advantage of using this class is to reuse one instance of a measurement object, as opposed
  * to instantiating a new immutable instance every time an operation is performed. This will reduce
  * memory pressure, but comes at the cost of increased code complexity and sensitivity to race
  * conditions if misused.
- *
  *
  * Any unsafe methods are prefixed with `mut_*`, such as [mut_plus] or
  * [mut_replace]. These methods will change the internal state of the measurement
@@ -115,7 +112,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
         baseUnitMagnitudeVal += other.baseUnitMagnitude()
 
         // can't naively use magnitude += other.in(unit) because the units may not
-        // be scalar multiples (eg adding 0C to 100K should result in 373.15K, not 100K)
+        // be scalar multiples (e.g. adding 0C to 100K should result in 373.15K, not 100K)
         magnitudeVal = unitVal.fromBaseUnits(baseUnitMagnitudeVal)
         return this
     }

@@ -177,9 +177,9 @@ public class AprilTag extends Processor<AprilTagData> {
          * Set the position of the camera relative to the robot's center of rotation.
          * Defaults to the camera being directly above the robot's center of rotation at field height.
          *
-         * @param forward the distance forward of the robot's center of rotation (+forward is forward)
-         * @param left    the distance left of the robot's center of rotation (+left is left)
-         * @param up      the distance above the robot's center of rotation at field height (+up is up)
+         * @param forward the distance forward of the robot's center of rotation (+forward = forward)
+         * @param left    the distance left of the robot's center of rotation (+left = left)
+         * @param up      the distance above the robot's center of rotation at field height (+up = up)
          * @return this instance
          */
         @NonNull
@@ -223,7 +223,7 @@ public class AprilTag extends Processor<AprilTagData> {
         /**
          * Set the forward distance of the camera relative to the robot's center of rotation.
          *
-         * @param forward the distance forward of the robot's center of rotation (+forward is forward)
+         * @param forward the distance forward of the robot's center of rotation (+forward = forward)
          * @return this instance
          */
         @NonNull
@@ -235,7 +235,7 @@ public class AprilTag extends Processor<AprilTagData> {
         /**
          * Set the backward distance of the camera relative to the robot's center of rotation.
          *
-         * @param backward the distance backward of the robot's center of rotation (+backward is backward)
+         * @param backward the distance backward of the robot's center of rotation (+backward = backward)
          * @return this instance
          */
         @NonNull
@@ -247,7 +247,7 @@ public class AprilTag extends Processor<AprilTagData> {
         /**
          * Set the left distance of the camera relative to the robot's center of rotation.
          *
-         * @param left the distance left of the robot's center of rotation (+left is left)
+         * @param left the distance left of the robot's center of rotation (+left = left)
          * @return this instance
          */
         @NonNull
@@ -259,7 +259,7 @@ public class AprilTag extends Processor<AprilTagData> {
         /**
          * Set the right distance of the camera relative to the robot's center of rotation.
          *
-         * @param right the distance right of the robot's center of rotation (+right is right)
+         * @param right the distance right of the robot's center of rotation (+right = right)
          * @return this instance
          */
         @NonNull
@@ -271,7 +271,7 @@ public class AprilTag extends Processor<AprilTagData> {
         /**
          * Set the up distance of the camera relative to the robot's center of rotation.
          *
-         * @param up the distance above the robot's center of rotation at field height (+up is up)
+         * @param up the distance above the robot's center of rotation at field height (+up = up)
          * @return this instance
          */
         @NonNull
@@ -283,7 +283,7 @@ public class AprilTag extends Processor<AprilTagData> {
         /**
          * Set the down distance of the camera relative to the robot's center of rotation.
          *
-         * @param down the distance above the robot's center of rotation at field height (+down is down)
+         * @param down the distance above the robot's center of rotation at field height (+down = down)
          * @return this instance
          */
         @NonNull

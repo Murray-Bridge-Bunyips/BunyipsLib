@@ -29,7 +29,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.MultiColourTh
  * Base class for all vision processors using the Vision system.
  * <p>
  * A processor will be attached to a Vision instance and will be called to process frames,
- * allowing you to access your data here using the .getData() method. This makes it useful
+ * allowing you to access your data here using the {@link #getData()} method. This makes it useful
  * for tasks to access the latest data from the vision system, without needing to directly
  * interface with the Vision instance.
  *
@@ -183,7 +183,7 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
 
     /**
      * Override this method to run any additional code that will be executed when
-     * this processor is attached (via init()) by a Vision instance.
+     * this processor is attached (via {@link Vision#init}) by a Vision instance.
      * <p>
      * This method is also called on standard initialisation of the processor if it has not been already done via Vision.
      */
@@ -193,7 +193,7 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
 
     /**
      * Override this method to run any additional code that will be executed when
-     * this processor starts streaming (via start()) on a Vision instance.
+     * this processor starts streaming (via {@link Vision#start}) on a Vision instance.
      */
     protected void onRunning() {
         // no-op
@@ -203,9 +203,9 @@ public abstract class Processor<T extends VisionData> implements VisionProcessor
      * Called to update new data from the vision system, which involves interpreting,
      * collecting, or otherwise processing new vision data per frame.
      * <p>
-     * This method should refresh `this.data` with the latest information from the vision system to
-     * be accessed with your methods on .getData().T (your VisionData class). `this.data` is
-     * automatically cleared upon each iteration, so opt to using realtime data in this method.
+     * This method should refresh {@link #data} with the latest information from the vision system to
+     * be accessed later via {@link #getData()} (returning your derived {@link VisionData} class).
+     * {@link #data} is automatically cleared upon each iteration, so opt to using realtime data in this method.
      * This method will be called automatically once attached to a Vision instance.
      */
     protected abstract void update();

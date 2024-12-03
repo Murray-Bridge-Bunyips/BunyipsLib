@@ -3,7 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 import androidx.annotation.NonNull;
 
 /**
- * Multi-purpose index-based table with increment and decrement functionality.
+ * Multipurpose index-based table with increment and decrement functionality.
  * Exposed as a runnable component for telemetry updates.
  *
  * @author Lucas Bubner, 2024
