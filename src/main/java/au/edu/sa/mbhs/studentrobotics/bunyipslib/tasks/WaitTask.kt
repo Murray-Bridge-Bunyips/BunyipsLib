@@ -20,7 +20,7 @@ class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = false) 
     constructor(magnitude: Double, unit: Time, showTelemetry: Boolean) : this(unit.of(magnitude), showTelemetry)
 
     init {
-        withName("Wait")
+        named("Wait")
     }
 
     override fun periodic() {

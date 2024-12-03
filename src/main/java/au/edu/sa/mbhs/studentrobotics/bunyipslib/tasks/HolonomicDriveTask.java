@@ -47,11 +47,11 @@ public class HolonomicDriveTask extends Task {
      */
     public HolonomicDriveTask(@NonNull Supplier<PoseVelocity2d> velSupplier, @NonNull Moveable drive, @NonNull BooleanSupplier fieldCentricEnabled) {
         if (drive instanceof BunyipsSubsystem)
-            onSubsystem((BunyipsSubsystem) drive, false);
+            on((BunyipsSubsystem) drive, false);
         this.drive = drive;
         vel = velSupplier;
         this.fieldCentricEnabled = fieldCentricEnabled;
-        withName("Holonomic Control");
+        named("Holonomic Control");
     }
 
     /**

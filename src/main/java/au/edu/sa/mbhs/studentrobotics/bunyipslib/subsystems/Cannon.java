@@ -120,7 +120,7 @@ public class Cannon extends BunyipsSubsystem {
          */
         @NonNull
         public Task fire() {
-            return new Lambda(Cannon.this::fire).onSubsystem(Cannon.this, true).withName(name + ":Fire");
+            return new Lambda(Cannon.this::fire).on(Cannon.this, true).named(name + ":Fire");
         }
 
         /**
@@ -130,7 +130,7 @@ public class Cannon extends BunyipsSubsystem {
          */
         @NonNull
         public Task reset() {
-            return new Lambda(Cannon.this::reset).onSubsystem(Cannon.this, true).withName(name + ":Reset");
+            return new Lambda(Cannon.this::reset).on(Cannon.this, true).named(name + ":Reset");
         }
     }
 }

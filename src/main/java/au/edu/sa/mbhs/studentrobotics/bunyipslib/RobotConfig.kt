@@ -61,7 +61,7 @@ abstract class RobotConfig {
         Storage.memory().hardwareErrors.clear()
         this.hardwareMap = opMode.hardwareMap
         if (opMode is BunyipsOpMode) {
-            Exceptions.runUserMethod(::onRuntime, opMode)
+            Exceptions.runUserMethod(opMode, ::onRuntime)
             opMode.t.add(
                 "<b>${this.javaClass.simpleName}</b>: Init completed with ${if (Storage.memory().hardwareErrors.size > 0) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}.",
             )

@@ -354,7 +354,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // We can only finish Task objects, as the RobotTask interface does not have a finish method
             // Most tasks will inherit from Task, so this should be safe, but this is to ensure maximum compatibility
             try {
-                if (initTask is Task && !(initTask as Task).isFinished()) {
+                if (initTask is Task && !(initTask as Task).isFinished) {
                     Dbg.log("BunyipsOpMode: initTask did not finish in time, early finishing -> % ...", initTask)
                     telemetry.log("<font color='gray'>init-task interrupted by start request.</font>")
                     (initTask as Task).finishNow()
@@ -452,7 +452,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 robotControllers.forEach { m -> m.clearBulkCache() }
                 try {
                     // Run user-defined active loop
-                    runnables.forEach { Exceptions.runUserMethod(it, this) }
+                    runnables.forEach { Exceptions.runUserMethod(this, it) }
                     activeLoop()
                 } catch (e: Exception) {
                     telemetry.overrideStatus = "<font color='red'><b>error</b></font>"

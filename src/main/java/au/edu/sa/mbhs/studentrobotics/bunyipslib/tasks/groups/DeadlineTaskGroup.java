@@ -23,7 +23,7 @@ public class DeadlineTaskGroup extends TaskGroup {
      */
     public DeadlineTaskGroup(@NonNull Task... tasks) {
         // Timeout is defined by the very first task
-        withTimeout(tasks[0].getTimeout());
+        timeout(tasks[0].getTimeout());
         setTasks(Arrays.asList(tasks));
     }
 
@@ -46,7 +46,7 @@ public class DeadlineTaskGroup extends TaskGroup {
     @Override
     public final boolean isTaskFinished() {
         Task firstTask = tasks.get(0);
-        boolean firstTaskFinished = firstTask != null && firstTask.pollFinished();
+        boolean firstTaskFinished = firstTask != null && firstTask.poll();
         if (firstTaskFinished) {
             finishAllTasks();
         }

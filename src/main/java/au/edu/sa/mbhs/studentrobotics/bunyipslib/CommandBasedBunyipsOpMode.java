@@ -164,14 +164,14 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     @Override
     protected final void onInit() {
-        Exceptions.runUserMethod(this::onInitialise, this);
+        Exceptions.runUserMethod(this, this::onInitialise);
 
         if (managedSubsystems.isEmpty()) {
             managedSubsystems = BunyipsSubsystem.getInstances();
         }
         scheduler.addSubsystems(managedSubsystems.toArray(new BunyipsSubsystem[0]));
 
-        Exceptions.runUserMethod(this::assignCommands, this);
+        Exceptions.runUserMethod(this, this::assignCommands);
 
         Scheduler.ScheduledTask[] tasks = scheduler.getAllocatedTasks();
         BunyipsSubsystem[] subsystems = scheduler.getManagedSubsystems();
@@ -181,8 +181,8 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
         out.append("[CommandBasedBunyipsOpMode] assignCommands() called | Managing % subsystem(s) | % task(s) scheduled (% subsystem, % command)\n",
                 subsystems.length,
                 taskCount,
-                Arrays.stream(tasks).filter(task -> task.getTaskToRun().hasDependency()).count() + taskCount - tasks.length,
-                Arrays.stream(tasks).filter(task -> !task.getTaskToRun().hasDependency()).count()
+                Arrays.stream(tasks).filter(task -> task.getTaskToRun().getDependency().isPresent()).count() + taskCount - tasks.length,
+                Arrays.stream(tasks).filter(task -> task.getTaskToRun().getDependency().isEmpty()).count()
         );
         for (BunyipsSubsystem subsystem : subsystems) {
             out.append(" | %\n", subsystem.toVerboseString());
@@ -205,7 +205,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     @Override
     protected final void activeLoop() {
-        Exceptions.runUserMethod(this::periodic, this);
+        Exceptions.runUserMethod(this, this::periodic);
         scheduler.run();
     }
 

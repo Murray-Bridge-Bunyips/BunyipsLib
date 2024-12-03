@@ -75,13 +75,13 @@ public class AlignToAprilTagTask extends Task {
      */
     public AlignToAprilTagTask(@Nullable Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag) {
         if (drive instanceof BunyipsSubsystem)
-            onSubsystem((BunyipsSubsystem) drive, false);
+            on((BunyipsSubsystem) drive, false);
         this.drive = drive;
         this.at = at;
         TARGET_TAG = targetTag;
         this.passthrough = passthrough;
         controller = DEFAULT_CONTROLLER;
-        withName("Align To AprilTag");
+        named("Align To AprilTag");
         Dashboard.enableConfig(getClass());
     }
 

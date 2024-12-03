@@ -76,7 +76,7 @@ object Exceptions {
      * ensuring code execution is not stopped on a non-critical exception.
      */
     @JvmStatic
-    fun runUserMethod(method: Runnable, opMode: BunyipsOpMode?) {
+    fun runUserMethod(opMode: BunyipsOpMode?, method: Runnable) {
         try {
             method.run()
         } catch (e: Exception) {

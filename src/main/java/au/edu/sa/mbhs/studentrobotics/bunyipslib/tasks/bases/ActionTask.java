@@ -44,12 +44,12 @@ public class ActionTask extends Task {
         if (parentAction instanceof SequentialAction seq) {
             parentAction = new SequentialTaskGroup(seq.getInitialActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
         }
-        withName(parentAction instanceof Task ? parentAction.toString() : parentAction.getClass().getSimpleName());
+        named(parentAction instanceof Task ? parentAction.toString() : parentAction.getClass().getSimpleName());
         if (parentAction instanceof Task task) {
-            withTimeout(task.getTimeout());
-            withName(task.toString());
+            timeout(task.getTimeout());
+            named(task.toString());
             if (task.getDependency().isPresent())
-                onSubsystem(task.getDependency().get());
+                on(task.getDependency().get());
         }
     }
 

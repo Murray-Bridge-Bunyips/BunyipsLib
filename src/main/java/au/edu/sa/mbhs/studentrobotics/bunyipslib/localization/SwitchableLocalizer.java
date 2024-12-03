@@ -165,7 +165,7 @@ public class SwitchableLocalizer implements Localizer {
                     // Manual exit or if all checks are complete
                     return forwardCheck && backwardCheck && leftCheck && rightCheck;
                 }
-            }.withName("Auto Test Main Localizer");
+            }.named("Auto Test Main Localizer");
         }
 
         /**
@@ -229,7 +229,7 @@ public class SwitchableLocalizer implements Localizer {
                     // User input only
                     return false;
                 }
-            }.withName("Manual Test Main Localizer");
+            }.named("Manual Test Main Localizer");
         }
     }
 }

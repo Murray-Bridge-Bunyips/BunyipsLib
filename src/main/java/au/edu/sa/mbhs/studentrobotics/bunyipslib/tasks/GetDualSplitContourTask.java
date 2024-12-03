@@ -51,7 +51,7 @@ public class GetDualSplitContourTask extends Task {
      * Create a new GetDualSplitContourTask.
      */
     public GetDualSplitContourTask() {
-        withName("Get Dual Split Contour");
+        named("Get Dual Split Contour");
     }
 
     /**

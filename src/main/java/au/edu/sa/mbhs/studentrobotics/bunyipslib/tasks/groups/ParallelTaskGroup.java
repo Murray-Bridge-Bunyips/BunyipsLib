@@ -24,7 +24,7 @@ public class ParallelTaskGroup extends TaskGroup {
     public ParallelTaskGroup(@NonNull Task... tasks) {
         // Try to extract the highest timeout to be the timeout of this task group, however if one is infinite
         // then the group is infinite. This works for parallel applications as every task will go till completion.
-        withTimeout(Arrays.stream(tasks).anyMatch(t -> t.getTimeout().magnitude() == 0.0) ? INFINITE_TIMEOUT :
+        timeout(Arrays.stream(tasks).anyMatch(t -> t.getTimeout().magnitude() == 0.0) ? INFINITE_TIMEOUT :
                 Seconds.of(Arrays.stream(tasks).mapToDouble(t -> t.getTimeout().in(Seconds)).max().orElse(0.0)));
         setTasks(Arrays.asList(tasks));
     }
@@ -42,7 +42,7 @@ public class ParallelTaskGroup extends TaskGroup {
     public final void periodic() {
         for (Task task : tasks) {
             executeTask(task);
-            task.pollFinished();
+            task.poll();
         }
     }
 

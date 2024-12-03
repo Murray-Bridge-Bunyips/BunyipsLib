@@ -25,7 +25,7 @@ public class SelectTask<T> extends Task {
      */
     public SelectTask(@NonNull Supplier<T> stateSupplier) {
         this.stateSupplier = stateSupplier;
-        withName("Select");
+        named("Select");
     }
 
     /**
@@ -77,7 +77,7 @@ public class SelectTask<T> extends Task {
     @Override
     protected boolean isTaskFinished() {
         Task task = tasks.get(stateSupplier.get());
-        return task != null && task.pollFinished();
+        return task != null && task.poll();
     }
 
     @Override

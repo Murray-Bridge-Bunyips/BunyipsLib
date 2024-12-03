@@ -18,7 +18,7 @@ class MessageTask(time: Measure<Time>, private val message: String) : Task(time)
     private var item: Item? = null
 
     init {
-        withName("Message")
+        named("Message")
     }
 
     private fun buildString(): String {

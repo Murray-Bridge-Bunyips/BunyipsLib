@@ -65,7 +65,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         safeToAddTasks = true;
 
         Controls selectedButton = userSelection != null ? userSelection.getSelectedButton() : Controls.NONE;
-        Exceptions.runUserMethod(() -> onReady(selectedOpMode, selectedButton), this);
+        Exceptions.runUserMethod(this, () -> onReady(selectedOpMode, selectedButton));
         callbackReceived = true;
 
         // Add any queued tasks that were delayed previously and we can do now
@@ -103,7 +103,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     @Override
     protected final void onInit() {
         // Run user-defined hardware initialisation
-        Exceptions.runUserMethod(this::onInitialise, this);
+        Exceptions.runUserMethod(this, this::onInitialise);
         if (updatedSubsystems.isEmpty()) {
             // We might be using an implicit subsystem initialisation schema, look for static instances instead
             updatedSubsystems = BunyipsSubsystem.getInstances();
@@ -156,7 +156,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     @Override
     protected final void activeLoop() {
         // Run any code defined by the user
-        Exceptions.runUserMethod(this::periodic, this);
+        Exceptions.runUserMethod(this, this::periodic);
 
         // Update all subsystems which may also contain user routines
         // This also ensures the subsystems are ready to accept incoming tasks
@@ -180,7 +180,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
             try {
                 // AutonomousBunyipsOpMode is handling all task completion checks, manual checks not required
-                if (currentTask.pollFinished()) {
+                if (currentTask.poll()) {
                     tasks.removeFirst();
                     double runTime = currentTask.getDeltaTime().in(Seconds);
                     Dbg.logd("[AutonomousBunyipsOpMode] task %/% (%) finished%", this.currentTask, taskCount, currentTask, runTime != 0 ? " -> " + runTime + "s" : "");
@@ -283,7 +283,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     @NonNull
     public final Lambda run(@NonNull String name, @NonNull Runnable runnable) {
         Lambda task = new Lambda(runnable);
-        task.withName(name);
+        task.named(name);
         return add(task);
     }
 
@@ -390,7 +390,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     @NonNull
     public final Lambda addAtIndex(int index, @NonNull String name, @NonNull Runnable runnable) {
         Lambda task = new Lambda(runnable);
-        task.withName(name);
+        task.named(name);
         return addAtIndex(index, task);
     }
 
@@ -711,10 +711,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     protected abstract void onReady(@Nullable Reference<?> selectedOpMode, @NonNull Controls selectedButton);
 
     /**
-     * Override to this method to add extra code to the activeLoop, which will be run before
-     * the task queue is processed.
+     * Override this method to add extra code to the activeLoop, which will be run before the task queue is processed.
      */
     protected void periodic() {
+        // no-op
     }
 
     /**

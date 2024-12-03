@@ -403,10 +403,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                 yPoints[i] = p.position.y;
             }
 
-            withName(Text.format("Trajectory %::%",
+            named(Text.format("Trajectory %::%",
                     Geometry.toUserString(t.path.begin(1).value()).replace("Pose2d", ""),
                     Geometry.toUserString(t.path.end(1).value())).replace("Pose2d", ""));
-            onSubsystem(MecanumDrive.this, true);
+            on(MecanumDrive.this, true);
         }
 
         @Override
@@ -519,11 +519,11 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                 yPoints[i] = p.position.y;
             }
 
-            withTimeout(Seconds.of(t.duration).plus(errorThresholds.getStabilizationTimeout()));
-            withName(Text.format("Trajectory %->%",
+            timeout(Seconds.of(t.duration).plus(errorThresholds.getStabilizationTimeout()));
+            named(Text.format("Trajectory %->%",
                     Geometry.toUserString(t.path.begin(1).value()).replace("Pose2d", ""),
                     Geometry.toUserString(t.path.end(1).value())).replace("Pose2d", ""));
-            onSubsystem(MecanumDrive.this, true);
+            on(MecanumDrive.this, true);
         }
 
         @Override
@@ -615,11 +615,11 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
          */
         public TurnTask(@NonNull TimeTurn turn) {
             this.turn = turn;
-            withTimeout(Seconds.of(turn.duration).plus(errorThresholds.getStabilizationTimeout()));
-            withName(Text.format("Turn %°->%°",
+            timeout(Seconds.of(turn.duration).plus(errorThresholds.getStabilizationTimeout()));
+            named(Text.format("Turn %°->%°",
                     Mathf.round(Math.toDegrees(turn.get(0).value().heading.log()), 1),
                     Mathf.round(Math.toDegrees(turn.get(turn.duration).value().heading.log()), 1)));
-            onSubsystem(MecanumDrive.this, true);
+            on(MecanumDrive.this, true);
         }
 
         @Override

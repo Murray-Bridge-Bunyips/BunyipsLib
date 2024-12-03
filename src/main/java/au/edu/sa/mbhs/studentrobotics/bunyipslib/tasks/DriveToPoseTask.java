@@ -72,14 +72,14 @@ public class DriveToPoseTask extends Task {
      */
     public DriveToPoseTask(@NonNull Pose2d targetPose, @NonNull Moveable driveInstance) {
         if (driveInstance instanceof BunyipsSubsystem)
-            onSubsystem((BunyipsSubsystem) driveInstance, true);
+            on((BunyipsSubsystem) driveInstance, true);
         drive = driveInstance;
         accumulator = () -> Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance for P2P to work!");
         this.targetPose = targetPose;
         xController = DEFAULT_X_CONTROLLER;
         yController = DEFAULT_Y_CONTROLLER;
         rController = DEFAULT_R_CONTROLLER;
-        withName("Drive To Pose: " + Geometry.toUserString(targetPose));
+        named("Drive To Pose: " + Geometry.toUserString(targetPose));
     }
 
     /**

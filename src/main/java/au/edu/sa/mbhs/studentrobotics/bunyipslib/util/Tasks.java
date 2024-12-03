@@ -113,7 +113,7 @@ public final class Tasks {
             return;
         }
         task.run();
-        task.pollFinished();
+        task.poll();
     }
 
     /**
@@ -128,7 +128,7 @@ public final class Tasks {
             task.reset();
         }
         task.run();
-        task.pollFinished();
+        task.poll();
     }
 
     /**

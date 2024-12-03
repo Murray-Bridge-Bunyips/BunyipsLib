@@ -18,7 +18,7 @@ public class RepeatTask extends Task {
      */
     public RepeatTask(@NonNull Task task) {
         this.task = task;
-        withName(task + " (repeat)");
+        named(task + " (repeat)");
     }
 
     @Override
@@ -28,7 +28,7 @@ public class RepeatTask extends Task {
 
     @Override
     protected void periodic() {
-        if (task.pollFinished()) {
+        if (task.poll()) {
             task.reset();
         }
         task.run();

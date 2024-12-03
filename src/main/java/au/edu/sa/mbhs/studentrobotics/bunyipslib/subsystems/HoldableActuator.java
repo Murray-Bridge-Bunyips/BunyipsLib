@@ -606,8 +606,8 @@ public class HoldableActuator extends BunyipsSubsystem {
         @NonNull
         public Task control(@NonNull DoubleSupplier powerSupplier) {
             return Task.task().periodic(() -> HoldableActuator.this.setPower(powerSupplier.getAsDouble()))
-                    .onSubsystem(HoldableActuator.this, false)
-                    .withName("Supplier Control");
+                    .on(HoldableActuator.this, false)
+                    .named("Supplier Control");
         }
 
         /**
@@ -619,8 +619,8 @@ public class HoldableActuator extends BunyipsSubsystem {
         @NonNull
         public Task setPower(double p) {
             return new Lambda(() -> HoldableActuator.this.setPower(p))
-                    .onSubsystem(HoldableActuator.this, false)
-                    .withName(name + ":Set Power");
+                    .on(HoldableActuator.this, false)
+                    .named(name + ":Set Power");
         }
 
         /**
@@ -636,7 +636,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     .init(HoldableActuator.this::setInputModeToUser)
                     .periodic(() -> userPower = pwr)
                     .onFinish(() -> userPower = 0)
-                    .onSubsystem(HoldableActuator.this, true)
+                    .on(HoldableActuator.this, true)
                     .timeout(time)
                     .named(name + ":Run For Time");
         }
@@ -649,9 +649,9 @@ public class HoldableActuator extends BunyipsSubsystem {
                 private double zeroHits;
 
                 {
-                    onSubsystem(HoldableActuator.this, true);
+                    on(HoldableActuator.this, true);
                     homingDirection = direction;
-                    withName(name + (homingDirection == -1 ? ":Return To Home" : ":Travel To Ceiling"));
+                    named(name + (homingDirection == -1 ? ":Return To Home" : ":Travel To Ceiling"));
                     targetSwitch = homingDirection == -1 ? bottomSwitch : topSwitch;
                 }
 
@@ -742,7 +742,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 return new Lambda();
             }
             // Since this is a static mapping we can return the task
-            return goTo(position).until(limitSwitch::isPressed).withName(name + ":Run To Limit Switch");
+            return goTo(position).until(limitSwitch::isPressed).named(name + ":Run To Limit Switch");
         }
 
         /**
@@ -765,8 +765,8 @@ public class HoldableActuator extends BunyipsSubsystem {
                     })
                     .isFinished(() -> inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), tolerance)))
                     .onFinish(HoldableActuator.this::setInputModeToUser)
-                    .onSubsystem(HoldableActuator.this, true)
-                    .withName(name + ":Run To " + targetPosition + " Ticks");
+                    .on(HoldableActuator.this, true)
+                    .named(name + ":Run To " + targetPosition + " Ticks");
         }
 
         /**
@@ -778,7 +778,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         @NonNull
         public Task delta(int deltaPosition) {
             return Task.defer(() -> goTo(encoder.getPosition() + deltaPosition))
-                    .withName(name + ":Run To " + deltaPosition + " Delta Ticks");
+                    .named(name + ":Run To " + deltaPosition + " Delta Ticks");
         }
     }
 }

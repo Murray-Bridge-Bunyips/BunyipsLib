@@ -38,9 +38,7 @@ public class DeferredTask extends Task {
      */
     public DeferredTask(@NonNull Supplier<Task> lazyTask) {
         this.lazyTask = lazyTask;
-        // We're not actually a task, so we'll let the inner task manage reports
-        muteReports();
-        super.withName(UNCONSTRUCTED_NAME);
+        super.named(UNCONSTRUCTED_NAME);
     }
 
     @Override
@@ -50,7 +48,7 @@ public class DeferredTask extends Task {
         Measure<Time> timeout = builtTask.getTimeout();
         Dbg.logd(getClass(), "built -> % (t=%)", name, timeout.magnitude() <= 0 ? "inf" : timeout.in(Seconds) + "s");
         if (UNCONSTRUCTED_NAME.equals(toString()))
-            super.withName(name);
+            super.named(name);
         if (getTimeout().equals(INFINITE_TIMEOUT))
             setTimeout(timeout);
         builtTask.getDependency().ifPresent((dep) ->
@@ -60,7 +58,7 @@ public class DeferredTask extends Task {
     @Override
     protected void periodic() {
         if (builtTask == null) return;
-        if (!builtTask.hasDependency())
+        if (builtTask.getDependency().isEmpty())
             builtTask.run();
     }
 
@@ -75,15 +73,15 @@ public class DeferredTask extends Task {
     protected void onReset() {
         if (builtTask == null) return;
         builtTask.reset();
-        withName(UNCONSTRUCTED_NAME);
-        withTimeout(INFINITE_TIMEOUT);
+        named(UNCONSTRUCTED_NAME);
+        timeout(INFINITE_TIMEOUT);
         builtTask = null;
     }
 
     @Override
     protected boolean isTaskFinished() {
         if (builtTask == null) return false;
-        return builtTask.hasDependency() ? builtTask.isFinished() : builtTask.pollFinished();
+        return builtTask.getDependency().isPresent() ? builtTask.isFinished() : builtTask.poll();
     }
 
     /**
@@ -92,10 +90,10 @@ public class DeferredTask extends Task {
      */
     @NonNull
     @Override
-    public final Task withName(@Nullable String name) {
+    public final Task named(@Nullable String name) {
         if (builtTask != null)
             return this;
-        super.withName(name + " (dyn)");
+        super.named(name + " (dyn)");
         return this;
     }
 
@@ -104,7 +102,7 @@ public class DeferredTask extends Task {
      */
     @NonNull
     @Override
-    public final Task onSubsystem(@NonNull BunyipsSubsystem subsystem, boolean override) {
+    public final Task on(@NonNull BunyipsSubsystem subsystem, boolean override) {
         StackTraceElement f = Exceptions.getCallingUserCodeFunction();
         Dbg.error(f, "Dynamic tasks are not designed to be attached to a subsystem, as the internal task will be scheduled to subsystems instead.");
         opMode(o -> o.telemetry.log(f, Text.html().color("red", "error: ").text("dynamic tasks should not be attached to subsystems!")));

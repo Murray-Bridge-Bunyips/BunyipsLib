@@ -273,7 +273,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * @param defaultTask The task to set as the default task
      */
     public final void setDefaultTask(@NonNull Task defaultTask) {
-        defaultTask.onSubsystem(this, false);
+        defaultTask.on(this, false);
         this.defaultTask = defaultTask;
     }
 
@@ -308,7 +308,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         // Lockout if a task is currently running that is not the default task
         if (currentTask != defaultTask) {
             // Override if the task is designed to override
-            if (newTask.isOverriding()) {
+            if (newTask.isPriority()) {
                 setHighPriorityCurrentTask(newTask);
                 return true;
             }
@@ -371,14 +371,14 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     private void internalUpdate() {
         Task task = getCurrentTask();
         if (task != null) {
-            if (task == defaultTask && defaultTask.pollFinished()) {
+            if (task == defaultTask && defaultTask.poll()) {
                 throw new EmergencyStop("Default task (of " + getClass().getSimpleName() + ") should never finish!");
             }
             // Run the task on our subsystem
             task.run();
             // Update the state of isFinished() after running the task as it may have changed
-            task.pollFinished();
-            if (!task.isMuted()) {
+            task.poll();
+            if (!task.isFinished()) { // TODO: was mute check
                 Scheduler.addTaskReport(
                         toString(),
                         task == defaultTask,
@@ -389,7 +389,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             }
         }
         // This should be the only place where periodic() is called for this subsystem
-        Exceptions.runUserMethod(this::periodic, opMode);
+        Exceptions.runUserMethod(opMode, this::periodic);
         // Update child subsystems if they are delegated, note we don't touch the parent subsystem at all
         for (BunyipsSubsystem child : children) {
             if (child != null && child.shouldRun)

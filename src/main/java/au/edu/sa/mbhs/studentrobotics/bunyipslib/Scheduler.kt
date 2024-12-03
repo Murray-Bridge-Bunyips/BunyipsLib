@@ -113,14 +113,14 @@ class Scheduler : BunyipsComponent() {
             opMode {
                 // Task count will account for tasks on subsystems that are not IdleTasks, and also subsystem tasks
                 val taskCount = (allocatedTasks.size - allocatedTasks.stream()
-                    .filter { task: ScheduledTask -> task.taskToRun.hasDependency() }.count()
+                    .filter { task -> task.taskToRun.dependency.isPresent }.count()
                         + subsystems.size - subsystems.stream().filter { obj: BunyipsSubsystem -> obj.isIdle }.count())
                 it.telemetry.add("\nManaging % task% (%s, %c) on % subsystem%",
                     taskCount,
                     if (taskCount == 1L) "" else "s",
-                    allocatedTasks.stream().filter { task: ScheduledTask -> task.taskToRun.hasDependency() }
+                    allocatedTasks.stream().filter { task -> task.taskToRun.dependency.isPresent }
                         .count() + taskCount - allocatedTasks.size,
-                    allocatedTasks.stream().filter { task: ScheduledTask -> !task.taskToRun.hasDependency() }.count(),
+                    allocatedTasks.stream().filter { task -> !task.taskToRun.dependency.isPresent }.count(),
                     subsystems.size,
                     if (subsystems.size == 1) "" else "s"
                 )
@@ -129,9 +129,9 @@ class Scheduler : BunyipsComponent() {
                     it.telemetry.add(item)
                 }
                 for (task in allocatedTasks) {
-                    if (task.taskToRun.hasDependency() // Whether the task is never run from the Scheduler (and task reports will come from the reports array)
+                    if (task.taskToRun.dependency.isPresent // Whether the task is never run from the Scheduler (and task reports will come from the reports array)
                         || !task.taskToRun.isRunning // Whether this task is actually running
-                        || task.taskToRun.isMuted() // Whether the task has declared itself as muted
+                        || task.muted // Whether the task has declared itself as muted
                     ) {
                         continue
                     }
@@ -150,7 +150,7 @@ class Scheduler : BunyipsComponent() {
             val condition = task.runCondition.invoke()
             if (task.stopCondition == null) task.stopCondition = { false }
             if (condition || task.taskToRun.isRunning) {
-                if (!task.taskToRun.hasDependency()) {
+                if (!task.taskToRun.dependency.isPresent) {
                     if (task.stopCondition!!.invoke()) {
                         // Finish now as we should do nothing with this task
                         task.taskToRun.finishNow()
@@ -159,7 +159,7 @@ class Scheduler : BunyipsComponent() {
                     // This is a non-command task, run it now as it will not be run by any subsystem
                     task.taskToRun.run()
                     // Debouncing should not auto-reset the task if it is completed
-                    if (task.taskToRun.pollFinished() && !task.debouncing) {
+                    if (task.taskToRun.poll() && !task.debouncing) {
                         // Reset the task as it is not attached to a subsystem and will not be reintegrated by one
                         task.taskToRun.reset()
                     }
@@ -168,18 +168,18 @@ class Scheduler : BunyipsComponent() {
                 // This task must have a dependency, set the current task of the subsystem that depends on it
                 // Tasks may only have one subsystem dependency, where this dependency represents where the task
                 // will be executed by the scheduler.
-                assert(task.taskToRun.getDependency().isPresent)
+                assert(task.taskToRun.dependency.isPresent)
                 if (task.stopCondition!!.invoke()) {
                     // Finish handler will be called on the subsystem
                     task.taskToRun.finish()
                     continue
                 }
-                if (task.taskToRun.isFinished() && task.debouncing) {
+                if (task.taskToRun.isFinished && task.debouncing) {
                     // Don't requeue if debouncing
                     continue
                 }
-                task.taskToRun.getDependency().get().setCurrentTask(task.taskToRun)
-            } else if (task.taskToRun.isFinished() && !task.debouncing) {
+                task.taskToRun.dependency.get().setCurrentTask(task.taskToRun)
+            } else if (task.taskToRun.isFinished && !task.debouncing) {
                 task.taskToRun.reset()
             }
         }
@@ -454,10 +454,10 @@ class Scheduler : BunyipsComponent() {
         internal val runCondition: () -> Boolean
         internal var debouncing: Boolean = false
         internal var stopCondition: (() -> Boolean)? = null
+        internal var muted = false
 
         private val and = ArrayList<BooleanSupplier>()
         private val or = ArrayList<BooleanSupplier>()
-        private var isTaskMuted = false
 
         init {
             // Run the task if the original expression is met,
@@ -493,7 +493,6 @@ class Scheduler : BunyipsComponent() {
                 throw EmergencyStop("A run(Task) method has been called more than once on a scheduler task. If you wish to run multiple tasks see about using a task group as your task.")
             }
             taskToRun = task
-            if (isTaskMuted) taskToRun.muteReports()
             return this
         }
 
@@ -525,7 +524,7 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         fun run(name: String, runnable: Runnable): ScheduledTask {
-            return run(Lambda(runnable).withName(name))
+            return run(Lambda(runnable).named(name))
         }
 
         /**
@@ -581,7 +580,7 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         fun runOnce(name: String, runnable: Runnable): ScheduledTask {
-            return runOnce(Lambda(runnable).withName(name))
+            return runOnce(Lambda(runnable).named(name))
         }
 
         /**
@@ -590,8 +589,7 @@ class Scheduler : BunyipsComponent() {
          * @return Current builder for additional task parameters
          */
         fun muted(): ScheduledTask {
-            taskToRun.muteReports()
-            isTaskMuted = true
+            muted = true
             return this
         }
 
@@ -671,7 +669,7 @@ class Scheduler : BunyipsComponent() {
 
         override fun toString(): String {
             val out = Text.builder()
-            out.append(if (taskToRun.hasDependency()) "Scheduling " else "Running ")
+            out.append(if (taskToRun.dependency.isPresent) "Scheduling " else "Running ")
                 .append("'")
                 .append(taskToRun.toString())
                 .append("'")
@@ -679,7 +677,7 @@ class Scheduler : BunyipsComponent() {
             if (timeout * 1000.0 > Lambda.EPSILON_MS) {
                 out.append(" (t=").append(timeout).append("s)")
             }
-            if (taskToRun.isOverriding()) out.append(" (overriding)")
+            if (taskToRun.isPriority) out.append(" (overriding)")
             if (originalRunCondition is ControllerButtonBind) {
                 val handler = originalRunCondition
                 out.append(" when GP")
@@ -704,7 +702,7 @@ class Scheduler : BunyipsComponent() {
             out.append(if (and.isNotEmpty()) ", " + and.size + " extra AND condition(s)" else "")
                 .append(if (or.isNotEmpty()) ", " + or.size + " extra OR condition(s)" else "")
                 .append(if (debouncing) ", debouncing" else "")
-                .append(if (isTaskMuted || taskToRun.isMuted()) ", task status muted" else "")
+                .append(if (muted) ", task status muted" else "")
             return out.toString()
         }
     }

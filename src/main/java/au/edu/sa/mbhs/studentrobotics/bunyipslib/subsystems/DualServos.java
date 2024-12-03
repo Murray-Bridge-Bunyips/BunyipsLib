@@ -189,8 +189,8 @@ public class DualServos extends BunyipsSubsystem {
         @NonNull
         public Task openLeft() {
             return new Lambda(() -> open(ServoSide.LEFT))
-                    .onSubsystem(DualServos.this, true)
-                    .withName(name + ":Open Left");
+                    .on(DualServos.this, true)
+                    .named(name + ":Open Left");
         }
 
         /**
@@ -201,8 +201,8 @@ public class DualServos extends BunyipsSubsystem {
         @NonNull
         public Task openRight() {
             return new Lambda(() -> open(ServoSide.RIGHT))
-                    .onSubsystem(DualServos.this, true)
-                    .withName(name + ":Open Right");
+                    .on(DualServos.this, true)
+                    .named(name + ":Open Right");
         }
 
         /**
@@ -213,8 +213,8 @@ public class DualServos extends BunyipsSubsystem {
         @NonNull
         public Task openBoth() {
             return new Lambda(() -> open(ServoSide.BOTH))
-                    .onSubsystem(DualServos.this, true)
-                    .withName(name + ":Open Both");
+                    .on(DualServos.this, true)
+                    .named(name + ":Open Both");
         }
 
         /**
@@ -225,8 +225,8 @@ public class DualServos extends BunyipsSubsystem {
         @NonNull
         public Task closeLeft() {
             return new Lambda(() -> close(ServoSide.LEFT))
-                    .onSubsystem(DualServos.this, true)
-                    .withName(name + ":Close Left");
+                    .on(DualServos.this, true)
+                    .named(name + ":Close Left");
         }
 
         /**
@@ -237,8 +237,8 @@ public class DualServos extends BunyipsSubsystem {
         @NonNull
         public Task closeRight() {
             return new Lambda(() -> close(ServoSide.RIGHT))
-                    .onSubsystem(DualServos.this, true)
-                    .withName(name + ":Close Right");
+                    .on(DualServos.this, true)
+                    .named(name + ":Close Right");
         }
 
         /**
@@ -249,8 +249,8 @@ public class DualServos extends BunyipsSubsystem {
         @NonNull
         public Task closeBoth() {
             return new Lambda(() -> close(ServoSide.BOTH))
-                    .onSubsystem(DualServos.this, true)
-                    .withName(name + ":Close Both");
+                    .on(DualServos.this, true)
+                    .named(name + ":Close Both");
         }
 
         /**
@@ -261,8 +261,8 @@ public class DualServos extends BunyipsSubsystem {
         @NonNull
         public Task toggleLeft() {
             return new Lambda(() -> toggle(ServoSide.LEFT))
-                    .onSubsystem(DualServos.this, true)
-                    .withName(name + ":Toggle Left");
+                    .on(DualServos.this, true)
+                    .named(name + ":Toggle Left");
         }
 
         /**
@@ -273,8 +273,8 @@ public class DualServos extends BunyipsSubsystem {
         @NonNull
         public Task toggleRight() {
             return new Lambda(() -> toggle(ServoSide.RIGHT))
-                    .onSubsystem(DualServos.this, true)
-                    .withName(name + ":Toggle Right");
+                    .on(DualServos.this, true)
+                    .named(name + ":Toggle Right");
         }
 
         /**
@@ -288,8 +288,8 @@ public class DualServos extends BunyipsSubsystem {
                 toggle(ServoSide.LEFT);
                 toggle(ServoSide.RIGHT);
             })
-                    .onSubsystem(DualServos.this, true)
-                    .withName(name + ":Toggle Both");
+                    .on(DualServos.this, true)
+                    .named(name + ":Toggle Both");
         }
     }
 }

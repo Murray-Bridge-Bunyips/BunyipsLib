@@ -52,12 +52,12 @@ public class AlignToContourTask extends Task {
      */
     public AlignToContourTask(@Nullable Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier) {
         if (drive instanceof BunyipsSubsystem)
-            onSubsystem((BunyipsSubsystem) drive, false);
+            on((BunyipsSubsystem) drive, false);
         this.drive = drive;
         contours = supplier;
         this.passthrough = passthrough;
         controller = DEFAULT_CONTROLLER;
-        withName("Align To Contour");
+        named("Align To Contour");
         Dashboard.enableConfig(getClass());
     }
 

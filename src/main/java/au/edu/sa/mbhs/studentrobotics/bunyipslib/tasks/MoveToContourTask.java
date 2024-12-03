@@ -64,13 +64,13 @@ public class MoveToContourTask extends Task {
      */
     public MoveToContourTask(@Nullable Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier) {
         if (drive instanceof BunyipsSubsystem)
-            onSubsystem((BunyipsSubsystem) drive, false);
+            on((BunyipsSubsystem) drive, false);
         this.drive = drive;
         contours = supplier;
         this.passthrough = passthrough;
         withXController(DEFAULT_X_CONTROLLER);
         withRController(DEFAULT_R_CONTROLLER);
-        withName("Move to Contour");
+        named("Move to Contour");
         Dashboard.enableConfig(getClass());
     }
 

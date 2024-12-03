@@ -65,7 +65,7 @@ public class TurnTask extends Task {
     public TurnTask(@NonNull Moveable drive, @NonNull Measure<Angle> angle, @SuppressLint("LambdaLast") boolean delta) {
         this(drive::setPower, () -> Objects.requireNonNull(drive.getPose(), "Drive instance requires a localizer attached to determine heading!"), angle, delta);
         if (drive instanceof BunyipsSubsystem)
-            onSubsystem((BunyipsSubsystem) drive);
+            on((BunyipsSubsystem) drive);
     }
 
     /**

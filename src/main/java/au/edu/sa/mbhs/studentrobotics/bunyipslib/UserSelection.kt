@@ -91,7 +91,7 @@ class UserSelection<T : Any>(
      */
     override fun run() {
         if (opmodes.isEmpty()) {
-            Exceptions.runUserMethod({ callback.accept(null) }, opMode)
+            Exceptions.runUserMethod(opMode) { callback.accept(null) }
             return
         }
 
@@ -180,6 +180,6 @@ class UserSelection<T : Any>(
         require(opMode).telemetry.remove(topBorder, mainText, bottomBorder)
         require(opMode).telemetry.isAutoClear = true
 
-        Exceptions.runUserMethod({ callback.accept(result) }, opMode)
+        Exceptions.runUserMethod(opMode) { callback.accept(result) }
     }
 }

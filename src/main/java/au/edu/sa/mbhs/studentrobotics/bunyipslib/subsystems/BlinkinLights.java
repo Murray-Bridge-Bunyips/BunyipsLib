@@ -228,8 +228,8 @@ public class BlinkinLights extends BunyipsSubsystem {
             return Task.task().periodic(() -> currentPattern = pattern)
                     .onFinish(() -> currentPattern = defaultPattern)
                     .timeout(duration)
-                    .onSubsystem(BlinkinLights.this, true)
-                    .withName(name + ":" + pattern.name());
+                    .on(BlinkinLights.this, true)
+                    .named(name + ":" + pattern.name());
         }
     }
 }

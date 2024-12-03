@@ -42,7 +42,7 @@ public abstract class TaskGroup extends Task {
             taskNames.append(tasks.get(i)).append(",");
         }
         taskNames.append(tasks.get(tasks.size() - 1));
-        withName(taskNames.toString());
+        named(taskNames.toString());
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class TaskGroup extends Task {
                 attachedTasks.add(task);
         });
         // Otherwise we can just run the task outright
-        if (!task.hasDependency()) {
+        if (task.getDependency().isEmpty()) {
             task.run();
         }
     }
@@ -91,7 +91,7 @@ public abstract class TaskGroup extends Task {
 
     @NonNull
     @Override
-    public final Task onSubsystem(@NonNull BunyipsSubsystem subsystem, boolean override) {
+    public final Task on(@NonNull BunyipsSubsystem subsystem, boolean override) {
         StackTraceElement f = Exceptions.getCallingUserCodeFunction();
         Dbg.error(f, "Task groups are not designed to be attached to a subsystem, as the internal tasks will be scheduled to subsystems instead.");
         opMode(o -> o.telemetry.log(f, Text.html().color("red", "error: ").text("task groups should not be attached to subsystems!")));

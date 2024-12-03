@@ -14,6 +14,6 @@ public class IdleTask extends Task {
     @Override
     protected void init() {
         // Ensure the name remains the same for telemetry ignoring
-        withName("IdleTask");
+        named("IdleTask");
     }
 }

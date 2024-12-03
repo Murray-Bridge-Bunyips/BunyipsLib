@@ -13,6 +13,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.ParallelTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.RaceTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.SequentialTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
@@ -27,14 +28,7 @@ import java.util.function.BooleanSupplier
  * The task system in BunyipsLib has been constructed from the ground-up with a more lightweight ecosystem
  * where Tasks are at their core stripped into running some code for some time, somewhere. The original behaviour of tasks running
  * outright used to be the legacy roots of how Tasks worked, and since has adopted some command-based structures that work
- * alongside the lightweight premise of a Task being "a Runnable with a timeout" with a run implementation left to the user.
- *
- * Some different implementations on how Tasks are interpreted are demonstrated in these classes:
- * - Scheduler
- * - BunyipsOpMode
- * - AutonomousBunyipsOpMode
- * - BunyipsSubsystem
- * - Tasks
+ * by running them in the contexts of other subsystems.
  *
  * Task extends [BunyipsComponent] to allow for simpler integration with accessing the OpMode, and was a legacy
  * feature that was kept for the sake of simplicity, more pedantic exception handling, and ease of use.
@@ -57,10 +51,54 @@ abstract class Task(
      */
     var timeout: Measure<Time>
 ) : BunyipsComponent(), Runnable, Action {
-    private var overrideDependency: Boolean = false
-    private var dependency: BunyipsSubsystem? = null
-    private var mutedReport = false
-    private var name = this.javaClass.simpleName
+    private var name = javaClass.simpleName
+    private var _dependency: BunyipsSubsystem? = null
+    private var userFinished = false
+    private var taskFinished = false
+    private var finisherFired = false
+    private var startTime = 0L
+
+    /**
+     * A task that does not have an integrated timeout, and will rely on manual intervention and [isTaskFinished].
+     */
+    constructor() : this(INFINITE_TIMEOUT)
+
+    /**
+     * Whether this task should override other tasks in the queue if they conflict with this task. Will only
+     * apply if this task has a dependency to run on (see [dependency]).
+     */
+    var isPriority: Boolean = false
+        private set
+
+    /**
+     * Get the subsystem reference that this task has elected a dependency on.
+     * Will return an Optional where if it is not present, this task is not dependent on any subsystem.
+     */
+    val dependency: Optional<BunyipsSubsystem>
+        get() = Optional.ofNullable(_dependency)
+
+    /**
+     * Whether the task is currently running (i.e. has been started (`init()` called) and not finished).
+     */
+    val isRunning: Boolean
+        get() = startTime != 0L && !isFinished
+
+    /**
+     * Time since the task was started.
+     */
+    val deltaTime: Measure<Time>
+        get() {
+            if (startTime == 0L)
+                return Nanoseconds.of(0.0)
+            return Nanoseconds.of((System.nanoTime() - startTime).toDouble())
+        }
+
+    /**
+     * Query (but not update) the finished state of the task. This will return true if the task is finished and the
+     * finisher has been fired.
+     */
+    val isFinished: Boolean
+        get() = taskFinished && finisherFired
 
     // RoadRunner Actions compatibility, exposes the same field names as they are presented in the Action interface
     /**
@@ -86,278 +124,54 @@ abstract class Task(
      * @param override  Whether this task should override conflicting tasks on this subsystem (not incl. default tasks)
      * @return this task
      */
-    @JvmOverloads
-    open fun onSubsystem(subsystem: BunyipsSubsystem, override: Boolean = false): Task {
-        dependency = subsystem
-        overrideDependency = override
-        return this
+    open fun on(subsystem: BunyipsSubsystem, override: Boolean) = apply {
+        _dependency = subsystem
+        isPriority = override
     }
 
     /**
      * Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.
-     * This task is scheduled with default override behaviour.
+     * This task is scheduled with default override behaviour (where this task is not priority).
      *
      * @param subsystem The subsystem to elect as the runner of this task
      * @return this task
      */
-    infix fun on(subsystem: BunyipsSubsystem): Task {
-        return onSubsystem(subsystem)
-    }
-
-    /**
-     * Return whether this task has elected a dependency on a subsystem or not.
-     */
-    fun hasDependency(): Boolean {
-        return dependency != null
-    }
-
-    /**
-     * Get the subsystem reference that this task has elected a dependency on.
-     * Will return an Optional where if it is not present, this task is not dependent on any subsystem.
-     */
-    fun getDependency(): Optional<BunyipsSubsystem> {
-        return Optional.ofNullable(dependency)
-    }
-
-    /**
-     * Mute task reports from the Scheduler.
-     */
-    fun muteReports(): Task {
-        mutedReport = true
-        return this
-    }
-
-    /**
-     * @return Whether this task is muted from subsystem reports or not.
-     */
-    fun isMuted(): Boolean {
-        return mutedReport
-    }
-
-    /**
-     * @return Whether this task should override other tasks in the queue if they conflict with this task. Will only
-     *         apply if this task has a dependency (see [hasDependency], [getDependency]).
-     */
-    fun isOverriding(): Boolean {
-        return overrideDependency
-    }
-
-    /**
-     * A task that does not have an integrated timeout, and will rely on manual intervention and [isTaskFinished].
-     */
-    constructor() : this(INFINITE_TIMEOUT)
+    infix fun on(subsystem: BunyipsSubsystem) = on(subsystem, false)
 
     /**
      * Set the name of this task to be displayed in the OpMode.
      * You may override this method if required to enforce a naming convention/prefix.
      */
-    open fun withName(name: String?): Task {
-        if (name == null) {
-            return this
-        }
-        this.name = name
-        return this
-    }
+    open infix fun named(name: String?) = apply { name?.let { this.name = it } }
 
     /**
-     * Set the name of this task to be displayed in the OpMode.
+     * Set the timeout of this task dynamically and return the task.
      */
-    infix fun named(name: String): Task {
-        return withName(name)
-    }
+    infix fun timeout(timeout: Measure<Time>) = apply { this.timeout = timeout }
 
     /**
-     * Get the name of this task. By default, it will be the class simple name, but you can call [withName] to set a
+     * Get the name of this task. By default, it will be the class simple name, but you can call [named] to set a
      * custom name.
      *
      * @return String representing the name of this task.
      */
-    final override fun toString(): String {
-        return name
-    }
+    final override fun toString(): String = name
 
     /**
      * Get a verbose string representation of this task, including all of its properties.
      */
     fun toVerboseString(): String {
-        return name + "[${if (taskFinished) "FINISHED" else "READY"}, ${if (isRunning) deltaTime else "NOT RUNNING"}/${if (timeout.magnitude() == 0.0) "INDEFINITE" else "$timeout"}, ${if (dependency != null) "DEPENDENT ON <${dependency?.toString()}>" else "INDEPENDENT"}, ${if (overrideDependency) "OVERRIDING" else "NON-OVERRIDING"}, ${if (mutedReport) "MUTED" else "REPORTING"}]"
+        val priority = if (isPriority) "PRIORITY, " else ""
+        val state = when {
+            isFinished -> "FINISHED"
+            isRunning -> deltaTime.toString()
+            else -> "READY"
+        }
+        val time = if (timeout.magnitude() <= 0.0) "INDEFINITE" else timeout.toString()
+        val dep = if (_dependency != null) "DEPENDENT ON ${Text.upper(_dependency.toString())}" else "INDEPENDENT"
+
+        return Text.format("%[%%/%, %]", name, priority, state, time, dep)
     }
-
-    /**
-     * Set the timeout of this task dynamically and return the task.
-     */
-    fun withTimeout(timeout: Measure<Time>): Task {
-        this.timeout = timeout
-        return this
-    }
-
-    /**
-     * Set the timeout of this task dynamically and return the task.
-     */
-    infix fun timeout(timeout: Measure<Time>): Task {
-        return withTimeout(timeout)
-    }
-
-    /**
-     * Compose this task into a [RaceTaskGroup] with a wait condition based on this condition.
-     */
-    infix fun until(condition: BooleanSupplier): RaceTaskGroup {
-        val task = task { isFinished { condition.asBoolean } }
-        task.withName("$name supervisor")
-        return RaceTaskGroup(this, task)
-    }
-
-    /**
-     * Composes a [ParallelTaskGroup] with a [WaitTask] to run before this task.
-     * This will ensure the task runs for at least the specified time, and no-ops until the duration if it finishes early.
-     */
-    infix fun forAtLeast(waitTime: Measure<Time>): ParallelTaskGroup {
-        val task = WaitTask(waitTime)
-        task.withName("$name wait")
-        return ParallelTaskGroup(this, task)
-    }
-
-    /**
-     * Composes a [ParallelTaskGroup] with a [WaitTask] to run before this task.
-     * This will ensure the task runs for at least the specified time, and no-ops until the duration if it finishes early.
-     */
-    fun forAtLeast(waitDuration: Double, unit: Time): ParallelTaskGroup {
-        return forAtLeast(unit.of(waitDuration))
-    }
-
-    /**
-     * Compose this task into a [SequentialTaskGroup] with the supplied
-     * tasks to run before this one.
-     */
-    fun after(vararg otherTasks: Task): SequentialTaskGroup {
-        return SequentialTaskGroup(*otherTasks, this)
-    }
-
-    /**
-     * Compose this task into a [SequentialTaskGroup] with the supplied task
-     * to run before this one.
-     */
-    infix fun after(otherTask: Task): SequentialTaskGroup {
-        return SequentialTaskGroup(otherTask, this)
-    }
-
-    /**
-     * Composes a [WaitTask] to run before this task.
-     */
-    infix fun after(waitTime: Measure<Time>): SequentialTaskGroup {
-        val task = WaitTask(waitTime)
-        task.withName("$name wait")
-        return SequentialTaskGroup(task, this)
-    }
-
-    /**
-     * Composes a [WaitTask] to run before this task.
-     */
-    fun after(waitDuration: Double, unit: Time): SequentialTaskGroup {
-        return after(unit.of(waitDuration))
-    }
-
-    /**
-     * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable],
-     * queued to run before this task starts.
-     */
-    infix fun after(runnable: Runnable): SequentialTaskGroup {
-        val task = Lambda(runnable)
-        task.withName("$name hook")
-        return SequentialTaskGroup(task, this)
-    }
-
-    /**
-     * Compose this task into a [SequentialTaskGroup] with the supplied tasks
-     * to follow after this one.
-     */
-    fun then(vararg otherTasks: Task): SequentialTaskGroup {
-        return SequentialTaskGroup(this, *otherTasks)
-    }
-
-    /**
-     * Compose this task into a [SequentialTaskGroup] with the supplied task
-     * to follow after this one.
-     */
-    infix fun then(otherTask: Task): SequentialTaskGroup {
-        return SequentialTaskGroup(this, otherTask)
-    }
-
-    /**
-     * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable],
-     * queued to run when this task finishes.
-     */
-    infix fun then(runnable: Runnable): SequentialTaskGroup {
-        val task = Lambda(runnable)
-        task.withName("$name callback")
-        return SequentialTaskGroup(this, task)
-    }
-
-    /**
-     * Compose this task into a [ParallelTaskGroup] with the supplied tasks
-     * to run all of these tasks at once.
-     */
-    fun with(vararg otherTasks: Task): ParallelTaskGroup {
-        return ParallelTaskGroup(this, *otherTasks)
-    }
-
-    /**
-     * Compose this task into a [ParallelTaskGroup] with the supplied task
-     * to run alongside this one.
-     */
-    infix fun with(otherTask: Task): ParallelTaskGroup {
-        return ParallelTaskGroup(this, otherTask)
-    }
-
-    /**
-     * Compose this task into a [RaceTaskGroup] with the supplied tasks
-     * to run all of these tasks until one finishes.
-     */
-    fun race(vararg otherTasks: Task): RaceTaskGroup {
-        return RaceTaskGroup(this, *otherTasks)
-    }
-
-    /**
-     * Compose this task into a [RaceTaskGroup] with the supplied task
-     * to run alongside this one until one finishes.
-     */
-    infix fun race(otherTask: Task): RaceTaskGroup {
-        return RaceTaskGroup(this, otherTask)
-    }
-
-    /**
-     * Compose this task into a [DeadlineTaskGroup] with the supplied tasks
-     * to run these extra tasks until this task is done.
-     */
-    fun during(vararg otherTasks: Task): DeadlineTaskGroup {
-        return DeadlineTaskGroup(this, *otherTasks)
-    }
-
-    /**
-     * Compose this task into a [DeadlineTaskGroup] with the supplied task
-     * to run alongside this one until this task is done.
-     */
-    infix fun during(otherTask: Task): DeadlineTaskGroup {
-        return DeadlineTaskGroup(this, otherTask)
-    }
-
-    /**
-     * Wrap this task in a [RepeatTask] where finish conditions are reset immediately.
-     */
-    fun repeatedly(): Task {
-        return RepeatTask(this)
-    }
-
-    /**
-     * Whether the task is finished or not via timeout or custom condition. Will be true regardless of the finisher
-     * being fired or not, as some tasks will handle this via finishNow().
-     */
-    @Volatile
-    var taskFinished = false
-        private set
-
-    private var startTime = 0L
-    private var finisherFired = false
 
     /**
      * Define code to run once, when the task is started.
@@ -376,30 +190,48 @@ abstract class Task(
     }
 
     /**
-     * Should be called by your polling loop to run the task and manage all state properly.
+     * Execute one cycle of this task. The finish condition is separately polled in the [poll] method.
      */
     final override fun run() {
         Dashboard.usePacket {
             p = it
             fieldOverlay = it.fieldOverlay()
             if (startTime == 0L) {
-                Exceptions.runUserMethod(::init, opMode)
+                Exceptions.runUserMethod(opMode, ::init)
                 startTime = System.nanoTime()
                 // Must poll finished on the first iteration to ensure that the task does not overrun
-                pollFinished()
+                poll()
             }
             // Here we check the taskFinished condition but don't call pollFinished(), to ensure that the task is only
             // updated with latest finish information at the user's discretion (excluding the first-call requirement)
             if (taskFinished && !finisherFired) {
-                Exceptions.runUserMethod(::onFinish, opMode)
-                if (!isFinished())
-                    Exceptions.runUserMethod(::onInterrupt, opMode)
+                Exceptions.runUserMethod(opMode, ::onFinish)
+                if (!userFinished)
+                    Exceptions.runUserMethod(opMode, ::onInterrupt)
                 finisherFired = true
             }
             // Don't run the task if it is finished as a safety guard
-            if (isFinished()) return@usePacket
-            Exceptions.runUserMethod(::periodic, opMode)
+            if (isFinished) return@usePacket
+            Exceptions.runUserMethod(opMode, ::periodic)
         }
+    }
+
+    /**
+     * Update and query the state of the task if it is finished.
+     * This will return true if the task is fully completed with all callbacks processed.
+     */
+    fun poll(): Boolean {
+        // Early return
+        if (taskFinished) return finisherFired
+
+        val startCalled = startTime != 0L
+        val timeoutFinished = timeout.magnitude() != 0.0 && System.nanoTime() > startTime + (timeout to Nanoseconds)
+        Exceptions.runUserMethod(opMode) { userFinished = isTaskFinished() }
+
+        taskFinished = startCalled && (timeoutFinished || userFinished)
+
+        // run() will handle firing the finisher, in which case we can return true and the polling loop can stop
+        return isFinished
     }
 
     /**
@@ -410,7 +242,7 @@ abstract class Task(
         // and fieldOverlay here as we will handle them ourselves. This also allows Action to Task porting
         // to use the same field parameters.
         run()
-        return !pollFinished()
+        return !poll()
     }
 
     /**
@@ -457,82 +289,167 @@ abstract class Task(
     }
 
     /**
-     * Query (but not update) the finished state of the task. This will return true if the task is finished and the
-     * finisher has been fired.
-     */
-    fun isFinished(): Boolean {
-        return taskFinished && finisherFired
-    }
-
-    /**
-     * Update and query the state of the task if it is finished. This will return true if the task is finished and the
-     * finisher has been fired.
-     */
-    fun pollFinished(): Boolean {
-        // Early return
-        if (taskFinished) return finisherFired
-
-        val startCalled = startTime != 0L
-        val timeoutFinished = timeout.magnitude() != 0.0 && System.nanoTime() > startTime + (timeout to Nanoseconds)
-        var userCondition = false
-        Exceptions.runUserMethod({ userCondition = isTaskFinished() }, opMode)
-
-        taskFinished = startCalled && (timeoutFinished || userCondition)
-
-        // run() will handle firing the finisher, in which case we can return true and the polling loop can stop
-        return taskFinished && finisherFired
-    }
-
-    /**
      * Reset a task to an uninitialised and unfinished state.
      * Will no-op if the task is already fully reset.
      */
     fun reset() {
-        if (startTime == 0L && !taskFinished && !finisherFired)
+        if (startTime == 0L && !isFinished)
             return
-        Exceptions.runUserMethod(::onReset, opMode)
+        Exceptions.runUserMethod(opMode, ::onReset)
         startTime = 0L
         taskFinished = false
         finisherFired = false
+        userFinished = false
     }
 
     /**
-     * Tell a task to finish on the next iteration.
+     * Tell a task to finish on the next iteration of [poll].
      */
     fun finish() {
         taskFinished = true
     }
 
     /**
-     * Force a task to finish immediately, and fire the onFinish() method without waiting
-     * for the next polling loop. This method is useful when your task needs to die and
+     * Force a task to finish immediately, and fire the [onFinish] method without waiting
+     * for the next polling loop.
+     *
+     * This method is useful when your task needs to die and
      * needs to finish up immediately. If your finisher has already been fired, this method
      * will do nothing but ensure that the task is marked as finished.
      */
     fun finishNow() {
         taskFinished = true
         if (!finisherFired) {
-            Exceptions.runUserMethod(::onFinish, opMode)
-            Exceptions.runUserMethod(::onInterrupt, opMode)
+            Exceptions.runUserMethod(opMode, ::onFinish)
+            if (!userFinished)
+                Exceptions.runUserMethod(opMode, ::onInterrupt)
         }
         finisherFired = true
     }
 
     /**
-     * @return Whether the task is currently running (i.e. has been started (`init()` called) and not finished).
+     * Compose this task into a [RaceTaskGroup] with a wait condition based on this condition.
      */
-    val isRunning: Boolean
-        get() = startTime != 0L && !isFinished()
+    infix fun until(condition: BooleanSupplier): RaceTaskGroup {
+        val task = task { isFinished { condition.asBoolean } }
+        task.named("$name supervisor")
+        return RaceTaskGroup(this, task)
+    }
 
     /**
-     * Time in seconds since the task was started.
+     * Composes a [ParallelTaskGroup] with a [WaitTask] to run before this task.
+     * This will ensure the task runs for at least the specified time, and no-ops until the duration if it finishes early.
      */
-    val deltaTime: Measure<Time>
-        get() {
-            if (startTime == 0L)
-                return Nanoseconds.of(0.0)
-            return Nanoseconds.of((System.nanoTime() - startTime).toDouble())
-        }
+    infix fun forAtLeast(waitTime: Measure<Time>): ParallelTaskGroup {
+        val task = WaitTask(waitTime)
+        task.named("$name wait")
+        return ParallelTaskGroup(this, task)
+    }
+
+    /**
+     * Composes a [ParallelTaskGroup] with a [WaitTask] to run before this task.
+     * This will ensure the task runs for at least the specified time, and no-ops until the duration if it finishes early.
+     */
+    fun forAtLeast(waitDuration: Double, unit: Time) = forAtLeast(unit.of(waitDuration))
+
+    /**
+     * Compose this task into a [SequentialTaskGroup] with the supplied
+     * tasks to run before this one.
+     */
+    fun after(vararg otherTasks: Task) = SequentialTaskGroup(*otherTasks, this)
+
+    /**
+     * Compose this task into a [SequentialTaskGroup] with the supplied task
+     * to run before this one.
+     */
+    infix fun after(otherTask: Task) = SequentialTaskGroup(otherTask, this)
+
+    /**
+     * Composes a [WaitTask] to run before this task.
+     */
+    infix fun after(waitTime: Measure<Time>): SequentialTaskGroup {
+        val task = WaitTask(waitTime)
+        task.named("$name wait")
+        return SequentialTaskGroup(task, this)
+    }
+
+    /**
+     * Composes a [WaitTask] to run before this task.
+     */
+    fun after(waitDuration: Double, unit: Time) = after(unit.of(waitDuration))
+
+    /**
+     * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable],
+     * queued to run before this task starts.
+     */
+    infix fun after(runnable: Runnable): SequentialTaskGroup {
+        val task = Lambda(runnable)
+        task.named("$name hook")
+        return SequentialTaskGroup(task, this)
+    }
+
+    /**
+     * Compose this task into a [SequentialTaskGroup] with the supplied tasks
+     * to follow after this one.
+     */
+    fun then(vararg otherTasks: Task) = SequentialTaskGroup(this, *otherTasks)
+
+    /**
+     * Compose this task into a [SequentialTaskGroup] with the supplied task
+     * to follow after this one.
+     */
+    infix fun then(otherTask: Task) = SequentialTaskGroup(this, otherTask)
+
+    /**
+     * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable],
+     * queued to run when this task finishes.
+     */
+    infix fun then(runnable: Runnable): SequentialTaskGroup {
+        val task = Lambda(runnable)
+        task.named("$name callback")
+        return SequentialTaskGroup(this, task)
+    }
+
+    /**
+     * Compose this task into a [ParallelTaskGroup] with the supplied tasks
+     * to run all of these tasks at once.
+     */
+    fun with(vararg otherTasks: Task) = ParallelTaskGroup(this, *otherTasks)
+
+    /**
+     * Compose this task into a [ParallelTaskGroup] with the supplied task
+     * to run alongside this one.
+     */
+    infix fun with(otherTask: Task) = ParallelTaskGroup(this, otherTask)
+
+    /**
+     * Compose this task into a [RaceTaskGroup] with the supplied tasks
+     * to run all of these tasks until one finishes.
+     */
+    fun race(vararg otherTasks: Task) = RaceTaskGroup(this, *otherTasks)
+
+    /**
+     * Compose this task into a [RaceTaskGroup] with the supplied task
+     * to run alongside this one until one finishes.
+     */
+    infix fun race(otherTask: Task) = RaceTaskGroup(this, otherTask)
+
+    /**
+     * Compose this task into a [DeadlineTaskGroup] with the supplied tasks
+     * to run these extra tasks until this task is done.
+     */
+    fun during(vararg otherTasks: Task) = DeadlineTaskGroup(this, *otherTasks)
+
+    /**
+     * Compose this task into a [DeadlineTaskGroup] with the supplied task
+     * to run alongside this one until this task is done.
+     */
+    infix fun during(otherTask: Task) = DeadlineTaskGroup(this, otherTask)
+
+    /**
+     * Wrap this task in a [RepeatTask] where finish conditions are reset immediately.
+     */
+    fun repeatedly(): Task = RepeatTask(this)
 
     companion object {
         /**
@@ -546,9 +463,7 @@ abstract class Task(
          * Useful for constructing tasks that use data that is not available at the build time of the wrapped task.
          */
         @JvmStatic
-        fun defer(taskBuilder: () -> Task): DeferredTask {
-            return DeferredTask(taskBuilder)
-        }
+        fun defer(taskBuilder: () -> Task) = DeferredTask(taskBuilder)
 
         /**
          * Utility to create a new [DynamicTask] instance for building a new task.
@@ -564,8 +479,6 @@ abstract class Task(
         /**
          * Default task setter extension for [BunyipsSubsystem] to set the default task of a subsystem.
          */
-        infix fun BunyipsSubsystem.default(defaultTask: Task) {
-            this.setDefaultTask(defaultTask)
-        }
+        infix fun BunyipsSubsystem.default(defaultTask: Task) = this.setDefaultTask(defaultTask)
     }
 }

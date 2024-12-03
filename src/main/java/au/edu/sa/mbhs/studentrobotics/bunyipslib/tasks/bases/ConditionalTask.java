@@ -33,7 +33,7 @@ public class ConditionalTask extends Task {
         this.trueTask = trueTask;
         this.falseTask = falseTask;
         this.conditionOnInit = conditionOnInit;
-        withName("Conditional " + trueTask + " / " + falseTask);
+        named("Conditional " + trueTask + " / " + falseTask);
     }
 
     /**
@@ -54,7 +54,7 @@ public class ConditionalTask extends Task {
         falseTask.reset();
         task = conditionOnInit.getAsBoolean() ? trueTask : falseTask;
         task.run();
-        withTimeout(task.getTimeout());
+        timeout(task.getTimeout());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ConditionalTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return task != null && task.pollFinished();
+        return task != null && task.poll();
     }
 
     @Override

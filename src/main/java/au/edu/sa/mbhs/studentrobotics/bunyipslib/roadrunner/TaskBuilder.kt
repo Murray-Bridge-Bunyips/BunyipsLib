@@ -727,9 +727,9 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      */
     fun build() = ActionTask(builder.build()).also {
         if (name != null)
-            it.withName(name)
+            it.named(name)
         if (timeout != null)
-            it.withTimeout(timeout!!)
+            it.timeout(timeout!!)
     }
 
     /**

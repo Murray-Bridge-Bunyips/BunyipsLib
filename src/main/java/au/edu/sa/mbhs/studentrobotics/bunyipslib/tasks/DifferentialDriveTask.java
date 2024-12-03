@@ -32,8 +32,8 @@ public class DifferentialDriveTask extends Task {
         this.drive = drive;
         this.gamepad = gamepad;
         if (drive instanceof BunyipsSubsystem)
-            onSubsystem((BunyipsSubsystem) drive, false);
-        withName("Differential Control");
+            on((BunyipsSubsystem) drive, false);
+        named("Differential Control");
     }
 
     @Override
