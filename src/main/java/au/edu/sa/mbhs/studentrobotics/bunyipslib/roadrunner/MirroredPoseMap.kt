@@ -12,7 +12,7 @@ import com.acmerobotics.roadrunner.PoseMap
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-class MirroredPoseMap : PoseMap {
+open class MirroredPoseMap : PoseMap {
     override fun map(pose: Pose2dDual<Arclength>) =
         Pose2dDual(pose.position.x, -pose.position.y, pose.heading.inverse())
 }

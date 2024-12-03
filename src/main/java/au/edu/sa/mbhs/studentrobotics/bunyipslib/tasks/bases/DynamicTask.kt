@@ -8,7 +8,7 @@ import java.util.function.BooleanSupplier
  * @author Lucas Bubner, 2024
  * @since 6.1.0
  */
-class DynamicTask : Task() {
+open class DynamicTask : Task() {
     private var init = {}
     private var loop = {}
     private var until = { false }
