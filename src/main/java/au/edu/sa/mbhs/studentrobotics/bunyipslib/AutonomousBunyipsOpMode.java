@@ -173,10 +173,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                 return;
             }
 
-            telemetry.setOverheadSubtitle(
-                    Text.format("<small><font color='aqua'>Running task <b>%/%</b></font> | %%</small>",
-                            this.currentTask, taskCount, currentTask, getApproximateTimeLeft())
-            );
+            telemetry.overheadSubtitle = Text.format("<small><font color='aqua'>Running task <b>%/%</b></font> | %%</small>",
+                    this.currentTask, taskCount, currentTask, getApproximateTimeLeft());
 
             try {
                 // AutonomousBunyipsOpMode is handling all task completion checks, manual checks not required

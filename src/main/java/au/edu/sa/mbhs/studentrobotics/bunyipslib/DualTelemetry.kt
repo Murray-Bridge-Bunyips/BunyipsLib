@@ -62,12 +62,14 @@ class DualTelemetry @JvmOverloads constructor(
     /**
      * A string to display the current 'status' of the OpMode, used for overhead telemetry.
      */
+    @JvmField
     var opModeStatus = ""
 
     /**
      * A string that overrules the status message in the overhead telemetry, such as a warning or error message.
      * Set to null to use the default status message.
      */
+    @JvmField
     var overrideStatus: String? = null
 
     /**
@@ -75,6 +77,7 @@ class DualTelemetry @JvmOverloads constructor(
      * the timing and controller statistics.
      * By default, this is an empty string.
      */
+    @JvmField
     var overheadSubtitle = ""
 
     /**
@@ -86,17 +89,20 @@ class DualTelemetry @JvmOverloads constructor(
      * item under the Item caption on FtcDashboard. The actual SDK caption-value separator is not affected by this
      * property, and these captions should always be an empty string as captions are not used in DualTelemetry.
      */
+    @JvmField
     var dashboardCaptionValueAutoSeparator = ": "
 
     /**
      * The color of the brackets in log messages, useful for distinguishing between different timer phases.
      */
+    @JvmField
     var logBracketColor = "white"
 
     /**
      * The time threshold at which the frequency segment will display yellow in the overhead telemetry to alert the user of slow
      * looping times.
      */
+    @JvmField
     var loopSpeedSlowAlert: Measure<Time> = Milliseconds.of(60.0)
 
     private enum class ItemType {
