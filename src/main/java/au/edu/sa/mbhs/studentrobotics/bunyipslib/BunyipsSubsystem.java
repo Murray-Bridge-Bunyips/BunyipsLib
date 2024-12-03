@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
@@ -278,11 +277,19 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     }
 
     /**
-     * Determine if the subsystem is idle, meaning an IdleTask is running.
+     * Determine if the subsystem is idle, meaning an IdleTask (or no task) is running.
      */
     public final boolean isIdle() {
         Task current = getCurrentTask();
         return current == null || current.toString().equals("IdleTask");
+    }
+
+    /**
+     * Determine if the subsystem is running the default task.
+     */
+    public final boolean isRunningDefaultTask() {
+        Task current = getCurrentTask();
+        return current != null && current.equals(defaultTask);
     }
 
     /**
@@ -378,15 +385,6 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             task.run();
             // Update the state of isFinished() after running the task as it may have changed
             task.poll();
-            if (!task.isFinished()) { // TODO: was mute check
-                Scheduler.addTaskReport(
-                        toString(),
-                        task == defaultTask,
-                        task.toString(),
-                        Mathf.round(task.getDeltaTime().in(Seconds), 1),
-                        task.getTimeout().in(Seconds)
-                );
-            }
         }
         // This should be the only place where periodic() is called for this subsystem
         Exceptions.runUserMethod(opMode, this::periodic);

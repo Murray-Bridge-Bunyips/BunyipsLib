@@ -479,6 +479,6 @@ abstract class Task(
         /**
          * Default task setter extension for [BunyipsSubsystem] to set the default task of a subsystem.
          */
-        infix fun BunyipsSubsystem.default(defaultTask: Task) = this.setDefaultTask(defaultTask)
+        infix fun BunyipsSubsystem.default(defaultTask: Task) = setDefaultTask(defaultTask)
     }
 }

@@ -28,12 +28,8 @@ class Scheduler : BunyipsComponent() {
     private val subsystems = ArrayList<BunyipsSubsystem>()
     private val allocatedTasks = ArrayList<ScheduledTask>()
 
-    /**
-     * Create a new scheduler and reset static fields.
-     */
     init {
         isMuted = false
-        reports.clear()
     }
 
     /**
@@ -114,7 +110,7 @@ class Scheduler : BunyipsComponent() {
                 // Task count will account for tasks on subsystems that are not IdleTasks, and also subsystem tasks
                 val taskCount = (allocatedTasks.size - allocatedTasks.stream()
                     .filter { task -> task.taskToRun.dependency.isPresent }.count()
-                        + subsystems.size - subsystems.stream().filter { obj: BunyipsSubsystem -> obj.isIdle }.count())
+                        + subsystems.size - subsystems.stream().filter { s -> s.isIdle }.count())
                 it.telemetry.add("\nManaging % task% (%s, %c) on % subsystem%",
                     taskCount,
                     if (taskCount == 1L) "" else "s",
@@ -124,12 +120,23 @@ class Scheduler : BunyipsComponent() {
                     subsystems.size,
                     if (subsystems.size == 1) "" else "s"
                 )
-                for (item in reports) {
-                    if (item.contains("IdleTask")) continue
-                    it.telemetry.add(item)
+                for (subsystem in subsystems) {
+                    val task = subsystem.currentTask
+                    if (task == null || task is IdleTask) continue
+                    var report = Text.format(
+                        "<small><b>%</b>% <font color='gray'>|</font> <b>%</b> -> %",
+                        subsystem.javaClass.simpleName,
+                        if (subsystem.isRunningDefaultTask) " (d.)" else "",
+                        task.toString().replace("${subsystem.javaClass.simpleName}:", ""),
+                        task.deltaTime to Seconds round 1
+                    )
+                    val timeoutSec = task.timeout to Seconds
+                    report += if (timeoutSec == 0.0) "s" else "/" + timeoutSec + "s"
+                    report += "</small>"
+                    it.telemetry.add(report)
                 }
                 for (task in allocatedTasks) {
-                    if (task.taskToRun.dependency.isPresent // Whether the task is never run from the Scheduler (and task reports will come from the reports array)
+                    if (task.taskToRun.dependency.isPresent // Whether the task is never run from the Scheduler (and task reports were handled above)
                         || !task.taskToRun.isRunning // Whether this task is actually running
                         || task.muted // Whether the task has declared itself as muted
                     ) {
@@ -143,7 +150,6 @@ class Scheduler : BunyipsComponent() {
                     )
                 }
             }
-            reports.clear()
         }
 
         for (task in allocatedTasks) {
@@ -708,37 +714,6 @@ class Scheduler : BunyipsComponent() {
     }
 
     companion object {
-        private val reports = ArrayList<String>()
         private var isMuted = false
-
-        /**
-         * Used internally by subsystems and tasks to report their running status statically.
-         * This method is not intended for use by the user.
-         *
-         * @param className     The class name of the subsystem or context.
-         * @param isDefaultTask Whether this task is a default task.
-         * @param taskName      The name of the task.
-         * @param deltaTimeSec  The time this task has been running in seconds
-         * @param timeoutSec    The time this task is allowed to run in seconds, 0.0 if indefinite
-         */
-        @JvmStatic
-        fun addTaskReport(
-            className: String,
-            isDefaultTask: Boolean,
-            taskName: String,
-            deltaTimeSec: Double,
-            timeoutSec: Double
-        ) {
-            if (isMuted) return
-            var report = Text.format(
-                "<small><b>%</b>% <font color='gray'>|</font> <b>%</b> -> %",
-                className,
-                if (isDefaultTask) " (d.)" else "",
-                taskName.replace("$className:", ""),
-                deltaTimeSec
-            )
-            report += if (timeoutSec == 0.0) "s" else "/" + timeoutSec + "s"
-            reports.add("$report</small>")
-        }
     }
 }
