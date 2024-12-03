@@ -515,7 +515,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     private String getTaskTimeout(Task task) {
         // Try to extract the timeout of the task, as Task does not have a timeout
-        Measure<Time> timeout = task.getTimeout();
+        Measure<Time> timeout = task.timeout;
         // INFINITE_TASK is defined as Seconds.zero()
         return timeout.magnitude() != 0.0
                 ? Mathf.round(timeout.in(Seconds), 1) + "s"
@@ -529,7 +529,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         double timeLeft = tasks.stream().mapToDouble(task -> {
             // We cannot extract the duration of a task that is not a Task, we will return zero instead of the assumption
             // as they are completely out of our control and we don't even know how they function
-            Measure<Time> timeout = task.getTimeout();
+            Measure<Time> timeout = task.timeout;
             // We have to approximate and guess as we cannot determine the duration of a task that is infinite
             if (timeout.magnitude() == 0.0) {
                 // We also adjust the approx flag so we can notify the user that the time is an estimate with a tilde

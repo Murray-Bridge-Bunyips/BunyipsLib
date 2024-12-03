@@ -46,7 +46,7 @@ public class ActionTask extends Task {
         }
         named(parentAction instanceof Task ? parentAction.toString() : parentAction.getClass().getSimpleName());
         if (parentAction instanceof Task task) {
-            timeout(task.getTimeout());
+            timeout = task.timeout;
             named(task.toString());
             if (task.getDependency().isPresent())
                 on(task.getDependency().get());

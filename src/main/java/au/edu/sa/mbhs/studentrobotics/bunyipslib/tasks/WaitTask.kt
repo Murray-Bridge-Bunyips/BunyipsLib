@@ -12,7 +12,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
  */
-class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = false) : Task(time) {
+class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = false) : Task() {
     constructor(time: Measure<Time>) : this(time, false)
 
     // Special utility constructors for this specific application
@@ -20,6 +20,7 @@ class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = false) 
     constructor(magnitude: Double, unit: Time, showTelemetry: Boolean) : this(unit.of(magnitude), showTelemetry)
 
     init {
+        timeout = time
         named("Wait")
     }
 

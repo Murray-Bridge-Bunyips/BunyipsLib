@@ -45,12 +45,12 @@ public class DeferredTask extends Task {
     protected void init() {
         builtTask = lazyTask.get();
         String name = builtTask.toString();
-        Measure<Time> timeout = builtTask.getTimeout();
-        Dbg.logd(getClass(), "built -> % (t=%)", name, timeout.magnitude() <= 0 ? "inf" : timeout.in(Seconds) + "s");
+        Measure<Time> t = builtTask.timeout;
+        Dbg.logd(getClass(), "built -> % (t=%)", name, t.magnitude() <= 0 ? "inf" : t.in(Seconds) + "s");
         if (UNCONSTRUCTED_NAME.equals(toString()))
             super.named(name);
-        if (getTimeout().equals(INFINITE_TIMEOUT))
-            setTimeout(timeout);
+        if (timeout.equals(INFINITE_TIMEOUT))
+            timeout = t;
         builtTask.getDependency().ifPresent((dep) ->
                 dep.setHighPriorityCurrentTask(builtTask));
     }

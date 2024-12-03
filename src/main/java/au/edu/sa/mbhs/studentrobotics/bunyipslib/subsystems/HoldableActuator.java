@@ -642,13 +642,14 @@ public class HoldableActuator extends BunyipsSubsystem {
         }
 
         private Task homingOperation(int direction) {
-            return new Task(homingTimeout) {
+            return new Task() {
                 private final TouchSensor targetSwitch;
                 private ElapsedTime overcurrentTimer;
                 private double previousAmpAlert;
                 private double zeroHits;
 
                 {
+                    timeout = homingTimeout;
                     on(HoldableActuator.this, true);
                     homingDirection = direction;
                     named(name + (homingDirection == -1 ? ":Return To Home" : ":Travel To Ceiling"));

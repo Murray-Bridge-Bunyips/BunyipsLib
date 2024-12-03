@@ -54,7 +54,7 @@ public class ConditionalTask extends Task {
         falseTask.reset();
         task = conditionOnInit.getAsBoolean() ? trueTask : falseTask;
         task.run();
-        timeout(task.getTimeout());
+        timeout = task.timeout;
     }
 
     @Override

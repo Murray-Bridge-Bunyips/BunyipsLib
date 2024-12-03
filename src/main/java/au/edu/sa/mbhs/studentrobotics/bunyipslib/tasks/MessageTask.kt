@@ -14,10 +14,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry.Item
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-class MessageTask(time: Measure<Time>, private val message: String) : Task(time) {
+class MessageTask(time: Measure<Time>, private val message: String) : Task() {
     private var item: Item? = null
 
     init {
+        timeout = time
         named("Message")
     }
 

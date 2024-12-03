@@ -36,21 +36,13 @@ import java.util.function.BooleanSupplier
  * As of 6.0.0, the Task system now implements the [Action] interface for seamless compatibility with RoadRunner v1.0.0.
  * The [ActionTask] may be used to convert a pure [Action] into a task, however, writing a task directly using a
  * Task is encouraged for more control and flexibility, due to there being no downsides to doing so and the exposure
- * of the same accessors.
+ * of the same accessors. Additional changes have also been made to allow for simpler construction of tasks, and
+ * the introduction of a new [DynamicTask] class to allow for more flexible task construction.
  *
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-abstract class Task(
-    /**
-     * Maximum timeout of the task. If set to 0 magnitude (or a timeout-less constructor) this will serve as an indefinite task, and
-     * will only finish when [isTaskFinished] returns true, or this task is manually interrupted via [finish].
-     *
-     * It is encouraged unless it is for systems that require infinite tasks, that you add timeouts to ensure your tasks
-     * don't get stuck, making tasks have a focus on timeout conditions.
-     */
-    var timeout: Measure<Time>
-) : BunyipsComponent(), Runnable, Action {
+abstract class Task : BunyipsComponent(), Runnable, Action {
     private var name = javaClass.simpleName
     private var _dependency: BunyipsSubsystem? = null
     private var userFinished = false
@@ -59,9 +51,16 @@ abstract class Task(
     private var startTime = 0L
 
     /**
-     * A task that does not have an integrated timeout, and will rely on manual intervention and [isTaskFinished].
+     * Maximum timeout of the task. If set to 0 magnitude (or a timeout-less constructor) this will serve as an indefinite task, and
+     * will only finish when [isTaskFinished] returns true, or this task is manually interrupted via [finish]/[finishNow].
+     *
+     * By default, tasks have an infinite timeout, and will only finish on user conditions.
+     *
+     * It is encouraged unless it is for systems that require infinite tasks, that you add timeouts to ensure your tasks
+     * don't get stuck, as sometimes tolerances can be exceeded and tasks can stall indefinitely.
      */
-    constructor() : this(INFINITE_TIMEOUT)
+    @JvmField
+    var timeout: Measure<Time> = INFINITE_TIMEOUT
 
     /**
      * Whether this task should override other tasks in the queue if they conflict with this task. Will only
@@ -90,7 +89,7 @@ abstract class Task(
         get() {
             if (startTime == 0L)
                 return Nanoseconds.of(0.0)
-            return Nanoseconds.of((System.nanoTime() - startTime).toDouble())
+            return Nanoseconds.of(System.nanoTime().toDouble() - startTime)
         }
 
     /**

@@ -23,7 +23,7 @@ public class DeadlineTaskGroup extends TaskGroup {
      */
     public DeadlineTaskGroup(@NonNull Task... tasks) {
         // Timeout is defined by the very first task
-        timeout(tasks[0].getTimeout());
+        timeout = tasks[0].timeout;
         setTasks(Arrays.asList(tasks));
     }
 

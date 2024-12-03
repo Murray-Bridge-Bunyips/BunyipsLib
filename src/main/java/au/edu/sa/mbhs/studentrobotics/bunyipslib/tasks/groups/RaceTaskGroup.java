@@ -25,7 +25,7 @@ public class RaceTaskGroup extends TaskGroup {
     public RaceTaskGroup(@NonNull Task... tasks) {
         // Try to extract the lowest timeout to be the timeout of this task group.
         // This works for a race where the first task to finish will finish the rest.
-        timeout(Seconds.of(Arrays.stream(tasks).mapToDouble(t -> t.getTimeout().in(Seconds)).min().orElse(0.0)));
+        timeout(Seconds.of(Arrays.stream(tasks).mapToDouble(t -> t.timeout.in(Seconds)).min().orElse(0.0)));
         setTasks(Arrays.asList(tasks));
     }
 
