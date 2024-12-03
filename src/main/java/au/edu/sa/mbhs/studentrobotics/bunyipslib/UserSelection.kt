@@ -97,14 +97,10 @@ class UserSelection<T : Any>(
 
         val buttons: HashMap<T, Controls> = Controls.mapArgs(opmodes)
 
-        // Disable auto clear if it is enabled, we might accidentally clear out static telemetry
-        require(opMode).telemetry.isAutoClear = false
-
         val attentionBorders = arrayOf(
             "<b>---------<font color='red'>!!!</font>--------</b>",
             "<b><font color='red'>---------</font><font color='white'>!!!</font><font color='red'>--------</font></b>"
         )
-
         val driverStation =
             Text.builder("<font color='yellow'><b>ACTION REQUIRED</b></font>: INIT OPMODE WITH GAMEPAD 1\n")
         val dashboard = Text.builder("<font color='gray'>|</font> ")
@@ -124,10 +120,6 @@ class UserSelection<T : Any>(
         val mainText = require(opMode).telemetry.addDS(driverStation)
         val bottomBorder = require(opMode).telemetry.addDS(attentionBorders[0])
         require(opMode).telemetry.addDashboard("USR", dashboard)
-
-        // Must manually call telemetry push as the BOM may not be handling them
-        // This will not clear out any other telemetry as auto clear is disabled
-        require(opMode).telemetry.update()
 
         var flash = false
         while (result == null && require(opMode).opModeInInit() && !Thread.currentThread().isInterrupted) {
@@ -176,9 +168,8 @@ class UserSelection<T : Any>(
         //This is code from lucas bubner. He is sad cause hes not important and dosent recieve capital letters. He is lonely except for LACHLAN PAUL  his coding buddy. Now i need to go but always keep this message in mind!!!
         // - Sorayya, hijacker of laptops
 
-        // Clean up telemetry and reset auto clear
+        // Clean up telemetry
         require(opMode).telemetry.remove(topBorder, mainText, bottomBorder)
-        require(opMode).telemetry.isAutoClear = true
 
         Exceptions.runUserMethod(opMode) { callback.accept(result) }
     }
