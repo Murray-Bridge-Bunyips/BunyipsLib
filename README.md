@@ -17,9 +17,9 @@ processing, subsystems and tasks, and an expansible ecosystem focused on multi-b
 
 <br>
 <div align="center">
-    <img src="https://github.com/user-attachments/assets/75408bde-ccba-408d-a4f9-3969af3b9ec5">
+    <img src="https://github.com/user-attachments/assets/ce11f5f2-b9b4-437f-a07f-f3b8d3b898b1">
     <br>
-    Two <b>BunyipsLib-powered</b> robots scoring in a <i>CENTERSTAGE (2023-2024 season)</i> autonomous.
+    An INTO THE DEEP <b>67 pts AUTO</b> by FTC 15215, running <b>BunyipsLib v6.0.0</b>. See the <a href="https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/blob/a7861c863a5b31bfa8c0a04e1120aa371d452a3a/TeamCode/Proto/src/main/java/au/edu/sa/mbhs/studentrobotics/ftc15215/proto/autonomous/QuadBasketPlacer.kt">OpMode</a> (~100 lines, Kotlin).
 </div>
 <br>
 
@@ -31,7 +31,8 @@ the latest and greatest features from the FTC SDK and other libraries.
 > BunyipsLib is in active and continually experimental development, expect bugs and to keep up to
 > date!
 
-![BunyipsLib](https://github.com/user-attachments/assets/c9e3795e-87f4-4952-86fd-1c51b76731f5)
+![BunyipsLib](https://github.com/user-attachments/assets/b1a843bb-cc6e-4528-ad48-d49ca1c88155)
+
 
 BunyipsLib is a developer-focused framework, directed at components that are well-documented and able to be
 used as learning resources.
