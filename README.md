@@ -19,7 +19,7 @@ processing, subsystems and tasks, and an expansible ecosystem focused on multi-b
 <div align="center">
     <img src="https://github.com/user-attachments/assets/ce11f5f2-b9b4-437f-a07f-f3b8d3b898b1">
     <br>
-    An INTO THE DEEP <b>67 pts AUTO</b> by FTC 15215, running <b>BunyipsLib v6.0.0</b>. See the <a href="https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/blob/a7861c863a5b31bfa8c0a04e1120aa371d452a3a/TeamCode/Proto/src/main/java/au/edu/sa/mbhs/studentrobotics/ftc15215/proto/autonomous/QuadBasketPlacer.kt">OpMode</a> (~100 lines, Kotlin).
+    An INTO THE DEEP <b>67 points AUTO</b> by FTC 15215 (<a href="https://ftc-events.firstinspires.org/2024/AUCMP/qualifications/41">match</a>), running <b>BunyipsLib v6.0.0</b>.<br>See the <a href="https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/blob/a7861c863a5b31bfa8c0a04e1120aa371d452a3a/TeamCode/Proto/src/main/java/au/edu/sa/mbhs/studentrobotics/ftc15215/proto/autonomous/QuadBasketPlacer.kt">OpMode</a> (~100 lines, Kotlin).
 </div>
 <br>
 
