@@ -36,14 +36,14 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     private HashSet<BunyipsSubsystem> managedSubsystems = new HashSet<>();
 
     /**
-     * Create a new controller button trigger creator.
+     * Create a new controller trigger creator.
      * <p>
      * For Kotlin users, calling this method can be done with the notation {@code `when`}
      * (see <a href="https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin">here</a>),
      * or by calling the alias {@code on}.
      *
      * @param user The Controller instance to use.
-     * @return The controller button trigger creator.
+     * @return The controller trigger creator.
      */
     @NonNull
     @SuppressLint("NoHardKeywords")
@@ -52,10 +52,10 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Create a new controller button trigger creator.
+     * Create a new controller trigger creator.
      *
      * @param user The Controller instance to use.
-     * @return The controller button trigger creator.
+     * @return The controller trigger creator.
      */
     @NonNull
     public Scheduler.ControllerTriggerCreator on(@NonNull Controller user) {
@@ -63,9 +63,9 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Create a new controller button trigger creator for the driver.
+     * Create a new controller trigger creator for the driver (gamepad 1).
      *
-     * @return The controller button trigger creator.
+     * @return The controller trigger creator.
      */
     @NonNull
     public Scheduler.ControllerTriggerCreator driver() {
@@ -73,13 +73,33 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Create a new controller button trigger creator for the operator.
+     * Create a new controller trigger creator for gamepad 1 (driver).
      *
-     * @return The controller button trigger creator.
+     * @return The controller trigger creator.
+     */
+    @NonNull
+    public Scheduler.ControllerTriggerCreator gp1() {
+        return scheduler.gp1();
+    }
+
+    /**
+     * Create a new controller trigger creator for the operator (gamepad 2).
+     *
+     * @return The controller trigger creator.
      */
     @NonNull
     public Scheduler.ControllerTriggerCreator operator() {
         return scheduler.operator();
+    }
+
+    /**
+     * Create a new controller trigger creator for gamepad 2 (operator).
+     *
+     * @return The controller trigger creator.
+     */
+    @NonNull
+    public Scheduler.ControllerTriggerCreator gp2() {
+        return scheduler.gp2();
     }
 
     /**
@@ -225,7 +245,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     protected abstract void assignCommands();
 
     /**
-     * Override this method to run any additional activeLoop() code before the Scheduler runs.
+     * Override this method to run any additional {@code activeLoop()} code before the Scheduler runs.
      */
     protected void periodic() {
     }

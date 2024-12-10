@@ -192,14 +192,14 @@ class Scheduler : BunyipsComponent() {
     }
 
     /**
-     * Create a new controller button trigger creator.
+     * Create a new controller trigger creator.
      *
      * For Kotlin users, calling this method can be done with the notation `` `when` ``
      * (see [here](https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin)),
      * or by calling the alias `on`.
      *
      * @param user The Controller instance to use.
-     * @return The controller button trigger creator.
+     * @return The controller trigger creator.
      */
     @SuppressLint("NoHardKeywords")
     fun `when`(user: Controller): ControllerTriggerCreator {
@@ -207,7 +207,7 @@ class Scheduler : BunyipsComponent() {
     }
 
     /**
-     * Create a new controller button trigger creator.
+     * Create a new controller trigger creator.
      *
      * @param user The Controller instance to use.
      * @return The controller button trigger creator.
@@ -217,22 +217,36 @@ class Scheduler : BunyipsComponent() {
     }
 
     /**
-     * Create a new controller button trigger creator for the driver.
+     * Create a new controller trigger creator for the driver (gamepad 1).
      *
-     * @return The controller button trigger creator.
+     * @return The controller trigger creator.
      */
     fun driver(): ControllerTriggerCreator {
         return ControllerTriggerCreator(require(opMode).gamepad1)
     }
 
     /**
-     * Create a new controller button trigger creator for the operator.
+     * Create a new controller trigger creator for gamepad 1 (driver).
      *
-     * @return The controller button trigger creator.
+     * @return The controller trigger creator.
+     */
+    fun gp1() = driver()
+
+    /**
+     * Create a new controller trigger creator for the operator (gamepad 2).
+     *
+     * @return The controller trigger creator.
      */
     fun operator(): ControllerTriggerCreator {
         return ControllerTriggerCreator(require(opMode).gamepad2)
     }
+
+    /**
+     * Create a new controller trigger creator for gamepad 2 (operator).
+     *
+     * @return The controller trigger creator.
+     */
+    fun gp2() = operator()
 
     /**
      * Run a task when a condition is met.
