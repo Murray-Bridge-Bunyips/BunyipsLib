@@ -29,7 +29,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  * @author Lucas Bubner, 2024
  * @since 5.1.0
  */
-public class ProfiledServo extends ServoImpl implements PwmControl {
+public class ServoEx extends ServoImpl implements PwmControl {
     @Nullable
     private TrapezoidProfile.Constraints constraints;
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
@@ -41,11 +41,11 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
     private long lastUpdate;
 
     /**
-     * Wrap a Servo to use with the ProfiledServo class.
+     * Wrap a Servo to use with the ServoEx class.
      *
      * @param servo the Servo from hardwareMap to use.
      */
-    public ProfiledServo(@NonNull Servo servo) {
+    public ServoEx(@NonNull Servo servo) {
         super(servo.getController(), servo.getPortNumber(), servo.getDirection());
     }
 
@@ -90,7 +90,7 @@ public class ProfiledServo extends ServoImpl implements PwmControl {
      * range. If PWM power is enabled for the servo, the servo will attempt to move to
      * the indicated position.
      * <p>
-     * <b>Important ProfiledServo Note:</b> Since this class requires continuous update with a motion profile,
+     * <b>Important ServoEx Note:</b> Since this class requires continuous update with a motion profile,
      * it is important that this method is being called periodically if one is being used; this is similar
      * to how {@code setPower} has to be called periodically in {@link Motor} to update system controllers.
      *

@@ -3,7 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.IMUEx
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.InvertibleTouchSensor
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ProfiledServo
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ServoEx
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.SimpleRotator
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import com.acmerobotics.roadrunner.ftc.LazyImu
@@ -123,10 +123,10 @@ abstract class RobotConfig {
             val imu = hardwareMap.get(IMU::class.java, name)
             return IMUEx(imu) as T
         }
-        // ProfiledServo is the equivalent of Motor in the sense that it is a full extension and can be fetched too
-        if (ProfiledServo::class.java.isAssignableFrom(device)) {
+        // ServoEx is the equivalent of Motor in the sense that it is a full extension and can be fetched too
+        if (ServoEx::class.java.isAssignableFrom(device)) {
             val servo = hardwareMap.get(Servo::class.java, name)
-            return ProfiledServo(servo) as T
+            return ServoEx(servo) as T
         }
         // SimpleRotator is a CRServo and DcMotorSimple drop-in replacement
         if (SimpleRotator::class.java.isAssignableFrom(device)) {
@@ -150,7 +150,7 @@ abstract class RobotConfig {
      * lifetime of the OpMode. These errors will also be reported to telemetry.
      *
      * @param name   name of device saved in the configuration file
-     * @param device the class of the item to configure, `Motor.class`, `ProfiledServo.class`, `RawEncoder.class`, etc.
+     * @param device the class of the item to configure, `Motor.class`, `ServoEx.class`, `RawEncoder.class`, etc.
      * @param onSuccess a Runnable to run if the device is successfully configured, useful for setting up motor configs
      *                  without having to check for null explicitly.
      */
