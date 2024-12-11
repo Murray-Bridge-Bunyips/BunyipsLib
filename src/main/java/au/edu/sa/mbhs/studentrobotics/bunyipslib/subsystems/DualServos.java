@@ -155,8 +155,8 @@ public class DualServos extends BunyipsSubsystem {
         left.setPosition(leftServoPosition);
         right.setPosition(rightServoPosition);
         opMode(o -> o.telemetry.add("%: Left->% Right->%", this,
-                leftServoPosition == leftOpen ? "<font color='green'>OPEN</font>" : "<font color='yellow'>CLOSE</font>",
-                rightServoPosition == rightOpen ? "<font color='green'>OPEN</font>" : "<font color='yellow'>CLOSE</font>"));
+                leftServoPosition == leftOpen ? "<font color='yellow'>OPEN</font>" : "<font color='green'>CLOSE</font>",
+                rightServoPosition == rightOpen ? "<font color='yellow'>OPEN</font>" : "<font color='green'>CLOSE</font>"));
     }
 
     /**
