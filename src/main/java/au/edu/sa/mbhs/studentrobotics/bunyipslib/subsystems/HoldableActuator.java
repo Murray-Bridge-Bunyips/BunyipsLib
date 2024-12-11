@@ -491,7 +491,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 }
                 newTarget = target + userPower * userSetpointControl.apply(dt);
                 motorPower = rtpPower * Math.signum(target - current);
-                opMode(o -> o.telemetry.add("%: % at % ticks, % error [%tps]", this, !motor.isBusy() ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, target - current, Math.round(encoder.getVelocity())));
+                opMode(o -> o.telemetry.add("%: % at % ticks [%tps], % error", this, !motor.isBusy() ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, Math.round(encoder.getVelocity()), Math.abs(target - current)));
                 break;
         }
 
