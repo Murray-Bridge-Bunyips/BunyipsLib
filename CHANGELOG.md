@@ -2,52 +2,128 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
-## v6.1.0 (2024-12-12)
-Various major bug fixes and API usability improvements.
+## v6.1.1 (2024-12-13)
 
-_SemVer note: BunyipsLib will now start to follow a partial SemVer pattern, breaking changes may occur in any version iteration, however, the significance of changes and features will determine how significant the version jump should be (as there are many underused features in BunyipsLib that are being rearranged but does change some small methods which technically constitutes as a major version)._
+PID systems refactoring and improvements.
 
 ### Breaking changes
+
+- `ProfiledPIDController` now extends `PIDController`, delegating a lot of its methods over to the `PIDFController`
+- Renamed `getPositionError()` to `getError()` on `PIDFController`
+- Renamed `getVelocityError()` to `getErrorDerivative()` on `PIDFController`
+- For consistency, the `setSetPoint` and `getSetPoint` methods that spanned `ProfiledPIDController` and `PIDFController`
+  are now simply `setSetpoint` and `getSetpoint`
+    - To differentiate the `double` setpoint from the TrapezoidalProfile setpoint, the `getSetPoint` method still exists
+      on `ProfiledPIDController`
+
+### Additions
+
+- `PIDFController` new methods and functionality
+    - `setClearIntegralOnNewSetpoint`, which will erase the integration accumulation whenever the setpoint is changed
+    - `setIntegrationZone`, also known as the IZone from WPILib, which sets a region around the error such that
+      integration is enabled
+    - `enableContinuousInput`, also from WPILib, which allows wrapping of PID outputs for continuous systems like angles
+    - See the BunyipsLib wiki (IO section) for more information
+- `PIDFController` now uses a low-pass filter to smooth derivative readings
+    - Comes with the `setDerivativeSmoothingGain` method, allowing you to set a low-pass gain (`0<g<1`)
+    - Designed to reduce noise and oscillation caused by too noisy of data to get a derivative that can be used
+      effectively
+    - Default value of 0.8 in place for all `PIDFController` instances - set to `Double.MIN_VALUE` to disable or
+      access/set the `DEFAULT_DERIVATIVE_LP_GAIN` field
+- New `PIDFController` `getTotalError()` method to accompany `getError()` and `getErrorDerivative()`
+
+### Non-breaking changes
+
+- New unit tests for the new refactored PID and features
+    - These tests are ported from WPILib
+    - Some tests, like ones that test derivatives have not been integrated as the controllers do not have constant
+      period
+- Various docs improvements and corrections
+- `PIDFController` now exposes the fields:
+    - `clearIOnNewSetpoint`
+    - `minIClamp`
+    - `maxIClamp`
+    - `iZone`
+    - `lowerClamp`
+    - and `upperClamp`
+- Various internal restructurings of `PIDFController`
+- `reset()` of `PIDFController` resets all errors now
+- The `Filter.LowPass` now exposes as a `public final` field the gain in use
+- Implementations of `Filter.LowPass` now have checks to stop reassignment on continuous set calls
+
+## v6.1.0 (2024-12-12)
+
+Various major bug fixes and API usability improvements.
+
+_SemVer note: BunyipsLib will now start to follow a partial SemVer pattern, breaking changes may occur in any version
+iteration, however, the significance of changes and features will determine how significant the version jump should be (
+as there are many underused features in BunyipsLib that are being rearranged but does change some small methods which
+technically constitutes as a major version)._
+
+### Breaking changes
+
 - The `Task` system has been altered to provide a richer API surface
-    - Some task implementations, such as `RunForTask`, `ContinuousTask`, `WaitUntilTask`, and `StartEndTask` have been removed
+    - Some task implementations, such as `RunForTask`, `ContinuousTask`, `WaitUntilTask`, and `StartEndTask` have been
+      removed
     - The `RunTask` has been renamed to the `Lambda`, and the `OnceTask` has been merged into `Lambda`
-    - The `ForeverTask` base has been removed, and instead all `Task` instances by default run forever (the requirement to override `isTaskFinished` and `periodic` is now optional)
+    - The `ForeverTask` base has been removed, and instead all `Task` instances by default run forever (the requirement
+      to override `isTaskFinished` and `periodic` is now optional)
     - The `DynamicTask` of old BunyipsLib was renamed to the `DeferredTask`
-    - Several task bases, such as `ActionTask`, `ConditionalTask`, `RepeatTask`, `SelectTask`, are now elements of the `bases` package
+    - Several task bases, such as `ActionTask`, `ConditionalTask`, `RepeatTask`, `SelectTask`, are now elements of the
+      `bases` package
     - To account for the missing classes, the new `DynamicTask` class is used
-        - This new class allows a builder-like composition of tasks, such as a ContinuousTask of old BunyipsLib now being implemented like: `Task.task().loop(() -> {})`.
-        - This allows permutations of classes, such as ones found in `RunForTask` previously to be accomplished without limiting what was available
-        - For instance, a task that will wait until a boolean condition is complete can be accomplished via `Task.task().isFinished(() -> bool)`, and adding extra construction to this is a simple process
-    - This new approach also allows some tasks to not have to use a full instance extension, and can be accomplished with the simple builder pattern
+        - This new class allows a builder-like composition of tasks, such as a ContinuousTask of old BunyipsLib now
+          being implemented like: `Task.task().loop(() -> {})`.
+        - This allows permutations of classes, such as ones found in `RunForTask` previously to be accomplished without
+          limiting what was available
+        - For instance, a task that will wait until a boolean condition is complete can be accomplished via
+          `Task.task().isFinished(() -> bool)`, and adding extra construction to this is a simple process
+    - This new approach also allows some tasks to not have to use a full instance extension, and can be accomplished
+      with the simple builder pattern
     - Kotlin users are able to use a DSL pattern for pseudocode like construction of tasks
-    - For more advanced lambda-based tasks that also track state, a conventional Task extension may still need to be used, however, all methods are optional overrides which reduces code bloatedness
-- Additional changes were also made to methods such as `pollFinished` (now simply `poll`), and cleaning up constructors and methods to be more consistent
-    - The `withX` methods (`withName`, `withTimeout`, `onSubsystem` etc) were removed in favour of the simpler versions such as `named`, `timeout`, `on` as it was confused with the `with` method which composes into a group and these methods were inconsistently named/had too many overloads
+    - For more advanced lambda-based tasks that also track state, a conventional Task extension may still need to be
+      used, however, all methods are optional overrides which reduces code bloatedness
+- Additional changes were also made to methods such as `pollFinished` (now simply `poll`), and cleaning up constructors
+  and methods to be more consistent
+    - The `withX` methods (`withName`, `withTimeout`, `onSubsystem` etc) were removed in favour of the simpler versions
+      such as `named`, `timeout`, `on` as it was confused with the `with` method which composes into a group and these
+      methods were inconsistently named/had too many overloads
     - The timeout constructor has been removed and instead `timeout` can be accessed and set as a field on the task
-    - `hasDependency()` replaced with simply using the Optional instance from `getDependency().isPresent()` (note: dependency is a field for Kotlin)
+    - `hasDependency()` replaced with simply using the Optional instance from `getDependency().isPresent()` (note:
+      dependency is a field for Kotlin)
     - The ability to "mute" tasks from Scheduler can now only be done from the Scheduler
         - BunyipsSubsystem tasks also no longer use `Scheduler.addTaskReport`, which is a now removed method
 - `Exceptions.runUserMethod` has flipped arguments from (Runnable, OpMode) to (OpMode, Runnable)
 - `ProfiledServo` has been renamed to `ServoEx`
-- API surface of `MoveToContourTask` has been updated to provide alternative sources of error to calculate forward distance
-    - This allows PnP matrices, area, and other ContourData attributes rather than just pitch to be used for alignment, due to camera configurations
-    - A `Function<ContourData, Double>` is used to return the system's current error (target - current), where the X controller will try to converge these two values
-    - By default, a pitch of 0.0 is used, this can be changed to whatever you'd like using the `withForwardErrorSupplier` method (while removing `withPitchTarget`)
+- API surface of `MoveToContourTask` has been updated to provide alternative sources of error to calculate forward
+  distance
+    - This allows PnP matrices, area, and other ContourData attributes rather than just pitch to be used for alignment,
+      due to camera configurations
+    - A `Function<ContourData, Double>` is used to return the system's current error (target - current), where the X
+      controller will try to converge these two values
+    - By default, a pitch of 0.0 is used, this can be changed to whatever you'd like using the
+      `withForwardErrorSupplier` method (while removing `withPitchTarget`)
 - `IndexedTable` is no longer a BunyipsSubsystem and is instead a Runnable component
     - It does not make sense for an indexed table to be a subsystem so it has been demoted
 - The `BunyipsOpMode` `initTask` now only supports supersets of the `Action` interface, instead of ` Runnable`
-    - This is to prevent accidentally placing forever running tasks in the init-task where it should instead be an action, which is similar to how `onInitLoop()` functions to begin with.
-    - The functional pattern of init tasks can still be replicated via an `Action`, which is why that was used as opposed to a full `Task` (Task implements Action internally so no changes are needed for already task-based init actions)
+    - This is to prevent accidentally placing forever running tasks in the init-task where it should instead be an
+      action, which is similar to how `onInitLoop()` functions to begin with.
+    - The functional pattern of init tasks can still be replicated via an `Action`, which is why that was used as
+      opposed to a full `Task` (Task implements Action internally so no changes are needed for already task-based init
+      actions)
 - Subsystem infrastructure has been reworked for task interop
     - Names of subsystems are now indexed by default, such as HoldableActuator0, HoldableActuator1, etc.
     - This comes with the change that tasks now report the subsystem name on them as well, to assist in telemetry
 - Removal of the `NullSafety` util class
     - Null safety is now performed at the class level for component assertions
 - `Switch` primary constructor has been updated for consistency
-    - For all servo instances by default, 0 represents Closed, and 1 represents Open (applies to `DualServos` and now `Switch`)
-    - The constructor used to be (Servo, openPosition, closePosition), now it is (Servo, closePosition, openPosition) to match constructors with `DualServos`
+    - For all servo instances by default, 0 represents Closed, and 1 represents Open (applies to `DualServos` and now
+      `Switch`)
+    - The constructor used to be (Servo, openPosition, closePosition), now it is (Servo, closePosition, openPosition) to
+      match constructors with `DualServos`
     - Be sure to adjust any constructors of Switch to be correct
-- `TaskBuilder` for RoadRunner no longer takes in a parameter for calling subsystem on construction as it is handled at the task level
+- `TaskBuilder` for RoadRunner no longer takes in a parameter for calling subsystem on construction as it is handled at
+  the task level
 - `DualTelemetry` now uses `@JvmField` for several properties, including:
     - `opModeStatus`
     - `overrideStatus`
@@ -55,11 +131,17 @@ _SemVer note: BunyipsLib will now start to follow a partial SemVer pattern, brea
     - `dashboardCaptionValueAutoSeparator`
     - `logBracketColor`
     - `loopSpeedSlowAlert`
+
 ### Bug fixes
-- The `ActionTask` (used internally by the `TaskBuilder` when making RoadRunner trajectories) now properly checks for an infinite timeout task for grouping
-    - This would cause Mecanum Path Following trajectories in combination with TurnTasks (which are time-based) to end early, as the infinite timeout of the path trajectory was interpreted at face value rather than infinite
-    - Task timeouts are now properly set as if it were a normal task group (such that if one of them are infinite timeout, the whole group is)
-- `TaskBuilder` method `.fresh()` now internally calls `.endTrajectory()` to avoid odd unspliced behaviour using `fresh()` (upstream RR change)
+
+- The `ActionTask` (used internally by the `TaskBuilder` when making RoadRunner trajectories) now properly checks for an
+  infinite timeout task for grouping
+    - This would cause Mecanum Path Following trajectories in combination with TurnTasks (which are time-based) to end
+      early, as the infinite timeout of the path trajectory was interpreted at face value rather than infinite
+    - Task timeouts are now properly set as if it were a normal task group (such that if one of them are infinite
+      timeout, the whole group is)
+- `TaskBuilder` method `.fresh()` now internally calls `.endTrajectory()` to avoid odd unspliced behaviour using
+  `fresh()` (upstream RR change)
 - `IndexedTable` `set` method now clamps bounds instead of throwing an exception
 - FtcDashboard telemetry should now reflect Driver Station telemetry logs
     - Before, the logs were getting overwritten with each other but now they should persist as entries
@@ -70,28 +152,37 @@ _SemVer note: BunyipsLib will now start to follow a partial SemVer pattern, brea
 - Fix `ProfiledServo` instances with position caching not responding if the initial position was 0
     - This was caused by missing a field initialiser for the last known position, defaulting to 0
     - This bug caused servos to do nothing (no PWM power) until they were commanded away from their position and back
-- `HoldableActuator` subsystems now continuously resets the internal encoder instance while the limit switch is being pressed
+- `HoldableActuator` subsystems now continuously resets the internal encoder instance while the limit switch is being
+  pressed
     - This makes it so that holding down a limit switch does not leave some random steady-state error
 - Resolve concurrency issues with FtcDashboard packets in use with `DualTelemetry`
     - A single packet is now actually sent to the dashboard every update cycle, avoiding conflicts
 - Resolve a major recursion bug where using `addFirst` in `AutonomousBunyipsOpMode` would cause a stack overflow
-    - This was due to a boolean flag representing an acknowledged callback being set too late, causing the internal call to `addFirst` to infinitely delegate the queue
+    - This was due to a boolean flag representing an acknowledged callback being set too late, causing the internal call
+      to `addFirst` to infinitely delegate the queue
 - Resolve concurrency problems with `AutonomousBunyipsOpMode`
     - Related to the pre and post-queues as they were not using thread-safe instances
 - The `UserSelection` field that shows on FtcDashboard is no longer small
-- `CustomAccumulator` `register()` method no longer throws an exception due to unsupported operations on an immutable list
-- Telemetry is no longer cleared when using a `UserSelection` on init, such as using `setOpModes` with `AutonomousBunyipsOpMode`
+- `CustomAccumulator` `register()` method no longer throws an exception due to unsupported operations on an immutable
+  list
+- Telemetry is no longer cleared when using a `UserSelection` on init, such as using `setOpModes` with
+  `AutonomousBunyipsOpMode`
 - Patched `UserSelection` clearing telemetry on init when it shouldn't be
     - `UserSelection` now also no longer updates telemetry internally, as it should be handled by the main loop
 
 ### Non-breaking changes and additions
-- `build()` and `addTask()` of `TaskBuilder` can now optionally take in a parameter of `Reference<Pose2d>` to set the reference to the last spliced pose
-    - This is useful if using `.fresh()` is not plausible but the end (unmapped) pose is needed to be extracted to improve code maintainability (similar to `.end()` of RoadRunner v0.5)
-- BunyipsSubsystem now exposes static methods `disableAll()` and `enableAll()` to accompany `updateAll()` and the `Scheduler` methods of managing all subsystems
+
+- `build()` and `addTask()` of `TaskBuilder` can now optionally take in a parameter of `Reference<Pose2d>` to set the
+  reference to the last spliced pose
+    - This is useful if using `.fresh()` is not plausible but the end (unmapped) pose is needed to be extracted to
+      improve code maintainability (similar to `.end()` of RoadRunner v0.5)
+- BunyipsSubsystem now exposes static methods `disableAll()` and `enableAll()` to accompany `updateAll()` and the
+  `Scheduler` methods of managing all subsystems
 - Adding of `Measure` overloads for `Vel` and `Accel` util classes
 - Added units `FieldTilesPerSecond` and `FieldTilesPerSecondPerSecond` to accompany `FieldTiles`
 - Various linting and improper docs updated
-- HoldableActuator `withTolerance` method now has an overload that invokes `applyToMotor` to true by default with one argument
+- HoldableActuator `withTolerance` method now has an overload that invokes `applyToMotor` to true by default with one
+  argument
 - `SimpleRotator` now exposes the underlying motor object under the `actuator` field
 - Subtasks of task groups are now reported to Logcat on completion
 - Exceptions nullability are now performed at a stacktrace level following the removal of the `NullSafety` class
@@ -99,24 +190,30 @@ _SemVer note: BunyipsLib will now start to follow a partial SemVer pattern, brea
     - This is to avoid spamming up the telemetry on an error that has already been reported
     - A string match is used to determine if an exception has been thrown previously
 - Optimise what fields are exposed to FtcDashboard
-    - This removes some classes that always show up, such as DualTelemetry and Vision. These fields are auto-shown when they are used, and in the case of some are completely removed as they don't need to be dynamically tuneable.
+    - This removes some classes that always show up, such as DualTelemetry and Vision. These fields are auto-shown when
+      they are used, and in the case of some are completely removed as they don't need to be dynamically tuneable.
 - `AprilTagRelocalizingAccumulator` now has a `setKf` boolean configuration option
     - This allows the built-in Kalman filter to be disabled and raw readings to be respected as the new pose instantly
     - The Kalman filter is enabled by default
-- New `Periodic` class for scheduling generic callbacks at arbitrary intervals, allowing functions to be invoked periodically
+- New `Periodic` class for scheduling generic callbacks at arbitrary intervals, allowing functions to be invoked
+  periodically
 - `ColourTunerOpMode` now runs in initialisation too to provide the Camera Stream of the DS
     - Operation of this class is the same as before but actually starting the OpMode is not required
 - Visual changes to some telemetry and visual output
     - `HardwareTester` now has a special blink pattern when it is running
     - Localizer information from the Moveable instances is now smaller on the telemetry to fit in one line
     - CLOSE and OPEN positions for `Switch` and `DualServos` is now green for closed, yellow for open
-    - Telemetry for RobotConfig init updated to "Hardware initialised with X errors" to avoid confusion with the BOM init complete message
-- The `ActionTask` now tries to extract more information about an underlying `Action` to best convert it into a `Task`, auto-converting Parallel and Sequential Actions into Task Groups
-- Internal `BunyipsSubsystem` implementations now can use the `sout()` method to log to Logcat while including class name and subsystem name without having to splice manually
+    - Telemetry for RobotConfig init updated to "Hardware initialised with X errors" to avoid confusion with the BOM
+      init complete message
+- The `ActionTask` now tries to extract more information about an underlying `Action` to best convert it into a `Task`,
+  auto-converting Parallel and Sequential Actions into Task Groups
+- Internal `BunyipsSubsystem` implementations now can use the `sout()` method to log to Logcat while including class
+  name and subsystem name without having to splice manually
 - Default task finishing exception modified to include subsystem name
 - `isRunningDefaultTask` on `BunyipsSubsystem` to allow checking if the subsystem is running the default task
 - `Scheduler` now exposes aliases for `driver()` and `operator()`, which are `gp1()` and `gp2()`
-- New `Sound` class, which can be used to broadcast sound files on the Driver Station with ease (internally uses the SoundPlayer class)
+- New `Sound` class, which can be used to broadcast sound files on the Driver Station with ease (internally uses the
+  SoundPlayer class)
 - Several English grammar and spelling fixes in docs
 - `HoldableActuator` telemetry has been updated to be not so confusing when using user setpoint control
 - IdleTask is no longer checked by name but rather by class instance

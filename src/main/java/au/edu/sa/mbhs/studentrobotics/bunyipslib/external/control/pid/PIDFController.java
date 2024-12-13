@@ -33,6 +33,11 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Filter;
  */
 public class PIDFController implements SystemController {
     /**
+     * The default smoothing/low-pass gain for the derivative (kD) term.
+     */
+    public static double DEFAULT_DERIVATIVE_LP_GAIN = 0.8;
+
+    /**
      * Proportional gain.
      */
     public double kP;
@@ -87,7 +92,7 @@ public class PIDFController implements SystemController {
     private double setPoint;
     private double currentPv;
 
-    private Filter.LowPass derivativeFilter = new Filter.LowPass(0.8);
+    private Filter.LowPass derivativeFilter = new Filter.LowPass(DEFAULT_DERIVATIVE_LP_GAIN);
 
     private double errorP;
     private double errorI;
@@ -160,6 +165,7 @@ public class PIDFController implements SystemController {
      *
      * @param clearIOnNewSetpoint Whether to clear the integral term.
      * @return this
+     * @since 6.1.1
      */
     @NonNull
     public PIDFController setClearIntegralOnNewSetpoint(boolean clearIOnNewSetpoint) {
@@ -195,6 +201,7 @@ public class PIDFController implements SystemController {
      *
      * @param iZone the zone where the integral term is active, where if the error is within this zone, the integral term is active
      * @return this
+     * @since 6.1.1
      */
     public PIDFController setIntegrationZone(double iZone) {
         this.iZone = iZone;
@@ -210,6 +217,7 @@ public class PIDFController implements SystemController {
      * @param minInput the minimum input value
      * @param maxInput the maximum input value
      * @return this
+     * @since 6.1.1
      */
     public PIDFController enableContinuousInput(double minInput, double maxInput) {
         continuousInput = true;
@@ -222,6 +230,7 @@ public class PIDFController implements SystemController {
      * Disables continuous input.
      *
      * @return this
+     * @since 6.1.1
      */
     public PIDFController disableContinuousInput() {
         continuousInput = false;
@@ -230,6 +239,8 @@ public class PIDFController implements SystemController {
 
     /**
      * Whether the input is continuous.
+     *
+     * @since 6.1.1
      */
     public boolean isContinuousInputEnabled() {
         return continuousInput;
@@ -239,6 +250,7 @@ public class PIDFController implements SystemController {
      * Get the derivative smoothing coefficient.
      *
      * @return the gain for the low pass filter
+     * @since 6.1.1
      */
     public double getDerivativeSmoothingGain() {
         return derivativeFilter.gain;
@@ -248,8 +260,10 @@ public class PIDFController implements SystemController {
      * Set the derivative smoothing coefficient.
      *
      * @param lowPassGain the gain for the low pass filter, {@code 0 < lowPassGain < 1},
-     *                    defaults to 0.8 for some smoothing. To disable, pass a value of {@link Double#MIN_VALUE}.
+     *                    defaults to {@link #DEFAULT_DERIVATIVE_LP_GAIN}.
+     *                    To disable, pass a value of {@link Double#MIN_VALUE}, or set the default to it.
      * @return this
+     * @since 6.1.1
      */
     public PIDFController setDerivativeSmoothingGain(double lowPassGain) {
         if (lowPassGain == derivativeFilter.gain)
