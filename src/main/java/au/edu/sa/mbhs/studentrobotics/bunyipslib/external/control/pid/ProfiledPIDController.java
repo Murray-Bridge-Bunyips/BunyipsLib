@@ -9,9 +9,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid;
 
 import androidx.annotation.NonNull;
 
-import java.util.Optional;
-
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.TrapezoidProfile;
 
 /**
@@ -20,116 +17,23 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.TrapezoidProfi
  *
  * @since 3.5.0
  */
-public class ProfiledPIDController implements SystemController {
-    /**
-     * The underlying PID controller used for ProfiledPID.
-     */
-    public final PIDController controller;
+public class ProfiledPIDController extends PIDController {
     private TrapezoidProfile.State goal = new TrapezoidProfile.State();
     private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
     private TrapezoidProfile.Constraints constraints;
 
     /**
-     * Allocates a ProfiledPIDController with the given constants for Kp, Ki, and
-     * Kd.
+     * Allocates a ProfiledPIDController with the given constants for kP, kI, and kD.
      *
-     * @param Kp          The proportional coefficient.
-     * @param Ki          The integral coefficient.
-     * @param Kd          The derivative coefficient.
+     * @param kP          The proportional coefficient.
+     * @param kI          The integral coefficient.
+     * @param kD          The derivative coefficient.
      * @param constraints Velocity and acceleration constraints for goal.
      */
-    public ProfiledPIDController(double Kp, double Ki, double Kd,
+    public ProfiledPIDController(double kP, double kI, double kD,
                                  @NonNull TrapezoidProfile.Constraints constraints) {
-        controller = new PIDController(Kp, Ki, Kd);
+        super(kP, kI, kD);
         this.constraints = constraints;
-    }
-
-    /**
-     * Sets the PID Controller gain parameters.
-     *
-     * <p>Sets the proportional, integral, and differential coefficients.
-     *
-     * @param Kp Proportional coefficient
-     * @param Ki Integral coefficient
-     * @param Kd Differential coefficient
-     * @return this
-     */
-    @NonNull
-    public ProfiledPIDController setPID(double Kp, double Ki, double Kd) {
-        controller.setPID(Kp, Ki, Kd);
-        return this;
-    }
-
-    /**
-     * Gets the proportional coefficient.
-     *
-     * @return proportional coefficient
-     */
-    public double getP() {
-        return controller.getP();
-    }
-
-    /**
-     * Sets the proportional coefficient of the PID controller gain.
-     *
-     * @param Kp proportional coefficient
-     * @return this
-     */
-    @NonNull
-    public ProfiledPIDController setP(double Kp) {
-        controller.setP(Kp);
-        return this;
-    }
-
-    /**
-     * Gets the integral coefficient.
-     *
-     * @return integral coefficient
-     */
-    public double getI() {
-        return controller.getI();
-    }
-
-    /**
-     * Sets the integral coefficient of the PID controller gain.
-     *
-     * @param Ki integral coefficient
-     * @return this
-     */
-    @NonNull
-    public ProfiledPIDController setI(double Ki) {
-        controller.setI(Ki);
-        return this;
-    }
-
-    /**
-     * Gets the differential coefficient.
-     *
-     * @return differential coefficient
-     */
-    public double getD() {
-        return controller.getD();
-    }
-
-    /**
-     * Sets the differential coefficient of the PID controller gain.
-     *
-     * @param Kd differential coefficient
-     * @return this
-     */
-    @NonNull
-    public ProfiledPIDController setD(double Kd) {
-        controller.setD(Kd);
-        return this;
-    }
-
-    /**
-     * Gets the period of this controller.
-     *
-     * @return The period of the controller.
-     */
-    public double getPeriod() {
-        return controller.getPeriod();
     }
 
     /**
@@ -193,19 +97,8 @@ public class ProfiledPIDController implements SystemController {
      * @return The current setpoint.
      */
     @NonNull
-    public TrapezoidProfile.State getSetpoint() {
+    public TrapezoidProfile.State getSetPoint() {
         return setpoint;
-    }
-
-    /**
-     * Returns true if the error is within the tolerance of the error.
-     *
-     * <p>This will return false until at least one input value has been computed.
-     *
-     * @return Whether the error is within the tolerance.
-     */
-    public boolean atSetpoint() {
-        return controller.atSetPoint();
     }
 
     /**
@@ -221,44 +114,17 @@ public class ProfiledPIDController implements SystemController {
     }
 
     /**
-     * Sets the error which is considered tolerable for use with {@link #atSetpoint()}.
-     *
-     * @param positionTolerance Position error which is tolerable.
-     * @param velocityTolerance Velocity error which is tolerable.
-     * @return this
-     */
-    @NonNull
-    public ProfiledPIDController setTolerance(double positionTolerance, double velocityTolerance) {
-        controller.setTolerance(positionTolerance, velocityTolerance);
-        return this;
-    }
-
-    /**
-     * Returns the difference between the setpoint and the measurement.
-     *
-     * @return The error.
-     */
-    public double getPositionError() {
-        return controller.getPositionError();
-    }
-
-    /**
-     * Returns the change in error per second.
-     */
-    public double getVelocityError() {
-        return controller.getVelocityError();
-    }
-
-    /**
      * Returns the next output of the PID controller.
      *
      * @param measurement The current measurement of the process variable.
      * @return The next output of the PID controller.
      */
+    @Override
     public double calculate(double measurement) {
         TrapezoidProfile profile = new TrapezoidProfile(constraints, goal, setpoint);
         setpoint = profile.calculate(getPeriod());
-        return controller.calculate(measurement, setpoint.position);
+        setSetpoint(setpoint.position);
+        return super.calculate(measurement);
     }
 
     /**
@@ -301,14 +167,6 @@ public class ProfiledPIDController implements SystemController {
     }
 
     /**
-     * Reset the previous error, the integral term, and disable the controller.
-     */
-    @Override
-    public void reset() {
-        controller.reset();
-    }
-
-    /**
      * Reset the previous error and the integral term.
      *
      * @param measurement The current measured State of the system.
@@ -316,7 +174,7 @@ public class ProfiledPIDController implements SystemController {
      */
     @NonNull
     public ProfiledPIDController reset(@NonNull TrapezoidProfile.State measurement) {
-        controller.reset();
+        reset();
         setpoint = measurement;
         return this;
     }
@@ -345,23 +203,5 @@ public class ProfiledPIDController implements SystemController {
     public ProfiledPIDController reset(double measuredPosition) {
         reset(measuredPosition, 0.0);
         return this;
-    }
-
-    @NonNull
-    @Override
-    public double[] getCoefficients() {
-        return new double[]{getP(), getI(), getD()};
-    }
-
-    @Override
-    public void setCoefficients(@NonNull double[] coeffs) {
-        controller.setCoefficients(coeffs);
-    }
-
-    @NonNull
-    @Override
-    public Optional<PIDFController> pidf() {
-        // Note: The controller as returned here will be limited in trapezoidal limitation
-        return Optional.of(controller);
     }
 }

@@ -7,15 +7,20 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import java.util.Optional;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.CompositeController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Filter;
 
 /**
  * This is a <a href="https://en.wikipedia.org/wiki/PID_controller">PID controller</a> for your robot.
- * Internally, it performs all the calculations for you.
+ * Internally, it performs all the calculations for you. This controller also includes a feedforward, {@code kF}, which
+ * is multiplied by the setpoint. Additional features such as output clamping, integral clamping, integral zone,
+ * continuous input, derivative smoothening, and auto-integral clearing are also included.
+ * <p>
  * You need to tune your values to the appropriate amounts in order to properly utilise these calculations.
  * <p>
  * The equation we will use is:
- * {@code u(t) = kP * e(t) + kI * int(0,t)[e(t')dt'] + kD * e'(t) + kF}
+ * {@code u(t) = kP * e(t) + kI * int(0,t)[e(t')dt'] + kD * e'(t) + kF * setPoint}
  * where {@code e(t) = r(t) - y(t)} and {@code r(t)} is the setpoint and {@code y(t)} is the
  * measured value. If we consider {@code e(t)} the positional error, then
  * {@code int(0,t)[e(t')dt']} is the total error and {@code e'(t)} is the velocity error.
@@ -40,27 +45,51 @@ public class PIDFController implements SystemController {
      * Feedforward gain.
      */
     public double kF;
+    /**
+     * Whether to clear the integral term when a new setpoint is set.
+     */
+    public boolean clearIOnNewSetpoint;
+    /**
+     * The minimum applied value for the integral term.
+     */
+    public double minIClamp;
+    /**
+     * The maximum applied value for the integral term.
+     */
+    public double maxIClamp;
+    /**
+     * The zone around the error where the integral term is active.
+     */
+    public double iZone = Double.POSITIVE_INFINITY;
+    /**
+     * The lower clamp for the output.
+     */
+    public double lowerClamp = -Double.MAX_VALUE;
+    /**
+     * The upper clamp for the output.
+     */
+    public double upperClamp = Double.MAX_VALUE;
+
     private double setPoint;
-    private double measuredValue;
-    private double minIntegral, maxIntegral;
+    private double currentPv;
 
-    private double errorVal_p;
-    private double errorVal_v;
+    private Filter.LowPass derivativeFilter = new Filter.LowPass(0.01);
+    private boolean continuousInput;
+    private double minContinuousInput, maxContinuousInput;
 
-    private double totalError;
-    private double prevErrorVal;
+    private double errorP;
+    private double errorI;
+    private double errorD;
+    private double errorToleranceP = 0.05;
+    private double errorToleranceD = Double.POSITIVE_INFINITY;
 
-    private double errorTolerance_p = 0.05;
-    private double errorTolerance_v = Double.POSITIVE_INFINITY;
-
+    private boolean hasMeasured;
+    private double prevErrorP;
     private double lastTimeStamp;
     private double period;
 
-    private double lowerLim = -Double.MAX_VALUE;
-    private double upperLim = Double.MAX_VALUE;
-
     /**
-     * The base constructor for the PIDF controller
+     * The base constructor for the PIDF controller.
      *
      * @param kp The value of kP for the coefficients.
      * @param ki The value of kI for the coefficients.
@@ -72,9 +101,8 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * This is the full constructor for the PIDF controller. Our PIDF controller
-     * includes a feed-forward value which is useful for fighting friction and gravity.
-     * Our errorVal represents the return of e(t) and prevErrorVal is the previous error.
+     * This is the full constructor for the PIDF controller. This controller
+     * also includes a feedforward value which is useful for fighting friction.
      *
      * @param kp The value of kP for the coefficients.
      * @param ki The value of kI for the coefficients.
@@ -91,40 +119,16 @@ public class PIDFController implements SystemController {
         kF = kf;
 
         setPoint = sp;
-        measuredValue = pv;
+        currentPv = pv;
 
-        minIntegral = -1.0;
-        maxIntegral = 1.0;
+        minIClamp = -1.0;
+        maxIClamp = 1.0;
 
         lastTimeStamp = 0;
         period = 0;
 
-        errorVal_p = setPoint - measuredValue;
+        errorP = setPoint - currentPv;
         reset();
-    }
-
-    /**
-     * Resets the PIDF controller.
-     */
-    @Override
-    public void reset() {
-        totalError = 0;
-        prevErrorVal = 0;
-        lastTimeStamp = 0;
-    }
-
-    /**
-     * Sets the error which is considered tolerable for use with {@link #atSetPoint()}.
-     *
-     * @param positionTolerance Position error which is tolerable.
-     * @param velocityTolerance Velocity error which is tolerable.
-     * @return this
-     */
-    @NonNull
-    public PIDFController setTolerance(double positionTolerance, double velocityTolerance) {
-        errorTolerance_p = positionTolerance;
-        errorTolerance_v = velocityTolerance;
-        return this;
     }
 
     /**
@@ -136,9 +140,110 @@ public class PIDFController implements SystemController {
      */
     @NonNull
     public PIDFController setOutputClamps(double lower, double upper) {
-        lowerLim = lower;
-        upperLim = upper;
+        lowerClamp = lower;
+        upperClamp = upper;
         return this;
+    }
+
+    /**
+     * Sets whether the integral term should be cleared when a new setpoint is set.
+     *
+     * @param clearIOnNewSetpoint Whether to clear the integral term.
+     * @return this
+     */
+    @NonNull
+    public PIDFController setClearIntegralOnNewSetpoint(boolean clearIOnNewSetpoint) {
+        this.clearIOnNewSetpoint = clearIOnNewSetpoint;
+        return this;
+    }
+
+    /**
+     * Set the bounds for the integral term.
+     * <p>
+     * The internal integrator is clamped so that the integral term's contribution to the output
+     * stays between minimumIntegral and maximumIntegral. This prevents integral windup.
+     *
+     * @param integralMin The minimum value for the integral term. Defaults to -1.0
+     * @param integralMax The maximum value for the integral term. Defaults to 1.0
+     * @return this
+     */
+    @NonNull
+    public PIDFController setIntegrationBounds(double integralMin, double integralMax) {
+        minIClamp = integralMin;
+        maxIClamp = integralMax;
+        return this;
+    }
+
+    /**
+     * Sets the Integration zone range.
+     * <p>
+     * When the absolute value of the position error is greater than the integration zone,
+     * the total accumulated error will reset to zero, disabling integral gain until the absolute value of
+     * the position error is less than the integration zone. This is used to prevent integral windup. Must be
+     * non-negative. Passing a value of zero will effectively disable integral gain. Passing a value
+     * of {@link Double#POSITIVE_INFINITY} disables integration zone functionality.
+     *
+     * @param iZone the zone where the integral term is active, where if the error is within this zone, the integral term is active
+     * @return this
+     */
+    public PIDFController setIntegrationZone(double iZone) {
+        this.iZone = iZone;
+        return this;
+    }
+
+    /**
+     * Enables continuous input.
+     * <p>
+     * Rather than using the max and min input range as constraints, it considers them to be the
+     * same point and automatically calculates the shortest route to the setpoint.
+     *
+     * @param minInput the minimum input value
+     * @param maxInput the maximum input value
+     * @return this
+     */
+    public PIDFController enableContinuousInput(double minInput, double maxInput) {
+        continuousInput = true;
+        minContinuousInput = minInput;
+        maxContinuousInput = maxInput;
+        return this;
+    }
+
+    /**
+     * Disables continuous input.
+     *
+     * @return this
+     */
+    public PIDFController disableContinuousInput() {
+        continuousInput = false;
+        return this;
+    }
+
+    /**
+     * Whether the input is continuous.
+     */
+    public boolean isContinuousInput() {
+        return continuousInput;
+    }
+
+    /**
+     * Set the derivative smoothing coefficient.
+     *
+     * @param lowPassGain the gain for the low pass filter, {@code 0 < lowPassGain < 1},
+     *                    defaults to 0.01 for effectively no smoothing
+     * @return this
+     */
+    public PIDFController setDerivativeSmoothing(double lowPassGain) {
+        derivativeFilter = new Filter.LowPass(lowPassGain);
+        return this;
+    }
+
+    /**
+     * Get the derivative smoothing coefficient.
+     *
+     * @return the gain for the low pass filter
+     */
+    public double getDerivativeSmoothingGain() {
+        return derivativeFilter.gain;
     }
 
     /**
@@ -146,7 +251,7 @@ public class PIDFController implements SystemController {
      *
      * @return The current setpoint.
      */
-    public double getSetPoint() {
+    public double getSetpoint() {
         return setPoint;
     }
 
@@ -157,10 +262,13 @@ public class PIDFController implements SystemController {
      * @return this
      */
     @NonNull
-    public PIDFController setSetPoint(double sp) {
+    public PIDFController setSetpoint(double sp) {
+        if (clearIOnNewSetpoint && sp != setPoint) {
+            errorI = 0;
+        }
         setPoint = sp;
-        errorVal_p = setPoint - measuredValue;
-        errorVal_v = (errorVal_p - prevErrorVal) / period;
+        errorP = setPoint - currentPv;
+        errorD = (errorP - prevErrorP) / period;
         return this;
     }
 
@@ -170,9 +278,9 @@ public class PIDFController implements SystemController {
      *
      * @return Whether the error is within the acceptable bounds.
      */
-    public boolean atSetPoint() {
-        return Math.abs(errorVal_p) < errorTolerance_p
-                && Math.abs(errorVal_v) < errorTolerance_v;
+    public boolean atSetpoint() {
+        return hasMeasured && Math.abs(errorP) < errorToleranceP
+                && Math.abs(errorD) < errorToleranceD;
     }
 
     /**
@@ -189,6 +297,9 @@ public class PIDFController implements SystemController {
      * kP, kI, kD, kF. Omission of values will drop up to the last value kP for a PController, however, do note
      * in a PD controller the second term will be kI, not kD. PID/PD/P controllers are simply PIDF controllers
      * with omitted values.
+     * <p>
+     * When using a {@link CompositeController}, do note you will have to supply
+     * <b>all four</b> coefficients to preserve ordering with the new composed controller.
      *
      * @inheritDoc
      */
@@ -204,22 +315,15 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * @return the positional error e(t)
-     */
-    public double getPositionError() {
-        return errorVal_p;
-    }
-
-    /**
      * @return the tolerances of the controller
      */
     @NonNull
     public double[] getTolerance() {
-        return new double[]{errorTolerance_p, errorTolerance_v};
+        return new double[]{errorToleranceP, errorToleranceD};
     }
 
     /**
-     * Sets the error which is considered tolerable for use with {@link #atSetPoint()}.
+     * Sets the error which is considered tolerable for use with {@link #atSetpoint()}.
      *
      * @param tolerances The positional and velocity tolerances.
      * @return this
@@ -231,7 +335,7 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * Sets the error which is considered tolerable for use with {@link #atSetPoint()}.
+     * Sets the error which is considered tolerable for use with {@link #atSetpoint()}.
      *
      * @param positionTolerance Position error which is tolerable.
      * @return this
@@ -243,10 +347,31 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * @return the velocity error {@code e'(t)}
+     * Sets the error which is considered tolerable for use with {@link #atSetpoint()}.
+     *
+     * @param positionTolerance Position error which is tolerable.
+     * @param velocityTolerance Velocity error which is tolerable.
+     * @return this
      */
-    public double getVelocityError() {
-        return errorVal_v;
+    @NonNull
+    public PIDFController setTolerance(double positionTolerance, double velocityTolerance) {
+        errorToleranceP = positionTolerance;
+        errorToleranceD = velocityTolerance;
+        return this;
+    }
+
+    /**
+     * @return the error {@code e(t)} measured by the controller
+     */
+    public double getError() {
+        return errorP;
+    }
+
+    /**
+     * @return the derivative of the error {@code e'(t)} measured by the controller
+     */
+    public double getErrorDerivative() {
+        return errorD;
     }
 
     /**
@@ -256,7 +381,7 @@ public class PIDFController implements SystemController {
      * {@link #calculate(double)}.
      */
     public double calculate() {
-        return calculate(measuredValue);
+        return calculate(currentPv);
     }
 
     /**
@@ -270,7 +395,7 @@ public class PIDFController implements SystemController {
     @Override
     public double calculate(double pv, double sp) {
         // Set the setpoint to the provided value
-        setSetPoint(sp);
+        setSetpoint(sp);
         return calculate(pv);
     }
 
@@ -281,36 +406,45 @@ public class PIDFController implements SystemController {
      * @return the value produced by u(t).
      */
     public double calculate(double pv) {
-        prevErrorVal = errorVal_p;
+        hasMeasured = true;
+        prevErrorP = errorP;
 
         double currentTimeStamp = System.nanoTime() / 1.0E9;
         if (lastTimeStamp == 0) lastTimeStamp = currentTimeStamp;
         period = currentTimeStamp - lastTimeStamp;
         lastTimeStamp = currentTimeStamp;
 
-        if (measuredValue == pv) {
-            errorVal_p = setPoint - measuredValue;
+        if (currentPv == pv) {
+            errorP = setPoint - currentPv;
         } else {
-            errorVal_p = setPoint - pv;
-            measuredValue = pv;
+            errorP = setPoint - pv;
+            currentPv = pv;
+        }
+        if (continuousInput) {
+            double bound = (maxContinuousInput - minContinuousInput) / 2.0;
+            errorP = Mathf.wrap(errorP, -bound, bound);
         }
 
         if (Math.abs(period) > 1.0E-6) {
-            errorVal_v = (errorVal_p - prevErrorVal) / period;
+            errorD = derivativeFilter.apply(errorP - prevErrorP) / period;
         } else {
-            errorVal_v = 0;
+            errorD = 0;
         }
 
         /*
          * If total error is the integral from 0 to t of e(t')dt', and
          * e(t) = sp - pv, then the total error, E(t), equals sp*t - pv*t.
          */
-        totalError += period * (setPoint - measuredValue);
-        totalError = totalError < minIntegral ? minIntegral : Math.min(maxIntegral, totalError);
+        if (Math.abs(errorP) <= iZone) {
+            errorI += period * (setPoint - currentPv);
+            errorI = errorI < minIClamp ? minIClamp : Math.min(maxIClamp, errorI);
+        } else {
+            errorI = 0;
+        }
 
         // Returns u(t)
-        double ut = kP * errorVal_p + kI * totalError + kD * errorVal_v + kF * setPoint;
-        return Mathf.clamp(ut, lowerLim, upperLim);
+        double ut = kP * errorP + kI * errorI + kD * errorD + kF * setPoint;
+        return Mathf.clamp(ut, lowerClamp, upperClamp);
     }
 
     /**
@@ -362,17 +496,16 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * Set the bounds for the integral term.
-     *
-     * @param integralMin The minimum value for the integral term.
-     * @param integralMax The maximum value for the integral term.
-     * @return this
+     * Resets the PIDF controller.
      */
-    @NonNull
-    public PIDFController setIntegrationBounds(double integralMin, double integralMax) {
-        minIntegral = integralMin;
-        maxIntegral = integralMax;
-        return this;
+    @Override
+    public void reset() {
+        hasMeasured = false;
+        errorP = 0;
+        errorI = 0;
+        errorD = 0;
+        prevErrorP = 0;
+        lastTimeStamp = 0;
     }
 
     /**
@@ -382,7 +515,7 @@ public class PIDFController implements SystemController {
      */
     @NonNull
     public PIDFController clearTotalError() {
-        totalError = 0;
+        errorI = 0;
         return this;
     }
 
@@ -450,6 +583,11 @@ public class PIDFController implements SystemController {
         return this;
     }
 
+    /**
+     * Get the period of the controller.
+     *
+     * @return the time period of the controller, in seconds
+     */
     public double getPeriod() {
         return period;
     }

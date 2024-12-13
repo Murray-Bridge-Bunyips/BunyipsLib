@@ -26,7 +26,10 @@ public final class Filter {
      * measure filter response time, cleaning up noisy sensor inputs.
      */
     public static class LowPass implements UnaryFunction {
-        private final double gain;
+        /**
+         * Gain used in (0, 1), higher values of the gain are smoother but have more phase lag,
+         */
+        public final double gain;
         private boolean hasInit;
         private double lastValue;
 

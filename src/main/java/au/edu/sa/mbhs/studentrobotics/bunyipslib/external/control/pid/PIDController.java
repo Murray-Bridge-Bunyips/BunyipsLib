@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.PIDCoefficients;
  */
 public class PIDController extends PIDFController {
     /**
-     * Default constructor with just the coefficients
+     * Default constructor with just the coefficients.
      *
      * @param kp The value of kP for the coefficients.
      * @param ki The value of kI for the coefficients.
@@ -69,9 +69,9 @@ public class PIDController extends PIDFController {
      */
     @NonNull
     public PIDController updatePID(@NonNull PIDCoefficients coefficients) {
-        coefficients.p = getP();
-        coefficients.i = getI();
-        coefficients.d = getD();
+        coefficients.p = kP;
+        coefficients.i = kI;
+        coefficients.d = kD;
         return this;
     }
 }

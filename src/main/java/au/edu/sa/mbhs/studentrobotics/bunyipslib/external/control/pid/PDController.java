@@ -8,7 +8,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid;
  */
 public class PDController extends PIDController {
     /**
-     * Default constructor with just the coefficients
+     * Default constructor with just the coefficients.
      *
      * @param kp The value of kP for the coefficients.
      * @param kd The value of kD for the coefficients.
