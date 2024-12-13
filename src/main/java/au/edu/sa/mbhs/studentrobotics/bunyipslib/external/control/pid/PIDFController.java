@@ -23,8 +23,11 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Filter;
  * {@code u(t) = kP * e(t) + kI * int(0,t)[e(t')dt'] + kD * e'(t) + kF * setPoint}
  * where {@code e(t) = r(t) - y(t)} and {@code r(t)} is the setpoint and {@code y(t)} is the
  * measured value. If we consider {@code e(t)} the positional error, then
- * {@code int(0,t)[e(t')dt']} is the total error and {@code e'(t)} is the velocity error.
+ * {@code int(0,t)[e(t')dt']} is the total error and {@code e'(t)} is the derivative error.
  * <a href="https://github.com/FTCLib/FTCLib/blob/cedc52cee1bb549324c1ca5059c5feec3c054902/core/src/main/java/com/arcrobotics/ftclib/controller/PIDFController.java">Source</a>
+ * <p>
+ * This controller can be combined with a feedforward controller to create a {@link CompositeController}, via
+ * the {@link SystemController} interface.
  *
  * @since 1.0.0-pre
  */
@@ -42,7 +45,7 @@ public class PIDFController implements SystemController {
      */
     public double kD;
     /**
-     * Feedforward gain.
+     * Feedforward setpoint gain.
      */
     public double kF;
     /**
@@ -69,6 +72,14 @@ public class PIDFController implements SystemController {
      * The upper clamp for the output.
      */
     public double upperClamp = Double.MAX_VALUE;
+    /**
+     * The positional error tolerance.
+     */
+    public double errorToleranceP = 0.05;
+    /**
+     * The derivative/velocity error tolerance.
+     */
+    public double errorToleranceD = Double.POSITIVE_INFINITY;
 
     private double setPoint;
     private double currentPv;
@@ -80,8 +91,6 @@ public class PIDFController implements SystemController {
     private double errorP;
     private double errorI;
     private double errorD;
-    private double errorToleranceP = 0.05;
-    private double errorToleranceD = Double.POSITIVE_INFINITY;
 
     private boolean hasMeasured;
     private double prevErrorP;
@@ -226,24 +235,24 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * Set the derivative smoothing coefficient.
-     *
-     * @param lowPassGain the gain for the low pass filter, {@code 0 < lowPassGain < 1},
-     *                    defaults to 0.01 for effectively no smoothing
-     * @return this
-     */
-    public PIDFController setDerivativeSmoothing(double lowPassGain) {
-        derivativeFilter = new Filter.LowPass(lowPassGain);
-        return this;
-    }
-
-    /**
      * Get the derivative smoothing coefficient.
      *
      * @return the gain for the low pass filter
      */
     public double getDerivativeSmoothingGain() {
         return derivativeFilter.gain;
+    }
+
+    /**
+     * Set the derivative smoothing coefficient.
+     *
+     * @param lowPassGain the gain for the low pass filter, {@code 0 < lowPassGain < 1},
+     *                    defaults to 0.01 for effectively no smoothing
+     * @return this
+     */
+    public PIDFController setDerivativeSmoothingGain(double lowPassGain) {
+        derivativeFilter = new Filter.LowPass(lowPassGain);
+        return this;
     }
 
     /**
@@ -315,7 +324,7 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * @return the tolerances of the controller
+     * @return the tolerances of the controller in order of positional and derivative tolerances
      */
     @NonNull
     public double[] getTolerance() {
@@ -325,7 +334,7 @@ public class PIDFController implements SystemController {
     /**
      * Sets the error which is considered tolerable for use with {@link #atSetpoint()}.
      *
-     * @param tolerances The positional and velocity tolerances.
+     * @param tolerances The positional and derivative tolerances.
      * @return this
      */
     @NonNull
@@ -349,14 +358,14 @@ public class PIDFController implements SystemController {
     /**
      * Sets the error which is considered tolerable for use with {@link #atSetpoint()}.
      *
-     * @param positionTolerance Position error which is tolerable.
-     * @param velocityTolerance Velocity error which is tolerable.
+     * @param positionTolerance   Position error which is tolerable.
+     * @param derivativeTolerance Derivative error which is tolerable.
      * @return this
      */
     @NonNull
-    public PIDFController setTolerance(double positionTolerance, double velocityTolerance) {
+    public PIDFController setTolerance(double positionTolerance, double derivativeTolerance) {
         errorToleranceP = positionTolerance;
-        errorToleranceD = velocityTolerance;
+        errorToleranceD = derivativeTolerance;
         return this;
     }
 
@@ -372,6 +381,13 @@ public class PIDFController implements SystemController {
      */
     public double getErrorDerivative() {
         return errorD;
+    }
+
+    /**
+     * @return the integral of the error {@code int(0,t)[e(t')dt']} measured by the controller
+     */
+    public double getTotalError() {
+        return errorI;
     }
 
     /**
