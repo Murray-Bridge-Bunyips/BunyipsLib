@@ -13,6 +13,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.TrapezoidProfi
 
 /**
  * Implements a PID control loop whose setpoint is constrained by a trapezoid profile.
+ * Users should call {@code reset()} when they first start running the controller to avoid unwanted behavior.
  * <a href="https://github.com/FTCLib/FTCLib/blob/1c8995d09413b406e0f4aff238ea4edc2bb860c4/core/src/main/java/com/arcrobotics/ftclib/controller/wpilibcontroller/ProfiledPIDController.java">Source</a>
  *
  * @since 3.5.0
@@ -99,18 +100,6 @@ public class ProfiledPIDController extends PIDController {
     @NonNull
     public TrapezoidProfile.State getSetPoint() {
         return setpoint;
-    }
-
-    /**
-     * Sets the error which is considered tolerable for use with {@link #atSetpoint()}.
-     *
-     * @param positionTolerance Position error which is tolerable.
-     * @return this
-     */
-    @NonNull
-    public ProfiledPIDController setTolerance(double positionTolerance) {
-        setTolerance(positionTolerance, Double.POSITIVE_INFINITY);
-        return this;
     }
 
     /**
