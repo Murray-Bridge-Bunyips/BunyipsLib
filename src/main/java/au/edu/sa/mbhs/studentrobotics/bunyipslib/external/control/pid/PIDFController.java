@@ -252,6 +252,8 @@ public class PIDFController implements SystemController {
      * @return this
      */
     public PIDFController setDerivativeSmoothingGain(double lowPassGain) {
+        if (lowPassGain == derivativeFilter.gain)
+            return this;
         derivativeFilter = new Filter.LowPass(lowPassGain);
         return this;
     }

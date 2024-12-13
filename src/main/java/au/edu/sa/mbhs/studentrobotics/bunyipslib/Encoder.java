@@ -126,6 +126,8 @@ public class Encoder {
      * @param gain the gain in the interval (0, 1) exclusive; default of 0.95
      */
     public void setAccelLowPassGain(double gain) {
+        if (gain == accelFilter.gain)
+            return;
         accelFilter = new Filter.LowPass(gain);
     }
 
