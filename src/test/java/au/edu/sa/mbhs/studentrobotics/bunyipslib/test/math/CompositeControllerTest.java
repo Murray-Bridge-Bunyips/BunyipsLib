@@ -14,6 +14,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PControlle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDController;
 
 class CompositeControllerTest {
+    private double vel;
+    private double acc;
+
     @Test
     void testComposedOutput() {
         PIDController a = new PIDController(0.1, 0.2, 0.3);
@@ -31,11 +34,11 @@ class CompositeControllerTest {
 
         a.setCoefficients(3.0, 5.0, 7.0);
         b.setCoefficients(11.0, 13.0, 17.0);
-        assertArrayEquals(c.getCoefficients(), new double[] {3.0, 5.0, 7.0, 0.0, 11.0, 13.0, 17.0, 0.0});
+        assertArrayEquals(c.getCoefficients(), new double[]{3.0, 5.0, 7.0, 0.0, 11.0, 13.0, 17.0, 0.0});
 
         c.setCoefficients(1.0, 2.0, 3.0, 0.0, 4.0, 5.0, 6.0, 0.0);
-        assertArrayEquals(a.getCoefficients(), new double[] {1.0, 2.0, 3.0, 0.0});
-        assertArrayEquals(b.getCoefficients(), new double[] {4.0, 5.0, 6.0, 0.0});
+        assertArrayEquals(a.getCoefficients(), new double[]{1.0, 2.0, 3.0, 0.0});
+        assertArrayEquals(b.getCoefficients(), new double[]{4.0, 5.0, 6.0, 0.0});
     }
 
     @Test
@@ -44,9 +47,6 @@ class CompositeControllerTest {
         CompositeController squid = a.compose(SystemController.NULL, (ae, o) -> Math.sqrt(ae));
         assertEquals(2, squid.calculate(0, 4));
     }
-
-    private double vel;
-    private double acc;
 
     @Test
     void testLinkedPIDFF() {

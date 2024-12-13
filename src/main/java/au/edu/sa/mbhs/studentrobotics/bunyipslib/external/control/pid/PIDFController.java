@@ -81,12 +81,13 @@ public class PIDFController implements SystemController {
      */
     public double errorToleranceD = Double.POSITIVE_INFINITY;
 
+    protected boolean continuousInput;
+    protected double minContinuousInput, maxContinuousInput;
+
     private double setPoint;
     private double currentPv;
 
     private Filter.LowPass derivativeFilter = new Filter.LowPass(0.01);
-    private boolean continuousInput;
-    private double minContinuousInput, maxContinuousInput;
 
     private double errorP;
     private double errorI;
@@ -230,7 +231,7 @@ public class PIDFController implements SystemController {
     /**
      * Whether the input is continuous.
      */
-    public boolean isContinuousInput() {
+    public boolean isContinuousInputEnabled() {
         return continuousInput;
     }
 
@@ -574,7 +575,7 @@ public class PIDFController implements SystemController {
     /**
      * Set the Derivative coefficient on this controller
      *
-     * @param kd derivative
+     * @param kd derivative, will be filtered with a low pass filter (see {@link #setDerivativeSmoothingGain(double)})
      * @return this
      */
     @NonNull
@@ -588,9 +589,9 @@ public class PIDFController implements SystemController {
     }
 
     /**
-     * Set the Feedforward coefficient on this controller
+     * Set the setpoint Feedforward coefficient on this controller
      *
-     * @param kf feedforward
+     * @param kf feedforward, will be multiplied by the setpoint
      * @return this
      */
     @NonNull

@@ -18,7 +18,7 @@ class PIDInputOutputTest {
     }
 
     @Test
-    void testProportionalGainOutputTest() {
+    void testProportionalGainOutput() {
         controller.setP(4);
 
         controller.setSetpoint(1000);
@@ -29,7 +29,7 @@ class PIDInputOutputTest {
     }
 
     @Test
-    void testIntegralGainOutputTest() {
+    void testIntegralGainOutput() {
         controller.setI(4);
         controller.setIntegrationBounds(-180, 180);
 
@@ -43,7 +43,7 @@ class PIDInputOutputTest {
     }
 
     @Test
-    void testDerivativeGainOutputTest() {
+    void testDerivativeGainOutput() {
         controller.setD(4);
 
         controller.setSetpoint(1000);
@@ -56,7 +56,7 @@ class PIDInputOutputTest {
     }
 
     @Test
-    void testErrorTolerancePeriodTest() {
+    void testErrorTolerancePeriod() {
         controller.setP(0.5);
         assertEquals(0, controller.getPeriod());
         assertEquals(0, controller.getErrorDerivative());

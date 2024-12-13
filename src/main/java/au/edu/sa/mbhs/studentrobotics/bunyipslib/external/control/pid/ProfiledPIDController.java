@@ -9,6 +9,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid;
 
 import androidx.annotation.NonNull;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.TrapezoidProfile;
 
 /**
@@ -94,6 +95,7 @@ public class ProfiledPIDController extends PIDController {
 
     /**
      * Returns the current setpoint of the ProfiledPIDController.
+     * Not to be confused with {@link #getSetpoint()}.
      *
      * @return The current setpoint.
      */
@@ -110,6 +112,20 @@ public class ProfiledPIDController extends PIDController {
      */
     @Override
     public double calculate(double measurement) {
+        if (isContinuousInputEnabled()) {
+            // Get error which is the smallest distance between goal and measurement
+            double errorBound = (maxContinuousInput - minContinuousInput) / 2.0;
+            double goalMinDistance = Mathf.wrap(goal.position - measurement, -errorBound, errorBound);
+            double setpointMinDistance = Mathf.wrap(setpoint.position - measurement, -errorBound, errorBound);
+
+            // Recompute the profile goal with the smallest error, thus giving the shortest path. The goal
+            // may be outside the input range after this operation, but that's OK because the controller
+            // will still go there and report an error of zero. In other words, the setpoint only needs to
+            // be offset from the measurement by the input range modulus; they don't need to be equal.
+            goal.position = goalMinDistance + measurement;
+            setpoint.position = setpointMinDistance + measurement;
+        }
+
         TrapezoidProfile profile = new TrapezoidProfile(constraints, goal, setpoint);
         setpoint = profile.calculate(getPeriod());
         setSetpoint(setpoint.position);
