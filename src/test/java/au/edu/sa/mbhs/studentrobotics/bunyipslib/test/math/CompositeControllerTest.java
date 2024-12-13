@@ -51,6 +51,7 @@ class CompositeControllerTest {
     @Test
     void testLinkedPIDFF() {
         PIDController a = new PIDController(0.1, 0, 0.3);
+        a.setDerivativeSmoothingGain(Double.MIN_VALUE); // cant use derivative lp gain due to linkage
         ElevatorFeedforward ff = new ElevatorFeedforward(0.5, 1, 1.5, 2, () -> vel, () -> acc);
         CompositeController c = a.compose(ff, Double::sum);
         for (int i = 0; i < 100; i++) {

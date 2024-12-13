@@ -45,6 +45,7 @@ class PIDInputOutputTest {
     @Test
     void testDerivativeGainOutput() {
         controller.setD(4);
+        controller.setDerivativeSmoothingGain(Double.MIN_VALUE);
 
         controller.setSetpoint(1000);
         controller.setTolerance(Double.MAX_VALUE, 1);

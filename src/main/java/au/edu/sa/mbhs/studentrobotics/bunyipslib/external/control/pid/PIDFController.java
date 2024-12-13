@@ -87,7 +87,7 @@ public class PIDFController implements SystemController {
     private double setPoint;
     private double currentPv;
 
-    private Filter.LowPass derivativeFilter = new Filter.LowPass(0.01);
+    private Filter.LowPass derivativeFilter = new Filter.LowPass(0.8);
 
     private double errorP;
     private double errorI;
@@ -248,7 +248,7 @@ public class PIDFController implements SystemController {
      * Set the derivative smoothing coefficient.
      *
      * @param lowPassGain the gain for the low pass filter, {@code 0 < lowPassGain < 1},
-     *                    defaults to 0.01 for effectively no smoothing
+     *                    defaults to 0.8 for some smoothing. To disable, pass a value of {@link Double#MIN_VALUE}.
      * @return this
      */
     public PIDFController setDerivativeSmoothingGain(double lowPassGain) {
@@ -280,7 +280,7 @@ public class PIDFController implements SystemController {
         }
         setPoint = sp;
         errorP = setPoint - currentPv;
-        errorD = (errorP - prevErrorP) / period;
+        errorD = derivativeFilter.apply(errorP - prevErrorP) / period;
         return this;
     }
 
