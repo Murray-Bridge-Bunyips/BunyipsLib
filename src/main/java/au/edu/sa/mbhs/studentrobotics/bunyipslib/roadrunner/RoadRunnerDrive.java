@@ -26,7 +26,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 public interface RoadRunnerDrive extends Moveable {
     /**
      * The constants object represents all configuration options required for creating
-     * a RoadRunner trajectory. These constants are used internally by [.makeTrajectory] to provide
+     * a RoadRunner trajectory. These constants are used internally by {@link #makeTrajectory} to provide
      * task creation.
      *
      * @return the constants and method references used to construct trajectories and motion profiles
@@ -52,6 +52,17 @@ public interface RoadRunnerDrive extends Moveable {
     RoadRunnerDrive withLocalizer(@NonNull Localizer localizer);
 
     /**
+     * Set the localizer for this drive.
+     *
+     * @param localizer the localizer to use
+     * @return this drive
+     */
+    @NonNull
+    default RoadRunnerDrive setLocalizer(@NonNull Localizer localizer) {
+        return withLocalizer(localizer);
+    }
+
+    /**
      * Get the localizer for this drive.
      *
      * @return the localizer
@@ -67,6 +78,17 @@ public interface RoadRunnerDrive extends Moveable {
      */
     @NonNull
     RoadRunnerDrive withAccumulator(@NonNull Accumulator accumulator);
+
+    /**
+     * Set the accumulator for this drive.
+     *
+     * @param accumulator the accumulator to use that will accumulate the localizer twist
+     * @return this drive
+     */
+    @NonNull
+    default RoadRunnerDrive setAccumulator(@NonNull Accumulator accumulator) {
+        return withAccumulator(accumulator);
+    }
 
     /**
      * Get the accumulator for this drive.
