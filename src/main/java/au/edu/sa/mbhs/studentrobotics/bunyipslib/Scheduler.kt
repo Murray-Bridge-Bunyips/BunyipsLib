@@ -192,6 +192,28 @@ class Scheduler : BunyipsComponent() {
     }
 
     /**
+     * Unbind a task from the scheduler, based on the index of the task in the scheduler's allocated tasks.
+     *
+     * This can either be determined by the order in which the tasks were bound, or by the ID of the task via
+     * the [ScheduledTask.id] property, which is the same thing.
+     *
+     * @param index The index of the task to unbind.
+     * @throws IndexOutOfBoundsException If the index is out of bounds.
+     */
+    fun unbind(index: Int) {
+        allocatedTasks.removeAt(index)
+    }
+
+    /**
+     * Unbind a scheduled task from the scheduler.
+     *
+     * @param task The [ScheduledTask] to unbind.
+     */
+    fun unbind(task: ScheduledTask) {
+        allocatedTasks.remove(task)
+    }
+
+    /**
      * Create a new controller trigger creator.
      *
      * For Kotlin users, calling this method can be done with the notation `` `when` ``
@@ -470,7 +492,18 @@ class Scheduler : BunyipsComponent() {
      * A task that will run when a condition is met.
      */
     inner class ScheduledTask(private val originalRunCondition: Condition) {
+        /**
+         * The ID (allocated task index) of the task that can be used to unbind and identify the binding.
+         */
+        @JvmField
+        val id: Int
+
+        /**
+         * The task to run when the condition is met.
+         */
         var taskToRun: Task = IdleTask()
+            private set
+
         internal val runCondition: () -> Boolean
         internal var debouncing: Boolean = false
         internal var stopCondition: (() -> Boolean)? = null
@@ -488,6 +521,7 @@ class Scheduler : BunyipsComponent() {
                         || or.stream().anyMatch { obj -> obj.asBoolean }
             }
             allocatedTasks.add(this)
+            id = allocatedTasks.size - 1
         }
 
         /**

@@ -36,6 +36,28 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     private HashSet<BunyipsSubsystem> managedSubsystems = new HashSet<>();
 
     /**
+     * Unbind a task from the scheduler, based on the index of the task in the scheduler's allocated tasks.
+     * <p>
+     * This can either be determined by the order in which the tasks were bound, or by the ID of the task via
+     * the {@code ScheduledTask.id} property, which is the same thing.
+     *
+     * @param index The index of the task to unbind.
+     * @throws IndexOutOfBoundsException If the index is out of bounds.
+     */
+    public void unbind(int index) {
+        scheduler.unbind(index);
+    }
+
+    /**
+     * Unbind a scheduled task from the scheduler.
+     *
+     * @param task The {@link Scheduler.ScheduledTask} to unbind.
+     */
+    public void unbind(@NonNull Scheduler.ScheduledTask task) {
+        scheduler.unbind(task);
+    }
+
+    /**
      * Create a new controller trigger creator.
      * <p>
      * For Kotlin users, calling this method can be done with the notation {@code `when`}
