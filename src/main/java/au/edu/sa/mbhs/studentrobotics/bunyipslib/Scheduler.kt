@@ -1,8 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import android.annotation.SuppressLint
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg.logv
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg.warn
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
@@ -59,8 +57,10 @@ class Scheduler : BunyipsComponent() {
      */
     fun addSubsystems(vararg dispatch: BunyipsSubsystem) {
         subsystems.addAll(listOf(*dispatch))
-        if (subsystems.isEmpty()) warn(javaClass, "Caution: No subsystems were added for the Scheduler to update.")
-        else logv(javaClass, "Added % subsystem(s) to update.", dispatch.size)
+        if (subsystems.isEmpty())
+            Dbg.warn(javaClass, "Caution: No subsystems were added for the Scheduler to update.")
+        else
+            Dbg.logv(javaClass, "Added % subsystem(s) to update.", dispatch.size)
     }
 
     /**
@@ -201,7 +201,7 @@ class Scheduler : BunyipsComponent() {
      * @throws IndexOutOfBoundsException If the index is out of bounds.
      */
     fun unbind(index: Int) {
-        allocatedTasks.removeAt(index)
+        Dbg.logd(javaClass, "unbound task: %", allocatedTasks.removeAt(index))
     }
 
     /**
@@ -210,7 +210,8 @@ class Scheduler : BunyipsComponent() {
      * @param task The [ScheduledTask] to unbind.
      */
     fun unbind(task: ScheduledTask) {
-        allocatedTasks.remove(task)
+        if (allocatedTasks.remove(task))
+            Dbg.logd(javaClass, "unbound task: %", task)
     }
 
     /**
@@ -334,19 +335,19 @@ class Scheduler : BunyipsComponent() {
     private class ControllerButtonBind(val controller: Controller, val button: Controls, edge: Edge) :
         Condition(edge, { controller[button] }) {
         override fun toString(): String {
-            return "Button:" + controller.user.toString() + "->" + button.toString()
+            return "Button($edge):GP${controller.user.id}->$button"
         }
     }
 
     private class ControllerAxisThreshold(
-        user: Controller,
+        private val user: Controller,
         private val axis: Analog,
         threshold: (Float) -> Boolean,
         edge: Edge
     ) :
         Condition(edge, { threshold.invoke(user[axis]) }) {
         override fun toString(): String {
-            return "Axis:$axis"
+            return "Axis($edge):GP${user.user.id}->$axis"
         }
     }
 
@@ -522,6 +523,7 @@ class Scheduler : BunyipsComponent() {
             }
             allocatedTasks.add(this)
             id = allocatedTasks.size - 1
+            Dbg.logv(javaClass, "allocating task binding % for % ...", id, originalRunCondition)
         }
 
         /**

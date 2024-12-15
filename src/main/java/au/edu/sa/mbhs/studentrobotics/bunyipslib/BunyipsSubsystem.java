@@ -114,7 +114,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * @param objs   the objects to format into the message using {@link Text#format(String, Object...)}
      */
     protected void sout(Consumer<String> logger, String format, Object... objs) {
-        logger.accept(Text.format("[%] %%", getClass().getSimpleName(), "(" + toString().replace(getClass().getSimpleName(), "") + ") ", Text.format(format, objs)));
+        logger.accept(Text.format("[%] %%", getClass().getSimpleName(), "(id:" + toString().replace(getClass().getSimpleName(), "") + ") ", Text.format(format, objs)));
     }
 
     /**
@@ -132,7 +132,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
     @Override
     @NonNull
     public final String toString() {
-        return name + (parent != null ? " (D. " + parent.name + ")" : "");
+        return name + (parent != null ? " [D. " + parent.name + "]" : "");
     }
 
     /**
