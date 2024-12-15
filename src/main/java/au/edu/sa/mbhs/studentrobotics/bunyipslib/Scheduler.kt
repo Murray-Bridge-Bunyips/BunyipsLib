@@ -201,7 +201,7 @@ class Scheduler : BunyipsComponent() {
      * @throws IndexOutOfBoundsException If the index is out of bounds.
      */
     fun unbind(index: Int) {
-        Dbg.logd(javaClass, "unbound task: %", allocatedTasks.removeAt(index))
+        Dbg.logd(javaClass, "unbound task %: %", allocatedTasks.size - 1, allocatedTasks.removeAt(index))
     }
 
     /**
@@ -211,7 +211,7 @@ class Scheduler : BunyipsComponent() {
      */
     fun unbind(task: ScheduledTask) {
         if (allocatedTasks.remove(task))
-            Dbg.logd(javaClass, "unbound task: %", task)
+            Dbg.logd(javaClass, "unbound task %: %", allocatedTasks.size, task)
     }
 
     /**
