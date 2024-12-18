@@ -20,13 +20,14 @@ open class DynamicTask() : Task() {
      * Wraps a [Task] instance to expose a dynamic builder pattern, adding additional functionality.
      */
     constructor(task: Task) : this() {
-        val t = dyn(task)
-        t.init = init
-        t.loop = loop
-        t.until = until
-        t.finish = finish
-        t.interrupt = interrupt
-        t.reset = reset
+        dyn(task).let {
+            init = it.init
+            loop = it.loop
+            until = it.until
+            finish = it.finish
+            interrupt = it.interrupt
+            reset = it.reset
+        }
     }
 
     /**
