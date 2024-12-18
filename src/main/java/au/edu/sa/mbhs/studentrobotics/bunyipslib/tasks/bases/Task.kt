@@ -450,6 +450,41 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
      */
     fun repeatedly(): Task = RepeatTask(this)
 
+    /**
+     * Creates a new [DynamicTask] instance by wrapping this existing [Task] instance, allowing
+     * you to add new functionality to a task without modifying the original task.
+     *
+     * This method will return the current task if it is already a [DynamicTask] instance.
+     *
+     * @since 6.2.0
+     */
+    fun mutate(): DynamicTask {
+        return if (this is DynamicTask) this else {
+            task {
+                named(this@Task.name)
+                timeout(this@Task.timeout)
+                if (this@Task.dependency.isPresent)
+                    on(this@Task.dependency.get(), this@Task.isPriority)
+                init {
+                    Dashboard.usePacket {
+                        this@Task.p = it
+                        this@Task.fieldOverlay = it.fieldOverlay()
+                    }
+                    val startTimeField = Task::class.java.getDeclaredField("startTime")
+                    startTimeField.isAccessible = true
+                    startTimeField.setLong(this@Task, startTime)
+                    this@Task.init()
+                    this@Task.poll()
+                }
+                periodic { this@Task.periodic() }
+                isFinished { this@Task.poll() }
+                onInterrupt { this@Task.onInterrupt() }
+                onReset { this@Task.reset() }
+                onFinish { this@Task.onFinish() }
+            }
+        }
+    }
+
     companion object {
         /**
          * Timeout value for an infinite task that will run forever.
@@ -474,24 +509,6 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
          * DSL function to create a new [DynamicTask] instance for building a new task.
          */
         fun task(block: DynamicTask.() -> Unit) = DynamicTask().apply(block)
-
-        /**
-         * Creates a new [DynamicTask] instance by wrapping an existing [Task] instance, allowing
-         * you to add new functionality to a task without modifying the original task.
-         */
-        @JvmStatic
-        fun dyn(task: Task): DynamicTask {
-            return task {
-                named(task.name)
-                timeout(task.timeout)
-                if (task.dependency.isPresent)
-                    on(task.dependency.get(), task.isPriority)
-                // TODO: poor implementation due to internal dependencies
-                periodic { task.run() }
-                isFinished { task.poll() }
-                onReset { task.reset() }
-            }
-        }
 
         /**
          * Default task setter extension for [BunyipsSubsystem] to set the default task of a subsystem.

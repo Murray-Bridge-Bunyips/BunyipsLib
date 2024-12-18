@@ -21,7 +21,7 @@ open class DynamicTask() : Task() {
      * Wraps a [Task] instance to expose a dynamic builder pattern, adding additional functionality.
      */
     constructor(task: Task) : this() {
-        dyn(task).let {
+        task.mutate().let {
             init = it.init
             loop = it.loop
             until = it.until
