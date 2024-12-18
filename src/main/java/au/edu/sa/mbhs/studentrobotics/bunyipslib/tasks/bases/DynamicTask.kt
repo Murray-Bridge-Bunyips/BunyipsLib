@@ -75,7 +75,8 @@ open class DynamicTask() : Task() {
      *
      * This function takes in a boolean being the current isFinished evaluation, and returns the new isFinished evaluation.
      */
-    infix fun addIsFinished(isTaskFinished: java.util.function.Function<Boolean, Boolean>) = apply { val u = until; until = { isTaskFinished.apply(u.invoke()) } }
+    infix fun addIsFinished(isTaskFinished: java.util.function.Function<Boolean, Boolean>) =
+        apply { val u = until; until = { isTaskFinished.apply(u.invoke()) } }
 
     /**
      * Adds additional onFinish code to run after the onFinish code.
