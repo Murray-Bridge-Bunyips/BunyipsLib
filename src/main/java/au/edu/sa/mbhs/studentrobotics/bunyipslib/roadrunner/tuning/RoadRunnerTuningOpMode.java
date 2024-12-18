@@ -384,6 +384,10 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             throw new RuntimeException("Unknown RoadRunnerDrive type!");
         }
 
+        ForwardRampLogger.POWER_PER_SEC = 0.2;
+        LateralRampLogger.POWER_PER_SEC = 0.2;
+        ManualFeedforwardTuner.DISTANCE = 96;
+
         TelemetryMenu.MenuElement root = new TelemetryMenu.MenuElement("RoadRunner Tuning Selection", true);
         LinearOpMode[] modes = {
                 new AngularRampLogger(dvf),

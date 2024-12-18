@@ -476,6 +476,22 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
         fun task(block: DynamicTask.() -> Unit) = DynamicTask().apply(block)
 
         /**
+         * Creates a new [DynamicTask] instance by wrapping an existing [Task] instance, allowing
+         * you to add new functionality to a task without modifying the original task.
+         */
+        @JvmStatic
+        fun dyn(task: Task): DynamicTask {
+            return task {
+                init { task.init() }
+                periodic { task.periodic() }
+                isFinished { task.isTaskFinished() }
+                onFinish { task.onFinish() }
+                onInterrupt { task.onInterrupt() }
+                onReset { task.onReset() }
+            }
+        }
+
+        /**
          * Default task setter extension for [BunyipsSubsystem] to set the default task of a subsystem.
          */
         infix fun BunyipsSubsystem.default(defaultTask: Task) = setDefaultTask(defaultTask)

@@ -8,13 +8,26 @@ import java.util.function.BooleanSupplier
  * @author Lucas Bubner, 2024
  * @since 6.1.0
  */
-open class DynamicTask : Task() {
+open class DynamicTask() : Task() {
     private var init = {}
     private var loop = {}
     private var until = { false }
     private var finish = {}
     private var interrupt = {}
     private var reset = {}
+
+    /**
+     * Wraps a [Task] instance to expose a dynamic builder pattern, adding additional functionality.
+     */
+    constructor(task: Task) : this() {
+        val t = dyn(task)
+        t.init = init
+        t.loop = loop
+        t.until = until
+        t.finish = finish
+        t.interrupt = interrupt
+        t.reset = reset
+    }
 
     /**
      * Runs once when the task is initialised.
@@ -45,6 +58,38 @@ open class DynamicTask : Task() {
      * Runs when the task is reset to its initial state.
      */
     infix fun onReset(onReset: Runnable) = apply { reset = { onReset.run() } }
+
+    /**
+     * Adds additional init to run after the initialisation code.
+     */
+    infix fun addInit(onInitialise: Runnable) = apply { init = { init.invoke(); onInitialise.run() } }
+
+    /**
+     * Adds additional periodic code to run after the periodic code.
+     */
+    infix fun addPeriodic(periodic: Runnable) = apply { loop = { loop.invoke(); periodic.run() } }
+
+    /**
+     * Adds additional isFinished code to run after the isFinished code.
+     *
+     * This function takes in a boolean being the current isFinished evaluation, and returns the new isFinished evaluation.
+     */
+    infix fun addIsFinished(isTaskFinished: java.util.function.Function<Boolean, Boolean>) = apply { val u = until; until = { isTaskFinished.apply(u.invoke()) } }
+
+    /**
+     * Adds additional onFinish code to run after the onFinish code.
+     */
+    infix fun addOnFinish(onFinish: Runnable) = apply { finish = { finish.invoke(); onFinish.run() } }
+
+    /**
+     * Adds additional onInterrupt code to run after the onInterrupt code.
+     */
+    infix fun addOnInterrupt(onInterrupt: Runnable) = apply { interrupt = { interrupt.invoke(); onInterrupt.run() } }
+
+    /**
+     * Adds additional onReset code to run after the onReset code.
+     */
+    infix fun addOnReset(onReset: Runnable) = apply { reset = { reset.invoke(); onReset.run() } }
 
     override fun init() {
         init.invoke()
