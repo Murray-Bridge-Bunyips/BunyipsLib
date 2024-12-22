@@ -136,6 +136,7 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
 
     @Override
     protected void onDisable() {
+        target = Geometry.zeroVel();
         leftMotors.forEach(m -> m.setPower(0));
         rightMotors.forEach(m -> m.setPower(0));
     }

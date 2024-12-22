@@ -349,6 +349,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
     @Override
     protected void onDisable() {
+        leftFrontPower = 0;
+        leftBackPower = 0;
+        rightBackPower = 0;
+        rightFrontPower = 0;
         leftFront.setPower(0);
         leftBack.setPower(0);
         rightBack.setPower(0);

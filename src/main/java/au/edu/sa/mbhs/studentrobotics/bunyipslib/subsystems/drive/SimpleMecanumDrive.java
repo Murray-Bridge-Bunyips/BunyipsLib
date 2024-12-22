@@ -226,6 +226,9 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
 
     @Override
     protected void onDisable() {
+        speedX = 0;
+        speedY = 0;
+        speedR = 0;
         leftFront.setPower(0);
         leftBack.setPower(0);
         rightBack.setPower(0);
