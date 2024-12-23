@@ -80,11 +80,6 @@ public abstract class TaskGroup extends Task {
     }
 
     @Override
-    protected final void init() {
-        // no-op
-    }
-
-    @Override
     protected final void onFinish() {
         finishAllTasks();
     }
