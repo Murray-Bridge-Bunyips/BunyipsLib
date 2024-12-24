@@ -603,6 +603,7 @@ public class TelemetryMenu {
         private final Function<Boolean, ?> executor;
         private final boolean def;
         private BooleanSupplier reset;
+        private BooleanSupplier latch;
         private String activeColour = "green";
         private String inactiveColour = "white";
         private boolean active;
@@ -632,6 +633,19 @@ public class TelemetryMenu {
         @NonNull
         public InteractiveToggle resetIf(@NonNull BooleanSupplier defState) {
             reset = defState;
+            return this;
+        }
+
+        /**
+         * The opposite of {@link #resetIf(BooleanSupplier)}, which will instead set the state to the opposite
+         * on this boolean supplier activating.
+         *
+         * @param notDefState the supplier that determines whether this option should be set to the opposite of the def. state
+         * @return this
+         */
+        @NonNull
+        public InteractiveToggle latchIf(@NonNull BooleanSupplier notDefState) {
+            latch = notDefState;
             return this;
         }
 
@@ -670,6 +684,8 @@ public class TelemetryMenu {
         protected String getDisplayText() {
             if (reset != null && reset.getAsBoolean())
                 active = def;
+            if (latch != null && latch.getAsBoolean())
+                active = !def;
             return Text.format("<font color='%' face='monospace'><b>%</b>: %</font>", active ? activeColour : inactiveColour, title, executor.apply(active));
         }
     }

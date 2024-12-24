@@ -35,7 +35,6 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -47,6 +46,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +59,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.MovingAverageTimer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * Dynamic OpMode to test hardware functionality of most {@link HardwareDevice} objects.
@@ -67,13 +69,21 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
  * @since 6.0.0
  */
 public final class HardwareTester extends LinearOpMode {
+    /**
+     * Array of motor powers and servo positions that can be controlled via FtcDashboard.
+     * Must be enabled for each device that is willing to delegate to the dashboard.
+     */
+    public static double[] actuators = new double[0];
+    private final List<DashboardControls> dashboardControlled = new ArrayList<>();
     private TelemetryMenu menu;
-    private Telemetry telemetry;
+    private DualTelemetry telemetry;
     private MovingAverageTimer timer;
 
     @Override
-    @SuppressWarnings({"unchecked", "ExtractMethodRecommender", "DataFlowIssue"})
+    @SuppressWarnings({"unchecked", "ExtractMethodRecommender"})
     public void runOpMode() {
+        dashboardControlled.clear();
+        actuators = new double[0];
         timer = new MovingAverageTimer();
         telemetry = new DualTelemetry(this, timer, "<b>HardwareTester</b>");
         Map<String, List<HardwareDevice>> hardware;
@@ -104,86 +114,114 @@ public final class HardwareTester extends LinearOpMode {
                 dev.addChildren(deviceType, connInfo);
 
                 if (device instanceof DcMotorSimple motor) {
+                    DashboardControls dashboardControls = new DashboardControls(entry.getKey(), motor);
                     // First, we map DcMotorSimple interfaces (including CRServos) to supply power and change direction
                     TelemetryMenu.InteractiveToggle powerControl = new TelemetryMenu.InteractiveToggle("Power", false, a -> {
-                        motor.setPower(a ? -gamepad1.left_stick_y : 0);
-                        return motor.getPower();
-                    }).resetIf(() -> gamepad1.b);
+                        if (!dashboardControls.active)
+                            motor.setPower(a ? -gamepad1.left_stick_y : 0);
+                        return Mathf.round(motor.getPower(), 3);
+                    }).resetIf(() -> gamepad1.b || dashboardControls.active);
+                    // We can also supply a controller for the dashboard
+                    TelemetryMenu.InteractiveToggle dashboardControl = new TelemetryMenu.InteractiveToggle("Use Dashboard", false, a -> {
+                        if (a && dashboardControls.index == -1) {
+                            double[] newActuators = new double[actuators.length + 1];
+                            System.arraycopy(actuators, 0, newActuators, 0, actuators.length);
+                            newActuators[actuators.length] = 0;
+                            actuators = newActuators;
+                            dashboardControls.index = actuators.length - 1;
+                            Dashboard.enableConfig(getClass());
+                        }
+                        dashboardControls.active = a;
+                        return a ? "active" : "inactive";
+                    }).withColours("green", "white");
                     TelemetryMenu.InteractiveToggle directionControl = new TelemetryMenu.InteractiveToggle("Direction", false, a -> {
                         motor.setDirection(a ? DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE);
                         return motor.getDirection();
                     }).withColours("white", "white");
-                    dev.addChildren(powerControl, directionControl);
+                    dashboardControlled.add(dashboardControls);
+                    dev.addChildren(powerControl, dashboardControl, directionControl);
+
+                    if (device instanceof DcMotorEx motorEx) {
+                        // We map all motors to the DcMotorEx interface to access more advanced motor functions
+                        // Includes controls for enabling/disabling the motor, setting zero power behavior, and resetting the encoder
+                        TelemetryMenu.InteractiveToggle enabledControl = new TelemetryMenu.InteractiveToggle("Enabled", true, a -> {
+                            if (a)
+                                motorEx.setMotorEnable();
+                            else
+                                motorEx.setMotorDisable();
+                            return motorEx.isMotorEnabled();
+                        }).withColours("green", "red").resetIf(() -> dashboardControls.active);
+                        TelemetryMenu.InteractiveToggle zeroPowerBehaviorControl = new TelemetryMenu.InteractiveToggle("Zero Power Behavior", false, a -> {
+                            motorEx.setZeroPowerBehavior(a ? DcMotor.ZeroPowerBehavior.BRAKE : DcMotor.ZeroPowerBehavior.FLOAT);
+                            return motorEx.getZeroPowerBehavior();
+                        }).withColours("white", "white");
+                        TelemetryMenu.StaticClickableOption resetEncoder = new TelemetryMenu.StaticClickableOption("Reset Encoder") {
+                            @Override
+                            protected void onClick() {
+                                motorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                                motorEx.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                            }
+                        };
+
+                        // Then, we can report out all the motor statistics
+                        TelemetryMenu.DynamicItem currentPosition = new TelemetryMenu.DynamicItem("Current Position (t)", motorEx::getCurrentPosition);
+                        TelemetryMenu.DynamicItem currentVelocity = new TelemetryMenu.DynamicItem("Current Velocity (t/s)", motorEx::getVelocity);
+                        TelemetryMenu.DynamicItem currentCurrent = new TelemetryMenu.DynamicItem("Current (A)", () -> motorEx.getCurrent(CurrentUnit.AMPS));
+                        dev.addChildren(enabledControl, zeroPowerBehaviorControl, resetEncoder, currentPosition, currentVelocity, currentCurrent);
+
+                        // We can also add the motor's current configuration type in a new menu
+                        TelemetryMenu.MenuElement motorConfig = new TelemetryMenu.MenuElement("Motor Information", false);
+                        // These configuration constants are unlikely to change, so we just use static text
+                        MotorConfigurationType motorType = motorEx.getMotorType();
+                        TelemetryMenu.StaticItem distributor = new TelemetryMenu.StaticItem("Distributor: " + motorType.getDistributorInfo().getDistributor() + " (" + motorType.getDistributorInfo().getModel() + ")");
+                        TelemetryMenu.StaticItem tpr = new TelemetryMenu.StaticItem("Ticks Per Revolution: " + motorType.getTicksPerRev());
+                        TelemetryMenu.StaticItem gearing = new TelemetryMenu.StaticItem("Gearing: " + motorType.getGearing());
+                        TelemetryMenu.StaticItem rpm = new TelemetryMenu.StaticItem("Max RPM: " + motorType.getMaxRPM());
+                        TelemetryMenu.StaticItem tps = new TelemetryMenu.StaticItem("Max TPS: " + motorType.getAchieveableMaxTicksPerSecond());
+                        TelemetryMenu.StaticItem orientation = new TelemetryMenu.StaticItem("Orientation: " + motorType.getOrientation());
+                        TelemetryMenu.StaticItem veloPid = new TelemetryMenu.StaticItem("Velocity PID: " + motorType.getHubVelocityParams());
+                        TelemetryMenu.StaticItem posPid = new TelemetryMenu.StaticItem("Position PID: " + motorType.getHubPositionParams());
+
+                        motorConfig.addChildren(distributor, tpr, gearing, rpm, tps, orientation, veloPid, posPid);
+                        dev.addChild(motorConfig);
+                    }
                 }
 
-                if (device instanceof DcMotor) {
-                    DcMotorEx motorEx = (DcMotorEx) device;
-                    // We map all motors to the DcMotorEx interface to access more advanced motor functions
-                    // Includes controls for enabling/disabling the motor, setting zero power behavior, and resetting the encoder
-                    TelemetryMenu.InteractiveToggle enabledControl = new TelemetryMenu.InteractiveToggle("Enabled", true, a -> {
-                        if (a)
-                            motorEx.setMotorEnable();
-                        else
-                            motorEx.setMotorDisable();
-                        return motorEx.isMotorEnabled();
-                    }).withColours("green", "red");
-                    TelemetryMenu.InteractiveToggle zeroPowerBehaviorControl = new TelemetryMenu.InteractiveToggle("Zero Power Behavior", false, a -> {
-                        motorEx.setZeroPowerBehavior(a ? DcMotor.ZeroPowerBehavior.BRAKE : DcMotor.ZeroPowerBehavior.FLOAT);
-                        return motorEx.getZeroPowerBehavior();
-                    }).withColours("white", "white");
-                    TelemetryMenu.StaticClickableOption resetEncoder = new TelemetryMenu.StaticClickableOption("Reset Encoder") {
-                        @Override
-                        protected void onClick() {
-                            motorEx.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                            motorEx.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        }
-                    };
-
-                    // Then, we can report out all the motor statistics
-                    TelemetryMenu.DynamicItem currentPosition = new TelemetryMenu.DynamicItem("Current Position (t)", motorEx::getCurrentPosition);
-                    TelemetryMenu.DynamicItem currentVelocity = new TelemetryMenu.DynamicItem("Current Velocity (t/s)", motorEx::getVelocity);
-                    TelemetryMenu.DynamicItem currentCurrent = new TelemetryMenu.DynamicItem("Current (A)", () -> motorEx.getCurrent(CurrentUnit.AMPS));
-                    dev.addChildren(enabledControl, zeroPowerBehaviorControl, resetEncoder, currentPosition, currentVelocity, currentCurrent);
-
-                    // We can also add the motor's current configuration type in a new menu
-                    TelemetryMenu.MenuElement motorConfig = new TelemetryMenu.MenuElement("Motor Information", false);
-                    // These configuration constants are unlikely to change, so we just use static text
-                    MotorConfigurationType motorType = motorEx.getMotorType();
-                    TelemetryMenu.StaticItem distributor = new TelemetryMenu.StaticItem("Distributor: " + motorType.getDistributorInfo().getDistributor() + " (" + motorType.getDistributorInfo().getModel() + ")");
-                    TelemetryMenu.StaticItem tpr = new TelemetryMenu.StaticItem("Ticks Per Revolution: " + motorType.getTicksPerRev());
-                    TelemetryMenu.StaticItem gearing = new TelemetryMenu.StaticItem("Gearing: " + motorType.getGearing());
-                    TelemetryMenu.StaticItem rpm = new TelemetryMenu.StaticItem("Max RPM: " + motorType.getMaxRPM());
-                    TelemetryMenu.StaticItem tps = new TelemetryMenu.StaticItem("Max TPS: " + motorType.getAchieveableMaxTicksPerSecond());
-                    TelemetryMenu.StaticItem orientation = new TelemetryMenu.StaticItem("Orientation: " + motorType.getOrientation());
-                    TelemetryMenu.StaticItem veloPid = new TelemetryMenu.StaticItem("Velocity PID: " + motorType.getHubVelocityParams());
-                    TelemetryMenu.StaticItem posPid = new TelemetryMenu.StaticItem("Position PID: " + motorType.getHubPositionParams());
-
-                    motorConfig.addChildren(distributor, tpr, gearing, rpm, tps, orientation, veloPid, posPid);
-                    dev.addChild(motorConfig);
-                }
-
-                if (device instanceof Servo) {
+                if (device instanceof ServoImplEx servo) {
+                    DashboardControls dashboardControls = new DashboardControls(entry.getKey(), servo);
                     // Servo controls are simpler and only require directionality and position controls
-                    ServoImplEx servo = (ServoImplEx) device;
                     TelemetryMenu.InteractiveToggle enabledControl = new TelemetryMenu.InteractiveToggle("Enabled", false, a -> {
                         if (a)
                             servo.setPwmEnable();
                         else
                             servo.setPwmDisable();
                         return servo.isPwmEnabled();
-                    }).withColours("green", "red").resetIf(() -> gamepad1.b);
+                    }).withColours("green", "red").resetIf(() -> gamepad1.b).latchIf(() -> dashboardControls.active);
                     TelemetryMenu.InteractiveToggle positionControl = new TelemetryMenu.InteractiveToggle("Position", false, a -> {
-                        double curr = servo.getPosition();
-                        servo.setPosition(a ? Mathf.scale(-gamepad1.left_stick_y, -1, 1, 0, 1) : curr);
-                        return curr;
-                    });
+                        double pos = a ? Mathf.scale(-gamepad1.left_stick_y, -1, 1, 0, 1) : servo.getPosition();
+                        servo.setPosition(pos);
+                        return Mathf.round(pos, 3);
+                    }).resetIf(() -> gamepad1.b || dashboardControls.active);
                     TelemetryMenu.StaticClickableOption setToZero = new TelemetryMenu.StaticClickableOption("Set to 0", () -> servo.setPosition(0));
                     TelemetryMenu.StaticClickableOption setToOne = new TelemetryMenu.StaticClickableOption("Set to 1", () -> servo.setPosition(1));
+                    TelemetryMenu.InteractiveToggle dashboardControl = new TelemetryMenu.InteractiveToggle("Use Dashboard", false, a -> {
+                        if (a && dashboardControls.index == -1) {
+                            double[] newActuators = new double[actuators.length + 1];
+                            System.arraycopy(actuators, 0, newActuators, 0, actuators.length);
+                            newActuators[actuators.length] = servo.getPosition();
+                            actuators = newActuators;
+                            dashboardControls.index = actuators.length - 1;
+                            Dashboard.enableConfig(getClass());
+                        }
+                        dashboardControls.active = a;
+                        return a ? "active" : "inactive";
+                    }).withColours("green", "white");
                     TelemetryMenu.InteractiveToggle directionControl = new TelemetryMenu.InteractiveToggle("Direction", false, a -> {
                         servo.setDirection(a ? Servo.Direction.FORWARD : Servo.Direction.REVERSE);
                         return servo.getDirection();
                     }).withColours("white", "white");
-                    dev.addChildren(enabledControl, positionControl, setToZero, setToOne, directionControl);
+                    dashboardControlled.add(dashboardControls);
+                    dev.addChildren(enabledControl, positionControl, setToZero, setToOne, dashboardControl, directionControl);
                 }
 
                 if (device instanceof TouchSensorMultiplexer mux) {
@@ -435,7 +473,7 @@ public final class HardwareTester extends LinearOpMode {
                     TelemetryMenu.StaticClickableOption selfTest = new TelemetryMenu.StaticClickableOption("Run Self Test") {
                         @Override
                         protected void onClick() {
-                            telemetry.log().add("OTOS Self Test: %s", otos.selfTest() ? "PASS" : "FAIL");
+                            telemetry.log("OTOS Self Test: %", otos.selfTest() ? "PASS" : "FAIL");
                         }
                     };
                     TelemetryMenu.StaticClickableOption calibrateIMU = new TelemetryMenu.StaticClickableOption("Calibrate IMU") {
@@ -488,12 +526,13 @@ public final class HardwareTester extends LinearOpMode {
             root.addChild(deviceMapping);
         }
         menu = new TelemetryMenu(telemetry, root);
-        telemetry.addLine("<b>HardwareTester</b>");
-        telemetry.addLine("Ready.");
-        timer.update();
-        telemetry.update();
+        telemetry.clearAll();
+        telemetry.opModeStatus = "<font color='green'>ready</font>";
 
-        waitForStart();
+        while (opModeInInit()) {
+            timer.update();
+            telemetry.update();
+        }
 
         timer.reset();
 
@@ -501,6 +540,18 @@ public final class HardwareTester extends LinearOpMode {
             if (gamepad1.back)
                 terminateOpModeNow();
             menu.loop(gamepad1);
+            for (DashboardControls dc : dashboardControlled) {
+                if (dc.index == -1)
+                    continue;
+                telemetry.addDashboard("<font face='monospace'>HardwareTester/actuators</font> index <b>" + dc.index + "</b>", dc.active ? Text.format("<b>%</b> (%)", dc.name, dc.device) : "inactive");
+                if (!dc.active)
+                    continue;
+                if (dc.device instanceof DcMotorSimple dms) {
+                    dms.setPower(actuators[dc.index]);
+                } else if (dc.device instanceof ServoImplEx servo) {
+                    servo.setPosition(actuators[dc.index]);
+                }
+            }
             timer.update();
             telemetry.update();
         }
@@ -523,6 +574,18 @@ public final class HardwareTester extends LinearOpMode {
 
         Color(int color) {
             this.color = color;
+        }
+    }
+
+    private static class DashboardControls {
+        public final HardwareDevice device;
+        public final String name;
+        public int index = -1;
+        public boolean active = false;
+
+        public DashboardControls(String name, HardwareDevice device) {
+            this.name = name;
+            this.device = device;
         }
     }
 }
