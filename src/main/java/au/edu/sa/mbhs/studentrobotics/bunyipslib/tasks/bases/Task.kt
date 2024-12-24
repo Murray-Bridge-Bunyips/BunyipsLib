@@ -189,6 +189,18 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
     }
 
     /**
+     * Scheduling method that will either attach this task to a subsystem or run it as part of the standard
+     * [run] method. This is the recommended way to run a task as it will attempt to run on the context as provided
+     * by the [dependency].
+     *
+     * A call to [execute] will attempt to schedule the task on every iteration of the [execute] call. As such, if it is rejected,
+     * re-scheduling will be attempted as the state of the subsystem may change and allow this task to become scheduled.
+     */
+    fun execute() {
+        TODO()
+    }
+
+    /**
      * Execute one cycle of this task. The finish condition is separately polled in the [poll] method.
      */
     final override fun run() {

@@ -319,7 +319,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
                 setHighPriorityCurrentTask(newTask);
                 return true;
             }
-            sout(Dbg::log, "Ignored task change: %->%", currentTask, newTask);
+            sout(Dbg::logv, "Ignored task change: %->%", currentTask, newTask);
             return false;
         }
 
@@ -329,7 +329,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             defaultTask.finishNow();
             defaultTask.reset();
         }
-        sout(Dbg::logv, "Task changed: %->%", currentTask, newTask);
+        sout(Dbg::logd, "Task changed: %->%", currentTask, newTask);
         currentTask = newTask;
         return true;
     }

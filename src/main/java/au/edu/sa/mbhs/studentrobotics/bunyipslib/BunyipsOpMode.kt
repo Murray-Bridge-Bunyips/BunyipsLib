@@ -356,7 +356,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // Most tasks will inherit from Task, so this should be safe, but this is to ensure maximum compatibility
             try {
                 if (initTask is Task && !(initTask as Task).isFinished) {
-                    Dbg.log("BunyipsOpMode: initTask did not finish in time, early finishing -> % ...", initTask)
+                    Dbg.warn("BunyipsOpMode: initTask did not finish in time, early finishing -> % ...", initTask)
                     telemetry.log("<font color='gray'>init-task interrupted by start request.</font>")
                     (initTask as Task).finishNow()
                 } else if (initTask != null) {

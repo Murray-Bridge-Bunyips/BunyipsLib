@@ -5,6 +5,7 @@ import java.util.function.Predicate
 
 /**
  * Dynamic builder pattern implementation for [Task] instances.
+ * By default, constructing a new [DynamicTask] will create a no-oping indefinite task.
  *
  * @author Lucas Bubner, 2024
  * @since 6.1.0

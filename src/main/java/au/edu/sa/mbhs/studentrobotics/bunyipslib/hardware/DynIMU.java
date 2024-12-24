@@ -160,7 +160,7 @@ public class DynIMU implements IMU {
         if (triedInit) return;
         triedInit = true;
 
-        Dbg.log("Dynamic IMU initialisation in progress...");
+        Dbg.logd("Dynamic IMU initialisation in progress...");
         if (!imu.initialize(new Parameters(orientation)))
             RobotLog.addGlobalWarningMessage("DynIMU failed to initialise the IMU!");
 
