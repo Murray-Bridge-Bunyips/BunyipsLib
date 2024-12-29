@@ -27,7 +27,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 public abstract class TaskGroup extends Task {
     protected final ArrayList<Task> tasks = new ArrayList<>();
     private final HashSet<Task> finishedTasks = new HashSet<>();
-    private final HashSet<Task> attachedTasks = new HashSet<>();
 
     protected void setTasks(@NonNull List<Task> tasks) {
         this.tasks.addAll(tasks);
@@ -87,7 +86,6 @@ public abstract class TaskGroup extends Task {
         for (Task task : tasks) {
             task.reset();
         }
-        attachedTasks.clear();
         finishedTasks.clear();
     }
 }
