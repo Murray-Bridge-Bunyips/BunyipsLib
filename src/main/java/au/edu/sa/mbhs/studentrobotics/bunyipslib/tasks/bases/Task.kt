@@ -47,7 +47,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
     // will have the name "Move To Pos"
     private var name = javaClass.simpleName
         .replace(Regex("([a-z])([A-Z])"), "$1 $2")
-        .replace("Task", "")
+        .replace(Regex("Task$"), "")
         .trim()
     private var _dependency: BunyipsSubsystem? = null
     private var attached = false
