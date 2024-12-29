@@ -21,7 +21,7 @@ class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = false) 
 
     init {
         timeout = time
-        named("Wait")
+        named("${time to Seconds round 2}s")
     }
 
     override fun periodic() {

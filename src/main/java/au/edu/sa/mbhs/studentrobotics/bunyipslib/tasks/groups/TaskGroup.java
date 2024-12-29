@@ -40,11 +40,11 @@ public abstract class TaskGroup extends Task {
         StringBuilder taskNames = new StringBuilder();
         taskNames.append("[");
         taskNames.append(getClass().getSimpleName().replace("TaskGroup", ""));
-        taskNames.append("] ");
+        taskNames.append(": ");
         for (int i = 0; i < tasks.size() - 1; i++) {
-            taskNames.append(tasks.get(i)).append(",");
+            taskNames.append(tasks.get(i)).append(", ");
         }
-        taskNames.append(tasks.get(tasks.size() - 1));
+        taskNames.append(tasks.get(tasks.size() - 1)).append("]");
         named(taskNames.toString());
     }
 
@@ -59,7 +59,7 @@ public abstract class TaskGroup extends Task {
     protected final void executeTask(@NonNull Task task) {
         if (task.isFinished()) {
             if (finishedTasks.add(task))
-                Dbg.logd(getClass(), "sub-task %/% (%) finished -> %s", finishedTasks.size(), tasks.size(), task, task.getDeltaTime().in(Seconds));
+                Dbg.logd(getClass(), "sub-task (`%` of `%`, #%/max %) finished -> %s", task, this, finishedTasks.size(), tasks.size(), task.getDeltaTime().in(Seconds));
             return;
         }
         task.execute();
