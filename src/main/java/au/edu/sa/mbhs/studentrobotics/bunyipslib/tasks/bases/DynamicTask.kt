@@ -10,13 +10,17 @@ import java.util.function.Predicate
  * @author Lucas Bubner, 2024
  * @since 6.1.0
  */
-open class DynamicTask() : Task() {
+class DynamicTask() : Task() {
     private var init = {}
     private var loop = {}
     private var until = { false }
     private var finish = {}
     private var interrupt = {}
     private var reset = {}
+
+    init {
+        named("Task (dyn)")
+    }
 
     /**
      * Wraps a [Task] instance to expose a dynamic builder pattern, adding additional functionality.

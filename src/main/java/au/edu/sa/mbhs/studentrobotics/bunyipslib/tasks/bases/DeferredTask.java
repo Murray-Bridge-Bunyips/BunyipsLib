@@ -55,7 +55,7 @@ public class DeferredTask extends Task {
         String name = builtTask.toString();
         Measure<Time> t = builtTask.timeout;
         Dbg.logd(getClass(), "built -> % (t=%)", name, t.magnitude() <= 0 ? "inf" : t.in(Seconds) + "s");
-        if ((getClass().getSimpleName() + SUFFIX).equals(toString()))
+        if (("Task" + SUFFIX).equals(toString()))
             super.named(name);
         if (timeout.equals(INFINITE_TIMEOUT))
             timeout = t;
@@ -77,7 +77,7 @@ public class DeferredTask extends Task {
     protected void onReset() {
         if (builtTask == null) return;
         builtTask.reset();
-        named(getClass().getSimpleName() + SUFFIX);
+        named("Task" + SUFFIX);
         timeout(INFINITE_TIMEOUT);
         builtTask = null;
     }
