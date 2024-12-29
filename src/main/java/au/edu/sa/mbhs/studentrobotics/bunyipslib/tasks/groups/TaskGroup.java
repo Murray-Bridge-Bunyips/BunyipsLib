@@ -28,6 +28,10 @@ public abstract class TaskGroup extends Task {
     protected final ArrayList<Task> tasks = new ArrayList<>();
     private final HashSet<Task> finishedTasks = new HashSet<>();
 
+    protected TaskGroup() {
+        disableSubsystemAttachment = true;
+    }
+
     protected void setTasks(@NonNull List<Task> tasks) {
         this.tasks.addAll(tasks);
         if (tasks.isEmpty()) {
@@ -70,15 +74,6 @@ public abstract class TaskGroup extends Task {
     @Override
     protected final void onFinish() {
         finishAllTasks();
-    }
-
-    @NonNull
-    @Override
-    public final Task on(@NonNull BunyipsSubsystem subsystem, boolean override) {
-        StackTraceElement f = Exceptions.getCallingUserCodeFunction();
-        Dbg.error(f, "Task groups are not designed to be attached to a subsystem, as the internal tasks will be scheduled to subsystems instead.");
-        opMode(o -> o.telemetry.log(f, Text.html().color("red", "error: ").text("task groups should not be attached to subsystems!")));
-        return this;
     }
 
     @Override

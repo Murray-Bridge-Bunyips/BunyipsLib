@@ -39,6 +39,7 @@ public class DeferredTask extends Task {
     public DeferredTask(@NonNull Supplier<Task> lazyTask) {
         this.lazyTask = lazyTask;
         super.named("Task" + SUFFIX);
+        disableSubsystemAttachment = true;
     }
 
     /**
@@ -77,7 +78,7 @@ public class DeferredTask extends Task {
     protected void onReset() {
         if (builtTask == null) return;
         builtTask.reset();
-        named("Task" + SUFFIX);
+        super.named("Task" + SUFFIX);
         timeout(INFINITE_TIMEOUT);
         builtTask = null;
     }
@@ -98,18 +99,6 @@ public class DeferredTask extends Task {
         if (builtTask != null)
             return this;
         super.named(name + SUFFIX);
-        return this;
-    }
-
-    /**
-     * Subsystems cannot be attached to DynamicTasks. This method will no-op and log an error.
-     */
-    @NonNull
-    @Override
-    public final Task on(@NonNull BunyipsSubsystem subsystem, boolean override) {
-        StackTraceElement f = Exceptions.getCallingUserCodeFunction();
-        Dbg.error(f, "Dynamic tasks are not designed to be attached to a subsystem, as the internal task will be scheduled to subsystems instead.");
-        opMode(o -> o.telemetry.log(f, Text.html().color("red", "error: ").text("dynamic tasks should not be attached to subsystems!")));
         return this;
     }
 }

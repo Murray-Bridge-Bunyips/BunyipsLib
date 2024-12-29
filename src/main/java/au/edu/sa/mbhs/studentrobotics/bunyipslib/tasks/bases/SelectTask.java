@@ -26,6 +26,7 @@ public class SelectTask<T> extends Task {
     public SelectTask(@NonNull Supplier<T> stateSupplier) {
         this.stateSupplier = stateSupplier;
         named("Select");
+        disableSubsystemAttachment = true;
     }
 
     /**

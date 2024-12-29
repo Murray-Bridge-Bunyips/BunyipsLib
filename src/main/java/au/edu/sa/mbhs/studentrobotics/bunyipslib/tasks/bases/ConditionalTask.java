@@ -34,6 +34,7 @@ public class ConditionalTask extends Task {
         this.falseTask = falseTask;
         this.conditionOnInit = conditionOnInit;
         named("Conditional " + trueTask + " / " + falseTask);
+        disableSubsystemAttachment = true;
     }
 
     /**

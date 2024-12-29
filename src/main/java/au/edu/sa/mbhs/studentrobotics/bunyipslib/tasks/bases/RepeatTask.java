@@ -19,6 +19,7 @@ public class RepeatTask extends Task {
     public RepeatTask(@NonNull Task task) {
         this.task = task;
         named(task + " (repeat)");
+        disableSubsystemAttachment = true;
     }
 
     @Override
@@ -31,6 +32,7 @@ public class RepeatTask extends Task {
         if (task.poll()) {
             task.reset();
         }
+        named(task + " (repeat)");
         task.execute();
     }
 
