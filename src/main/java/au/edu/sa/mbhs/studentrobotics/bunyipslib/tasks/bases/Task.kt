@@ -547,7 +547,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
                         this@Task.periodic()
                     }
                 }
-                isFinished { this@Task.poll() }
+                isFinished { this@Task.isTaskFinished() }
                 onInterrupt { this@Task.onInterrupt() }
                 onReset { this@Task.reset() }
                 onFinish { this@Task.onFinish() }
