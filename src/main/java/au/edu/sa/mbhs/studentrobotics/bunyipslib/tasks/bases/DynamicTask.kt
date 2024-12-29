@@ -19,7 +19,7 @@ class DynamicTask() : Task() {
     private var reset = {}
 
     init {
-        named("Task (dyn)")
+        named("Task (dyn.)")
     }
 
     /**

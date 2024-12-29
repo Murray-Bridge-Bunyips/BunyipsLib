@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 public class SelectTask<T> extends Task {
     private final Supplier<T> stateSupplier;
     private final HashMap<T, Task> tasks = new HashMap<>();
+    private Task currentTask;
 
     /**
      * Create a new select task with the given state supplier.
@@ -25,7 +26,7 @@ public class SelectTask<T> extends Task {
      */
     public SelectTask(@NonNull Supplier<T> stateSupplier) {
         this.stateSupplier = stateSupplier;
-        named("Select");
+        named("Task (sel.)");
         disableSubsystemAttachment = true;
     }
 
@@ -60,25 +61,29 @@ public class SelectTask<T> extends Task {
     }
 
     @Override
-    protected void init() {
-        Task task = tasks.get(stateSupplier.get());
-        if (task != null) {
-            task.execute();
-        }
-    }
-
-    @Override
     protected void periodic() {
         Task task = tasks.get(stateSupplier.get());
-        if (task != null) {
-            task.execute();
+        if (task != null && task != currentTask) {
+            currentTask.finishNow();
+            currentTask = task;
         }
+        if (currentTask == null) return;
+        named(currentTask.toString());
+        timeout = currentTask.timeout;
+        currentTask.execute();
     }
 
     @Override
     protected boolean isTaskFinished() {
         Task task = tasks.get(stateSupplier.get());
         return task != null && task.poll();
+    }
+
+    @Override
+    protected void onFinish() {
+        for (Task task : tasks.values()) {
+            task.finishNow();
+        }
     }
 
     @Override

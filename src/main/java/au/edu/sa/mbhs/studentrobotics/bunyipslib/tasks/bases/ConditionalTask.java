@@ -33,7 +33,7 @@ public class ConditionalTask extends Task {
         this.trueTask = trueTask;
         this.falseTask = falseTask;
         this.conditionOnInit = conditionOnInit;
-        named("Conditional " + trueTask + " / " + falseTask);
+        named(trueTask + " / " + falseTask + " (cnd.)");
         disableSubsystemAttachment = true;
     }
 
@@ -54,14 +54,15 @@ public class ConditionalTask extends Task {
         trueTask.reset();
         falseTask.reset();
         task = conditionOnInit.getAsBoolean() ? trueTask : falseTask;
-        task.execute();
-        timeout = task.timeout;
     }
 
     @Override
     protected void periodic() {
-        if (task != null)
+        if (task != null) {
+            named(task.toString());
+            timeout = task.timeout;
             task.execute();
+        }
     }
 
     @Override

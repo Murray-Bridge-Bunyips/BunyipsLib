@@ -18,13 +18,9 @@ public class RepeatTask extends Task {
      */
     public RepeatTask(@NonNull Task task) {
         this.task = task;
-        named(task + " (repeat)");
+        named(task + " (rep.)");
+        timeout = task.timeout;
         disableSubsystemAttachment = true;
-    }
-
-    @Override
-    protected void init() {
-        task.execute();
     }
 
     @Override
@@ -33,11 +29,17 @@ public class RepeatTask extends Task {
             task.reset();
         }
         named(task + " (repeat)");
+        timeout = task.timeout;
         task.execute();
     }
 
     @Override
     protected void onFinish() {
         task.finishNow();
+    }
+
+    @Override
+    protected void onReset() {
+        task.reset();
     }
 }

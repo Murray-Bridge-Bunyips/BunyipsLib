@@ -7,12 +7,9 @@ import androidx.annotation.Nullable;
 
 import java.util.function.Supplier;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * Represents a task that is constructed at runtime. This is useful for tasks that have runtime requirements
@@ -27,7 +24,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  * @since 4.0.0
  */
 public class DeferredTask extends Task {
-    private static final String SUFFIX = " (dfr)";
+    private static final String SUFFIX = " (dfr.)";
     private final Supplier<Task> lazyTask;
     private Task builtTask;
 
