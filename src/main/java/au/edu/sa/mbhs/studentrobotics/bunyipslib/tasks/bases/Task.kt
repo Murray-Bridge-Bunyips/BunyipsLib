@@ -435,7 +435,6 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
      * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable] named [name],
      * queued to run before this task starts.
      */
-    @JvmOverloads
     fun after(runnable: Runnable, name: String = "Run"): SequentialTaskGroup {
         val task = Lambda(runnable).named(name)
         task.named("after $task")
@@ -464,7 +463,6 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
      * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable] named [name],
      * queued to run when this task finishes.
      */
-    @JvmOverloads
     fun then(runnable: Runnable, name: String = "Run"): SequentialTaskGroup {
         val task = Lambda(runnable).named(name)
         task.named("then $task")
