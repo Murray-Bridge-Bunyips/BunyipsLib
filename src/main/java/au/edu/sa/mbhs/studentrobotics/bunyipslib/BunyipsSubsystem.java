@@ -315,7 +315,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         // Lockout if a task is currently running that is not the default task
         if (currentTask != defaultTask) {
             // Override if the task is designed to override
-            if (newTask.isPriority()) {
+            if (newTask.isPriority) {
                 setHighPriorityCurrentTask(newTask);
                 return true;
             }

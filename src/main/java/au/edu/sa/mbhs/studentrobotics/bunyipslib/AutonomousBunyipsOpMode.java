@@ -184,8 +184,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                     Dbg.logd("[AutonomousBunyipsOpMode] task %/% (%) finished%", this.currentTask, taskCount, currentTask, runTime != 0 ? " -> " + runTime + "s" : "");
                     this.currentTask++;
                 }
-
-                currentTask.run();
+                currentTask.execute();
             } catch (Exception e) {
                 Exceptions.handle(e, telemetry::log);
             }

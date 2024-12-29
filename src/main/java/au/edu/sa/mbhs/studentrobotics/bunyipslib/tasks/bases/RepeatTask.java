@@ -23,7 +23,7 @@ public class RepeatTask extends Task {
 
     @Override
     protected void init() {
-        task.run();
+        task.execute();
     }
 
     @Override
@@ -31,7 +31,7 @@ public class RepeatTask extends Task {
         if (task.poll()) {
             task.reset();
         }
-        task.run();
+        task.execute();
     }
 
     @Override

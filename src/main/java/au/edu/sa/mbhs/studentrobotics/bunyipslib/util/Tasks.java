@@ -112,7 +112,7 @@ public final class Tasks {
         if (task.isFinished()) {
             return;
         }
-        task.run();
+        task.execute();
         task.poll();
     }
 
@@ -127,7 +127,7 @@ public final class Tasks {
         if (task.isFinished()) {
             task.reset();
         }
-        task.run();
+        task.execute();
         task.poll();
     }
 

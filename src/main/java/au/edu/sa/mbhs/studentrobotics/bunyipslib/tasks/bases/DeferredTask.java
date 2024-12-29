@@ -27,7 +27,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  * @since 4.0.0
  */
 public class DeferredTask extends Task {
-    private static final String UNCONSTRUCTED_NAME = " (dfr)";
+    private static final String SUFFIX = " (dfr)";
     private final Supplier<Task> lazyTask;
     private Task builtTask;
 
@@ -38,7 +38,15 @@ public class DeferredTask extends Task {
      */
     public DeferredTask(@NonNull Supplier<Task> lazyTask) {
         this.lazyTask = lazyTask;
-        super.named(UNCONSTRUCTED_NAME);
+        super.named("Task" + SUFFIX);
+    }
+
+    /**
+     * @return the built task following deferral initialisation, nullable if this task hasn't been built yet
+     */
+    @Nullable
+    public Task getTask() {
+        return builtTask;
     }
 
     @Override
@@ -47,33 +55,29 @@ public class DeferredTask extends Task {
         String name = builtTask.toString();
         Measure<Time> t = builtTask.timeout;
         Dbg.logd(getClass(), "built -> % (t=%)", name, t.magnitude() <= 0 ? "inf" : t.in(Seconds) + "s");
-        if (UNCONSTRUCTED_NAME.equals(toString()))
+        if ((getClass().getSimpleName() + SUFFIX).equals(toString()))
             super.named(name);
         if (timeout.equals(INFINITE_TIMEOUT))
             timeout = t;
-        builtTask.getDependency().ifPresent((dep) ->
-                dep.setHighPriorityCurrentTask(builtTask));
     }
 
     @Override
     protected void periodic() {
         if (builtTask == null) return;
-        if (builtTask.getDependency().isEmpty())
-            builtTask.run();
+        builtTask.execute();
     }
 
     @Override
     protected void onFinish() {
         if (builtTask == null) return;
         builtTask.finishNow();
-        builtTask.getDependency().ifPresent(BunyipsSubsystem::cancelCurrentTask);
     }
 
     @Override
     protected void onReset() {
         if (builtTask == null) return;
         builtTask.reset();
-        named(UNCONSTRUCTED_NAME);
+        named(getClass().getSimpleName() + SUFFIX);
         timeout(INFINITE_TIMEOUT);
         builtTask = null;
     }
@@ -81,11 +85,11 @@ public class DeferredTask extends Task {
     @Override
     protected boolean isTaskFinished() {
         if (builtTask == null) return false;
-        return builtTask.getDependency().isPresent() ? builtTask.isFinished() : builtTask.poll();
+        return builtTask.poll();
     }
 
     /**
-     * Set the name of this DeferredTask. Note that "(dyn)" will be appended to indicate this task is not constructed.
+     * Set the name of this DeferredTask. Note that " (dfr)" will be appended to indicate this task is deferred.
      * If the task is constructed, this method will no-op. Use the wrapped Task to set a name.
      */
     @NonNull
@@ -93,7 +97,7 @@ public class DeferredTask extends Task {
     public final Task named(@Nullable String name) {
         if (builtTask != null)
             return this;
-        super.named(name + " (dyn)");
+        super.named(name + SUFFIX);
         return this;
     }
 

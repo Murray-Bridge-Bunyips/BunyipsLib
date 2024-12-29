@@ -62,7 +62,7 @@ public class SelectTask<T> extends Task {
     protected void init() {
         Task task = tasks.get(stateSupplier.get());
         if (task != null) {
-            task.run();
+            task.execute();
         }
     }
 
@@ -70,7 +70,7 @@ public class SelectTask<T> extends Task {
     protected void periodic() {
         Task task = tasks.get(stateSupplier.get());
         if (task != null) {
-            task.run();
+            task.execute();
         }
     }
 

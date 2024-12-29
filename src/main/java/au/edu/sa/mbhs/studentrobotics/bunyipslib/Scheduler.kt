@@ -156,36 +156,19 @@ class Scheduler : BunyipsComponent() {
             val condition = task.runCondition.invoke()
             if (task.stopCondition == null) task.stopCondition = { false }
             if (condition || task.taskToRun.isRunning) {
-                if (!task.taskToRun.dependency.isPresent) {
-                    if (task.stopCondition!!.invoke()) {
-                        // Finish now as we should do nothing with this task
-                        task.taskToRun.finishNow()
-                        continue
-                    }
-                    // This is a non-command task, run it now as it will not be run by any subsystem
-                    task.taskToRun.run()
-                    // Debouncing should not auto-reset the task if it is completed
-                    if (task.taskToRun.poll() && !task.debouncing) {
-                        // Reset the task as it is not attached to a subsystem and will not be reintegrated by one
-                        task.taskToRun.reset()
-                    }
+                // Terminate current task if we hit the stop condition, or early return if we've already finished
+                if (task.stopCondition!!.invoke() || task.taskToRun.isFinished) {
+                    // No-ops if already stopped
+                    task.taskToRun.finishNow()
                     continue
                 }
-                // This task must have a dependency, set the current task of the subsystem that depends on it
-                // Tasks may only have one subsystem dependency, where this dependency represents where the task
-                // will be executed by the scheduler.
-                assert(task.taskToRun.dependency.isPresent)
-                if (task.stopCondition!!.invoke()) {
-                    // Finish handler will be called on the subsystem
-                    task.taskToRun.finish()
-                    continue
+                task.taskToRun.execute()
+                if (task.taskToRun.dependency.isEmpty) {
+                    // Update finish conditions for non-subsystem tasks as it is not done elsewhere
+                    task.taskToRun.poll()
                 }
-                if (task.taskToRun.isFinished && task.debouncing) {
-                    // Don't requeue if debouncing
-                    continue
-                }
-                task.taskToRun.dependency.get().setCurrentTask(task.taskToRun)
             } else if (task.taskToRun.isFinished && !task.debouncing) {
+                // For tasks that are not debouncing and their conditions are met again, we restart them
                 task.taskToRun.reset()
             }
         }

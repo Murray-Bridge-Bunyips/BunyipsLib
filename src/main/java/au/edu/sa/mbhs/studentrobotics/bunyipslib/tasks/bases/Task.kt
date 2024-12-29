@@ -45,6 +45,7 @@ import java.util.function.BooleanSupplier
 abstract class Task : BunyipsComponent(), Runnable, Action {
     private var name = javaClass.simpleName
     private var _dependency: BunyipsSubsystem? = null
+    private var attached = false
     private var userFinished = false
     private var taskFinished = false
     private var finisherFired = false
@@ -66,8 +67,8 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
      * Whether this task should override other tasks in the queue if they conflict with this task. Will only
      * apply if this task has a dependency to run on (see [dependency]).
      */
+    @JvmField
     var isPriority: Boolean = false
-        private set
 
     /**
      * Get the subsystem reference that this task has elected a dependency on.
@@ -195,15 +196,21 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
      *
      * A call to [execute] will attempt to schedule the task on every iteration of the [execute] call. As such, if it is rejected,
      * re-scheduling will be attempted as the state of the subsystem may change and allow this task to become scheduled.
+     * An already scheduled task on a subsystem will no-op this call. A task with no dependency makes this method the equivalent of [run].
      */
     fun execute() {
-        TODO()
+        if (attached) return
+        dependency.ifPresentOrElse({ attached = it.setCurrentTask(this) }, this::run)
     }
 
     /**
      * Execute one cycle of this task. The finish condition is separately polled in the [poll] method.
+     *
+     * Note that this method will perform one cycle of work for this task in the context it is currently,
+     * if you wish to respect the [dependency], use the [execute] method.
      */
     final override fun run() {
+        dependency.ifPresentOrElse({ attached = it.currentTask == this }, { attached = false })
         Dashboard.usePacket {
             p = it
             fieldOverlay = it.fieldOverlay()
@@ -219,6 +226,11 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
                 Exceptions.runUserMethod(opMode, ::onFinish)
                 if (!userFinished)
                     Exceptions.runUserMethod(opMode, ::onInterrupt)
+                dependency.ifPresent { d ->
+                    if (attached && d.currentTask == this)
+                        d.cancelCurrentTask()
+                }
+                attached = false
                 finisherFired = true
             }
             // Don't run the task if it is finished as a safety guard
@@ -311,6 +323,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
         taskFinished = false
         finisherFired = false
         userFinished = false
+        attached = false
     }
 
     /**
@@ -334,6 +347,11 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
             Exceptions.runUserMethod(opMode, ::onFinish)
             if (!userFinished)
                 Exceptions.runUserMethod(opMode, ::onInterrupt)
+            dependency.ifPresent {
+                if (attached && it.currentTask == this)
+                    it.cancelCurrentTask()
+            }
+            attached = false
         }
         finisherFired = true
     }

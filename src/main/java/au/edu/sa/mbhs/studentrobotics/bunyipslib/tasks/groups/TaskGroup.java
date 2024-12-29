@@ -59,22 +59,11 @@ public abstract class TaskGroup extends Task {
                 Dbg.logd(getClass(), "sub-task %/% (%) finished -> %s", finishedTasks.size(), tasks.size(), task, task.getDeltaTime().in(Seconds));
             return;
         }
-        // Do not manage a task if it is already attached to a subsystem being managed there
-        if (attachedTasks.contains(task)) return;
-        task.getDependency().ifPresent(dependency -> {
-            if (dependency.setCurrentTask(task))
-                attachedTasks.add(task);
-        });
-        // Otherwise we can just run the task outright
-        if (task.getDependency().isEmpty()) {
-            task.run();
-        }
+        task.execute();
     }
 
     protected final void finishAllTasks() {
         for (Task task : tasks) {
-            if (!task.isFinished())
-                task.getDependency().ifPresent(BunyipsSubsystem::cancelCurrentTask);
             task.finishNow();
         }
     }
