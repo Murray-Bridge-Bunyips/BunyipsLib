@@ -226,13 +226,13 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
                 Exceptions.runUserMethod(opMode, ::onFinish)
                 if (!userFinished)
                     Exceptions.runUserMethod(opMode, ::onInterrupt)
+                finisherFired = true
                 dependency.ifPresent { d ->
                     if (attached && d.currentTask == this) {
                         d.cancelCurrentTask()
                         attached = false
                     }
                 }
-                finisherFired = true
             }
             // Don't run the task if it is finished as a safety guard
             if (isFinished) return@usePacket
@@ -348,6 +348,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
             Exceptions.runUserMethod(opMode, ::onFinish)
             if (!userFinished)
                 Exceptions.runUserMethod(opMode, ::onInterrupt)
+            finisherFired = true
             dependency.ifPresent {
                 if (attached && it.currentTask == this) {
                     attached = false
@@ -355,7 +356,6 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
                 }
             }
         }
-        finisherFired = true
     }
 
     /**

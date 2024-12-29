@@ -111,7 +111,7 @@ class Scheduler : BunyipsComponent() {
                 val taskCount = (allocatedTasks.size - allocatedTasks.stream()
                     .filter { task -> task.taskToRun.dependency.isPresent }.count()
                         + subsystems.size - subsystems.stream().filter { s -> s.isIdle }.count())
-                it.telemetry.add("\nManaging % task% (%s, %c) on % subsystem%",
+                it.telemetry.add("\nRunning % task% (%s, %c) on % subsystem%",
                     taskCount,
                     if (taskCount == 1L) "" else "s",
                     allocatedTasks.stream().filter { task -> task.taskToRun.dependency.isPresent }
