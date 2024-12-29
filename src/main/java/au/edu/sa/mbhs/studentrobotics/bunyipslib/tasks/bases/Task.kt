@@ -227,10 +227,11 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
                 if (!userFinished)
                     Exceptions.runUserMethod(opMode, ::onInterrupt)
                 dependency.ifPresent { d ->
-                    if (attached && d.currentTask == this)
+                    if (attached && d.currentTask == this) {
                         d.cancelCurrentTask()
+                        attached = false
+                    }
                 }
-                attached = false
                 finisherFired = true
             }
             // Don't run the task if it is finished as a safety guard
@@ -348,10 +349,11 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
             if (!userFinished)
                 Exceptions.runUserMethod(opMode, ::onInterrupt)
             dependency.ifPresent {
-                if (attached && it.currentTask == this)
+                if (attached && it.currentTask == this) {
+                    attached = false
                     it.cancelCurrentTask()
+                }
             }
-            attached = false
         }
         finisherFired = true
     }
