@@ -42,7 +42,7 @@ public class MecanumGains {
      */
     public boolean pathFollowingEnabled;
     /**
-     * Whether the default task of the drive should be a {@link MecanumDrive.HoldLastPose}, instead of an idle task.
+     * Whether the default task of the drive should be a {@link MecanumDrive.HoldLastPoseTask}, instead of an idle task.
      */
     public boolean poseHoldingEnabled;
 
@@ -119,7 +119,7 @@ public class MecanumGains {
 
         /**
          * Enabling this option is a convenience configuration option to schedule the default task of {@link MecanumDrive}
-         * to be a {@link MecanumDrive.HoldLastPose} task. This task will continue to run the RoadRunner feedback loops
+         * to be a {@link MecanumDrive.HoldLastPoseTask}. This task will continue to run the RoadRunner feedback loops
          * even when no trajectory is running, ensuring the robot corrects for disturbances despite the fact a trajectory
          * is not active.
          * <p>
