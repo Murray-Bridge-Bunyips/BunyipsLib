@@ -62,7 +62,7 @@ class DynamicTask() : Task() {
     infix fun onFinish(onFinish: Runnable) = apply { finish = { onFinish.run() } }
 
     /**
-     * Runs when the task is interrupted (finished but not by [onFinish]).
+     * Runs when the task is interrupted (finished but not by [isFinished]).
      */
     infix fun onInterrupt(onInterrupt: Runnable) = apply { interrupt = { onInterrupt.run() } }
 
