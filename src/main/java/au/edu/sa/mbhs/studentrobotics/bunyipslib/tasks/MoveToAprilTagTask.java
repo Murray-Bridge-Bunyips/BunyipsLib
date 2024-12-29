@@ -284,7 +284,7 @@ public class MoveToAprilTagTask extends Task {
             throw new IllegalStateException("A drive localizer must be present to use MoveToAprilTagTask!");
         VectorF point = target.get().getMetadata().get().fieldPosition;
 
-        fieldOverlay.setStroke("#dd2c00")
+        dashboard.fieldOverlay().setStroke("#dd2c00")
                 .strokeCircle(point.get(0), point.get(1), 2)
                 .setStroke("#b89eff")
                 .strokeLine(point.get(0), point.get(1), poseEstimate.position.x, poseEstimate.position.y)

@@ -314,11 +314,12 @@ public class HolonomicVectorDriveTask extends Task {
                 headingLock != null ? -rController.calculate(rLockedError, 0) : v.angVel
         ));
 
-        fieldOverlay.setStroke("#c91c00");
+        dashboard.fieldOverlay().setStroke("#4CAF50BB");
         if (vectorLock != null)
-            fieldOverlay.strokeLine(current.position.x, current.position.y, vectorLock.x, vectorLock.y);
+            dashboard.fieldOverlay().strokeLine(current.position.x, current.position.y, vectorLock.x, vectorLock.y);
+        dashboard.fieldOverlay().setStroke("#4CAF50");
         if (headingLock != null)
-            Dashboard.drawRobot(fieldOverlay, new Pose2d(current.position, headingLock));
+            Dashboard.drawRobot(dashboard.fieldOverlay(), new Pose2d(vectorLock != null ? vectorLock : current.position, headingLock));
     }
 
     @Override

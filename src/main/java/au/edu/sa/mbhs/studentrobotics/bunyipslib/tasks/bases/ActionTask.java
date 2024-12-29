@@ -55,8 +55,8 @@ public class ActionTask extends Task {
 
     @Override
     protected void periodic() {
-        parentAction.preview(fieldOverlay);
-        actionFinished = !parentAction.run(p);
+        parentAction.preview(dashboard.fieldOverlay());
+        actionFinished = !parentAction.run(dashboard);
     }
 
     @Override

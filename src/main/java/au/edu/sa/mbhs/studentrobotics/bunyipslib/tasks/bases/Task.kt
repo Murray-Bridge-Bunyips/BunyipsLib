@@ -100,22 +100,14 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
     val isFinished: Boolean
         get() = taskFinished && finisherFired
 
-    // RoadRunner Actions compatibility, exposes the same field names as they are presented in the Action interface
-    /**
-     * Convenience field to get a reference to FtcDashboard's field overlay for drawing on the field.
-     * Available as soon as [init] has been called for this task.
-     *
-     * This field is used for porting between [Action] and [Task] implementations.
-     */
-    protected lateinit var fieldOverlay: Canvas
-
     /**
      * Convenience field to get a reference to a [TelemetryPacket] for sending telemetry to the dashboard.
      * Available as soon as [init] has been called for this task.
      *
-     * This field is used for porting between [Action] and [Task] implementations.
+     * This field is used for seamless transition between [Action] and [Task] implementations.
+     * Use `dashboard.fieldOverlay()` for accessing a field overlay.
      */
-    protected lateinit var p: TelemetryPacket
+    protected lateinit var dashboard: TelemetryPacket
 
     /**
      * Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.
@@ -212,8 +204,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
     final override fun run() {
         dependency.ifPresentOrElse({ attached = it.currentTask == this }, { attached = false })
         Dashboard.usePacket {
-            p = it
-            fieldOverlay = it.fieldOverlay()
+            dashboard = it
             if (startTime == 0L) {
                 Exceptions.runUserMethod(opMode, ::init)
                 startTime = System.nanoTime()
@@ -263,8 +254,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
      */
     final override fun run(p: TelemetryPacket): Boolean {
         // FtcDashboard parameters are handled by the periodic method of this task, so we can ignore the packet
-        // and fieldOverlay here as we will handle them ourselves. This also allows Action to Task porting
-        // to use the same field parameters.
+        // and fieldOverlay here as we will handle them ourselves through the `dashboard` field
         run()
         return !poll()
     }
@@ -499,16 +489,20 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
                     on(this@Task.dependency.get(), this@Task.isPriority)
                 init {
                     Dashboard.usePacket {
-                        this@Task.p = it
-                        this@Task.fieldOverlay = it.fieldOverlay()
+                        this@Task.dashboard = it
+                        val startTimeField = Task::class.java.getDeclaredField("startTime")
+                        startTimeField.isAccessible = true
+                        startTimeField.setLong(this@Task, startTime)
+                        this@Task.init()
+                        this@Task.poll()
                     }
-                    val startTimeField = Task::class.java.getDeclaredField("startTime")
-                    startTimeField.isAccessible = true
-                    startTimeField.setLong(this@Task, startTime)
-                    this@Task.init()
-                    this@Task.poll()
                 }
-                periodic { this@Task.periodic() }
+                periodic {
+                    Dashboard.usePacket {
+                        this@Task.dashboard = it
+                        this@Task.periodic()
+                    }
+                }
                 isFinished { this@Task.poll() }
                 onInterrupt { this@Task.onInterrupt() }
                 onReset { this@Task.reset() }

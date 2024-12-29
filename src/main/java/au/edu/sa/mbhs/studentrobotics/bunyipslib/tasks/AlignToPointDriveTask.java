@@ -201,7 +201,7 @@ public class AlignToPointDriveTask extends Task {
         drive.setPower(new PoseVelocity2d(fieldCentric ? robotFrameInput : fieldFrameInput, headingInput));
 
         // Draw the target on the field with lines to the target
-        fieldOverlay.setStroke("#dd2c00")
+        dashboard.fieldOverlay().setStroke("#dd2c00")
                 .strokeCircle(point.x, point.y, 2)
                 .setStroke("#b89eff")
                 .strokeLine(point.x, point.y, poseEstimate.position.x, poseEstimate.position.y)

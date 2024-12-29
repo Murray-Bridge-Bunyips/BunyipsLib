@@ -339,10 +339,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            fieldOverlay.setStroke("#4CAF507A");
-            fieldOverlay.setStrokeWidth(1);
-            fieldOverlay.strokePolyline(xPoints, yPoints);
-
             if (beginTs < 0) {
                 beginTs = Actions.now();
                 t = 0;
@@ -355,11 +351,11 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             Pose2dDual<Arclength> txWorldTarget = timeTrajectory.path.get(x.value(), 3);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
-            PoseVelocity2dDual<Time> command = new RamseteController(kinematics.trackWidth, gains.ramseteZeta, gains.ramseteBBar)
+            PoseVelocity2dDual<Time> feedback = new RamseteController(kinematics.trackWidth, gains.ramseteZeta, gains.ramseteBBar)
                     .compute(x, txWorldTarget, accumulator.getPose());
-            driveCommandWriter.write(new DriveCommandMessage(command));
+            driveCommandWriter.write(new DriveCommandMessage(feedback));
 
-            TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
+            TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(feedback);
             double voltage = voltageSensor.getVoltage();
             MotorFeedforward feedforward = new MotorFeedforward(
                     profile.kS, profile.kV / model.inPerTick, profile.kA / model.inPerTick);
@@ -368,17 +364,17 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             tankCommandWriter.write(new TankCommandMessage(voltage, leftPower, rightPower));
 
             Pose2d error = txWorldTarget.value().minusExp(accumulator.getPose());
-            p.put("xError", error.position.x);
-            p.put("yError", error.position.y);
-            p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
+            dashboard.put("xError", error.position.x);
+            dashboard.put("yError", error.position.y);
+            dashboard.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
 
-            Canvas c = p.fieldOverlay();
+            Canvas c = dashboard.fieldOverlay();
             c.setStrokeWidth(1);
 
             c.setStroke("#4CAF50");
             Dashboard.drawRobot(c, txWorldTarget.value());
 
-            c.setStroke("#4CAF50FF");
+            c.setStroke("#4CAF50BB");
             c.setStrokeWidth(1);
             c.strokePolyline(xPoints, yPoints);
         }
@@ -419,9 +415,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            fieldOverlay.setStroke("#7C4DFF7A");
-            fieldOverlay.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
-
             if (beginTs < 0) {
                 beginTs = Actions.now();
                 t = 0;
@@ -434,16 +427,16 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
             PoseVelocity2d robotVelRobot = accumulator.getVelocity();
 
-            PoseVelocity2dDual<Time> command = new PoseVelocity2dDual<>(
+            PoseVelocity2dDual<Time> feedback = new PoseVelocity2dDual<>(
                     Vector2dDual.constant(Geometry.zeroVec(), 3),
                     txWorldTarget.heading.velocity().plus(
                             gains.turnGain * accumulator.getPose().heading.minus(txWorldTarget.heading.value()) +
                                     gains.turnVelGain * (robotVelRobot.angVel - txWorldTarget.heading.velocity().value())
                     )
             );
-            driveCommandWriter.write(new DriveCommandMessage(command));
+            driveCommandWriter.write(new DriveCommandMessage(feedback));
 
-            TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
+            TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(feedback);
             double voltage = voltageSensor.getVoltage();
             MotorFeedforward feedforward = new MotorFeedforward(
                     profile.kS, profile.kV / model.inPerTick, profile.kA / model.inPerTick);
@@ -451,13 +444,13 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             rightPower = feedforward.compute(wheelVels.right) / voltage;
             tankCommandWriter.write(new TankCommandMessage(voltage, leftPower, rightPower));
 
-            Canvas c = p.fieldOverlay();
+            Canvas c = dashboard.fieldOverlay();
             c.setStrokeWidth(1);
 
             c.setStroke("#4CAF50");
             Dashboard.drawRobot(c, txWorldTarget.value());
 
-            c.setStroke("#7C4DFFFF");
+            c.setStroke("#7C4DFFBB");
             c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
         }
 

@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters;
 
 import androidx.annotation.NonNull;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
+
 /**
  * Drive coefficients that define gains for a Mecanum drivetrain.
  *
@@ -39,6 +41,10 @@ public class MecanumGains {
      * Whether a path follower approach should be used instead of the default time-based trajectory.
      */
     public boolean pathFollowingEnabled;
+    /**
+     * Whether the default task of the drive should be a {@link MecanumDrive.HoldLastPose}, instead of an idle task.
+     */
+    public boolean poseHoldingEnabled;
 
     @NonNull
     @Override
@@ -108,6 +114,24 @@ public class MecanumGains {
         @NonNull
         public Builder setPathFollowing(boolean usePathFollowing) {
             gains.pathFollowingEnabled = usePathFollowing;
+            return this;
+        }
+
+        /**
+         * Enabling this option is a convenience configuration option to schedule the default task of {@link MecanumDrive}
+         * to be a {@link MecanumDrive.HoldLastPose} task. This task will continue to run the RoadRunner feedback loops
+         * even when no trajectory is running, ensuring the robot corrects for disturbances despite the fact a trajectory
+         * is not active.
+         * <p>
+         * Without pose holding, and by default, disturbances that occur while the drive is not running a trajectory
+         * will not be corrected for. Enabling this option ensures it will correct in the context of a running task.
+         *
+         * @param defaultTaskAutoLock whether to schedule a hold last pose task as the default task of the drive
+         * @return this
+         */
+        @NonNull
+        public Builder setPoseHolding(boolean defaultTaskAutoLock) {
+            gains.poseHoldingEnabled = defaultTaskAutoLock;
             return this;
         }
 

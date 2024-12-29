@@ -147,8 +147,8 @@ public class TurnTask extends Task {
         Pose2d pose = poseEstimate.get();
         double errRad = Mathf.wrap(pose.heading.toDouble(), -Math.PI, Math.PI) - angRad;
         powerIn.accept(Geometry.vel(0, 0, controller.calculate(Mathf.wrap(errRad, -Math.PI, Math.PI), 0)));
-        fieldOverlay.setStroke("#4CAF50");
-        Dashboard.drawRobot(fieldOverlay, new Pose2d(pose.position, angRad));
+        dashboard.fieldOverlay().setStroke("#4CAF50");
+        Dashboard.drawRobot(dashboard.fieldOverlay(), new Pose2d(pose.position, angRad));
     }
 
     @Override

@@ -237,10 +237,16 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
      * Cancel the current task immediately and return to the default task, if available.
      */
     public final void cancelCurrentTask() {
-        if (shouldRun && currentTask != defaultTask) {
-            sout(Dbg::logv, "Task changed: %<-%(INT)", defaultTask, currentTask);
-            currentTask.finishNow();
-            currentTask = defaultTask;
+        if (!shouldRun) return;
+        if (currentTask != defaultTask) {
+            if (currentTask != null && !currentTask.isFinished()) {
+                sout(Dbg::logv, "Task changed: %<-%(INT)", defaultTask, currentTask);
+                currentTask.finishNow();
+                // Set now to avoid double logging
+                currentTask = defaultTask;
+            }
+            // Keep operations consistent when assigning the default task
+            getCurrentTask();
         }
     }
 

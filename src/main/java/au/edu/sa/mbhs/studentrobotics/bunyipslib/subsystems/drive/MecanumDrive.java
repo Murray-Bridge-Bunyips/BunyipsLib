@@ -25,11 +25,13 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.PoseVelocity2dDual;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.ProfileParams;
+import com.acmerobotics.roadrunner.Rotation2dDual;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeTrajectory;
 import com.acmerobotics.roadrunner.TimeTurn;
 import com.acmerobotics.roadrunner.TrajectoryBuilderParams;
 import com.acmerobotics.roadrunner.TurnConstraints;
+import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
@@ -160,6 +162,10 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         this.rightBack = (DcMotorEx) rightBack;
         this.rightFront = (DcMotorEx) rightFront;
         this.lazyImu = lazyImu;
+
+        if (gains.poseHoldingEnabled) {
+            setDefaultTask(new HoldLastPose());
+        }
 
         Dashboard.enableConfig(getClass());
     }
@@ -379,7 +385,68 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     }
 
     /**
+     * A task that will hold the last known pose of the robot using the RoadRunner feedback loop.
+     * Useful as a default task and can be conveniently autoconfigured as the default task via the {@link MecanumGains} config option.
+     */
+    public final class HoldLastPose extends Task {
+        private Pose2d hold;
+
+        @Override
+        protected void init() {
+            hold = accumulator.getPose();
+        }
+
+        @Override
+        protected void periodic() {
+            targetPoseWriter.write(new PoseMessage(hold));
+
+            Pose2d robotPose = accumulator.getPose();
+            PoseVelocity2d robotVel = accumulator.getVelocity();
+            // Target position with zero velocity
+            Pose2dDual<Time> txWorldTarget = new Pose2dDual<>(
+                    Vector2dDual.constant(hold.position, 2),
+                    Rotation2dDual.constant(hold.heading, 2)
+            );
+
+            PoseVelocity2dDual<Time> feedback = new HolonomicController(
+                    gains.axialGain, gains.lateralGain, gains.headingGain,
+                    gains.axialVelGain, gains.lateralVelGain, gains.headingVelGain
+            )
+                    .compute(txWorldTarget, robotPose, robotVel);
+            driveCommandWriter.write(new DriveCommandMessage(feedback));
+
+            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(feedback);
+            double voltage = voltageSensor.getVoltage();
+
+            MotorFeedforward feedforward = new MotorFeedforward(
+                    profile.kS, profile.kV / model.inPerTick, profile.kA / model.inPerTick);
+            leftFrontPower = feedforward.compute(wheelVels.leftFront) / voltage;
+            leftBackPower = feedforward.compute(wheelVels.leftBack) / voltage;
+            rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
+            rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
+            mecanumCommandWriter.write(new MecanumCommandMessage(
+                    voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
+            ));
+
+            Pose2d error = hold.minusExp(robotPose);
+            dashboard.put("xError", error.position.x);
+            dashboard.put("yError", error.position.y);
+            dashboard.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
+
+            Canvas c = dashboard.fieldOverlay();
+            c.setStrokeWidth(1);
+
+            c.setStroke("#4CAF50");
+            Dashboard.drawRobot(c, hold);
+
+            c.setStroke("#4CAF50BB");
+            c.strokeLine(robotPose.position.x, robotPose.position.y, hold.position.x, hold.position.y);
+        }
+    }
+
+    /**
      * A task that will execute a RoadRunner trajectory on a Mecanum drive using a path follower approach.
+     * Can be enabled for use via the {@link MecanumGains} configuration option.
      */
     public final class FollowDisplacementTrajectoryTask extends Task {
         private final DisplacementTrajectory displacementTrajectory;
@@ -415,10 +482,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            fieldOverlay.setStroke("#4CAF507A");
-            fieldOverlay.setStrokeWidth(1);
-            fieldOverlay.strokePolyline(xPoints, yPoints);
-
             Pose2d actualPose = accumulator.getPose();
             robotVelRobot = accumulator.getVelocity();
 
@@ -428,19 +491,19 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             Pose2dDual<Time> txWorldTarget = displacementTrajectory.get(s + PATH_FOLLOWER_PROJECTION_LOOKAHEAD_INCHES);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
-            PoseVelocity2dDual<Time> feedbackCommand = new HolonomicController(
+            PoseVelocity2dDual<Time> feedback = new HolonomicController(
                     gains.axialGain, gains.lateralGain, gains.headingGain,
                     gains.axialVelGain, gains.lateralVelGain, gains.headingVelGain
             )
                     .compute(txWorldTarget, actualPose, robotVelRobot);
-            driveCommandWriter.write(new DriveCommandMessage(feedbackCommand));
+            driveCommandWriter.write(new DriveCommandMessage(feedback));
 
             double voltage = voltageSensor.getVoltage();
 
             // Future: calculate max feedforward power
 //            Pose2dDual<Arclength> displacement = displacementTrajectory.path.get(s, 3);
 
-            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(feedbackCommand);
+            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(feedback);
             MotorFeedforward feedforward = new MotorFeedforward(profile.kS,
                     profile.kV / model.inPerTick, profile.kA / model.inPerTick);
             leftFrontPower = feedforward.compute(wheelVels.leftFront) / voltage;
@@ -452,17 +515,17 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             ));
 
             error = txWorldTarget.value().minusExp(actualPose);
-            p.put("xError", error.position.x);
-            p.put("yError", error.position.y);
-            p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
+            dashboard.put("xError", error.position.x);
+            dashboard.put("yError", error.position.y);
+            dashboard.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
 
-            Canvas c = p.fieldOverlay();
+            Canvas c = dashboard.fieldOverlay();
             c.setStrokeWidth(1);
 
             c.setStroke("#4CAF50");
             Dashboard.drawRobot(c, txWorldTarget.value());
 
-            c.setStroke("#4CAF50FF");
+            c.setStroke("#4CAF50BB");
             c.setStrokeWidth(1);
             c.strokePolyline(xPoints, yPoints);
         }
@@ -532,10 +595,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            fieldOverlay.setStroke("#4CAF507A");
-            fieldOverlay.setStrokeWidth(1);
-            fieldOverlay.strokePolyline(xPoints, yPoints);
-
             if (beginTs < 0) {
                 beginTs = Actions.now();
                 t = 0;
@@ -543,19 +602,20 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                 t = Actions.now() - beginTs;
             }
 
+            Pose2d robotPose = accumulator.getPose();
             Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             robotVelRobot = accumulator.getVelocity();
 
-            PoseVelocity2dDual<Time> command = new HolonomicController(
+            PoseVelocity2dDual<Time> feedback = new HolonomicController(
                     gains.axialGain, gains.lateralGain, gains.headingGain,
                     gains.axialVelGain, gains.lateralVelGain, gains.headingVelGain
             )
-                    .compute(txWorldTarget, accumulator.getPose(), robotVelRobot);
-            driveCommandWriter.write(new DriveCommandMessage(command));
+                    .compute(txWorldTarget, robotPose, robotVelRobot);
+            driveCommandWriter.write(new DriveCommandMessage(feedback));
 
-            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
+            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(feedback);
             double voltage = voltageSensor.getVoltage();
 
             MotorFeedforward feedforward = new MotorFeedforward(
@@ -568,18 +628,18 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                     voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
             ));
 
-            error = txWorldTarget.value().minusExp(accumulator.getPose());
-            p.put("xError", error.position.x);
-            p.put("yError", error.position.y);
-            p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
+            error = txWorldTarget.value().minusExp(robotPose);
+            dashboard.put("xError", error.position.x);
+            dashboard.put("yError", error.position.y);
+            dashboard.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
 
-            Canvas c = p.fieldOverlay();
+            Canvas c = dashboard.fieldOverlay();
             c.setStrokeWidth(1);
 
             c.setStroke("#4CAF50");
             Dashboard.drawRobot(c, txWorldTarget.value());
 
-            c.setStroke("#4CAF50FF");
+            c.setStroke("#4CAF50BB");
             c.setStrokeWidth(1);
             c.strokePolyline(xPoints, yPoints);
         }
@@ -628,9 +688,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            fieldOverlay.setStroke("#7C4DFF7A");
-            fieldOverlay.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
-
             if (beginTs < 0) {
                 beginTs = Actions.now();
                 t = 0;
@@ -643,14 +700,14 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
             robotVelRobot = accumulator.getVelocity();
 
-            PoseVelocity2dDual<Time> command = new HolonomicController(
+            PoseVelocity2dDual<Time> feedback = new HolonomicController(
                     gains.axialGain, gains.lateralGain, gains.headingGain,
                     gains.axialVelGain, gains.lateralVelGain, gains.headingVelGain
             )
                     .compute(txWorldTarget, accumulator.getPose(), robotVelRobot);
-            driveCommandWriter.write(new DriveCommandMessage(command));
+            driveCommandWriter.write(new DriveCommandMessage(feedback));
 
-            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
+            MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(feedback);
             double voltage = voltageSensor.getVoltage();
             MotorFeedforward feedforward = new MotorFeedforward(
                     profile.kS, profile.kV / model.inPerTick, profile.kA / model.inPerTick);
@@ -663,15 +720,15 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             ));
 
             error = txWorldTarget.value().minusExp(accumulator.getPose());
-            p.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
+            dashboard.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));
 
-            Canvas c = p.fieldOverlay();
+            Canvas c = dashboard.fieldOverlay();
             c.setStrokeWidth(1);
 
             c.setStroke("#4CAF50");
             Dashboard.drawRobot(c, txWorldTarget.value());
 
-            c.setStroke("#7C4DFFFF");
+            c.setStroke("#7C4DFFBB");
             c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
         }
 

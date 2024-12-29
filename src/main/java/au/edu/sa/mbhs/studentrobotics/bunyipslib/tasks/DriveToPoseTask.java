@@ -211,10 +211,10 @@ public class DriveToPoseTask extends Task {
                 Mathf.clamp(headingPower, -MAX_ROTATION_SPEED, MAX_ROTATION_SPEED)
         ));
 
-        fieldOverlay.setStroke("#c91c00")
+        dashboard.fieldOverlay().setStroke("#c91c00")
                 .strokeLine(estimatedPose.position.x, estimatedPose.position.y, targetPose.position.x, targetPose.position.y);
-        fieldOverlay.setStroke("#4CAF50");
-        Dashboard.drawRobot(fieldOverlay, targetPose);
+        dashboard.fieldOverlay().setStroke("#4CAF50");
+        Dashboard.drawRobot(dashboard.fieldOverlay(), targetPose);
     }
 
     @Override
