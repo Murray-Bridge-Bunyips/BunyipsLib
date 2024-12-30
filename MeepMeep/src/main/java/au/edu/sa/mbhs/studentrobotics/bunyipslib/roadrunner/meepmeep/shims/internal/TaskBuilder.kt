@@ -731,12 +731,16 @@ class TaskBuilder(
 
     /**
      * Will attempt to auto-call `bot.runAction()` with the built task. Also replicates [setUnmappedEndPoseRef] functionality.
+     *
      * Mimics adding the built task to the AutonomousBunyipsOpMode queue automatically.
      * Do note only 1 action should be running at a time, and chaining addTask() calls will make a SequentialAction internally.
+     *
+     * Returns the result of [fresh] to allow chaining of future tasks.
      */
     @JvmOverloads
-    fun addTask(setUnmappedEndPoseRef: Reference<Pose2d>? = null) {
+    fun addTask(setUnmappedEndPoseRef: Reference<Pose2d>? = null): TaskBuilder {
         runActionConsumer.accept(if (setUnmappedEndPoseRef != null) build(setUnmappedEndPoseRef) else build())
+        return fresh()
     }
 
     /**

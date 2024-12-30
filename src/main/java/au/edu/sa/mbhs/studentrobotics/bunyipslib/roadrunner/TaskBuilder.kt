@@ -749,14 +749,17 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      *
      * This method will throw an [UninitializedPropertyAccessException] if the current [BunyipsOpMode] is not an
      * [AutonomousBunyipsOpMode] or if the [AutonomousBunyipsOpMode] is not running.
+     *
+     * Returns the result of [fresh] to allow chaining of future tasks.
      */
     @JvmOverloads
-    fun addTask(setUnmappedEndPoseRef: Reference<Pose2d>? = null) {
+    fun addTask(setUnmappedEndPoseRef: Reference<Pose2d>? = null): TaskBuilder {
         if (!BunyipsOpMode.isRunning || BunyipsOpMode.instance !is AutonomousBunyipsOpMode)
             throw UninitializedPropertyAccessException("Cannot call addTask() when an active AutonomousBunyipsOpMode instance is not running!")
         (BunyipsOpMode.instance as AutonomousBunyipsOpMode).add(
             priority,
             if (setUnmappedEndPoseRef != null) build(setUnmappedEndPoseRef) else build()
         )
+        return fresh()
     }
 }
