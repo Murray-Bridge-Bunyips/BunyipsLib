@@ -1068,4 +1068,14 @@ class DualTelemetry @JvmOverloads constructor(
     override fun log(): Telemetry.Log {
         return opMode.telemetry.log()
     }
+
+    @Suppress("KDocMissingDocumentation")
+    @Deprecated(
+        "Unused. Use Mathf utilities to set the number of decimal places sent to telemetry.",
+        replaceWith = ReplaceWith("Mathf.round(num, decimalPlaces) // pass as arg"),
+        level = DeprecationLevel.ERROR
+    )
+    override fun setNumDecimalPlaces(minDecimalPlaces: Int, maxDecimalPlaces: Int) {
+        // no-op
+    }
 }
