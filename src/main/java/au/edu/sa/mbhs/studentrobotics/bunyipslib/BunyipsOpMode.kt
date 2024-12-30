@@ -7,7 +7,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.*
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.ftc.throwIfModulesAreOutdated
@@ -20,9 +19,7 @@ import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.LightSensor
 import com.qualcomm.robotcore.hardware.RobotCoreLynxUsbDevice
 import com.qualcomm.robotcore.hardware.ServoController
-import com.qualcomm.robotcore.util.RobotLog
 import com.qualcomm.robotcore.util.ThreadPool
-import com.qualcomm.robotcore.util.Version
 import java.util.Optional
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
@@ -248,23 +245,12 @@ abstract class BunyipsOpMode : BOMInternal() {
         // BunyipsOpMode
         _instance = this
         try {
-            Storage.resetAllStaticFieldsForOpMode()
-            Dbg.log("=============== BunyipsLib v${BuildConfig.SEMVER} BunyipsOpMode ${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME} uid:${BuildConfig.ID} ===============")
+            Dbg.logv("BunyipsOpMode: setting up...")
             throwIfModulesAreOutdated(hardwareMap)
-            if (!Version.getLibraryVersion().equals(BuildConfig.SDK_VER)) {
-                Dbg.warn(
-                    "BunyipsOpMode: SDK version mismatch! (SDK: %, BunyipsLib: %)",
-                    Version.getLibraryVersion(),
-                    BuildConfig.SDK_VER
-                )
-                RobotLog.addGlobalWarningMessage("The version of the Robot Controller running on this robot is not the same as the recommended version for BunyipsLib. This may cause incompatibilities. Please ensure you are updated to the SDK version specified in the BunyipsLib documentation.")
-            }
             robotControllers.forEach { module ->
                 module.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
                 module.setConstant(Color.CYAN)
             }
-
-            Dbg.logv("BunyipsOpMode: setting up...")
             // Ring-buffer timing utility
             timer = MovingAverageTimer()
             // Telemetry

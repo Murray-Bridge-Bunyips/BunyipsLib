@@ -51,7 +51,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.MotionPro
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.MecanumDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.TankDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 
@@ -133,8 +132,6 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     @Override
     @SuppressWarnings("unchecked")
     public final void runOpMode() throws InterruptedException {
-        Storage.resetAllStaticFieldsForOpMode();
-
         // Still need to send some telemetry to the dashboard, instead of using DualTelemetry which is overkill
         // for this purpose, we'll just use MultipleTelemetry.
         Telemetry fusedTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

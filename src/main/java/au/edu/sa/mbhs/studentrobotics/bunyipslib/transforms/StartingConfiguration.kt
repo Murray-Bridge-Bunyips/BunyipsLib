@@ -15,9 +15,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguratio
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.RIGHT
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.acmerobotics.roadrunner.Pose2d
-import org.apache.commons.math3.exception.NumberIsTooLargeException
-import org.apache.commons.math3.exception.OutOfRangeException
-import org.apache.commons.math3.exception.util.LocalizedFormats
 import kotlin.math.abs
 
 /**
@@ -264,7 +261,7 @@ object StartingConfiguration {
          */
         fun tile(tileFromOrigin: Double): PrebuiltPosition {
             if (tileFromOrigin < 0.5 || tileFromOrigin > 6.5)
-                throw OutOfRangeException(LocalizedFormats.OUT_OF_RANGE_SIMPLE, tileFromOrigin, 0.5, 6.5)
+                throw IllegalArgumentException("tile index out of the bound [0.5, 6.5]")
             translate(FieldTiles.one() / 2.0 + FieldTiles.one() * (tileFromOrigin - 1.0))
             return PrebuiltPosition()
         }
@@ -276,7 +273,7 @@ object StartingConfiguration {
         fun translate(translationFromOrigin: Measure<Distance>): PrebuiltPosition {
             val mag = abs(translationFromOrigin to Feet)
             if (mag > 12.0)
-                throw NumberIsTooLargeException(mag, 12, true)
+                throw IllegalArgumentException("translation is larger than the width of the field (12 feet)")
             horizontalTranslation = translationFromOrigin
             return PrebuiltPosition()
         }

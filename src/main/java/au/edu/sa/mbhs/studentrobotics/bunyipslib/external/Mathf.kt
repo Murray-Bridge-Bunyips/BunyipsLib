@@ -8,12 +8,18 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import com.acmerobotics.roadrunner.Vector2d
-import org.apache.commons.math3.util.FastMath
-import org.apache.commons.math3.util.MathUtils
 import org.opencv.core.Point
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.sign
+import kotlin.math.sqrt
 
 /**
  * Extended math utility functions.
@@ -23,11 +29,7 @@ import java.math.RoundingMode
  * and Unity's [Mathf](https://github.com/Unity-Technologies/UnityCsReference/blob/22a9cc4540dc5efa28ad9f02cd12b37b4b1a21c7/Runtime/Export/Math/Mathf.cs) features,
  * adjusted to use WPIUnits and custom classes.
  *
- * This class internally uses the Apache Commons [FastMath] methods.
- *
  * @see Math
- * @see FastMath
- * @see MathUtils
  * @since 1.0.0-pre
  */
 object Mathf {
@@ -70,7 +72,7 @@ object Mathf {
      */
     @JvmStatic
     infix fun Number.approx(other: Number): Boolean {
-        return FastMath.abs(this.toDouble() - other.toDouble()) < 1.0e-6
+        return abs(this.toDouble() - other.toDouble()) < 1.0e-6
     }
 
     /**
@@ -98,8 +100,8 @@ object Mathf {
         }
         // Solutions at (-b \pm \sqrt{b^2-4ac}) / 2a
         return listOf(
-            (-bD + FastMath.sqrt(disc)) / (2 * aD),
-            (-bD - FastMath.sqrt(disc)) / (2 * aD)
+            (-bD + sqrt(disc)) / (2 * aD),
+            (-bD - sqrt(disc)) / (2 * aD)
         )
     }
 
@@ -110,8 +112,8 @@ object Mathf {
      */
     @JvmStatic
     fun Measure<Angle>.wrap(): Measure<Angle> {
-        val ang = (this to Radians) % MathUtils.TWO_PI
-        return Degrees.of(((ang + MathUtils.TWO_PI) % MathUtils.TWO_PI).radToDeg())
+        val ang = (this to Radians) % TWO_PI
+        return Degrees.of(((ang + TWO_PI) % TWO_PI).radToDeg())
     }
 
     /**
@@ -121,8 +123,8 @@ object Mathf {
      */
     @JvmStatic
     fun Number.wrapRadians(): Double {
-        val ang = this.toDouble() % MathUtils.TWO_PI
-        return (ang + MathUtils.TWO_PI) % MathUtils.TWO_PI
+        val ang = this.toDouble() % TWO_PI
+        return (ang + TWO_PI) % TWO_PI
     }
 
     /**
@@ -134,7 +136,7 @@ object Mathf {
      */
     @JvmStatic
     fun Number.clamp(low: Number, high: Number): Double {
-        return FastMath.max(low.toDouble(), FastMath.min(this.toDouble(), high.toDouble()))
+        return max(low.toDouble(), min(this.toDouble(), high.toDouble()))
     }
 
     /**
@@ -145,7 +147,7 @@ object Mathf {
      */
     @JvmStatic
     infix fun Number.clamp(range: ClosedFloatingPointRange<Double>): Double {
-        return FastMath.max(range.start, FastMath.min(this.toDouble(), range.endInclusive))
+        return max(range.start, min(this.toDouble(), range.endInclusive))
     }
 
     /**
@@ -195,7 +197,7 @@ object Mathf {
         val valueD = this.toDouble()
         val deadbandD = deadband.toDouble()
         val maxMagnitudeD = maxMagnitude.toDouble()
-        if (FastMath.abs(valueD) > deadbandD) {
+        if (abs(valueD) > deadbandD) {
             if (maxMagnitudeD / deadbandD > 1.0e12) {
                 // If max magnitude is sufficiently large, the implementation encounters
                 // round-off error.  Implementing the limiting behavior directly avoids
@@ -309,7 +311,7 @@ object Mathf {
      */
     @JvmStatic
     fun Number.wrapDeltaRadians(): Double {
-        return this wrap (-FastMath.PI..FastMath.PI)
+        return this wrap (-PI..PI)
     }
 
     /**
@@ -400,8 +402,8 @@ object Mathf {
         val currentD = this.toDouble()
         val targetD = target.toDouble()
         val maxDeltaD = maxDelta.toDouble()
-        if (FastMath.abs(targetD - currentD) <= FastMath.abs(maxDeltaD)) return targetD
-        return currentD + FastMath.signum(targetD - currentD) * maxDeltaD
+        if (abs(targetD - currentD) <= abs(maxDeltaD)) return targetD
+        return currentD + sign(targetD - currentD) * maxDeltaD
     }
 
     /**
@@ -460,9 +462,9 @@ object Mathf {
         val absMaxD = absMax.toDouble()
         val gammaD = gamma.toDouble()
         val negative = valueD < 0.0
-        val absVal = FastMath.abs(valueD)
+        val absVal = abs(valueD)
         if (absVal > absMaxD) return if (negative) -absVal else absVal
-        val result = FastMath.pow(absVal / absMaxD, gammaD) * absMaxD
+        val result = (absVal / absMaxD).pow(gammaD) * absMaxD
         return if (negative) -result else result
     }
 
@@ -555,7 +557,7 @@ object Mathf {
     infix fun Number.repeat(length: Number): Double {
         val tD = this.toDouble()
         val lengthD = length.toDouble()
-        return (tD - FastMath.floor(tD / lengthD) * lengthD) clamp (0.0..lengthD)
+        return (tD - floor(tD / lengthD) * lengthD) clamp (0.0..lengthD)
     }
 
     /**
@@ -568,7 +570,7 @@ object Mathf {
     infix fun Number.pingPong(length: Number): Double {
         val lengthD = length.toDouble()
         val repeat = this repeat (lengthD * 2.0)
-        return lengthD - FastMath.abs(repeat - lengthD)
+        return lengthD - abs(repeat - lengthD)
     }
 
     /**
@@ -895,7 +897,7 @@ object Mathf {
     fun Number.isNear(expected: Number, tolerance: Number): Boolean {
         val toleranceD = tolerance.toDouble()
         require(!(toleranceD < 0)) { "Tolerance must be a non-negative number!" }
-        return FastMath.abs(expected.toDouble() - this.toDouble()) < toleranceD
+        return abs(expected.toDouble() - this.toDouble()) < toleranceD
     }
 
     /**
@@ -921,11 +923,16 @@ object Mathf {
         // Max error is exactly halfway between the min and max
         val errorBound = (max.toDouble() - min.toDouble()) / 2.0
         val error = (expected.toDouble() - this.toDouble()) wrap (-errorBound..errorBound)
-        return FastMath.abs(error) < toleranceD
+        return abs(error) < toleranceD
     }
 
     /**
      * Exception thrown if no intercept is found when using the intersection methods of this class.
      */
     class NoInterceptException : RuntimeException("Intercept calculation failed due to no intercepts or an edge case.")
+
+    /**
+     * 2pi
+     */
+    const val TWO_PI = 2.0 * PI
 }

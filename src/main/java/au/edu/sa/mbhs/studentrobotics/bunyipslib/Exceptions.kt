@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Cleanup
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.ForceStopException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -85,7 +86,6 @@ object Exceptions {
         }
     }
 
-
     /**
      * Get the calling user code function of the current context by looking at the stacktrace until it leaves BunyipsLib.
      */
@@ -104,5 +104,11 @@ object Exceptions {
         // If we can't find the calling function, then we can't return a stack trace element
         Dbg.warn("Could not find calling function in getCallingUserCodeFunction()!")
         return StackTraceElement("Unknown", "userMethod", "User Code", -1)
+    }
+
+    @Cleanup
+    @JvmStatic
+    private fun reset() {
+        THROWN_EXCEPTIONS.clear()
     }
 }

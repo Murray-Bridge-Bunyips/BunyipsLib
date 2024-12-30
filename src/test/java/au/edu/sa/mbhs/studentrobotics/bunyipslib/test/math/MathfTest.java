@@ -10,7 +10,6 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Sec
 
 import com.acmerobotics.roadrunner.Vector2d;
 
-import org.apache.commons.math3.util.MathUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -79,10 +78,10 @@ class MathfTest {
         assertEquals(360.0, Mathf.wrap(360.0, 0.0, 360.0));
         assertEquals(180.0, Mathf.wrap(540.0, 0.0, 360.0));
         assertEquals(180.0, Mathf.wrap(-180.0, 0.0, 360.0));
-        assertEquals(0.0, Mathf.wrap(Radians.of(MathUtils.TWO_PI)).in(Radians));
-        assertEquals(0.0, Mathf.wrap(Radians.of(-MathUtils.TWO_PI)).in(Radians));
-        assertEquals(0.0, Mathf.wrapRadians(MathUtils.TWO_PI));
-        assertEquals(0.0, Mathf.wrapRadians(-MathUtils.TWO_PI));
+        assertEquals(0.0, Mathf.wrap(Radians.of(Mathf.TWO_PI)).in(Radians));
+        assertEquals(0.0, Mathf.wrap(Radians.of(-Mathf.TWO_PI)).in(Radians));
+        assertEquals(0.0, Mathf.wrapRadians(Mathf.TWO_PI));
+        assertEquals(0.0, Mathf.wrapRadians(-Mathf.TWO_PI));
         assertEquals(Mathf.wrapDeltaRadians(Math.toRadians(-2000)), Math.toRadians(160), 1.0e-6);
         assertEquals(Mathf.wrapDeltaRadians(Math.toRadians(358)), Math.toRadians(-2), 1.0e-6);
         assertEquals(Mathf.wrapDeltaRadians(Math.toRadians(360)), 0, 1.0e-6);
@@ -497,7 +496,7 @@ class MathfTest {
     void testRadToDeg() {
         assertEquals(0.0, Mathf.radToDeg(0.0));
         assertEquals(180.0, Mathf.radToDeg(Math.PI));
-        assertEquals(360.0, Mathf.radToDeg(MathUtils.TWO_PI));
+        assertEquals(360.0, Mathf.radToDeg(Mathf.TWO_PI));
         assertEquals(90.0, Mathf.radToDeg(Math.PI / 2));
         assertEquals(-90.0, Mathf.radToDeg(-Math.PI / 2));
         assertEquals(45.0, Mathf.radToDeg(Math.PI / 4));
@@ -508,7 +507,7 @@ class MathfTest {
     void testDegToRad() {
         assertEquals(0.0, Mathf.degToRad(0.0));
         assertEquals(Math.PI, Mathf.degToRad(180.0));
-        assertEquals(MathUtils.TWO_PI, Mathf.degToRad(360.0));
+        assertEquals(Mathf.TWO_PI, Mathf.degToRad(360.0));
         assertEquals(Math.PI / 2, Mathf.degToRad(90.0));
         assertEquals(-Math.PI / 2, Mathf.degToRad(-90.0));
         assertEquals(Math.PI / 4, Mathf.degToRad(45.0));

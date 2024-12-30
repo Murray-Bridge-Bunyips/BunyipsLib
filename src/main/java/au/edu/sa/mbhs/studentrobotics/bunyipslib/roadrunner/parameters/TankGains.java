@@ -2,10 +2,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters;
 
 import androidx.annotation.NonNull;
 
-import org.apache.commons.math3.exception.NotStrictlyPositiveException;
-import org.apache.commons.math3.exception.NumberIsTooLargeException;
-import org.apache.commons.math3.exception.NumberIsTooSmallException;
-
 /**
  * Drive coefficients that define gains for a Tank drivetrain.
  *
@@ -57,10 +53,10 @@ public class TankGains {
         @NonNull
         public Builder setRamseteZeta(double ramseteZeta) {
             if (ramseteZeta <= 0) {
-                throw new NumberIsTooSmallException(ramseteZeta, 0, false);
+                throw new IllegalArgumentException("zeta cannot be 0 or negative");
             }
             if (ramseteZeta >= 1) {
-                throw new NumberIsTooLargeException(ramseteZeta, 1, false);
+                throw new IllegalArgumentException("zeta cannot be greater than 1");
             }
             gains.ramseteZeta = ramseteZeta;
             return this;
@@ -75,7 +71,7 @@ public class TankGains {
         @NonNull
         public Builder setRamseteBBar(double ramseteBBar) {
             if (ramseteBBar <= 0) {
-                throw new NotStrictlyPositiveException(ramseteBBar);
+                throw new IllegalArgumentException("bBar cannot be zero or negative");
             }
             gains.ramseteBBar = ramseteBBar;
             return this;

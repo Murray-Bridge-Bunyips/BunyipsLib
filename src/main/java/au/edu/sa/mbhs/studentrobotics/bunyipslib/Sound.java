@@ -4,8 +4,6 @@ import androidx.annotation.RawRes;
 
 import com.qualcomm.ftccommon.SoundPlayer;
 
-import org.apache.commons.math3.exception.NumberIsTooLargeException;
-import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.firstinspires.ftc.robotcore.external.function.Consumer;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
@@ -69,10 +67,10 @@ public class Sound {
      */
     public Sound setRate(double rate) {
         if (rate < 0.5) {
-            throw new NumberIsTooSmallException(rate, 0.5, true);
+            throw new IllegalArgumentException("rate cannot be slower than x0.5");
         }
         if (rate > 2) {
-            throw new NumberIsTooLargeException(rate, 2, true);
+            throw new IllegalArgumentException("rate cannot be faster than x2");
         }
         params.rate = (float) rate;
         return this;

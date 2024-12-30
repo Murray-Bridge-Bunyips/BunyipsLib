@@ -2,10 +2,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util;
 
 import androidx.annotation.NonNull;
 
-import org.apache.commons.math3.exception.DimensionMismatchException;
-import org.apache.commons.math3.exception.NumberIsTooLargeException;
-import org.apache.commons.math3.exception.NumberIsTooSmallException;
-
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 
@@ -43,10 +39,10 @@ public final class Filter {
          */
         public LowPass(double gain) {
             if (gain <= 0) {
-                throw new NumberIsTooSmallException(gain, 0, false);
+                throw new IllegalArgumentException("gain cannot be 0 or negative");
             }
             if (gain >= 1) {
-                throw new NumberIsTooLargeException(gain, 1, false);
+                throw new IllegalArgumentException("gain cannot be equal to or greater than 1");
             }
             this.gain = gain;
         }
@@ -170,7 +166,7 @@ public final class Filter {
          */
         public WeightedFusion(@NonNull DoubleSupplier[] inputs, @NonNull double[] weights) {
             if (inputs.length != weights.length)
-                throw new DimensionMismatchException(weights.length, inputs.length);
+                throw new IllegalArgumentException("dimension mismatch, must be square: " + weights.length + "x" + inputs.length);
             this.inputs = inputs;
             this.weights = weights;
         }

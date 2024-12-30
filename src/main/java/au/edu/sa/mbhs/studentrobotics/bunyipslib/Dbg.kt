@@ -40,11 +40,19 @@ import com.qualcomm.robotcore.util.RobotLog
  */
 object Dbg {
     /**
-     * Tag used by logcat
+     * Tag used by Logcat.
      */
-    const val TAG = "BELLOWER"
-    private const val ERR_PREPEND = "!!"
-    private const val WRN_PREPEND = "!"
+    var TAG = "BELLOWER"
+
+    /**
+     * Prepended on [error].
+     */
+    var ERR_PREPEND = "!!"
+
+    /**
+     * Prepended on [warn].
+     */
+    var WRN_PREPEND = "!"
 
     /**
      * Log an error message.

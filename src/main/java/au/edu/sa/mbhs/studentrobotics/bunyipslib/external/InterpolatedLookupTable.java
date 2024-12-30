@@ -2,9 +2,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external;
 
 import androidx.annotation.NonNull;
 
-import org.apache.commons.math3.exception.OutOfRangeException;
-import org.apache.commons.math3.exception.util.LocalizedFormats;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -113,7 +110,7 @@ public class InterpolatedLookupTable {
     }
 
     /**
-     * Check if a given input will be out of range by this LUT.
+     * Check if a given input will be out of range by this LUT and therefore clamped.
      *
      * @param input the value to check
      * @return 1 if the input is too large, -1 if it is too small, 0 if it is within bounds.
@@ -153,9 +150,8 @@ public class InterpolatedLookupTable {
      *
      * @param input The X value.
      * @return The interpolated Y = f(X) value.
-     * @throws OutOfRangeException if the input is outside the domain available by this lookup table
      */
-    public double get(double input) throws OutOfRangeException {
+    public double get(double input) {
         if (!built)
             throw new IllegalStateException("This InterpolatedLookupTable has not been built yet.");
 
@@ -165,10 +161,10 @@ public class InterpolatedLookupTable {
             return input;
         }
         if (input <= mX.get(0)) {
-            throw new OutOfRangeException(LocalizedFormats.NUMBER_TOO_SMALL_BOUND_EXCLUDED, input, mX.get(0), 0);
+            return getMin();
         }
         if (input >= mX.get(n - 1)) {
-            throw new OutOfRangeException(LocalizedFormats.NUMBER_TOO_LARGE_BOUND_EXCLUDED, input, mX.get(n - 1), 0);
+            return getMax();
         }
 
         // Find the index 'i' of the last point with smaller X.

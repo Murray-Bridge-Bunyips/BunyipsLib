@@ -21,8 +21,6 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.apache.commons.math3.exception.OutOfRangeException;
-import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -232,7 +230,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         if (controller == null)
             return;
         if (bufferFraction <= 0 || bufferFraction > 1) {
-            throw new OutOfRangeException(LocalizedFormats.OUT_OF_RANGE_LEFT, bufferFraction, 0, 1);
+            throw new IllegalStateException("buffer fraction out of domain (0, 1]");
         }
         rueController = controller;
         rueInfo = new Pair<>(bufferFraction, maxAchievableTicksPerSecond);
@@ -254,9 +252,11 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * @param bufferFraction fractional value for velocity control, must be in (0, 1].
      * @param controller     the controller to use, recommended to use a PIDFF controller.
      */
-    public void setRunUsingEncoderController(double bufferFraction, @NonNull SystemController controller) {
+    public void setRunUsingEncoderController(double bufferFraction, @Nullable SystemController controller) {
+        if (controller == null)
+            return;
         if (bufferFraction <= 0 || bufferFraction > 1) {
-            throw new OutOfRangeException(LocalizedFormats.OUT_OF_RANGE_LEFT, bufferFraction, 0, 1);
+            throw new IllegalStateException("buffer fraction out of domain (0, 1]");
         }
         rueController = controller;
         rueInfo = new Pair<>(bufferFraction, getMotorType().getAchieveableMaxTicksPerSecond());

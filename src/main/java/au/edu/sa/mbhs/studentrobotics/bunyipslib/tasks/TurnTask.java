@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 
-import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.firstinspires.ftc.robotcore.external.function.Consumer;
 
 import java.util.Objects;
@@ -129,7 +128,7 @@ public class TurnTask extends Task {
     @NonNull
     public TurnTask withTolerance(@NonNull Measure<Angle> tolerance) {
         if (tolerance.magnitude() <= 0) {
-            throw new NotStrictlyPositiveException(tolerance.magnitude());
+            throw new IllegalArgumentException("tolerance cannot be zero or negative");
         }
         this.tolerance = tolerance;
         return this;
