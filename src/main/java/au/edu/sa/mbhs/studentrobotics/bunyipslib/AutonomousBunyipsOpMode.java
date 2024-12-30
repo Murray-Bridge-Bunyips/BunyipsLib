@@ -55,7 +55,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     private int currentTask = 1;
     private volatile boolean safeToAddTasks;
     private volatile boolean callbackReceived;
-    private boolean hardwareStopOnFinish = true;
+    private OnTasksDone onCompletion = OnTasksDone.FINISH_OPMODE;
+    private boolean tasksFinished;
 
     private void callback(@Nullable Reference<?> selectedOpMode) {
         // Safety as the OpMode may not be running anymore (due to it being on another thread)
@@ -164,12 +165,21 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             subsystem.update();
         }
 
+        if (tasksFinished && onCompletion == OnTasksDone.CONTINUE_EXECUTION) {
+            // Tasks are all done and all we need to do is update subsystems, so we exit here
+            return;
+        }
+
         // Run the queue of tasks
         synchronized (tasks) {
             Task currentTask = tasks.peekFirst();
             if (currentTask == null) {
-                telemetry.log("<font color='gray'>auto:</font> tasks done -> finishing");
-                finish(hardwareStopOnFinish);
+                telemetry.log("<font color='gray'>auto:</font> tasks done -> %", onCompletion);
+                if (onCompletion != OnTasksDone.CONTINUE_EXECUTION) {
+                    finish(onCompletion == OnTasksDone.FINISH_OPMODE);
+                }
+                telemetry.overheadSubtitle = Text.format("<small>All tasks <font color='green'>completed</font> in <b>%s</b>.</small>", Mathf.round(timer.elapsedTime().in(Seconds), 2));
+                tasksFinished = true;
                 return;
             }
 
@@ -202,11 +212,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Call to disable the automatic stopping of the hardware when the OpMode finishes after no tasks are left.
-     * This does not impact the automated stopping of the hardware when the OpMode is requested to stop.
+     * Sets the behaviour this OpMode should take when all tasks in the task queue have been completed.
+     * Review the {@link OnTasksDone} enum for more information on the different modes.
+     *
+     * @param finishBehaviour the actions to take when all tasks are done, by default, {@link OnTasksDone#FINISH_OPMODE}.
      */
-    public final void disableHardwareStopOnFinish() {
-        hardwareStopOnFinish = false;
+    public final void setCompletionBehaviour(OnTasksDone finishBehaviour) {
+        if (finishBehaviour == null) return;
+        onCompletion = finishBehaviour;
     }
 
     /**
@@ -712,6 +725,30 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     protected void periodic() {
         // no-op
+    }
+
+    /**
+     * Finish actions that can be taken following the completion of all tasks in the queue.
+     */
+    public enum OnTasksDone {
+        /**
+         * Executes {@link #finish()} and automatically halts all hardware via the {@link #safeHaltHardware()} method
+         * when all tasks are completed.
+         * This is the default behaviour.
+         */
+        FINISH_OPMODE,
+        /**
+         * Executes {@link #finish()}, but does not safe halt hardware when all tasks are completed. This is useful for
+         * situations where servos should remain powered for the rest of the OpMode, and motor powers left at their last value.
+         * This mode is not appropriate for controls that require an active loop, as system controllers will receive no updates.
+         */
+        FINISH_OPMODE_NO_HALT_HARDWARE,
+        /**
+         * Continue running the OpMode, allowing default tasks on subsystems and periodic to continue execution when all tasks are completed.
+         * This is most appropriate for PID loops that need to continue, such as holding a position until the
+         * rest of the OpMode is completed.
+         */
+        CONTINUE_EXECUTION
     }
 
     /**
