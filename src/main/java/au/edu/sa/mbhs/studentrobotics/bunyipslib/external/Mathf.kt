@@ -932,7 +932,7 @@ object Mathf {
     class NoInterceptException : RuntimeException("Intercept calculation failed due to no intercepts or an edge case.")
 
     /**
-     * 2pi
+     * 2π
      */
     const val TWO_PI = 2.0 * PI
 }
