@@ -11,7 +11,7 @@ import java.util.Objects
  * situations and gives compile-time safety. Two measures with the same *unit* and
  * *magnitude* are effectively equivalent objects.
  *
- * @param <U> the unit type of the measure
+ * @param U the unit type of the measure
  * @since 1.0.0-pre
  */
 class ImmutableMeasure<U : Unit<U>> internal constructor(magnitude: Double, baseUnitMagnitude: Double, unit: Unit<U>) :
@@ -79,7 +79,7 @@ class ImmutableMeasure<U : Unit<U>> internal constructor(magnitude: Double, base
         /**
          * Creates a new measure in the given unit with a magnitude equal to the given one in base units.
          *
-         * @param <U>               the type of the units of measure
+         * @param U                 the type of the units of measure
          * @param baseUnitMagnitude the magnitude of the measure, in terms of the base unit of measure
          * @param unit              the unit of measure
          * @return a new measure
@@ -93,7 +93,7 @@ class ImmutableMeasure<U : Unit<U>> internal constructor(magnitude: Double, base
         /**
          * Creates a new measure in the given unit with a magnitude in terms of that unit.
          *
-         * @param <U>               the type of the units of measure
+         * @param U                 the type of the units of measure
          * @param relativeMagnitude the magnitude of the measure
          * @param unit              the unit of measure
          * @return a new measure

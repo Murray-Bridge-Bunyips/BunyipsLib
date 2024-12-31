@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.ImmutableMeasure.Companion.ofBaseUnits
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.ImmutableMeasure.Companion.ofRelativeUnits
 import java.util.Objects
 import kotlin.math.abs
@@ -12,7 +13,7 @@ import kotlin.math.abs
  *
  * This is the base class for units. Actual units (such as [Units.Grams] and [ ][Units.Meters]) can be found in the [Units] class.
  *
- * @param <U> the self type, e.g. `class SomeUnit extends Unit<SomeUnit>`
+ * @param U the self type, e.g. `class SomeUnit extends Unit<SomeUnit>`
  * @since 1.0.0-pre
  */
 open class Unit<U : Unit<U>>(
@@ -184,7 +185,7 @@ open class Unit<U : Unit<U>>(
      * @return the measure
      */
     infix fun ofBaseUnits(baseUnitMagnitude: Double): Measure<U> {
-        return ImmutableMeasure.ofBaseUnits(
+        return ofBaseUnits(
             baseUnitMagnitude,
             this
         )
@@ -240,6 +241,22 @@ open class Unit<U : Unit<U>>(
     }
 
     /**
+     * Creates a velocity unit derived from this one. Can be chained to denote velocity, acceleration,
+     * jerk, etc.
+     *
+     * ```
+     * Meters / Second // linear velocity
+     * Kilograms / Second // mass flow
+     * 32 of (Feet / Second / Second) // roughly 1G of acceleration
+     * ```
+     *
+     * @param period the time period of the velocity, such as seconds or milliseconds
+     * @return a velocity unit corresponding to the rate of change of this unit over time
+     */
+    @JvmName("perKt")
+    operator fun div(period: Time) = per(period)
+
+    /**
      * Takes this unit and creates a new proportional unit where this unit is the numerator and the
      * given denominator is the denominator.
      *
@@ -247,7 +264,7 @@ open class Unit<U : Unit<U>>(
      * Volts.per(Meter) // V/m
      * ```
      *
-     * @param <D>         the type of the denominator units
+     * @param D           the type of the denominator units
      * @param denominator the denominator of the proportional unit
      * @return a combined proportional unit
      */
@@ -257,6 +274,21 @@ open class Unit<U : Unit<U>>(
     }
 
     /**
+     * Takes this unit and creates a new proportional unit where this unit is the numerator and the
+     * given denominator is the denominator.
+     *
+     * ```
+     * Volts / Meter // V/m
+     * ```
+     *
+     * @param D           the type of the denominator units
+     * @param denominator the denominator of the proportional unit
+     * @return a combined proportional unit
+     */
+    @JvmName("perKt")
+    operator fun <D : Unit<D>> div(denominator: D) = per(denominator)
+
+    /**
      * Takes this unit and creates a new combinatory unit equivalent to this unit multiplied by
      * another.
      *
@@ -264,14 +296,29 @@ open class Unit<U : Unit<U>>(
      * Volts.mult(Meter) // V*m
      * ```
      *
-     * @param <U2>  the type of the unit to multiply by
+     * @param U2    the type of the unit to multiply by
      * @param other the unit to multiply by
      * @return a combined unit equivalent to this unit multiplied by the other
-    </U2> */
+     */
     infix fun <U2 : Unit<U2>> mult(other: U2): Mult<U, U2> {
         @Suppress("UNCHECKED_CAST")
         return Mult.combine(this as U, other)
     }
+
+    /**
+     * Takes this unit and creates a new combinatory unit equivalent to this unit multiplied by
+     * another.
+     *
+     * ```
+     * Volts * Meter // V*m
+     * ```
+     *
+     * @param U2    the type of the unit to multiply by
+     * @param other the unit to multiply by
+     * @return a combined unit equivalent to this unit multiplied by the other
+     */
+    @JvmName("multKt")
+    operator fun <U2 : Unit<U2>> times(other: U2) = mult(other)
 
     /**
      * Checks if this unit is equivalent to another one. Equivalence is determined by both units

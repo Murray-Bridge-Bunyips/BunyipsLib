@@ -19,7 +19,7 @@ import java.util.Objects
  * object, and as such can be dangerous to use. They are primarily intended for use to track
  * internal state of things like sensors
  *
- * @param <U> the type of the unit of measure
+ * @param U the type of the unit of measure
  * @since 1.0.0-pre
  */
 @Suppress("FunctionName")
@@ -239,7 +239,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
         /**
          * Creates a new mutable measure that is a copy of the given one.
          *
-         * @param <U>     the type of the units of measure
+         * @param U       the type of the units of measure
          * @param measure the measure to create a mutable copy of
          * @return a new mutable measure with an initial state equal to the given measure
          */
@@ -251,7 +251,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
         /**
          * Creates a new mutable measure with a magnitude of 0 in the given unit.
          *
-         * @param <U>  the type of the units of measure
+         * @param U    the type of the units of measure
          * @param unit the unit of measure
          * @return a new mutable measure
          */
@@ -264,7 +264,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
          * Creates a new mutable measure in the given unit with a magnitude equal to the given one in base
          * units.
          *
-         * @param <U>               the type of the units of measure
+         * @param U                 the type of the units of measure
          * @param baseUnitMagnitude the magnitude of the measure, in terms of the base unit of measure
          * @param unit              the unit of measure
          * @return a new mutable measure
@@ -279,7 +279,7 @@ class MutableMeasure<U : Unit<U>> private constructor(
         /**
          * Creates a new mutable measure in the given unit with a magnitude in terms of that unit.
          *
-         * @param <U>               the type of the units of measure
+         * @param U                 the type of the units of measure
          * @param relativeMagnitude the magnitude of the measure
          * @param unit              the unit of measure
          * @return a new mutable measure

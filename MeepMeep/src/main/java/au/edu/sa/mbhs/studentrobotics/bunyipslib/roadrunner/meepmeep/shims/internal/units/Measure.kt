@@ -10,7 +10,7 @@ import kotlin.math.abs
  * A measure holds the magnitude and unit of some dimension, such as distance, time, or speed. Two
  * measures with the same *unit* and *magnitude* are effectively equivalent objects.
  *
- * @param <U> the unit type of the measure
+ * @param U the unit type of the measure
  * @since 1.0.0-pre
  */
 interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
@@ -94,10 +94,10 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
      * analysis is performed to reduce the units down somewhat; for example, multiplying a `Measure<Time>` by a `Measure<Velocity<Distance>>` will return just a `Measure<Distance>` instead of the naive `Measure<Mult<Time, Velocity<Distance>>`. This is
      * not guaranteed to perform perfect dimensional analysis.
      *
-     * @param <U2>  the type of the other measure to multiply by
+     * @param U2 the type of the other measure to multiply by
      * @param other the unit to multiply by
      * @return the multiplicative unit
-    </U2> */
+     */
     operator fun <U2 : Unit<U2>> times(other: Measure<U2>): Measure<*> {
         if (other.unit() is Dimensionless) {
             // scalar multiplication
@@ -154,7 +154,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
      * Divides this measurement by another measure and performs some dimensional analysis to reduce
      * the units.
      *
-     * @param <U2>  the type of the other measure to multiply by
+     * @param U2 the type of the other measure to multiply by
      * @param other the unit to multiply by
      * @return the resulting measure
      */
@@ -202,7 +202,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
      * Volts.of(1.05).per(Meter) // V/m, potential PID constant
      * ```
      *
-     * @param <U2>        the type of the denominator unit
+     * @param U2          the type of the denominator unit
      * @param denominator the denominator unit being divided by
      * @return the relational measure
      */
@@ -429,7 +429,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
         /**
          * Returns the measure with the absolute value closest to positive infinity.
          *
-         * @param <U>      the type of the units of the measures
+         * @param U        the type of the units of the measures
          * @param measures the set of measures to compare
          * @return the measure with the greatest positive magnitude, or null if no measures were provided
          */
@@ -453,7 +453,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
         /**
          * Returns the measure with the absolute value closest to negative infinity.
          *
-         * @param <U>      the type of the units of the measures
+         * @param U        the type of the units of the measures
          * @param measures the set of measures to compare
          * @return the measure with the greatest negative magnitude
          */
