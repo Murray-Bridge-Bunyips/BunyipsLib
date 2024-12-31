@@ -15,8 +15,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
  * <p>Note: {@link Velocity} is used to represent the velocity dimension, rather than {@code
  * Per<Distance, Time>}.
  *
- * @param <N></N> the type of the numerator unit
- * @param <D>     the type of the denominator unit
+ * @param <N> the type of the numerator unit
+ * @param <D> the type of the denominator unit
  * @since 1.0.0-pre
  */
 public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
