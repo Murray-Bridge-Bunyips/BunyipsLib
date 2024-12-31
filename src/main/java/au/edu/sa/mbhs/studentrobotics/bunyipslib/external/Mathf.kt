@@ -106,7 +106,7 @@ object Mathf {
     }
 
     /**
-     * Normalizes the given angle to be within the range of [0, 2pi) radians or [0, 360) degrees.
+     * Normalizes the given angle to be within the range of [0, 2π) radians or [0, 360) degrees.
      *
      * @return The normalized angle.
      */
@@ -117,9 +117,9 @@ object Mathf {
     }
 
     /**
-     * Normalizes the given radians to be within the range [0, 2pi).
+     * Normalizes the given radians to be within the range [0, 2π).
      *
-     * @return The normalized radians in the range [0, 2pi)
+     * @return The normalized radians in the range [0, 2π)
      */
     @JvmStatic
     fun Number.wrapRadians(): Double {
