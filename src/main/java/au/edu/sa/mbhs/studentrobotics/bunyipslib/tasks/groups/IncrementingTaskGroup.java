@@ -16,7 +16,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
  * when the last task is reached and finished.
  *
  * @author Lucas Bubner, 2024
- * @since 6.2.0
+ * @since 7.0.0
  */
 public class IncrementingTaskGroup extends TaskGroup {
     private int taskIndex = -1;

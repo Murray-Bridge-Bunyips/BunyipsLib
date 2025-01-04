@@ -257,9 +257,13 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Runs upon the pressing of the INIT button on the Driver Station.
-     * This is where you should initialise your hardware and other components.
+     * This is where you should initialise your hardware (if applicable) and other components.
+     * <p>
+     * Override this method to use it.
      */
-    protected abstract void onInitialise();
+    protected void onInitialise() {
+        // no-op (>= v7.0.0)
+    }
 
     /**
      * Assign your scheduler commands here by accessing the {@link #scheduler} and controllers {@link #driver()} and {@link #operator()}.

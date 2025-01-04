@@ -33,14 +33,6 @@ import kotlin.math.roundToInt
 class DualTelemetry @JvmOverloads constructor(
     private val opMode: OpMode,
     private val movingAverageTimer: MovingAverageTimer? = null,
-    /**
-     * A tag to prepend to the overhead telemetry status message.
-     */
-    private val overheadTag: String? = null,
-    /**
-     * A string to display as the first log message in the telemetry log.
-     */
-    private val infoString: String? = null
 ) : Telemetry {
     companion object {
         /**
@@ -52,12 +44,20 @@ class DualTelemetry @JvmOverloads constructor(
         var TELEMETRY_LOG_LINE_LIMIT = 200
     }
 
+    private val initActions = mutableListOf<Runnable>()
     private lateinit var overheadTelemetry: Item
     private var dashboardItems = Collections.synchronizedSet(mutableSetOf<Pair<ItemType, Reference<String>>>())
     private var userPacket: TelemetryPacket = TelemetryPacket()
+    private var info: String? = null
 
     @Volatile
     private var telemetryQueue = 0
+
+    /**
+     * A tag to prepend to the overhead telemetry status message.
+     */
+    @JvmField
+    var overheadTag: String? = null
 
     /**
      * A string to display the current 'status' of the OpMode, used for overhead telemetry.
@@ -111,7 +111,17 @@ class DualTelemetry @JvmOverloads constructor(
         LOG
     }
 
-    init {
+    /**
+     * Call to initialise [DualTelemetry].
+     *
+     * Internally called by [BunyipsOpMode].
+     *
+     * @param info the information string to be added as the first log; should never be null
+     * @since 7.0.0
+     */
+    @JvmOverloads
+    fun init(info: String = "") {
+        this.info = info
         clearAll()
         opMode.telemetry.setDisplayFormat(DisplayFormat.HTML)
         opMode.telemetry.log().displayOrder = Telemetry.Log.DisplayOrder.OLDEST_FIRST
@@ -119,17 +129,18 @@ class DualTelemetry @JvmOverloads constructor(
         opMode.telemetry.log().capacity = TELEMETRY_LOG_LINE_LIMIT
         // Separate log from telemetry on the DS with an empty line
         opMode.telemetry.log().add("")
-        if (infoString != null) {
+        if (info.isNotEmpty()) {
             synchronized(dashboardItems) {
                 dashboardItems.add(
                     Pair(
                         ItemType.LOG,
-                        Reference.of(infoString)
+                        Reference.of(info)
                     )
                 )
             }
-            opMode.telemetry.log().add(infoString)
+            opMode.telemetry.log().add(info)
         }
+        initActions.forEach { it.run() }
     }
 
     /**
@@ -146,7 +157,7 @@ class DualTelemetry @JvmOverloads constructor(
      * will split this to an item for FtcDashboard automagically, replicating what [addDashboard] would do.
      * @param format An object string to add to telemetry
      * @param args The objects to format into the object format string via [Text.format]
-     * @return The telemetry item added to the Driver Station, null if sending failed from overflow
+     * @return The telemetry item added to the Driver Station
      */
     fun add(format: Any, vararg args: Any?): HtmlItem {
         flushTelemetryQueue()
@@ -167,7 +178,7 @@ class DualTelemetry @JvmOverloads constructor(
      * @param caption Caption before appended separator ([dashboardCaptionValueAutoSeparator])
      * @param format Format string to append after separator ([dashboardCaptionValueAutoSeparator])
      * @param args Objects to format into the format string via [Text.format]
-     * @return The telemetry item added to the Driver Station, null if sending failed from overflow
+     * @return The telemetry item added to the Driver Station
      */
     override fun addData(caption: String, format: String, vararg args: Any?): Item {
         return add(caption + dashboardCaptionValueAutoSeparator + format, *args)
@@ -179,7 +190,7 @@ class DualTelemetry @JvmOverloads constructor(
      * for FtcDashboard.
      * @param caption Caption before appended separator ([dashboardCaptionValueAutoSeparator])
      * @param value Value to append after separator ([dashboardCaptionValueAutoSeparator])
-     * @return The telemetry item added to the Driver Station, null if sending failed from overflow
+     * @return The telemetry item added to the Driver Station
      */
     override fun addData(caption: String, value: Any?): Item {
         return add(caption + dashboardCaptionValueAutoSeparator + value)
@@ -275,6 +286,11 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     private fun logMessage(msg: String) {
+        if (info == null) {
+            // Defer until init
+            initActions.add { logMessage(msg) }
+            return
+        }
         var prepend = ""
         if (movingAverageTimer != null)
             prepend =
@@ -330,6 +346,11 @@ class DualTelemetry @JvmOverloads constructor(
      */
     @Suppress("UNCHECKED_CAST")
     override fun update(): Boolean {
+        if (info == null) {
+            init()
+            throw IllegalStateException("DualTelemetry has not been initialised via `.init(String)`! Initialisation has been dispatched automatically. This may cause unexpected behaviour.")
+        }
+
         // Update main DS telemetry
         val retVal = opMode.telemetry.update()
 
@@ -407,7 +428,7 @@ class DualTelemetry @JvmOverloads constructor(
                     )
 
                     ItemType.LOG -> {
-                        if (value == infoString) {
+                        if (value == info) {
                             // BunyipsLib info, this is an always-log and will always
                             // be the first log in the list as it is added at the start
                             // of the init cycle
@@ -583,7 +604,7 @@ class DualTelemetry @JvmOverloads constructor(
      *
      * @author Lachlan Paul, 2024
      */
-    class HtmlItem(
+    inner class HtmlItem(
         private var value: String,
         retained: Boolean,
         /**
@@ -604,11 +625,19 @@ class DualTelemetry @JvmOverloads constructor(
         private var applyOnlyIf: BooleanSupplier? = null
 
         init {
-            if (!isOverflow) {
+            val init = {
                 // To let dynamic reformatting on an item that already exists, we will use the Func<T> attribute against
                 // the HTML string builder, which will ensure changes made after the item has been sent are reflected.
                 item = opMode.telemetry.addData("", ::build)
                 item?.setRetained(retained)
+            }
+            if (!isOverflow) {
+                if (info == null) {
+                    // We have to wait for a bit, so we'll delay the item being available until init() is called
+                    initActions.add { init.invoke() }
+                } else {
+                    init.invoke()
+                }
             }
         }
 
@@ -969,9 +998,6 @@ class DualTelemetry @JvmOverloads constructor(
         }
     }
 
-    /**
-     * Create a new telemetry object and add it to the management queue.
-     */
     private fun createTelemetryItem(value: String, retained: Boolean, isOverflow: Boolean): HtmlItem {
         // Use a reference of the string to be added to telemetry. This allows us to pass it into HtmlItem where it
         // may be modified at an arbitrary time, and the changes will be reflected in the telemetry object as part of

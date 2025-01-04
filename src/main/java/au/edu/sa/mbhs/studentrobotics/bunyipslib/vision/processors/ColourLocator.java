@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Cleanup;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.Processor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ColourBlob;
 
@@ -66,7 +66,7 @@ public class ColourLocator extends Processor<ColourBlob> {
         instance = builder.apply(makeBuilderWithCommonSettings()).build();
     }
 
-    @Cleanup
+    @Hook(on = Hook.Target.POST_STOP)
     private static void reset() {
         instances = 0;
     }

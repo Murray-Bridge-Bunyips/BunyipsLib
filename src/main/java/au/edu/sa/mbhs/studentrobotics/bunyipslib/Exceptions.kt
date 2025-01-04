@@ -1,6 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Cleanup
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.ForceStopException
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -106,7 +106,7 @@ object Exceptions {
         return StackTraceElement("Unknown", "userMethod", "User Code", -1)
     }
 
-    @Cleanup
+    @Hook(on = Hook.Target.POST_STOP)
     @JvmStatic
     private fun reset() {
         THROWN_EXCEPTIONS.clear()

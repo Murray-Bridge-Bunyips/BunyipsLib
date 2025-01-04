@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks
 
-import android.annotation.SuppressLint
 import android.content.Context
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BuildConfig
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg
@@ -15,6 +14,7 @@ import dev.frozenmilk.sinister.SinisterFilter
 import dev.frozenmilk.sinister.apphooks.OnCreateEventLoop
 import dev.frozenmilk.sinister.isStatic
 import dev.frozenmilk.sinister.targeting.FocusedSearch
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil
 import java.lang.reflect.Method
 
 /**
@@ -25,7 +25,7 @@ import java.lang.reflect.Method
  * To use the full extent of BunyipsLib utilities at the OpMode level, consult the BunyipsOpMode.
  *
  * @author Lucas Bubner, 2024
- * @since 6.2.0
+ * @since 7.0.0
  */
 object BunyipsLib {
     /**
@@ -33,12 +33,20 @@ object BunyipsLib {
      *
      * @return Instance for the OpMode manager
      */
-    @SuppressLint("StaticFieldLeak")
-    lateinit var opModeManager: OpModeManagerImpl
+    @JvmStatic
+    val opModeManager: OpModeManagerImpl by lazy {
+        OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().activity)
+    }
+
+    /**
+     * @return The currently active OpMode via [opModeManager]
+     */
+    @JvmStatic
+    val opMode: OpMode
+        get() = opModeManager.activeOpMode
 
     private object EventLoopHook : OnCreateEventLoop {
         override fun onCreateEventLoop(context: Context, ftcEventLoop: FtcEventLoop) {
-            opModeManager = ftcEventLoop.opModeManager
             opModeManager.registerListener(OpModeHook)
             Dbg.log(
                 "loaded BunyipsLib v% %-% uid:%",
@@ -66,6 +74,7 @@ object BunyipsLib {
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
+            HookFilter.preInit.forEach { it.invoke(null) }
         }
 
         override fun onOpModePreStart(opMode: OpMode) {
@@ -75,6 +84,7 @@ object BunyipsLib {
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
+            HookFilter.preStart.forEach { it.invoke(null) }
         }
 
         override fun onOpModePostStop(opMode: OpMode) {
@@ -84,29 +94,52 @@ object BunyipsLib {
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
-            CleanupHookFilter.cleanupMethods.forEach { it.invoke(null) }
+            HookFilter.postStop.forEach { it.invoke(null) }
         }
     }
 
-    private object CleanupHookFilter : SinisterFilter {
-        val cleanupMethods: MutableSet<Method> = mutableSetOf()
+    private object HookFilter : SinisterFilter {
+        val preInit = LinkedHashSet<Method>()
+        val preStart = LinkedHashSet<Method>()
+        val postStop = LinkedHashSet<Method>()
 
-        override val targets = FocusedSearch()
-            .exclude("com.acmerobotics.roadrunner")
-            .exclude("com.acmerobotics.dashboard")
-            .exclude("org.team11260.fastload")
-            .exclude("org.openftc.easyopencv")
-            .exclude("org.opencv")
-            .exclude("com.fasterxml.jackson")
+        override val targets = StdSearch()
 
         override fun init() {
-            cleanupMethods.clear()
+            preInit.clear()
+            preStart.clear()
+            postStop.clear()
         }
 
         override fun filter(clazz: Class<*>) {
-            cleanupMethods.addAll(clazz.declaredMethods.filter {
-                it.isStatic() && it.isAnnotationPresent(Cleanup::class.java) && it.parameterCount == 0
-            }.onEach { it.isAccessible = true })
+            val allHooks = clazz.declaredMethods.filter {
+                it.isStatic() && it.isAnnotationPresent(Hook::class.java) && it.parameterCount == 0
+            }.onEach { it.isAccessible = true }
+
+            allHooks.map { it to it.getAnnotation(Hook::class.java)!! }
+                .sortedByDescending { it.second.priority }
+                .forEach {
+                    when (it.second.on) {
+                        Hook.Target.PRE_INIT -> preInit.add(it.first)
+                        Hook.Target.PRE_START -> preStart.add(it.first)
+                        Hook.Target.POST_STOP -> postStop.add(it.first)
+                    }
+                }
+        }
+    }
+
+    /**
+     * [SinisterFilter] target for BunyipsLib + User code.
+     */
+    class StdSearch : FocusedSearch() {
+        init {
+            // Also excludes other libraries relevant to BunyipsLib but won't ever have hook targets
+            exclude("com.acmerobotics.roadrunner")
+            exclude("com.acmerobotics.dashboard")
+            exclude("org.team11260.fastload")
+            exclude("org.openftc.easyopencv")
+            exclude("org.opencv")
+            exclude("com.fasterxml.jackson")
         }
     }
 }

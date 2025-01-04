@@ -15,9 +15,13 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook;
 
 /**
  * Async utilities for running user code on different threads while having control/logging over them.
+ * <p>
+ * Threads started via this class are automatically shut down at the end of OpModes, via the {@link #stopAll()} method
+ * and a BunyipsLib {@link Hook}.
  *
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
@@ -129,8 +133,10 @@ public final class Threads {
      * Stop all threads that are currently running.
      * This will interrupt all threads and remove them from the list of managed threads,
      * not including threads that were started outside of this class.
-     * This method is automatically called at the end of a BunyipsOpMode.
+     * <p>
+     * <b>IMPORTANT</b>: This method is automatically called at the end of any OpMode, via a {@link Hook}.
      */
+    @Hook(on = Hook.Target.POST_STOP, priority = 1)
     public static void stopAll() {
         for (Thread thread : threads.values()) {
             if (!thread.isAlive()) continue;

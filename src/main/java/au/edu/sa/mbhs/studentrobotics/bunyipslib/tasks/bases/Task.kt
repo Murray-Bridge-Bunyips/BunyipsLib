@@ -522,7 +522,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
      *
      * This method will return the current task if it is already a [DynamicTask] instance.
      *
-     * @since 6.2.0
+     * @since 7.0.0
      */
     fun mutate(): DynamicTask {
         return if (this is DynamicTask) this else {

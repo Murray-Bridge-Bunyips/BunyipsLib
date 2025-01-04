@@ -8,7 +8,7 @@ import java.util.Collections;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.CommandBasedBunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Cleanup;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.RepeatTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
@@ -75,7 +75,7 @@ public final class Tasks {
         throw new AssertionError("This is a utility class");
     }
 
-    @Cleanup
+    @Hook(on = Hook.Target.POST_STOP)
     private static void reset() {
         registeredTasks.clear();
     }

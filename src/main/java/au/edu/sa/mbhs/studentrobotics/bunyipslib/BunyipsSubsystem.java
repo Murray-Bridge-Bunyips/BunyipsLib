@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Cleanup;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
@@ -63,7 +63,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
                 .collect(HashSet::new, HashSet::add, HashSet::addAll);
     }
 
-    @Cleanup
+    @Hook(on = Hook.Target.POST_STOP)
     private static void reset() {
         instances.clear();
         idx = 0;

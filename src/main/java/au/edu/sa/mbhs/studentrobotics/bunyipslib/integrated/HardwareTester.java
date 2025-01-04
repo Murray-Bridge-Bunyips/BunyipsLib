@@ -85,7 +85,9 @@ public final class HardwareTester extends LinearOpMode {
         dashboardControlled.clear();
         actuators = new double[0];
         timer = new MovingAverageTimer();
-        telemetry = new DualTelemetry(this, timer, "<b>HardwareTester</b>");
+        telemetry = new DualTelemetry(this, timer);
+        telemetry.overheadTag = "<b>HardwareTester</b>";
+        telemetry.init();
         Map<String, List<HardwareDevice>> hardware;
         hardwareMap.logDevices();
         try {
