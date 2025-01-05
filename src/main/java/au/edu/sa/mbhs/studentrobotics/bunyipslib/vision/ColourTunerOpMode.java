@@ -60,6 +60,7 @@ public abstract class ColourTunerOpMode extends BunyipsOpMode {
 
     @Override
     protected final void onInit() {
+        telemetry.setAutoClear(true);
         // Using quadratic scaling for the scalar adjustment for more precision
         gamepad1.set(Controls.Analog.LEFT_STICK_Y, UnaryFunction.SQUARE_KEEP_SIGN);
         // Restrict speed so that adjustment is consistent

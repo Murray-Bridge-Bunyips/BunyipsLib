@@ -7,9 +7,12 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.lang.reflect.Field;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
@@ -182,7 +185,9 @@ public class BlinkinLights extends BunyipsSubsystem {
 
     @Override
     protected void periodic() {
-        opMode(o -> o.telemetry.add("%: Pattern->%", this, currentPattern.name()).color("gray"));
+        Telemetry.Item i = DualTelemetry.smartAdd(toString(), "Pattern->%", currentPattern.name());
+        if (i instanceof DualTelemetry.HtmlItem hi)
+            hi.color("gray");
         if (setPattern != currentPattern) {
             lights.setPattern(currentPattern);
             setPattern = currentPattern;

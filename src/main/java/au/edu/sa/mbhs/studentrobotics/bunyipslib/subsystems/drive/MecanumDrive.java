@@ -42,10 +42,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.Arrays;
 import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.RobotConfig;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
@@ -331,26 +334,28 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         Pose2d pose = accumulator.getPose();
         PoseVelocity2d poseVel = accumulator.getVelocity();
-        opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %°(%/s)",
+        Telemetry.Item i = DualTelemetry.smartAdd("Localizer", "X:%in(%/s) Y:%in(%/s) %°(%/s)",
                 Mathf.round(pose.position.x, 1),
                 Mathf.round(poseVel.linearVel.x, 1),
                 Mathf.round(pose.position.y, 1),
                 Mathf.round(poseVel.linearVel.y, 1),
                 Mathf.round(Math.toDegrees(pose.heading.toDouble()), 1),
                 Mathf.round(Math.toDegrees(poseVel.angVel), 1)
-        ).color("gray").small());
+        );
+        if (i instanceof DualTelemetry.HtmlItem hi)
+            hi.color("gray").small();
 
         leftFront.setPower(leftFrontPower);
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
         rightFront.setPower(rightFrontPower);
 
-        opMode(o -> o.telemetry.add("%: FL:%\\% %, BL:%\\% %, BR:%\\% %, FR:%\\% %", this,
+        DualTelemetry.smartAdd(toString(), "FL:%\\% %, BL:%\\% %, BR:%\\% %, FR:%\\% %",
                 Math.round(Math.min(100, Math.abs(leftFrontPower * 100))), leftFrontPower >= 0 ? "↑" : "↓",
                 Math.round(Math.min(100, Math.abs(leftBackPower * 100))), leftBackPower >= 0 ? "↑" : "↓",
                 Math.round(Math.min(100, Math.abs(rightBackPower * 100))), rightBackPower >= 0 ? "↑" : "↓",
                 Math.round(Math.min(100, Math.abs(rightFrontPower * 100))), rightFrontPower >= 0 ? "↑" : "↓"
-        ));
+        );
     }
 
     @Override

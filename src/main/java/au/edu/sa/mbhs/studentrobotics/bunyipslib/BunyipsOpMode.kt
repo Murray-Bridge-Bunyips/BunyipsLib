@@ -5,6 +5,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.*
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
@@ -115,11 +116,12 @@ abstract class BunyipsOpMode : BOMInternal() {
          * The instance of the current [BunyipsOpMode]. This is set automatically by the [BunyipsOpMode] lifecycle.
          * This can be used instead of dependency injection to access the current OpMode, as it is a singleton.
          *
-         * `BunyipsComponent` (and derivatives `Task`, `BunyipsSubsystem`, etc.) internally use this to grant access
-         * to the current BunyipsOpMode through the `opMode` property.
-         *
          * If you choose to access the current OpMode through this property, you must ensure that the OpMode
          * is actively running, otherwise this property will be null, and you will raise a full-crashing exception.
+         * The OpMode is generally available upon construction of your OpMode, so exceptions should be rare if you
+         * are using a [BunyipsOpMode].
+         *
+         * You may also choose to access the currently running base `OpMode` instance through the [BunyipsLib] class.
          *
          * @throws UninitializedPropertyAccessException If a [BunyipsOpMode] is not running, this exception will be raised.
          * @return The instance of the current [BunyipsOpMode].
@@ -129,7 +131,12 @@ abstract class BunyipsOpMode : BOMInternal() {
             // If Kotlin throws an UninitializedPropertyAccessException, it will crash the DS and require a full
             // restart, so we will handle this exception ourselves and supply a more informative message.
             get() = _instance
-                ?: throw UninitializedPropertyAccessException("Attempted to access a BunyipsOpMode that is not running! This is due to a BunyipsOpMode.getInstance() call that has been invoked without checking if there is an active BunyipsOpMode running.")
+                ?: throw UninitializedPropertyAccessException(
+                    "Attempted to access a BunyipsOpMode that is not running! " +
+                            "This is due to a `BunyipsOpMode.getInstance()` call that has been invoked without checking if there is an active BunyipsOpMode running. " +
+                            "The most likely cause is that a component has tried to access a running BunyipsOpMode when none is running. " +
+                            "For this component to function properly, it must be run during the execution of a BunyipsOpMode or initialisation should be delayed until an instance is available."
+                )
 
         /**
          * Whether a [BunyipsOpMode] is currently running. This is useful for checking if the OpMode singleton can be accessed
@@ -444,7 +451,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 robotControllers.forEach { m -> m.clearBulkCache() }
                 try {
                     // Run user-defined active loop
-                    runnables.forEach { Exceptions.runUserMethod(this, it) }
+                    runnables.forEach { Exceptions.runUserMethod(it) }
                     activeLoop()
                 } catch (e: Exception) {
                     telemetry.overrideStatus = "<font color='red'><b>error</b></font>"

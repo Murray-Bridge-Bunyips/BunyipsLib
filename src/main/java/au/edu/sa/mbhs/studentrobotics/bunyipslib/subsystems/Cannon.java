@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
@@ -105,7 +106,7 @@ public class Cannon extends BunyipsSubsystem {
 
     @Override
     protected void periodic() {
-        opMode(o -> o.telemetry.add("%: %", this, target == FIRED ? "<font color='red'><b>FIRED</b></font>" : "<font color='green'>READY</font>"));
+        DualTelemetry.smartAdd(toString(), target == FIRED ? "<font color='red'><b>FIRED</b></font>" : "<font color='green'>READY</font>");
         prolong.setPosition(target);
     }
 

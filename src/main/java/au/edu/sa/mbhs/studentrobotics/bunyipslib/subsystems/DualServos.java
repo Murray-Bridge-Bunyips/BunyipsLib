@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
@@ -154,9 +155,9 @@ public class DualServos extends BunyipsSubsystem {
     protected void periodic() {
         left.setPosition(leftServoPosition);
         right.setPosition(rightServoPosition);
-        opMode(o -> o.telemetry.add("%: Left->% Right->%", this,
+        DualTelemetry.smartAdd(toString(), "Left->% Right->%",
                 leftServoPosition == leftOpen ? "<font color='yellow'>OPEN</font>" : "<font color='green'>CLOSE</font>",
-                rightServoPosition == rightOpen ? "<font color='yellow'>OPEN</font>" : "<font color='green'>CLOSE</font>"));
+                rightServoPosition == rightOpen ? "<font color='yellow'>OPEN</font>" : "<font color='green'>CLOSE</font>");
     }
 
     /**

@@ -29,7 +29,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
  * @see Scheduler
  * @since 1.0.0-pre
  */
-public abstract class BunyipsSubsystem extends BunyipsComponent {
+public abstract class BunyipsSubsystem {
     private static final HashSet<BunyipsSubsystem> instances = new HashSet<>();
     private static int idx = 0;
     private final List<BunyipsSubsystem> children = new ArrayList<>();
@@ -179,10 +179,8 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         shouldRun = Arrays.stream(parameters).allMatch(Objects::nonNull);
         if (!shouldRun) {
             assertionFailed = true;
-            opMode(o -> {
-                o.telemetry.addRetained("<font color='red'><b>! SUBSYSTEM FAULT</b></font>: %", toString());
-                o.telemetry.log("<font color='yellow'><b>warning!</b> <i>%</i> failed a null self-check and was auto disabled.</font>", toString());
-            });
+            DualTelemetry.smartAdd(true, toString(), "<font color='red'><b>SUBSYSTEM FAULT!</b></font>");
+            DualTelemetry.smartLog("<font color='yellow'><b>warning!</b> <i>%</i> failed a null self-check and was auto disabled.</font>", toString());
             sout(Dbg::error, "Subsystem has been disabled as assertParamsNotNull() failed.");
             onDisable();
         }
@@ -212,7 +210,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (!shouldRun) return;
         shouldRun = false;
         sout(Dbg::logv, "Subsystem disabled via disable() call.");
-        opMode(o -> o.telemetry.log(getClass(), Text.html().color("yellow", "disabled. ").small("check logcat for more info.")));
+        DualTelemetry.smartLog(getClass(), Text.html().color("yellow", "disabled. ").small("check logcat for more info."));
         onDisable();
         for (BunyipsSubsystem child : children)
             child.disable();
@@ -226,7 +224,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
         if (shouldRun || assertionFailed) return;
         shouldRun = true;
         sout(Dbg::logv, "Subsystem enabled via enable() call.");
-        opMode(o -> o.telemetry.log(getClass(), Text.html().color("green", "enabled. ").small("check logcat for more info.")));
+        DualTelemetry.smartLog(getClass(), Text.html().color("green", "enabled. ").small("check logcat for more info."));
         onEnable();
         for (BunyipsSubsystem child : children)
             child.enable();
@@ -393,7 +391,7 @@ public abstract class BunyipsSubsystem extends BunyipsComponent {
             task.poll();
         }
         // This should be the only place where periodic() is called for this subsystem
-        Exceptions.runUserMethod(opMode, this::periodic);
+        Exceptions.runUserMethod(this::periodic);
         // Update child subsystems if they are delegated, note we don't touch the parent subsystem at all
         for (BunyipsSubsystem child : children) {
             if (child != null && child.shouldRun)

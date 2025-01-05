@@ -6,7 +6,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Second
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.canvas.Canvas
@@ -34,16 +36,6 @@ class DualTelemetry @JvmOverloads constructor(
     private val opMode: OpMode,
     private val movingAverageTimer: MovingAverageTimer? = null,
 ) : Telemetry {
-    companion object {
-        /**
-         * The maximum number of telemetry logs that can be stored in the telemetry log.
-         * If the number of logs exceeds this limit, the oldest logs will be removed to make space for new logs to
-         * avoid crashing the Driver Station.
-         */
-        @JvmField
-        var TELEMETRY_LOG_LINE_LIMIT = 200
-    }
-
     private val initActions = mutableListOf<Runnable>()
     private lateinit var overheadTelemetry: Item
     private var dashboardItems = Collections.synchronizedSet(mutableSetOf<Pair<ItemType, Reference<String>>>())
@@ -1103,5 +1095,101 @@ class DualTelemetry @JvmOverloads constructor(
     )
     override fun setNumDecimalPlaces(minDecimalPlaces: Int, maxDecimalPlaces: Int) {
         // no-op
+    }
+
+    companion object {
+        /**
+         * The maximum number of telemetry logs that can be stored in the telemetry log.
+         *
+         * If the number of logs exceeds this limit, the oldest logs will be removed to make space for new logs to
+         * avoid crashing the Driver Station.
+         */
+        @JvmField
+        var TELEMETRY_LOG_LINE_LIMIT = 200
+
+        /**
+         * Whether to strip HTML from [smartAdd] and [smartLog] calls for [OpMode] instances.
+         * Note: This does not apply to [BunyipsOpMode] instances as it is using a [DualTelemetry] object.
+         *
+         * This option is retained through OpModes.
+         */
+        @JvmField
+        var SMART_CALL_BASE_OPMODE_HTML_STRIP = false
+
+        /**
+         * [smartAdd] is a static utility that will attempt to access a [Telemetry] object to add new data to either
+         * a [DualTelemetry] object affixed to a [BunyipsOpMode], or a standard [Telemetry] out affixed to any
+         * [OpMode] derivative.
+         *
+         * This provides components such as subsystems the ability to add telemetry regardless of whether a [BunyipsOpMode]
+         * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
+         * instances to work similarly with FtcDashboard routing and smart parsing.
+         *
+         * @since 7.0.0
+         */
+        @JvmStatic
+        fun smartAdd(retained: Boolean, caption: String, format: String, vararg objs: Any?): Item {
+            if (BunyipsOpMode.isRunning) {
+                val t = BunyipsOpMode.instance.telemetry
+                return if (caption.isBlank()) {
+                    if (!retained) t.add(format, *objs) else t.addRetained(format, *objs)
+                } else {
+                    if (!retained) t.addData(caption, format, *objs) else
+                        t.addRetained(caption + t.dashboardCaptionValueAutoSeparator + format, *objs)
+                }
+            } else if (BunyipsLib.isOpModeRunning) {
+                val formatted = Text.format(format, *objs)
+                val nCap = caption.ifBlank { System.currentTimeMillis().toString() }
+                val cap = if (SMART_CALL_BASE_OPMODE_HTML_STRIP) Text.removeHtml(nCap) else nCap
+                val str = if (SMART_CALL_BASE_OPMODE_HTML_STRIP) Text.removeHtml(formatted) else formatted
+                Dashboard.usePacket {
+                    it.put(nCap, formatted)
+                }
+                return BunyipsLib.opMode.telemetry.addData(cap, str).setRetained(retained)
+            }
+            throw IllegalStateException("No OpMode is running!")
+        }
+
+        @JvmStatic
+        fun smartAdd(retained: Boolean, format: String, vararg objs: Any?) = smartAdd(retained, "", format, *objs)
+        @JvmStatic
+        fun smartAdd(caption: String, format: String, vararg objs: Any?) = smartAdd(false, caption, format, *objs)
+        @JvmStatic
+        fun smartAdd(format: String, vararg objs: Any?) = smartAdd(false, "", format, *objs)
+
+        /**
+         * [smartLog] is a static utility that will attempt to access a [Telemetry] object to append a new log to
+         * a [DualTelemetry] object affixed to a [BunyipsOpMode], or a standard [Telemetry] out affixed to any
+         * [OpMode] derivative.
+         *
+         * This provides components such as subsystems the ability to add logs regardless of whether a [BunyipsOpMode]
+         * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
+         * instances to work similarly with FtcDashboard routing and smart parsing.
+         *
+         * @since 7.0.0
+         */
+        @JvmStatic
+        fun smartLog(format: Any, vararg objs: Any?) {
+            if (BunyipsOpMode.isRunning) {
+                BunyipsOpMode.instance.telemetry.log(format, *objs)
+            } else if (BunyipsLib.isOpModeRunning) {
+                val formatted = Text.format(format.toString(), *objs)
+                BunyipsLib.opMode.telemetry.log().add(
+                    if (SMART_CALL_BASE_OPMODE_HTML_STRIP) Text.removeHtml(formatted) else formatted
+                )
+                Dashboard.usePacket {
+                    it.put(System.currentTimeMillis().toString(), formatted)
+                }
+            }
+            throw IllegalStateException("No OpMode is running!")
+        }
+
+        @JvmStatic
+        fun smartLog(obj: Class<*>, format: Any, vararg objs: Any?) =
+            smartLog("<font color='gray'>[${obj.simpleName}]</font> $format", *objs)
+
+        @JvmStatic
+        fun smartLog(stck: StackTraceElement, format: Any, vararg objs: Any?) =
+            smartLog("<font color='gray'>[$stck]</font> $format", *objs)
     }
 }

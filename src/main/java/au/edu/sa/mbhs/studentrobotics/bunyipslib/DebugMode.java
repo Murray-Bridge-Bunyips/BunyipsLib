@@ -24,16 +24,19 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 /**
  * A collection of {@link BunyipsOpMode} debug features intended for use in a testing environment, including
  * a controller-based kill switch, robot pickup detection, and customisable auto-halt conditions.
+ * <p>
+ * Must be used in a {@link BunyipsOpMode} due to internal references.
  *
  * @author Lucas Bubner, 2024
  * @since 4.1.0
  */
-public class DebugMode extends BunyipsComponent implements Runnable {
+public class DebugMode implements Runnable {
     /**
      * The threshold at which {@link #whenRobotRolled(IMU, TriggerAction)} will trigger for the pitch and roll angles.
      */
     public static double ROBOT_PITCH_ROLL_THRESHOLD_DEGREES = 5;
 
+    private final BunyipsOpMode opMode = BunyipsOpMode.getInstance();
     private final ArrayList<Pair<BooleanSupplier, TriggerAction>> actions = new ArrayList<>();
     private final ArrayList<Watchdog> watchdogs = new ArrayList<>();
     private boolean hasResetWatchdogs = false;
@@ -43,7 +46,7 @@ public class DebugMode extends BunyipsComponent implements Runnable {
      * Enable debug mode.
      */
     public DebugMode() {
-        require(opMode).onActiveLoop(this);
+        opMode.onActiveLoop(this);
         Dbg.logd(getClass(), "Update executor has been auto-attached to BunyipsOpMode.");
         Dashboard.enableConfig(getClass());
     }
@@ -99,7 +102,7 @@ public class DebugMode extends BunyipsComponent implements Runnable {
     @NonNull
     public DebugMode whenGamepadKillSwitch(@NonNull TriggerAction action) {
         actions.add(new Pair<>(() ->
-                (require(opMode).gamepad1.back && opMode.gamepad1.start) || (opMode.gamepad2.back && opMode.gamepad2.start),
+                (opMode.gamepad1.back && opMode.gamepad1.start) || (opMode.gamepad2.back && opMode.gamepad2.start),
                 action
         ));
         return this;
@@ -170,7 +173,7 @@ public class DebugMode extends BunyipsComponent implements Runnable {
             return;
         }
 
-        require(opMode).getRobotControllers()
+        opMode.getRobotControllers()
                 .forEach((controller) -> controller.setConstant(Color.YELLOW));
 
         switch (TriggerAction.values()[max]) {

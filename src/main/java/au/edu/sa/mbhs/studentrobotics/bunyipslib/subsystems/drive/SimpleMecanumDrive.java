@@ -10,7 +10,10 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
@@ -91,14 +94,18 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
             }
             accumulator.accumulate(twist);
 
-            opMode(o -> o.telemetry.add("Localizer: X:%in(%/s) Y:%in(%/s) %°(%/s)",
-                    Mathf.round(accumulator.getPose().position.x, 1),
-                    Mathf.round(accumulator.getVelocity().linearVel.x, 1),
-                    Mathf.round(accumulator.getPose().position.y, 1),
-                    Mathf.round(accumulator.getVelocity().linearVel.y, 1),
-                    Mathf.round(Math.toDegrees(accumulator.getPose().heading.toDouble()), 1),
-                    Mathf.round(Math.toDegrees(accumulator.getVelocity().angVel), 1)
-            ).color("gray").small());
+            Pose2d pose = accumulator.getPose();
+            PoseVelocity2d poseVel = accumulator.getVelocity();
+            Telemetry.Item i = DualTelemetry.smartAdd("Localizer", "X:%in(%/s) Y:%in(%/s) %°(%/s)",
+                    Mathf.round(pose.position.x, 1),
+                    Mathf.round(poseVel.linearVel.x, 1),
+                    Mathf.round(pose.position.y, 1),
+                    Mathf.round(poseVel.linearVel.y, 1),
+                    Mathf.round(Math.toDegrees(pose.heading.toDouble()), 1),
+                    Mathf.round(Math.toDegrees(poseVel.angVel), 1)
+            );
+            if (i instanceof DualTelemetry.HtmlItem hi)
+                hi.color("gray").small();
         }
 
         double leftFrontPower, leftBackPower, rightBackPower, rightFrontPower;
@@ -164,11 +171,11 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         rightBack.setPower(rightBackPower);
         rightFront.setPower(rightFrontPower);
 
-        opMode(o -> o.telemetry.add("%: %\\% %, %\\% %, %\\% %", this,
+        DualTelemetry.smartAdd(toString(), "%\\% %, %\\% %, %\\% %", this,
                 Math.round(Math.abs(speedX * 100)), speedX >= 0 ? "↑" : "↓",
                 Math.round(Math.abs(speedY * 100)), speedY >= 0 ? "←" : "→",
                 Math.round(Math.abs(speedR * 100)), speedR >= 0 ? "↺" : "↻"
-        ));
+        );
     }
 
     /**

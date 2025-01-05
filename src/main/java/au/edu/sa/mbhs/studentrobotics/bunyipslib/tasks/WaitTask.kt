@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
@@ -26,7 +27,7 @@ class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = false) 
 
     override fun periodic() {
         if (showTelemetry)
-            opMode?.telemetry?.add(
+            DualTelemetry.smartAdd(
                 "Waiting %/% seconds...",
                 deltaTime to Seconds round 1,
                 timeout to Seconds

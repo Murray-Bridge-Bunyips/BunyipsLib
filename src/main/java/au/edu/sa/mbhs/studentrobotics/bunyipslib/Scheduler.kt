@@ -5,13 +5,15 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Analog
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Companion.get
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
+import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser
 import java.util.function.BooleanSupplier
 
@@ -22,7 +24,7 @@ import java.util.function.BooleanSupplier
  * @see CommandBasedBunyipsOpMode
  * @since 1.0.0-pre
  */
-class Scheduler : BunyipsComponent() {
+class Scheduler {
     private val subsystems = ArrayList<BunyipsSubsystem>()
     private val allocatedTasks = ArrayList<ScheduledTask>()
 
@@ -106,49 +108,47 @@ class Scheduler : BunyipsComponent() {
         }
 
         if (!isMuted) {
-            opMode {
-                // Task count will account for tasks on subsystems that are not IdleTasks, and also subsystem tasks
-                val taskCount = (allocatedTasks.size - allocatedTasks.stream()
-                    .filter { task -> task.taskToRun.dependency.isPresent }.count()
-                        + subsystems.size - subsystems.stream().filter { s -> s.isIdle }.count())
-                it.telemetry.add("\nRunning % task% (%s, %c) on % subsystem%",
-                    taskCount,
-                    if (taskCount == 1L) "" else "s",
-                    allocatedTasks.stream().filter { task -> task.taskToRun.dependency.isPresent }
-                        .count() + taskCount - allocatedTasks.size,
-                    allocatedTasks.stream().filter { task -> !task.taskToRun.dependency.isPresent }.count(),
-                    subsystems.size,
-                    if (subsystems.size == 1) "" else "s"
+            // Task count will account for tasks on subsystems that are not IdleTasks, and also subsystem tasks
+            val taskCount = (allocatedTasks.size - allocatedTasks.stream()
+                .filter { task -> task.taskToRun.dependency.isPresent }.count()
+                    + subsystems.size - subsystems.stream().filter { s -> s.isIdle }.count())
+            DualTelemetry.smartAdd("\nRunning % task% (%s, %c) on % subsystem%",
+                taskCount,
+                if (taskCount == 1L) "" else "s",
+                allocatedTasks.stream().filter { task -> task.taskToRun.dependency.isPresent }
+                    .count() + taskCount - allocatedTasks.size,
+                allocatedTasks.stream().filter { task -> !task.taskToRun.dependency.isPresent }.count(),
+                subsystems.size,
+                if (subsystems.size == 1) "" else "s"
+            )
+            for (subsystem in subsystems) {
+                val task = subsystem.currentTask
+                if (task == null || task is IdleTask) continue
+                var report = Text.format(
+                    "<small><b>%</b>% <font color='gray'>|</font> <b>%</b> -> %",
+                    subsystem,
+                    if (subsystem.isRunningDefaultTask) " (d.)" else "",
+                    task.toString().replace("$subsystem:", ""),
+                    task.deltaTime to Seconds round 1
                 )
-                for (subsystem in subsystems) {
-                    val task = subsystem.currentTask
-                    if (task == null || task is IdleTask) continue
-                    var report = Text.format(
-                        "<small><b>%</b>% <font color='gray'>|</font> <b>%</b> -> %",
-                        subsystem,
-                        if (subsystem.isRunningDefaultTask) " (d.)" else "",
-                        task.toString().replace("$subsystem:", ""),
-                        task.deltaTime to Seconds round 1
-                    )
-                    val timeoutSec = task.timeout to Seconds
-                    report += if (timeoutSec == 0.0) "s" else "/" + timeoutSec + "s"
-                    report += "</small>"
-                    it.telemetry.add(report)
+                val timeoutSec = task.timeout to Seconds
+                report += if (timeoutSec == 0.0) "s" else "/" + timeoutSec + "s"
+                report += "</small>"
+                DualTelemetry.smartAdd(format = report)
+            }
+            for (task in allocatedTasks) {
+                if (task.taskToRun.dependency.isPresent // Whether the task is never run from the Scheduler (and task reports were handled above)
+                    || !task.taskToRun.isRunning // Whether this task is actually running
+                    || task.muted // Whether the task has declared itself as muted
+                ) {
+                    continue
                 }
-                for (task in allocatedTasks) {
-                    if (task.taskToRun.dependency.isPresent // Whether the task is never run from the Scheduler (and task reports were handled above)
-                        || !task.taskToRun.isRunning // Whether this task is actually running
-                        || task.muted // Whether the task has declared itself as muted
-                    ) {
-                        continue
-                    }
-                    val deltaTime = task.taskToRun.deltaTime to Seconds round 1
-                    it.telemetry.add(
-                        "<small><b>Scheduler</b> (c.) <font color='gray'>|</font> <b>%</b> -> %</small>",
-                        task.taskToRun,
-                        if (deltaTime == 0.0) "active" else deltaTime.toString() + "s"
-                    )
-                }
+                val deltaTime = task.taskToRun.deltaTime to Seconds round 1
+                DualTelemetry.smartAdd(
+                    "<small><b>Scheduler</b> (c.) <font color='gray'>|</font> <b>%</b> -> %</small>",
+                    task.taskToRun,
+                    if (deltaTime == 0.0) "active" else deltaTime.toString() + "s"
+                )
             }
         }
 
@@ -208,7 +208,7 @@ class Scheduler : BunyipsComponent() {
      * @return The controller trigger creator.
      */
     @SuppressLint("NoHardKeywords")
-    fun `when`(user: Controller): ControllerTriggerCreator {
+    fun `when`(user: Gamepad): ControllerTriggerCreator {
         return ControllerTriggerCreator(user)
     }
 
@@ -218,7 +218,7 @@ class Scheduler : BunyipsComponent() {
      * @param user The Controller instance to use.
      * @return The controller button trigger creator.
      */
-    fun on(user: Controller): ControllerTriggerCreator {
+    fun on(user: Gamepad): ControllerTriggerCreator {
         return ControllerTriggerCreator(user)
     }
 
@@ -228,7 +228,7 @@ class Scheduler : BunyipsComponent() {
      * @return The controller trigger creator.
      */
     fun driver(): ControllerTriggerCreator {
-        return ControllerTriggerCreator(require(opMode).gamepad1)
+        return ControllerTriggerCreator(BunyipsLib.opMode.gamepad1)
     }
 
     /**
@@ -244,7 +244,7 @@ class Scheduler : BunyipsComponent() {
      * @return The controller trigger creator.
      */
     fun operator(): ControllerTriggerCreator {
-        return ControllerTriggerCreator(require(opMode).gamepad2)
+        return ControllerTriggerCreator(BunyipsLib.opMode.gamepad2)
     }
 
     /**
@@ -315,7 +315,7 @@ class Scheduler : BunyipsComponent() {
         return ScheduledTask(Condition { true })
     }
 
-    private class ControllerButtonBind(val controller: Controller, val button: Controls, edge: Edge) :
+    private class ControllerButtonBind(val controller: Gamepad, val button: Controls, edge: Edge) :
         Condition(edge, { controller[button] }) {
         override fun toString(): String {
             return "Button($edge):GP${controller.user.id}->$button"
@@ -323,7 +323,7 @@ class Scheduler : BunyipsComponent() {
     }
 
     private class ControllerAxisThreshold(
-        private val user: Controller,
+        private val user: Gamepad,
         private val axis: Analog,
         threshold: (Float) -> Boolean,
         edge: Edge
@@ -337,7 +337,7 @@ class Scheduler : BunyipsComponent() {
     /**
      * Controller trigger creator.
      */
-    inner class ControllerTriggerCreator(private val user: Controller) {
+    inner class ControllerTriggerCreator(private val user: Gamepad) {
         /**
          * Run a task once this analog axis condition is met.
          * This condition will be evaluated continuously.

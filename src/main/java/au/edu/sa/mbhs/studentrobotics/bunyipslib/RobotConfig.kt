@@ -65,10 +65,12 @@ abstract class RobotConfig {
      * Should be called as the first line in your init cycle if not using [AutoInit].
      * This method can only be executed once (further calls will no-op).
      *
-     * @param opMode the OpMode instance - usually the `this` object when at the root OpMode.
+     * As of BunyipsLib v7.0.0, passing the `opMode` parameter is no longer necessary as it will be retrieved
+     * through a [BunyipsLib] utility.
+     *
      * @return the instance of the RobotConfig
      */
-    fun init(opMode: OpMode): RobotConfig {
+    fun init(): RobotConfig {
         if (hasInitCalled) {
             Dbg.warn(RobotConfig::class.java, "instance (%) already initialised!", javaClass.simpleName)
             return this
@@ -82,52 +84,21 @@ abstract class RobotConfig {
                 javaClass.simpleName
             )
         }
-        this.hardwareMap = opMode.hardwareMap
-        if (opMode is BunyipsOpMode) {
-            Exceptions.runUserMethod(opMode, ::onRuntime)
-            opMode.t.add("<b>${javaClass.simpleName}</b>: Hardware initialised with ${if (Storage.memory().hardwareErrors.size > 0) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}.")
-        } else {
-            onRuntime()
-            opMode.telemetry.addData(
-                "",
-                "${javaClass.simpleName}: Hardware initialised with ${Storage.memory().hardwareErrors.size} error(s).",
-            )
-        }
+        this.hardwareMap = BunyipsLib.opMode.hardwareMap
+        Exceptions.runUserMethod(::onRuntime)
+        DualTelemetry.smartAdd(
+            false,
+            "<b>${javaClass.simpleName}</b>",
+            "Hardware initialised with ${if (Storage.memory().hardwareErrors.size > 0) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}."
+        )
         Dbg.logd(javaClass, "hardware initialised with % errors.", Storage.memory().hardwareErrors.size)
         for (error in Storage.memory().hardwareErrors) {
-            if (opMode is BunyipsOpMode) {
-                opMode.t.addRetained("<font color='red'><b>! MISSING DEVICE</b></font>: $error")
-                opMode.t.addRetained("<font color='red'>error:</font> <i>$error</i> was not found in the current saved configuration.")
-            } else {
-                opMode.telemetry.addData("", "! MISSING DEVICE: $error").setRetained(true)
-                opMode.telemetry.log().add("error: '$error' was not found in the current saved configuration.")
-            }
+            DualTelemetry.smartAdd(true, error, "<font color='red'><b>MISSING DEVICE!</b></font>")
+            DualTelemetry.smartLog("<font color='red'>error:</font> <i>$error</i> was not found in the current saved configuration.")
         }
         hasInitCalled = true
         globalInitCalled = true
         return this
-    }
-
-    /**
-     * Implicit OpMode config initialisation for use in BunyipsOpModes. This will not work in normal SDK OpModes.
-     *
-     * Uses the HardwareMap to fetch HardwareDevices and assign instances from `onRuntime`.
-     *
-     * Should be called as the first line in your init cycle if not using [AutoInit].
-     * This method can only be executed once (further calls will no-op if initialisation is executed).
-     *
-     * @throws UnsupportedOperationException if not called from a BunyipsOpMode.
-     * @see init(opMode: OpMode)
-     * @return the instance of the RobotConfig
-     */
-    fun init(): RobotConfig {
-        try {
-            // Access the singleton associated with a BunyipsOpMode, if we're not running one Kotlin
-            // will throw a UninitializedPropertyAccessException, so we can tell the user off here.
-            return init(BunyipsOpMode.instance)
-        } catch (e: UninitializedPropertyAccessException) {
-            throw UnsupportedOperationException("Argument-less .init() method is only supported in a BunyipsOpMode. Use .init(this) instead.")
-        }
     }
 
     private val dcMotorCastable = listOf(RawEncoder::class.java, Ramping.DcMotor::class.java, Motor::class.java)
@@ -311,8 +282,7 @@ abstract class RobotConfig {
         @Hook(on = Hook.Target.PRE_INIT, priority = 1)
         private fun autoInit() {
             AutoInitHookFilter.candidates.forEach {
-                val opMode = BunyipsLib.opMode
-                if (opMode.javaClass.isAnnotationPresent(InhibitAutoInit::class.java)) {
+                if (BunyipsLib.opMode.javaClass.isAnnotationPresent(InhibitAutoInit::class.java)) {
                     Dbg.log(
                         RobotConfig::class.java,
                         "auto-initialisation of % inhibited by `@RobotConfig.InhibitAutoInit`",
@@ -322,7 +292,7 @@ abstract class RobotConfig {
                     return
                 }
                 Dbg.logd(RobotConfig::class.java, "auto-initialising: % ...", it.javaClass.simpleName)
-                it.init(opMode)
+                it.init()
             }
         }
     }

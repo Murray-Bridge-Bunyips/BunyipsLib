@@ -3,14 +3,15 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Direction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
@@ -34,7 +35,6 @@ public class GetDualSplitContourTask extends Task {
     private ColourThreshold colourThreshold;
     private Measure<Time> noDetectionPersistenceTime = Seconds.of(3);
     private volatile Direction position = Direction.ZERO;
-    @Nullable
     private Telemetry.Item item;
 
     /**
@@ -111,8 +111,7 @@ public class GetDualSplitContourTask extends Task {
 
     @Override
     protected void init() {
-        if (opMode != null)
-            item = opMode.telemetry.addRetained(buildString()).getItem();
+        item = DualTelemetry.smartAdd(true, buildString());
         if (colourThreshold == null)
             return;
         if (!colourThreshold.isRunning())
@@ -137,6 +136,6 @@ public class GetDualSplitContourTask extends Task {
     @Override
     protected void onFinish() {
         if (item != null)
-            require(opMode).telemetry.remove(item);
+            BunyipsLib.getOpMode().telemetry.removeItem(item);
     }
 }

@@ -16,6 +16,7 @@ import dev.frozenmilk.sinister.isStatic
 import dev.frozenmilk.sinister.targeting.FocusedSearch
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil
 import java.lang.reflect.Method
+import java.util.function.Consumer
 
 /**
  * BunyipsLib hook manager for the SDK via the `Sinister` utilities, allowing execution of static hooks giving BunyipsLib
@@ -44,6 +45,19 @@ object BunyipsLib {
     @JvmStatic
     val opMode: OpMode
         get() = opModeManager.activeOpMode
+
+    /**
+     * Whether an active user OpMode is running.
+     */
+    @JvmStatic
+    val isOpModeRunning: Boolean
+        get() = opMode !is DefaultOpMode
+
+    /**
+     * Runs [ifRunning] if the [opMode] is an active user OpMode.
+     */
+    @JvmStatic
+    fun ifOpModeRunning(ifRunning: Consumer<OpMode>) = if (isOpModeRunning) ifRunning.accept(opMode) else Unit
 
     private object EventLoopHook : OnCreateEventLoop {
         override fun onCreateEventLoop(context: Context, ftcEventLoop: FtcEventLoop) {

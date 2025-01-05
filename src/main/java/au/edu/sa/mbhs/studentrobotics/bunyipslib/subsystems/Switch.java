@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import java.util.function.DoubleSupplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
@@ -200,10 +201,10 @@ public class Switch extends BunyipsSubsystem {
 
     @Override
     protected void periodic() {
-        opMode(o -> o.telemetry.add("%: %", this, target == openPosition
+        DualTelemetry.smartAdd(toString(), target == openPosition
                 ? "<font color='yellow'>OPEN</font> (" + Mathf.round(openPosition, 1) + ")"
                 : target == closePosition ? "<font color='green'>CLOSE</font> (" + Mathf.round(closePosition, 1) + ")"
-                : "<b>" + Mathf.round(target, 2) + "/1.00</b>"));
+                : "<b>" + Mathf.round(target, 2) + "/1.00</b>");
         servo.setPosition(target);
     }
 

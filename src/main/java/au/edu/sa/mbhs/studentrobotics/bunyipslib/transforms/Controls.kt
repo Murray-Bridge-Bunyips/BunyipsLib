@@ -5,6 +5,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian
 import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Vector2d
 import com.qualcomm.robotcore.hardware.Gamepad
+import kotlin.collections.set
 
 /**
  * Utility class for the different button and analog controls on the gamepad.
@@ -263,8 +264,17 @@ enum class Controls {
         /**
          * `getDebounced` extension for [Controller].
          */
-        infix fun Controller.rising(button: Controls): Boolean {
-            return this.getDebounced(button)
-        }
+        infix fun Controller.rising(button: Controls): Boolean = getDebounced(button)
+
+        /**
+         * [isSelected] extension for [Gamepad].
+         */
+        operator fun Gamepad.get(button: Controls) = isSelected(this, button)
+
+
+        /**
+         * [Analog.get] extension for [Gamepad].
+         */
+        operator fun Gamepad.get(axis: Analog): Float = Analog.get(this, axis)
     }
 }

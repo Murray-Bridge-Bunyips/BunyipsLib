@@ -66,7 +66,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         safeToAddTasks = true;
 
         Controls selectedButton = userSelection != null ? userSelection.getSelectedButton() : Controls.NONE;
-        Exceptions.runUserMethod(this, () -> onReady(selectedOpMode, selectedButton));
+        Exceptions.runUserMethod(() -> onReady(selectedOpMode, selectedButton));
         callbackReceived = true;
 
         // Add any queued tasks that were delayed previously and we can do now
@@ -104,7 +104,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     @Override
     protected final void onInit() {
         // Run user-defined hardware initialisation
-        Exceptions.runUserMethod(this, this::onInitialise);
+        Exceptions.runUserMethod(this::onInitialise);
         if (updatedSubsystems.isEmpty()) {
             // We might be using an implicit subsystem initialisation schema, look for static instances instead
             updatedSubsystems = BunyipsSubsystem.getInstances();
@@ -157,7 +157,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     @Override
     protected final void activeLoop() {
         // Run any code defined by the user
-        Exceptions.runUserMethod(this, this::periodic);
+        Exceptions.runUserMethod(this::periodic);
 
         // Update all subsystems which may also contain user routines
         // This also ensures the subsystems are ready to accept incoming tasks

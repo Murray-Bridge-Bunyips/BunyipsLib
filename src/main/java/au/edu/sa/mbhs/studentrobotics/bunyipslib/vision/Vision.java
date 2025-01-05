@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
@@ -166,13 +167,13 @@ public class Vision extends BunyipsSubsystem {
         }
 
         // Since Vision is usually called from the init-cycle, we can try to fit in some telemetry
-        opMode(o -> o.telemetry.add(
-                "%: % processor(s) initialised.",
-                name,
+        DualTelemetry.smartAdd(
+                toString(),
+                "% processor(s) initialised.",
                 Arrays.stream(newProcessors).map(Processor::toString).collect(Collectors.toList())
-        ));
+        );
 
-        visionPortal = builder
+        Runnable init = () -> visionPortal = builder
                 .setCamera(camera)
                 .setCameraResolution(new Size(DEFAULT_CAMERA_WIDTH, DEFAULT_CAMERA_HEIGHT))
                 // "Live View" does not affect how the DS/Dashboard stream is handled, as these previews
@@ -185,6 +186,15 @@ public class Vision extends BunyipsSubsystem {
                 .setShowStatsOverlay(false)
                 // Set any additional VisionPortal settings here
                 .build();
+
+        try {
+            init.run();
+        } catch (NullPointerException e) {
+            // For some reason we get random errors testing hardware finding that trying to register the internal
+            // listener for OpMode activity in OpenCV throws an exception. We try to init twice to hack this as it
+            // works for all calls thereafter for some reason.
+            init.run();
+        }
 
         visionPortal.stopLiveView();
 
@@ -482,15 +492,15 @@ public class Vision extends BunyipsSubsystem {
     protected void periodic() {
         if (visionPortal != null) {
             VisionPortal.CameraState state = visionPortal.getCameraState();
-            opMode(o -> o.telemetry.add(
-                    "%: <font color='%'>%</font> | % fps | %/% processors",
-                    name,
+            DualTelemetry.smartAdd(
+                    toString(),
+                    "<font color='%'>%</font> | % fps | %/% processors",
                     state == VisionPortal.CameraState.STREAMING ? "green" : state == VisionPortal.CameraState.ERROR ? "red" : "yellow",
                     state,
                     (int) Mathf.round(visionPortal.getFps(), 0),
                     processors.stream().filter((p) -> visionPortal.getProcessorEnabled(p)).count(),
                     processors.size()
-            ));
+            );
         }
     }
 

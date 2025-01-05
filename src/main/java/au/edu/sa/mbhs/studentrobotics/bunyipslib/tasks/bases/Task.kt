@@ -1,8 +1,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsComponent
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions.getCallingUserCodeFunction
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
@@ -32,9 +32,6 @@ import java.util.function.BooleanSupplier
  * outright used to be the legacy roots of how Tasks worked, and since has adopted some command-based structures that work
  * by running them in the contexts of other subsystems.
  *
- * Task extends [BunyipsComponent] to allow for simpler integration with accessing the OpMode, and was a legacy
- * feature that was kept for the sake of simplicity, more pedantic exception handling, and ease of use.
- *
  * As of 6.0.0, the Task system now implements the [Action] interface for seamless compatibility with RoadRunner v1.0.0.
  * The [ActionTask] may be used to convert a pure [Action] into a task, however, writing a task directly using a
  * Task is encouraged for more control and flexibility, due to there being no downsides to doing so and the exposure
@@ -44,7 +41,7 @@ import java.util.function.BooleanSupplier
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-abstract class Task : BunyipsComponent(), Runnable, Action {
+abstract class Task : Runnable, Action {
     // By default, task names will be spliced with spaces and Task removed, such that a task with the name MoveToPosTask
     // will have the name "Move To Pos"
     private var name = javaClass.simpleName
@@ -138,13 +135,10 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
                 "[%] This task are not designed to be attached to a subsystem, as it has declared it will be handling subsystem scheduling internally. The on() call should be removed for this wrapped task.",
                 javaClass.simpleName
             )
-            opMode {
-                it.telemetry.log(
-                    function,
-                    Text.html().color("red", "error: ")
-                        .text("${javaClass.simpleName} instance should not be attached to subsystems!")
-                )
-            }
+            DualTelemetry.smartLog(
+                function, Text.html().color("red", "error: ")
+                    .text("${javaClass.simpleName} instance should not be attached to subsystems!")
+            )
             return@apply
         }
         _dependency = subsystem
@@ -236,7 +230,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
         Dashboard.usePacket {
             dashboard = it
             if (startTime == 0L) {
-                Exceptions.runUserMethod(opMode, ::init)
+                Exceptions.runUserMethod(::init)
                 startTime = System.nanoTime()
                 // Must poll finished on the first iteration to ensure that the task does not overrun
                 poll()
@@ -244,9 +238,9 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
             // Here we check the taskFinished condition but don't call pollFinished(), to ensure that the task is only
             // updated with latest finish information at the user's discretion (excluding the first-call requirement)
             if (taskFinished && !finisherFired) {
-                Exceptions.runUserMethod(opMode, ::onFinish)
+                Exceptions.runUserMethod(::onFinish)
                 if (!userFinished)
-                    Exceptions.runUserMethod(opMode, ::onInterrupt)
+                    Exceptions.runUserMethod(::onInterrupt)
                 finisherFired = true
                 dependency.ifPresent { d ->
                     if (attached && d.currentTask == this) {
@@ -257,7 +251,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
             }
             // Don't run the task if it is finished as a safety guard
             if (isFinished) return@usePacket
-            Exceptions.runUserMethod(opMode, ::periodic)
+            Exceptions.runUserMethod(::periodic)
         }
     }
 
@@ -271,7 +265,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
 
         val startCalled = startTime != 0L
         val timeoutFinished = timeout.magnitude() != 0.0 && System.nanoTime() > startTime + (timeout to Nanoseconds)
-        Exceptions.runUserMethod(opMode) { userFinished = isTaskFinished() }
+        Exceptions.runUserMethod { userFinished = isTaskFinished() }
 
         taskFinished = startCalled && (timeoutFinished || userFinished)
 
@@ -341,7 +335,7 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
     fun reset() {
         if (startTime == 0L && !isFinished)
             return
-        Exceptions.runUserMethod(opMode, ::onReset)
+        Exceptions.runUserMethod(::onReset)
         startTime = 0L
         taskFinished = false
         finisherFired = false
@@ -367,9 +361,9 @@ abstract class Task : BunyipsComponent(), Runnable, Action {
     fun finishNow() {
         taskFinished = true
         if (!finisherFired) {
-            Exceptions.runUserMethod(opMode, ::onFinish)
+            Exceptions.runUserMethod(::onFinish)
             if (!userFinished)
-                Exceptions.runUserMethod(opMode, ::onInterrupt)
+                Exceptions.runUserMethod(::onInterrupt)
             finisherFired = true
             dependency.ifPresent {
                 if (attached && it.currentTask == this) {

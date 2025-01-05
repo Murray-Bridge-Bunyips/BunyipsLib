@@ -17,8 +17,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import java.util.HashMap;
 import java.util.function.DoubleSupplier;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Encoder;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Current;
@@ -454,12 +456,12 @@ public class HoldableActuator extends BunyipsSubsystem {
                     break;
                 }
                 motorPower = rtpPower * Math.signum(target - current);
-                opMode(o -> o.telemetry.add("%: <font color='#FF5F1F'>MOVING -> %/% ticks</font> [%tps]", this, current, target, Math.round(encoder.getVelocity())));
+                DualTelemetry.smartAdd(toString(), "<font color='#FF5F1F'>MOVING -> %/% ticks</font> [%tps]", current, target, Math.round(encoder.getVelocity()));
                 break;
             case HOMING:
                 motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 motorPower = homePower * Math.signum(homingDirection);
-                opMode(o -> o.telemetry.add("%: <font color='yellow'><b>HOMING</b></font> [%tps]", this, Math.round(encoder.getVelocity())));
+                DualTelemetry.smartAdd(toString(), "<font color='yellow'><b>HOMING</b></font> [%tps]", Math.round(encoder.getVelocity()));
                 break;
             case USER_POWER:
                 if (userPower == 0.0) {
@@ -476,12 +478,12 @@ public class HoldableActuator extends BunyipsSubsystem {
                     motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     motorPower = userPower;
                 }
-                opMode(o -> o.telemetry.add("%: % at % ticks [%tps]", this, userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", current, Math.round(encoder.getVelocity())));
+                DualTelemetry.smartAdd(toString(), "% at % ticks [%tps]", userPower == 0.0 ? "<font color='green'>HOLDING</font>" : "<font color='#FF5F1F'><b>MOVING</b></font>", current, Math.round(encoder.getVelocity()));
                 break;
             case USER_SETPOINT:
                 double dt;
-                if (opMode != null) {
-                    dt = opMode.timer.deltaTime().in(Seconds);
+                if (BunyipsOpMode.isRunning()) {
+                    dt = BunyipsOpMode.getInstance().timer.deltaTime().in(Seconds);
                 } else {
                     double now = System.nanoTime() / 1.0E9;
                     if (lastTime == -1)
@@ -491,7 +493,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 }
                 newTarget = target + userPower * userSetpointControl.apply(dt);
                 motorPower = rtpPower * Math.signum(target - current);
-                opMode(o -> o.telemetry.add("%: % at % ticks [%tps], % error", this, !motor.isBusy() ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, Math.round(encoder.getVelocity()), Math.abs(target - current)));
+                DualTelemetry.smartAdd(toString(), "% at % ticks [%tps], % error", !motor.isBusy() ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, Math.round(encoder.getVelocity()), Math.abs(target - current));
                 break;
         }
 

@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-public class IndexedTable extends BunyipsComponent implements Runnable {
+public class IndexedTable implements Runnable {
     private final double[] tableValues;
     private String name = "IndexedTable";
     private int index = 0;
@@ -96,12 +96,12 @@ public class IndexedTable extends BunyipsComponent implements Runnable {
      */
     @Override
     public void run() {
-        opMode(o -> o.telemetry.add(
-                "%: % <font color='gray'>(%/%)</font>",
+        DualTelemetry.smartAdd(
                 name,
+                "% <font color='gray'>(%/%)</font>",
                 tableValues[index],
                 index + 1,
                 tableValues.length
-        ));
+        );
     }
 }

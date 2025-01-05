@@ -58,6 +58,9 @@ import java.util.function.Consumer
  * Updated to use dynamic button mapping and generics 04/08/23.
  * Updated to be async and removed time restriction 07/09/23.
  *
+ * This class is currently only supported for use in a [BunyipsOpMode] context
+ * as it references several of its internal components.
+ *
  * @param opModes Modes to map to buttons. Will be cast to strings for display and return back in type `T`.
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
@@ -69,7 +72,7 @@ class UserSelection<T : Any>(
      */
     private val callback: Consumer<T?>,
     private vararg val opModes: T
-) : BunyipsComponent(), Runnable {
+) : Runnable {
     private val timer = ElapsedTime()
 
     /**
@@ -92,7 +95,7 @@ class UserSelection<T : Any>(
      */
     override fun run() {
         if (opModes.isEmpty()) {
-            Exceptions.runUserMethod(opMode) { callback.accept(null) }
+            Exceptions.runUserMethod { callback.accept(null) }
             return
         }
 
@@ -117,15 +120,17 @@ class UserSelection<T : Any>(
 
         driverStation.delete(driverStation.length - 1, driverStation.length)
 
-        val topBorder = require(opMode).telemetry.addDS(attentionBorders[0])
-        val mainText = require(opMode).telemetry.addDS(driverStation)
-        val bottomBorder = require(opMode).telemetry.addDS(attentionBorders[0])
-        require(opMode).telemetry.addDashboard("USR", dashboard)
+        val opMode = BunyipsOpMode.instance
+
+        val topBorder = opMode.telemetry.addDS(attentionBorders[0])
+        val mainText = opMode.telemetry.addDS(driverStation)
+        val bottomBorder = opMode.telemetry.addDS(attentionBorders[0])
+        opMode.telemetry.addDashboard("USR", dashboard)
 
         var flash = false
-        while (result == null && require(opMode).opModeInInit() && !Thread.currentThread().isInterrupted) {
+        while (result == null && opMode.opModeInInit() && !Thread.currentThread().isInterrupted) {
             for ((str, button) in buttons) {
-                if (Controls.isSelected(require(opMode).gamepad1, button)) {
+                if (Controls.isSelected(opMode.gamepad1, button)) {
                     selectedButton = button
                     result = str
                     break
@@ -148,9 +153,9 @@ class UserSelection<T : Any>(
         val opModeName = result.toString()
 
         if (result == null) {
-            require(opMode).telemetry.log("<font color='yellow'>No user OpMode selection was made.</font>")
+            opMode.telemetry.log("<font color='yellow'>No user OpMode selection was made.</font>")
         } else {
-            require(opMode).telemetry.log("Running OpMode: <font color='#caabff'>${selectedButton.name} -> <b>$opModeName</b></font>")
+            opMode.telemetry.log("Running OpMode: <font color='#caabff'>${selectedButton.name} -> <b>$opModeName</b></font>")
             if (result is StartingPositions) {
                 Storage.memory().lastKnownAlliance = (result as StartingPositions).toStartingConfiguration().alliance
             } else if (result is StartingConfiguration.Position) {
@@ -158,10 +163,10 @@ class UserSelection<T : Any>(
             }
         }
 
-        require(opMode).telemetry.addDashboard(
+        opMode.telemetry.addDashboard(
             "USR",
             if (result == null) "No selection" else "${selectedButton.name} -> $opModeName@T+${
-                require(opMode).timer.elapsedTime() to Seconds round 1
+                opMode.timer.elapsedTime() to Seconds round 1
             }s"
         )
 
@@ -169,8 +174,8 @@ class UserSelection<T : Any>(
         // - Sorayya, hijacker of laptops
 
         // Clean up telemetry
-        require(opMode).telemetry.remove(topBorder, mainText, bottomBorder)
+        opMode.telemetry.remove(topBorder, mainText, bottomBorder)
 
-        Exceptions.runUserMethod(opMode) { callback.accept(result) }
+        Exceptions.runUserMethod { callback.accept(result) }
     }
 }

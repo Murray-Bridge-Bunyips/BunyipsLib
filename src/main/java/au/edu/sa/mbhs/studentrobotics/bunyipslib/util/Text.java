@@ -167,6 +167,18 @@ public final class Text {
         private final ArrayList<String> tags = new ArrayList<>();
 
         /**
+         * Insert any string into the HTML string.
+         *
+         * @param str the object to convert to a string and add
+         * @return The HtmlBuilder instance
+         */
+        @NonNull
+        public HtmlBuilder append(@NonNull Object str) {
+            html.append(str);
+            return this;
+        }
+
+        /**
          * Insert normal text into the HTML string.
          *
          * @param text The text to insert
