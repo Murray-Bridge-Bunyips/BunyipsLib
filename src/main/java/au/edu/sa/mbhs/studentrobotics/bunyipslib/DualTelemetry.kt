@@ -1139,6 +1139,7 @@ class DualTelemetry @JvmOverloads constructor(
                 }
             } else if (BunyipsLib.isOpModeRunning) {
                 val formatted = Text.format(format, *objs)
+                    .replace("%", "%%") // May be piped into String.format so we properly format now
                 val nCap = caption.ifBlank { System.currentTimeMillis().toString() }
                 val cap = if (SMART_CALL_BASE_OPMODE_HTML_STRIP) Text.removeHtml(nCap) else nCap
                 val str = if (SMART_CALL_BASE_OPMODE_HTML_STRIP) Text.removeHtml(formatted) else formatted
@@ -1174,6 +1175,7 @@ class DualTelemetry @JvmOverloads constructor(
                 BunyipsOpMode.instance.telemetry.log(format, *objs)
             } else if (BunyipsLib.isOpModeRunning) {
                 val formatted = Text.format(format.toString(), *objs)
+                    .replace("%", "%%")
                 BunyipsLib.opMode.telemetry.log().add(
                     if (SMART_CALL_BASE_OPMODE_HTML_STRIP) Text.removeHtml(formatted) else formatted
                 )
