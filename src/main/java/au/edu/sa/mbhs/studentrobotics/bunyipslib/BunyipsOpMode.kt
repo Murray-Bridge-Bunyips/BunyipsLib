@@ -272,11 +272,11 @@ abstract class BunyipsOpMode : BOMInternal() {
                 module.setConstant(Color.CYAN)
             }
             // Gamepad monitors to update gamepad custom functions
-            Threads.start("BunyipsOpMode gamepad1") {
+            Threads.start("bom gamepad1") {
                 while (!Thread.currentThread().isInterrupted)
                     gamepad1.update()
             }
-            Threads.start("BunyipsOpMode gamepad2") {
+            Threads.start("bom gamepad2") {
                 while (!Thread.currentThread().isInterrupted)
                     gamepad2.update()
             }

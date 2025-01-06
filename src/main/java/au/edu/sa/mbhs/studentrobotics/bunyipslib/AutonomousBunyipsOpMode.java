@@ -123,7 +123,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             // This will run asynchronously, and the callback will be called
             // when the user has selected an OpMode
             userSelection = new UserSelection<>(this::callback, varargs);
-            Threads.start(userSelection);
+            Threads.start("AutonomousBunyipsOpMode setOpModes selection", userSelection);
         } else {
             // There are no OpMode selections, so just run the callback with the default OpMode
             callback(opModes.get(0));
@@ -144,8 +144,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             return;
         if (userSelection != null) {
             // UserSelection will internally check opMode.isInInit() to see if it should terminate itself,
-            // but we should wait here until it has actually terminated
-            Threads.waitFor(userSelection, true);
+            // but we should cancel here too to be pedantic
+            Threads.stop(userSelection);
         }
         // Busy wait here until onReady() has processed and the callback is fully joined
         // This is safe to do as there are no main thread operations left to run

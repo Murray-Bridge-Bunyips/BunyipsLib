@@ -1,6 +1,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision;
 
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
+
 import android.graphics.Canvas;
 import android.util.Size;
 
@@ -450,7 +452,7 @@ public class Vision extends BunyipsSubsystem {
     public void startPreview() {
         if (visionSender == null || !Threads.isRunning(visionSender)) {
             visionSender = new SwitchableVisionSender(this);
-            Threads.start(visionSender);
+            Threads.startLoop("switchable vision sender", Milliseconds.of(200), visionSender);
             senderIdx = 0;
         } else {
             senderIdx = visionSender.addInstance(this);

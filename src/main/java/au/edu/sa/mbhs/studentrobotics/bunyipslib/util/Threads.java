@@ -226,10 +226,32 @@ public final class Threads {
      * If getting a result that you actually want, storing the {@link Future} returned by the start methods
      * will use the proper generic type, as this method only returns unbounded types.
      *
-     * @param task the name ID of the task to get
+     * @param task the name ID of the task to get, must be managed by Threads
      * @return the (unbounded) task {@link Future}, if found
      */
     public static Future<?> task(@NonNull String task) {
-        return Objects.requireNonNull(tasks.getOrDefault(task, new Pair<>(-1, null))).second;
+        return Objects.requireNonNull(tasks.getOrDefault(task, new Pair<>(null, null))).second;
+    }
+
+    /**
+     * Gets a {@link Future} from the currently managed tasks by the supplied task.
+     * <p>
+     * <b>IMPORTANT:</b> Will return null if there is no task with such a name that is being managed by Threads.
+     * <p>
+     * The returned {@link Future} object can be used to then cancel execution or get (and block for) a result.
+     * If getting a result that you actually want, storing the {@link Future} returned by the start methods
+     * will use the proper generic type, as this method only returns unbounded types.
+     *
+     * @param task the task to get, must be managed by Threads, will be null if not found;
+     *             using Object supertype for compat. between Runnable and Callable
+     * @return the (unbounded) task {@link Future}, if found
+     */
+    public static Future<?> task(@NonNull Object task) {
+        AtomicReference<Future<?>> res = new AtomicReference<>();
+        tasks.forEach((k, v) -> {
+            if (v.first == task.hashCode())
+                res.set(v.second);
+        });
+        return res.get();
     }
 }

@@ -8,6 +8,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingPositions
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.qualcomm.robotcore.util.ElapsedTime
+import java.util.concurrent.Callable
+import java.util.concurrent.Future
 import java.util.function.Consumer
 
 /**
@@ -24,7 +26,7 @@ import java.util.function.Consumer
  * die or similar (e.g. `Task.task().isFinished(() -> !Threads.isRunning(...))`).
  * If you do not do this, the OpMode will assume it is ready to run regardless.
  *
- * The result of this thread will be stored in the `result` property, which you can access yourself,
+ * The result of this thread will be stored in the [Future] getter, which you can access yourself,
  * or you can attach a callback to the `callback` property to be run once the thread is complete.
  * This callback will still be run if the OpMode moves to a running state without a selection. In
  * the event a user does not make a selection, the callback result and `result` property will be
@@ -35,7 +37,7 @@ import java.util.function.Consumer
  * private val selector: UserSelection<String> = UserSelection({ if (it == "POV") initPOVDrive() else initFCDrive() }, "POV", "FIELD-CENTRIC")
  *
  * override fun onInit() {
- *   Threads.start(selector)
+ *   Threads.start("drive selector", selector)
  * }
  * ```
  *
@@ -45,15 +47,13 @@ import java.util.function.Consumer
  *
  * @Override
  * protected void onInit() {
- *   Threads.start(selector);
+ *   Threads.start("drive selector", selector);
  * }
  *
  * private void callback(@Nullable String res) {
  *   // Do something with res
  * }
  * ```
- *
- * `res` will be null if the user did not make a selection.
  *
  * Updated to use dynamic button mapping and generics 04/08/23.
  * Updated to be async and removed time restriction 07/09/23.
@@ -65,23 +65,15 @@ import java.util.function.Consumer
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
  */
-class UserSelection<T : Any>(
+class UserSelection<T>(
     /**
      * Runs once the user has made a selection or the thread is interrupted. The result will be the selection made by the user.
      * Can be null if the user did not make a selection.
      */
     private val callback: Consumer<T?>,
     private vararg val opModes: T
-) : Runnable {
+) : Callable<T> {
     private val timer = ElapsedTime()
-
-    /**
-     * The result of the user selection. Will be null if the user did not make a selection.
-     * Passed into the callback.
-     */
-    @Volatile
-    var result: T? = null
-        private set
 
     /**
      * The button that was selected by the user.
@@ -93,12 +85,13 @@ class UserSelection<T : Any>(
      * Maps a set of operation modes to a set of buttons.
      * @return A HashMap of operation modes to buttons.
      */
-    override fun run() {
+    override fun call(): T? {
         if (opModes.isEmpty()) {
             Exceptions.runUserMethod { callback.accept(null) }
-            return
+            return null
         }
 
+        var result: T? = null
         val buttons: HashMap<T, Controls> = Controls.mapArgs(opModes)
 
         val attentionBorders = arrayOf(
@@ -177,5 +170,6 @@ class UserSelection<T : Any>(
         opMode.telemetry.remove(topBorder, mainText, bottomBorder)
 
         Exceptions.runUserMethod { callback.accept(result) }
+        return result
     }
 }
