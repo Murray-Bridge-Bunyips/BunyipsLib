@@ -128,6 +128,7 @@ public class MecanumGains {
          *
          * @param defaultTaskAutoLock whether to schedule a hold last pose task as the default task of the drive
          * @return this
+         * @since 7.0.0
          */
         @NonNull
         public Builder setPoseHolding(boolean defaultTaskAutoLock) {

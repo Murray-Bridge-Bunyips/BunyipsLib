@@ -58,6 +58,8 @@ abstract class Task : Runnable, Action {
     /**
      * Enabling will reject all future [on] calls.
      * Useful for composing tasks that will internally re-schedule a wrapped Task.
+     *
+     * @since 7.0.0
      */
     @JvmField
     protected var disableSubsystemAttachment = false
@@ -117,6 +119,8 @@ abstract class Task : Runnable, Action {
      *
      * This field is used for seamless transition between [Action] and [Task] implementations.
      * Use `dashboard.fieldOverlay()` for accessing a field overlay.
+     *
+     * @since 7.0.0
      */
     protected lateinit var dashboard: TelemetryPacket
 
@@ -213,6 +217,8 @@ abstract class Task : Runnable, Action {
      * A call to [execute] will attempt to schedule the task on every iteration of the [execute] call. As such, if it is rejected,
      * re-scheduling will be attempted as the state of the subsystem may change and allow this task to become scheduled.
      * An already scheduled task on a subsystem will no-op this call. A task with no dependency makes this method the equivalent of [run].
+     *
+     * @since 7.0.0
      */
     fun execute() {
         if (attached) return

@@ -43,6 +43,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      *
      * @param index The index of the task to unbind.
      * @throws IndexOutOfBoundsException If the index is out of bounds.
+     * @since 7.0.0
      */
     public void unbind(int index) {
         scheduler.unbind(index);
@@ -52,6 +53,7 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
      * Unbind a scheduled task from the scheduler.
      *
      * @param task The {@link Scheduler.ScheduledTask} to unbind.
+     * @since 7.0.0
      */
     public void unbind(@NonNull Scheduler.ScheduledTask task) {
         scheduler.unbind(task);

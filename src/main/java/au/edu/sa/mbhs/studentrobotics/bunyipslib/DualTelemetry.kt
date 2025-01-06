@@ -1153,8 +1153,10 @@ class DualTelemetry @JvmOverloads constructor(
 
         @JvmStatic
         fun smartAdd(retained: Boolean, format: String, vararg objs: Any?) = smartAdd(retained, "", format, *objs)
+
         @JvmStatic
         fun smartAdd(caption: String, format: String, vararg objs: Any?) = smartAdd(false, caption, format, *objs)
+
         @JvmStatic
         fun smartAdd(format: String, vararg objs: Any?) = smartAdd(false, "", format, *objs)
 

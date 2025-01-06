@@ -216,6 +216,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Review the {@link OnTasksDone} enum for more information on the different modes.
      *
      * @param finishBehaviour the actions to take when all tasks are done, by default, {@link OnTasksDone#FINISH_OPMODE}.
+     * @since 7.0.0
      */
     public final void setCompletionBehaviour(OnTasksDone finishBehaviour) {
         if (finishBehaviour == null) return;
@@ -734,6 +735,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Finish actions that can be taken following the completion of all tasks in the queue.
+     *
+     * @since 7.0.0
      */
     public enum OnTasksDone {
         /**
