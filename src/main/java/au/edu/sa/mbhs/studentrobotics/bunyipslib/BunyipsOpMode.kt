@@ -21,9 +21,7 @@ import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.LightSensor
 import com.qualcomm.robotcore.hardware.RobotCoreLynxUsbDevice
 import com.qualcomm.robotcore.hardware.ServoController
-import com.qualcomm.robotcore.util.ThreadPool
 import java.util.Optional
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 import kotlin.math.abs
@@ -106,7 +104,6 @@ abstract class BunyipsOpMode : BOMInternal() {
     private var safeHaltHardwareOnStop = false
 
     private val runnables = mutableSetOf<Runnable>()
-    private var gamepadExecutor: ExecutorService? = null
     private var initTask: Action? = null
 
     companion object {
@@ -275,12 +272,11 @@ abstract class BunyipsOpMode : BOMInternal() {
                 module.setConstant(Color.CYAN)
             }
             // Gamepad monitors to update gamepad custom functions
-            gamepadExecutor = ThreadPool.newFixedThreadPool(2, "BunyipsLib BunyipsOpMode Gamepad1+2")
-            gamepadExecutor?.submit {
+            Threads.start("BunyipsOpMode gamepad1") {
                 while (!Thread.currentThread().isInterrupted)
                     gamepad1.update()
             }
-            gamepadExecutor?.submit {
+            Threads.start("BunyipsOpMode gamepad2") {
                 while (!Thread.currentThread().isInterrupted)
                     gamepad2.update()
             }
@@ -294,10 +290,12 @@ abstract class BunyipsOpMode : BOMInternal() {
             // Store telemetry objects raised by onInit() by turning off auto-clear
             telemetry.isAutoClear = false
             telemetry.update()
-            if (!gamepad1.atRest() || !gamepad2.atRest()) {
-                telemetry.log("<b><font color='yellow'>WARNING!</font></b> a gamepad was not zeroed during init. please ensure controllers zero out correctly.")
-            }
             var ok = true
+            if (!gamepad1.atRest() || !gamepad2.atRest()) {
+                ok = false
+                telemetry.log("<b><font color='yellow'>WARNING!</font></b> a gamepad was not zeroed during init. please ensure controllers zero out correctly by disconnecting and reconnecting them.")
+                telemetry.overrideStatus = "<font color='yellow'><b>check gamepads</b></font>"
+            }
             // Run user-defined setup
             try {
                 onInit()
@@ -429,6 +427,8 @@ abstract class BunyipsOpMode : BOMInternal() {
                 // Limitation, flashing here and the OpMode ending will leave the light flashing,
                 // but we can't control LynxModules after the OpMode ends. This can be reset when the user
                 // restarts the robot or runs the ResetRobotControllerLights OpMode. This applies to all set RC lights.
+                // Future: investigate whether the RC can be "re-enabled" for lights control via the OpModeManagerImpl,
+                //         thus removing the need for the reset OpMode as it can be simply handled by BOMs finally
                 module.pattern = listOf(
                     Blinker.Step(Color.GREEN, 200, TimeUnit.MILLISECONDS),
                     Blinker.Step(Color.BLACK, 200, TimeUnit.MILLISECONDS)
@@ -502,9 +502,8 @@ abstract class BunyipsOpMode : BOMInternal() {
             throw t
         } finally {
             Dbg.logd("BunyipsOpMode: opmode stop requested. cleaning up...")
-            // Ensure all threads have been told to stop
-            gamepadExecutor?.shutdownNow()
-            Threads.stopAll() // paranoia
+            // Ensure all threads have been told to stop, even if there is a post-stop hook
+            Threads.stopAll()
             SoundPlayer.getInstance().stopPlayingAll()
             try {
                 onStop()
