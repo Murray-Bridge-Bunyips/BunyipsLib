@@ -87,7 +87,7 @@ public class HolonomicLockingDriveTask extends Task {
     private Measure<Time> lockingTimeout = Milliseconds.of(300);
 
     /**
-     * Constructor for HolonomicVectorDriveTask.
+     * Constructor for HolonomicLockingDriveTask.
      *
      * @param vel                 The supplier for the current pose velocity of the robot
      * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
@@ -110,7 +110,7 @@ public class HolonomicLockingDriveTask extends Task {
     }
 
     /**
-     * Constructor for HolonomicVectorDriveTask on an always disabled field-centric mode.
+     * Constructor for HolonomicLockingDriveTask on an always disabled field-centric mode.
      *
      * @param vel   The supplier for the current pose velocity of the robot
      * @param drive The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
@@ -122,7 +122,7 @@ public class HolonomicLockingDriveTask extends Task {
     }
 
     /**
-     * Constructor for HolonomicVectorDriveTask using a default Mecanum binding.
+     * Constructor for HolonomicLockingDriveTask using a default Mecanum binding.
      * Left stick controls translation, right stick controls rotation.
      *
      * @param driver              The gamepad to use for driving
@@ -136,7 +136,7 @@ public class HolonomicLockingDriveTask extends Task {
     }
 
     /**
-     * Constructor for HolonomicVectorDriveTask using a default Mecanum binding. Field-centric mode is disabled by default.
+     * Constructor for HolonomicLockingDriveTask using a default Mecanum binding. Field-centric mode is disabled by default.
      * Left stick controls translation, right stick controls rotation.
      *
      * @param driver The gamepad to use for driving
@@ -276,7 +276,7 @@ public class HolonomicLockingDriveTask extends Task {
 
     @Override
     protected void periodic() {
-        Pose2d current = Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance in order to use the HolonomicVectorDriveTask!");
+        Pose2d current = Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance in order to use the HolonomicLockingDriveTask!");
 
         PoseVelocity2d v = vel.get();
         if (fieldCentricEnabled.getAsBoolean()) {

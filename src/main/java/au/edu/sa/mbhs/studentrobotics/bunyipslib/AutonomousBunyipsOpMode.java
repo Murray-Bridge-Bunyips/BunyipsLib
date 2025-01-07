@@ -123,7 +123,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             // This will run asynchronously, and the callback will be called
             // when the user has selected an OpMode
             userSelection = new UserSelection<>(this::callback, varargs);
-            Threads.start("AutonomousBunyipsOpMode setOpModes selection", userSelection);
+            Threads.start("abom user selection", userSelection);
         } else {
             // There are no OpMode selections, so just run the callback with the default OpMode
             callback(opModes.get(0));
