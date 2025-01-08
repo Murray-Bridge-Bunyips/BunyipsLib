@@ -89,7 +89,7 @@ public class HolonomicLockingDriveTask extends Task {
     /**
      * Constructor for HolonomicLockingDriveTask.
      *
-     * @param vel                 The supplier for the current pose velocity of the robot
+     * @param vel                 The supplier for the current pose velocity of the robot, magnitude [-1, 1] of max robot velocity
      * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
      *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
      *                            if possible. A localizer attached is required.
@@ -112,7 +112,7 @@ public class HolonomicLockingDriveTask extends Task {
     /**
      * Constructor for HolonomicLockingDriveTask on an always disabled field-centric mode.
      *
-     * @param vel   The supplier for the current pose velocity of the robot
+     * @param vel   The supplier for the current pose velocity of the robot, magnitude [-1, 1] of max robot velocity
      * @param drive The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
      *              called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
      *              if possible. A localizer attached is required.
