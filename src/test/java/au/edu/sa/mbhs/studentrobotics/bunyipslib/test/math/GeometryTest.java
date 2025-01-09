@@ -13,9 +13,10 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 import org.junit.jupiter.api.Test;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref;
+import dev.frozenmilk.util.cell.RefCell;
 
 /**
  * Geometry class tests.
@@ -139,12 +140,12 @@ class GeometryTest {
     void testSmoothDampVec() {
         Vector2d a = new Vector2d(0, 0);
         Vector2d b = new Vector2d(10, 10);
-        Reference<Double> v = new Reference<>(0.0);
+        RefCell<Double> v = Ref.of(0.0);
 
         for (int i = 0; i < 5; i++)
             Geometry.smoothDamp(a, b, v, Seconds.of(10), 2, Seconds.of(1));
 
-        assertEquals(1, v.require(), 0.1);
+        assertEquals(1, v.get(), 0.1);
         Vector2d res = Geometry.smoothDamp(a, b, v, Seconds.of(10), 2, Seconds.of(1));
         assertEquals(res.x, 1, 0.1);
         assertEquals(res.y, 1, 0.1);
@@ -154,12 +155,12 @@ class GeometryTest {
     void testSmoothDampPose() {
         Pose2d a = new Pose2d(0, 0, 0);
         Pose2d b = new Pose2d(10, 10, Math.PI);
-        Reference<Double> v = new Reference<>(0.0);
+        RefCell<Double> v = Ref.of(0.0);
 
         for (int i = 0; i < 5; i++)
             Geometry.smoothDamp(a, b, v, Seconds.of(10), 10, Seconds.of(1));
 
-        assertEquals(5, v.require(), 0.1);
+        assertEquals(5, v.get(), 0.1);
         Pose2d res = Geometry.smoothDamp(a, b, v, Seconds.of(1), 20, Seconds.of(5));
 
         assertEquals(10, res.position.x, 0.4);

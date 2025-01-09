@@ -25,6 +25,7 @@ import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.VelConstraint
 import com.noahbres.meepmeep.roadrunner.Constraints
 import com.noahbres.meepmeep.roadrunner.DriveTrainType
+import dev.frozenmilk.util.cell.Cell
 import java.util.function.Consumer
 
 /**
@@ -720,13 +721,13 @@ class TaskBuilder(
     /**
      * Build the current trajectory and return it as a [Action].
      * The BunyipsLib Task system does not exist in MeepMeep.
-     * This overload also stores the last *unmapped* spliced pose in the given [Reference] object for manual chaining.
+     * This overload also stores the last *unmapped* spliced pose in the given [Cell] object for manual chaining.
      */
-    fun build(setUnmappedEndPoseRef: Reference<Pose2d>) = build().also {
+    fun build(setUnmappedEndPoseRef: Cell<Pose2d>) = build().also {
         endTrajectory()
         val lastPoseField = builder::class.java.getDeclaredField("lastPoseUnmapped")
         lastPoseField.isAccessible = true
-        setUnmappedEndPoseRef.set(lastPoseField.get(builder) as Pose2d)
+        setUnmappedEndPoseRef.accept(lastPoseField.get(builder) as Pose2d)
     }
 
     /**
@@ -738,7 +739,7 @@ class TaskBuilder(
      * Returns the result of [fresh] to allow chaining of future tasks.
      */
     @JvmOverloads
-    fun addTask(setUnmappedEndPoseRef: Reference<Pose2d>? = null): TaskBuilder {
+    fun addTask(setUnmappedEndPoseRef: Cell<Pose2d>? = null): TaskBuilder {
         runActionConsumer.accept(if (setUnmappedEndPoseRef != null) build(setUnmappedEndPoseRef) else build())
         return fresh()
     }

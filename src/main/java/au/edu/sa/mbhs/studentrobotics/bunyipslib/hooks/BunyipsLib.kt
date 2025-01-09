@@ -3,7 +3,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks
 import android.content.Context
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BuildConfig
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference
 import com.qualcomm.ftccommon.FtcEventLoop
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
@@ -15,6 +14,7 @@ import dev.frozenmilk.sinister.SinisterFilter
 import dev.frozenmilk.sinister.apphooks.OnCreateEventLoop
 import dev.frozenmilk.sinister.isStatic
 import dev.frozenmilk.sinister.targeting.FocusedSearch
+import dev.frozenmilk.util.cell.LateInitCell
 import org.firstinspires.ftc.ftccommon.internal.manualcontrol.ManualControlOpMode
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil
 import java.lang.reflect.Method
@@ -39,8 +39,9 @@ object BunyipsLib {
     @JvmStatic
     val opModeManager: OpModeManagerImpl
         get() {
-            _opModeManager.setIfNotPresent(OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().activity))
-            return _opModeManager.require()
+            if (!_opModeManager.initialised)
+                _opModeManager.accept(OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().activity))
+            return _opModeManager.get()
         }
 
     /**
@@ -63,12 +64,12 @@ object BunyipsLib {
     @JvmStatic
     fun ifOpModeRunning(ifRunning: Consumer<OpMode>) = if (isOpModeRunning) ifRunning.accept(opMode) else Unit
 
-    private val _opModeManager = Reference<OpModeManagerImpl>()
+    private val _opModeManager = LateInitCell<OpModeManagerImpl>()
 
     private object EventLoopHook : OnCreateEventLoop {
         override fun onCreateEventLoop(context: Context, ftcEventLoop: FtcEventLoop) {
-            _opModeManager.ifPresent { it.unregisterListener(OpModeHook) }
-            _opModeManager.set(ftcEventLoop.opModeManager)
+            _opModeManager.safeInvoke { it.unregisterListener(OpModeHook) }
+            _opModeManager.accept(ftcEventLoop.opModeManager)
             opModeManager.registerListener(OpModeHook)
             Dbg.log(
                 "loaded BunyipsLib v% %-% uid:%",

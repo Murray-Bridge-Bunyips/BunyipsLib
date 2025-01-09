@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
  * Integrated BunyipsLib OpModes.
  *
  * @author Lucas Bubner, 2024
+ * @since 6.0.0
  */
 public final class OpModes {
     private static boolean suppressOpModes = false;

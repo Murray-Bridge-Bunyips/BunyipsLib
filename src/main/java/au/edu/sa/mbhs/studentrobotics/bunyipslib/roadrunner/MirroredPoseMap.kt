@@ -13,6 +13,9 @@ import com.acmerobotics.roadrunner.PoseMap
  * @since 6.0.0
  */
 open class MirroredPoseMap : PoseMap {
+    /**
+     * Applies (x,y,r) -> (x,-y,-r)
+     */
     override fun map(pose: Pose2dDual<Arclength>) =
         Pose2dDual(pose.position.x, -pose.position.y, pose.heading.inverse())
 }

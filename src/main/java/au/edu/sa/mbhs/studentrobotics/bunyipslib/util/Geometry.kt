@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.approx
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.lerp
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.moveTowards
@@ -19,6 +18,7 @@ import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Rotation2d
 import com.acmerobotics.roadrunner.Twist2d
 import com.acmerobotics.roadrunner.Vector2d
+import dev.frozenmilk.util.cell.Cell
 import kotlin.math.hypot
 
 /**
@@ -243,7 +243,7 @@ object Geometry {
     @JvmStatic
     fun Vector2d.smoothDamp(
         target: Vector2d,
-        currentVelocity: Reference<Double>,
+        currentVelocity: Cell<Double>,
         smoothTime: Measure<Time>,
         maxVelocity: Number,
         deltaTime: Measure<Time>
@@ -261,7 +261,7 @@ object Geometry {
     @JvmStatic
     fun Pose2d.smoothDamp(
         target: Pose2d,
-        currentVelocity: Reference<Double>,
+        currentVelocity: Cell<Double>,
         smoothTime: Measure<Time>,
         maxVelocity: Number,
         deltaTime: Measure<Time>
@@ -279,7 +279,7 @@ object Geometry {
     @JvmStatic
     fun Rotation2d.smoothDamp(
         target: Rotation2d,
-        currentVelocity: Reference<Double>,
+        currentVelocity: Cell<Double>,
         smoothTime: Measure<Time>,
         maxVelocity: Number,
         deltaTime: Measure<Time>

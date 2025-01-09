@@ -2,7 +2,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.AutonomousBunyipsOpMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
@@ -31,6 +30,7 @@ import com.acmerobotics.roadrunner.TranslationalVelConstraint
 import com.acmerobotics.roadrunner.TurnConstraints
 import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.VelConstraint
+import dev.frozenmilk.util.cell.Cell
 
 /**
  * Extension of a RoadRunner trajectory builder to provide WPIUnits and task building support.
@@ -734,13 +734,13 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
 
     /**
      * Build the current trajectory and return it as a [Task]/[Action].
-     * This overload also stores the last *unmapped* spliced pose in the given [Reference] object for manual chaining.
+     * This overload also stores the last *unmapped* spliced pose in the given [Cell] object for manual chaining.
      */
-    fun build(setUnmappedEndPoseRef: Reference<Pose2d>) = build().also {
+    fun build(setUnmappedEndPoseRef: Cell<Pose2d>) = build().also {
         endTrajectory()
         val lastPoseField = builder::class.java.getDeclaredField("lastPoseUnmapped")
         lastPoseField.isAccessible = true
-        setUnmappedEndPoseRef.set(lastPoseField.get(builder) as Pose2d)
+        setUnmappedEndPoseRef.accept(lastPoseField.get(builder) as Pose2d)
     }
 
     /**
@@ -753,7 +753,7 @@ class TaskBuilder(private val constants: Constants, startPose: Pose2d, poseMap: 
      * Returns the result of [fresh] to allow chaining of future tasks.
      */
     @JvmOverloads
-    fun addTask(setUnmappedEndPoseRef: Reference<Pose2d>? = null): TaskBuilder {
+    fun addTask(setUnmappedEndPoseRef: Cell<Pose2d>? = null): TaskBuilder {
         if (!BunyipsOpMode.isRunning || BunyipsOpMode.instance !is AutonomousBunyipsOpMode)
             throw UninitializedPropertyAccessException("Cannot call addTask() when an active AutonomousBunyipsOpMode instance is not running!")
         (BunyipsOpMode.instance as AutonomousBunyipsOpMode).add(

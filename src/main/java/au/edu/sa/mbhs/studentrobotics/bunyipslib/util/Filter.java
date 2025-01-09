@@ -11,6 +11,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
  * A collection of data filters for smoothing out and fusing sensor data.
  *
  * @author Lucas Bubner, 2024
+ * @since 4.1.0
  */
 public final class Filter {
     private Filter() {

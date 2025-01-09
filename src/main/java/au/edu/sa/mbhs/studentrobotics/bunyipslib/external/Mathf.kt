@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
@@ -8,6 +7,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import com.acmerobotics.roadrunner.Vector2d
+import dev.frozenmilk.util.cell.Cell
 import org.opencv.core.Point
 import java.math.BigDecimal
 import java.math.MathContext
@@ -483,7 +483,7 @@ object Mathf {
     @JvmStatic
     fun Number.smoothDamp(
         target: Number,
-        currentVelocity: Reference<Double>,
+        currentVelocity: Cell<Double>,
         smoothTime: Measure<Time>,
         maxVelocity: Number,
         deltaTime: Measure<Time>
@@ -506,15 +506,14 @@ object Mathf {
         delta = delta clamp (-maxDelta..maxDelta)
 
         // Calculate new velocity and output of the current position
-        currentVelocity.ifNotPresent { currentVelocity.set(0.0) }
-        val temp = (currentVelocity.require() + omega * delta) * dt
-        currentVelocity.set((currentVelocity.require() - omega * temp) * exp)
+        val temp = (currentVelocity.get() + omega * delta) * dt
+        currentVelocity.accept((currentVelocity.get() - omega * temp) * exp)
         var output = (currentD - delta) + (delta + temp) * exp
 
         // Prevent overshooting
         if (targetD - currentD > 0.0 == output > targetD) {
             output = targetD
-            currentVelocity.set((output - targetD) / dt)
+            currentVelocity.accept((output - targetD) / dt)
         }
 
         return output
@@ -535,7 +534,7 @@ object Mathf {
     @JvmStatic
     fun Measure<Angle>.smoothDamp(
         target: Measure<Angle>,
-        currentVelocity: Reference<Double>,
+        currentVelocity: Cell<Double>,
         smoothTime: Measure<Time>,
         maxVelocity: Number,
         deltaTime: Measure<Time>

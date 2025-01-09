@@ -39,10 +39,10 @@ class Scheduler {
         return allocatedTasks.toTypedArray<ScheduledTask>()
     }
 
+    /**
+     * All subsystems attached to and managed by the Scheduler.
+     */
     val managedSubsystems: Array<BunyipsSubsystem>
-        /**
-         * Get all subsystems attached to the scheduler.
-         */
         get() = subsystems.toTypedArray<BunyipsSubsystem>()
 
     /**

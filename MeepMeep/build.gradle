@@ -10,11 +10,13 @@ java {
 
 repositories {
     maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://repo.dairy.foundation/releases/' }
     mavenCentral()
 }
 
 dependencies {
     implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.6'
+    implementation 'dev.frozenmilk.dairy:Util:1.1.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 

@@ -9,12 +9,14 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref.ref
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
+import dev.frozenmilk.util.cell.RefCell
 import org.firstinspires.ftc.robotcore.external.Func
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.Telemetry.DisplayFormat
@@ -38,7 +40,7 @@ class DualTelemetry @JvmOverloads constructor(
 ) : Telemetry {
     private val initActions = mutableListOf<Runnable>()
     private lateinit var overheadTelemetry: Item
-    private var dashboardItems = Collections.synchronizedSet(mutableSetOf<Pair<ItemType, Reference<String>>>())
+    private var dashboardItems = Collections.synchronizedSet(mutableSetOf<Pair<ItemType, RefCell<String>>>())
     private var userPacket: TelemetryPacket = TelemetryPacket()
     private var info: String? = null
 
@@ -126,7 +128,7 @@ class DualTelemetry @JvmOverloads constructor(
                 dashboardItems.add(
                     Pair(
                         ItemType.LOG,
-                        Reference.of(info)
+                        info.ref()
                     )
                 )
             }
@@ -289,7 +291,7 @@ class DualTelemetry @JvmOverloads constructor(
                 "<small><font color='$logBracketColor'>[</font>T+${Math.round(movingAverageTimer.elapsedTime() to Seconds)}s<font color='$logBracketColor'>]</font></small> "
         opMode.telemetry.log().add(prepend + msg)
         synchronized(dashboardItems) {
-            dashboardItems.add(Pair(ItemType.LOG, Reference.of(msg)))
+            dashboardItems.add(Pair(ItemType.LOG, msg.ref()))
         }
     }
 
@@ -399,7 +401,7 @@ class DualTelemetry @JvmOverloads constructor(
             val padding = 3
             dashboardItems.forEach { pair ->
                 val (type, ref) = pair
-                val currentRef = ref.require()
+                val currentRef = ref.get()
                 val (userTag, value) = let {
                     val parts = currentRef.split(dashboardCaptionValueAutoSeparator, limit = 2)
                     if (parts.size == 2) {
@@ -603,7 +605,7 @@ class DualTelemetry @JvmOverloads constructor(
          * Whether this item failed to send to the DS because of telemetry queue overload.
          */
         val isOverflow: Boolean,
-        private val dashboardRef: Reference<String>,
+        private val dashboardRef: RefCell<String>,
         opMode: OpMode
     ) : Item {
         /**
@@ -637,7 +639,7 @@ class DualTelemetry @JvmOverloads constructor(
             // im david heath, and this is cs50
             if (applyOnlyIf != null && applyOnlyIf?.asBoolean == false) {
                 // If the condition evaluates false, we will not apply the HTML formatting
-                dashboardRef.set(value)
+                dashboardRef.accept(value)
                 return value
             }
             var out = ""
@@ -655,7 +657,7 @@ class DualTelemetry @JvmOverloads constructor(
             for (tag in tags.reversed())
                 out += "</$tag>"
             // Synchronise the FtcDashboard reference
-            dashboardRef.set(out)
+            dashboardRef.accept(out)
             return out
         }
 
@@ -994,7 +996,7 @@ class DualTelemetry @JvmOverloads constructor(
         // Use a reference of the string to be added to telemetry. This allows us to pass it into HtmlItem where it
         // may be modified at an arbitrary time, and the changes will be reflected in the telemetry object as part of
         // the telemetry update cycle. This includes all styles to be applied through HtmlItem.
-        val ref = Reference.of(value)
+        val ref = value.ref()
         if (value.isNotBlank()) {
             synchronized(dashboardItems) {
                 dashboardItems.add(
@@ -1151,12 +1153,45 @@ class DualTelemetry @JvmOverloads constructor(
             throw IllegalStateException("No OpMode is running!")
         }
 
+        /**
+         * [smartAdd] is a static utility that will attempt to access a [Telemetry] object to add new data to either
+         * a [DualTelemetry] object affixed to a [BunyipsOpMode], or a standard [Telemetry] out affixed to any
+         * [OpMode] derivative.
+         *
+         * This provides components such as subsystems the ability to add telemetry regardless of whether a [BunyipsOpMode]
+         * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
+         * instances to work similarly with FtcDashboard routing and smart parsing.
+         *
+         * @since 7.0.0
+         */
         @JvmStatic
         fun smartAdd(retained: Boolean, format: String, vararg objs: Any?) = smartAdd(retained, "", format, *objs)
 
+        /**
+         * [smartAdd] is a static utility that will attempt to access a [Telemetry] object to add new data to either
+         * a [DualTelemetry] object affixed to a [BunyipsOpMode], or a standard [Telemetry] out affixed to any
+         * [OpMode] derivative.
+         *
+         * This provides components such as subsystems the ability to add telemetry regardless of whether a [BunyipsOpMode]
+         * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
+         * instances to work similarly with FtcDashboard routing and smart parsing.
+         *
+         * @since 7.0.0
+         */
         @JvmStatic
         fun smartAdd(caption: String, format: String, vararg objs: Any?) = smartAdd(false, caption, format, *objs)
 
+        /**
+         * [smartAdd] is a static utility that will attempt to access a [Telemetry] object to add new data to either
+         * a [DualTelemetry] object affixed to a [BunyipsOpMode], or a standard [Telemetry] out affixed to any
+         * [OpMode] derivative.
+         *
+         * This provides components such as subsystems the ability to add telemetry regardless of whether a [BunyipsOpMode]
+         * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
+         * instances to work similarly with FtcDashboard routing and smart parsing.
+         *
+         * @since 7.0.0
+         */
         @JvmStatic
         fun smartAdd(format: String, vararg objs: Any?) = smartAdd(false, "", format, *objs)
 
@@ -1188,10 +1223,32 @@ class DualTelemetry @JvmOverloads constructor(
             throw IllegalStateException("No OpMode is running!")
         }
 
+        /**
+         * [smartLog] is a static utility that will attempt to access a [Telemetry] object to append a new log to
+         * a [DualTelemetry] object affixed to a [BunyipsOpMode], or a standard [Telemetry] out affixed to any
+         * [OpMode] derivative.
+         *
+         * This provides components such as subsystems the ability to add logs regardless of whether a [BunyipsOpMode]
+         * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
+         * instances to work similarly with FtcDashboard routing and smart parsing.
+         *
+         * @since 7.0.0
+         */
         @JvmStatic
         fun smartLog(obj: Class<*>, format: Any, vararg objs: Any?) =
             smartLog("<font color='gray'>[${obj.simpleName}]</font> $format", *objs)
 
+        /**
+         * [smartLog] is a static utility that will attempt to access a [Telemetry] object to append a new log to
+         * a [DualTelemetry] object affixed to a [BunyipsOpMode], or a standard [Telemetry] out affixed to any
+         * [OpMode] derivative.
+         *
+         * This provides components such as subsystems the ability to add logs regardless of whether a [BunyipsOpMode]
+         * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
+         * instances to work similarly with FtcDashboard routing and smart parsing.
+         *
+         * @since 7.0.0
+         */
         @JvmStatic
         fun smartLog(stck: StackTraceElement, format: Any, vararg objs: Any?) =
             smartLog("<font color='gray'>[$stck]</font> $format", *objs)

@@ -24,10 +24,11 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.DeferredTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
+import dev.frozenmilk.util.cell.RefCell;
 
 /**
  * {@link BunyipsOpMode} variant for Autonomous operation. Uses the {@link Task} system for a queued action OpMode.
@@ -43,7 +44,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Purely visual, and does not affect the actual task (hence why this field is not exposed to FtcDashboard).
      */
     public static double INFINITE_TASK_ASSUMED_DURATION_SECONDS = 5.0;
-    private final ArrayList<Reference<?>> opModes = new ArrayList<>();
+    private final ArrayList<RefCell<?>> opModes = new ArrayList<>();
     private final ConcurrentLinkedDeque<Task> tasks = new ConcurrentLinkedDeque<>();
     // Pre- and post-queues cannot have their tasks removed, so we can rely on their .size() methods
     private final ConcurrentLinkedDeque<Task> postQueue = new ConcurrentLinkedDeque<>();
@@ -51,22 +52,21 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     @NonNull
     private HashSet<BunyipsSubsystem> updatedSubsystems = new HashSet<>();
     private int taskCount;
-    private UserSelection<Reference<?>> userSelection;
+    private UserSelection<RefCell<?>> userSelection;
     private int currentTask = 1;
     private volatile boolean safeToAddTasks;
     private volatile boolean callbackReceived;
     private OnTasksDone onCompletion = OnTasksDone.FINISH_OPMODE;
     private boolean tasksFinished;
 
-    private void callback(@Nullable Reference<?> selectedOpMode) {
+    private void callback(@Nullable RefCell<?> selectedOpMode) {
         // Safety as the OpMode may not be running anymore (due to it being on another thread)
         if (isStopRequested())
             return;
 
         safeToAddTasks = true;
 
-        Controls selectedButton = userSelection != null ? userSelection.getSelectedButton() : Controls.NONE;
-        Exceptions.runUserMethod(() -> onReady(selectedOpMode, selectedButton));
+        Exceptions.runUserMethod(() -> onReady(selectedOpMode));
         callbackReceived = true;
 
         // Add any queued tasks that were delayed previously and we can do now
@@ -114,9 +114,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         }
 
         // Convert user defined OpModeSelections to varargs
-        Reference<?>[] varargs = opModes.toArray(new Reference[0]);
+        RefCell<?>[] varargs = opModes.toArray(new RefCell[0]);
         if (varargs.length == 0) {
-            opModes.add(Reference.empty());
+            opModes.add(Ref.of(null));
         }
         if (varargs.length > 1) {
             // Run task allocation if OpModeSelections are defined
@@ -441,9 +441,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Add a task to the run queue, but after {@link #onReady(Reference, Controls)} has processed tasks. This is useful
+     * Add a task to the run queue, but after {@link #onReady(RefCell)} has processed tasks. This is useful
      * to call when working with tasks that should be queued at the very end of the autonomous, while still
-     * being able to add tasks asynchronously with user input in {@link #onReady(Reference, Controls)}.
+     * being able to add tasks asynchronously with user input in {@link #onReady(RefCell)}.
      *
      * @param newTask task to add to the run queue
      * @param <T>     the inherited task type
@@ -467,9 +467,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Add a task to the run queue, but after {@link #onReady(Reference, Controls)} has processed tasks. This is useful
+     * Add a task to the run queue, but after {@link #onReady(RefCell)} has processed tasks. This is useful
      * to call when working with tasks that should be queued at the very end of the autonomous, while still
-     * being able to add tasks asynchronously with user input in {@link #onReady(Reference, Controls)}.
+     * being able to add tasks asynchronously with user input in {@link #onReady(RefCell)}.
      * <p>
      * This task will be internally wrapped into a {@link DeferredTask}.
      *
@@ -485,7 +485,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     /**
      * Add a task to the very start of the queue. This is useful to call when working with tasks that
      * should be queued at the very start of the autonomous, while still being able to add tasks
-     * asynchronously with user input in {@link #onReady(Reference, Controls)}.
+     * asynchronously with user input in {@link #onReady(RefCell)}.
      *
      * @param newTask task to add to the run queue
      * @param <T>     the inherited task type
@@ -511,7 +511,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     /**
      * Add a task to the very start of the queue. This is useful to call when working with tasks that
      * should be queued at the very start of the autonomous, while still being able to add tasks
-     * asynchronously with user input in {@link #onReady(Reference, Controls)}.
+     * asynchronously with user input in {@link #onReady(RefCell)}.
      * <p>
      * This task will be internally wrapped into a {@link DeferredTask}.
      *
@@ -651,7 +651,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Runs upon the pressing of the INIT button on the Driver Station.
      * This is where your hardware should be initialised (if applicable), and to assign OpModes via {@link #setOpModes}.
      * You may also add specific tasks to the queue here, but it is recommended to use {@link #setInitTask}
-     * or {@link #onReady(Reference, Controls)} instead.
+     * or {@link #onReady(RefCell)} instead.
      * <p>
      * Override this method to use it.
      */
@@ -663,7 +663,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Call to define your OpModeSelections, if you list any, then the user will be prompted to select
      * an OpMode before the OpMode begins. If you return null/don't call this method, then the user will not
      * be prompted for a selection, and the OpMode will move to task-ready state immediately.
-     * This determines what is to be used in the parameters of {@link #onReady(Reference, Controls)}.
+     * This determines what is to be used in the parameters of {@link #onReady(RefCell)}.
      *
      * <pre>{@code
      *     setOpModes(
@@ -701,14 +701,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (selectableOpModes == null) return;
         opModes.clear();
         for (Object selectableOpMode : selectableOpModes) {
-            if (selectableOpMode instanceof Reference<?>) {
-                opModes.add((Reference<?>) selectableOpMode);
+            if (selectableOpMode instanceof RefCell<?>) {
+                opModes.add((RefCell<?>) selectableOpMode);
             } else if (selectableOpMode instanceof StartingConfiguration.Builder.PrebuiltPosition) {
                 // Preemptive catch for non-built StartingConfigurations which are a common use case
                 // No point in throwing errors for the little stuff we can solve here now
-                opModes.add(new Reference<>(((StartingConfiguration.Builder.PrebuiltPosition) selectableOpMode).build()));
+                opModes.add(Ref.of(((StartingConfiguration.Builder.PrebuiltPosition) selectableOpMode).build()));
             } else {
-                opModes.add(new Reference<>(selectableOpMode));
+                opModes.add(Ref.of(selectableOpMode));
             }
         }
     }
@@ -718,13 +718,14 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * This will happen when the user has selected an OpMode, or if {@link #setOpModes(Object...)} returned null,
      * in which case it will run immediately after {@code static_init} has completed.
      * This is where you should add your tasks to the run queue.
+     * <p>
+     * For versions >=7.0.0, you can access the {@code selectedButton} field through {@code UserSelection.getLastSelectedButton()}.
      *
      * @param selectedOpMode the OpMode selected by the user, if applicable. Will be NULL if the user does not select an OpMode (and OpModes were available).
      *                       Will be an empty reference if {@link #setOpModes(Object...)} returned null (no OpModes to select).
-     * @param selectedButton the button selected by the user. Will be {@link Controls#NONE} if no selection is made or given.
      * @see #add(Task)
      */
-    protected abstract void onReady(@Nullable Reference<?> selectedOpMode, @NonNull Controls selectedButton);
+    protected abstract void onReady(@Nullable RefCell<?> selectedOpMode);
 
     /**
      * Override this method to add extra code to the activeLoop, which will be run before the task queue is processed.

@@ -24,6 +24,7 @@ import kotlin.jvm.functions.Function2;
  * Internal shim for MeepMeep and BunyipsLib interop.
  *
  * @author Lucas Bubner, 2024
+ * @since 6.0.0
  */
 @SuppressWarnings("UnknownNullness")
 public abstract class MeepMeepInternal {

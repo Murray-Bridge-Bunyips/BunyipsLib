@@ -14,8 +14,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Reference;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref;
+import dev.frozenmilk.util.cell.RefCell;
 import kotlin.Pair;
 
 /**
@@ -380,32 +381,32 @@ class MathfTest {
 
     @Test
     void testSmoothDamp() {
-        Reference<Double> velocity = new Reference<>(0.0);
+        RefCell<Double> velocity = Ref.of(0.0);
 
         // Test moving towards target
         assertEquals(2.79411764, Mathf.smoothDamp(0.0, 5.0, velocity, Seconds.of(1.0), 10.0, Seconds.of(1.0)), 1.0e-6);
-        assertEquals(velocity.require(), 2.94117647, 1.0e-6);
+        assertEquals(velocity.get(), 2.94117647, 1.0e-6);
         assertEquals(8.22664359, Mathf.smoothDamp(5.0, 10.0, velocity, Seconds.of(1.0), 10.0, Seconds.of(1.0)), 1.0e-6);
 
-        velocity.set(0.0);
+        velocity.accept(0.0);
         Mathf.smoothDamp(0.0, 1000.0, velocity, Seconds.of(100.0), 1.0, Seconds.of(50.0));
-        assertEquals(0.73664, velocity.require(), 1.0e-3);
+        assertEquals(0.73664, velocity.get(), 1.0e-3);
 
         // Test overshooting prevention
-        velocity.set(0.0);
+        velocity.accept(0.0);
         assertEquals(9.5588235, Mathf.smoothDamp(9.0, 10.0, velocity, Seconds.of(1.0), 10.0, Seconds.of(1.0)), 1.0e-6);
 
         // Test clamping of maximum speed
-        velocity.set(0.0);
+        velocity.accept(0.0);
         assertEquals(0.5588235, Mathf.smoothDamp(0.0, 10.0, velocity, Seconds.of(1.0), 1.0, Seconds.of(1.0)), 1.0e-6);
 
         // Test negative target
-        velocity.set(0.0);
+        velocity.accept(0.0);
         assertEquals(-2.794117, Mathf.smoothDamp(0.0, -5.0, velocity, Seconds.of(1.0), 10.0, Seconds.of(1.0)), 1.0e-6);
         assertEquals(-8.226643, Mathf.smoothDamp(-5.0, -10.0, velocity, Seconds.of(1.0), 10.0, Seconds.of(1.0)), 1.0e-6);
 
         // Test with different smoothTime and deltaTime
-        velocity.set(0.0);
+        velocity.accept(0.0);
         assertEquals(1.3167587, Mathf.smoothDamp(0.0, 5.0, velocity, Seconds.of(2.0), 10.0, Seconds.of(1.0)), 1.0e-6);
         assertEquals(3.8366926, Mathf.smoothDamp(2.5, 5.0, velocity, Seconds.of(2.0), 10.0, Seconds.of(1.0)), 1.0e-6);
     }

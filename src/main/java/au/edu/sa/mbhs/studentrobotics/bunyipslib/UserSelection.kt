@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingPositions
@@ -75,11 +76,21 @@ class UserSelection<T>(
 ) : Callable<T> {
     private val timer = ElapsedTime()
 
-    /**
-     * The button that was selected by the user.
-     */
-    var selectedButton: Controls = Controls.NONE
-        private set
+    companion object {
+        /**
+         * The button that was last selected by the user through an active [UserSelection] instance.
+         * Null if a [UserSelection] has not been run yet. [Controls.NONE] if a [UserSelection] ran with no selection.
+         */
+        @JvmStatic
+        var lastSelectedButton: Controls? = null
+            private set
+
+        @JvmStatic
+        @Hook(on = Hook.Target.POST_STOP)
+        private fun reset() {
+            lastSelectedButton = null
+        }
+    }
 
     /**
      * Maps a set of operation modes to a set of buttons.
@@ -124,7 +135,7 @@ class UserSelection<T>(
         while (result == null && opMode.opModeInInit() && !Thread.currentThread().isInterrupted) {
             for ((str, button) in buttons) {
                 if (Controls.isSelected(opMode.gamepad1, button)) {
-                    selectedButton = button
+                    lastSelectedButton = button
                     result = str
                     break
                 }
@@ -143,12 +154,15 @@ class UserSelection<T>(
             // Updates will be handled by the main telemetry loop
         }
 
+        if (lastSelectedButton == null)
+            lastSelectedButton = Controls.NONE
+
         val opModeName = result.toString()
 
         if (result == null) {
             opMode.telemetry.log("<font color='yellow'>No user OpMode selection was made.</font>")
         } else {
-            opMode.telemetry.log("Running OpMode: <font color='#caabff'>${selectedButton.name} -> <b>$opModeName</b></font>")
+            opMode.telemetry.log("Running OpMode: <font color='#caabff'>${lastSelectedButton?.name} -> <b>$opModeName</b></font>")
             if (result is StartingPositions) {
                 Storage.memory().lastKnownAlliance = (result as StartingPositions).toStartingConfiguration().alliance
             } else if (result is StartingConfiguration.Position) {
@@ -158,7 +172,7 @@ class UserSelection<T>(
 
         opMode.telemetry.addDashboard(
             "USR",
-            if (result == null) "No selection" else "${selectedButton.name} -> $opModeName@T+${
+            if (result == null) "No selection" else "${lastSelectedButton?.name} -> $opModeName@T+${
                 opMode.timer.elapsedTime() to Seconds round 1
             }s"
         )

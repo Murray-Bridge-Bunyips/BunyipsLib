@@ -12,6 +12,8 @@ import java.util.function.DoubleSupplier;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref;
+import dev.frozenmilk.util.cell.RefCell;
 
 /**
  * A collection of ramping functions and values for smoothing out deltas over time.
@@ -66,7 +68,7 @@ public interface Ramping {
      */
     class Value implements Ramping {
         private final ElapsedTime timer = new ElapsedTime();
-        private final Reference<Double> v = Reference.of(0.0);
+        private final RefCell<Double> v = Ref.of(0.0);
         private Measure<Time> smoothTime = Seconds.of(0.1);
         private double maxDelta = 1.0;
         // Enabled by default
