@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.Objects;
-import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
@@ -28,7 +27,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
@@ -49,11 +47,13 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * This caveat means that this task will make no effort to try and correct translational deviation when the robot is being commanded.
  * <p>
  * A localizer-attached holonomic drive is required for this class, as it will require the use of the pose estimate system.
+ * <p>
+ * Previously called {@code HolonomicVectorDriveTask}.
  *
  * @author Lucas Bubner, 2024
  * @since 4.0.0
  */
-public class HolonomicLockingDriveTask extends Task {
+public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
     /**
      * Default controller to use for the x (forward) axis.
      */
@@ -70,9 +70,7 @@ public class HolonomicLockingDriveTask extends Task {
     @NonNull
     public static SystemController DEFAULT_R_CONTROLLER = new PDController(1, 0.0001);
 
-    private final Moveable drive;
     private final Supplier<PoseVelocity2d> vel;
-    private final BooleanSupplier fieldCentricEnabled;
     private final ElapsedTime vectorLocker = new ElapsedTime();
     private final ElapsedTime headingLocker = new ElapsedTime();
     private SystemController xController;
@@ -80,27 +78,24 @@ public class HolonomicLockingDriveTask extends Task {
     private SystemController rController;
     private Vector2d vectorLock = null;
     private Rotation2d headingLock = null;
-    private Rotation2d fcOffset = Rotation2d.exp(0);
 
     // Default admissible error of 1 inch and 1 degree, waiting 300ms for the pose to stabilise
     private Pose2d toleranceInchRad = new Pose2d(1, 1, Math.toRadians(1));
     private Measure<Time> lockingTimeout = Milliseconds.of(300);
 
     /**
-     * Constructor for HolonomicLockingDriveTask.
+     * Constructor for HolonomicTrackingDriveTask.
      *
-     * @param vel                 The supplier for the current pose velocity of the robot, magnitude [-1, 1] of max robot velocity
-     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
-     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
-     *                            if possible. A localizer attached is required.
-     * @param fieldCentricEnabled A BooleanSupplier that returns whether field centric drive is enabled
+     * @param vel   The supplier for the current pose velocity of the robot, magnitude [-1, 1] of max robot velocity
+     * @param drive The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *              called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *              if possible. A localizer attached is required.
      */
-    public HolonomicLockingDriveTask(@NonNull Supplier<PoseVelocity2d> vel, @NonNull Moveable drive, @NonNull BooleanSupplier fieldCentricEnabled) {
+    public HolonomicTrackingDriveTask(@NonNull Supplier<PoseVelocity2d> vel, @NonNull Moveable drive) {
+        super.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             on((BunyipsSubsystem) drive, false);
-        this.drive = drive;
         this.vel = vel;
-        this.fieldCentricEnabled = fieldCentricEnabled;
 
         xController = DEFAULT_X_CONTROLLER;
         yController = DEFAULT_Y_CONTROLLER;
@@ -110,33 +105,7 @@ public class HolonomicLockingDriveTask extends Task {
     }
 
     /**
-     * Constructor for HolonomicLockingDriveTask on an always disabled field-centric mode.
-     *
-     * @param vel   The supplier for the current pose velocity of the robot, magnitude [-1, 1] of max robot velocity
-     * @param drive The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
-     *              called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
-     *              if possible. A localizer attached is required.
-     */
-    public HolonomicLockingDriveTask(@NonNull Supplier<PoseVelocity2d> vel, @NonNull Moveable drive) {
-        this(vel, drive, () -> false);
-    }
-
-    /**
-     * Constructor for HolonomicLockingDriveTask using a default Mecanum binding.
-     * Left stick controls translation, right stick controls rotation.
-     *
-     * @param driver              The gamepad to use for driving
-     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
-     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
-     *                            if possible. A localizer attached is required.
-     * @param fieldCentricEnabled A BooleanSupplier that returns whether field centric drive is enabled
-     */
-    public HolonomicLockingDriveTask(@NonNull Gamepad driver, @NonNull Moveable drive, @NonNull BooleanSupplier fieldCentricEnabled) {
-        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, fieldCentricEnabled);
-    }
-
-    /**
-     * Constructor for HolonomicLockingDriveTask using a default Mecanum binding. Field-centric mode is disabled by default.
+     * Constructor for HolonomicTrackingDriveTask using a default Mecanum binding.
      * Left stick controls translation, right stick controls rotation.
      *
      * @param driver The gamepad to use for driving
@@ -144,8 +113,8 @@ public class HolonomicLockingDriveTask extends Task {
      *               called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
      *               if possible. A localizer attached is required.
      */
-    public HolonomicLockingDriveTask(@NonNull Gamepad driver, @NonNull Moveable drive) {
-        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive, () -> false);
+    public HolonomicTrackingDriveTask(@NonNull Gamepad driver, @NonNull Moveable drive) {
+        this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive);
     }
 
     /**
@@ -155,7 +124,7 @@ public class HolonomicLockingDriveTask extends Task {
      * @return this
      */
     @NonNull
-    public HolonomicLockingDriveTask withXController(@NonNull SystemController x) {
+    public HolonomicTrackingDriveTask withXController(@NonNull SystemController x) {
         xController = x;
         return this;
     }
@@ -167,7 +136,7 @@ public class HolonomicLockingDriveTask extends Task {
      * @return this
      */
     @NonNull
-    public HolonomicLockingDriveTask withYController(@NonNull SystemController y) {
+    public HolonomicTrackingDriveTask withYController(@NonNull SystemController y) {
         yController = y;
         return this;
     }
@@ -179,7 +148,7 @@ public class HolonomicLockingDriveTask extends Task {
      * @return this
      */
     @NonNull
-    public HolonomicLockingDriveTask withRController(@NonNull SystemController r) {
+    public HolonomicTrackingDriveTask withRController(@NonNull SystemController r) {
         rController = r;
         return this;
     }
@@ -191,7 +160,7 @@ public class HolonomicLockingDriveTask extends Task {
      * @return this
      */
     @NonNull
-    public HolonomicLockingDriveTask withTolerance(@NonNull Pose2d inchRad) {
+    public HolonomicTrackingDriveTask withTolerance(@NonNull Pose2d inchRad) {
         toleranceInchRad = inchRad;
         return this;
     }
@@ -205,7 +174,7 @@ public class HolonomicLockingDriveTask extends Task {
      * @return this
      */
     @NonNull
-    public HolonomicLockingDriveTask withStabilisationTimeout(@NonNull Measure<Time> lockTimeout) {
+    public HolonomicTrackingDriveTask withStabilisationTimeout(@NonNull Measure<Time> lockTimeout) {
         lockingTimeout = lockTimeout;
         return this;
     }
@@ -219,7 +188,7 @@ public class HolonomicLockingDriveTask extends Task {
      * @return this
      */
     @NonNull
-    public HolonomicLockingDriveTask withTolerance(@NonNull Measure<Distance> poseX, @NonNull Measure<Distance> poseY, @NonNull Measure<Angle> poseR) {
+    public HolonomicTrackingDriveTask withTolerance(@NonNull Measure<Distance> poseX, @NonNull Measure<Distance> poseY, @NonNull Measure<Angle> poseR) {
         return withTolerance(new Pose2d(poseX.in(Inches), poseY.in(Inches), poseR.in(Radians)));
     }
 
@@ -245,27 +214,6 @@ public class HolonomicLockingDriveTask extends Task {
         vectorLock = vectorInches;
     }
 
-    /**
-     * Sets an angle to use as the origin for Field-Centric driving.
-     * If this mode is not enabled on the drive task, this value won't be used for anything meaningful.
-     *
-     * @param fcOffset the offset angle (usually the current robot heading) to add to the vector heading rotation
-     */
-    public void setFieldCentricOffset(@NonNull Measure<Angle> fcOffset) {
-        this.fcOffset = Rotation2d.exp(fcOffset.in(Radians));
-    }
-
-    /**
-     * Sets the origin angle for Field-Centric driving to the drive pose of the robot (effectively resetting the offset).
-     * This is the most common use case for resetting the offset of FC operations.
-     * If this mode is not enabled on the drive task, this value won't be used for anything meaningful.
-     *
-     * @param drivePose the current pose of the drive that will be used to zero out the field centric origin
-     */
-    public void resetFieldCentricOrigin(@NonNull Pose2d drivePose) {
-        fcOffset = drivePose.heading;
-    }
-
     @Override
     protected void init() {
         vectorLocker.reset();
@@ -276,13 +224,9 @@ public class HolonomicLockingDriveTask extends Task {
 
     @Override
     protected void periodic() {
-        Pose2d current = Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance in order to use the HolonomicLockingDriveTask!");
+        Pose2d current = Objects.requireNonNull(drive.getPose(), "A localizer must be attached to the drive instance in order to use the HolonomicTrackingDriveTask!");
 
-        PoseVelocity2d v = vel.get();
-        if (fieldCentricEnabled.getAsBoolean()) {
-            // Field-centric inputs that will be rotated before any processing
-            v = current.heading.inverse().times(fcOffset).times(v);
-        }
+        PoseVelocity2d v = applyOrientation(vel.get());
 
         // Rising edge detections for pose locking
         if (v.linearVel.x == 0 && v.linearVel.y == 0 && vectorLock == null && vectorLocker.nanoseconds() >= lockingTimeout.in(Nanoseconds)) {

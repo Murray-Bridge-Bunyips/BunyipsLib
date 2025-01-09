@@ -14,7 +14,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
@@ -26,7 +25,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-public class MoveToContourTask extends Task {
+public class MoveToContourTask extends FieldOrientableDriveTask {
     /**
      * The tolerance of the X controller for Auto.
      */
@@ -46,9 +45,8 @@ public class MoveToContourTask extends Task {
     @NonNull
     public static SystemController DEFAULT_R_CONTROLLER = new PDController(1, 0.0001);
 
-    private final Moveable drive;
     private final Supplier<List<ContourData>> contours;
-    private final Supplier<PoseVelocity2d> passthrough;
+    private final Supplier<PoseVelocity2d> vel;
 
     private Function<ContourData, Double> errorSupplier = c -> -c.getPitch();
     private SystemController xController;
@@ -63,11 +61,11 @@ public class MoveToContourTask extends Task {
      * @param supplier    a supplier source that will provide contour data
      */
     public MoveToContourTask(@Nullable Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier) {
+        super.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             on((BunyipsSubsystem) drive, false);
-        this.drive = drive;
         contours = supplier;
-        this.passthrough = passthrough;
+        vel = passthrough;
         withXController(DEFAULT_X_CONTROLLER);
         withRController(DEFAULT_R_CONTROLLER);
         named("Move to Contour");
@@ -142,8 +140,8 @@ public class MoveToContourTask extends Task {
     @Override
     protected void periodic() {
         PoseVelocity2d vel = Geometry.zeroVel();
-        if (passthrough != null)
-            vel = passthrough.get();
+        if (this.vel != null)
+            vel = applyOrientation(this.vel.get());
 
         List<ContourData> data = contours.get();
         biggestContour = ContourData.getLargest(data);
@@ -163,6 +161,6 @@ public class MoveToContourTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return passthrough == null && biggestContour != null && Math.abs(errorSupplier.apply(biggestContour)) < X_TOLERANCE && Math.abs(biggestContour.getYaw()) < R_TOLERANCE;
+        return vel == null && biggestContour != null && Math.abs(errorSupplier.apply(biggestContour)) < X_TOLERANCE && Math.abs(biggestContour.getYaw()) < R_TOLERANCE;
     }
 }

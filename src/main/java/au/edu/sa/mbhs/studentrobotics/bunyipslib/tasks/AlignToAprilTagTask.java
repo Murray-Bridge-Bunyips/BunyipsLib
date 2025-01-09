@@ -19,7 +19,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemControll
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
@@ -32,7 +31,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.AprilTag;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-public class AlignToAprilTagTask extends Task {
+public class AlignToAprilTagTask extends FieldOrientableDriveTask {
     /**
      * Tolerance for the R error to be considered at the setpoint.
      */
@@ -47,9 +46,8 @@ public class AlignToAprilTagTask extends Task {
     @NonNull
     public static PIDFController DEFAULT_CONTROLLER = new PDController(0.1, 0.0001);
 
-    private final Moveable drive;
     private final AprilTag at;
-    private final Supplier<PoseVelocity2d> passthrough;
+    private final Supplier<PoseVelocity2d> vel;
 
     private SystemController controller;
     private Double bearing;
@@ -74,12 +72,12 @@ public class AlignToAprilTagTask extends Task {
      * @param targetTag   the tag to align to, -1 for any tag
      */
     public AlignToAprilTagTask(@Nullable Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull AprilTag at, int targetTag) {
+        super.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             on((BunyipsSubsystem) drive, false);
-        this.drive = drive;
         this.at = at;
         TARGET_TAG = targetTag;
-        this.passthrough = passthrough;
+        vel = passthrough;
         controller = DEFAULT_CONTROLLER;
         named("Align To AprilTag");
         Dashboard.enableConfig(getClass());
@@ -119,8 +117,8 @@ public class AlignToAprilTagTask extends Task {
     @Override
     protected void periodic() {
         PoseVelocity2d vel = Geometry.zeroVel();
-        if (passthrough != null)
-            vel = passthrough.get();
+        if (this.vel != null)
+            vel = applyOrientation(this.vel.get());
 
         List<AprilTagData> data = at.getData();
 
@@ -154,6 +152,6 @@ public class AlignToAprilTagTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return passthrough == null && bearing != null && Mathf.isNear(bearing, 0, R_TOLERANCE);
+        return vel == null && bearing != null && Mathf.isNear(bearing, 0, R_TOLERANCE);
     }
 }

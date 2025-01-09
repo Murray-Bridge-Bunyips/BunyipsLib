@@ -25,7 +25,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDControll
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
@@ -38,7 +37,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.AprilTag;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-public class MoveToAprilTagTask extends Task {
+public class MoveToAprilTagTask extends FieldOrientableDriveTask {
     /**
      * The desired distance from the tag.
      */
@@ -87,10 +86,9 @@ public class MoveToAprilTagTask extends Task {
     @NonNull
     public static PDController DEFAULT_R_CONTROLLER = new PDController(0.1, 0.0001);
 
-    private final Moveable drive;
     private final AprilTag aprilTag;
 
-    private Supplier<PoseVelocity2d> passthrough;
+    private Supplier<PoseVelocity2d> vel;
     private SystemController xController;
     private SystemController yController;
     private SystemController rController;
@@ -107,9 +105,9 @@ public class MoveToAprilTagTask extends Task {
      * @param targetTag the tag to target. -1 for any tag
      */
     public MoveToAprilTagTask(@NonNull Moveable drive, @NonNull AprilTag aprilTag, @SuppressLint("LambdaLast") int targetTag) {
+        super.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             on((BunyipsSubsystem) drive, false);
-        this.drive = drive;
         this.aprilTag = aprilTag;
         TARGET_TAG = targetTag;
         xController = DEFAULT_X_CONTROLLER;
@@ -128,11 +126,11 @@ public class MoveToAprilTagTask extends Task {
      * @param targetTag   the tag to target. -1 for any tag
      */
     public MoveToAprilTagTask(@NonNull Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull AprilTag aprilTag, @SuppressLint("LambdaLast") int targetTag) {
+        super.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             on((BunyipsSubsystem) drive, false);
-        this.drive = drive;
         this.aprilTag = aprilTag;
-        this.passthrough = passthrough;
+        vel = passthrough;
         TARGET_TAG = targetTag;
         xController = DEFAULT_X_CONTROLLER;
         yController = DEFAULT_Y_CONTROLLER;
@@ -257,7 +255,9 @@ public class MoveToAprilTagTask extends Task {
 
     @Override
     protected void periodic() {
-        PoseVelocity2d vel = passthrough.get();
+        PoseVelocity2d vel = Geometry.zeroVel();
+        if (this.vel != null)
+            vel = applyOrientation(this.vel.get());
 
         List<AprilTagData> data = aprilTag.getData();
 
@@ -295,6 +295,6 @@ public class MoveToAprilTagTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return passthrough == null && Math.abs(rangeError) < X_TOLERANCE && Math.abs(yawError) < Y_TOLERANCE && Math.abs(headingError) < R_TOLERANCE;
+        return vel == null && Math.abs(rangeError) < X_TOLERANCE && Math.abs(yawError) < Y_TOLERANCE && Math.abs(headingError) < R_TOLERANCE;
     }
 }

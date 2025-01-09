@@ -576,6 +576,13 @@ abstract class Task : Runnable, Action {
         fun task() = DynamicTask()
 
         /**
+         * Utility to cast a task into the desired task class.
+         * Useful for ignoring task nullability to cast into a new type - ensure your task exists before calling.
+         */
+        @JvmStatic
+        fun <T : Task> cast(task: Task?, cast: Class<T>) = cast.cast(task) as T
+
+        /**
          * DSL function to create a new [DynamicTask] instance for building a new task.
          */
         fun task(block: DynamicTask.() -> Unit) = DynamicTask().apply(block)

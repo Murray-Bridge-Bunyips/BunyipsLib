@@ -27,7 +27,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * Drive to a pose using a localizer and PID-To-Point.
  * <p>
  * This is useful for pose alignment based on error, rather than using trajectories for planned motion.
- * Designed and tested for Mecanum drivebases as RoadRunner was designed around them.
+ * Designed and tested for Mecanum drivebases.
+ * <p>
+ * See the {@link HolonomicTrackingDriveTask} for running a P2P in TeleOp with user input priority (tracks locked poses).
  *
  * @author Lucas Bubner, 2024
  * @since 3.3.0

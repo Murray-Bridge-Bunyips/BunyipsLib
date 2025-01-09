@@ -14,7 +14,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemControll
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
@@ -26,7 +25,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ContourData;
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
  */
-public class AlignToContourTask extends Task {
+public class AlignToContourTask extends FieldOrientableDriveTask {
     /**
      * The tolerance for the R error to be considered at the setpoint.
      */
@@ -37,9 +36,8 @@ public class AlignToContourTask extends Task {
     @NonNull
     public static PIDFController DEFAULT_CONTROLLER = new PDController(1, 0.0001);
 
-    private final Moveable drive;
     private final Supplier<List<ContourData>> contours;
-    private final Supplier<PoseVelocity2d> passthrough;
+    private final Supplier<PoseVelocity2d> vel;
     private SystemController controller;
     private ContourData biggestContour;
 
@@ -51,11 +49,11 @@ public class AlignToContourTask extends Task {
      * @param supplier    a supplier source that will provide contour data
      */
     public AlignToContourTask(@Nullable Supplier<PoseVelocity2d> passthrough, @NonNull Moveable drive, @NonNull Supplier<List<ContourData>> supplier) {
+        super.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             on((BunyipsSubsystem) drive, false);
-        this.drive = drive;
         contours = supplier;
-        this.passthrough = passthrough;
+        vel = passthrough;
         controller = DEFAULT_CONTROLLER;
         named("Align To Contour");
         Dashboard.enableConfig(getClass());
@@ -102,8 +100,8 @@ public class AlignToContourTask extends Task {
     @Override
     protected void periodic() {
         PoseVelocity2d vel = Geometry.zeroVel();
-        if (passthrough != null)
-            vel = passthrough.get();
+        if (this.vel != null)
+            vel = applyOrientation(this.vel.get());
 
         List<ContourData> data = contours.get();
         biggestContour = ContourData.getLargest(data);
@@ -120,6 +118,6 @@ public class AlignToContourTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return passthrough == null && biggestContour != null && Math.abs(biggestContour.getYaw()) < R_TOLERANCE;
+        return vel == null && biggestContour != null && Math.abs(biggestContour.getYaw()) < R_TOLERANCE;
     }
 }
