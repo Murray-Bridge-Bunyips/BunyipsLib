@@ -171,7 +171,7 @@ public abstract class BunyipsSubsystem {
      *                   in which case the subsystem should be disabled
      * @return whether the assertion passed or failed, where you can stop the constructor if this returns false
      */
-    protected final boolean assertParamsNotNull(@Nullable Object... parameters) {
+    protected final boolean assertParamsNotNull(Object... parameters) {
         // If a previous check has already failed, we don't need to check again otherwise we might
         // erase a previous check that failed
         if (!shouldRun) return false;

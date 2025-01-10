@@ -72,7 +72,7 @@ public final class Text {
      * @return The formatted string
      */
     @NonNull
-    public static String format(@NonNull String fstring, @Nullable Object... objs) {
+    public static String format(@NonNull String fstring, Object... objs) {
         return format(fstring, Arrays.asList(objs));
     }
 
