@@ -169,13 +169,13 @@ enum class Controls {
         @JvmStatic
         fun <T> mapArgs(args: Array<out T>): HashMap<T, Controls> {
             // Map strings of args to every controller enum in order
-            if (args.size >= values().size) {
+            if (args.size >= entries.size) {
                 throw IllegalArgumentException("Controller: Number of args exceeds number of possible gamepad buttons (14).")
             }
             val map = HashMap<T, Controls>()
             for (i in args.indices) {
                 // For every arg, map it to the corresponding enum
-                map[args[i]] = values()[i]
+                map[args[i]] = entries.toTypedArray()[i]
             }
             return map
         }
@@ -205,7 +205,7 @@ enum class Controls {
         fun movementString(gamepad: Gamepad): String {
             if (gamepad.id == -1) return "(dc)"
             var str = "("
-            for (button in values()) {
+            for (button in entries) {
                 if (button == NONE) continue
                 if (isSelected(gamepad, button)) {
                     str += getChar(button)
@@ -239,7 +239,7 @@ enum class Controls {
                 ButtonGroup.DPAD -> arrayOf(DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT)
                 ButtonGroup.BUTTONS -> arrayOf(A, B, X, Y)
                 ButtonGroup.SPECIAL -> arrayOf(START, BACK, LEFT_STICK_BUTTON, RIGHT_STICK_BUTTON)
-                ButtonGroup.ALL -> values()
+                ButtonGroup.ALL -> entries.toTypedArray()
             }
         }
 
@@ -257,7 +257,7 @@ enum class Controls {
                 )
 
                 AnalogGroup.TRIGGERS -> arrayOf(Analog.LEFT_TRIGGER, Analog.RIGHT_TRIGGER)
-                AnalogGroup.ALL -> Analog.values()
+                AnalogGroup.ALL -> Analog.entries.toTypedArray()
             }
         }
 
