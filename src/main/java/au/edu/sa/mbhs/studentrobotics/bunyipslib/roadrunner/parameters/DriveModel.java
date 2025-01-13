@@ -30,6 +30,17 @@ public class DriveModel {
      */
     public double trackWidthTicks;
 
+    /**
+     * Copy the parameters of this drive model to another.
+     *
+     * @param other the other drive model
+     */
+    public void copyTo(@NonNull DriveModel other) {
+        other.inPerTick = inPerTick;
+        other.lateralInPerTick = lateralInPerTick;
+        other.trackWidthTicks = trackWidthTicks;
+    }
+
     @NonNull
     @Override
     public String toString() {

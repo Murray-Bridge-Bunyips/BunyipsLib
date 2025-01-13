@@ -3,7 +3,11 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks
 import android.content.Context
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BuildConfig
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.dashboard.config.reflection.ReflectionConfig
 import com.qualcomm.ftccommon.FtcEventLoop
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.DefaultOpMode
@@ -86,6 +90,13 @@ object BunyipsLib {
                 )
                 RobotLog.addGlobalWarningMessage("The version of the Robot Controller running on this robot is not the same as the recommended version for BunyipsLib. This may cause incompatibilities. Please ensure you are updated to the SDK version specified in the BunyipsLib documentation.")
             }
+            // Manual reload all FtcDashboard entries, this makes it so Restart Robot will also refresh dashboard
+            for (clazz in DashFilter.loaded) {
+                FtcDashboard.getInstance()?.withConfigRoot {
+                    val name = clazz.getAnnotation(Config::class.java)!!.value.ifEmpty { clazz.simpleName }
+                    it.putVariable(name, ReflectionConfig.createVariableFromClass(clazz))
+                }
+            }
         }
     }
 
@@ -148,6 +159,21 @@ object BunyipsLib {
                         Hook.Target.POST_STOP -> postStop.add(it.first)
                     }
                 }
+        }
+    }
+
+    private object DashFilter : SinisterFilter {
+        val loaded = mutableSetOf<Class<*>>()
+
+        override val targets = StdSearch()
+
+        override fun init() {
+            loaded.clear()
+        }
+
+        override fun filter(clazz: Class<*>) {
+            if (!clazz.isAnnotationPresent(Config::class.java) || clazz.isAnnotationPresent(Disabled::class.java)) return
+            loaded.add(clazz)
         }
     }
 

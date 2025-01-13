@@ -55,6 +55,22 @@ public class MotionProfile {
      */
     public double maxAngAccel = Math.PI;
 
+    /**
+     * Copy the parameters of this motion profile to another.
+     *
+     * @param other the other motion profile
+     */
+    public void copyTo(@NonNull MotionProfile other) {
+        other.kS = kS;
+        other.kV = kV;
+        other.kA = kA;
+        other.maxWheelVel = maxWheelVel;
+        other.minProfileAccel = minProfileAccel;
+        other.maxProfileAccel = maxProfileAccel;
+        other.maxAngVel = maxAngVel;
+        other.maxAngAccel = maxAngAccel;
+    }
+
     @NonNull
     @Override
     public String toString() {

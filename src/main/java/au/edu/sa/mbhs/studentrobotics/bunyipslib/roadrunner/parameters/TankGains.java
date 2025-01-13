@@ -27,6 +27,18 @@ public class TankGains {
      */
     public double turnVelGain = 0.0;
 
+    /**
+     * Copy the parameters of this tank gains to another.
+     *
+     * @param other the other tank gains
+     */
+    public void copyTo(@NonNull TankGains other) {
+        other.ramseteZeta = ramseteZeta;
+        other.ramseteBBar = ramseteBBar;
+        other.turnGain = turnGain;
+        other.turnVelGain = turnVelGain;
+    }
+
     @NonNull
     @Override
     public String toString() {

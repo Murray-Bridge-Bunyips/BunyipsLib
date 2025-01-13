@@ -70,7 +70,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  * @since 6.0.0
  */
 public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
-    private final TankKinematics kinematics;
     private final TurnConstraints defaultTurnConstraints;
     private final VelConstraint defaultVelConstraint;
     private final AccelConstraint defaultAccelConstraint;
@@ -89,6 +88,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public TankGains gains;
     private Localizer localizer;
     private Accumulator accumulator;
+    private TankKinematics kinematics;
     private volatile double leftPower;
     private volatile double rightPower;
 
@@ -126,7 +126,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         this.rightMotors = rightMotors.stream().map(m -> (DcMotorEx) m).collect(Collectors.toList());
         this.lazyImu = lazyImu;
 
-        kinematics = new TankKinematics(driveModel.inPerTick * driveModel.trackWidthTicks);
+        withLocalizer(new TankLocalizer(model, leftMotors, rightMotors));
         defaultTurnConstraints = new TurnConstraints(motionProfile.maxAngVel, -motionProfile.maxAngAccel, motionProfile.maxAngAccel);
         defaultVelConstraint = new MinVelConstraint(Arrays.asList(
                 kinematics.new WheelVelConstraint(motionProfile.maxWheelVel),
@@ -135,10 +135,8 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         defaultAccelConstraint = new ProfileAccelConstraint(motionProfile.minProfileAccel, motionProfile.maxProfileAccel);
 
         voltageSensor = voltageSensorMapping.iterator().next();
-        localizer = new TankLocalizer(model, leftMotors, rightMotors);
 
         FlightRecorder.write("TANK_GAINS", gains);
-        FlightRecorder.write("TANK_DRIVE_MODEL", model);
         FlightRecorder.write("TANK_PROFILE", profile);
     }
 
@@ -167,6 +165,8 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     @NonNull
     @Override
     public TankDrive withLocalizer(@NonNull Localizer localizer) {
+        kinematics = new TankKinematics(model.inPerTick * model.trackWidthTicks);
+        FlightRecorder.write("TANK_DRIVE_MODEL", model);
         this.localizer = localizer;
         return this;
     }

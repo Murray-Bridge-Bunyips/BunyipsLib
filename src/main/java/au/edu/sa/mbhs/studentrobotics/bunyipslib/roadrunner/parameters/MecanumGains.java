@@ -46,6 +46,22 @@ public class MecanumGains {
      */
     public boolean poseHoldingEnabled;
 
+    /**
+     * Copy the parameters of these mecanum gains to another.
+     *
+     * @param other the other mecanum gains
+     */
+    public void copyTo(@NonNull MecanumGains other) {
+        other.axialGain = axialGain;
+        other.lateralGain = lateralGain;
+        other.headingGain = headingGain;
+        other.axialVelGain = axialVelGain;
+        other.lateralVelGain = lateralVelGain;
+        other.headingVelGain = headingVelGain;
+        other.pathFollowingEnabled = pathFollowingEnabled;
+        other.poseHoldingEnabled = poseHoldingEnabled;
+    }
+
     @NonNull
     @Override
     public String toString() {
