@@ -11,6 +11,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanosecond
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.IncrementingTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.ParallelTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.RaceTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.SequentialTaskGroup
@@ -512,6 +513,18 @@ abstract class Task : Runnable, Action {
     infix fun during(otherTask: Task) = DeadlineTaskGroup(this, otherTask)
 
     /**
+     * Compose this task into a [IncrementingTaskGroup] with the supplied tasks
+     * to run the next task in sequence after the previous one finishes, while looping back to the first task.
+     */
+    fun next(vararg otherTasks: Task) = IncrementingTaskGroup(this, *otherTasks)
+
+    /**
+     * Compose this task into a [IncrementingTaskGroup] with the supplied task
+     * to run alongside this one until one finishes.
+     */
+    infix fun next(otherTask: Task) = IncrementingTaskGroup(this, otherTask)
+
+    /**
      * Wrap this task in a [RepeatTask] where finish conditions are reset immediately.
      */
     fun repeatedly(): Task = RepeatTask(this)
@@ -563,11 +576,42 @@ abstract class Task : Runnable, Action {
         val INFINITE_TIMEOUT: Measure<Time> = Seconds.zero()
 
         /**
-         * Utility to create a new [DeferredTask] based on the supplied task builder.
+         * Constructor utility to create a new [DeferredTask] based on the supplied task builder.
+         *
          * Useful for constructing tasks that use data that is not available at the build time of the wrapped task.
          */
         @JvmStatic
         fun defer(taskBuilder: () -> Task) = DeferredTask(taskBuilder)
+
+        /**
+         * Shorthand group utility for creating a [SequentialTaskGroup].
+         */
+        @JvmStatic
+        fun seq(vararg tasks: Task) = SequentialTaskGroup(*tasks)
+
+        /**
+         * Shorthand group utility for creating a [ParallelTaskGroup].
+         */
+        @JvmStatic
+        fun par(vararg tasks: Task) = ParallelTaskGroup(*tasks)
+
+        /**
+         * Shorthand group utility for creating a [RaceTaskGroup].
+         */
+        @JvmStatic
+        fun rce(vararg tasks: Task) = RaceTaskGroup(*tasks)
+
+        /**
+         * Shorthand group utility for creating a [DeadlineTaskGroup].
+         */
+        @JvmStatic
+        fun ddl(vararg tasks: Task) = DeadlineTaskGroup(*tasks)
+
+        /**
+         * Shorthand group utility for creating a [IncrementingTaskGroup].
+         */
+        @JvmStatic
+        fun inc(vararg tasks: Task) = IncrementingTaskGroup(*tasks)
 
         /**
          * Utility to create a new [DynamicTask] instance for building a new task.

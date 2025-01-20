@@ -226,7 +226,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     /**
-     * Set the top limit switch of the actuator to use in encoder awareness.
+     * Set the top limit switch of the actuator to use in encoder awareness and the ceiling task.
      *
      * @param topLimitSwitch the limit switch to set as the top switch where the arm would be at the max position
      * @return this
@@ -288,7 +288,11 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     /**
-     * Set the auto response power magnitude of the actuator, where a positive value will bring the arm upwards (away from bottom).
+     * Set the auto response power magnitude of the actuator.
+     * <p>
+     * If positive power is supplied to the motor, the mechanism should be brought "upwards" (away from the bottom
+     * relative to your limit switches and homing direction).
+     * <p>
      * This value is used to scale automatic responses by the actuator. Default of 1.0.
      * <p>
      * Note: This power is clamped by the lower and upper power clamps.
@@ -303,7 +307,11 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     /**
-     * Set the homing power magnitude of the actuator, where a positive value will bring the arm upwards (away from bottom).
+     * Set the homing power magnitude of the actuator.
+     * <p>
+     * If homing power is supplied to the motor, the mechanism should be brought "downwards" (away from the upwards limit
+     * relative to your limit switches and maximum constraints). An inverted version is used for the ceiling task.
+     * <p>
      * This power will be used as the raw power in a home or ceiling task. Default of 0.7.
      * <p>
      * Note: This power is clamped by the lower and upper power clamps.
@@ -647,7 +655,6 @@ public class HoldableActuator extends BunyipsSubsystem {
             return new Task() {
                 private final TouchSensor targetSwitch;
                 private ElapsedTime overcurrentTimer;
-                private double previousAmpAlert;
                 private double zeroHits;
 
                 {
@@ -660,7 +667,6 @@ public class HoldableActuator extends BunyipsSubsystem {
 
                 @Override
                 protected void init() {
-                    previousAmpAlert = motor.getCurrentAlert(CurrentUnit.AMPS);
                     // Stop now if the switch is already pressed
                     if (targetSwitch != null && targetSwitch.isPressed()) {
                         finishNow();
