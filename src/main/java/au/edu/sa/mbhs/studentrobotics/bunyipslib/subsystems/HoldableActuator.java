@@ -458,8 +458,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 try {
                     motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 } catch (Exception e) {
-                    // Cannot catch ActionNotSupportedException due to package protections, so we will handle a generic exception
-                    // In the event this does fail, we will fall back to the default mode.
+                    // Fall back if we don't have a target (although, we shouldn't not have one)
                     setInputModeToUser();
                     break;
                 }
