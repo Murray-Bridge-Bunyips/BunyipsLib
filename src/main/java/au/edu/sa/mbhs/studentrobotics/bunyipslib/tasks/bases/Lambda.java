@@ -6,6 +6,9 @@ import androidx.annotation.NonNull;
 
 import java.util.function.Consumer;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+
 /**
  * A task to run a callback before immediately completing.
  * <p>
@@ -45,6 +48,16 @@ public class Lambda extends Task {
      */
     public Lambda(@NonNull Runnable callback) {
         this((t) -> callback.run());
+    }
+
+    // Kotlin constructor
+    /**
+     * Run the given callback immediately.
+     *
+     * @param callback The callback to run
+     */
+    public Lambda(@NonNull Function0<Unit> callback) {
+        this((t) -> callback.invoke());
     }
 
     /**
