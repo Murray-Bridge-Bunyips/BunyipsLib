@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
@@ -44,10 +45,10 @@ public class DualServos extends BunyipsSubsystem {
         if (leftClosed == leftOpen || rightClosed == rightOpen)
             throw new IllegalArgumentException("Open and close positions for either servo cannot be the same");
 
-        this.leftClosed = leftClosed;
-        this.leftOpen = leftOpen;
-        this.rightClosed = rightClosed;
-        this.rightOpen = rightOpen;
+        this.leftClosed = Mathf.clamp(leftClosed, 0, 1);
+        this.leftOpen = Mathf.clamp(leftOpen, 0, 1);
+        this.rightClosed = Mathf.clamp(rightClosed, 0, 1);
+        this.rightOpen = Mathf.clamp(rightOpen, 0, 1);
 
         if (!assertParamsNotNull(left, right)) return;
         this.left = left;
@@ -285,10 +286,7 @@ public class DualServos extends BunyipsSubsystem {
          */
         @NonNull
         public Task toggleBoth() {
-            return new Lambda(() -> {
-                toggle(ServoSide.LEFT);
-                toggle(ServoSide.RIGHT);
-            })
+            return new Lambda(() -> toggle(ServoSide.BOTH))
                     .on(DualServos.this, true)
                     .named(name + ":Toggle Both");
         }

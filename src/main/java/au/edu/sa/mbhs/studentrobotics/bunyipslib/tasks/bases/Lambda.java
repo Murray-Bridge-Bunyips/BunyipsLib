@@ -4,6 +4,8 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Mil
 
 import androidx.annotation.NonNull;
 
+import java.util.function.Consumer;
+
 /**
  * A task to run a callback before immediately completing.
  * <p>
@@ -20,7 +22,21 @@ public class Lambda extends Task {
      * The epsilon value for the Lambda timeout.
      */
     public static final int EPSILON_MS = 300;
-    private final Runnable callback;
+    private final Consumer<Task> callback;
+
+    /**
+     * Run the given callback immediately.
+     *
+     * @param callback The callback to run, taking in an instance of the current task
+     */
+    public Lambda(@NonNull Consumer<Task> callback) {
+        // For Lambdas, we can't have an infinite timeout, but we can use a very short one instead.
+        // This is so the schedulers do not mistake this task as for one that will end up running forever,
+        // as all Lambdas will run only once. This also helps telemetry decide how long a task will execute for.
+        timeout = Milliseconds.of(EPSILON_MS);
+        this.callback = callback;
+        named("Run");
+    }
 
     /**
      * Run the given callback immediately.
@@ -28,12 +44,7 @@ public class Lambda extends Task {
      * @param callback The callback to run
      */
     public Lambda(@NonNull Runnable callback) {
-        // For Lambdas, we can't have an infinite timeout, but we can use a very short one instead.
-        // This is so the schedulers do not mistake this task as for one that will end up running forever,
-        // as all Lambdas will run only once. This also helps telemetry decide how long a task will execute for.
-        timeout = Milliseconds.of(EPSILON_MS);
-        this.callback = callback;
-        named("Run");
+        this((t) -> callback.run());
     }
 
     /**
@@ -47,7 +58,7 @@ public class Lambda extends Task {
 
     @Override
     protected void init() {
-        callback.run();
+        callback.accept(this);
     }
 
     @Override

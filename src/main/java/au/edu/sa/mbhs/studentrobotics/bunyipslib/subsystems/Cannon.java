@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
@@ -44,8 +45,8 @@ public class Cannon extends BunyipsSubsystem {
         if (openPosition == closePosition)
             throw new IllegalArgumentException("Open and close positions cannot be the same");
 
-        FIRED = openPosition;
-        RESET = closePosition;
+        FIRED = Mathf.clamp(openPosition, 0, 1);
+        RESET = Mathf.clamp(closePosition, 0, 1);
 
         if (!assertParamsNotNull(prolong)) return;
         this.prolong = prolong;

@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +17,9 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.TrapezoidProfile;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.DualServos;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.Switch;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 /**
  * Extension of the extended {@link Servo} interface that allows for motion profiling via a {@link TrapezoidProfile}.
@@ -40,6 +44,8 @@ public class ServoEx extends ServoImpl implements PwmControl {
     private long refreshRateNanos;
     private long lastUpdate;
 
+    private Measure<Time> endToEndTime = Seconds.one();
+
     /**
      * Wrap a Servo to use with the ServoEx class.
      *
@@ -47,6 +53,18 @@ public class ServoEx extends ServoImpl implements PwmControl {
      */
     public ServoEx(@NonNull Servo servo) {
         super(servo.getController(), servo.getPortNumber(), servo.getDirection());
+    }
+
+    /**
+     * Attempts to get the end-to-end time for this servo (only available on ServoEx).
+     *
+     * @param servo the servo to get the time for (rescaling parameters are ignored if this is not a ServoEx)
+     * @param from the rescaling lower limit where the servo is currently
+     * @param to the rescaling upper limit where the servo should go to
+     * @return the rescaled servo end-to-end time if available, else {@link Task#INFINITE_TIMEOUT}.
+     */
+    public static Measure<Time> tryGetEndToEndTime(Servo servo, double from, double to) {
+        return servo instanceof ServoEx sex ? sex.endToEndTime.times(to - from) : Task.INFINITE_TIMEOUT;
     }
 
     /**
@@ -66,6 +84,30 @@ public class ServoEx extends ServoImpl implements PwmControl {
      */
     public void setPositionRefreshRate(@NonNull Measure<Time> refreshRate) {
         refreshRateNanos = (long) refreshRate.in(Nanoseconds);
+    }
+
+    /**
+     * The user-defined time it takes for this servo to travel from position 0 to 1 or 1 to 0.
+     * Default of 1 second.
+     *
+     * @return end to end time
+     */
+    @NonNull
+    public Measure<Time> getEndToEndTime() {
+        return endToEndTime;
+    }
+
+    /**
+     * Set the time at which it takes the servo to complete a full rotation from the programmed 0 to 1 position (and
+     * vice versa). This value is used to define the task timing for several subsystems, including the {@link Switch}
+     * and {@link DualServos}.
+     * <p>
+     * This value can also be used for your own purposes accessed through {@link #getEndToEndTime()}.
+     *
+     * @param servoFullRotationTime the time it takes for the servo to travel from programmed position 0 to 1 or 1 to 0.
+     */
+    public void setEndToEndTime(@NonNull Measure<Time> servoFullRotationTime) {
+        endToEndTime = servoFullRotationTime;
     }
 
     /**
