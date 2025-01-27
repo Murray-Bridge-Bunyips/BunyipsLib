@@ -61,6 +61,16 @@ public interface Ramping {
     Ramping setMaxRampingDelta(double maxDelta);
 
     /**
+     * Set whether a zero (0) value will instantly set this Ramping supplier back to 0.
+     * Useful for motor controls to stop immediately when required.
+     *
+     * @param zeroValueCutoff whether to use a zero-value cutoff (default <b>false</b>, zero values will not cut off the ramp
+     *                        to comply with legacy behaviour)
+     */
+    @NonNull
+    Ramping setZeroInputRampingCutoff(boolean zeroValueCutoff);
+
+    /**
      * SmoothDamp implementation for a {@code double} value.
      *
      * @author Lucas Bubner, 2024
@@ -73,6 +83,7 @@ public interface Ramping {
         private double maxDelta = 1.0;
         // Enabled by default
         private boolean enabled = true;
+        private boolean zeroValueCutoff = false;
 
         /**
          * Set whether the ramping function is enabled.
@@ -126,6 +137,13 @@ public interface Ramping {
             return this;
         }
 
+        @NonNull
+        @Override
+        public Value setZeroInputRampingCutoff(boolean zeroValueCutoff) {
+            this.zeroValueCutoff = zeroValueCutoff;
+            return this;
+        }
+
         /**
          * Gets a SmoothDamped result from the value supplier.
          * Must be called regularly to update the SmoothDamp velocities.
@@ -138,7 +156,8 @@ public interface Ramping {
             if (!enabled)
                 return target;
 
-            if (current == target) {
+            if ((target == 0 && zeroValueCutoff) || current == target) {
+                v.accept(0.0);
                 timer.reset();
                 return target;
             }
@@ -245,6 +264,13 @@ public interface Ramping {
             return this;
         }
 
+        @NonNull
+        @Override
+        public Supplier setZeroInputRampingCutoff(boolean zeroValueCutoff) {
+            v.setZeroInputRampingCutoff(zeroValueCutoff);
+            return this;
+        }
+
         /**
          * Gets a ramped value from the value supplier and target value.
          * Must be called regularly to update the SmoothDamp velocities.
@@ -255,7 +281,6 @@ public interface Ramping {
         public double get(double target) {
             return v.get(current.getAsDouble(), target);
         }
-
 
         /**
          * Gets a ramped value from the value supplier and target value.
@@ -353,12 +378,21 @@ public interface Ramping {
             return this;
         }
 
+        @NonNull
+        @Override
+        public DcMotor setZeroInputRampingCutoff(boolean zeroValueCutoff) {
+            v.setZeroInputRampingCutoff(zeroValueCutoff);
+            return this;
+        }
+
         /**
          * Set the power level of the motor, which will be passed through a SmoothDamp function defined by the motor's ramping parameters.
          * <b>This function must be called periodically</b> (e.g. constantly during an activeLoop) to update the motor's power level,
          * as it relies on the time since the last call to calculate the new power level.
          *
-         * @param power the new power level of the motor, a value in the interval [-1.0, 1.0]
+         * @param power the new power level of the motor, a value in the interval [-1.0, 1.0]. Power levels of 0
+         *              are instantly propagated to the motor if option {@link #setZeroInputRampingCutoff(boolean)} is set.
+         *              By default, the motor will <b>ramp even if the power is 0. Be aware of this default behaviour.</b>
          */
         @Override
         public void setPower(double power) {
@@ -369,6 +403,8 @@ public interface Ramping {
          * Instantly set the power level of the motor, bypassing the SmoothDamp function.
          */
         public void setPowerInstant(double power) {
+            v.v.v.accept(0.0);
+            v.v.timer.reset();
             super.setPower(power);
         }
 
