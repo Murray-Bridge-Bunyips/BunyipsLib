@@ -270,7 +270,8 @@ public class LongToObjectHashMap<V> {
 
         boolean[] newUses = new boolean[newCapacity];
         long[] newKeys = new long[newCapacity];
-        @SuppressWarnings("unchecked") V[] newValues = (V[]) new Object[newCapacity];
+        @SuppressWarnings("unchecked")
+        V[] newValues = (V[]) new Object[newCapacity];
 
         for (int oldBucket = 0; oldBucket < oldCapacity; oldBucket++) {
             if (!oldUses[oldBucket]) {

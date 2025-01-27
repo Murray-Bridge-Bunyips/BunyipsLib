@@ -4,6 +4,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.collections;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -205,7 +207,7 @@ public class LongToObjectHashMap<V> {
      *
      * @return a read-only set of keys
      */
-
+    @NonNull
     public ReadOnlyPrimitiveLongSet keySet() {
         // Copy the sparse key array into a compact array
         long[] keys = new long[size];
@@ -226,7 +228,7 @@ public class LongToObjectHashMap<V> {
      *
      * @return a read-only collection of values
      */
-
+    @NonNull
     public Collection<V> values() {
         Collection<V> vals = new ArrayList<>();
         for (int bucket = 0; bucket < capacity; bucket++) {
@@ -242,7 +244,7 @@ public class LongToObjectHashMap<V> {
      *
      * @param function the function to apply to every key-value pair.
      */
-    public void forEach(IteratorFunction<? super V> function) {
+    public void forEach(@NonNull IteratorFunction<? super V> function) {
         for (int bucket = 0; bucket < capacity; bucket++) {
             if (uses[bucket]) {
                 function.accept(keys[bucket], values[bucket]);
@@ -268,7 +270,8 @@ public class LongToObjectHashMap<V> {
 
         boolean[] newUses = new boolean[newCapacity];
         long[] newKeys = new long[newCapacity];
-        @SuppressWarnings("unchecked") V[] newValues = (V[]) new Object[newCapacity];
+        @SuppressWarnings("unchecked")
+        V[] newValues = (V[]) new Object[newCapacity];
 
         for (int oldBucket = 0; oldBucket < oldCapacity; oldBucket++) {
             if (!oldUses[oldBucket]) {

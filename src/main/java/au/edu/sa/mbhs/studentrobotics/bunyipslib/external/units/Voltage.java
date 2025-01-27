@@ -20,19 +20,11 @@ import androidx.annotation.NonNull;
  * @since 1.0.0-pre
  */
 public class Voltage extends Unit<Voltage> {
-    /**
-     * @noinspection SameParameterValue
-     */
     Voltage(Voltage baseUnit, double baseUnitEquivalent, String name, String symbol) {
         super(baseUnit, baseUnitEquivalent, name, symbol);
     }
 
-    Voltage(
-            Voltage baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Voltage(Voltage baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 

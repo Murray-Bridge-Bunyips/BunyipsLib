@@ -4,7 +4,7 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
 
-import java.util.Locale;
+import androidx.annotation.NonNull;import java.util.Locale;
 
 /**
  * Contains and exposes a set of predefined units.
@@ -437,7 +437,7 @@ public final class Units {
      * @param symbol the symbol of the new derived unit
      * @return the milli-unit
      */
-    public static <U extends Unit<U>> U Milli(Unit<U> baseUnit, String name, String symbol) {
+    public static <U extends Unit<U>> U Milli(@NonNull Unit<U> baseUnit, @NonNull String name, @NonNull String symbol) {
         return derive(baseUnit).splitInto(1000).named(name).symbol(symbol).make();
     }
 
@@ -448,7 +448,7 @@ public final class Units {
      * @param baseUnit the unit being derived from. This does not have to be the base unit of measure
      * @return the milli-unit
      */
-    public static <U extends Unit<U>> U Milli(Unit<U> baseUnit) {
+    public static <U extends Unit<U>> U Milli(@NonNull Unit<U> baseUnit) {
         return Milli(baseUnit, "Milli" + baseUnit.name().toLowerCase(Locale.ROOT), "m" + baseUnit.symbol());
     }
 
@@ -462,7 +462,7 @@ public final class Units {
      * @param symbol the symbol of the new derived unit
      * @return the micro-unit
      */
-    public static <U extends Unit<U>> U Micro(Unit<U> baseUnit, String name, String symbol) {
+    public static <U extends Unit<U>> U Micro(@NonNull Unit<U> baseUnit, @NonNull String name, @NonNull String symbol) {
         return derive(baseUnit).splitInto(1_000_000).named(name).symbol(symbol).make();
     }
 
@@ -473,7 +473,7 @@ public final class Units {
      * @param baseUnit the unit being derived from. This does not have to be the base unit of measure
      * @return the micro-unit
      */
-    public static <U extends Unit<U>> U Micro(Unit<U> baseUnit) {
+    public static <U extends Unit<U>> U Micro(@NonNull Unit<U> baseUnit) {
         return Micro(baseUnit, "Micro" + baseUnit.name().toLowerCase(Locale.ROOT), "u" + baseUnit.symbol());
     }
 
@@ -486,7 +486,7 @@ public final class Units {
      * @param symbol the symbol of the new derived unit
      * @return the kilo-unit
      */
-    public static <U extends Unit<U>> U Kilo(Unit<U> baseUnit, String name, String symbol) {
+    public static <U extends Unit<U>> U Kilo(@NonNull Unit<U> baseUnit, @NonNull String name, @NonNull String symbol) {
         return derive(baseUnit).aggregate(1000).named(name).symbol(symbol).make();
     }
 
@@ -497,7 +497,7 @@ public final class Units {
      * @param baseUnit the unit being derived from. This does not have to be the base unit of measure
      * @return the kilo-unit
      */
-    public static <U extends Unit<U>> U Kilo(Unit<U> baseUnit) {
+    public static <U extends Unit<U>> U Kilo(@NonNull Unit<U> baseUnit) {
         return Kilo(baseUnit, "Kilo" + baseUnit.name().toLowerCase(Locale.ROOT), "K" + baseUnit.symbol());
     }
 
@@ -509,8 +509,8 @@ public final class Units {
      * @param <U> the dimension of the unit to derive
      * @return a builder object
      */
-    @SuppressWarnings("unchecked")
-    public static <U extends Unit<U>> UnitBuilder<U> derive(Unit<U> unit) {
+    @NonNull @SuppressWarnings("unchecked")
+    public static <U extends Unit<U>> UnitBuilder<U> derive(@NonNull Unit<U> unit) {
         return new UnitBuilder<>((U) unit);
     }
 }

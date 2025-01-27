@@ -22,12 +22,12 @@ public final class Accel {
      * Specified minimum acceleration in inches per second squared.
      */
     @Nullable
-    public Double minAccelInchesPerSecSquared;
+    public final Double minAccelInchesPerSecSquared;
     /**
      * Specified maximum acceleration in inches per second squared.
      */
     @Nullable
-    public Double maxAccelInchesPerSecSquared;
+    public final Double maxAccelInchesPerSecSquared;
 
     private Accel(@Nullable Double minAccelInchesPerSecSquared, @Nullable Double maxAccelInchesPerSecSquared) {
         this.minAccelInchesPerSecSquared = minAccelInchesPerSecSquared;

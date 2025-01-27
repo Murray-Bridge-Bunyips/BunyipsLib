@@ -4,6 +4,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.collections.LongToObjectHashMap;
@@ -33,23 +35,13 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
     private final Time period;
 
     Velocity(D unit, Time period, String name, String symbol) {
-        super(
-                unit.isBaseUnit() && period.isBaseUnit()
-                        ? null
-                        : combine(unit.baseUnit, period.baseUnit),
-                unit.toBaseUnits(1) / period.toBaseUnits(1),
-                name,
-                symbol);
+        super(unit.isBaseUnit() && period.isBaseUnit() ? null : combine(unit.baseUnit, period.baseUnit),
+                unit.toBaseUnits(1) / period.toBaseUnits(1), name, symbol);
         this.unit = unit;
         this.period = period;
     }
 
-    Velocity(
-            Velocity<D> baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Velocity(Velocity<D> baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
         unit = baseUnit.unit;
         period = baseUnit.period;
@@ -87,10 +79,9 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
      * @param symbol    the symbol of the new velocity unit
      * @return the new unit
      */
-
+    @NonNull
     @SuppressWarnings("unchecked")
-    public static <D extends Unit<D>> Velocity<D> combine(
-            Unit<D> numerator, Time period, String name, String symbol) {
+    public static <D extends Unit<D>> Velocity<D> combine(@NonNull Unit<D> numerator, @NonNull Time period, @NonNull String name, @NonNull String symbol) {
         long key = cacheKey(numerator, period);
         if (cache.containsKey(key)) {
             return cache.get(key);
@@ -126,9 +117,9 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
      * @param period    the period for unit time
      * @return the new unit
      */
-
+    @NonNull
     @SuppressWarnings("unchecked")
-    public static <D extends Unit<D>> Velocity<D> combine(Unit<D> numerator, Time period) {
+    public static <D extends Unit<D>> Velocity<D> combine(@NonNull Unit<D> numerator, @NonNull Time period) {
         long key = cacheKey(numerator, period);
         if (cache.containsKey(key)) {
             return cache.get(key);
@@ -156,7 +147,7 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
      *
      * @return the period unit
      */
-
+    @NonNull
     public Time getPeriod() {
         return period;
     }
@@ -166,23 +157,23 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
      *
      * @return the reciprocal
      */
-
+    @NonNull
     public Per<Time, D> reciprocal() {
         return period.per(unit);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object other) {
+        if (this == other) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (other == null || getClass() != other.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
+        if (!super.equals(other)) {
             return false;
         }
-        Velocity<?> velocity = (Velocity<?>) o;
+        Velocity<?> velocity = (Velocity<?>) other;
         return unit.equals(velocity.unit) && period.equals(velocity.period);
     }
 

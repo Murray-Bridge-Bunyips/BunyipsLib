@@ -1,94 +1,296 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal
 
-
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Inches;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Radians;
-
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.PoseVelocity2d;
-import com.acmerobotics.roadrunner.Twist2d;
-import com.acmerobotics.roadrunner.Vector2d;
-
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Angle;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Distance;
-
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Mathf.approx
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Mathf.lerp
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Mathf.moveTowards
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Mathf.radToDeg
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Mathf.smoothDamp
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Mathf.wrapDeltaRadians
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Angle
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Distance
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Measure
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Time
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Degrees
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Inches
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Radians
+import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.PoseVelocity2d
+import com.acmerobotics.roadrunner.Rotation2d
+import com.acmerobotics.roadrunner.Twist2d
+import com.acmerobotics.roadrunner.Vector2d
+import dev.frozenmilk.util.cell.Cell
+import kotlin.math.hypot
 
 /**
- * Defines useful conversion methods for RoadRunner geometry types, including conversion between {@link Pose2d} and {@link PoseVelocity2d},
- * as well as restoring some removed methods from RoadRunner v0.5.
- * <p>
+ * Defines useful conversion methods for RoadRunner geometry types, restoring some removed methods from RoadRunner v0.5.
+ *
  * This class was created for migration purposes between RoadRunner v0.5 and v1.0, where new types were introduced
  * and some methods removed, but these methods are still useful within BunyipsLib.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-@SuppressWarnings("UnknownNullness")
-public final class Geometry {
-    private Geometry() {
-    }
-
+object Geometry {
     /**
-     * Create a new {@link Pose2d} with zero values.
+     * Create a new [Pose2d] with zero values.
      *
      * @return the zero pose
      */
-    public static Pose2d zeroPose() {
-        return new Pose2d(0, 0, 0);
+    @JvmStatic
+    fun zeroPose(): Pose2d {
+        return Pose2d(0.0, 0.0, 0.0)
     }
 
     /**
-     * Create a new {@link PoseVelocity2d} with zero values.
+     * Create a new [PoseVelocity2d] with zero values.
      *
      * @return the zero pose velocity
      */
-    public static PoseVelocity2d zeroVel() {
-        return new PoseVelocity2d(new Vector2d(0, 0), 0);
+    @JvmStatic
+    fun zeroVel(): PoseVelocity2d {
+        return PoseVelocity2d(Vector2d(0.0, 0.0), 0.0)
     }
 
     /**
-     * Create a new {@link Vector2d} with zero values.
+     * Create a new [Vector2d] with zero values.
      *
      * @return the zero vector
      */
-    public static Vector2d zeroVec() {
-        return new Vector2d(0, 0);
+    @JvmStatic
+    fun zeroVec(): Vector2d {
+        return Vector2d(0.0, 0.0)
     }
 
     /**
-     * Create a new {@link Twist2d} with zero values.
+     * Create a new [Twist2d] with zero values.
      *
      * @return the zero twist
      */
-    public static Twist2d zeroTwist() {
-        return new Twist2d(new Vector2d(0, 0), 0);
+    @JvmStatic
+    fun zeroTwist(): Twist2d {
+        return Twist2d(Vector2d(0.0, 0.0), 0.0)
+    }
+
+    /**
+     * Create a new [PoseVelocity2d] with x, y, and heading values.
+     *
+     * @param xVel   the +forward velocity
+     * @param yVel   the +left velocity
+     * @param angVel the +anticlockwise heading velocity
+     * @return the pose velocity
+     */
+    @JvmStatic
+    fun vel(xVel: Double, yVel: Double, angVel: Double): PoseVelocity2d {
+        return PoseVelocity2d(Vector2d(xVel, yVel), angVel)
     }
 
     /**
      * Create a vector in the desired units to be converted to a conventional Inches unit.
      *
-     * @param value the vector
      * @param unit  the unit of both the x and y values
      * @return the vector in Inches
      */
-    public static Vector2d unitVec(Vector2d value, Distance unit) {
-        return new Vector2d(unit.of(value.x).in(Inches), unit.of(value.y).in(Inches));
+    @JvmStatic
+    infix fun Vector2d.inchesFrom(unit: Distance): Vector2d {
+        return Vector2d(unit of this.x to Inches, unit of this.y to Inches)
     }
 
     /**
      * Create a pose in the desired units to be converted to conventional Inches and Radians units.
      *
-     * @param vec   the vector element
      * @param tUnit the unit of both the x and y values
      * @param r     the heading value
      * @param rUnit the unit of the heading value
      * @return the vector in Inches
      */
-    public static Pose2d unitPose(Vector2d vec, Distance tUnit, double r, Angle rUnit) {
-        return new Pose2d(
-                tUnit.of(vec.x).in(Inches),
-                tUnit.of(vec.y).in(Inches),
-                rUnit.of(r).in(Radians)
-        );
+    @JvmStatic
+    @JvmOverloads
+    fun Vector2d.poseFrom(tUnit: Distance = Inches, r: Double, rUnit: Angle): Pose2d {
+        return Pose2d(
+            tUnit of this.x to Inches,
+            tUnit of this.y to Inches,
+            rUnit of r to Radians
+        )
+    }
+
+    /**
+     * Compare two poses with an epsilon value.
+     *
+     * @param other the other pose
+     * @return whether the two poses are equal within the epsilon value 1e-6
+     */
+    @JvmStatic
+    infix fun Pose2d.approx(other: Pose2d): Boolean {
+        return this.position.x approx other.position.x
+                && this.position.y approx other.position.y
+                && this.heading.toDouble() approx other.heading.toDouble()
+    }
+
+    /**
+     * Compare two poses with an epsilon value plus a renormalisation of heading.
+     *
+     * @param other the other pose
+     * @return whether the two poses are equal within the epsilon value 1e-6 and heading radius
+     */
+    @JvmStatic
+    infix fun Pose2d.approxNormHeading(other: Pose2d): Boolean {
+        return this.position.x approx other.position.x
+                && this.position.y approx other.position.y
+                && (this.heading.toDouble() - other.heading.toDouble()).wrapDeltaRadians() approx 0
+    }
+
+    /**
+     * Compare two vectors with an epsilon value.
+     *
+     * @param other the other vector to compare
+     * @return whether the two vectors are equal within the epsilon value 1e-6
+     */
+    @JvmStatic
+    infix fun Vector2d.approx(other: Vector2d): Boolean {
+        return this.x approx other.x && this.y approx other.y
+    }
+
+    /**
+     * Calculate the distance between two vectors.
+     *
+     * @param other the other vector
+     * @return the distance between the two vectors
+     */
+    @JvmStatic
+    infix fun Vector2d.distTo(other: Vector2d): Double {
+        return hypot(other.x - this.x, other.y - this.y)
+    }
+
+    /**
+     * Returns a user-friendly representation of a [Pose2d].
+     *
+     * @return the user-friendly string
+     */
+    @JvmStatic
+    fun Pose2d.toUserString(): String {
+        return "Pose2d(x=%.1f, y=%.1f, r=%.1f°)".format(
+            this.position.x,
+            this.position.y,
+            Math.toDegrees(this.heading.toDouble())
+        )
+    }
+
+    /**
+     * Linearly interpolate between two vectors.
+     * The [t] parameter is not clamped between 0-1.
+     */
+    @JvmStatic
+    fun Vector2d.lerp(other: Vector2d, t: Double): Vector2d {
+        return Vector2d(this.x + (other.x - this.x) * t, this.y + (other.y - this.y) * t)
+    }
+
+    /**
+     * Linearly interpolate between two poses.
+     * The [t] parameter is not clamped between 0-1.
+     */
+    @JvmStatic
+    fun Pose2d.lerp(other: Pose2d, t: Double): Pose2d {
+        return Pose2d(
+            this.position.lerp(other.position, t),
+            this.heading.lerp(other.heading, t)
+        )
+    }
+
+    /**
+     * Linearly interpolate between two rotations.
+     * The [t] parameter is not clamped between 0-1.
+     * Rotation value will take the shortest path.
+     */
+    @JvmStatic
+    fun Rotation2d.lerp(other: Rotation2d, t: Double): Rotation2d {
+        return Rotation2d.exp((Radians.of(this.log()) to Radians.of(other.log()) lerp t to Radians))
+    }
+
+    /**
+     * Move a vector towards another vector by a step size.
+     */
+    @JvmStatic
+    fun Vector2d.moveTowards(other: Vector2d, stepSizeInches: Double): Vector2d {
+        return Vector2d(
+            this.x.moveTowards(other.x, stepSizeInches),
+            this.y.moveTowards(other.y, stepSizeInches)
+        )
+    }
+
+    /**
+     * Move a pose towards another pose by a step size.
+     */
+    @JvmStatic
+    fun Pose2d.moveTowards(other: Pose2d, stepSizeInches: Double, stepSizeRad: Double): Pose2d {
+        return Pose2d(
+            this.position.moveTowards(other.position, stepSizeInches),
+            this.heading.moveTowards(other.heading, Radians.of(stepSizeRad))
+        )
+    }
+
+    /**
+     * Move a rotation towards another rotation by a step size.
+     */
+    @JvmStatic
+    fun Rotation2d.moveTowards(other: Rotation2d, stepSize: Measure<Angle>): Rotation2d {
+        return Rotation2d.exp((Radians.of(this.log()).moveTowards(Radians.of(other.log()), stepSize) to Radians))
+    }
+
+    /**
+     * Smoothly damp a vector towards another vector.
+     */
+    @JvmStatic
+    fun Vector2d.smoothDamp(
+        target: Vector2d,
+        currentVelocity: Cell<Double>,
+        smoothTime: Measure<Time>,
+        maxVelocity: Number,
+        deltaTime: Measure<Time>
+    ): Vector2d {
+        return Vector2d(
+            this.x.smoothDamp(target.x, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime),
+            this.y.smoothDamp(target.y, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime)
+        )
+    }
+
+    /**
+     * Smoothly damp a pose towards another pose.
+     * Velocity will be in degrees per second.
+     */
+    @JvmStatic
+    fun Pose2d.smoothDamp(
+        target: Pose2d,
+        currentVelocity: Cell<Double>,
+        smoothTime: Measure<Time>,
+        maxVelocity: Number,
+        deltaTime: Measure<Time>
+    ): Pose2d {
+        return Pose2d(
+            this.position.smoothDamp(target.position, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime),
+            this.heading.smoothDamp(target.heading, currentVelocity, smoothTime, maxVelocity.toDouble(), deltaTime)
+        )
+    }
+
+    /**
+     * Smoothly damp a rotation towards another rotation.
+     * Velocity will be in degrees per second.
+     */
+    @JvmStatic
+    fun Rotation2d.smoothDamp(
+        target: Rotation2d,
+        currentVelocity: Cell<Double>,
+        smoothTime: Measure<Time>,
+        maxVelocity: Number,
+        deltaTime: Measure<Time>
+    ): Rotation2d {
+        return Rotation2d.exp(
+            Degrees.of(this.log().radToDeg()).smoothDamp(
+                Degrees.of(target.log().radToDeg()),
+                currentVelocity,
+                smoothTime,
+                maxVelocity.toDouble(),
+                deltaTime
+            ) to Radians
+        )
     }
 }

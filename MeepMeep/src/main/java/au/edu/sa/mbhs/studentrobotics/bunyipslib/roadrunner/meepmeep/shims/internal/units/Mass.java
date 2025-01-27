@@ -16,19 +16,11 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inte
  * @since 1.0.0-pre
  */
 public class Mass extends Unit<Mass> {
-    /**
-     * @noinspection SameParameterValue
-     */
     Mass(Mass baseUnit, double baseUnitEquivalent, String name, String symbol) {
         super(baseUnit, baseUnitEquivalent, name, symbol);
     }
 
-    Mass(
-            Mass baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Mass(Mass baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 }

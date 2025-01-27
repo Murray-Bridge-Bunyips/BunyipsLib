@@ -16,19 +16,11 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
  * @since 1.0.0-pre
  */
 public class Time extends Unit<Time> {
-    /**
-     * @noinspection SameParameterValue
-     */
     Time(Time baseUnit, double baseUnitEquivalent, String name, String symbol) {
         super(baseUnit, baseUnitEquivalent, name, symbol);
     }
 
-    Time(
-            Time baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Time(Time baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 }

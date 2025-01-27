@@ -72,9 +72,7 @@ open class Unit<U : Unit<U>>(
      * @param symbol             the short symbol for the unit, such as "m" for meters or "lb." for pounds
      */
     protected constructor(baseUnit: U?, baseUnitEquivalent: Double, name: String, symbol: String) : this(
-        baseUnit,
-        { x: Double -> x * baseUnitEquivalent },
-        { x: Double -> x / baseUnitEquivalent }, name, symbol
+        baseUnit, { it * baseUnitEquivalent }, { it / baseUnitEquivalent }, name, symbol
     )
 
     /**
@@ -82,9 +80,7 @@ open class Unit<U : Unit<U>>(
      *
      * @return true if this is the base unit, false if not
      */
-    fun isBaseUnit(): Boolean {
-        return equals(baseUnit)
-    }
+    fun isBaseUnit() = equals(baseUnit)
 
     /**
      * Converts a value in terms of base units to a value in terms of this unit.
@@ -92,9 +88,7 @@ open class Unit<U : Unit<U>>(
      * @param valueInBaseUnits the value in base units to convert
      * @return the equivalent value in terms of this unit
      */
-    fun fromBaseUnits(valueInBaseUnits: Double): Double {
-        return converterFromBase.apply(valueInBaseUnits)
-    }
+    fun fromBaseUnits(valueInBaseUnits: Number) = converterFromBase.apply(valueInBaseUnits.toDouble())
 
     /**
      * Converts a value in terms of this unit to a value in terms of the base unit.
@@ -102,9 +96,7 @@ open class Unit<U : Unit<U>>(
      * @param valueInNativeUnits the value in terms of this unit to convert
      * @return the equivalent value in terms of the base unit
      */
-    fun toBaseUnits(valueInNativeUnits: Double): Double {
-        return converterToBase.apply(valueInNativeUnits)
-    }
+    fun toBaseUnits(valueInNativeUnits: Number) = converterToBase.apply(valueInNativeUnits.toDouble())
 
     /**
      * Converts a magnitude in terms of another unit of the same dimension to a magnitude in terms of
@@ -119,12 +111,13 @@ open class Unit<U : Unit<U>>(
      * @param otherUnit the unit to convert the magnitude to
      * @return the corresponding value in terms of this unit.
      */
-    fun convertFrom(magnitude: Double, otherUnit: Unit<U>): Double {
+    fun convertFrom(magnitude: Number, otherUnit: Unit<U>): Double {
+        val m = magnitude.toDouble()
         if (equivalent(otherUnit)) {
             // same unit, don't bother converting
-            return magnitude
+            return m
         }
-        return fromBaseUnits(otherUnit.toBaseUnits(magnitude))
+        return fromBaseUnits(otherUnit.toBaseUnits(m))
     }
 
     /**
@@ -134,19 +127,17 @@ open class Unit<U : Unit<U>>(
      * @param magnitude the magnitude of the measure to create
      * @return the measure
      */
-    infix fun of(magnitude: Double): Measure<U> {
-        if (magnitude == 0.0) {
+    infix fun of(magnitude: Number): Measure<U> {
+        val m = magnitude.toDouble()
+        if (m == 0.0) {
             // reuse static object
             return zero()
         }
-        if (magnitude == 1.0) {
+        if (m == 1.0) {
             // reuse static object
             return one()
         }
-        return ofRelativeUnits(
-            magnitude,
-            this
-        )
+        return ofRelativeUnits(m, this)
     }
 
     companion object {
@@ -154,27 +145,28 @@ open class Unit<U : Unit<U>>(
          * Creates a new measure of this unit with the given value. The resulting measure is
          * *immutable* and cannot have its value modified.
          *
+         * ```
+         * 15 of Seconds
+         * ```
+         *
          * @return the measure object as associated with the given number
          */
-        infix fun <U : Unit<U>> Number.of(unit: Unit<U>): Measure<U> {
-            return unit.of(this.toDouble())
-        }
+        infix fun <U : Unit<U>> Number.of(unit: Unit<U>) = unit.of(this.toDouble())
 
         /**
-         * Converts a magnitude in terms of this unit to a magnitude in terms of another unit of the same
-         * dimension.
+         * Converts a magnitude in terms of another unit of the same dimension to a magnitude in terms of
+         * this unit.
          *
          * ```
-         * Inches.convertTo(144, Feet) // 12.0
-         * Kilograms.convertTo(1, Pounds) // 2.20462
+         * Inches from (12 to Feet) // 144.0
+         * Kilograms from (2.2 to Pounds) // 0.9979024
          * ```
          *
          * @param conversion a pair of the magnitude and the unit to convert to
          * @return the corresponding value in terms of the other unit.
          */
-        infix fun <U : Unit<U>> Unit<U>.from(conversion: Pair<Double, Unit<U>>): Double {
-            return convertFrom(conversion.first, conversion.second)
-        }
+        infix fun <U : Unit<U>> Unit<U>.from(conversion: Pair<Number, Unit<U>>) =
+            convertFrom(conversion.first.toDouble(), conversion.second)
     }
 
     /**
@@ -184,12 +176,7 @@ open class Unit<U : Unit<U>>(
      * @param baseUnitMagnitude the magnitude of the measure in terms of the base unit
      * @return the measure
      */
-    infix fun ofBaseUnits(baseUnitMagnitude: Double): Measure<U> {
-        return ofBaseUnits(
-            baseUnitMagnitude,
-            this
-        )
-    }
+    infix fun ofBaseUnits(baseUnitMagnitude: Number) = ofBaseUnits(baseUnitMagnitude.toDouble(), this)
 
     /**
      * Gets a measure with a magnitude of 0 in terms of this unit.
@@ -199,10 +186,7 @@ open class Unit<U : Unit<U>>(
     fun zero(): Measure<U> {
         // lazy init because 'this' is null in object initialization
         if (zero == null) {
-            zero = ofRelativeUnits(
-                0.0,
-                this
-            )
+            zero = ofRelativeUnits(0.0, this)
         }
         return zero as Measure<U>
     }
@@ -215,10 +199,7 @@ open class Unit<U : Unit<U>>(
     fun one(): Measure<U> {
         // lazy init because 'this' is null in object initialization
         if (one == null) {
-            one = ofRelativeUnits(
-                1.0,
-                this
-            )
+            one = ofRelativeUnits(1.0, this)
         }
         return one as Measure<U>
     }
@@ -236,9 +217,7 @@ open class Unit<U : Unit<U>>(
      * @param period the time period of the velocity, such as seconds or milliseconds
      * @return a velocity unit corresponding to the rate of change of this unit over time
      */
-    infix fun per(period: Time): Velocity<U> {
-        return Velocity.combine(this, period)
-    }
+    infix fun per(period: Time) = Velocity.combine(this, period)
 
     /**
      * Creates a velocity unit derived from this one. Can be chained to denote velocity, acceleration,
@@ -268,10 +247,8 @@ open class Unit<U : Unit<U>>(
      * @param denominator the denominator of the proportional unit
      * @return a combined proportional unit
      */
-    infix fun <D : Unit<D>> per(denominator: D): Per<U, D> {
-        @Suppress("UNCHECKED_CAST")
-        return Per.combine(this as U, denominator)
-    }
+    @Suppress("UNCHECKED_CAST")
+    infix fun <D : Unit<D>> per(denominator: D) = Per.combine(this as U, denominator)
 
     /**
      * Takes this unit and creates a new proportional unit where this unit is the numerator and the
@@ -300,10 +277,8 @@ open class Unit<U : Unit<U>>(
      * @param other the unit to multiply by
      * @return a combined unit equivalent to this unit multiplied by the other
      */
-    infix fun <U2 : Unit<U2>> mult(other: U2): Mult<U, U2> {
-        @Suppress("UNCHECKED_CAST")
-        return Mult.combine(this as U, other)
-    }
+    @Suppress("UNCHECKED_CAST")
+    infix fun <U2 : Unit<U2>> mult(other: U2) = Mult.combine(this as U, other)
 
     /**
      * Takes this unit and creates a new combinatory unit equivalent to this unit multiplied by
@@ -336,13 +311,8 @@ open class Unit<U : Unit<U>>(
 
         val arbitrary = 16777.214 // 2^24 / 1e3
 
-        return abs(
-            converterFromBase.apply(arbitrary)
-                    - other.converterFromBase.apply(arbitrary)
-        ) <= Measure.EQUIVALENCE_THRESHOLD
-                && abs(
-            converterToBase.apply(arbitrary) - other.converterToBase.apply(arbitrary)
-        ) <= Measure.EQUIVALENCE_THRESHOLD
+        return abs(converterFromBase.apply(arbitrary) - other.converterFromBase.apply(arbitrary)) <= Measure.EQUIVALENCE_THRESHOLD &&
+                abs(converterToBase.apply(arbitrary) - other.converterToBase.apply(arbitrary)) <= Measure.EQUIVALENCE_THRESHOLD
     }
 
     override operator fun equals(other: Any?): Boolean {
@@ -355,29 +325,21 @@ open class Unit<U : Unit<U>>(
         return name == other.name && symbol == other.symbol && equivalent(other)
     }
 
-    override fun hashCode(): Int {
-        return Objects.hash(converterToBase, converterFromBase, name, symbol)
-    }
+    override fun hashCode() = Objects.hash(converterToBase, converterFromBase, name, symbol)
 
     /**
      * Gets the name of this unit.
      *
      * @return the unit's name
      */
-    fun name(): String {
-        return name
-    }
+    fun name() = name
 
     /**
      * Gets the symbol of this unit.
      *
      * @return the unit's symbol
      */
-    fun symbol(): String {
-        return symbol
-    }
+    fun symbol() = symbol
 
-    override fun toString(): String {
-        return name()
-    }
+    override fun toString() = name()
 }

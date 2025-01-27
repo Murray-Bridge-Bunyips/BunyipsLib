@@ -12,6 +12,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+
 /**
  * Builder used for easily deriving new units from existing ones. When deriving a new unit, the base
  * unit class <strong>must</strong> redeclare the constructor {@link Unit#Unit(Unit, UnaryFunction,
@@ -40,29 +42,8 @@ public final class UnitBuilder<U extends Unit<U>> {
         this.base = Objects.requireNonNull(base, "Base unit cannot be null");
     }
 
-    /**
-     * Maps a value {@code value} in the range {@code [inMin..inMax]} to an output in the range {@code
-     * [outMin..outMax]}. Inputs outside the bounds will be mapped correspondingly to outputs outside
-     * the output bounds. Inputs equal to {@code inMin} will be mapped to {@code outMin}, and inputs
-     * equal to {@code inMax} will similarly be mapped to {@code outMax}.
-     *
-     * @param value  the value to map
-     * @param inMin  the minimum input value (does not have to be absolute)
-     * @param inMax  the maximum input value (does not have to be absolute)
-     * @param outMin the minimum output value (does not have to be absolute)
-     * @param outMax the maximum output value (does not have to be absolute)
-     * @return the mapped output
-     */
-    // NOTE: This method lives here instead of in MappingBuilder because inner classes can't
-    // define static methods prior to Java 16.
-    private static double mapValue(
-            double value, double inMin, double inMax, double outMin, double outMax) {
-        return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-    }
-
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <U extends Unit<U>> Constructor<? extends Unit<U>> getConstructor(U baseUnit)
-            throws NoSuchMethodException {
+    private static <U extends Unit<U>> Constructor<? extends Unit<U>> getConstructor(U baseUnit) throws NoSuchMethodException {
         Class<? extends Unit> baseClass = baseUnit.getClass();
 
         Constructor<? extends Unit<U>> ctor =
@@ -208,8 +189,7 @@ public final class UnitBuilder<U extends Unit<U>> {
         Objects.requireNonNull(nameVal, "new unit name was not set");
         Objects.requireNonNull(symbolVal, "new unit symbol was not set");
 
-        return constructor.create(
-                base.baseUnit,
+        return constructor.create(base.baseUnit,
                 toBaseVal.pipeTo(base.getConverterToBase()),
                 base.getConverterFromBase().pipeTo(fromBaseVal),
                 nameVal,
@@ -229,7 +209,6 @@ public final class UnitBuilder<U extends Unit<U>> {
         return make(
                 (baseUnit, toBaseUnits, fromBaseUnits, name, symbol) -> {
                     Class<?> baseClass = baseUnit.getClass();
-
                     try {
                         Constructor<? extends Unit<U>> ctor = getConstructor(baseUnit);
                         return (U) ctor.newInstance(baseUnit, toBaseUnits, fromBaseUnits, name, symbol);
@@ -271,12 +250,11 @@ public final class UnitBuilder<U extends Unit<U>> {
          * @param symbol        the shorthand symbol of the new unit
          * @return a new unit
          */
-        U create(
-                U baseUnit,
-                @NonNull UnaryFunction toBaseUnits,
-                @NonNull UnaryFunction fromBaseUnits,
-                @NonNull String name,
-                @SuppressLint("LambdaLast") @NonNull String symbol);
+        U create(U baseUnit,
+                 @NonNull UnaryFunction toBaseUnits,
+                 @NonNull UnaryFunction fromBaseUnits,
+                 @NonNull String name,
+                 @SuppressLint("LambdaLast") @NonNull String symbol);
     }
 
     /**
@@ -300,8 +278,8 @@ public final class UnitBuilder<U extends Unit<U>> {
          */
         @NonNull
         public UnitBuilder<U> toOutputRange(double minOutput, double maxOutput) {
-            fromBaseVal = x -> mapValue(x, minInput, maxInput, minOutput, maxOutput);
-            toBaseVal = y -> mapValue(y, minOutput, maxOutput, minInput, maxInput);
+            fromBaseVal = x -> Mathf.scale(x, minInput, maxInput, minOutput, maxOutput);
+            toBaseVal = y -> Mathf.scale(y, minOutput, maxOutput, minInput, maxInput);
             return UnitBuilder.this;
         }
     }

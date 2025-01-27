@@ -29,12 +29,12 @@ public final class Vel {
      * Specified maximum translation velocity in inches per second.
      */
     @Nullable
-    public Double maxVelInchesPerSec;
+    public final Double maxVelInchesPerSec;
     /**
      * Specified maximum angular velocity in radians per second.
      */
     @Nullable
-    public Double maxAngVelRadsPerSec;
+    public final Double maxAngVelRadsPerSec;
 
     private Vel(@Nullable Double maxVelInchesPerSec, @Nullable Double maxAngVelRadsPerSec) {
         this.maxVelInchesPerSec = maxVelInchesPerSec;

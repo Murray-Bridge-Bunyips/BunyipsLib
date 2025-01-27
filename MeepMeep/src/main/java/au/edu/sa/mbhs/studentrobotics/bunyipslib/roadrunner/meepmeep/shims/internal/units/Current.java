@@ -4,8 +4,9 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
 
-
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Watts;
+
+import androidx.annotation.NonNull;
 
 /**
  * Unit of electric current dimension.
@@ -19,19 +20,11 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shim
  * @since 1.0.0-pre
  */
 public class Current extends Unit<Current> {
-    /**
-     * @noinspection SameParameterValue
-     */
     Current(Current baseUnit, double baseUnitEquivalent, String name, String symbol) {
         super(baseUnit, baseUnitEquivalent, name, symbol);
     }
 
-    Current(
-            Current baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Current(Current baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 
@@ -46,7 +39,8 @@ public class Current extends Unit<Current> {
      * @param symbol  the symbol used to represent the unit of power
      * @return the power unit
      */
-    public Power times(Unit<Voltage> voltage, String name, String symbol) {
+    @NonNull
+    public Power times(@NonNull Unit<Voltage> voltage, @NonNull String name, @NonNull String symbol) {
         return new Power(Watts, toBaseUnits(1) * voltage.toBaseUnits(1), name, symbol);
     }
 }

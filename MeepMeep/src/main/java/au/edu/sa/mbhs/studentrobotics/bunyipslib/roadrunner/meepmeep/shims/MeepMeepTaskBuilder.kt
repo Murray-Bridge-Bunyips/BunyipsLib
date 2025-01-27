@@ -1,5 +1,8 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.constraints.Accel
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.constraints.Turn
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.constraints.Vel
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Distance
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Measure
@@ -31,10 +34,12 @@ import java.util.function.Consumer
 /**
  * Extension of a RoadRunner trajectory builder to provide WPIUnits and task building support.
  *
+ * This is a shim for MeepMeep support as running the BunyipsLib Task and other utilities are not supported.
+ *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-class TaskBuilder(
+class MeepMeepTaskBuilder(
     private var builder: TrajectoryActionBuilder,
     private val baseConstraints: Constraints,
     private val driveTrainType: DriveTrainType,
@@ -639,13 +644,15 @@ class TaskBuilder(
     /**
      * Creates a new builder with the same settings and default constraints at the current pose, tangent.
      */
-    fun fresh(): TaskBuilder {
+    fun fresh(): MeepMeepTaskBuilder {
         val bClass = builder::class.java
         val lastTangentField = bClass.getDeclaredField("lastTangent")
         lastTangentField.isAccessible = true
         val lastTangent = lastTangentField.get(builder) as Rotation2d
 
-        return TaskBuilder(builder.endTrajectory().fresh(), baseConstraints, driveTrainType).setTangent(lastTangent)
+        return MeepMeepTaskBuilder(builder.endTrajectory().fresh(), baseConstraints, driveTrainType).setTangent(
+            lastTangent
+        )
     }
 
     /**
@@ -739,7 +746,7 @@ class TaskBuilder(
      * Returns the result of [fresh] to allow chaining of future tasks.
      */
     @JvmOverloads
-    fun addTask(setUnmappedEndPoseRef: Cell<Pose2d>? = null): TaskBuilder {
+    fun addTask(setUnmappedEndPoseRef: Cell<Pose2d>? = null): MeepMeepTaskBuilder {
         runActionConsumer.accept(if (setUnmappedEndPoseRef != null) build(setUnmappedEndPoseRef) else build())
         return fresh()
     }

@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
@@ -19,7 +20,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.DualServos;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.Switch;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 
 /**
  * Extension of the extended {@link Servo} interface that allows for motion profiling via a {@link TrapezoidProfile}.
@@ -61,10 +62,10 @@ public class ServoEx extends ServoImpl implements PwmControl {
      * @param servo the servo to get the time for (rescaling parameters are ignored if this is not a ServoEx)
      * @param from the rescaling lower limit where the servo is currently
      * @param to the rescaling upper limit where the servo should go to
-     * @return the rescaled servo end-to-end time if available, else {@link Task#INFINITE_TIMEOUT}.
+     * @return the rescaled servo end-to-end time if available, else {@link Lambda#EPSILON_MS}.
      */
     public static Measure<Time> tryGetEndToEndTime(Servo servo, double from, double to) {
-        return servo instanceof ServoEx sex ? sex.endToEndTime.times(to - from) : Task.INFINITE_TIMEOUT;
+        return servo instanceof ServoEx sex ? sex.endToEndTime.times(to - from) : Milliseconds.of(Lambda.EPSILON_MS);
     }
 
     /**

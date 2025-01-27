@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ServoEx;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
@@ -122,7 +123,12 @@ public class Cannon extends BunyipsSubsystem {
          */
         @NonNull
         public Task fire() {
-            return new Lambda(Cannon.this::fire).on(Cannon.this, true).named(name + ":Fire");
+            return new Lambda((t) -> {
+                t.timeout = ServoEx.tryGetEndToEndTime(prolong, target, FIRED);
+                Cannon.this.fire();
+            }).on(Cannon.this, true)
+                    .timeout(ServoEx.tryGetEndToEndTime(prolong, target, FIRED)) // preliminary
+                    .named(name + ":Fire");
         }
 
         /**
@@ -132,7 +138,12 @@ public class Cannon extends BunyipsSubsystem {
          */
         @NonNull
         public Task reset() {
-            return new Lambda(Cannon.this::reset).on(Cannon.this, true).named(name + ":Reset");
+            return new Lambda((t) -> {
+                t.timeout = ServoEx.tryGetEndToEndTime(prolong, target, RESET);
+                Cannon.this.reset();
+            }).on(Cannon.this, true)
+                    .timeout(ServoEx.tryGetEndToEndTime(prolong, target, RESET)) // preliminary
+                    .named(name + ":Reset");
         }
     }
 }

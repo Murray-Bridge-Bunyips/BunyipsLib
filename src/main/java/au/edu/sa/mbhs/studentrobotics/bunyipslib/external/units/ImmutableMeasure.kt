@@ -14,8 +14,11 @@ import java.util.Objects
  * @param U the unit type of the measure
  * @since 1.0.0-pre
  */
-class ImmutableMeasure<U : Unit<U>> internal constructor(magnitude: Double, baseUnitMagnitude: Double, unit: Unit<U>) :
-    Measure<U> {
+class ImmutableMeasure<U : Unit<U>> internal constructor(
+    magnitude: Double,
+    baseUnitMagnitude: Double,
+    unit: Unit<U>
+) : Measure<U> {
     private val magnitude: Double
     private val baseUnitMagnitude: Double
     private val unit: U
@@ -32,23 +35,11 @@ class ImmutableMeasure<U : Unit<U>> internal constructor(magnitude: Double, base
         this.unit = unit as U
     }
 
-    /**
-     * Gets the unitless magnitude of this measure.
-     */
-    override fun magnitude(): Double {
-        return magnitude
-    }
+    override fun magnitude() = magnitude
 
-    override fun baseUnitMagnitude(): Double {
-        return baseUnitMagnitude
-    }
+    override fun baseUnitMagnitude() = baseUnitMagnitude
 
-    /**
-     * Gets the units of this measure.
-     */
-    override fun unit(): U {
-        return unit
-    }
+    override fun unit() = unit
 
     /**
      * Checks for *object equality*. To check if two measures are *equivalent*, use [isEquivalent].
@@ -63,17 +54,11 @@ class ImmutableMeasure<U : Unit<U>> internal constructor(magnitude: Double, base
         return unit == other.unit() && baseUnitMagnitude == other.baseUnitMagnitude()
     }
 
-    override fun hashCode(): Int {
-        return Objects.hash(magnitude, unit)
-    }
+    override fun hashCode() = Objects.hash(magnitude, unit)
 
-    override fun copy(): Measure<U> {
-        return this // Already immutable, no need to allocate a new object
-    }
+    override fun copy() = this // Already immutable, no need to allocate a new object
 
-    override fun toString(): String {
-        return toShortString()
-    }
+    override fun toString() = toShortString()
 
     companion object {
         /**
@@ -84,11 +69,8 @@ class ImmutableMeasure<U : Unit<U>> internal constructor(magnitude: Double, base
          * @param unit              the unit of measure
          * @return a new measure
          */
-        fun <U : Unit<U>> ofBaseUnits(
-            baseUnitMagnitude: Double, unit: Unit<U>
-        ): ImmutableMeasure<U> {
-            return ImmutableMeasure(unit.fromBaseUnits(baseUnitMagnitude), baseUnitMagnitude, unit)
-        }
+        fun <U : Unit<U>> ofBaseUnits(baseUnitMagnitude: Double, unit: Unit<U>) =
+            ImmutableMeasure(unit.fromBaseUnits(baseUnitMagnitude), baseUnitMagnitude, unit)
 
         /**
          * Creates a new measure in the given unit with a magnitude in terms of that unit.
@@ -98,10 +80,7 @@ class ImmutableMeasure<U : Unit<U>> internal constructor(magnitude: Double, base
          * @param unit              the unit of measure
          * @return a new measure
          */
-        fun <U : Unit<U>> ofRelativeUnits(
-            relativeMagnitude: Double, unit: Unit<U>
-        ): ImmutableMeasure<U> {
-            return ImmutableMeasure(relativeMagnitude, unit.toBaseUnits(relativeMagnitude), unit)
-        }
+        fun <U : Unit<U>> ofRelativeUnits(relativeMagnitude: Double, unit: Unit<U>) =
+            ImmutableMeasure(relativeMagnitude, unit.toBaseUnits(relativeMagnitude), unit)
     }
 }

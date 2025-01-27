@@ -10,19 +10,11 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
  * @since 1.0.0-pre
  */
 public class Dimensionless extends Unit<Dimensionless> {
-    /**
-     * @noinspection SameParameterValue
-     */
     Dimensionless(Dimensionless baseUnit, double baseUnitEquivalent, String name, String symbol) {
         super(baseUnit, baseUnitEquivalent, name, symbol);
     }
 
-    Dimensionless(
-            Dimensionless baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Dimensionless(Dimensionless baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 }

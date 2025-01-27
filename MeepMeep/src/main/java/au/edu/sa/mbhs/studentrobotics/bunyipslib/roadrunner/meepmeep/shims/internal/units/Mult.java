@@ -4,8 +4,7 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
 
-
-import org.jetbrains.annotations.NotNull;
+import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
@@ -34,8 +33,7 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
      * @param b the second unit of the product
      */
     protected Mult(A a, B b) {
-        super(
-                a.isBaseUnit() && b.isBaseUnit() ? null : combine(a.baseUnit, b.baseUnit),
+        super(a.isBaseUnit() && b.isBaseUnit() ? null : combine(a.baseUnit, b.baseUnit),
                 a.toBaseUnits(1) * b.toBaseUnits(1),
                 a.name() + "-" + b.name(),
                 a.symbol() + "*" + b.symbol());
@@ -43,12 +41,7 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
         unitB = b;
     }
 
-    Mult(
-            Mult<A, B> baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Mult(Mult<A, B> baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
         unitA = baseUnit.unitA();
         unitB = baseUnit.unitB();
@@ -70,6 +63,7 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
      * @param b   the second unit
      * @return the combined unit
      */
+    @NonNull
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <A extends Unit<A>, B extends Unit<B>> Mult<A, B> combine(A a, B b) {
         long key = ((long) a.hashCode()) << 32L | (b.hashCode() & 0xFFFFFFFFL);
@@ -100,24 +94,24 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
         return unitB;
     }
 
+    @NonNull
     @Override
-    @NotNull
     public String toString() {
         return "(" + unitA.toString() + " * " + unitB.toString() + ")";
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object other) {
+        if (this == other) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (other == null || getClass() != other.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
+        if (!super.equals(other)) {
             return false;
         }
-        Mult<?, ?> mult = (Mult<?, ?>) o;
+        Mult<?, ?> mult = (Mult<?, ?>) other;
         return Objects.equals(unitA, mult.unitA) && Objects.equals(unitB, mult.unitB);
     }
 

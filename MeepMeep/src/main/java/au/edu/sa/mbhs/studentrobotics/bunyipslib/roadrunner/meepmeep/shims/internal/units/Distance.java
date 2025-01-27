@@ -16,19 +16,11 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inte
  * @since 1.0.0-pre
  */
 public class Distance extends Unit<Distance> {
-    /**
-     * @noinspection SameParameterValue
-     */
     Distance(Distance baseUnit, double baseUnitEquivalent, String name, String symbol) {
         super(baseUnit, baseUnitEquivalent, name, symbol);
     }
 
-    Distance(
-            Distance baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Distance(Distance baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 }

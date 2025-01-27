@@ -33,8 +33,7 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
      * @param b the second unit of the product
      */
     protected Mult(A a, B b) {
-        super(
-                a.isBaseUnit() && b.isBaseUnit() ? null : combine(a.baseUnit, b.baseUnit),
+        super(a.isBaseUnit() && b.isBaseUnit() ? null : combine(a.baseUnit, b.baseUnit),
                 a.toBaseUnits(1) * b.toBaseUnits(1),
                 a.name() + "-" + b.name(),
                 a.symbol() + "*" + b.symbol());
@@ -42,12 +41,7 @@ public class Mult<A extends Unit<A>, B extends Unit<B>> extends Unit<Mult<A, B>>
         unitB = b;
     }
 
-    Mult(
-            Mult<A, B> baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Mult(Mult<A, B> baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
         unitA = baseUnit.unitA();
         unitB = baseUnit.unitB();

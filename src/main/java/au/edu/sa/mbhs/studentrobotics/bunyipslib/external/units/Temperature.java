@@ -16,15 +16,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
  * @since 1.0.0-pre
  */
 public class Temperature extends Unit<Temperature> {
-    /**
-     * @noinspection SameParameterValue, SameParameterValue, SameParameterValue
-     */
-    Temperature(
-            Temperature baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Temperature(Temperature baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 }

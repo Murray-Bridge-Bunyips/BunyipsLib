@@ -168,7 +168,7 @@ abstract class Task : Runnable, Action {
     /**
      * Set the timeout of this task dynamically and return the task.
      */
-    infix fun timeout(timeout: Measure<Time>) = apply { this.timeout = timeout }
+    infix fun timeout(timeout: Measure<Time>?) = apply { timeout?.let { this.timeout = timeout } }
 
     /**
      * Get the name of this task. By default, it will be the class simple name, but you can call [named] to set a

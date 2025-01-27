@@ -4,8 +4,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {
@@ -16,12 +16,18 @@ repositories {
 
 dependencies {
     implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.6'
+    // We have dependency troubles trying to import BunyipsLib, since it is an Android
+    // library and we explicitly need a Java-only lib for JavaFx. We could split BunyipsLib
+    // into both a core/ftc subpackage system, but it is easier to just shim away duplicates
+    // that can port between easily. A bit ugly, but oh well. It's the easiest way without
+    // increasing installation and updating complexity. We import some libraries that
+    // BunyipsLib depends on and we can just use now.
     implementation 'dev.frozenmilk.dairy:Util:1.1.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'androidx.annotation:annotation-jvm:1.9.1'
 }
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }

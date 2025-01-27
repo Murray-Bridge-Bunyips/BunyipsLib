@@ -4,6 +4,8 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.collections.LongToObjectHashMap;
@@ -37,10 +39,7 @@ public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
      * @param denominator the denominator unit
      */
     protected Per(N numerator, D denominator) {
-        super(
-                numerator.isBaseUnit() && denominator.isBaseUnit()
-                        ? null
-                        : combine(numerator.baseUnit, denominator.baseUnit),
+        super(numerator.isBaseUnit() && denominator.isBaseUnit() ? null : combine(numerator.baseUnit, denominator.baseUnit),
                 numerator.toBaseUnits(1) / denominator.toBaseUnits(1),
                 numerator.name() + " per " + denominator.name(),
                 numerator.symbol() + "/" + denominator.symbol());
@@ -48,12 +47,7 @@ public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
         this.denominator = denominator;
     }
 
-    Per(
-            Per<N, D> baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Per(Per<N, D> baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
         numerator = baseUnit.numerator();
         denominator = baseUnit.denominator();
@@ -76,11 +70,10 @@ public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
      * @param denominator the denominator for unit time
      * @return the combined unit
      */
+    @NonNull
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public static <N extends Unit<N>, D extends Unit<D>> Per<N, D> combine(
-            N numerator, D denominator) {
-        long key =
-                ((long) numerator.hashCode()) << 32L | (denominator.hashCode() & 0xFFFFFFFFL);
+    public static <N extends Unit<N>, D extends Unit<D>> Per<N, D> combine(N numerator, D denominator) {
+        long key = ((long) numerator.hashCode()) << 32L | (denominator.hashCode() & 0xFFFFFFFFL);
 
         Per existing = cache.get(key);
         if (existing != null) {
@@ -115,24 +108,24 @@ public class Per<N extends Unit<N>, D extends Unit<D>> extends Unit<Per<N, D>> {
      *
      * @return the reciprocal
      */
+    @NonNull
     public Per<D, N> reciprocal() {
         return denominator.per(numerator);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object other) {
+        if (this == other) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (other == null || getClass() != other.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
+        if (!super.equals(other)) {
             return false;
         }
-        Per<?, ?> per = (Per<?, ?>) o;
-        return Objects.equals(numerator, per.numerator)
-                && Objects.equals(denominator, per.denominator);
+        Per<?, ?> per = (Per<?, ?>) other;
+        return Objects.equals(numerator, per.numerator) && Objects.equals(denominator, per.denominator);
     }
 
     @Override

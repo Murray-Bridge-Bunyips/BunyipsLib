@@ -244,7 +244,7 @@ public class Switch extends BunyipsSubsystem {
          * @return Open switch task.
          */
         @NonNull
-        public Task open() {
+        public Task open() { // TODO
             return new Lambda(Switch.this::open)
                     .on(Switch.this, true)
                     .named(name + ":Open");
@@ -282,6 +282,7 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task setToUnclipped(double position) {
+            // TODO: setTo task names are only set on creation of the tasks and don't reflect later changes to positions
             return new Lambda(() -> setPositionUnclipped(position))
                     .on(Switch.this, true)
                     .named(name + ":Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");

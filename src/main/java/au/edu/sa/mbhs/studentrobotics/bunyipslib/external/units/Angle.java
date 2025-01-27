@@ -19,19 +19,11 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 // e.g. Mass * Distance * Velocity<Angle> is equivalent to (Mass * Distance) / Time - otherwise known
 // as Power - in other words, Velocity<Angle> is /actually/ Frequency
 public class Angle extends Unit<Angle> {
-    /**
-     * @noinspection SameParameterValue
-     */
     Angle(Angle baseUnit, double baseUnitEquivalent, String name, String symbol) {
         super(baseUnit, baseUnitEquivalent, name, symbol);
     }
 
-    Angle(
-            Angle baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Angle(Angle baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 }

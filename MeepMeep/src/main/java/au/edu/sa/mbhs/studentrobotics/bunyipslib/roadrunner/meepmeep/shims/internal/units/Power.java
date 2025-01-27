@@ -20,12 +20,7 @@ public class Power extends Unit<Power> {
         super(baseUnit, baseUnitEquivalent, name, symbol);
     }
 
-    Power(
-            Power baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Power(Power baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 }

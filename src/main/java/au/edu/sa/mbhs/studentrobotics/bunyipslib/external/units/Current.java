@@ -20,19 +20,11 @@ import androidx.annotation.NonNull;
  * @since 1.0.0-pre
  */
 public class Current extends Unit<Current> {
-    /**
-     * @noinspection SameParameterValue
-     */
     Current(Current baseUnit, double baseUnitEquivalent, String name, String symbol) {
         super(baseUnit, baseUnitEquivalent, name, symbol);
     }
 
-    Current(
-            Current baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Current(Current baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 

@@ -35,23 +35,13 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
     private final Time period;
 
     Velocity(D unit, Time period, String name, String symbol) {
-        super(
-                unit.isBaseUnit() && period.isBaseUnit()
-                        ? null
-                        : combine(unit.baseUnit, period.baseUnit),
-                unit.toBaseUnits(1) / period.toBaseUnits(1),
-                name,
-                symbol);
+        super(unit.isBaseUnit() && period.isBaseUnit() ? null : combine(unit.baseUnit, period.baseUnit),
+                unit.toBaseUnits(1) / period.toBaseUnits(1), name, symbol);
         this.unit = unit;
         this.period = period;
     }
 
-    Velocity(
-            Velocity<D> baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Velocity(Velocity<D> baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
         unit = baseUnit.unit;
         period = baseUnit.period;
@@ -91,8 +81,7 @@ public class Velocity<D extends Unit<D>> extends Unit<Velocity<D>> {
      */
     @NonNull
     @SuppressWarnings("unchecked")
-    public static <D extends Unit<D>> Velocity<D> combine(
-            @NonNull Unit<D> numerator, @NonNull Time period, @NonNull String name, @NonNull String symbol) {
+    public static <D extends Unit<D>> Velocity<D> combine(@NonNull Unit<D> numerator, @NonNull Time period, @NonNull String name, @NonNull String symbol) {
         long key = cacheKey(numerator, period);
         if (cache.containsKey(key)) {
             return cache.get(key);

@@ -22,17 +22,17 @@ public final class Turn {
      * Specified maximum angular velocity in radians per second.
      */
     @Nullable
-    public Double maxAngVelRadsPerSec;
+    public final Double maxAngVelRadsPerSec;
     /**
      * Specified minimum angular acceleration in radians per second squared.
      */
     @Nullable
-    public Double minAngAccelRadsPerSecSquared;
+    public final Double minAngAccelRadsPerSecSquared;
     /**
      * Specified maximum angular acceleration in radians per second squared.
      */
     @Nullable
-    public Double maxAngAccelRadsPerSecSquared;
+    public final Double maxAngAccelRadsPerSecSquared;
 
     private Turn(@Nullable Double maxAngVelRadsPerSec, @Nullable Double minAngAccelRadsPerSecSquared, @Nullable Double maxAngAccelRadsPerSecSquared) {
         this.maxAngVelRadsPerSec = maxAngVelRadsPerSec;

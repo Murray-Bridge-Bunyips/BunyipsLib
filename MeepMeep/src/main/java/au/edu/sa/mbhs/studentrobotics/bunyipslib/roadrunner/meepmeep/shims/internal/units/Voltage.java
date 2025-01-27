@@ -6,6 +6,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inte
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Watts;
 
+import androidx.annotation.NonNull;
+
 /**
  * Unit of electric voltage dimension.
  *
@@ -18,19 +20,11 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shim
  * @since 1.0.0-pre
  */
 public class Voltage extends Unit<Voltage> {
-    /**
-     * @noinspection SameParameterValue
-     */
     Voltage(Voltage baseUnit, double baseUnitEquivalent, String name, String symbol) {
         super(baseUnit, baseUnitEquivalent, name, symbol);
     }
 
-    Voltage(
-            Voltage baseUnit,
-            UnaryFunction toBaseConverter,
-            UnaryFunction fromBaseConverter,
-            String name,
-            String symbol) {
+    Voltage(Voltage baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
     }
 
@@ -45,8 +39,8 @@ public class Voltage extends Unit<Voltage> {
      * @param symbol  the symbol used to represent the unit of power
      * @return the power unit
      */
-
-    public Power times(Unit<Current> current, String name, String symbol) {
+    @NonNull
+    public Power times(@NonNull Unit<Current> current, @NonNull String name, @NonNull String symbol) {
         return new Power(Watts, toBaseUnits(1) * current.toBaseUnits(1), name, symbol);
     }
 }

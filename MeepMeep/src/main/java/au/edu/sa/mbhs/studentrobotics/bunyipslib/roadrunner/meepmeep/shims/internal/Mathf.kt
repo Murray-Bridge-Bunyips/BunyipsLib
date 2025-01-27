@@ -1,14 +1,13 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.external
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Angle
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Measure
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Time
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Degrees
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Radians
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Seconds
 import com.acmerobotics.roadrunner.Vector2d
 import dev.frozenmilk.util.cell.Cell
-import org.opencv.core.Point
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
@@ -614,37 +613,40 @@ object Mathf {
     /**
      * Orders OpenCV camera points to be in the order top-left, top-right, bottom-right and bottom-left.
      */
+    @Suppress("UnusedReceiverParameter")
     @JvmStatic
-    fun Array<Point>.orderPoints(): Array<Point?> {
-        val orderedPts: Array<Point?> = arrayOfNulls(4)
-
-        // Sum and difference of x and y coordinates
-        val sum = DoubleArray(4)
-        val diff = DoubleArray(4)
-
-        for (i in 0..3) {
-            sum[i] = this[i].x + this[i].y
-            diff[i] = this[i].y - this[i].x
-        }
-
-        // Top-left point has the smallest sum
-        val tlIndex = sum.indexOfMin()
-        orderedPts[0] = this[tlIndex]
-
-        // Bottom-right point has the largest sum
-        val brIndex = sum.indexOfMax()
-        orderedPts[2] = this[brIndex]
-
-        // Top-right point has the smallest difference
-        val trIndex = diff.indexOfMin()
-        orderedPts[1] = this[trIndex]
-
-        // Bottom-left point has the largest difference
-        val blIndex = diff.indexOfMax()
-        orderedPts[3] = this[blIndex]
-
-        return orderedPts
-    }
+    fun Array<Any>.orderPoints() = NotImplementedError("Stubbed!")
+//    @JvmStatic
+//    fun Array<Point>.orderPoints(): Array<Point?> {
+//        val orderedPts: Array<Point?> = arrayOfNulls(4)
+//
+//        // Sum and difference of x and y coordinates
+//        val sum = DoubleArray(4)
+//        val diff = DoubleArray(4)
+//
+//        for (i in 0..3) {
+//            sum[i] = this[i].x + this[i].y
+//            diff[i] = this[i].y - this[i].x
+//        }
+//
+//        // Top-left point has the smallest sum
+//        val tlIndex = sum.indexOfMin()
+//        orderedPts[0] = this[tlIndex]
+//
+//        // Bottom-right point has the largest sum
+//        val brIndex = sum.indexOfMax()
+//        orderedPts[2] = this[brIndex]
+//
+//        // Top-right point has the smallest difference
+//        val trIndex = diff.indexOfMin()
+//        orderedPts[1] = this[trIndex]
+//
+//        // Bottom-left point has the largest difference
+//        val blIndex = diff.indexOfMax()
+//        orderedPts[3] = this[blIndex]
+//
+//        return orderedPts
+//    }
 
     /**
      * Determines the index with the lowest value in this array.

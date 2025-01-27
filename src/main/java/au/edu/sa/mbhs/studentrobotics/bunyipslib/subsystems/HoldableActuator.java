@@ -647,7 +647,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     .onFinish(() -> userPower = 0)
                     .on(HoldableActuator.this, true)
                     .timeout(time)
-                    .named(name + ":Run For Time");
+                    .named(name + ":Run For " + time);
         }
 
         private Task homingOperation(int direction) {

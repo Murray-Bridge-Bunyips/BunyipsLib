@@ -1,6 +1,9 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.constraints;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.InchesPerSecondPerSecond;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 
@@ -18,15 +21,15 @@ public final class Accel {
     /**
      * Specified minimum acceleration in inches per second squared.
      */
-
-    public Double minAccelInchesPerSecSquared;
+    @Nullable
+    public final Double minAccelInchesPerSecSquared;
     /**
      * Specified maximum acceleration in inches per second squared.
      */
+    @Nullable
+    public final Double maxAccelInchesPerSecSquared;
 
-    public Double maxAccelInchesPerSecSquared;
-
-    private Accel(Double minAccelInchesPerSecSquared, Double maxAccelInchesPerSecSquared) {
+    private Accel(@Nullable Double minAccelInchesPerSecSquared, @Nullable Double maxAccelInchesPerSecSquared) {
         this.minAccelInchesPerSecSquared = minAccelInchesPerSecSquared;
         this.maxAccelInchesPerSecSquared = maxAccelInchesPerSecSquared;
     }
@@ -38,8 +41,8 @@ public final class Accel {
      * @param unit     The unit of the minimum acceleration.
      * @return The new Accel object.
      */
-
-    public static Accel ofMin(double minAccel, Velocity<Velocity<Distance>> unit) {
+    @NonNull
+    public static Accel ofMin(double minAccel, @NonNull Velocity<Velocity<Distance>> unit) {
         return new Accel(unit.of(minAccel).in(InchesPerSecondPerSecond), null);
     }
 
@@ -50,8 +53,8 @@ public final class Accel {
      * @param unit     The unit of the maximum acceleration.
      * @return The new Accel object.
      */
-
-    public static Accel ofMax(double maxAccel, Velocity<Velocity<Distance>> unit) {
+    @NonNull
+    public static Accel ofMax(double maxAccel, @NonNull Velocity<Velocity<Distance>> unit) {
         return new Accel(null, unit.of(maxAccel).in(InchesPerSecondPerSecond));
     }
 
@@ -61,8 +64,8 @@ public final class Accel {
      * @param minAccel The minimum acceleration constraint.
      * @return The new Accel object.
      */
-
-    public static Accel ofMin(Measure<Velocity<Velocity<Distance>>> minAccel) {
+    @NonNull
+    public static Accel ofMin(@NonNull Measure<Velocity<Velocity<Distance>>> minAccel) {
         return new Accel(minAccel.in(InchesPerSecondPerSecond), null);
     }
 
@@ -72,8 +75,8 @@ public final class Accel {
      * @param maxAccel The maximum acceleration constraint.
      * @return The new Accel object.
      */
-
-    public static Accel ofMax(Measure<Velocity<Velocity<Distance>>> maxAccel) {
+    @NonNull
+    public static Accel ofMax(@NonNull Measure<Velocity<Velocity<Distance>>> maxAccel) {
         return new Accel(null, maxAccel.in(InchesPerSecondPerSecond));
     }
 
@@ -84,8 +87,8 @@ public final class Accel {
      * @param unit     The unit of the maximum acceleration.
      * @return The new Accel object.
      */
-
-    public Accel andMax(double maxAccel, Velocity<Velocity<Distance>> unit) {
+    @NonNull
+    public Accel andMax(double maxAccel, @NonNull Velocity<Velocity<Distance>> unit) {
         return new Accel(minAccelInchesPerSecSquared, unit.of(maxAccel).in(InchesPerSecondPerSecond));
     }
 
@@ -96,8 +99,8 @@ public final class Accel {
      * @param unit     The unit of the minimum acceleration.
      * @return The new Accel object.
      */
-
-    public Accel andMin(double minAccel, Velocity<Velocity<Distance>> unit) {
+    @NonNull
+    public Accel andMin(double minAccel, @NonNull Velocity<Velocity<Distance>> unit) {
         return new Accel(unit.of(minAccel).in(InchesPerSecondPerSecond), maxAccelInchesPerSecSquared);
     }
 
@@ -107,8 +110,8 @@ public final class Accel {
      * @param maxAccel The maximum acceleration constraint.
      * @return The new Accel object.
      */
-
-    public Accel andMax(Measure<Velocity<Velocity<Distance>>> maxAccel) {
+    @NonNull
+    public Accel andMax(@NonNull Measure<Velocity<Velocity<Distance>>> maxAccel) {
         return new Accel(minAccelInchesPerSecSquared, maxAccel.in(InchesPerSecondPerSecond));
     }
 
@@ -118,8 +121,8 @@ public final class Accel {
      * @param minAccel The minimum acceleration constraint.
      * @return The new Accel object.
      */
-
-    public Accel andMin(Measure<Velocity<Velocity<Distance>>> minAccel) {
+    @NonNull
+    public Accel andMin(@NonNull Measure<Velocity<Velocity<Distance>>> minAccel) {
         return new Accel(minAccel.in(InchesPerSecondPerSecond), maxAccelInchesPerSecSquared);
     }
 
@@ -129,8 +132,8 @@ public final class Accel {
      * @param defaultConstraints The default constraints to use if no constraints are specified.
      * @return The built ProfileAccelConstraint object.
      */
-
-    public ProfileAccelConstraint getOrDefault(ProfileAccelConstraint defaultConstraints) {
+    @NonNull
+    public ProfileAccelConstraint getOrDefault(@NonNull ProfileAccelConstraint defaultConstraints) {
         return new ProfileAccelConstraint(
                 minAccelInchesPerSecSquared == null ? defaultConstraints.minAccel : minAccelInchesPerSecSquared,
                 maxAccelInchesPerSecSquared == null ? defaultConstraints.maxAccel : maxAccelInchesPerSecSquared

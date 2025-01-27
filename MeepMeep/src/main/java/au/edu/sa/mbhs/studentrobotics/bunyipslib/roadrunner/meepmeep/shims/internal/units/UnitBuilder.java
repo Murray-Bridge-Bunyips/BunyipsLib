@@ -4,9 +4,13 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units;
 
+import androidx.annotation.NonNull;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Mathf;
 
 /**
  * Builder used for easily deriving new units from existing ones. When deriving a new unit, the base
@@ -36,29 +40,8 @@ public final class UnitBuilder<U extends Unit<U>> {
         this.base = Objects.requireNonNull(base, "Base unit cannot be null");
     }
 
-    /**
-     * Maps a value {@code value} in the range {@code [inMin..inMax]} to an output in the range {@code
-     * [outMin..outMax]}. Inputs outside the bounds will be mapped correspondingly to outputs outside
-     * the output bounds. Inputs equal to {@code inMin} will be mapped to {@code outMin}, and inputs
-     * equal to {@code inMax} will similarly be mapped to {@code outMax}.
-     *
-     * @param value  the value to map
-     * @param inMin  the minimum input value (does not have to be absolute)
-     * @param inMax  the maximum input value (does not have to be absolute)
-     * @param outMin the minimum output value (does not have to be absolute)
-     * @param outMax the maximum output value (does not have to be absolute)
-     * @return the mapped output
-     */
-    // NOTE: This method lives here instead of in MappingBuilder because inner classes can't
-    // define static methods prior to Java 16.
-    private static double mapValue(
-            double value, double inMin, double inMax, double outMin, double outMax) {
-        return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-    }
-
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static <U extends Unit<U>> Constructor<? extends Unit<U>> getConstructor(U baseUnit)
-            throws NoSuchMethodException {
+    private static <U extends Unit<U>> Constructor<? extends Unit<U>> getConstructor(U baseUnit) throws NoSuchMethodException {
         Class<? extends Unit> baseClass = baseUnit.getClass();
 
         Constructor<? extends Unit<U>> ctor =
@@ -83,7 +66,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param offset the offset
      * @return this builder
      */
-
+    @NonNull
     public UnitBuilder<U> offset(double offset) {
         toBaseVal = derivedValue -> derivedValue + offset;
         fromBaseVal = baseValue -> baseValue - offset;
@@ -99,7 +82,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param maxBase the maximum output value (does not have to be absolute)
      * @return a builder object used to define the output range
      */
-
+    @NonNull
     public MappingBuilder mappingInputRange(double minBase, double maxBase) {
         return new MappingBuilder(minBase, maxBase);
     }
@@ -111,8 +94,8 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param fromBase the conversion function
      * @return the unit builder, for continued chaining
      */
-
-    public UnitBuilder<U> fromBase(UnaryFunction fromBase) {
+    @NonNull
+    public UnitBuilder<U> fromBase(@NonNull UnaryFunction fromBase) {
         fromBaseVal = Objects.requireNonNull(fromBase, "fromBase function cannot be null");
         return this;
     }
@@ -124,8 +107,8 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param toBase the conversion function
      * @return the unit builder, for continued chaining
      */
-
-    public UnitBuilder<U> toBase(UnaryFunction toBase) {
+    @NonNull
+    public UnitBuilder<U> toBase(@NonNull UnaryFunction toBase) {
         toBaseVal = Objects.requireNonNull(toBase, "toBase function cannot be null");
         return this;
     }
@@ -136,8 +119,8 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param name the new name
      * @return the unit builder, for continued chaining
      */
-
-    public UnitBuilder<U> named(String name) {
+    @NonNull
+    public UnitBuilder<U> named(@NonNull String name) {
         nameVal = name;
         return this;
     }
@@ -148,8 +131,8 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @param symbol the new symbol
      * @return the unit builder, for continued chaining
      */
-
-    public UnitBuilder<U> symbol(String symbol) {
+    @NonNull
+    public UnitBuilder<U> symbol(@NonNull String symbol) {
         symbolVal = symbol;
         return this;
     }
@@ -164,7 +147,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      *                 the derived unit corresponds to
      * @return the unit builder, for continued chaining
      */
-
+    @NonNull
     public UnitBuilder<U> splitInto(double fraction) {
         if (fraction == 0) {
             throw new IllegalArgumentException("Fraction must be nonzero");
@@ -181,7 +164,7 @@ public final class UnitBuilder<U extends Unit<U>> {
      *                    of 1 in the derived unit
      * @return the unit builder, for continued chaining
      */
-
+    @NonNull
     public UnitBuilder<U> aggregate(double aggregation) {
         if (aggregation == 0) {
             throw new IllegalArgumentException("Aggregation amount must be nonzero");
@@ -198,14 +181,13 @@ public final class UnitBuilder<U extends Unit<U>> {
      * @return the new derived unit
      * @throws NullPointerException if the unit conversions, unit name, or unit symbol were not set
      */
-    public U make(UnitConstructorFunction<U> constructor) {
+    public U make(@NonNull UnitConstructorFunction<U> constructor) {
         Objects.requireNonNull(fromBaseVal, "fromBase function was not set");
         Objects.requireNonNull(toBaseVal, "toBase function was not set");
         Objects.requireNonNull(nameVal, "new unit name was not set");
         Objects.requireNonNull(symbolVal, "new unit symbol was not set");
 
-        return constructor.create(
-                base.baseUnit,
+        return constructor.create(base.baseUnit,
                 toBaseVal.pipeTo(base.getConverterToBase()),
                 base.getConverterFromBase().pipeTo(fromBaseVal),
                 nameVal,
@@ -225,7 +207,6 @@ public final class UnitBuilder<U extends Unit<U>> {
         return make(
                 (baseUnit, toBaseUnits, fromBaseUnits, name, symbol) -> {
                     Class<?> baseClass = baseUnit.getClass();
-
                     try {
                         Constructor<? extends Unit<U>> ctor = getConstructor(baseUnit);
                         return (U) ctor.newInstance(baseUnit, toBaseUnits, fromBaseUnits, name, symbol);
@@ -267,12 +248,11 @@ public final class UnitBuilder<U extends Unit<U>> {
          * @param symbol        the shorthand symbol of the new unit
          * @return a new unit
          */
-        U create(
-                U baseUnit,
-                UnaryFunction toBaseUnits,
-                UnaryFunction fromBaseUnits,
-                String name,
-                String symbol);
+        U create(U baseUnit,
+                 @NonNull UnaryFunction toBaseUnits,
+                 @NonNull UnaryFunction fromBaseUnits,
+                 @NonNull String name,
+                 @NonNull String symbol);
     }
 
     /**
@@ -294,10 +274,10 @@ public final class UnitBuilder<U extends Unit<U>> {
          * @param maxOutput the maximum output value (does not have to be absolute)
          * @return the unit builder, for continued chaining
          */
-
+        @NonNull
         public UnitBuilder<U> toOutputRange(double minOutput, double maxOutput) {
-            fromBaseVal = x -> mapValue(x, minInput, maxInput, minOutput, maxOutput);
-            toBaseVal = y -> mapValue(y, minOutput, maxOutput, minInput, maxInput);
+            fromBaseVal = x -> Mathf.scale(x, minInput, maxInput, minOutput, maxOutput);
+            toBaseVal = y -> Mathf.scale(y, minOutput, maxOutput, minInput, maxInput);
             return UnitBuilder.this;
         }
     }

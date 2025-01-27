@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Geometry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.TaskBuilder;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Distance;
 import kotlin.jvm.functions.Function2;
@@ -37,7 +36,7 @@ public abstract class MeepMeepInternal {
      * bare makeTrajectory call. See the `on(int)` method to temporarily mention which BunyipsLibBotBuilder to use by
      * order of creation index.
      */
-    public static Drive drive = new Drive();
+    public static final Drive drive = new Drive();
 
     /**
      * BunyipsLib MeepMeep drive shim.
@@ -79,11 +78,11 @@ public abstract class MeepMeepInternal {
          * @param poseMap   the pose map to use for the trajectory
          * @return a new TaskBuilder to build the trajectory action
          */
-        public TaskBuilder makeTrajectory(Pose2d startPose, PoseMap poseMap) {
+        public MeepMeepTaskBuilder makeTrajectory(Pose2d startPose, PoseMap poseMap) {
             if (trajectoryActionBuilderSuppliers.isEmpty()) {
                 throw new IllegalStateException("A BunyipsLibBotBuilder must be created and built before calling drive.makeTrajectory!");
             }
-            TaskBuilder tb = new TaskBuilder(
+            MeepMeepTaskBuilder tb = new MeepMeepTaskBuilder(
                     trajectoryActionBuilderSuppliers.get(operatingIndex).invoke(startPose, poseMap),
                     constraintsSuppliers.get(operatingIndex).get(),
                     dttSuppliers.get(operatingIndex).get(),
@@ -104,8 +103,8 @@ public abstract class MeepMeepInternal {
          * @param poseMap  the pose map to use for the trajectory
          * @return a new TaskBuilder to build the trajectory action
          */
-        public TaskBuilder makeTrajectory(Vector2d startVec, Distance distUnit, double ang, Angle angUnit, PoseMap poseMap) {
-            return makeTrajectory(Geometry.unitPose(startVec, distUnit, ang, angUnit), poseMap);
+        public MeepMeepTaskBuilder makeTrajectory(Vector2d startVec, Distance distUnit, double ang, Angle angUnit, PoseMap poseMap) {
+            return makeTrajectory(Geometry.poseFrom(startVec, distUnit, ang, angUnit), poseMap);
         }
 
         /**
@@ -118,8 +117,8 @@ public abstract class MeepMeepInternal {
          * @param angUnit  the unit of angle of the start pose
          * @return a new TaskBuilder to build the trajectory action
          */
-        public TaskBuilder makeTrajectory(Vector2d startVec, Distance distUnit, double ang, Angle angUnit) {
-            return makeTrajectory(Geometry.unitPose(startVec, distUnit, ang, angUnit), new IdentityPoseMap());
+        public MeepMeepTaskBuilder makeTrajectory(Vector2d startVec, Distance distUnit, double ang, Angle angUnit) {
+            return makeTrajectory(Geometry.poseFrom(startVec, distUnit, ang, angUnit), new IdentityPoseMap());
         }
 
         /**
@@ -129,7 +128,7 @@ public abstract class MeepMeepInternal {
          * @param startPose the pose to start the trajectory at and where the robot will be placed
          * @return a new TaskBuilder to build the trajectory action
          */
-        public TaskBuilder makeTrajectory(Pose2d startPose) {
+        public MeepMeepTaskBuilder makeTrajectory(Pose2d startPose) {
             return makeTrajectory(startPose, new IdentityPoseMap());
         }
     }
