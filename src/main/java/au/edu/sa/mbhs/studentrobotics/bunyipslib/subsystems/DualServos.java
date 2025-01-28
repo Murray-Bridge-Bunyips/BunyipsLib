@@ -5,10 +5,13 @@ import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.function.Supplier;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ServoEx;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
@@ -82,15 +85,15 @@ public class DualServos extends BunyipsSubsystem {
     @NonNull
     public DualServos toggle(@NonNull ServoSide servo) {
         if (servo == ServoSide.LEFT) {
-            leftServoPosition = (leftServoPosition == leftOpen) ? leftClosed : leftOpen;
+            leftServoPosition = leftServoPosition == leftOpen ? leftClosed : leftOpen;
             return this;
         }
         if (servo == ServoSide.RIGHT) {
-            rightServoPosition = (rightServoPosition == rightOpen) ? rightClosed : rightOpen;
+            rightServoPosition = rightServoPosition == rightOpen ? rightClosed : rightOpen;
             return this;
         }
-        leftServoPosition = (leftServoPosition == leftOpen) ? leftClosed : leftOpen;
-        rightServoPosition = (rightServoPosition == rightOpen) ? rightClosed : rightOpen;
+        leftServoPosition = leftServoPosition == leftOpen ? leftClosed : leftOpen;
+        rightServoPosition = rightServoPosition == rightOpen ? rightClosed : rightOpen;
         return this;
     }
 
@@ -192,12 +195,13 @@ public class DualServos extends BunyipsSubsystem {
          */
         @NonNull
         public Task openLeft() {
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftOpen);
             return new Lambda((t) -> {
-                t.timeout = ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftOpen);
+                t.timeout = taskTimeout.get();
                 open(ServoSide.LEFT);
             }).on(DualServos.this, true)
-                    .timeout(ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftOpen)) // preliminary
-                    .named(name + ":Open Left");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Open Left"));
         }
 
         /**
@@ -207,13 +211,14 @@ public class DualServos extends BunyipsSubsystem {
          */
         @NonNull
         public Task openRight() {
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightOpen);
             return new Lambda((t) -> {
-                t.timeout = ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightOpen);
+                t.timeout = taskTimeout.get();
                 open(ServoSide.RIGHT);
             })
                     .on(DualServos.this, true)
-                    .timeout(ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightOpen)) // preliminary
-                    .named(name + ":Open Right");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Open Right"));
         }
 
         /**
@@ -223,15 +228,17 @@ public class DualServos extends BunyipsSubsystem {
          */
         @NonNull
         public Task openBoth() {
+            Supplier<Measure<Time>> taskTimeout = () -> Measure.max(
+                    ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftOpen),
+                    ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightOpen)
+            );
             return new Lambda((t) -> {
-                t.timeout(Measure.max(ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftOpen),
-                        ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightOpen)));
+                t.timeout = taskTimeout.get();
                 open(ServoSide.BOTH);
             })
                     .on(DualServos.this, true)
-                    .timeout(Measure.max(ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftOpen),
-                            ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightOpen))) // preliminary
-                    .named(name + ":Open Both");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Open Both"));
         }
 
         /**
@@ -241,12 +248,13 @@ public class DualServos extends BunyipsSubsystem {
          */
         @NonNull
         public Task closeLeft() {
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftClosed);
             return new Lambda((t) -> {
-                t.timeout = ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftClosed);
+                t.timeout = taskTimeout.get();
                 close(ServoSide.LEFT);
             }).on(DualServos.this, true)
-                    .timeout(ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftClosed)) // preliminary
-                    .named(name + ":Close Left");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Close Left"));
         }
 
         /**
@@ -256,13 +264,14 @@ public class DualServos extends BunyipsSubsystem {
          */
         @NonNull
         public Task closeRight() {
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightClosed);
             return new Lambda((t) -> {
-                t.timeout = ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightClosed);
+                t.timeout = taskTimeout.get();
                 close(ServoSide.RIGHT);
             })
                     .on(DualServos.this, true)
-                    .timeout(ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightClosed)) // preliminary
-                    .named(name + ":Close Right");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Close Right"));
         }
 
         /**
@@ -272,18 +281,18 @@ public class DualServos extends BunyipsSubsystem {
          */
         @NonNull
         public Task closeBoth() {
+            Supplier<Measure<Time>> taskTimeout = () -> Measure.max(
+                    ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftClosed),
+                    ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightClosed)
+            );
             return new Lambda((t) -> {
-                t.timeout(Measure.max(ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftClosed),
-                        ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightClosed)));
+                t.timeout = taskTimeout.get();
                 close(ServoSide.BOTH);
             })
                     .on(DualServos.this, true)
-                    .timeout(Measure.max(ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftClosed),
-                            ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightClosed))) // preliminary
-                    .named(name + ":Close Both");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Close Both"));
         }
-
-        // TODO
 
         /**
          * Create a task to toggle the left servo.
@@ -292,9 +301,14 @@ public class DualServos extends BunyipsSubsystem {
          */
         @NonNull
         public Task toggleLeft() {
-            return new Lambda(() -> toggle(ServoSide.LEFT))
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftServoPosition == leftOpen ? leftClosed : leftOpen);
+            return new Lambda((t) -> {
+                t.timeout = taskTimeout.get();
+                toggle(ServoSide.LEFT);
+            })
                     .on(DualServos.this, true)
-                    .named(name + ":Toggle Left");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Toggle Left"));
         }
 
         /**
@@ -304,9 +318,14 @@ public class DualServos extends BunyipsSubsystem {
          */
         @NonNull
         public Task toggleRight() {
-            return new Lambda(() -> toggle(ServoSide.RIGHT))
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightServoPosition == rightOpen ? rightClosed : rightOpen);
+            return new Lambda((t) -> {
+                t.timeout = taskTimeout.get();
+                toggle(ServoSide.RIGHT);
+            })
                     .on(DualServos.this, true)
-                    .named(name + ":Toggle Right");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Toggle Right"));
         }
 
         /**
@@ -316,9 +335,17 @@ public class DualServos extends BunyipsSubsystem {
          */
         @NonNull
         public Task toggleBoth() {
-            return new Lambda(() -> toggle(ServoSide.BOTH))
+            Supplier<Measure<Time>> taskTimeout = () -> Measure.max(
+                    ServoEx.tryGetEndToEndTime(left, leftServoPosition, leftServoPosition == leftOpen ? leftClosed : leftOpen),
+                    ServoEx.tryGetEndToEndTime(right, rightServoPosition, rightServoPosition == rightOpen ? rightClosed : rightOpen)
+            );
+            return new Lambda((t) -> {
+                t.timeout = taskTimeout.get();
+                toggle(ServoSide.BOTH);
+            })
                     .on(DualServos.this, true)
-                    .named(name + ":Toggle Both");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Toggle Both"));
         }
     }
 }

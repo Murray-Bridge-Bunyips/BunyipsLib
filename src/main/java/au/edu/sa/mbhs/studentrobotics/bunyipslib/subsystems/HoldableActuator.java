@@ -629,7 +629,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         public Task setPower(double p) {
             return new Lambda(() -> HoldableActuator.this.setPower(p))
                     .on(HoldableActuator.this, false)
-                    .named(name + ":Set Power");
+                    .named(forThisSubsystem("Set Power"));
         }
 
         /**
@@ -647,7 +647,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     .onFinish(() -> userPower = 0)
                     .on(HoldableActuator.this, true)
                     .timeout(time)
-                    .named(name + ":Run For " + time);
+                    .named(forThisSubsystem("Run For " + time));
         }
 
         private Task homingOperation(int direction) {
@@ -750,7 +750,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 return new Lambda();
             }
             // Since this is a static mapping we can return the task
-            return goTo(position).until(limitSwitch::isPressed).named(name + ":Run To Limit Switch");
+            return goTo(position).until(limitSwitch::isPressed).named(forThisSubsystem("Run To Limit Switch"));
         }
 
         /**
@@ -774,7 +774,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     .isFinished(() -> inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), tolerance)))
                     .onFinish(HoldableActuator.this::setInputModeToUser)
                     .on(HoldableActuator.this, true)
-                    .named(name + ":Run To " + targetPosition + " Ticks");
+                    .named(forThisSubsystem("Run To " + targetPosition + " Ticks"));
         }
 
         /**
@@ -786,7 +786,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         @NonNull
         public Task delta(int deltaPosition) {
             return Task.defer(() -> goTo(encoder.getPosition() + deltaPosition))
-                    .named(name + ":Run To " + deltaPosition + " Delta Ticks");
+                    .named(forThisSubsystem("Run To " + deltaPosition + " Delta Ticks"));
         }
     }
 }

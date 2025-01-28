@@ -6,10 +6,14 @@ import androidx.annotation.Nullable;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ServoEx;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
@@ -222,7 +226,7 @@ public class Switch extends BunyipsSubsystem {
         public Task controlPosition(@NonNull DoubleSupplier positionSupplier) {
             return Task.task().periodic(() -> setPosition(positionSupplier.getAsDouble()))
                     .on(Switch.this, false)
-                    .named(name + ":Supplier Position Control");
+                    .named(forThisSubsystem("Supplier Position Control"));
         }
 
         /**
@@ -235,7 +239,7 @@ public class Switch extends BunyipsSubsystem {
         public Task controlDelta(@NonNull DoubleSupplier powerSupplier) {
             return Task.task().periodic(() -> setPosition(target + powerSupplier.getAsDouble()))
                     .on(Switch.this, false)
-                    .named(name + ":Supplier Delta Control");
+                    .named(forThisSubsystem("Supplier Delta Control"));
         }
 
         /**
@@ -244,10 +248,15 @@ public class Switch extends BunyipsSubsystem {
          * @return Open switch task.
          */
         @NonNull
-        public Task open() { // TODO
-            return new Lambda(Switch.this::open)
+        public Task open() {
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(servo, target, openPosition);
+            return new Lambda((t) -> {
+                t.timeout = taskTimeout.get();
+                Switch.this.open();
+            })
                     .on(Switch.this, true)
-                    .named(name + ":Open");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Open"));
         }
 
         /**
@@ -257,9 +266,14 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task close() {
-            return new Lambda(Switch.this::close)
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(servo, target, closePosition);
+            return new Lambda((t) -> {
+                t.timeout = taskTimeout.get();
+                Switch.this.close();
+            })
                     .on(Switch.this, true)
-                    .named(name + ":Close");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Close"));
         }
 
         /**
@@ -269,9 +283,15 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task toggle() {
-            return new Lambda(Switch.this::toggle)
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(servo, target,
+                    target == closePosition || Math.abs(target - openPosition) < Math.abs(target - closePosition) ? openPosition : closePosition);
+            return new Lambda((t) -> {
+                t.timeout = taskTimeout.get();
+                Switch.this.toggle();
+            })
                     .on(Switch.this, true)
-                    .named(name + ":Toggle");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Toggle"));
         }
 
         /**
@@ -282,10 +302,13 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task setToUnclipped(double position) {
-            // TODO: setTo task names are only set on creation of the tasks and don't reflect later changes to positions
-            return new Lambda(() -> setPositionUnclipped(position))
-                    .on(Switch.this, true)
-                    .named(name + ":Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
+            Supplier<String> taskName = () -> forThisSubsystem("Go To " + Mathf.clamp(position, 0, 1) + "/1.0");
+            return new Lambda((t) -> {
+                t.named(taskName.get());
+                setPositionUnclipped(position);
+            })
+                    .named(taskName.get()) // preliminary
+                    .on(Switch.this, true);
         }
 
         /**
@@ -296,9 +319,13 @@ public class Switch extends BunyipsSubsystem {
          */
         @NonNull
         public Task setTo(double position) {
-            return new Lambda(() -> setPosition(position))
-                    .on(Switch.this, true)
-                    .named(name + ":Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
+            Supplier<String> taskName = () -> forThisSubsystem("Go To " + Mathf.clamp(position, Math.min(closePosition, openPosition), Math.max(closePosition, openPosition)) + "/1.0");
+            return new Lambda((t) -> {
+                t.named(taskName.get());
+                setPosition(position);
+            })
+                    .named(taskName.get()) // preliminary
+                    .on(Switch.this, true);
         }
 
         /**
@@ -311,7 +338,7 @@ public class Switch extends BunyipsSubsystem {
         public Task deltaUnclipped(double delta) {
             return new Lambda(() -> setPositionUnclipped(target + delta))
                     .on(Switch.this, true)
-                    .named(name + ":Delta By " + delta);
+                    .named(forThisSubsystem("Delta By " + delta));
         }
 
         /**
@@ -324,7 +351,7 @@ public class Switch extends BunyipsSubsystem {
         public Task delta(double delta) {
             return new Lambda(() -> setPosition(target + delta))
                     .on(Switch.this, true)
-                    .named(name + ":Delta By " + delta);
+                    .named(forThisSubsystem("Delta By " + delta));
         }
     }
 }

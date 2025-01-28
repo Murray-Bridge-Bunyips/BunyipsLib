@@ -162,11 +162,13 @@ abstract class Task : Runnable, Action {
     /**
      * Set the name of this task to be displayed in the OpMode.
      * You may override this method if required to enforce a naming convention/prefix.
+     * Null values are ignored.
      */
     open infix fun named(name: String?) = apply { name?.let { this.name = it } }
 
     /**
      * Set the timeout of this task dynamically and return the task.
+     * Null values are ignored.
      */
     infix fun timeout(timeout: Measure<Time>?) = apply { timeout?.let { this.timeout = timeout } }
 

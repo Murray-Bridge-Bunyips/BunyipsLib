@@ -234,7 +234,7 @@ public class BlinkinLights extends BunyipsSubsystem {
                     .onFinish(() -> currentPattern = defaultPattern)
                     .timeout(duration)
                     .on(BlinkinLights.this, true)
-                    .named(name + ":" + pattern.name());
+                    .named(forThisSubsystem(pattern.name()));
         }
     }
 }

@@ -5,9 +5,13 @@ import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.function.Supplier;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ServoEx;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
@@ -123,12 +127,13 @@ public class Cannon extends BunyipsSubsystem {
          */
         @NonNull
         public Task fire() {
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(prolong, target, FIRED);
             return new Lambda((t) -> {
-                t.timeout = ServoEx.tryGetEndToEndTime(prolong, target, FIRED);
+                t.timeout = taskTimeout.get();
                 Cannon.this.fire();
             }).on(Cannon.this, true)
-                    .timeout(ServoEx.tryGetEndToEndTime(prolong, target, FIRED)) // preliminary
-                    .named(name + ":Fire");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Fire"));
         }
 
         /**
@@ -138,12 +143,13 @@ public class Cannon extends BunyipsSubsystem {
          */
         @NonNull
         public Task reset() {
+            Supplier<Measure<Time>> taskTimeout = () -> ServoEx.tryGetEndToEndTime(prolong, target, RESET);
             return new Lambda((t) -> {
-                t.timeout = ServoEx.tryGetEndToEndTime(prolong, target, RESET);
+                t.timeout = taskTimeout.get();
                 Cannon.this.reset();
             }).on(Cannon.this, true)
-                    .timeout(ServoEx.tryGetEndToEndTime(prolong, target, RESET)) // preliminary
-                    .named(name + ":Reset");
+                    .timeout(taskTimeout.get()) // preliminary
+                    .named(forThisSubsystem("Reset"));
         }
     }
 }

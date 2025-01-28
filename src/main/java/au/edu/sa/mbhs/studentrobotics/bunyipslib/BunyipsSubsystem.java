@@ -34,7 +34,7 @@ public abstract class BunyipsSubsystem {
     private static int idx = 0;
     private final List<BunyipsSubsystem> children = new ArrayList<>();
     /**
-     * Reference to the unmodified name of this subsystem.
+     * Reference to the user-defined or default name of this subsystem.
      *
      * @see #toString() referencing `this` to also retrieve delegation status affixed to the end of the name
      */
@@ -112,8 +112,20 @@ public abstract class BunyipsSubsystem {
      * @param format the message (format string) to log
      * @param objs   the objects to format into the message using {@link Text#format(String, Object...)}
      */
-    protected void sout(Consumer<String> logger, String format, Object... objs) {
+    protected final void sout(@NonNull Consumer<String> logger, @NonNull String format, @Nullable Object... objs) {
         logger.accept(Text.format("[%] %%", getClass().getSimpleName(), "(id:" + toString().replace(getClass().getSimpleName(), "") + ") ", Text.format(format, objs)));
+    }
+
+    /**
+     * Formats a task name to follow the convention {@code full_name:task}.
+     * This convention ensures the name is stripped properly in telemetry, and verbosely in Logcat.
+     *
+     * @param name the task name to follow the subsystem name
+     * @return formatted string for task name, e.g. {@code .named(forThisSubsystem("Close"))}
+     */
+    @NonNull
+    protected final String forThisSubsystem(@NonNull Object name) {
+        return this + ":" + name;
     }
 
     /**
@@ -131,7 +143,7 @@ public abstract class BunyipsSubsystem {
     @Override
     @NonNull
     public final String toString() {
-        return name + (parent != null ? " [D. " + parent.name + "]" : "");
+        return name + (parent != null ? " [D. " + parent + "]" : "");
     }
 
     /**
