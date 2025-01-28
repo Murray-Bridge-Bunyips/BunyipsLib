@@ -155,7 +155,8 @@ class DynamicTask() : Task() {
      * Runs when the task is reset to its initial state.
      */
     @JvmOverloads
-    fun onReset(onReset: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) = onReset { _ -> onReset.run() }
+    fun onReset(onReset: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
+        onReset { _ -> onReset.run() }
 
     /**
      * Adds additional [init] to run after the current [init] code.
@@ -177,7 +178,10 @@ class DynamicTask() : Task() {
      * This function takes in a boolean being the current [isFinished] evaluation, and returns the new [isFinished] evaluation.
      */
     @JvmOverloads
-    fun addIsFinished(isTaskFinished: Predicate<Boolean>, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
+    fun addIsFinished(
+        isTaskFinished: Predicate<Boolean>,
+        @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null
+    ) =
         addIsFinished { _, b -> isTaskFinished.test(b) }
 
     /**

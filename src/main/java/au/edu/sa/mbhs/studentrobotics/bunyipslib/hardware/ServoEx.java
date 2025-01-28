@@ -60,8 +60,8 @@ public class ServoEx extends ServoImpl implements PwmControl {
      * Attempts to get the end-to-end time for this servo (only available on ServoEx).
      *
      * @param servo the servo to get the time for (rescaling parameters are ignored if this is not a ServoEx)
-     * @param from the rescaling lower limit where the servo is currently
-     * @param to the rescaling upper limit where the servo should go to
+     * @param from  the rescaling lower limit where the servo is currently
+     * @param to    the rescaling upper limit where the servo should go to
      * @return the rescaled servo end-to-end time if available, else {@link Lambda#EPSILON_MS}.
      */
     public static Measure<Time> tryGetEndToEndTime(Servo servo, double from, double to) {
