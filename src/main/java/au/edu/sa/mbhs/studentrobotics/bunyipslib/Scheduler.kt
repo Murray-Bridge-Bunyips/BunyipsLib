@@ -681,6 +681,7 @@ class Scheduler {
          * Unmute all Scheduler instances telemetry for the rest of the OpMode.
          */
         @JvmStatic
+        @JvmName("muteTelemetry")
         fun mute() {
             isMuted = true
         }
@@ -689,6 +690,7 @@ class Scheduler {
          * Unmute all Scheduler instances telemetry for the rest of the OpMode.
          */
         @JvmStatic
+        @JvmName("unmuteTelemetry")
         fun unmute() {
             isMuted = false
         }
