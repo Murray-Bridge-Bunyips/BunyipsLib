@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks
 
 import android.content.Context
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BuildConfig
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
@@ -49,11 +50,11 @@ object BunyipsLib {
         }
 
     /**
-     * @return The currently active OpMode via [opModeManager]
+     * @return The currently active OpMode via [opModeManager] or [BunyipsOpMode] (if available)
      */
     @JvmStatic
     val opMode: OpMode
-        get() = opModeManager.activeOpMode
+        get() = if (BunyipsOpMode.isRunning) BunyipsOpMode.instance else opModeManager.activeOpMode
 
     /**
      * Whether an active user OpMode is running.
