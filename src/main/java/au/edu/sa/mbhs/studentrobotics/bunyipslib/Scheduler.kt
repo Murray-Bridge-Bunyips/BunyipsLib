@@ -660,11 +660,25 @@ class Scheduler {
         }
     }
 
+    /**
+     * Mute all Scheduler instances telemetry for the rest of the OpMode.
+     */
+    fun mute() {
+        isMuted = true
+    }
+
+    /**
+     * Unmute all Scheduler instances telemetry for the rest of the OpMode.
+     */
+    fun unmute() {
+        isMuted = false
+    }
+
     companion object {
         private var isMuted = false
 
         /**
-         * Mute all Scheduler telemetry for the rest of the OpMode.
+         * Unmute all Scheduler instances telemetry for the rest of the OpMode.
          */
         @JvmStatic
         fun mute() {
@@ -672,7 +686,7 @@ class Scheduler {
         }
 
         /**
-         * Unmute all Scheduler telemetry for the rest of the OpMode.
+         * Unmute all Scheduler instances telemetry for the rest of the OpMode.
          */
         @JvmStatic
         fun unmute() {
