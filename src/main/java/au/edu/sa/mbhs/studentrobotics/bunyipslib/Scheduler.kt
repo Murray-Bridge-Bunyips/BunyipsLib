@@ -6,6 +6,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
@@ -27,10 +28,6 @@ import java.util.function.BooleanSupplier
 class Scheduler {
     private val subsystems = ArrayList<BunyipsSubsystem>()
     private val allocatedTasks = ArrayList<ScheduledTask>()
-
-    init {
-        isMuted = false
-    }
 
     /**
      * Get all allocated tasks.
@@ -75,20 +72,6 @@ class Scheduler {
      */
     fun enable() {
         subsystems.forEach { it.enable() }
-    }
-
-    /**
-     * Mute Scheduler telemetry for the rest of the OpMode.
-     */
-    fun mute() {
-        isMuted = true
-    }
-
-    /**
-     * Unmute Scheduler telemetry for the rest of the OpMode.
-     */
-    fun unmute() {
-        isMuted = false
     }
 
     /**
@@ -302,13 +285,12 @@ class Scheduler {
     }
 
     private class ControllerAxisThreshold(
-        private val user: Gamepad,
+        private val controller: Gamepad,
         private val axis: Analog,
         threshold: (Float) -> Boolean,
         edge: Edge
-    ) :
-        Condition(edge, { threshold.invoke(user[axis]) }) {
-        override fun toString() = "Axis($edge):GP${user.user.id}->$axis"
+    ) : Condition(edge, { threshold.invoke(controller[axis]) }) {
+        override fun toString() = "Axis($edge):GP${controller.user.id}->$axis"
     }
 
     /**
@@ -680,5 +662,27 @@ class Scheduler {
 
     companion object {
         private var isMuted = false
+
+        /**
+         * Mute all Scheduler telemetry for the rest of the OpMode.
+         */
+        @JvmStatic
+        fun mute() {
+            isMuted = true
+        }
+
+        /**
+         * Unmute all Scheduler telemetry for the rest of the OpMode.
+         */
+        @JvmStatic
+        fun unmute() {
+            isMuted = false
+        }
+
+        @JvmStatic
+        @Hook(on = Hook.Target.POST_STOP)
+        private fun reset() {
+            isMuted = false
+        }
     }
 }
