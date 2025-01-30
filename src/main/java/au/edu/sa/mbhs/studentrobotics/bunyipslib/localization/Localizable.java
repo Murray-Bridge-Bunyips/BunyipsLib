@@ -20,6 +20,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 public interface Localizable {
     /**
      * Calculate the accumulated pose from an internal localizer.
+     * <p>
+     * Units should return in inches and radians on correct configuration.
      *
      * @return the current pose estimate of the drive, may be nullable if this drive does not support localization
      */
@@ -29,6 +31,8 @@ public interface Localizable {
     /**
      * Reset the accumulated pose estimate to this pose. Further updates from an internal localizer will continue
      * from this supplied pose estimate.
+     * <p>
+     * Units should be in inches and radians.
      *
      * @param newPose the new pose to continue localization from, may no-op if the drive does not support localization
      */
@@ -50,6 +54,8 @@ public interface Localizable {
 
     /**
      * Calculate the first derivative of the accumulated pose from an internal localizer.
+     * <p>
+     * Units should be in inches/sec and radians/sec.
      *
      * @return the current pose velocity of the drive, may be nullable if this drive does not support localization or
      * does not supply velocity

@@ -86,16 +86,16 @@ public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
     /**
      * Constructor for HolonomicTrackingDriveTask.
      *
-     * @param vel   The supplier for the current pose velocity of the robot, magnitude [-1, 1] of max robot velocity
-     * @param drive The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
-     *              called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
-     *              if possible. A localizer attached is required.
+     * @param targetVecNormalised The supplier for the current pose velocity of the robot, magnitude [-1, 1] of max robot velocity
+     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *                            if possible. A localizer attached is required.
      */
-    public HolonomicTrackingDriveTask(@NonNull Supplier<PoseVelocity2d> vel, @NonNull Moveable drive) {
+    public HolonomicTrackingDriveTask(@NonNull Supplier<PoseVelocity2d> targetVecNormalised, @NonNull Moveable drive) {
         super.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             on((BunyipsSubsystem) drive, false);
-        this.vel = vel;
+        this.vel = targetVecNormalised;
 
         xController = DEFAULT_X_CONTROLLER;
         yController = DEFAULT_Y_CONTROLLER;

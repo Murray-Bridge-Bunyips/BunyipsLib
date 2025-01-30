@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
@@ -62,7 +63,7 @@ public class HolonomicPrecisionDriveTask extends FieldOrientableDriveTask {
     @NonNull
     public static SystemController DEFAULT_R_CONTROLLER = new PController(12);
 
-    private final Supplier<PoseVelocity2d> controllerVel;
+    private final Supplier<PoseVelocity2d> vel;
     private SystemController xController;
     private SystemController yController;
     private SystemController rController;
@@ -72,17 +73,17 @@ public class HolonomicPrecisionDriveTask extends FieldOrientableDriveTask {
     private Measure<Velocity<Angle>> maxAngVel = DegreesPerSecond.of(180);
     private Measure<Velocity<Velocity<Angle>>> maxAngAccel = DegreesPerSecondPerSecond.of(Double.MAX_VALUE);
     // TODO: do we need to use a locking vector technique?
-    // TODO: trapezoidal profile
+    // TODO: trapezoidal profile (consider profiling regardless instead of relying fully on the pids?)
 
     /**
      * Constructor for HolonomicPrecisionDriveTask.
      *
-     * @param targetVec The supplier for the current pose velocity of the robot via the controller as a fraction of the maximum velocity
-     * @param drive     The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
-     *                  called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
-     *                  if possible. A localizer attached is required. A {@link RoadRunnerDrive} will auto-extract maximum <i>velocity</i> constraints.
+     * @param targetVecNormalised The supplier for the current pose velocity of the robot via the controller as a fraction [-1, 1] of the maximum velocity
+     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *                            if possible. A localizer attached is required. A {@link RoadRunnerDrive} will auto-extract maximum <i>velocity</i> constraints.
      */
-    public HolonomicPrecisionDriveTask(@NonNull Supplier<PoseVelocity2d> targetVec, @NonNull Moveable drive) {
+    public HolonomicPrecisionDriveTask(@NonNull Supplier<PoseVelocity2d> targetVecNormalised, @NonNull Moveable drive) {
         super.drive = drive;
         if (drive instanceof BunyipsSubsystem s)
             on(s, false);
@@ -92,11 +93,11 @@ public class HolonomicPrecisionDriveTask extends FieldOrientableDriveTask {
             maxVel = InchesPerSecond.of(mp.maxWheelVel);
             maxAngVel = RadiansPerSecond.of(mp.maxAngVel);
         }
-        controllerVel = targetVec;
+        vel = targetVecNormalised;
 
-        xController = DEFAULT_X_CONTROLLER;
-        yController = DEFAULT_Y_CONTROLLER;
-        rController = DEFAULT_R_CONTROLLER;
+        withXController(DEFAULT_X_CONTROLLER);
+        withYController(DEFAULT_Y_CONTROLLER);
+        withRController(DEFAULT_R_CONTROLLER);
 
         named("Holonomic Precision Control");
     }
@@ -208,7 +209,15 @@ public class HolonomicPrecisionDriveTask extends FieldOrientableDriveTask {
 
     @Override
     protected void periodic() {
-        throw new NotImplementedError(); // TODO: implement and applyOrientation
+        PoseVelocity2d input = applyOrientation(vel.get());
+        PoseVelocity2d currentVelocity = Objects.requireNonNull(drive.getVelocity(), "A drive localizer able to supply velocity information is required to use the HolonomicPrecisionDriveTask!");
+        // TODO: do we need to implement a circular scaling to ensure the maxVel is followed for 2d motion?
+        double xVel = xController.calculate(currentVelocity.linearVel.x, maxVel.in(InchesPerSecond) * input.linearVel.x);
+        double yVel = yController.calculate(currentVelocity.linearVel.y, maxVel.in(InchesPerSecond) * input.linearVel.y);
+        double rVel = rController.calculate(currentVelocity.angVel, maxAngVel.in(RadiansPerSecond) * input.angVel);
+        // TODO: this approach is unstable, need to think of a better way to do this
+        drive.setPower(Geometry.vel(xVel, yVel, rVel));
+        throw new NotImplementedError("hpdt not implemented yet!");
     }
 
     @Override

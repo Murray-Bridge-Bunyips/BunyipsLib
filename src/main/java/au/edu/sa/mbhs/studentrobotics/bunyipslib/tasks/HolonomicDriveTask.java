@@ -25,16 +25,16 @@ public class HolonomicDriveTask extends FieldOrientableDriveTask {
     /**
      * Constructor for HolonomicDriveTask.
      *
-     * @param velSupplier The supplier for Robot velocity input
-     * @param drive       The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
-     *                    called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
-     *                    if possible.
+     * @param targetVecNormalised The supplier for Robot velocity input, magnitude [-1, 1] of max robot velocity
+     * @param drive               The holonomic drive to use, which you must ensure is holonomic as strafe commands will be
+     *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
+     *                            if possible.
      */
-    public HolonomicDriveTask(@NonNull Supplier<PoseVelocity2d> velSupplier, @NonNull Moveable drive) {
+    public HolonomicDriveTask(@NonNull Supplier<PoseVelocity2d> targetVecNormalised, @NonNull Moveable drive) {
         super.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             on((BunyipsSubsystem) drive, false);
-        vel = velSupplier;
+        vel = targetVecNormalised;
         named("Holonomic Control");
     }
 

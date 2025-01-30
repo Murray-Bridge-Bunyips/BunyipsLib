@@ -19,9 +19,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
  */
 public interface Moveable extends Localizable {
     /**
-     * Set the current commanded state of the robot in the Robot Coordinate System.
+     * Set the current commanded power state of the robot in the Robot Coordinate System.
      *
-     * @param target the state this robot should now try to represent via motors
+     * @param target the normalised state this robot should now try to represent via motors running as a fraction
+     *               of their maximum speed ([-1, 1])
      */
     void setPower(@NonNull PoseVelocity2d target);
 }

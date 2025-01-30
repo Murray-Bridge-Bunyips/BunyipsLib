@@ -53,17 +53,17 @@ public class AlignToPointDriveTask extends FieldOrientableDriveTask {
     /**
      * Construct a new pass-through AlignToPointTask.
      *
-     * @param point       the point to align to in field space, will use the drive's pose estimate for current position
-     * @param passthrough the robot linear velocity pass-through
-     * @param drive       drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
+     * @param point               the point to align to in field space, will use the drive's pose estimate for current position
+     * @param targetVecNormalised the robot linear velocity pass-through, magnitude [-1, 1] of max robot velocity
+     * @param drive               drive instance to use, can optionally be a BunyipsSubsystem for auto-attachment
      */
-    public AlignToPointDriveTask(@NonNull Supplier<Vector2d> point, @Nullable Supplier<Vector2d> passthrough, @NonNull Moveable drive) {
+    public AlignToPointDriveTask(@NonNull Supplier<Vector2d> point, @Nullable Supplier<Vector2d> targetVecNormalised, @NonNull Moveable drive) {
         super.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             on((BunyipsSubsystem) drive, false);
         pointSupplier = point;
         controller = DEFAULT_CONTROLLER;
-        vel = passthrough;
+        vel = targetVecNormalised;
         Vector2d currentTarget = point.get();
         named("Align To Point: " + currentTarget);
         lastPoint = currentTarget;
