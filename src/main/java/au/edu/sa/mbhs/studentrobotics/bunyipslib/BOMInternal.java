@@ -39,10 +39,16 @@ public abstract class BOMInternal extends LinearOpMode {
     final Telemetry getSdkTelemetry() {
         return super.telemetry;
     }
-    
-    final void updateSdkFields(Gamepad gamepad1, Gamepad gamepad2, Telemetry telemetry) {
+
+    final void setSdkGamepad1(Gamepad gamepad1) {
         super.gamepad1 = gamepad1;
+    }
+
+    final void setSdkGamepad2(Gamepad gamepad2) {
         super.gamepad2 = gamepad2;
+    }
+
+    final void setSdkTelemetry(Telemetry telemetry) {
         super.telemetry = telemetry;
     }
 

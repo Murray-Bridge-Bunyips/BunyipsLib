@@ -169,7 +169,10 @@ abstract class BunyipsOpMode : BOMInternal() {
                 it.t = it.telemetry
                 it.gamepad1 = Controller(it.sdkGamepad1, GamepadUser.ONE)
                 it.gamepad2 = Controller(it.sdkGamepad2, GamepadUser.TWO)
-                it.updateSdkFields(it.gamepad1, it.gamepad2, it.telemetry)
+                // Update OpModeInternal fields
+                it.sdkGamepad1 = it.gamepad1
+                it.sdkGamepad2 = it.gamepad2
+                it.sdkTelemetry = it.telemetry
             }
         }
     }
