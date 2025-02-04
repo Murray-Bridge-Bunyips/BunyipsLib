@@ -1210,7 +1210,6 @@ class DualTelemetry @JvmOverloads constructor(
         fun smartLog(format: Any, vararg objs: Any?) {
             if (BunyipsOpMode.isRunning) {
                 BunyipsOpMode.instance.telemetry.log(format, *objs)
-                return
             } else if (BunyipsLib.isOpModeRunning) {
                 val formatted = Text.format(format.toString(), *objs)
                     .replace("%", "%%")
@@ -1220,9 +1219,8 @@ class DualTelemetry @JvmOverloads constructor(
                 Dashboard.usePacket {
                     it.put(System.currentTimeMillis().toString(), formatted)
                 }
-                return
             }
-            throw IllegalStateException("No OpMode is running!")
+            // If logging fails we silently bail as smartLog could very well be called from outside an OpMode
         }
 
         /**

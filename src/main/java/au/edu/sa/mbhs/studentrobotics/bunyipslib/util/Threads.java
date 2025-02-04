@@ -75,7 +75,7 @@ public final class Threads {
             }
             return (T) null;
         };
-        Future<T> scheduled = ThreadPool.getDefault().submit(task);
+        Future<T> scheduled = ThreadPool.getDefault().submit(t);
         tasks.put(name, new Pair<>(task.hashCode(), scheduled));
         Dbg.logd(Threads.class, "starting new thread task: %(%) ...", name, task.hashCode());
         return scheduled;
@@ -116,7 +116,7 @@ public final class Threads {
                 Dbg.logd(Threads.class, "thread loop task '%(%)' completed.", name, loopTask.hashCode());
             }
         };
-        Future<?> scheduled = ThreadPool.getDefault().submit(loopTask);
+        Future<?> scheduled = ThreadPool.getDefault().submit(t);
         tasks.put(name, new Pair<>(loopTask.hashCode(), scheduled));
         Dbg.logd(Threads.class, "starting new thread loop task: %(%) %...", name, loopTask.hashCode(), magMillis != 0 ? "at a " + magMillis + " ms interval " : "");
         return scheduled;
