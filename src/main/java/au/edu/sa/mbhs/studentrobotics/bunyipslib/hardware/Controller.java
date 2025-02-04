@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
+
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.function.Predicate;
@@ -25,10 +27,17 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 public class Controller extends Gamepad {
     /**
      * The SDK gamepad that this Controller wraps and takes input from.
+     * <p>
      * This is public for advanced users who need to access the raw gamepad values, or need to access hardware
      * related gamepad methods that are not available in the Controller class which copies state.
      */
     public final Gamepad sdk;
+    /**
+     * The user defined designated user for this gamepad controller.
+     * <p>
+     * See the constructor notes for more information.
+     */
+    public final GamepadUser designatedUser;
     private final HashMap<Controls, Predicate<Boolean>> buttons = new HashMap<>();
     private final HashMap<Controls.Analog, UnaryFunction> axes = new HashMap<>();
     private final HashMap<Controls, Boolean> debounces = new HashMap<>();
@@ -92,12 +101,40 @@ public class Controller extends Gamepad {
     /**
      * Create a new Controller to manage.
      *
-     * @param gamepad The Gamepad to wrap (gamepad1, gamepad2)
+     * @param gamepad        The Gamepad to wrap (gamepad1, gamepad2)
+     * @param designatedUser The user this gamepad is designated to. Normally, accessing the {@code gamepad.getUser()}
+     *                       method can return null if the gamepad has not been "activated" via the controller by
+     *                       the user doing Start + A or B. This behaviour is a strange oddity of the SDK but leads
+     *                       to unexpected behaviour for users extracting controller data in init.
+     *                       This field is used to re-expose as the {@link #designatedUser} public field, which ensures
+     *                       that a user object can be retrieved without risk of it being null. Note that the presence
+     *                       of this field does not impact the {@link #user} field on the actual gamepad, as it is
+     *                       being parsed directly from the SDK to ensure consistent behaviour and eliminate risk
+     *                       of race conditions. A try-getter, {@link #tryGetUser} exists for convenience.
      */
-    public Controller(@NonNull Gamepad gamepad) {
+    public Controller(@NonNull Gamepad gamepad, @NonNull GamepadUser designatedUser) {
+        this.designatedUser = designatedUser;
         sdk = gamepad;
         copy(gamepad);
         update();
+    }
+
+    /**
+     * Attempts to get the user of this controller.
+     * <p>
+     * If a user cannot be found directly and this gamepad is a Controller instance, the {@link #designatedUser}
+     * will be returned. Otherwise, if no user can be found, null is returned.
+     *
+     * @param gamepad the gamepad to get from
+     * @return the user of the controller, if available by user getter and designated user means, else null
+     */
+    @Nullable
+    public static GamepadUser tryGetUser(@NonNull Gamepad gamepad) {
+        GamepadUser user = gamepad.getUser();
+        if (user == null && gamepad instanceof Controller ctrl) {
+            return ctrl.designatedUser;
+        }
+        return user;
     }
 
     private void parseUnmanagedControllerBuffer() {

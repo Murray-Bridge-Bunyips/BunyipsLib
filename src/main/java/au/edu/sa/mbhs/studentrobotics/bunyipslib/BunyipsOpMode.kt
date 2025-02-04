@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.HardwareDevice
 import com.qualcomm.robotcore.hardware.LightSensor
 import com.qualcomm.robotcore.hardware.RobotCoreLynxUsbDevice
 import com.qualcomm.robotcore.hardware.ServoController
+import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser
 import java.util.Optional
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
@@ -165,8 +166,8 @@ abstract class BunyipsOpMode : BOMInternal() {
             instance.timer = MovingAverageTimer()
             instance.telemetry = DualTelemetry(instance, instance.timer)
             instance.t = instance.telemetry
-            instance.gamepad1 = Controller(instance.sdkGamepad1)
-            instance.gamepad2 = Controller(instance.sdkGamepad2)
+            instance.gamepad1 = Controller(instance.sdkGamepad1, GamepadUser.ONE)
+            instance.gamepad2 = Controller(instance.sdkGamepad2, GamepadUser.TWO)
         }
     }
 
@@ -272,13 +273,11 @@ abstract class BunyipsOpMode : BOMInternal() {
                 module.setConstant(Color.CYAN)
             }
             // Gamepad monitors to update gamepad custom functions
-            Threads.start("bom gamepad1") {
-                while (!Thread.currentThread().isInterrupted)
-                    gamepad1.update()
+            Threads.startLoop("bom gamepad1") {
+                gamepad1.update()
             }
-            Threads.start("bom gamepad2") {
-                while (!Thread.currentThread().isInterrupted)
-                    gamepad2.update()
+            Threads.startLoop("bom gamepad2") {
+                gamepad2.update()
             }
             telemetry.init("<small><font color='#e5ffde'>bunyipslib</font> <font color='gray'>v${BuildConfig.SEMVER}-${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME}</font></small>")
             telemetry.overheadTag = "<b>${javaClass.simpleName}</b>"

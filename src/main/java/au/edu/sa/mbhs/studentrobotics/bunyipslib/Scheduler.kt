@@ -5,6 +5,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask
@@ -15,7 +16,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Analog
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Companion.get
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.qualcomm.robotcore.hardware.Gamepad
-import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser
 import java.util.function.BooleanSupplier
 
 /**
@@ -200,7 +200,9 @@ class Scheduler {
      *
      * @return The controller trigger creator.
      */
-    fun driver() = ControllerTriggerCreator(BunyipsLib.opMode.gamepad1)
+    // FIXME: temporary solution for BunyipsLib.opMode not returning the BOM fields
+    fun driver() =
+        ControllerTriggerCreator(if (BunyipsOpMode.isRunning) BunyipsOpMode.instance.gamepad1 else BunyipsLib.opMode.gamepad1)
 
     /**
      * Create a new controller trigger creator for gamepad 1 (driver).
@@ -214,7 +216,8 @@ class Scheduler {
      *
      * @return The controller trigger creator.
      */
-    fun operator() = ControllerTriggerCreator(BunyipsLib.opMode.gamepad2)
+    fun operator() =
+        ControllerTriggerCreator(if (BunyipsOpMode.isRunning) BunyipsOpMode.instance.gamepad2 else BunyipsLib.opMode.gamepad2)
 
     /**
      * Create a new controller trigger creator for gamepad 2 (operator).
@@ -281,7 +284,7 @@ class Scheduler {
         val button: Controls,
         edge: Edge
     ) : Condition(edge, { controller[button] }) {
-        override fun toString() = "Button($edge):GP${controller.user.id}->$button"
+        override fun toString() = "Button($edge):GP${Controller.tryGetUser(controller)?.id ?: "?"}->$button"
     }
 
     private class ControllerAxisThreshold(
@@ -290,7 +293,7 @@ class Scheduler {
         threshold: (Float) -> Boolean,
         edge: Edge
     ) : Condition(edge, { threshold.invoke(controller[axis]) }) {
-        override fun toString() = "Axis($edge):GP${controller.user.id}->$axis"
+        override fun toString() = "Axis($edge):GP${Controller.tryGetUser(controller)?.id ?: "?"}->$axis"
     }
 
     /**
@@ -634,7 +637,7 @@ class Scheduler {
             if (originalRunCondition is ControllerButtonBind) {
                 val handler = originalRunCondition
                 out.append(" when GP")
-                    .append(if (handler.controller.user == GamepadUser.ONE) 1 else 2)
+                    .append(Controller.tryGetUser(handler.controller)?.id ?: "?")
                     .append("->")
                     .append(handler.button)
                     .append(" is ")
