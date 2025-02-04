@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ class ControllerTest {
     @BeforeEach
     void setUp() {
         gamepad = new Gamepad();
-        controller = new Controller(gamepad);
+        controller = new Controller(gamepad, GamepadUser.ONE);
     }
 
     @Test

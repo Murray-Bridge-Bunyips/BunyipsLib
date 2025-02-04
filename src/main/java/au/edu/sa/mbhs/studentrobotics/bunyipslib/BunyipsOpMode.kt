@@ -161,13 +161,16 @@ abstract class BunyipsOpMode : BOMInternal() {
         @JvmStatic
         @Hook(on = Hook.Target.PRE_INIT, priority = 2)
         private fun configureObjects() {
-            if (_instance == null) return
+            val bom = _instance ?: return
             Dbg.logv("BunyipsOpMode: setting up...")
-            instance.timer = MovingAverageTimer()
-            instance.telemetry = DualTelemetry(instance, instance.timer)
-            instance.t = instance.telemetry
-            instance.gamepad1 = Controller(instance.sdkGamepad1, GamepadUser.ONE)
-            instance.gamepad2 = Controller(instance.sdkGamepad2, GamepadUser.TWO)
+            bom.let {
+                it.timer = MovingAverageTimer()
+                it.telemetry = DualTelemetry(it.sdkTelemetry, it.timer)
+                it.t = it.telemetry
+                it.gamepad1 = Controller(it.sdkGamepad1, GamepadUser.ONE)
+                it.gamepad2 = Controller(it.sdkGamepad2, GamepadUser.TWO)
+                it.updateSdkFields(it.gamepad1, it.gamepad2, it.telemetry)
+            }
         }
     }
 

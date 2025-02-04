@@ -35,7 +35,7 @@ import kotlin.math.roundToInt
  * @since 1.0.0-pre
  */
 class DualTelemetry @JvmOverloads constructor(
-    private val opMode: OpMode,
+    private val telemetry: Telemetry,
     private val movingAverageTimer: MovingAverageTimer? = null,
 ) : Telemetry {
     private val initActions = mutableListOf<Runnable>()
@@ -117,12 +117,12 @@ class DualTelemetry @JvmOverloads constructor(
     fun init(info: String = "") {
         this.info = info
         clearAll()
-        opMode.telemetry.setDisplayFormat(DisplayFormat.HTML)
-        opMode.telemetry.log().displayOrder = Telemetry.Log.DisplayOrder.OLDEST_FIRST
-        opMode.telemetry.captionValueSeparator = ""
-        opMode.telemetry.log().capacity = TELEMETRY_LOG_LINE_LIMIT
+        telemetry.setDisplayFormat(DisplayFormat.HTML)
+        telemetry.log().displayOrder = Telemetry.Log.DisplayOrder.OLDEST_FIRST
+        telemetry.captionValueSeparator = ""
+        telemetry.log().capacity = TELEMETRY_LOG_LINE_LIMIT
         // Separate log from telemetry on the DS with an empty line
-        opMode.telemetry.log().add("")
+        telemetry.log().add("")
         if (info.isNotEmpty()) {
             synchronized(dashboardItems) {
                 dashboardItems.add(
@@ -132,7 +132,7 @@ class DualTelemetry @JvmOverloads constructor(
                     )
                 )
             }
-            opMode.telemetry.log().add(info)
+            telemetry.log().add(info)
         }
         initActions.forEach { it.run() }
     }
@@ -156,7 +156,7 @@ class DualTelemetry @JvmOverloads constructor(
     fun add(format: Any, vararg args: Any?): HtmlItem {
         flushTelemetryQueue()
         var isOverflow = false
-        if (telemetryQueue >= 255 && !opMode.telemetry.isAutoClear) {
+        if (telemetryQueue >= 255 && !telemetry.isAutoClear) {
             // Auto flush will fail as clearing is not permitted
             // We will send telemetry to the debugger instead as a fallback
             Dbg.log("Telemetry overflow: $format")
@@ -207,7 +207,7 @@ class DualTelemetry @JvmOverloads constructor(
      * Add any additional telemetry to the Driver Station telemetry object.
      */
     fun addDS(format: Any, vararg args: Any?): Item {
-        return opMode.telemetry.addData("", Text.format(format.toString(), *args))
+        return telemetry.addData("", Text.format(format.toString(), *args))
     }
 
     /**
@@ -252,7 +252,7 @@ class DualTelemetry @JvmOverloads constructor(
             var rem = item
             if (item is HtmlItem && item.item != null)
                 rem = item.item!!
-            val res = opMode.telemetry.removeItem(rem)
+            val res = telemetry.removeItem(rem)
             if (!res) {
                 Dbg.logd("Could not find telemetry item to remove: $rem")
                 ok = false
@@ -289,7 +289,7 @@ class DualTelemetry @JvmOverloads constructor(
         if (movingAverageTimer != null)
             prepend =
                 "<small><font color='$logBracketColor'>[</font>T+${Math.round(movingAverageTimer.elapsedTime() to Seconds)}s<font color='$logBracketColor'>]</font></small> "
-        opMode.telemetry.log().add(prepend + msg)
+        telemetry.log().add(prepend + msg)
         synchronized(dashboardItems) {
             dashboardItems.add(Pair(ItemType.LOG, msg.ref()))
         }
@@ -332,7 +332,7 @@ class DualTelemetry @JvmOverloads constructor(
      */
     fun setLogCapacity(capacity: Int) {
         TELEMETRY_LOG_LINE_LIMIT = capacity
-        opMode.telemetry.log().capacity = capacity
+        telemetry.log().capacity = capacity
     }
 
     /**
@@ -346,7 +346,8 @@ class DualTelemetry @JvmOverloads constructor(
         }
 
         // Update main DS telemetry
-        val retVal = opMode.telemetry.update()
+        val opMode = BunyipsLib.opMode
+        val retVal = telemetry.update()
 
         // Requeue new overhead status message
         val loopTime = movingAverageTimer?.let {
@@ -459,7 +460,7 @@ class DualTelemetry @JvmOverloads constructor(
             userPacket = TelemetryPacket()
         }
 
-        if (opMode.telemetry.isAutoClear) {
+        if (telemetry.isAutoClear) {
             telemetryQueue = 0
         }
 
@@ -508,20 +509,20 @@ class DualTelemetry @JvmOverloads constructor(
         synchronized(dashboardItems) {
             clearDashboardItems()
         }
-        opMode.telemetry.clear()
+        telemetry.clear()
     }
 
     /**
      * Reset telemetry data, including retention and FtcDashboard
      */
     override fun clearAll() {
-        opMode.telemetry.clearAll()
+        telemetry.clearAll()
         synchronized(dashboardItems) {
             dashboardItems.clear()
         }
         FtcDashboard.getInstance().clearTelemetry()
         telemetryQueue = 0
-        overheadTelemetry = opMode.telemetry.addData("", "")
+        overheadTelemetry = telemetry.addData("", "")
             .setRetained(true)
     }
 
@@ -529,28 +530,28 @@ class DualTelemetry @JvmOverloads constructor(
      * Add an action to perform before Driver Station telemetry is updated.
      */
     override fun addAction(action: Runnable): Any {
-        return opMode.telemetry.addAction(action)
+        return telemetry.addAction(action)
     }
 
     /**
      * Remove an action from the telemetry object.
      */
     override fun removeAction(token: Any): Boolean {
-        return opMode.telemetry.removeAction(token)
+        return telemetry.removeAction(token)
     }
 
     /**
      * Speak a message to the Driver Station.
      */
     override fun speak(text: String) {
-        opMode.telemetry.speak(text)
+        telemetry.speak(text)
     }
 
     /**
      * Speak a message to the Driver Station with language and country code.
      */
     override fun speak(text: String, languageCode: String, countryCode: String) {
-        opMode.telemetry.speak(text, languageCode, countryCode)
+        telemetry.speak(text, languageCode, countryCode)
     }
 
     /**
@@ -558,14 +559,14 @@ class DualTelemetry @JvmOverloads constructor(
      * FtcDashboard will always be false.
      */
     override fun isAutoClear(): Boolean {
-        return opMode.telemetry.isAutoClear
+        return telemetry.isAutoClear
     }
 
     /**
      * Set the telemetry object to auto-clear after each update for the Driver Station.
      */
     override fun setAutoClear(autoClear: Boolean) {
-        opMode.telemetry.isAutoClear = autoClear
+        telemetry.isAutoClear = autoClear
     }
 
     /**
@@ -573,14 +574,14 @@ class DualTelemetry @JvmOverloads constructor(
      * FtcDashboard interval can be checked with `FtcDashboard.getInstance().getTelemetryTransmissionInterval()`.
      */
     override fun getMsTransmissionInterval(): Int {
-        return opMode.telemetry.msTransmissionInterval
+        return telemetry.msTransmissionInterval
     }
 
     /**
      * Set the transmission interval in milliseconds for the Driver Station and FtcDashboard.
      */
     override fun setMsTransmissionInterval(msTransmissionInterval: Int) {
-        opMode.telemetry.msTransmissionInterval = msTransmissionInterval
+        telemetry.msTransmissionInterval = msTransmissionInterval
         FtcDashboard.getInstance().telemetryTransmissionInterval = msTransmissionInterval
     }
 
@@ -589,7 +590,7 @@ class DualTelemetry @JvmOverloads constructor(
      * By default, this is already set to HTML formatting, and it is recommended to leave this as-is.
      */
     override fun setDisplayFormat(displayFormat: DisplayFormat) {
-        opMode.telemetry.setDisplayFormat(displayFormat)
+        telemetry.setDisplayFormat(displayFormat)
     }
 
     /**
@@ -606,7 +607,6 @@ class DualTelemetry @JvmOverloads constructor(
          */
         val isOverflow: Boolean,
         private val dashboardRef: RefCell<String>,
-        opMode: OpMode
     ) : Item {
         /**
          * The underlying telemetry item added to the DS that this HTML item is wrapping.
@@ -622,7 +622,7 @@ class DualTelemetry @JvmOverloads constructor(
             val init = {
                 // To let dynamic reformatting on an item that already exists, we will use the Func<T> attribute against
                 // the HTML string builder, which will ensure changes made after the item has been sent are reflected.
-                item = opMode.telemetry.addData("", ::build)
+                item = telemetry.addData("", ::build)
                 item?.setRetained(retained)
             }
             if (!isOverflow) {
@@ -985,7 +985,7 @@ class DualTelemetry @JvmOverloads constructor(
         if (telemetryQueue >= 255) {
             // We have to flush out telemetry as the queue is too big
             update()
-            if (opMode.telemetry.isAutoClear) {
+            if (telemetry.isAutoClear) {
                 // Flush successful
                 Dbg.logd("Telemetry queue exceeded 255 messages, auto-pushing to flush...")
             }
@@ -1007,7 +1007,7 @@ class DualTelemetry @JvmOverloads constructor(
                 )
             }
         }
-        return HtmlItem(value, retained, isOverflow, ref, opMode)
+        return HtmlItem(value, retained, isOverflow, ref)
     }
 
     @Suppress("KDocMissingDocumentation")
@@ -1066,7 +1066,7 @@ class DualTelemetry @JvmOverloads constructor(
         replaceWith = ReplaceWith("")
     )
     override fun getItemSeparator(): String {
-        return opMode.telemetry.itemSeparator
+        return telemetry.itemSeparator
     }
 
     @Suppress("KDocMissingDocumentation")
@@ -1076,7 +1076,7 @@ class DualTelemetry @JvmOverloads constructor(
         level = DeprecationLevel.ERROR
     )
     override fun setItemSeparator(itemSeparator: String) {
-        opMode.telemetry.itemSeparator = itemSeparator
+        telemetry.itemSeparator = itemSeparator
     }
 
     @Suppress("KDocMissingDocumentation")
@@ -1086,7 +1086,7 @@ class DualTelemetry @JvmOverloads constructor(
         level = DeprecationLevel.ERROR
     )
     override fun log(): Telemetry.Log {
-        return opMode.telemetry.log()
+        return telemetry.log()
     }
 
     @Suppress("KDocMissingDocumentation")
