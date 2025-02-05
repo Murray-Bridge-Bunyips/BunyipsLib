@@ -31,6 +31,18 @@ object Ref {
     fun <T> Supplier<T>.lazy() = LazyCell(this)
 
     /**
+     * Attempts to call `toString` on this object while stripping any additional metadata regarding a [Cell], such
+     * as stripping `RefCell|Content from wrapped toString()|` to `Content from wrapped toString()`.
+     *
+     * The standard `toString` call will be executed if this object is not a [Cell].
+     * 
+     * Optionally works on nullable objects which will return "null".
+     */
+    @JvmStatic
+    fun <T> T?.stringify() = if (this is Cell<*>) this.toString().replace(Regex("^.*Cell\\|"), "")
+        .replace(Regex("\\|$"), "") else this.toString()
+
+    /**
      * Convert this supplier to a [LazyCell].
      */
     fun <T> (() -> T).lazy() = LazyCell(this)

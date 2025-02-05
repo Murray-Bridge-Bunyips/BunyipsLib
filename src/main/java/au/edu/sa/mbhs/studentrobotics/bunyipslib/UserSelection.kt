@@ -6,6 +6,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingPositions
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref.stringify
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.qualcomm.robotcore.util.ElapsedTime
@@ -113,7 +114,8 @@ class UserSelection<T>(
             Text.builder("<font color='yellow'><b>ACTION REQUIRED</b></font>: INIT OPMODE WITH GAMEPAD 1\n")
         val dashboard = Text.builder("<font color='gray'>|</font> ")
 
-        for ((name, button) in buttons) {
+        for ((n, button) in buttons) {
+            val name = n.stringify()
             dashboard.append("%: % <font color='gray'>|</font> ", button.name, name)
             driverStation.append(
                 "| %: <b>%</b>\n",
@@ -157,7 +159,7 @@ class UserSelection<T>(
         if (lastSelectedButton == null)
             lastSelectedButton = Controls.NONE
 
-        val opModeName = result.toString()
+        val opModeName = result.stringify()
 
         if (result == null) {
             opMode.telemetry.log("<font color='yellow'>No user OpMode selection was made.</font>")
