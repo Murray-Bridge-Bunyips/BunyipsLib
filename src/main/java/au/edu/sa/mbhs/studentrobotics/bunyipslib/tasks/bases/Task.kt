@@ -193,7 +193,7 @@ abstract class Task : Runnable, Action {
         val time = if (timeout.magnitude() <= 0.0) "INDEFINITE" else timeout.toString()
         val dep = if (_dependency != null) "DEPENDENT ON ${Text.upper(_dependency.toString())}" else "INDEPENDENT"
 
-        return Text.format("%[%%/%, %]", name, priority, state, time, dep)
+        return Text.format("%, %%/%, %", name, priority, state, time, dep)
     }
 
     /**
