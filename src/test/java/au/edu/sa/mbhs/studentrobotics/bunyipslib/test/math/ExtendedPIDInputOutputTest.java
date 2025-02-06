@@ -44,6 +44,30 @@ class ExtendedPIDInputOutputTest {
     }
 
     @Test
+    void testIntegralResetOnNewSetpoint() {
+        var controller = new PIDController(0.0, 0.0, 0.0);
+        controller.setClearIntegralOnNewSetpoint(true);
+        controller.setI(4);
+        for (int i = 0; i < 5; i++)
+            controller.calculate(0.025, 0);
+        assertEquals(0, controller.calculate(0.025, 0.01), 1.0e-5);
+    }
+
+    @Test
+    void testClampedUpperOutput() {
+        var controller = new PIDController(1.0, 0.0, 0.0);
+        controller.upperClamp = 1;
+        assertEquals(1, controller.calculate(0, 100));
+    }
+
+    @Test
+    void testClampedLowerOutput() {
+        var controller = new PIDController(1.0, 0.0, 0.0);
+        controller.lowerClamp = -1;
+        assertEquals(-1, controller.calculate(0, -100));
+    }
+
+    @Test
     void testIZoneNoOutput() {
         var controller = new PIDController(0.0, 0.0, 0.0);
 
