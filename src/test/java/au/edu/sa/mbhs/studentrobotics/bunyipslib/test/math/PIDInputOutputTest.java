@@ -65,7 +65,7 @@ class PIDInputOutputTest {
         controller.setSetpoint(100);
         assertEquals(100, controller.getError());
         assertEquals(0, controller.getPeriod());
-        assertEquals(Double.POSITIVE_INFINITY, controller.getErrorDerivative());
+        assertEquals(0, controller.getErrorDerivative()); // period < 1.0e-6 check
         assertFalse(controller.atSetpoint());
         controller.setTolerance(Double.POSITIVE_INFINITY);
         assertFalse(controller.atSetpoint());
