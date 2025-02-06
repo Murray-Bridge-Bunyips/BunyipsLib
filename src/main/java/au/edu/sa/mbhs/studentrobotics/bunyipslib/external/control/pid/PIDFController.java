@@ -261,7 +261,7 @@ public class PIDFController implements SystemController {
      *
      * @param lowPassGain the gain for the low pass filter, {@code 0 < lowPassGain < 1},
      *                    defaults to {@link #DEFAULT_DERIVATIVE_LP_GAIN}.
-     *                    To disable, pass a value of {@link Double#MIN_VALUE}, or set the default to it.
+     *                    To disable, pass a value of {@link Double#MIN_VALUE}.
      * @return this
      * @since 6.1.1
      */
@@ -294,7 +294,7 @@ public class PIDFController implements SystemController {
         }
         setPoint = sp;
         errorP = setPoint - currentPv;
-        errorD = derivativeFilter.apply(errorP - prevErrorP) / period;
+        errorD = Math.abs(period) > 1.0e-6 ? derivativeFilter.apply(errorP - prevErrorP) / period : 0;
         return this;
     }
 
@@ -453,16 +453,13 @@ public class PIDFController implements SystemController {
             errorP = setPoint - pv;
             currentPv = pv;
         }
+
         if (continuousInput) {
             double bound = (maxContinuousInput - minContinuousInput) / 2.0;
             errorP = Mathf.wrap(errorP, -bound, bound);
         }
 
-        if (Math.abs(period) > 1.0E-6) {
-            errorD = derivativeFilter.apply(errorP - prevErrorP) / period;
-        } else {
-            errorD = 0;
-        }
+        errorD = Math.abs(period) > 1.0e-6 ? derivativeFilter.apply(errorP - prevErrorP) / period : 0;
 
         /*
          * If total error is the integral from 0 to t of e(t')dt', and
