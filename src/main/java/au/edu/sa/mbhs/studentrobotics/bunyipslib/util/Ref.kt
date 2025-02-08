@@ -35,7 +35,7 @@ object Ref {
      * as stripping `RefCell|Content from wrapped toString()|` to `Content from wrapped toString()`.
      *
      * The standard `toString` call will be executed if this object is not a [Cell].
-     * 
+     *
      * Optionally works on nullable objects which will return "null".
      */
     @JvmStatic

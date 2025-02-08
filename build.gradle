@@ -101,7 +101,7 @@ tasks.withType(DokkaTask.class).configureEach {
     {
       "customAssets": ["${file("docs/custom/logo-icon.svg")}"],
       "separateInheritedMembers": true,
-      "footerMessage": "© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club"
+      "footerMessage": "© 2025 Lucas Bubner, Murray Bridge High School Student Robotics Club"
     }
     """
     pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase": dokkaBaseConfiguration])

@@ -5,13 +5,15 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inte
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.ImmutableMeasure.Companion.ofBaseUnits
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.ImmutableMeasure.Companion.ofRelativeUnits
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Grams
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Meters
 import java.util.Objects
 import kotlin.math.abs
 
 /**
  * Unit of measurement that defines a quantity, such as grams, meters, or seconds.
  *
- * This is the base class for units. Actual units (such as [Units.Grams] and [ ][Units.Meters]) can be found in the [Units] class.
+ * This is the base class for units. Actual units (such as [Grams] and [Meters]) can be found in the [Units] class.
  *
  * @param U the self type, e.g. `class SomeUnit extends Unit<SomeUnit>`
  * @since 1.0.0-pre

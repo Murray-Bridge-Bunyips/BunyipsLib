@@ -40,7 +40,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
      * Converts this measure to a measure with a different unit of the same type, e.g. minutes to
      * seconds. Converting to the same unit is equivalent to calling [magnitude].
      *
-     * For Kotlin users, calling this method can be done with the notation \`in\`
+     * For Kotlin users, calling this method can be done with the notation &#96;in&#96;
      * (see [here](https://kotlinlang.org/docs/java-interop.html#escaping-for-java-identifiers-that-are-keywords-in-kotlin)),
      * or by calling the alias `to`.
      *
