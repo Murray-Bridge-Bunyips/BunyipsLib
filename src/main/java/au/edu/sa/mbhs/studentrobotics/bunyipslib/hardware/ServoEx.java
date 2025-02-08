@@ -2,7 +2,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,7 +44,7 @@ public class ServoEx extends ServoImpl implements PwmControl {
     private long refreshRateNanos;
     private long lastUpdate;
 
-    private Measure<Time> endToEndTime = Seconds.one();
+    private Measure<Time> endToEndTime = Milliseconds.of(500);
 
     /**
      * Wrap a Servo to use with the ServoEx class.
