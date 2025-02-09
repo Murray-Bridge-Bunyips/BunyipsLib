@@ -19,14 +19,16 @@ import java.util.function.Consumer
  * set of instructions before a [BunyipsOpMode] starts (`dynamic_init`).
  *
  * You really should only be running one of these threads at a time, preferably using the Threads
- * class to start and manage it to allow for logging and OpMode management.
+ * class to start and manage it to allow for logging and OpMode management. [AutonomousBunyipsOpMode] handles
+ * the propagation of a user selection fully automatically and re-exposes it through `onReady`.
  *
  * Keep in mind this thread runs in the background so it is not guaranteed to be ready during any
  * specific phase of your init-cycle. It is recommended to check if this thread is running using
  * `Threads.isRunning(selector)` in your `onInitLoop()` to ensure BOM knows it has to wait for the
  * user to make a selection. Alternatively, you can set an init-task that simply waits for the thread to
- * die or similar (e.g. `Task.task().isFinished(() -> !Threads.isRunning(...))`).
- * If you do not do this, the OpMode will assume it is ready to run regardless.
+ * die or similar (e.g. `Task.task().isFinished(() -> !Threads.isRunning(...))`). You can also alternatively use
+ * the init branch of this task to initialise the user selection.
+ * If you do not implement a waiting action, the OpMode will assume it is ready to run regardless.
  *
  * The result of this thread will be stored in the [Future] getter, which you can access yourself,
  * or you can attach a callback to the `callback` property to be run once the thread is complete.
@@ -94,8 +96,11 @@ class UserSelection<T>(
     }
 
     /**
-     * Maps a set of operation modes to a set of buttons.
-     * @return A HashMap of operation modes to buttons.
+     * Maps a set of operation modes to a set of buttons, then blocks until the user inputs an option via `gamepad1`.
+     *
+     * Currently only supports runtime within a [BunyipsOpMode].
+     *
+     * @return the result from this UserSelection
      */
     override fun call(): T? {
         if (opModes.isEmpty()) {
@@ -134,6 +139,7 @@ class UserSelection<T>(
         opMode.telemetry.addDashboard("USR", dashboard)
 
         var flash = false
+        timer.reset()
         while (result == null && opMode.opModeInInit() && !Thread.currentThread().isInterrupted) {
             for ((str, button) in buttons) {
                 if (Controls.isSelected(opMode.gamepad1, button)) {
