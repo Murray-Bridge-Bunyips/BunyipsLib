@@ -80,18 +80,24 @@ class UserSelection<T>(
     private val timer = ElapsedTime()
 
     companion object {
+        private val _lastSelectedButtons = mutableListOf<Controls>()
+
         /**
-         * The button that was last selected by the user through an active [UserSelection] instance.
-         * Null if a [UserSelection] has not been run yet. [Controls.NONE] if a [UserSelection] ran with no selection.
+         * The buttons that were last selected by the user through an active [UserSelection] instance.
+         *
+         * Populated in order from prompts that the user was asked for. Auto-cleared at the end of an OpMode.
+         *
+         * Will be an empty list if no [UserSelection] instances have run, or populated with [Controls.NONE] if
+         * a selection ran but no option was selected.
          */
         @JvmStatic
-        var lastSelectedButton: Controls? = null
-            private set
+        val lastSelectedButtons: List<Controls>
+            get() = _lastSelectedButtons
 
         @JvmStatic
         @Hook(on = Hook.Target.POST_STOP)
         private fun reset() {
-            lastSelectedButton = null
+            _lastSelectedButtons.clear()
         }
     }
 
@@ -139,11 +145,12 @@ class UserSelection<T>(
         opMode.telemetry.addDashboard("USR", dashboard)
 
         var flash = false
+        var selectedButton: Controls = Controls.NONE
         timer.reset()
         while (result == null && opMode.opModeInInit() && !Thread.currentThread().isInterrupted) {
             for ((str, button) in buttons) {
                 if (Controls.isSelected(opMode.gamepad1, button)) {
-                    lastSelectedButton = button
+                    selectedButton = button
                     result = str
                     break
                 }
@@ -162,15 +169,14 @@ class UserSelection<T>(
             // Updates will be handled by the main telemetry loop
         }
 
-        if (lastSelectedButton == null)
-            lastSelectedButton = Controls.NONE
+        _lastSelectedButtons.add(selectedButton)
 
         val opModeName = result.stringify()
 
         if (result == null) {
             opMode.telemetry.log("<font color='yellow'>No user OpMode selection was made.</font>")
         } else {
-            opMode.telemetry.log("Running OpMode: <font color='#caabff'>${lastSelectedButton?.name} -> <b>$opModeName</b></font>")
+            opMode.telemetry.log("Running OpMode: <font color='#caabff'>${selectedButton.name} -> <b>$opModeName</b></font>")
             if (result is StartingPositions) {
                 Storage.memory().lastKnownAlliance = (result as StartingPositions).toStartingConfiguration().alliance
             } else if (result is StartingConfiguration.Position) {
@@ -180,9 +186,10 @@ class UserSelection<T>(
 
         opMode.telemetry.addDashboard(
             "USR",
-            if (result == null) "No selection" else "${lastSelectedButton?.name} -> $opModeName@T+${
-                opMode.timer.elapsedTime() to Seconds round 1
-            }s"
+            if (result == null)
+                "No selection"
+            else
+                "${selectedButton.name} -> $opModeName@T+${opMode.timer.elapsedTime() to Seconds round 1}s"
         )
 
         //This is code from lucas bubner. He is sad cause hes not important and dosent recieve capital letters. He is lonely except for LACHLAN PAUL  his coding buddy. Now i need to go but always keep this message in mind!!!
