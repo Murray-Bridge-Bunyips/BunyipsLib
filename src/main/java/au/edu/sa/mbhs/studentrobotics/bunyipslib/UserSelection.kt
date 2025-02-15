@@ -155,13 +155,14 @@ class UserSelection<T : Any>(
             var result: Any? = null
             var selectedButton = Controls.NONE
 
-            val driverStation = Text.builder("<font color='yellow'><b>(${index + 1}/${buttonLayers.size}) " +
-                    "ACTION REQUIRED</b></font>: CHOOSE ON GAMEPAD\n")
+            var header = "<font color='yellow'><b>(${index + 1}/${buttonLayers.size}) " +
+                    "ACTION REQUIRED</b></font>: CHOOSE ON GAMEPAD\n"
             // No point in displaying the number on the DS if there's only one
             if (buttonLayers.size == 1)
-                driverStation.replaceFirst(Regex("\\(\\d+/\\d+\\)\\s"), "")
+                header = header.replaceFirst(Regex("\\(\\d+/\\d+\\)\\s"), "")
             // Dashboard is a backup/secondary so it doesn't really matter if we're overly verbose
             val dashboard = Text.builder("<font color='gray'>(${index + 1}/${buttonLayers.size}) |</font> ")
+            val driverStation = Text.builder(header)
 
             for ((n, button) in it) {
                 val name = n.stringify()
