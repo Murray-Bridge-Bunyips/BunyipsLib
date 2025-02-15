@@ -224,12 +224,12 @@ class UserSelection<T : Any>(
         }
 
         val selectionsName = if (results.size > 1)
-            "[${results.joinToString(", ") { it.stringify() }}]"
+            "[${results.joinToString { it.stringify() }}]"
         else
             results[0].stringify()
 
         val buttonsName = if (results.size > 1)
-            "[${_lastSelectedButtons.takeLast(buttonLayers.size).joinToString(", ") { it.name }}]"
+            "[${_lastSelectedButtons.takeLast(buttonLayers.size).joinToString { it.name }}]"
         else
             _lastSelectedButtons.last().name
 
