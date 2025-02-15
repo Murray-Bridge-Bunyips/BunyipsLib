@@ -75,7 +75,7 @@ import java.util.function.Consumer
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
  */
-class UserSelection<T : Any>(
+class UserSelection<T : Any> @SafeVarargs constructor(
     /**
      * Runs once the user has made a selection or the thread is interrupted. The result will be the selection made by the user.
      * Can be null if the user did not make a selection.
@@ -140,6 +140,8 @@ class UserSelection<T : Any>(
         if (disableChaining) {
             buttonLayers.add(Controls.mapArgs(selections))
         } else {
+            // TODO: AutonomousBunyipsOpMode use of UserSelection makes these checks fail
+            // TODO: java trouble in detecting Array<*>
             if (selections.isArrayOf<Array<*>>()) {
                 selections.forEach { buttonLayers.add(Controls.mapArgs(it as Array<*>)) }
             } else if (selections.isArrayOf<Collection<*>>()) {
@@ -235,8 +237,10 @@ class UserSelection<T : Any>(
 
         if (results.filterNotNull().isNotEmpty()) {
             opMode.telemetry.log("Running: <font color='#caabff'>$buttonsName -> <b>$selectionsName</b></font>")
-            opMode.telemetry.addDashboard("USR",
-                "$buttonsName -> $selectionsName@T+${opMode.timer.elapsedTime() to Seconds round 1}s")
+            opMode.telemetry.addDashboard(
+                "USR",
+                "$buttonsName -> $selectionsName@T+${opMode.timer.elapsedTime() to Seconds round 1}s"
+            )
 
             // We also auto-parse starting alliance data for Storage, to assist in heuristics
             // Note this only applies for the first found results which is a starting alliance
