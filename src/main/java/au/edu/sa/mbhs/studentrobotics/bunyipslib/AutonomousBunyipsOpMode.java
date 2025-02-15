@@ -112,20 +112,13 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (updatedSubsystems.isEmpty()) {
             Dbg.warn(getClass(), "Caution: No subsystems are attached to AutonomousBunyipsOpMode that can be updated.");
         }
-
-        // Convert user defined OpModeSelections to varargs
-        RefCell<?>[] varargs = opModes.toArray(new RefCell[0]);
-        if (varargs.length == 0) {
-            opModes.add(Ref.of(null));
-        }
-        if (varargs.length > 1) {
-            // Run task allocation if OpModeSelections are defined
-            // This will run asynchronously, and the callback will be called
-            // when the user has selected an OpMode
-            userSelection = new UserSelection<>(this::callback, varargs);
+        if (opModes.size() > 1) {
+            // There is minimum two options so we proceed with selection
             Threads.start("abom user selection", userSelection);
         } else {
-            // There are no OpMode selections, so just run the callback with the default OpMode
+            // There are no selections to make, so just run the callback with whatever we have
+            if (opModes.isEmpty())
+                opModes.add(Ref.empty()); // Handle setOpModes with no elements compared to just 1
             callback(opModes.get(0));
         }
     }
@@ -697,8 +690,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *     // which is the recommended way to define OpModes (OpModes themselves define objectives, not positions)
      * }</pre>
      */
-    protected final void setOpModes(@Nullable Object... selectableOpModes) {
-        if (selectableOpModes == null) return;
+    protected final UserSelection<RefCell<?>> setOpModes(@Nullable Object... selectableOpModes) {
+        if (selectableOpModes == null) return null;
         opModes.clear();
         for (Object selectableOpMode : selectableOpModes) {
             if (selectableOpMode instanceof RefCell<?>) {
@@ -711,6 +704,11 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                 opModes.add(Ref.of(selectableOpMode));
             }
         }
+        RefCell<?>[] selections = opModes.toArray(new RefCell[0]);
+        // This will run asynchronously later, and the callback will be called when the user has selected an OpMode
+        // An empty selections array will cause an immediate return of the callback on execution, handled on init
+        userSelection = new UserSelection<>(this::callback, selections);
+        return userSelection; // Allow chaining if the user wants to disable v7.0.0 features
     }
 
     /**

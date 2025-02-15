@@ -119,7 +119,7 @@ enum class StartingPositions(
          * positions from the audience's perspective.
          */
         @JvmStatic /* giulio was here fun use(): list<any> { */
-        fun use(): Array<Any> {
+        fun use(): Array<StartingPositions> {
             return arrayOf(
                 STARTING_RED_LEFT, // A
                 STARTING_RED_RIGHT, // B /*giulio is is still here*/
