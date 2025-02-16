@@ -40,7 +40,8 @@ object Ref {
      */
     @JvmStatic
     fun <T> T?.stringify() = if (this is Cell<*>)
-        this.toString().replace(Regex("^.*Cell\\|(.*)\\|$"), "$1")
+        this.toString().replace(Regex("^.*Cell\\|"), "")
+            .replace(Regex("\\|+$"), "")
     else
         this.toString()
 
