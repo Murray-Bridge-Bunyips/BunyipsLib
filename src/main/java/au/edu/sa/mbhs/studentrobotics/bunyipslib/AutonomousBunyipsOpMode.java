@@ -649,9 +649,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Call to define your user selections. If you list any, then the user will be prompted to select
-     * an OpMode before the OpMode begins. If you return null or don't call this method, then the user will not
-     * be prompted for a selection, and the OpMode will move to task-ready state immediately.
+     * Call to define your user selection "sub-OpModes". If you list any, then the user will be prompted to select
+     * from these options during initialisation asynchronously. If you return null or don't call this method,
+     * then the user will not be prompted for a selection, and the OpMode will move to task-ready state immediately.
      * <p>
      * Review the {@link UserSelection} class and wiki documentation for more information regarding this feature,
      * including chaining and what to expect regarding the runtime of this class.
@@ -679,8 +679,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * <p>
      * For versions >=7.0.0, you can access the {@code selectedButton} field through {@code UserSelection.getLastSelectedButton()}.
      *
-     * @param selectedOpMode the OpMode selected by the user, if applicable. Will be NULL if the user does not select an OpMode (and OpModes were available).
-     *                       Will be an empty reference if {@link #setOpModes(Object...)} returned null (no OpModes to select).
+     * @param selectedOpMode the sub-OpMode selection by the user via {@link #setOpModes}, if applicable. Will be {@code null} if the user does not select *any* sub-OpMode (and options were available).
+     *                       Will be an empty reference if {@link #setOpModes(Object...)} returned null/was not called (no OpModes to select). If you have used array chaining for your selections,
+     *                       this parameter will be of type `T[]` or `Collection<T>` and contains an array with the results from each layer (such that if you had two arrays in, you would
+     *                       get one array back with a size of two, elements being the selections from array one and two). If the chaining selection ends halfway through, the array is filled to length with null values.
      * @see #add(Task)
      */
     protected abstract void onReady(@Nullable RefCell<?> selectedOpMode);

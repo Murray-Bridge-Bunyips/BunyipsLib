@@ -293,14 +293,16 @@ class UserSelection<T : Any> @SafeVarargs constructor(
 
             // We also auto-parse starting alliance data for Storage, to assist in heuristics
             // Note this only applies for the first found results which is a starting alliance
-            results.forEach {
-                if (it is StartingPositions) {
-                    Storage.memory().lastKnownAlliance = it.toStartingConfiguration().alliance
-                    return@forEach
-                }
-                if (it is StartingConfiguration.Position) {
-                    Storage.memory().lastKnownAlliance = it.alliance
-                    return@forEach
+            run loop@{
+                results.forEach {
+                    if (it is StartingPositions) {
+                        Storage.memory().lastKnownAlliance = it.toStartingConfiguration().alliance
+                        return@loop
+                    }
+                    if (it is StartingConfiguration.Position) {
+                        Storage.memory().lastKnownAlliance = it.alliance
+                        return@loop
+                    }
                 }
             }
         } else {
