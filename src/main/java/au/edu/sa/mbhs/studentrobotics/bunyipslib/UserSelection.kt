@@ -331,7 +331,7 @@ class UserSelection<T : Any> @SafeVarargs constructor(
             else if (selections.isArrayOf<Set<*>>())
                 results.toCollection(LinkedHashSet()) as? T
             else
-                throw IllegalArgumentException("Failed to cast back results to type T. This is because the inputted collection object as part of the selection objects is not a List or Set `Collection` type.")
+                throw IllegalArgumentException("Failed to cast back results to type T. This is because the inputted collection object as part of the selection objects is not all a List or Set `Collection` type. Ensure your argument types are consistent and are supported.")
         } else {
             results.first() as? T
         }
