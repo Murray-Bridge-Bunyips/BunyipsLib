@@ -653,18 +653,11 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * an OpMode before the OpMode begins. If you return null or don't call this method, then the user will not
      * be prompted for a selection, and the OpMode will move to task-ready state immediately.
      * <p>
-     * Review the {@link UserSelection} class for more information regarding this feature, including chaining and
-     * what to expect regarding the runtime of this class.
-     * <pre>{@code
-     *     setOpModes(
-     *             "GO_PARK",
-     *             "GO_SHOOT",
-     *             "GO_SHOOT_AND_PARK",
-     *             "SABOTAGE_ALLIANCE"
-     *     );
-     *     // See the StartingConfiguration class for advanced builder patterns of robot starting positions,
-     *     // which is the recommended way to define OpModes (OpModes themselves define objectives, not positions)
-     * }</pre>
+     * Review the {@link UserSelection} class and wiki documentation for more information regarding this feature,
+     * including chaining and what to expect regarding the runtime of this class.
+     * <p>
+     * By setting OpModes here, the {@link #onReady(RefCell)} parameter will be of type {@link T} and you can cast
+     * it without needing to check.
      */
     @SafeVarargs
     protected final <T> UserSelection<?> setOpModes(@Nullable T... selectableOpModes) {
@@ -680,7 +673,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Called when the OpMode is ready to process tasks.
-     * This will happen when the user has selected an OpMode, or if {@link #setOpModes(Object...)} returned null,
+     * This will happen when the user has selected an OpMode, or if {@link #setOpModes(Object...)} was not called,
      * in which case it will run immediately after {@code static_init} has completed.
      * This is where you should add your tasks to the run queue.
      * <p>
