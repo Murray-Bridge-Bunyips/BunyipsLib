@@ -6,12 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,7 +22,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.DeferredTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
@@ -44,11 +41,11 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Purely visual, and does not affect the actual task (hence why this field is not exposed to FtcDashboard).
      */
     public static double INFINITE_TASK_ASSUMED_DURATION_SECONDS = 5.0;
-    private final ArrayList<Object> opModes = new ArrayList<>();
     private final ConcurrentLinkedDeque<Task> tasks = new ConcurrentLinkedDeque<>();
     // Pre- and post-queues cannot have their tasks removed, so we can rely on their .size() methods
     private final ConcurrentLinkedDeque<Task> postQueue = new ConcurrentLinkedDeque<>();
     private final ConcurrentLinkedDeque<Task> preQueue = new ConcurrentLinkedDeque<>();
+    private Object[] selections = {};
     @NonNull
     private HashSet<BunyipsSubsystem> updatedSubsystems = new HashSet<>();
     private int taskCount;
@@ -86,7 +83,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         String timeLeft = getApproximateTimeLeft();
         Text.Builder out = Text.builder();
         out.append("[AutonomousBunyipsOpMode] onReady() called | %% task(s) queued% | % subsystem(s)\n",
-                userSelection != null ? "usr: " + Text.removeHtml(String.valueOf(selectedOpMode)) + " | " : "",
+                userSelection != null ? "usr: " + Text.removeHtml(Ref.stringify(selectedOpMode)) + " | " : "",
                 taskCount,
                 timeLeft.isEmpty() ? "" : timeLeft + " to complete",
                 updatedSubsystems.size()
@@ -112,14 +109,13 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (updatedSubsystems.isEmpty()) {
             Dbg.warn(getClass(), "Caution: No subsystems are attached to AutonomousBunyipsOpMode that can be updated.");
         }
-        if (opModes.size() > 1) {
+        if (selections.length > 1) {
             // There is minimum two options so we proceed with selection
             Threads.start("abom user selection", userSelection);
         } else {
-            // There are no selections to make, so just run the callback with whatever we have
-            if (opModes.isEmpty())
-                opModes.add(Ref.empty()); // Handle setOpModes with no elements compared to just 1
-            callback(opModes.get(0));
+            // There are no selections to make, so just run the callback with whatever we have, or if the user did
+            // not mention any selections we give them an empty cell
+            callback(selections.length == 1 ? selections[0] : Ref.empty());
         }
     }
 
@@ -653,11 +649,12 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Call to define your OpModeSelections, if you list any, then the user will be prompted to select
-     * an OpMode before the OpMode begins. If you return null/don't call this method, then the user will not
+     * Call to define your user selections. If you list any, then the user will be prompted to select
+     * an OpMode before the OpMode begins. If you return null or don't call this method, then the user will not
      * be prompted for a selection, and the OpMode will move to task-ready state immediately.
-     * This determines what is to be used in the parameters of {@link #onReady(RefCell)}.
-     *
+     * <p>
+     * Review the {@link UserSelection} class for more information regarding this feature, including chaining and
+     * what to expect regarding the runtime of this class.
      * <pre>{@code
      *     setOpModes(
      *             "GO_PARK",
@@ -669,45 +666,15 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      *     // which is the recommended way to define OpModes (OpModes themselves define objectives, not positions)
      * }</pre>
      */
-    protected final void setOpModes(@Nullable List<Object> selectableOpModes) {
-        if (selectableOpModes == null) return;
-        setOpModes(selectableOpModes.toArray(new Object[0]));
-    }
-
-
-    /**
-     * Call to define your OpModeSelections, if you list any, then the user will be prompted to select
-     * an OpMode before the OpMode begins. If you return null, then the user will not
-     * be prompted for a selection, and the OpMode will move to task-ready state immediately.
-     * <pre>{@code
-     *     setOpModes(
-     *             "GO_PARK",
-     *             "GO_SHOOT",
-     *             "GO_SHOOT_AND_PARK",
-     *             "SABOTAGE_ALLIANCE"
-     *     );
-     *     // See the StartingConfiguration class for advanced builder patterns of robot starting positions,
-     *     // which is the recommended way to define OpModes (OpModes themselves define objectives, not positions)
-     * }</pre>
-     */
-    protected final UserSelection<?> setOpModes(@Nullable Object... selectableOpModes) {
+    @SafeVarargs
+    protected final <T> UserSelection<?> setOpModes(@Nullable T... selectableOpModes) {
         if (selectableOpModes == null) return null;
-        opModes.clear();
-        for (Object selectableOpMode : selectableOpModes) {
-            // TODO: check internally for array<startingconfiguration.builder.prebuiltposition>
-            // TODO: collection<*> does not work here
-            if (selectableOpMode instanceof StartingConfiguration.Builder.PrebuiltPosition) {
-                // Preemptive catch for non-built StartingConfigurations which are a common use case
-                // No point in throwing errors for the little stuff we can solve here now
-                opModes.add(((StartingConfiguration.Builder.PrebuiltPosition) selectableOpMode).build());
-            } else {
-                opModes.add(selectableOpMode);
-            }
-        }
-        Object[] selections = opModes.toArray(new Object[0]);
+        selections = selectableOpModes;
         // This will run asynchronously later, and the callback will be called when the user has selected an OpMode
         // An empty selections array will cause an immediate return of the callback on execution, handled on init
-        userSelection = new UserSelection<>(this::callback, selections);
+        userSelection = new UserSelection<>(this::callback, selectableOpModes);
+        // Note we already downcast to a wildcard since T can be modified if we're using a prebuilt
+        // starting position (legacy), and we also expect a wildcard type on onReady.
         return userSelection; // Allow chaining if the user wants to disable v7.0.0 features
     }
 

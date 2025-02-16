@@ -39,8 +39,10 @@ object Ref {
      * Optionally works on nullable objects which will return "null".
      */
     @JvmStatic
-    fun <T> T?.stringify() = if (this is Cell<*>) this.toString().replace(Regex("^.*Cell\\|"), "")
-        .replace(Regex("\\|$"), "") else this.toString()
+    fun <T> T?.stringify() = if (this is Cell<*>)
+        this.toString().replace(Regex("^.*Cell\\|(.*)\\|$"), "$1")
+    else
+        this.toString()
 
     /**
      * Convert this supplier to a [LazyCell].
