@@ -66,7 +66,9 @@ import java.util.function.Consumer
  * given the options in each sub-array, allowing you to compose and piece together separate selections. The callback,
  * which will be of `Array<*>` or `Collection<*>` will return the selections made for each section. Null values will
  * fill the array at the point the selection is terminated early, hence the return type is still `T?`.
- * You can choose to disable this behaviour by calling [disableChaining].
+ * Chaining `Array` with `Collection` instances will not trigger chaining. All elements of T must conform with either
+ * a vararg of arrays (primitive arrays will be autoboxed), or vararg of collections (including [List] and [Set]).
+ * You can choose to disable chaining behaviour by calling [disableChaining].
  *
  * This class is currently only supported for use in a [BunyipsOpMode] context
  * as it references several of its internal components.
@@ -89,6 +91,19 @@ class UserSelection<T : Any> @SafeVarargs constructor(
         "<b>---------<font color='red'>!!!</font>--------</b>",
         "<b><font color='red'>---------</font><font color='white'>!!!</font><font color='red'>--------</font></b>"
     )
+
+    /**
+     * The captions used which are appended after the text "ACTION REQUIRED: " on the DS.
+     * 
+     * If you populate this map before the user selection is run, each layer based on index will use the caption
+     * associated with that index.
+     * 
+     * If you don't edit used layer entries, the standard "CHOOSE ON GAMEPAD" message will fill each empty layer slot.
+     * 
+     * @since 7.0.0
+     */
+    @JvmField
+    val captionLayers = mutableMapOf<Int, String>()
 
     companion object {
         private val _lastSelectedButtons = mutableListOf<Controls>()
@@ -120,6 +135,16 @@ class UserSelection<T : Any> @SafeVarargs constructor(
     fun disableChaining() = apply { disableChaining = true }
 
     /**
+     * Chaining utility to add a layering caption to [captionLayers], which will display the given caption on the desired
+     * selection layer. Since this string will be added to telemetry, if HTML is available for telemetry you can use HTML here for formatting.
+     * 
+     * If you're only using 1 layer, add to the 0th element of this map.
+     * 
+     * @since 7.0.0
+     */
+    fun captionLayer(layer: Int, caption: String) = apply { captionLayers[layer] = caption }
+
+    /**
      * Maps a set of operation modes to a set of buttons, then blocks until the user inputs an option via `gamepad1`.
      *
      * Currently only supports runtime within a [BunyipsOpMode].
@@ -140,10 +165,8 @@ class UserSelection<T : Any> @SafeVarargs constructor(
         if (disableChaining) {
             buttonLayers.add(Controls.mapArgs(selections))
         } else {
-            // TODO: AutonomousBunyipsOpMode use of UserSelection makes these checks fail
-            // TODO: java trouble in detecting Array<*>
-            if (selections.isArrayOf<Array<*>>()) {
-                selections.forEach { buttonLayers.add(Controls.mapArgs(it as Array<*>)) }
+            if (selections.all { tryAutoboxArray(it) is Array<*> }) {
+                selections.forEach { buttonLayers.add(Controls.mapArgs(tryAutoboxArray(it) as Array<*>)) }
             } else if (selections.isArrayOf<Collection<*>>()) {
                 selections.forEach { buttonLayers.add(Controls.mapArgs((it as Collection<*>).toTypedArray())) }
             } else {
@@ -151,77 +174,85 @@ class UserSelection<T : Any> @SafeVarargs constructor(
             }
         }
 
+        for (i in 0..buttonLayers.size)
+            captionLayers.putIfAbsent(i, "SELECT AN OPTION")
+        val captions = captionLayers.toList()
+
         val results: MutableList<Any?> = mutableListOf()
 
-        buttonLayers.forEachIndexed { index, it ->
-            var result: Any? = null
-            var selectedButton = Controls.NONE
+        run loop@{
+            buttonLayers.forEachIndexed { index, it ->
+                var result: Any? = null
+                var selectedButton = Controls.NONE
 
-            var header = "<font color='yellow'><b>(${index + 1}/${buttonLayers.size}) " +
-                    "ACTION REQUIRED</b></font>: CHOOSE ON GAMEPAD\n"
-            // No point in displaying the number on the DS if there's only one
-            if (buttonLayers.size == 1)
-                header = header.replaceFirst(Regex("\\(\\d+/\\d+\\)\\s"), "")
-            // Dashboard is a backup/secondary so it doesn't really matter if we're overly verbose
-            val dashboard = Text.builder("<font color='gray'>(${index + 1}/${buttonLayers.size}) |</font> ")
-            val driverStation = Text.builder(header)
+                var header = "<font color='yellow'><b>(${index + 1}/${buttonLayers.size}) " +
+                        "ACTION REQUIRED</b></font>: ${captions[index].second}\n<font color='gray'><small>Use gamepad1 or gamepad2 to select an option.</small></font>\n"
+                // No point in displaying the number on the DS if there's only one
+                if (buttonLayers.size == 1)
+                    header = header.replaceFirst(Regex("\\(\\d+/\\d+\\)\\s"), "")
+                // Dashboard is a backup/secondary so it doesn't really matter if we're overly verbose
+                val dashboard = Text.builder("<font color='gray'>(${index + 1}/${buttonLayers.size}) |</font> ")
+                val driverStation = Text.builder(header)
 
-            for ((n, button) in it) {
-                val name = n.stringify()
-                dashboard.append("%: % <font color='gray'>|</font> ", button.name, name)
-                driverStation.append(
-                    "| %: <b>%</b>\n",
-                    button.name,
-                    name,
-                )
-            }
+                for ((n, button) in it) {
+                    val name = n.stringify()
+                    dashboard.append("%: % <font color='gray'>|</font> ", button.name, name)
+                    driverStation.append(
+                        "| %: <b>%</b>\n",
+                        button.name,
+                        name,
+                    )
+                }
 
-            driverStation.delete(driverStation.length - 1, driverStation.length)
+                driverStation.delete(driverStation.length - 1, driverStation.length)
 
-            val topBorder = opMode.telemetry.addDS(attentionBorders[0])
-            val mainText = opMode.telemetry.addDS(driverStation)
-            val bottomBorder = opMode.telemetry.addDS(attentionBorders[0])
-            opMode.telemetry.addDashboard("USR", dashboard)
+                val topBorder = opMode.telemetry.addDS(attentionBorders[0])
+                val mainText = opMode.telemetry.addDS(driverStation)
+                val bottomBorder = opMode.telemetry.addDS(attentionBorders[0])
+                opMode.telemetry.addDashboard("USR", dashboard)
 
-            var flash = false
-            timer.reset()
-            while (result == null && opMode.opModeInInit() && !Thread.currentThread().isInterrupted) {
-                for ((option, button) in it) {
-                    // TODO: debounce
-                    if (Controls.isSelected(opMode.gamepad1, button) || Controls.isSelected(opMode.gamepad2, button)) {
-                        selectedButton = button
-                        result = option
-                        break
+                var flash = false
+                timer.reset()
+                while (result == null && opMode.opModeInInit() && !Thread.currentThread().isInterrupted) {
+                    for ((option, button) in it) {
+                        if (opMode.gamepad1.getDebounced(button) || opMode.gamepad2.getDebounced(button)) {
+                            Dbg.logv(javaClass, "user selected (button %, layer %/%): % ...", button, index + 1, buttonLayers.size, Text.removeHtml(option.toString()))
+                            selectedButton = button
+                            result = option
+                            break
+                        }
                     }
+                    if (timer.seconds() > 0.5) {
+                        flash = !flash
+                        timer.reset()
+                    }
+                    if (flash) {
+                        topBorder.setValue(attentionBorders[1])
+                        bottomBorder.setValue(attentionBorders[1])
+                    } else {
+                        topBorder.setValue(attentionBorders[0])
+                        bottomBorder.setValue(attentionBorders[0])
+                    }
+                    // Updates will be handled by the main telemetry loop
                 }
-                if (timer.seconds() > 0.5) {
-                    flash = !flash
-                    timer.reset()
-                }
-                if (flash) {
-                    topBorder.setValue(attentionBorders[1])
-                    bottomBorder.setValue(attentionBorders[1])
-                } else {
-                    topBorder.setValue(attentionBorders[0])
-                    bottomBorder.setValue(attentionBorders[0])
-                }
-                // Updates will be handled by the main telemetry loop
-            }
 
-            result?.let {
-                results.add(it)
-                _lastSelectedButtons.add(selectedButton)
-            }
-
-            opMode.telemetry.remove(topBorder, mainText, bottomBorder)
-
-            // Early end any nested selections if the OpMode is continuing
-            if (result == null) {
-                repeat(buttonLayers.size - index) {
-                    results.add(null)
-                    _lastSelectedButtons.add(Controls.NONE)
+                result?.let {
+                    results.add(it)
+                    _lastSelectedButtons.add(selectedButton)
                 }
-                return@forEachIndexed
+
+                opMode.telemetry.remove(topBorder, mainText, bottomBorder)
+
+                // Early end any nested selections if the OpMode is continuing
+                if (result == null) {
+                    val fillEntries = buttonLayers.size - index
+                    Dbg.logd(javaClass, "ending early, filling null for $fillEntries selection(s) ...")
+                    repeat(fillEntries) {
+                        results.add(null)
+                        _lastSelectedButtons.add(Controls.NONE)
+                    }
+                    return@loop
+                }
             }
         }
 
@@ -261,6 +292,12 @@ class UserSelection<T : Any> @SafeVarargs constructor(
 
         //This is code from lucas bubner. He is sad cause hes not important and dosent recieve capital letters. He is lonely except for LACHLAN PAUL  his coding buddy. Now i need to go but always keep this message in mind!!!
         // - Sorayya, hijacker of laptops
+        
+        // We used getDebounced so we reset it for further user implementation
+        Controls.entries.forEach {
+            opMode.gamepad1.resetDebounce(it)
+            opMode.gamepad2.resetDebounce(it)
+        }
 
         // Finally, we need to cast back into the proper type. We lost type information in the layering stage
         // so we know that if we're dealing with T of some Any, we can cast straight to T as per legacy behaviour.
@@ -269,7 +306,7 @@ class UserSelection<T : Any> @SafeVarargs constructor(
         // We ignore compiler warnings for this reason.
         @Suppress("UNCHECKED_CAST")
         val userRes: T? = if (results.size > 1) {
-            if (selections.isArrayOf<Array<*>>())
+            if (selections.all { tryAutoboxArray(it) is Array<*> })
                 results.toTypedArray() as? T
             else if (selections.isArrayOf<List<*>>())
                 results.toCollection(ArrayList()) as? T
@@ -282,5 +319,20 @@ class UserSelection<T : Any> @SafeVarargs constructor(
         }
         Exceptions.runUserMethod { callback.accept(userRes) }
         return userRes
+    }
+    
+    private fun tryAutoboxArray(it: Any): Any {
+        // Required to check for Array<*> since the primitive arrays do *not* inherit Array
+        return when (it) {
+            is BooleanArray -> it.toTypedArray()
+            is ByteArray -> it.toTypedArray()
+            is CharArray -> it.toTypedArray()
+            is DoubleArray -> it.toTypedArray()
+            is FloatArray -> it.toTypedArray()
+            is IntArray -> it.toTypedArray()
+            is LongArray -> it.toTypedArray()
+            is ShortArray -> it.toTypedArray()
+            else -> it
+        }
     }
 }

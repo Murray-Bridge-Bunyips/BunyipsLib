@@ -694,6 +694,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (selectableOpModes == null) return null;
         opModes.clear();
         for (Object selectableOpMode : selectableOpModes) {
+            // TODO: check internally for array<startingconfiguration.builder.prebuiltposition>
+            // TODO: collection<*> does not work here
             if (selectableOpMode instanceof StartingConfiguration.Builder.PrebuiltPosition) {
                 // Preemptive catch for non-built StartingConfigurations which are a common use case
                 // No point in throwing errors for the little stuff we can solve here now
