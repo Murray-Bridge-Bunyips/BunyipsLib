@@ -9,6 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingPositions
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref.stringify
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads
 import com.qualcomm.robotcore.util.ElapsedTime
 import java.util.concurrent.Callable
 import java.util.concurrent.Future
@@ -158,6 +159,7 @@ class UserSelection<T : Any> @SafeVarargs constructor(
         }
 
         val opMode = BunyipsOpMode.instance
+        val runningOnThread = Threads.isRunning(this)
 
         // Attempt to compose internal arrays or collections into their own layers
         // We lose type clarity, but usually we would be dealing with incompatible types when we have multiple arrays
@@ -251,7 +253,9 @@ class UserSelection<T : Any> @SafeVarargs constructor(
                         topBorder.setValue(attentionBorders[0])
                         bottomBorder.setValue(attentionBorders[0])
                     }
-                    // Updates will be handled by the main telemetry loop
+                    // Updates will be handled by the main telemetry loop if we're on another thread
+                    if (!runningOnThread)
+                        opMode.telemetry.update()
                 }
 
                 result?.let {
