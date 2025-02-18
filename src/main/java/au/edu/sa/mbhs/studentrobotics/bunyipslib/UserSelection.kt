@@ -193,7 +193,8 @@ class UserSelection<T : Any> @SafeVarargs constructor(
                 if (buttonLayers.size == 1)
                     header = header.replaceFirst(Regex("\\(\\d+/\\d+\\)\\s"), "")
                 // Dashboard is a backup/secondary so it doesn't really matter if we're overly verbose
-                val dashboard = Text.builder("(${index + 1}/${buttonLayers.size}) ${captions[index].second} <font color='gray'>|</font> ")
+                val dashboard =
+                    Text.builder("(${index + 1}/${buttonLayers.size}) ${captions[index].second} <font color='gray'>|</font> ")
                 val driverStation = Text.builder(header)
 
                 val it = layer.map {

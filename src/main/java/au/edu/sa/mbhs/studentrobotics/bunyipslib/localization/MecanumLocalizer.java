@@ -93,6 +93,10 @@ public class MecanumLocalizer implements Localizer {
         PositionVelocityPair leftBackPosVel = leftBack.getPositionAndVelocity();
         PositionVelocityPair rightBackPosVel = rightBack.getPositionAndVelocity();
         PositionVelocityPair rightFrontPosVel = rightFront.getPositionAndVelocity();
+        assert leftFrontPosVel.velocity != null;
+        assert leftBackPosVel.velocity != null;
+        assert rightBackPosVel.velocity != null;
+        assert rightFrontPosVel.velocity != null;
 
         YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
 

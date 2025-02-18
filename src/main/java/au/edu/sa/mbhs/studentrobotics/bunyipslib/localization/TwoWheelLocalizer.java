@@ -87,6 +87,8 @@ public class TwoWheelLocalizer implements Localizer {
 
         PositionVelocityPair parPosVel = par.getPositionAndVelocity();
         PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
+        assert parPosVel.velocity != null;
+        assert perpPosVel.velocity != null;
 
         YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS);
@@ -113,7 +115,6 @@ public class TwoWheelLocalizer implements Localizer {
         int perpPosDelta = perpPosVel.position - lastPerpPos;
         double headingDelta = heading.minus(lastHeading);
 
-        // TODO: localizers here complain of null
         Twist2dDual<Time> twist = new Twist2dDual<>(
                 new Vector2dDual<>(
                         new DualNum<Time>(new double[]{

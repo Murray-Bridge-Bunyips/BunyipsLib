@@ -75,6 +75,9 @@ public class ThreeWheelLocalizer implements Localizer {
         PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
         PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
         PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
+        assert par0PosVel.velocity != null;
+        assert par1PosVel.velocity != null;
+        assert perpPosVel.velocity != null;
 
         FlightRecorder.write("THREE_DEAD_WHEEL_INPUTS", new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
 

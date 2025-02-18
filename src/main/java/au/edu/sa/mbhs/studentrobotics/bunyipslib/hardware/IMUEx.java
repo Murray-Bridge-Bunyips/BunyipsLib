@@ -114,7 +114,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     @Nullable
     private Parameters parameters;
     private boolean triedInit;
-    private double timeoutMs = 500;
+    private double timeoutMs = 700;
     private String threadName = null;
     private YawDomain domain = YawDomain.SIGNED;
     private Measure<Angle> yawOffset = Degrees.zero();
