@@ -75,7 +75,7 @@ public class MecanumLocalizer implements Localizer {
         this.rightBack = rightBack != null ? new OverflowEncoder(new RawEncoder((DcMotorEx) rightBack)) : null;
         this.rightFront = rightFront != null ? new OverflowEncoder(new RawEncoder((DcMotorEx) rightFront)) : null;
         this.imu = imu;
-        // Wake up the IMU if it's a DynIMU
+        // Wake up the IMU if it's a IMUEx
         if (imu != null)
             imu.getRobotOrientationAsQuaternion();
     }

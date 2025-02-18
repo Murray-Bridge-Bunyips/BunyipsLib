@@ -10,7 +10,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib.StdSearch
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
-import com.acmerobotics.roadrunner.ftc.LazyImu
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -18,7 +17,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
-import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.TouchSensor
 import dev.frozenmilk.sinister.Preload
@@ -35,7 +33,7 @@ import java.util.function.Consumer
  * ```
  * In your OpMode's init method, call the `init` method of your config class, passing in the OpMode.
  * ```
- *     config.init(this);
+ *     config.init();
  * ```
  *
  * Alternatively as of v7.0.0, you can choose to use a singleton pattern where the [RobotConfig] will be initialised
@@ -117,6 +115,8 @@ abstract class RobotConfig {
             }
         }
         // IMUEx is a drop-in replacement for IMU and can be fetched here too
+        // It is also a lazy-loaded IMU compatible with RoadRunner through the LazyImu interface
+        // Must be also initialised with orientation data by the user
         if (IMUEx::class.java.isAssignableFrom(device)) {
             val imu = hardwareMap.get(IMU::class.java, name)
             return IMUEx(imu) as T
@@ -149,7 +149,7 @@ abstract class RobotConfig {
      *
      * @param name   name of device saved in the configuration file
      * @param device the class of the item to configure, `Motor.class`, `ServoEx.class`, `RawEncoder.class`, etc.
-     * @param onSuccess a Runnable to run if the device is successfully configured, useful for setting up motor configs
+     * @param onSuccess a Runnable to run if the device is successfully configured, useful for setting up configs
      *                  without having to check for null explicitly.
      */
     @JvmOverloads
@@ -177,19 +177,6 @@ abstract class RobotConfig {
         if (ok)
             onSuccess.accept(hardwareDevice!!)
         return hardwareDevice
-    }
-
-    /**
-     * Returns a [LazyImu] instance to use with RoadRunner drives. The difference between a regular IMU and a LazyImu
-     * is that the LazyImu is auto-initialised only when it is required via the `get()` call.
-     *
-     * @param name the name of the IMU in HardwareMap
-     * @param orientationOnRobot the IMU orientation on the robot
-     */
-    @JvmOverloads
-    protected fun getLazyImu(name: String = "imu", orientationOnRobot: ImuOrientationOnRobot): LazyImu? {
-        if (getHardware(name, IMU::class.java) == null) return null
-        return LazyImu(hardwareMap, name, orientationOnRobot, 700)
     }
 
     /**

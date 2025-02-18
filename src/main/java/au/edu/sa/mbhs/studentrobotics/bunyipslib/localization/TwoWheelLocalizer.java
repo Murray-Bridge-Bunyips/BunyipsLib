@@ -70,7 +70,7 @@ public class TwoWheelLocalizer implements Localizer {
         this.perp = perp != null ? new OverflowEncoder(perp) : null;
         this.imu = imu;
 
-        // Wake up the IMU if it's a DynIMU
+        // Wake up the IMU if it's an IMUEx
         if (imu != null)
             imu.getRobotOrientationAsQuaternion();
 
@@ -113,6 +113,7 @@ public class TwoWheelLocalizer implements Localizer {
         int perpPosDelta = perpPosVel.position - lastPerpPos;
         double headingDelta = heading.minus(lastHeading);
 
+        // TODO: localizers here complain of null
         Twist2dDual<Time> twist = new Twist2dDual<>(
                 new Vector2dDual<>(
                         new DualNum<Time>(new double[]{
