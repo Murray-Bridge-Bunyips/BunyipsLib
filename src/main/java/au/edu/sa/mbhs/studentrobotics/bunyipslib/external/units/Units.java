@@ -4,8 +4,9 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import androidx.annotation.NonNull;
-import java.util.Locale;import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import java.util.Locale;
 
 /**
  * Contains and exposes a set of predefined units.
