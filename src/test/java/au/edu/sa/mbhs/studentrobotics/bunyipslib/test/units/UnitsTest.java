@@ -40,6 +40,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Wat
 
 import org.junit.jupiter.api.Test;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Unit;
 
 class UnitsTest {
@@ -201,7 +202,7 @@ class UnitsTest {
 
     @Test
     void testRevolutions() {
-        assertEquals(1, Revolutions.convertFrom(2 * Math.PI, Radians), thresh);
+        assertEquals(1, Revolutions.convertFrom(Mathf.TWO_PI, Radians), thresh);
         assertEquals("Revolution", Revolutions.name());
         assertEquals("R", Revolutions.symbol());
     }
@@ -209,8 +210,8 @@ class UnitsTest {
     @Test
     void testRadians() {
         testBaseUnit(Radians);
-        assertEquals(2 * Math.PI, Radians.convertFrom(1, Revolutions), thresh);
-        assertEquals(2 * Math.PI, Radians.convertFrom(360, Degrees), thresh);
+        assertEquals(Mathf.TWO_PI, Radians.convertFrom(1, Revolutions), thresh);
+        assertEquals(Mathf.TWO_PI, Radians.convertFrom(360, Degrees), thresh);
         assertEquals("Radian", Radians.name());
         assertEquals("rad", Radians.symbol());
     }
@@ -218,7 +219,7 @@ class UnitsTest {
     @Test
     void testDegrees() {
         assertEquals(360, Degrees.convertFrom(1, Revolutions), thresh);
-        assertEquals(360, Degrees.convertFrom(2 * Math.PI, Radians), thresh);
+        assertEquals(360, Degrees.convertFrom(Mathf.TWO_PI, Radians), thresh);
         assertEquals("Degree", Degrees.name());
         assertEquals("°", Degrees.symbol());
     }

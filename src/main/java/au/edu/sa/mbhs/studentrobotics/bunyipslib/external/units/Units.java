@@ -5,7 +5,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
 import androidx.annotation.NonNull;
-import java.util.Locale;
+import java.util.Locale;import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 
 /**
  * Contains and exposes a set of predefined units.
@@ -104,7 +104,7 @@ public final class Units {
      * #Rotations}, but may be semantically more expressive in certain scenarios.
      */
     public static final Angle Revolutions = derive(Radians)
-            .aggregate(2 * Math.PI)
+            .aggregate(Mathf.TWO_PI)
             .named("Revolution")
             .symbol("R")
             .make();

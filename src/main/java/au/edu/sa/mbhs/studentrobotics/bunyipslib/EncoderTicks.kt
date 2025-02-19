@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
@@ -29,7 +30,7 @@ object EncoderTicks {
      */
     @JvmStatic
     fun toInches(ticks: Number, wheelRadiusInches: Double, gearRatio: Double, ticksPerRevolution: Number): Double {
-        return wheelRadiusInches * 2 * Math.PI * gearRatio * ticks.toDouble() / ticksPerRevolution.toDouble()
+        return wheelRadiusInches * Mathf.TWO_PI * gearRatio * ticks.toDouble() / ticksPerRevolution.toDouble()
     }
 
     /**
