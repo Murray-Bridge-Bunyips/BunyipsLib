@@ -75,16 +75,14 @@ public final class HardwareTester extends LinearOpMode {
      */
     public static double[] actuators = new double[0];
     private final List<DashboardControls> dashboardControlled = new ArrayList<>();
-    private TelemetryMenu menu;
     private DualTelemetry telemetry;
-    private MovingAverageTimer timer;
 
     @Override
     @SuppressWarnings({"unchecked", "ExtractMethodRecommender"})
     public void runOpMode() {
         dashboardControlled.clear();
         actuators = new double[0];
-        timer = new MovingAverageTimer();
+        MovingAverageTimer timer = new MovingAverageTimer();
         telemetry = new DualTelemetry(super.telemetry, timer);
         telemetry.overheadTag = "<b>HardwareTester</b>";
         telemetry.init();
@@ -265,7 +263,7 @@ public final class HardwareTester extends LinearOpMode {
                     TelemetryMenu.DynamicItem lightLevel = new TelemetryMenu.DynamicItem("Light Level", light::getLightDetected);
                     TelemetryMenu.DynamicItem rawLightLevel = new TelemetryMenu.DynamicItem("Raw Light Level", light::getRawLightDetected);
                     TelemetryMenu.DynamicItem rawLightLevelMax = new TelemetryMenu.DynamicItem("Raw Light Level Max", light::getRawLightDetectedMax);
-                    dev.addChildren(lightLevel, rawLightLevel, rawLightLevelMax);
+                    dev.addChildren(ledControl, lightLevel, rawLightLevel, rawLightLevelMax);
                 }
 
                 if (device instanceof TouchSensor touch) {
@@ -383,7 +381,7 @@ public final class HardwareTester extends LinearOpMode {
                     // Other sensors we just add their data anyway since they may be useful...
                     TelemetryMenu.DynamicItem status = new TelemetryMenu.DynamicItem("Status", accel::status);
                     TelemetryMenu.DynamicItem acceleration = new TelemetryMenu.DynamicItem("Acceleration (g)", accel::getAcceleration);
-                    dev.addChildren(acceleration);
+                    dev.addChildren(status, acceleration);
                 }
 
                 if (device instanceof CompassSensor compass) {
@@ -392,7 +390,7 @@ public final class HardwareTester extends LinearOpMode {
                     TelemetryMenu.StaticClickableOption measurement = new TelemetryMenu.StaticClickableOption("Measurement Mode", () -> compass.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE));
                     TelemetryMenu.StaticClickableOption calibration = new TelemetryMenu.StaticClickableOption("Calibration Mode", () -> compass.setMode(CompassSensor.CompassMode.CALIBRATION_MODE));
                     TelemetryMenu.DynamicItem calibrationStatus = new TelemetryMenu.DynamicItem("Calibration Failed?", compass::calibrationFailed);
-                    dev.addChildren(direction);
+                    dev.addChildren(status, direction, measurement, calibration, calibrationStatus);
                 }
 
                 if (device instanceof GyroSensor gyro) {
@@ -527,7 +525,7 @@ public final class HardwareTester extends LinearOpMode {
             }
             root.addChild(deviceMapping);
         }
-        menu = new TelemetryMenu(telemetry, root);
+        TelemetryMenu menu = new TelemetryMenu(telemetry, root);
         telemetry.clearAll();
         telemetry.opModeStatus = "<font color='green'>ready</font>";
 
