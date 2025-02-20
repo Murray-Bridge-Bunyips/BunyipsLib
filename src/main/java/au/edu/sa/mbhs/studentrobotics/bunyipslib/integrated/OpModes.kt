@@ -20,7 +20,7 @@ object OpModes : OpModeRegistrar {
     fun suppressOpModes() {
         suppressOpModes = true
     }
-    
+
     /**
      * Register all the BunyipsLib integrated OpModes.
      *

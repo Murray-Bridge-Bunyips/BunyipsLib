@@ -28,6 +28,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Periodic;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.RobotConfig;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
@@ -48,14 +49,15 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
  * Threading capabilities do exist for IMUEx, however, they are dangerous operations.
  * <p>
  * Since this class is down-castable, it also can be used as a {@link HardwareDevice} and serves
- * as a drop-in replacement for the {@link IMU} interface.
+ * as drop-in replacements for the {@link IMU} and {@link LazyImu} interfaces.
  * <p>
  * Field-exposed angles from this class are intrinsic. Read more in the {@link YawPitchRollAngles} and {@link Orientation} classes.
  * <p>
  * This class also fuses the old DynIMU to expose {@link LazyImu} interface by taking a reference to an
  * uninitialised {@link IMU} object and initialising it on the first call to a method.
  * <p>
- * As of v7.0.0, IMUEx is the standard IMU recommended for use in BunyipsLib, as it implements both LazyImu and IMU.
+ * As of v7.0.0, IMUEx is the standard IMU recommended for use in BunyipsLib, as it implements both {@link LazyImu} and {@link IMU}.
+ * A read refresh rate can also be specified via {@link #setRefreshRate}.
  *
  * @author Lucas Bubner, 2025
  * @since 7.0.0
@@ -121,6 +123,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     private double yawDeltaMultiplier = 1;
     private double angleSumDeg;
     private double lastYawDeg;
+    private final Periodic executor = new Periodic(Milliseconds.zero(), this::internalUpdate);
 
     /**
      * Wrap a new IMUEx that will initialise the given {@link IMU} object when a read is required.
@@ -322,7 +325,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
      * as listed by the {@link YawPitchRollAngles} that is provided by this method. This ensures consistent use of
      * the {@link YawPitchRollAngles} class while still delegating the collection of IMU data.
      * <p>
-     * Data will be automatically updated when this method is called, unless it is being updated asynchronously.
+     * Data will be automatically updated when this method is called at the refresh rate, unless it is being updated asynchronously.
      *
      * @inheritDoc
      */
@@ -347,7 +350,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
      * Note: This Orientation will not respect the currently set {@link YawDomain} to ensure consistency across usages
      * of the Universal IMU Interface.
      * <p>
-     * Data will be automatically updated when this method is called, unless it is being updated asynchronously.
+     * Data will be automatically updated when this method is called at the refresh rate, unless it is being updated asynchronously.
      *
      * @inheritDoc
      */
@@ -361,7 +364,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
      * Note: This Orientation will not respect the currently set {@link YawDomain} to ensure consistency across usages
      * of the Universal IMU Interface.
      * <p>
-     * Data will be automatically updated when this method is called, unless it is being updated asynchronously.
+     * Data will be automatically updated when this method is called at the refresh rate, unless it is being updated asynchronously.
      *
      * @inheritDoc
      */
@@ -469,6 +472,21 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     }
 
     /**
+     * Sets the refresh rate at which the IMU should be read.
+     * <p>
+     * By setting a higher interval, data will be more stale, but hardware reads will be cached between intervals.
+     * You may want to increase this value to optimise loop times or set a "fixed" interval for IMU reads.
+     * <p>
+     * By default, the refresh rate is 0 meaning every invocation will read the IMU.
+     *
+     * @param interval the interval at which the IMU will read at for all future IMU accessors
+     * @since 7.0.0
+     */
+    public void setRefreshRate(@NonNull Measure<Time> interval) {
+        executor.setInterval(interval);
+    }
+
+    /**
      * Update the class fields and method return values with the newest information from the IMU.
      * <p>
      * This method will no-op if updates have been delegated via {@link #startThread()}.
@@ -476,7 +494,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     @Override
     public void run() {
         if (threadName != null) return;
-        internalUpdate();
+        executor.run();
     }
 
     /**
@@ -490,7 +508,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
      * complexity when dealing with hardware threading.
      * You must ensure you know what you're doing before you multithread.
      * <p>
-     * The thread will run at full speed as-is.
+     * The thread will run at full speed as-is, ignoring the refresh rate interval as set by {@link #setRefreshRate(Measure)}.
      */
     public void startThread() {
         startThread(Seconds.zero());
@@ -506,6 +524,8 @@ public class IMUEx implements IMU, LazyImu, Runnable {
      * This method is exposed only for highly advanced operations and opens a wide range of technical
      * complexity when dealing with hardware threading.
      * You must ensure you know what you're doing before you multithread.
+     * <p>
+     * Threaded operation ignores the refresh rate as set by {@link #setRefreshRate(Measure)}
      *
      * @param loopSleepDuration the duration to sleep this thread after every loop to save resources
      */

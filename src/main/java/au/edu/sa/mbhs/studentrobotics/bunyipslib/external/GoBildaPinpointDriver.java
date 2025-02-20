@@ -24,7 +24,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external;
 
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
-
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Millimeters;
 
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynch;
@@ -81,7 +80,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     /**
      * Constructs a new Pinpoint Computer.
      *
-     * @param deviceClient the I2C device client
+     * @param deviceClient        the I2C device client
      * @param deviceClientIsOwned whether this device client is owned
      */
     public GoBildaPinpointDriver(I2cDeviceSynchSimple deviceClient, boolean deviceClientIsOwned) {
@@ -319,7 +318,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * Sets the encoder resolution based on the counts-per-revolution and circumference, calculated with wheel radius.<br>
      * This is a BunyipsLib utility which supports WPIUnits.
      *
-     * @param cpr counts per revolution of your encoders
+     * @param cpr         counts per revolution of your encoders
      * @param wheelRadius radius of the encoder wheels
      */
     public void setEncoderResolution(double cpr, Measure<Distance> wheelRadius) {
@@ -330,7 +329,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * Send a position that the Pinpoint should use to track your robot relative to. You can use this to
      * update the estimated position of your robot with new external sensor data, or to run a robot
      * in field coordinates. <br><br>
-     *
+     * <p>
      * This overrides the current position. <br><br>
      *
      * <strong>Using this feature to track your robot's position in field coordinates:</strong> <br>
@@ -382,9 +381,9 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
 
     /**
      * Tuning this value should be unnecessary.<br>
-     *
+     * <p>
      * The goBILDA Odometry Computer has a per-device tuned yaw offset already applied when you receive it.<br><br>
-     *
+     * <p>
      * This is a scalar that is applied to the gyro's yaw value. Increasing it will mean it will report more than one degree for every degree the sensor fusion algorithm measures. <br><br>
      * You can tune this variable by rotating the robot a large amount (10 full turns is a good starting place) and comparing the amount that the robot rotated to the amount measured.
      * Rotating the robot exactly 10 times should measure 3600°. If it measures more or less, divide moved amount by the measured amount and apply that value to the Yaw Offset.<br><br>
