@@ -31,8 +31,8 @@ object OpModes : OpModeRegistrar {
         opModeManager.register(
             OpModeMeta.Builder()
                 .setName("Hardware Tester")
-                .setFlavor(OpModeMeta.Flavor.TELEOP) // Using the FtcDashboard group for all of these OpModes to keep the OpMode out of the way
-                .setGroup("dash")
+                .setFlavor(OpModeMeta.Flavor.TELEOP)
+                .setGroup("dash") // Using the FtcDashboard group for all of these OpModes to keep the OpMode out of the way
                 .build(),
             HardwareTester::class.java
         )
