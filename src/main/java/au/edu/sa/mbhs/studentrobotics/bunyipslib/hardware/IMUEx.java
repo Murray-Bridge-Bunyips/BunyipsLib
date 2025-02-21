@@ -259,14 +259,14 @@ public class IMUEx implements IMU, LazyImu, Runnable {
         timeoutMs = timeout.in(Milliseconds);
     }
 
-    private boolean tryInit() {
+    private boolean tryInit(String reason) {
         if (parameters == null)
             throw new EmergencyStop("IMUEx does not have any information available to initialise the required IMU! Since this data is unavailable when it is needed, use `lazyInitialize` or `initialize` on this object to resolve this error.");
 
         if (triedInit) return true;
         triedInit = true;
 
-        Dbg.logd(getClass(), "Dynamic IMU initialisation in progress ...");
+        Dbg.logd(getClass(), "IMU initialisation in progress (reason=%) ...", reason);
         boolean res = imu.initialize(parameters);
         if (!res)
             RobotLog.addGlobalWarningMessage("IMUEx failed to initialise the IMU!");
@@ -309,12 +309,11 @@ public class IMUEx implements IMU, LazyImu, Runnable {
         if (triedInit)
             Dbg.logd(getClass(), "IMU is reinitialising...");
         triedInit = false;
-        return tryInit();
+        return tryInit("MANUAL_INIT");
     }
 
     @Override
     public void resetYaw() {
-        tryInit();
         angleSumDeg = 0;
         lastYawDeg = 0;
         imu.resetYaw();
@@ -333,6 +332,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     @Override
     @SuppressWarnings("DataFlowIssue")
     public YawPitchRollAngles getRobotYawPitchRollAngles() {
+        tryInit("GET_ROBOT_YAW_PITCH_ROLL_ANGLES");
         run();
         return new YawPitchRollAngles(
                 AngleUnit.DEGREES,
@@ -357,6 +357,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     @NonNull
     @Override
     public Orientation getRobotOrientation(@NonNull AxesReference reference, @NonNull AxesOrder order, @NonNull AngleUnit angleUnit) {
+        tryInit("GET_ROBOT_ORIENTATION");
         return getRobotOrientationAsQuaternion().toOrientation(reference, order, angleUnit);
     }
 
@@ -371,6 +372,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     @NonNull
     @Override
     public Quaternion getRobotOrientationAsQuaternion() {
+        tryInit("GET_ROBOT_ORIENTATION_AS_QUATERNION");
         run();
         return quaternion;
     }
@@ -379,6 +381,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     @Override
     @SuppressWarnings("DataFlowIssue")
     public AngularVelocity getRobotAngularVelocity(@NonNull AngleUnit angleUnit) {
+        tryInit("GET_ROBOT_ANGULAR_VELOCITY");
         run();
         return new AngularVelocity(AngleUnit.DEGREES, (float) pitchVel.magnitude(), (float) rollVel.magnitude(), (float) yawVel.magnitude(), lastAcquisitionTimeNanos);
     }
@@ -419,6 +422,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     @NonNull
     @Override
     public IMU get() {
+        tryInit("LAZY_INIT");
         return this;
     }
 
@@ -546,7 +550,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     }
 
     private void internalUpdate() {
-        tryInit();
+        tryInit("AUTO_INIT");
 
         // Get raw orientations from the IMU to give us full information
         // This will be where the data is retrieved from the IMU, and will be the blocking part of the loop
