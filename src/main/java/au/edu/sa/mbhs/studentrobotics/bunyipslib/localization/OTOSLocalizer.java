@@ -88,7 +88,12 @@ public class OTOSLocalizer implements Localizer {
         otos.getPosVelAcc(position, velocity, new SparkFunOTOS.Pose2D());
 
         Pose2d pose = OTOSKt.toRRPose(position);
-        PoseVelocity2d vel = new PoseVelocity2d(OTOSKt.toRRPose(velocity).position, velocity.h);
+        // Note: All OTOS data including velocity is in the global reference frame
+        //https://discord.com/channels/225450307654647808/650764965799657502/1248045328029061262
+        PoseVelocity2d vel = new PoseVelocity2d(
+                pose.heading.inverse().times(OTOSKt.toRRPose(velocity).position),
+                velocity.h
+        );
 
         FlightRecorder.write("OTOS_POSE", new PoseMessage(pose));
         FlightRecorder.write("OTOS_VELOCITY", new PoseMessage(vel));

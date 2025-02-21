@@ -210,6 +210,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             parEncs.add(new EncoderRef(0, 0));
             perpEncs.add(new EncoderRef(0, 1));
         } else if (localizer instanceof OTOSLocalizer ol) {
+            assert ol.otos != null;
             encoderGroups.add(new OTOSEncoderGroup(ol.otos));
             parEncs.add(new EncoderRef(0, 0));
             perpEncs.add(new EncoderRef(0, 1));
@@ -227,26 +228,31 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
                 @Override
                 public void update() {
+                    assert pl.pinpoint != null;
                     pl.pinpoint.update();
                 }
 
                 @Override
                 public int getParEncoderPosition() {
+                    assert pl.pinpoint != null;
                     return pl.pinpoint.getEncoderX();
                 }
 
                 @Override
                 public int getPerpEncoderPosition() {
+                    assert pl.pinpoint != null;
                     return pl.pinpoint.getEncoderY();
                 }
 
                 @Override
                 public float getHeadingVelocity() {
+                    assert pl.pinpoint != null;
                     return (float) pl.pinpoint.getHeadingVelocity();
                 }
 
                 @Override
                 public void setParDirection(@NonNull DcMotorSimple.Direction direction) {
+                    assert pl.pinpoint != null;
                     parDirection = direction == DcMotorSimple.Direction.FORWARD ?
                             GoBildaPinpointDriver.EncoderDirection.FORWARD :
                             GoBildaPinpointDriver.EncoderDirection.REVERSED;
@@ -255,6 +261,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
                 @Override
                 public void setPerpDirection(@NonNull DcMotorSimple.Direction direction) {
+                    assert pl.pinpoint != null;
                     perpDirection = direction == DcMotorSimple.Direction.FORWARD ?
                             GoBildaPinpointDriver.EncoderDirection.FORWARD :
                             GoBildaPinpointDriver.EncoderDirection.REVERSED;

@@ -50,7 +50,6 @@ public class TwoWheelLocalizer implements Localizer {
     private final DriveModel driveModel;
     private int lastParPos, lastPerpPos;
     private Rotation2d lastHeading;
-    private double lastRawHeadingVel, headingVelOffset;
     private boolean initialized;
 
     /**
