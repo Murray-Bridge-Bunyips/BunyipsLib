@@ -35,6 +35,7 @@ import com.acmerobotics.roadrunner.ftc.PinpointIMU;
 import com.acmerobotics.roadrunner.ftc.PinpointView;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -518,35 +519,48 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
         try {
             LinearOpMode opMode = selection.get();
-            try {
-                //noinspection DataFlowIssue
-                Class<?> opModeInternal = getClass().getSuperclass().getSuperclass().getSuperclass().getSuperclass();
-                //noinspection DataFlowIssue
-                Field started = opModeInternal.getDeclaredField("isStarted");
-                // We need to force start the OpMode that will execute, although we miss the init step we can wait
-                // here instead.
-                started.setAccessible(true);
-                started.set(opMode, true);
-            } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e) {
-                throw new RuntimeException("Internal error while starting OpMode. This shouldn't happen!");
-            }
             opMode.gamepad1 = gamepad1;
             opMode.gamepad2 = gamepad2;
             opMode.hardwareMap = hardwareMap;
 
+            // Generate some feedback when pressing an OpMode so the user doesn't think the procedure is broken
             fusedTelemetry.setCaptionValueSeparator(": ");
             fusedTelemetry.addData(Text.html().bold(opMode.getClass().getSimpleName()).toString(), "Ready.");
-            fusedTelemetry.update();
+            double r = getRuntime();
+            while (getRuntime() < r + 1)
+                fusedTelemetry.update();
 
             FtcDashboard.getInstance().withConfigRoot(configRoot ->
                     configRoot.putVariable("[RR] Tuning Parameters", ReflectionConfig.createVariableFromClass(getClass())));
 
-            while (opModeInInit()) {
-                fusedTelemetry.update();
-                sleep(500);
-            }
-            if (isStopRequested())
-                return;
+            Threads.start("wait for start", () -> {
+                // We wait for the OpMode to become a ready state then force the internal OpMode to begin
+                while (opModeInInit()) {
+                    //noinspection BusyWait
+                    Thread.sleep(500);
+                }
+                if (isStopRequested())
+                    return null;
+                try {
+                    //noinspection ExtractMethodRecommender
+                    Class<?> opModeInternal = Objects.requireNonNull(OpMode.class.getSuperclass());
+                    Field isStarted = opModeInternal.getDeclaredField("isStarted");
+                    // Force start as this OpMode is not technically the one running, but we have the instance
+                    // We could alternatively use the OpModeManager to force re-init a new OpMode, but we may as well
+                    // keep it all localised into a single class.
+                    isStarted.setAccessible(true);
+                    isStarted.set(opMode, true);
+                    Field runningNotifier = LinearOpMode.class.getDeclaredField("runningNotifier");
+                    runningNotifier.setAccessible(true);
+                    Object notifier = Objects.requireNonNull(runningNotifier.get(opMode));
+                    synchronized (notifier) {
+                        notifier.notifyAll();
+                    }
+                } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e) {
+                    throw new RuntimeException("Internal error while starting OpMode. This shouldn't happen!");
+                }
+                return null;
+            });
 
             // Quickly construct the DriveView even for OpModes that don't need it, though still required for FtcDashboard tuning.
             // This mostly applies to the ManualFeedbackTuner and allows the constants on the drive to be adjusted.
