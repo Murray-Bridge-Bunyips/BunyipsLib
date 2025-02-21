@@ -145,7 +145,7 @@ public final class Threads {
      * <p>
      * <b>IMPORTANT</b>: This method is automatically called at the end of any OpMode, via a {@link Hook}.
      */
-    @Hook(on = Hook.Target.POST_STOP, priority = 1)
+    @Hook(on = Hook.Target.POST_STOP, priority = 4)
     public static void stopAll() {
         for (String key : tasks.keySet()) {
             Pair<Integer, Future<?>> task = tasks.get(key);

@@ -266,7 +266,7 @@ abstract class RobotConfig {
         }
 
         @JvmStatic
-        @Hook(on = Hook.Target.PRE_INIT, priority = 1)
+        @Hook(on = Hook.Target.PRE_INIT, priority = 2)
         private fun autoInit() {
             AutoInitHookFilter.candidates.forEach {
                 if (BunyipsLib.opMode.javaClass.isAnnotationPresent(InhibitAutoInit::class.java)) {

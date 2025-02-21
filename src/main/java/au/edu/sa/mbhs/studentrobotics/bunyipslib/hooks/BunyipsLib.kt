@@ -110,7 +110,8 @@ object BunyipsLib {
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
-            HookFilter.preInit.forEach { Exceptions.runUserMethod { it.invoke(null) } }
+            HookFilter.preInit.sortedByDescending { it.second.priority }
+                .forEach { Exceptions.runUserMethod { it.first.invoke(null) } }
         }
 
         override fun onOpModePreStart(opMode: OpMode) {
@@ -120,7 +121,8 @@ object BunyipsLib {
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
-            HookFilter.preStart.forEach { Exceptions.runUserMethod { it.invoke(null) } }
+            HookFilter.preStart.sortedByDescending { it.second.priority }
+                .forEach { Exceptions.runUserMethod { it.first.invoke(null) } }
         }
 
         override fun onOpModePostStop(opMode: OpMode) {
@@ -130,14 +132,15 @@ object BunyipsLib {
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
-            HookFilter.postStop.forEach { Exceptions.runUserMethod { it.invoke(null) } }
+            HookFilter.postStop.sortedByDescending { it.second.priority }
+                .forEach { Exceptions.runUserMethod { it.first.invoke(null) } }
         }
     }
 
     private object HookFilter : SinisterFilter {
-        val preInit = LinkedHashSet<Method>()
-        val preStart = LinkedHashSet<Method>()
-        val postStop = LinkedHashSet<Method>()
+        val preInit = LinkedHashSet<Pair<Method, Hook>>()
+        val preStart = LinkedHashSet<Pair<Method, Hook>>()
+        val postStop = LinkedHashSet<Pair<Method, Hook>>()
 
         override val targets = StdSearch()
 
@@ -153,12 +156,11 @@ object BunyipsLib {
             }.onEach { it.isAccessible = true }
 
             allHooks.map { it to it.getAnnotation(Hook::class.java)!! }
-                .sortedByDescending { it.second.priority }
                 .forEach {
                     when (it.second.on) {
-                        Hook.Target.PRE_INIT -> preInit.add(it.first)
-                        Hook.Target.PRE_START -> preStart.add(it.first)
-                        Hook.Target.POST_STOP -> postStop.add(it.first)
+                        Hook.Target.PRE_INIT -> preInit.add(it)
+                        Hook.Target.PRE_START -> preStart.add(it)
+                        Hook.Target.POST_STOP -> postStop.add(it)
                     }
                 }
         }

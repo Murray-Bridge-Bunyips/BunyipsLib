@@ -38,6 +38,17 @@ public @interface Hook {
     /**
      * @return the priority of this hook; higher value numbers are run before other hooks of lower numbers.
      * By default, hooks are assigned a priority of "level 0", running at whichever order the class loader does.
+     * <p>
+     * Priorities used for integrated hooks are as follows:
+     * <ol start=0>
+     *     <li>Static cleanup methods</li>
+     *     <li><i>Unused</i></li>
+     *     <li>RobotConfig AutoInit</li>
+     *     <li><i>Unused</i></li>
+     *     <li>Threads Auto Stop</li>
+     *     <li><i>Unused</i></li>
+     *     <li>BunyipsOpMode Configuration</li>
+     * </ol>
      */
     int priority() default 0;
 

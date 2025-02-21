@@ -159,7 +159,7 @@ abstract class BunyipsOpMode : BOMInternal() {
         }
 
         @JvmStatic
-        @Hook(on = Hook.Target.PRE_INIT, priority = 2)
+        @Hook(on = Hook.Target.PRE_INIT, priority = 6)
         private fun configureObjects() {
             val bom = _instance ?: return
             Dbg.logv("BunyipsOpMode: setting up...")
