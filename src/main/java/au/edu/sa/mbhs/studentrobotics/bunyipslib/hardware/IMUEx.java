@@ -419,8 +419,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     @NonNull
     @Override
     public IMU get() {
-        tryInit();
-        return imu;
+        return this;
     }
 
     /**

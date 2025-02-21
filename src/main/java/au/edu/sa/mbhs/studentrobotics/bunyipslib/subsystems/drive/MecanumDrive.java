@@ -35,10 +35,10 @@ import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
-import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -49,8 +49,8 @@ import java.util.List;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.RobotConfig;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.IMUEx;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.MecanumLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
@@ -90,10 +90,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final VelConstraint defaultVelConstraint;
     private final AccelConstraint defaultAccelConstraint;
     private final VoltageSensor voltageSensor;
-    // Unfortunately we have to expose lazyImu directly on both RR drives as they are required for tuning,
-    // the LazyImu interface is not exposed on the localizers as they should be constructed by simply calling .get()
-    // if a LazyImu were to be used regardless
-    private final LazyImu lazyImu;
+    private final IMU imu;
     private final DcMotorEx leftFront;
     private final DcMotorEx leftBack;
     private final DcMotorEx rightBack;
@@ -127,11 +124,11 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param leftBack             the back left motor
      * @param rightBack            the back right motor
      * @param rightFront           the front right motor
-     * @param lazyImu              the LazyImu instance to use, see the {@code getLazyImu} method of {@link RobotConfig} to construct this
+     * @param imu                  the IMU to use, see {@link IMUEx} for lazy initialisation
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      * @param startPose            the starting pose of the robot
      */
-    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @Nullable DcMotor leftFront, @Nullable DcMotor leftBack, @Nullable DcMotor rightBack, @Nullable DcMotor rightFront, @Nullable LazyImu lazyImu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, @NonNull Pose2d startPose) {
+    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @Nullable DcMotor leftFront, @Nullable DcMotor leftBack, @Nullable DcMotor rightBack, @Nullable DcMotor rightFront, @Nullable IMU imu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping, @NonNull Pose2d startPose) {
         accumulator = new Accumulator(startPose);
 
         gains = mecanumGains;
@@ -151,7 +148,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         FlightRecorder.write("MECANUM_GAINS", mecanumGains);
         FlightRecorder.write("MECANUM_PROFILE", motionProfile);
 
-        if (assertParamsNotNull(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, lazyImu, voltageSensorMapping, startPose)) {
+        if (assertParamsNotNull(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, imu, voltageSensorMapping, startPose)) {
             assert leftFront != null && leftBack != null && rightBack != null && rightFront != null;
             leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -163,7 +160,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         this.leftBack = (DcMotorEx) leftBack;
         this.rightBack = (DcMotorEx) rightBack;
         this.rightFront = (DcMotorEx) rightFront;
-        this.lazyImu = lazyImu;
+        this.imu = imu;
 
         if (gains.poseHoldingEnabled) {
             setDefaultTask(new HoldLastPoseTask());
@@ -182,11 +179,11 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param leftBack             the back left motor
      * @param rightBack            the back right motor
      * @param rightFront           the front right motor
-     * @param lazyImu              the LazyImu instance to use, see the {@code getLazyImu} method of {@link RobotConfig} to construct this
+     * @param imu                  the IMU to use, see {@link IMUEx} for lazy initialisation
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      */
-    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @Nullable DcMotor leftFront, @Nullable DcMotor leftBack, @Nullable DcMotor rightBack, @Nullable DcMotor rightFront, @Nullable LazyImu lazyImu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
-        this(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, lazyImu, voltageSensorMapping, Storage.memory().lastKnownPosition);
+    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @Nullable DcMotor leftFront, @Nullable DcMotor leftBack, @Nullable DcMotor rightBack, @Nullable DcMotor rightFront, @Nullable IMU imu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
+        this(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, imu, voltageSensorMapping, Storage.memory().lastKnownPosition);
     }
 
     /**
@@ -210,7 +207,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     @Override
     public Localizer getLocalizer() {
         if (localizer == null) {
-            localizer = new MecanumLocalizer(model, leftFront, leftBack, rightBack, rightFront, lazyImu.get());
+            localizer = new MecanumLocalizer(model, leftFront, leftBack, rightBack, rightFront, imu);
         }
         return localizer;
     }
@@ -329,7 +326,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     @Override
     public void periodic() {
         if (localizer == null) {
-            withLocalizer(new MecanumLocalizer(model, leftFront, leftBack, rightBack, rightFront, lazyImu.get()));
+            withLocalizer(new MecanumLocalizer(model, leftFront, leftBack, rightBack, rightFront, imu));
         }
 
         accumulator.accumulate(localizer.update());
