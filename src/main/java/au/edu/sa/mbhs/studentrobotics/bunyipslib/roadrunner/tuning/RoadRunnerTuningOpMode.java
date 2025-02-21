@@ -533,13 +533,6 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             opMode.gamepad1 = gamepad1;
             opMode.gamepad2 = gamepad2;
             opMode.hardwareMap = hardwareMap;
-            if (opMode instanceof ForwardPushTest || opMode instanceof LateralPushTest) {
-                // These OpModes report telemetry but not to the dashboard for whatever reason, so we'll just use
-                // our own fused telemetry instance.
-                opMode.telemetry = fusedTelemetry;
-            } else {
-                opMode.telemetry = telemetry;
-            }
 
             fusedTelemetry.setCaptionValueSeparator(": ");
             fusedTelemetry.addData(Text.html().bold(opMode.getClass().getSimpleName()).toString(), "Ready.");
@@ -548,7 +541,10 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             FtcDashboard.getInstance().withConfigRoot(configRoot ->
                     configRoot.putVariable("[RR] Tuning Parameters", ReflectionConfig.createVariableFromClass(getClass())));
 
-            waitForStart();
+            while (opModeInInit()) {
+                fusedTelemetry.update();
+                sleep(500);
+            }
             if (isStopRequested())
                 return;
 
