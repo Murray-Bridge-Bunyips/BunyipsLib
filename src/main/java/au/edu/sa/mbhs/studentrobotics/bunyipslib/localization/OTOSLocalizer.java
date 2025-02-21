@@ -5,6 +5,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Rad
 
 import androidx.annotation.NonNull;
 
+import androidx.annotation.Nullable;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -53,9 +54,13 @@ public class OTOSLocalizer implements Localizer {
      *             Constructing this localizer will perform a <b>blocking</b> IMU calibration, which will last for
      *             roughly 600 milliseconds.
      */
-    public OTOSLocalizer(@NonNull Params params, @NonNull SparkFunOTOS otos) {
+    public OTOSLocalizer(@NonNull Params params, @Nullable SparkFunOTOS otos) {
         this.params = params;
         this.otos = otos;
+        
+        FlightRecorder.write("OTOS_PARAMS", params);
+        if (otos == null)
+            return;
 
         // RR standard units. Modifying them will result in unit conversions issues.
         otos.setLinearUnit(DistanceUnit.INCH);
@@ -69,8 +74,6 @@ public class OTOSLocalizer implements Localizer {
         otos.setOffset(params.offset);
 
         otos.resetTracking();
-
-        FlightRecorder.write("OTOS_PARAMS", params);
     }
 
     @NonNull

@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
 import androidx.annotation.NonNull;
 
+import androidx.annotation.Nullable;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -43,8 +44,12 @@ public class PinpointLocalizer implements Localizer {
      *                   parameters object is being used.
      * @param pinpoint   the Pinpoint Computer from HardwareMap. Will be IMU and position reset on construction.
      */
-    public PinpointLocalizer(DriveModel driveModel, TwoWheelLocalizer.Params params, GoBildaPinpointDriver pinpoint) {
+    public PinpointLocalizer(@NonNull DriveModel driveModel, @NonNull TwoWheelLocalizer.Params params, @Nullable GoBildaPinpointDriver pinpoint) {
         this.pinpoint = pinpoint;
+        
+        FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", params);
+        if (pinpoint == null)
+            return;
 
         // Pinpoint uses millimeters as its standard unit
         double mmPerTick = INCH_MM_CONVERSION_FACTOR * driveModel.inPerTick;
@@ -52,8 +57,6 @@ public class PinpointLocalizer implements Localizer {
         pinpoint.setOffsets(mmPerTick * params.parYTicks, mmPerTick * params.perpXTicks);
 
         pinpoint.resetPosAndIMU();
-
-        FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", params);
     }
 
     @NonNull

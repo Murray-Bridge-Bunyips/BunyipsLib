@@ -111,7 +111,15 @@ object BunyipsLib {
                 opModeManager.activeOpModeName
             )
             HookFilter.preInit.sortedByDescending { it.second.priority }
-                .forEach { Exceptions.runUserMethod { it.first.invoke(null) } }
+                .forEach {
+                    Dbg.logv(
+                        javaClass, "invoking PRE_INIT(priority=%): %.%() ...",
+                        it.second.priority,
+                        it.first.declaringClass.simpleName,
+                        it.first.name
+                    )
+                    Exceptions.runUserMethod { it.first.invoke(null) }
+                }
         }
 
         override fun onOpModePreStart(opMode: OpMode) {
@@ -122,7 +130,15 @@ object BunyipsLib {
                 opModeManager.activeOpModeName
             )
             HookFilter.preStart.sortedByDescending { it.second.priority }
-                .forEach { Exceptions.runUserMethod { it.first.invoke(null) } }
+                .forEach {
+                    Dbg.logv(
+                        javaClass, "invoking PRE_START(priority=%): %.%() ...",
+                        it.second.priority,
+                        it.first.declaringClass.simpleName,
+                        it.first.name
+                    )
+                    Exceptions.runUserMethod { it.first.invoke(null) }
+                }
         }
 
         override fun onOpModePostStop(opMode: OpMode) {
@@ -133,7 +149,15 @@ object BunyipsLib {
                 opModeManager.activeOpModeName
             )
             HookFilter.postStop.sortedByDescending { it.second.priority }
-                .forEach { Exceptions.runUserMethod { it.first.invoke(null) } }
+                .forEach {
+                    Dbg.logv(
+                        javaClass, "invoking POST_STOP(priority=%): %.%() ...",
+                        it.second.priority,
+                        it.first.declaringClass.simpleName,
+                        it.first.name
+                    )
+                    Exceptions.runUserMethod { it.first.invoke(null) }
+                }
         }
     }
 
