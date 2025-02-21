@@ -47,7 +47,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 
 
 /**
- * The goBILDA Pinpoint Odometry Computer driver, ported from goBILDA.
+ * The goBILDA® Pinpoint Odometry Computer driver, ported from goBILDA®.
  * <p>
  * To use this in BunyipsLib, use this as any other HardwareDevice (such as DcMotor).
  * <p>
@@ -77,6 +77,10 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     private float yVelocity = 0;
     private float hVelocity = 0;
 
+    // BunyipsLib has added these fields so we don't need to track them in the localizer itself
+    private EncoderDirection xDirection = EncoderDirection.FORWARD;
+    private EncoderDirection yDirection = EncoderDirection.FORWARD;
+
     /**
      * Constructs a new Pinpoint Computer.
      *
@@ -88,6 +92,9 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
 
         this.deviceClient.setI2cAddress(I2cAddr.create7bit(DEFAULT_ADDRESS));
         super.registerArmingStateCallback(false);
+
+        // Ensure field synchronisation for BunyipsLib
+        setEncoderDirections(xDirection, yDirection);
     }
 
     @Override
@@ -293,6 +300,23 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
         if (yEncoder == EncoderDirection.REVERSED) {
             writeInt(Register.DEVICE_CONTROL, 1 << 2);
         }
+
+        xDirection = xEncoder;
+        yDirection = yEncoder;
+    }
+
+    /**
+     * BunyipsLib utility to fetch the last set encoder direction of the X pod.
+     */
+    public EncoderDirection getXDirection() {
+        return xDirection;
+    }
+
+    /**
+     * BunyipsLib utility to fetch the last set encoder direction of the Y pod.
+     */
+    public EncoderDirection getYDirection() {
+        return yDirection;
     }
 
     /**

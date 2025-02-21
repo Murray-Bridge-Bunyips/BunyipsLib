@@ -10,7 +10,9 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.OTOSKt;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 
@@ -22,10 +24,11 @@ import java.util.ArrayList;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
- * Standard SparkFun OTOS Localizer from RoadRunner.
+ * Standard SparkFun OTOS localizer.
  * <a href="https://github.com/acmerobotics/road-runner-quickstart/blob/06d2cb08df827b88cf0286246c44d936c41f6a31/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/OTOSLocalizer.java">Source</a>
  *
  * @since 7.0.0
@@ -40,7 +43,7 @@ public class OTOSLocalizer implements Localizer {
      */
     public final Params params;
 
-    private Pose2d lastPosition = Geometry.zeroPose();
+    private Pose2d lastPose = Geometry.zeroPose();
 
     /**
      * Create a new OTOS localizer that uses this OTOS.
@@ -66,31 +69,44 @@ public class OTOSLocalizer implements Localizer {
         otos.setOffset(params.offset);
 
         otos.resetTracking();
+
+        FlightRecorder.write("OTOS_PARAMS", params);
     }
 
     @NonNull
     @Override
     public Twist2dDual<Time> update() {
+        if (otos == null)
+            return new Twist2dDual<>(Vector2dDual.constant(Geometry.zeroVec(), 2), DualNum.constant(0, 2));
+
         SparkFunOTOS.Pose2D position = new SparkFunOTOS.Pose2D();
         SparkFunOTOS.Pose2D velocity = new SparkFunOTOS.Pose2D();
         // Acceleration is unused, but we burst read so we only need to do it once
         otos.getPosVelAcc(position, velocity, new SparkFunOTOS.Pose2D());
 
-        // TODO: needs testing
-        Pose2d pos = OTOSKt.toRRPose(position);
+        Pose2d pose = OTOSKt.toRRPose(position);
         PoseVelocity2d vel = new PoseVelocity2d(OTOSKt.toRRPose(velocity).position, velocity.h);
-        Pose2d delta = lastPosition.minusExp(pos);
-        lastPosition = pos;
+
+        FlightRecorder.write("OTOS_POSE", new PoseMessage(pose));
+        FlightRecorder.write("OTOS_VELOCITY", new PoseMessage(vel));
+
+        // TODO: needs testing
+        Vector2d positionDelta = pose.position.minus(lastPose.position);
+        double headingDelta = pose.heading.minus(lastPose.heading);
+        lastPose = pose;
 
         return new Twist2dDual<>(
                 new Vector2dDual<>(
-                        new DualNum<>(new double[]{delta.position.x, vel.linearVel.x}),
-                        new DualNum<>(new double[]{delta.position.y, vel.linearVel.y})
+                        new DualNum<>(new double[]{positionDelta.x, vel.linearVel.x}),
+                        new DualNum<>(new double[]{positionDelta.y, vel.linearVel.y})
                 ),
-                new DualNum<>(new double[]{delta.heading.toDouble(), vel.angVel})
+                new DualNum<>(new double[]{headingDelta, vel.angVel})
         );
     }
 
+    /**
+     * Parameters for the OTOS.
+     */
     public static class Params {
         /**
          * Multiplicative scale for linear tracking to correct for inaccuracies.
