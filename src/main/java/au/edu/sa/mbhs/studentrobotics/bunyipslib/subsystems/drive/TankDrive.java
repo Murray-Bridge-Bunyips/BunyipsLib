@@ -237,14 +237,14 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         accumulator.accumulate(localizer.update());
 
         Pose2d pose = accumulator.getPose();
-        PoseVelocity2d poseVel = accumulator.getVelocity();
+        PoseVelocity2d poseVelRot = pose.heading.inverse().times(accumulator.getVelocity());
         Telemetry.Item i = DualTelemetry.smartAdd("Localizer", "X:%in(%/s) Y:%in(%/s) %°(%/s)",
                 Mathf.round(pose.position.x, 1),
-                Mathf.round(pose.heading.inverse().times(poseVel.linearVel).x, 1),
+                Mathf.round(poseVelRot.linearVel.x, 1),
                 Mathf.round(pose.position.y, 1),
-                Mathf.round(pose.heading.inverse().times(poseVel.linearVel).y, 1),
+                Mathf.round(poseVelRot.linearVel.y, 1),
                 Mathf.round(Math.toDegrees(pose.heading.toDouble()), 1),
-                Mathf.round(Math.toDegrees(poseVel.angVel), 1)
+                Mathf.round(Math.toDegrees(poseVelRot.angVel), 1)
         );
         if (i instanceof DualTelemetry.HtmlItem hi)
             hi.color("gray").small();
