@@ -90,8 +90,7 @@ public class OTOSLocalizer implements Localizer {
         FlightRecorder.write("OTOS_POSE", new PoseMessage(pose));
         FlightRecorder.write("OTOS_VELOCITY", new PoseMessage(vel));
 
-        // TODO: needs testing
-        Vector2d positionDelta = pose.position.minus(lastPose.position);
+        Vector2d positionDelta = pose.heading.inverse().times(pose.position.minus(lastPose.position));
         double headingDelta = pose.heading.minus(lastPose.heading);
         lastPose = pose;
 

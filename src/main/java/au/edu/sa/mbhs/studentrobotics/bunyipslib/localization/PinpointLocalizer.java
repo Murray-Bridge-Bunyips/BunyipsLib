@@ -79,7 +79,7 @@ public class PinpointLocalizer implements Localizer {
         FlightRecorder.write("PINPOINT_POSE", new PoseMessage(pose));
         FlightRecorder.write("PINPOINT_VELOCITY", new PoseMessage(vel));
 
-        Vector2d positionDelta = pose.position.minus(lastPose.position);
+        Vector2d positionDelta = pose.heading.inverse().times(pose.position.minus(lastPose.position));
         double headingDelta = pose.heading.minus(lastPose.heading);
         lastPose = pose;
 
