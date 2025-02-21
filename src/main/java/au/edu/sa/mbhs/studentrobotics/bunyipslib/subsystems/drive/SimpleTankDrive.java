@@ -110,9 +110,9 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
             PoseVelocity2d poseVel = accumulator.getVelocity();
             Telemetry.Item i = DualTelemetry.smartAdd("Localizer", "X:%in(%/s) Y:%in(%/s) %°(%/s)",
                     Mathf.round(pose.position.x, 1),
-                    Mathf.round(poseVel.linearVel.x, 1),
+                    Mathf.round(pose.heading.inverse().times(poseVel.linearVel).x, 1),
                     Mathf.round(pose.position.y, 1),
-                    Mathf.round(poseVel.linearVel.y, 1),
+                    Mathf.round(pose.heading.inverse().times(poseVel.linearVel).y, 1),
                     Mathf.round(Math.toDegrees(pose.heading.toDouble()), 1),
                     Mathf.round(Math.toDegrees(poseVel.angVel), 1)
             );

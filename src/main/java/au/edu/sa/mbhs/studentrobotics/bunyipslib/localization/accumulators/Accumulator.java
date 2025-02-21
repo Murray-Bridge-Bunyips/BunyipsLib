@@ -80,8 +80,8 @@ public class Accumulator implements Localizable {
             p.put("x (in)", pose.position.x);
             p.put("y (in)", pose.position.y);
             p.put("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
-            p.put("xVel (in/s)", velocity.linearVel.x);
-            p.put("yVel (in/s)", velocity.linearVel.y);
+            p.put("xRelativeVel (in/s)", velocity.linearVel.x);
+            p.put("yRelativeVel (in/s)", velocity.linearVel.y);
             p.put("headingVel (deg/s)", Math.toDegrees(velocity.angVel));
 
             Canvas c = p.fieldOverlay();

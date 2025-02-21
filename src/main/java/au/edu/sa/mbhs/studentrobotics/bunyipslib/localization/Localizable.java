@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
@@ -54,6 +55,9 @@ public interface Localizable {
 
     /**
      * Calculate the first derivative of the accumulated pose from an internal localizer.
+     * <p>
+     * This velocity is robot-relative. Note for telemetry outputs in the four main {@link Moveable} classes,
+     * the velocity is rotated to be field-relative.
      * <p>
      * Units should be in inches/sec and radians/sec.
      *
