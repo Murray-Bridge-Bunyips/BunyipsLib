@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.AccelConstraint;
-import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.DualNum;
@@ -313,8 +312,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public final class FollowTrajectoryTask extends Task {
         private final TimeTrajectory timeTrajectory;
         private final double[] xPoints, yPoints;
-        private double beginTs = -1;
-        private double t;
 
         /**
          * Create a new FollowTrajectoryTask.
@@ -344,14 +341,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            if (beginTs < 0) {
-                beginTs = Actions.now();
-                t = 0;
-            } else {
-                t = Actions.now() - beginTs;
-            }
-
-            DualNum<Time> x = timeTrajectory.profile.get(t);
+            DualNum<Time> x = timeTrajectory.profile.get(getDeltaTime().in(Seconds));
 
             Pose2dDual<Arclength> txWorldTarget = timeTrajectory.path.get(x.value(), 3);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
@@ -386,7 +376,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return t >= timeTrajectory.duration;
+            return getDeltaTime().in(Seconds) >= timeTrajectory.duration;
         }
 
         @Override
@@ -401,8 +391,6 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      */
     public final class TurnTask extends Task {
         private final TimeTurn turn;
-        private double beginTs = -1;
-        private double t;
 
         /**
          * Create a new TurnTask.
@@ -420,14 +408,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            if (beginTs < 0) {
-                beginTs = Actions.now();
-                t = 0;
-            } else {
-                t = Actions.now() - beginTs;
-            }
-
-            Pose2dDual<Time> txWorldTarget = turn.get(t);
+            Pose2dDual<Time> txWorldTarget = turn.get(getDeltaTime().in(Seconds));
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             PoseVelocity2d robotVelRobot = accumulator.getVelocity();
@@ -461,7 +442,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return t >= turn.duration;
+            return getDeltaTime().in(Seconds) >= turn.duration;
         }
 
         @Override

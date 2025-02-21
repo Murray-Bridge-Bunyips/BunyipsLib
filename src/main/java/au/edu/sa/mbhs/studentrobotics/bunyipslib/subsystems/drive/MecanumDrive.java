@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.AccelConstraint;
-import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.AngularVelConstraint;
 import com.acmerobotics.roadrunner.DisplacementTrajectory;
 import com.acmerobotics.roadrunner.DualNum;
@@ -559,6 +558,14 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             rightBackPower = 0;
             rightFrontPower = 0;
         }
+        
+        @Override
+        protected void onReset() {
+            s = 0;
+            stab = null;
+            error = Geometry.zeroPose();
+            robotVelRobot = Geometry.zeroVel();
+        }
     }
 
     /**
@@ -569,8 +576,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         private final double[] xPoints, yPoints;
         private Pose2d error = Geometry.zeroPose();
         private PoseVelocity2d robotVelRobot = Geometry.zeroVel();
-        private double beginTs = -1;
-        private double t;
 
         /**
          * Create a new FollowTimedTrajectoryTask.
@@ -600,15 +605,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            if (beginTs < 0) {
-                beginTs = Actions.now();
-                t = 0;
-            } else {
-                t = Actions.now() - beginTs;
-            }
-
             Pose2d robotPose = accumulator.getPose();
-            Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
+            Pose2dDual<Time> txWorldTarget = timeTrajectory.get(getDeltaTime().in(Seconds));
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             robotVelRobot = accumulator.getVelocity();
@@ -651,7 +649,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return t >= timeTrajectory.duration
+            return getDeltaTime().in(Seconds) >= timeTrajectory.duration
                     && error.position.norm() < errorThresholds.getMaxTranslationalError().in(Inches)
                     && robotVelRobot.linearVel.norm() < errorThresholds.getMinVelStab().in(InchesPerSecond)
                     && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
@@ -665,6 +663,12 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             rightBackPower = 0;
             rightFrontPower = 0;
         }
+        
+        @Override
+        protected void onReset() {
+            error = Geometry.zeroPose();
+            robotVelRobot = Geometry.zeroVel();
+        }
     }
 
     /**
@@ -674,8 +678,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         private final TimeTurn turn;
         private Pose2d error = Geometry.zeroPose();
         private PoseVelocity2d robotVelRobot = Geometry.zeroVel();
-        private double beginTs = -1;
-        private double t;
 
         /**
          * Create a new TurnTask.
@@ -693,14 +695,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            if (beginTs < 0) {
-                beginTs = Actions.now();
-                t = 0;
-            } else {
-                t = Actions.now() - beginTs;
-            }
-
-            Pose2dDual<Time> txWorldTarget = turn.get(t);
+            Pose2dDual<Time> txWorldTarget = turn.get(getDeltaTime().in(Seconds));
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             robotVelRobot = accumulator.getVelocity();
@@ -739,7 +734,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return t >= turn.duration
+            return getDeltaTime().in(Seconds) >= turn.duration
                     && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
                     && robotVelRobot.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
         }
@@ -750,6 +745,12 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             leftBackPower = 0;
             rightBackPower = 0;
             rightFrontPower = 0;
+        }
+        
+        @Override
+        protected void onReset() {
+            error = Geometry.zeroPose();
+            robotVelRobot = Geometry.zeroVel();
         }
     }
 }

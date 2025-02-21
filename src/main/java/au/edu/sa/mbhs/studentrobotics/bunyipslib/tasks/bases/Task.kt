@@ -564,7 +564,7 @@ abstract class Task : Runnable, Action {
                 }
                 isFinished { this@Task.isTaskFinished() }
                 onInterrupt { this@Task.onInterrupt() }
-                onReset { this@Task.reset() }
+                onReset { this@Task.onReset() }
                 onFinish { this@Task.onFinish() }
             }
         }
