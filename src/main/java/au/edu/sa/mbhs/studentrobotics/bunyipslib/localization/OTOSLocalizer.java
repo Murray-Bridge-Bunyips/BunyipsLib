@@ -4,8 +4,8 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inc
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
 
 import androidx.annotation.NonNull;
-
 import androidx.annotation.Nullable;
+
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -57,7 +57,7 @@ public class OTOSLocalizer implements Localizer {
     public OTOSLocalizer(@NonNull Params params, @Nullable SparkFunOTOS otos) {
         this.params = params;
         this.otos = otos;
-        
+
         FlightRecorder.write("OTOS_PARAMS", params);
         if (otos == null)
             return;
@@ -89,7 +89,7 @@ public class OTOSLocalizer implements Localizer {
 
         Pose2d pose = OTOSKt.toRRPose(position);
         // Note: All OTOS data including velocity is in the global reference frame
-        //https://discord.com/channels/225450307654647808/650764965799657502/1248045328029061262
+        // https://discord.com/channels/225450307654647808/650764965799657502/1248045328029061262
         PoseVelocity2d vel = new PoseVelocity2d(
                 pose.heading.inverse().times(OTOSKt.toRRPose(velocity).position),
                 velocity.h
