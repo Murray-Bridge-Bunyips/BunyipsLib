@@ -247,7 +247,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
                 if (!warned[11]) Dbg.warn("IMUEx.none() was accessed for close.");
                 warned[11] = true;
             }
-        }, new Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.FORWARD, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
+        }, new Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD)));
     }
 
     /**
