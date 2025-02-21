@@ -554,7 +554,13 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
             // Quickly construct the DriveView even for OpModes that don't need it, though still required for FtcDashboard tuning.
             // This mostly applies to the ManualFeedbackTuner and allows the constants on the drive to be adjusted.
-            if (opMode instanceof ManualFeedbackTuner || opMode instanceof SplineTest || opMode instanceof LocalizationTest) {
+            if (opMode instanceof ManualFeedbackTuner
+                    || opMode instanceof SplineTest
+                    || opMode instanceof LocalizationTest
+                    || opMode instanceof OTOSAngularScalarTuner
+                    || opMode instanceof OTOSLinearScalarTuner
+                    || opMode instanceof OTOSHeadingOffsetTuner
+                    || opMode instanceof OTOSPositionOffsetTuner) {
                 // Ensures the update loop is started for the gains
                 dvf.make(hardwareMap);
             }
