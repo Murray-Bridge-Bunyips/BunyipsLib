@@ -249,7 +249,7 @@ public abstract class BunyipsSubsystem {
         if (!shouldRun) return;
         if (currentTask != defaultTask) {
             if (currentTask != null && !currentTask.isFinished()) {
-                sout(Dbg::logv, "Task changed: `%` <- `%`(INT)", defaultTask, currentTask);
+                sout(Dbg::logv, "Task changed: % <- %(INT)", defaultTask, currentTask);
                 currentTask.finishNow();
                 // Set now to avoid double logging
                 currentTask = defaultTask;
@@ -274,7 +274,7 @@ public abstract class BunyipsSubsystem {
                 onEnable();
             } else {
                 // Task changes are repetitive to telemetry log, will just leave the important messages to there
-                sout(Dbg::logv, "Task changed: `%` <- `%`", defaultTask, currentTask);
+                sout(Dbg::logv, "Task changed: % <- %", defaultTask, currentTask);
             }
             currentTask = defaultTask;
         }
@@ -335,7 +335,7 @@ public abstract class BunyipsSubsystem {
                 setHighPriorityCurrentTask(newTask);
                 return true;
             }
-            sout(Dbg::logv, "Ignored task change: `%` -> `%`", currentTask, newTask);
+            sout(Dbg::logv, "Ignored task change: % -> %", currentTask, newTask);
             return false;
         }
 
@@ -345,7 +345,7 @@ public abstract class BunyipsSubsystem {
             defaultTask.finishNow();
             defaultTask.reset();
         }
-        sout(Dbg::logd, "Task changed: `%` -> `%`", currentTask, newTask);
+        sout(Dbg::logd, "Task changed: % -> %", currentTask, newTask);
         currentTask = newTask;
         return true;
     }
@@ -362,7 +362,7 @@ public abstract class BunyipsSubsystem {
         }
         // Task will be cancelled abruptly, run the finish callback now
         if (this.currentTask != defaultTask) {
-            sout(Dbg::warn, "Task changed: `%`(INT) -> `%`", this.currentTask, currentTask);
+            sout(Dbg::warn, "Task changed: %(INT) -> %", this.currentTask, currentTask);
             this.currentTask.finishNow();
         }
         currentTask.reset();

@@ -97,6 +97,16 @@ public final class Tasks {
     }
 
     /**
+     * Gets a registered task that may have been registered through {@link #register(Task...)}.
+     *
+     * @param idx the index of the registered task
+     * @return the task
+     */
+    public static Task get(int idx) {
+        return registeredTasks.get(idx);
+    }
+
+    /**
      * Run a single robot task iteration, where further calls will no-op if the task is finished.
      * <p>
      * This is for tasks that you may want to run start-to-finish only once,

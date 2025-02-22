@@ -56,7 +56,7 @@ public abstract class TaskGroup extends Task {
     protected final void executeTask(@NonNull Task task) {
         if (task.isFinished()) {
             if (finishedTasks.add(task))
-                Dbg.logd(getClass(), "sub-task (`%` of `%`, #%/max %) finished -> %s", task, this, finishedTasks.size(), tasks.size(), task.getDeltaTime().in(Seconds));
+                Dbg.logd(getClass(), "sub-task (% of %, #%/max %) finished -> %s", task, this, finishedTasks.size(), tasks.size(), task.getDeltaTime().in(Seconds));
             return;
         }
         task.execute();

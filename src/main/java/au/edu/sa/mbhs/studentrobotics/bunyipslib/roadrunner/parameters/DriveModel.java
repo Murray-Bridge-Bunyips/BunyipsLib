@@ -62,7 +62,7 @@ public class DriveModel {
         /**
          * Set the inches per tick for the drive as a result of a tuned measurement ratio.
          * <p>
-         * If using an OTOS or Pinpoint, this value should be set to 1, thus making 1 tick 1 inch.
+         * If using an OTOS, this value should be set to 1, thus making 1 tick 1 inch.
          * <p>
          * <b>Note</b>: Calling this function multiple times will take the average between other calls that have set
          * the inches per tick. This allows for multiple tuning session results to average in on the most accurate value.
@@ -79,7 +79,7 @@ public class DriveModel {
         /**
          * Set the inches per tick for the drive as a result of movement and encoder ticks.
          * <p>
-         * If using an OTOS or Pinpoint, this ratio should be set to 1, thus making 1 tick 1 inch.
+         * If using an OTOS, this ratio should be set to 1, thus making 1 tick 1 inch.
          * <p>
          * <b>Note</b>: Calling this function multiple times will take the average between other calls that have set
          * the inches per tick. This allows for multiple tuning session results to average in on the most accurate value.
@@ -97,7 +97,7 @@ public class DriveModel {
         /**
          * Set the inches per tick for the drive as a result of a precomputed ratio.
          * <p>
-         * If using an OTOS or Pinpoint, this ratio should be set to 1, thus making 1 tick 1 inch.
+         * If using an OTOS, this ratio should be set to 1, thus making 1 tick 1 inch.
          * <p>
          * <b>Note</b>: Calling this function multiple times will take the average between other calls that have set
          * the inches per tick. This allows for multiple tuning session results to average in on the most accurate value.
@@ -174,7 +174,7 @@ public class DriveModel {
         /**
          * Set the track width in encoder ticks.
          * <p>
-         * If using an OTOS or Pinpoint, this will be in inches since {@code inPerTick} will be 1.
+         * If using an OTOS, this will be in inches since {@code inPerTick} will be 1.
          * <p>
          * Multiple calls of this function will not take an average between the previous calls
          * (as the track width tuning relies on accurate values of kS and kV, rather than observed push tests)

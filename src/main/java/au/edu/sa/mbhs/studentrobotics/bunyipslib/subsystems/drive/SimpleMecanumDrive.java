@@ -95,7 +95,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
             accumulator.accumulate(twist);
 
             Pose2d pose = accumulator.getPose();
-            PoseVelocity2d poseVelRot = pose.heading.inverse().times(accumulator.getVelocity());
+            PoseVelocity2d poseVelRot = pose.heading.times(accumulator.getVelocity());
             Telemetry.Item i = DualTelemetry.smartAdd("Localizer", "X:%in(%/s) Y:%in(%/s) %°(%/s)",
                     Mathf.round(pose.position.x, 1),
                     Mathf.round(poseVelRot.linearVel.x, 1),
