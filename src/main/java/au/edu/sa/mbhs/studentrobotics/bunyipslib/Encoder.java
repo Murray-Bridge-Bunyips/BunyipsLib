@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.function.Supplier;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Filter;
-
 /**
  * Represents a motor or external encoder that takes in suppliers of position and velocity to calculate encoder ticks.
  * The velocity methods of this class have been adjusted to include acceleration and corrected velocity receivers.
@@ -24,10 +22,10 @@ public class Encoder {
     private static final int CPS_STEP = 0x10000;
     private final Supplier<Integer> position;
     private final Supplier<Double> velocity;
-    private Filter.LowPass accelFilter = new Filter.LowPass(0.95);
+    private final Diff acceleration = new Diff();
     private int resetVal, lastPosition;
     private DcMotorSimple.Direction direction;
-    private double lastTimestamp, veloEstimate, accel, lastVelo;
+    private double lastTimestamp, veloEstimate;
     private boolean overflowCorrection;
     private Supplier<DcMotorSimple.Direction> directionSupplier;
     private int accumulation;
@@ -126,9 +124,7 @@ public class Encoder {
      * @param gain the gain in the interval (0, 1) exclusive; default of 0.95
      */
     public void setAccelLowPassGain(double gain) {
-        if (gain == accelFilter.gain)
-            return;
-        accelFilter = new Filter.LowPass(gain);
+        acceleration.setLowPassGain(gain);
     }
 
     /**
@@ -137,7 +133,7 @@ public class Encoder {
      */
     public double getAcceleration() {
         getRawVelocity();
-        return accel;
+        return acceleration.getLast();
     }
 
     /**
@@ -153,14 +149,7 @@ public class Encoder {
      */
     public double getRawVelocity() {
         double velo = (getDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
-        double currentTime = System.nanoTime() / 1.0E9;
-        double dt = currentTime - lastTimestamp;
-        // Too small of measurements are incalculable due to floating-point error
-        if (dt > 1.0E-3) {
-            accel = accelFilter.apply((velo - lastVelo) / dt);
-            lastVelo = velo;
-            lastTimestamp = currentTime;
-        }
+        acceleration.apply(velo);
         return velo;
     }
 
