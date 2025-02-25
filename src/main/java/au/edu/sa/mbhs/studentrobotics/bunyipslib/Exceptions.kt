@@ -52,18 +52,19 @@ object Exceptions {
             stack = stack.substring(0, MAX_DS_STACKTRACE_CHARS - 4)
             stack += " ..."
         }
-        out?.accept("<font color='red'><b>exception caught!</b></font> -> <small>$stack</small>")
+        val ec = e.cause
+        var cause = ""
+        if (ec != null) {
+            var ecc = ec.toString()
+            if (ecc.length > MAX_DS_STACKTRACE_CHARS) {
+                ecc = ecc.substring(0, MAX_DS_STACKTRACE_CHARS - 4)
+                ecc += " ..."
+            }
+            cause = " caused by $ecc"
+        }
+        out?.accept("<font color='red'><b>exception caught!</b></font>$cause\n<small>$stack</small>")
         // We will bother writing out the cause but not bother about suppressed exceptions, since this is user-facing
         // Logcat via sendStacktrace will contain all info if required, so we don't lose info
-        val ec = e.cause
-        if (ec != null) {
-            var cause = ec.toString()
-            if (cause.length > MAX_DS_STACKTRACE_CHARS) {
-                cause = cause.substring(0, MAX_DS_STACKTRACE_CHARS - 4)
-                cause += " ..."
-            }
-            out?.accept("caused by: $cause")
-        }
         if (e is InterruptedException || e is ForceStopException) {
             Dbg.error("Interrupt exception called, raising to superclass...")
             // FTC SDK must handle this
