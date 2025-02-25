@@ -101,18 +101,17 @@ object Dbg {
      */
     @JvmStatic
     fun sendStacktrace(e: Throwable) {
-        val msg = e.localizedMessage
-        RobotLog.ee(TAG, "$e${if (msg == null) "" else " <$msg>"}")
-        for (el in e.stackTrace) {
-            RobotLog.ee(TAG, "at $el")
-        }
-        val cause = e.cause
-        if (cause != null) {
-            RobotLog.ee(TAG, "caused by: $cause")
-            for (el in cause.stackTrace) {
-                RobotLog.ee(TAG, "at $el")
+        fun sendLayer(t: Throwable, tag: String = "") {
+            val msg = t.localizedMessage
+            RobotLog.ee(TAG, "$tag$t${if (msg == null) "" else " <$msg>"}")
+            for (el in t.stackTrace) {
+                RobotLog.ee(TAG, "\tat $el")
             }
         }
+
+        sendLayer(e)
+        e.cause?.let { sendLayer(it, "caused by: ") }
+        e.suppressedExceptions.forEach { sendLayer(it, "suppressed: ") }
     }
 
     /**

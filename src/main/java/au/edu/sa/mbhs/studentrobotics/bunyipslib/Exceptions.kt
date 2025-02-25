@@ -55,6 +55,8 @@ object Exceptions {
             stack += " ..."
         }
         out?.accept("<small>$stack</small>")
+        // We will bother writing out the cause but not bother about suppressed exceptions, since this is user-facing
+        // Logcat via sendStacktrace will contain all info if required, so we don't lose info
         val ec = e.cause
         if (ec != null) {
             var cause = ec.toString()
