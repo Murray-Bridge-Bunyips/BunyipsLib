@@ -103,7 +103,7 @@ object Dbg {
     fun sendStacktrace(e: Throwable) {
         fun sendLayer(t: Throwable, tag: String = "") {
             val msg = t.localizedMessage
-            RobotLog.ee(TAG, "$tag$t${if (msg == null) "" else " <$msg>"}")
+            RobotLog.ee(TAG, "$tag${t.javaClass.name}${if (msg == null) "" else " <$msg>"}")
             for (el in t.stackTrace) {
                 RobotLog.ee(TAG, "\tat $el")
             }

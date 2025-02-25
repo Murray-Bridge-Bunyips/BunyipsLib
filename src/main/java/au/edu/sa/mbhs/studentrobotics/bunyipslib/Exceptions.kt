@@ -48,13 +48,11 @@ object Exceptions {
         val sw = StringWriter()
         e.printStackTrace(PrintWriter(sw))
         var stack = sw.toString()
-        val msg = e.localizedMessage
-        out?.accept("<font color='red'><b>exception caught!${if (msg == null) "" else " &lt;$msg&gt;"}</b></font>")
+        out?.accept("<font color='red'><b>exception caught!</b></font> -> <small>$stack</small>")
         if (stack.length > MAX_DS_STACKTRACE_CHARS) {
             stack = stack.substring(0, MAX_DS_STACKTRACE_CHARS - 4)
             stack += " ..."
         }
-        out?.accept("<small>$stack</small>")
         // We will bother writing out the cause but not bother about suppressed exceptions, since this is user-facing
         // Logcat via sendStacktrace will contain all info if required, so we don't lose info
         val ec = e.cause
