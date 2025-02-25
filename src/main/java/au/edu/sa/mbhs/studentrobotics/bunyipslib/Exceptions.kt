@@ -76,6 +76,11 @@ object Exceptions {
             // We will let the FTC SDK handle it in terminating the OpMode and displaying the popup
             throw e
         }
+        if (e is Error) {
+            Dbg.error("Throwable is an instance of Error, raising to superclass ...")
+            // We shouldn't be swallowing Error instances
+            throw e
+        }
     }
 
     /**
