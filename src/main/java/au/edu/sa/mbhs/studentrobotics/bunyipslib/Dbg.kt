@@ -96,14 +96,22 @@ object Dbg {
     }
 
     /**
-     * Report out a stacktrace.
+     * Report out a stacktrace and cause stacktrace if possible.
      * @param e throwable
      */
     @JvmStatic
     fun sendStacktrace(e: Throwable) {
-        RobotLog.ee(TAG, e.toString())
+        val msg = e.localizedMessage
+        RobotLog.ee(TAG, "$e${if (msg == null) "" else " <$msg>"}")
         for (el in e.stackTrace) {
-            RobotLog.ee(TAG, el.toString())
+            RobotLog.ee(TAG, "at $el")
+        }
+        val cause = e.cause
+        if (cause != null) {
+            RobotLog.ee(TAG, "caused by: $cause")
+            for (el in cause.stackTrace) {
+                RobotLog.ee(TAG, "at $el")
+            }
         }
     }
 

@@ -48,15 +48,22 @@ object Exceptions {
         val sw = StringWriter()
         e.printStackTrace(PrintWriter(sw))
         var stack = sw.toString()
-        out?.accept("<font color='red'><b>exception caught! &lt;${e.localizedMessage}&gt;</b></font>")
-        if (e.cause != null) {
-            out?.accept("caused by: ${e.cause}")
-        }
+        val msg = e.localizedMessage
+        out?.accept("<font color='red'><b>exception caught!${if (msg == null) "" else " &lt;$msg&gt;"}</b></font>")
         if (stack.length > MAX_DS_STACKTRACE_CHARS) {
             stack = stack.substring(0, MAX_DS_STACKTRACE_CHARS - 4)
             stack += " ..."
         }
         out?.accept("<small>$stack</small>")
+        val ec = e.cause
+        if (ec != null) {
+            var cause = ec.toString()
+            if (cause.length > MAX_DS_STACKTRACE_CHARS) {
+                cause = cause.substring(0, MAX_DS_STACKTRACE_CHARS - 4)
+                cause += " ..."
+            }
+            out?.accept("caused by: $cause")
+        }
         if (e is InterruptedException || e is ForceStopException) {
             Dbg.error("Interrupt exception called, raising to superclass...")
             // FTC SDK must handle this
