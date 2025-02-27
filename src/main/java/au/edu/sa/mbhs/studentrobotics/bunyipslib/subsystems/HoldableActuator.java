@@ -151,7 +151,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     /**
      * Set the overcurrent threshold used for stall detection.
      * <p>
-     * If this current is reached during a state where stalling is monitored, for the set duration set here, the actuator
+     * If this current is reached during a state where stalling is monitored for the set duration set here, the actuator
      * will auto-reset the motor.
      *
      * @param current the current threshold where exceeding will intervene. Default is 8A.
