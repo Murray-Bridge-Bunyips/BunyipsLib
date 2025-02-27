@@ -38,7 +38,7 @@ public class Lambda extends Task {
         // as all Lambdas will run only once. This also helps telemetry decide how long a task will execute for.
         timeout = Milliseconds.of(EPSILON_MS);
         this.callback = callback;
-        named("Run");
+        named("Callback");
     }
 
     /**
@@ -67,7 +67,7 @@ public class Lambda extends Task {
     public Lambda() {
         this(() -> {
         });
-        named("Run Nothing");
+        named("No-op");
     }
 
     @Override

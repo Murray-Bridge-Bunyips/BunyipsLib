@@ -438,7 +438,7 @@ abstract class Task : Runnable, Action {
      * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable] named [name],
      * queued to run before this task starts.
      */
-    fun after(runnable: Runnable, name: String = "Run"): SequentialTaskGroup {
+    fun after(runnable: Runnable, name: String = "Callback"): SequentialTaskGroup {
         val task = Lambda(runnable).named(name)
         task.named("after $task")
         return SequentialTaskGroup(task, this)
@@ -448,7 +448,7 @@ abstract class Task : Runnable, Action {
      * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable],
      * queued to run before this task starts.
      */
-    infix fun after(runnable: Runnable) = after(runnable, "Run")
+    infix fun after(runnable: Runnable) = after(runnable, "Callback")
 
     /**
      * Compose this task into a [SequentialTaskGroup] with the supplied tasks
@@ -466,7 +466,7 @@ abstract class Task : Runnable, Action {
      * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable] named [name],
      * queued to run when this task finishes.
      */
-    fun then(runnable: Runnable, name: String = "Run"): SequentialTaskGroup {
+    fun then(runnable: Runnable, name: String = "Callback"): SequentialTaskGroup {
         val task = Lambda(runnable).named(name)
         task.named("then $task")
         return SequentialTaskGroup(this, task)
@@ -476,7 +476,7 @@ abstract class Task : Runnable, Action {
      * Implicitly run a [SequentialTaskGroup] with this supplied [Runnable],
      * queued to run when this task finishes.
      */
-    infix fun then(runnable: Runnable) = then(runnable, "Run")
+    infix fun then(runnable: Runnable) = then(runnable, "Callback")
 
     /**
      * Compose this task into a [ParallelTaskGroup] with the supplied tasks
@@ -616,22 +616,23 @@ abstract class Task : Runnable, Action {
         fun inc(vararg tasks: Task) = IncrementingTaskGroup(*tasks)
 
         /**
-         * Utility for creating a task that will loop some [function] for some [time].
+         * Utility for creating a [DynamicTask] that will loop some [function] for some [time].
          */
         @JvmStatic
-        fun runFor(time: Measure<Time>, function: Runnable) = task { timeout(time); periodic(function) }
+        fun runFor(time: Measure<Time>, function: Runnable) =
+            task { named("$time loop (dyn.)"); timeout(time); periodic(function) }
 
         /**
-         * Utility for creating a task that will loop some [function] until the task is manually finished.
+         * Utility for creating a [DynamicTask] that will loop some [function] until the task is manually finished.
          */
         @JvmStatic
-        fun loop(function: Runnable) = task { periodic(function) }
+        fun loop(function: Runnable) = task { named("Loop (dyn.)"); periodic(function) }
 
         /**
-         * Utility for creating a task that will wait for some [condition] and finish when the condition is true.
+         * Utility for creating a [DynamicTask] that will wait for some [condition] and finish when the condition is true.
          */
         @JvmStatic
-        fun waitFor(condition: BooleanSupplier) = task { isFinished(condition) }
+        fun waitFor(condition: BooleanSupplier) = task { named("Busy wait (dyn.)"); isFinished(condition) }
 
         /**
          * Utility to create a new [DynamicTask] instance for building a new task.
