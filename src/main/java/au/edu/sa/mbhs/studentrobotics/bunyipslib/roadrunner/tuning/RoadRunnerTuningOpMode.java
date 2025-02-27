@@ -143,7 +143,8 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
      * Instantiate hardware and return the fully configured RoadRunner drive instance to use for tuning.
      * <p>
      * It is recommended to use the default {@link Accumulator}, however, setting the used {@link Localizer}
-     * is required for tuning a {@link TwoWheelLocalizer} or {@link ThreeWheelLocalizer}.
+     * is required for tuning a {@link TwoWheelLocalizer}, {@link ThreeWheelLocalizer}, {@link OTOSLocalizer},
+     * or {@link PinpointLocalizer}.
      *
      * @return the configured drive instance to use for tuning
      */
@@ -153,6 +154,8 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     @Override
     @SuppressWarnings("unchecked")
     public final void runOpMode() throws InterruptedException {
+        opModes.clear();
+
         // Still need to send some telemetry to the dashboard, instead of using DualTelemetry which is overkill
         // for this purpose, we'll just use MultipleTelemetry.
         Telemetry fusedTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -518,6 +521,9 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             }
         }
 
+        if (isStopRequested())
+            return;
+
         fusedTelemetry.clearAll();
         if (!selection.getInitialised()) {
             // Force select current option if none was selected
@@ -528,6 +534,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             LinearOpMode opMode = selection.get();
             opMode.gamepad1 = gamepad1;
             opMode.gamepad2 = gamepad2;
+            opMode.telemetry = telemetry;
             opMode.hardwareMap = hardwareMap;
 
             // Generate some feedback when pressing an OpMode so the user doesn't think the procedure is broken
