@@ -616,6 +616,24 @@ abstract class Task : Runnable, Action {
         fun inc(vararg tasks: Task) = IncrementingTaskGroup(*tasks)
 
         /**
+         * Utility for creating a task that will loop some [function] for some [time].
+         */
+        @JvmStatic
+        fun runFor(time: Measure<Time>, function: Runnable) = task { timeout(time); periodic(function) }
+
+        /**
+         * Utility for creating a task that will loop some [function] until the task is manually finished.
+         */
+        @JvmStatic
+        fun loop(function: Runnable) = task { periodic(function) }
+
+        /**
+         * Utility for creating a task that will wait for some [condition] and finish when the condition is true.
+         */
+        @JvmStatic
+        fun waitFor(condition: BooleanSupplier) = task { isFinished(condition) }
+
+        /**
          * Utility to create a new [DynamicTask] instance for building a new task.
          */
         @JvmStatic
