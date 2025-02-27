@@ -22,8 +22,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
  * @author Lucas Bubner, 2025
  * @see AlignToPointDriveTask
  * @see HolonomicDriveTask
- * @see HolonomicTrackingDriveTask
- * @see HolonomicPrecisionDriveTask
+ * @see HolonomicVectorDriveTask
  * @since 7.0.0
  */
 public abstract class FieldOrientableDriveTask extends Task {

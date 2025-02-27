@@ -47,13 +47,11 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * This caveat means that this task will make no effort to try and correct translational deviation when the robot is being commanded.
  * <p>
  * A localizer-attached holonomic drive is required for this class, as it will require the use of the pose estimate system.
- * <p>
- * Previously called {@code HolonomicVectorDriveTask}.
  *
  * @author Lucas Bubner, 2024
  * @since 4.0.0
  */
-public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
+public class HolonomicVectorDriveTask extends FieldOrientableDriveTask {
     /**
      * Default controller to use for the x (forward) axis.
      */
@@ -91,7 +89,7 @@ public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
      *                            called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
      *                            if possible. A localizer attached is required.
      */
-    public HolonomicTrackingDriveTask(@NonNull Supplier<PoseVelocity2d> targetVecNormalised, @NonNull Moveable drive) {
+    public HolonomicVectorDriveTask(@NonNull Supplier<PoseVelocity2d> targetVecNormalised, @NonNull Moveable drive) {
         super.drive = drive;
         if (drive instanceof BunyipsSubsystem)
             on((BunyipsSubsystem) drive, false);
@@ -113,7 +111,7 @@ public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
      *               called unlike the differential control task. This task will be auto-attached to this BunyipsSubsystem
      *               if possible. A localizer attached is required.
      */
-    public HolonomicTrackingDriveTask(@NonNull Gamepad driver, @NonNull Moveable drive) {
+    public HolonomicVectorDriveTask(@NonNull Gamepad driver, @NonNull Moveable drive) {
         this(() -> Controls.vel(driver.left_stick_x, driver.left_stick_y, driver.right_stick_x), drive);
     }
 
@@ -124,7 +122,7 @@ public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
      * @return this
      */
     @NonNull
-    public HolonomicTrackingDriveTask withXController(@NonNull SystemController x) {
+    public HolonomicVectorDriveTask withXController(@NonNull SystemController x) {
         xController = x;
         return this;
     }
@@ -136,7 +134,7 @@ public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
      * @return this
      */
     @NonNull
-    public HolonomicTrackingDriveTask withYController(@NonNull SystemController y) {
+    public HolonomicVectorDriveTask withYController(@NonNull SystemController y) {
         yController = y;
         return this;
     }
@@ -148,7 +146,7 @@ public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
      * @return this
      */
     @NonNull
-    public HolonomicTrackingDriveTask withRController(@NonNull SystemController r) {
+    public HolonomicVectorDriveTask withRController(@NonNull SystemController r) {
         rController = r;
         return this;
     }
@@ -160,7 +158,7 @@ public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
      * @return this
      */
     @NonNull
-    public HolonomicTrackingDriveTask withTolerance(@NonNull Pose2d inchRad) {
+    public HolonomicVectorDriveTask withTolerance(@NonNull Pose2d inchRad) {
         toleranceInchRad = inchRad;
         return this;
     }
@@ -174,7 +172,7 @@ public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
      * @return this
      */
     @NonNull
-    public HolonomicTrackingDriveTask withStabilisationTimeout(@NonNull Measure<Time> lockTimeout) {
+    public HolonomicVectorDriveTask withStabilisationTimeout(@NonNull Measure<Time> lockTimeout) {
         lockingTimeout = lockTimeout;
         return this;
     }
@@ -188,7 +186,7 @@ public class HolonomicTrackingDriveTask extends FieldOrientableDriveTask {
      * @return this
      */
     @NonNull
-    public HolonomicTrackingDriveTask withTolerance(@NonNull Measure<Distance> poseX, @NonNull Measure<Distance> poseY, @NonNull Measure<Angle> poseR) {
+    public HolonomicVectorDriveTask withTolerance(@NonNull Measure<Distance> poseX, @NonNull Measure<Distance> poseY, @NonNull Measure<Angle> poseR) {
         return withTolerance(new Pose2d(poseX.in(Inches), poseY.in(Inches), poseR.in(Radians)));
     }
 

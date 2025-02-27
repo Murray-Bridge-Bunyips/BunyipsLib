@@ -1,14 +1,14 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
 
 /**
  * Reset OpMode to clear all motors of their last known positions.
