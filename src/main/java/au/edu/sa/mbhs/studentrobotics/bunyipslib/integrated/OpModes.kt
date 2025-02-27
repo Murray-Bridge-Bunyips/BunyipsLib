@@ -34,7 +34,7 @@ object OpModes : OpModeRegistrar {
                 .setFlavor(OpModeMeta.Flavor.TELEOP)
                 .setGroup("dash") // Using the FtcDashboard group for all of these OpModes to keep the OpMode out of the way
                 .build(),
-            HardwareTester::class.java
+            HardwareTester()
         )
         opModeManager.register(
             OpModeMeta.Builder()
@@ -42,7 +42,7 @@ object OpModes : OpModeRegistrar {
                 .setFlavor(OpModeMeta.Flavor.TELEOP)
                 .setGroup("dash")
                 .build(),
-            ResetLastKnowns::class.java
+            ResetLastKnowns()
         )
         opModeManager.register(
             OpModeMeta.Builder()
@@ -50,7 +50,7 @@ object OpModes : OpModeRegistrar {
                 .setFlavor(OpModeMeta.Flavor.TELEOP)
                 .setGroup("dash")
                 .build(),
-            ResetEncoders::class.java
+            ResetEncoders()
         )
         opModeManager.register(
             OpModeMeta.Builder()
@@ -58,7 +58,7 @@ object OpModes : OpModeRegistrar {
                 .setFlavor(OpModeMeta.Flavor.TELEOP)
                 .setGroup("dash")
                 .build(),
-            ResetRobotControllerLights::class.java
+            ResetRobotControllerLights()
         )
     }
 }
