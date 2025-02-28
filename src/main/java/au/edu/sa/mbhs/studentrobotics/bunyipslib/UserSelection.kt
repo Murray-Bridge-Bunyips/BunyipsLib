@@ -16,20 +16,21 @@ import java.util.concurrent.Future
 import java.util.function.Consumer
 
 /**
- * Async thread to ask for user input from a controller in order to determine a pre-determined
- * set of instructions before a [BunyipsOpMode] starts (`dynamic_init`).
+ * Callable thread-friendly operation to ask for user input from a controller in order to determine a pre-determined
+ * set of instructions before a [BunyipsOpMode] starts (during `dynamic_init`).
  *
- * You really should only be running one of these threads at a time, preferably using the Threads
- * class to start and manage it to allow for logging and OpMode management. [AutonomousBunyipsOpMode] handles
- * the propagation of a user selection fully automatically and re-exposes it through `onReady`. Note you are
- * able to call this UserSelection manually via [call], but be warned as this will block your thread until completion.
- * During init, this may not matter, so pick whichever method you wish.
+ * You really should only be running one of these at a time, preferably using the Threads
+ * class to start and manage it to allow for logging, OpMode management, and parallelization.
+ * [AutonomousBunyipsOpMode] handles the propagation of a user selection fully automatically and
+ * re-exposes it through `onReady`. Note you area ble to call this UserSelection manually via [call],
+ * but be warned as this will block your thread until completion. During init, this may not matter,
+ * so pick whichever method you wish.
  *
  * Keep in mind a thread runs in the background so it is not guaranteed to be ready during any
  * specific phase of your init-cycle. It is recommended to check if this thread is running using
  * `Threads.isRunning(selector)` in your `onInitLoop()` to ensure BOM knows it has to wait for the
  * user to make a selection. Alternatively, you can set an init-task that simply waits for the thread to
- * die or similar (e.g. `Task.task().isFinished(() -> !Threads.isRunning(...))`). You can also alternatively use
+ * die or similar (e.g. `Task.waitFor(() -> !Threads.isRunning(...))`). You can also alternatively use
  * the init branch of this task to initialise the user selection. `onReady` of [AutonomousBunyipsOpMode] handles this.
  * If you do not implement a waiting action, the OpMode will assume it is ready to run regardless.
  *
