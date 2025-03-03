@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Diff;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Rect;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Field;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
  * Accumulator to define clamping limits on the field.
@@ -37,18 +37,12 @@ public class BoundedAccumulator extends Accumulator {
      * This is to sustain the velocity calculation for a short period of time as the rebound is not called every loop.
      */
     public static double MANUAL_VELOCITY_INHIBITION_TIME = 0.5;
-    /**
-     * Time in seconds to use for the delta step in deriving velocity ({@code s'(t) = (s(t) - s(t + dt)) / dt}).
-     * Too low of a resolution will cause floating point errors, while too high will cause the velocity to be inaccurate
-     */
-    public static double MANUAL_VELOCITY_DT_RESOLUTION = 0.1;
 
     private final List<Rect> restrictedAreas = new ArrayList<>();
     private final Rect robotBoundingBox;
     private final ElapsedTime velocityInhibitionTimer = new ElapsedTime();
-    private final ElapsedTime deltaTime = new ElapsedTime();
-    private Vector2d lastPos = Geometry.zeroVec();
-    private PoseVelocity2d lastVel = Geometry.zeroVel();
+    private final Diff xVel = new Diff();
+    private final Diff yVel = new Diff();
 
     /**
      * Create a new BoundedAccumulator.
@@ -139,20 +133,10 @@ public class BoundedAccumulator extends Accumulator {
         // Switch to manual velocity calculation based on the adjusted pose
         // We latch the inhibition for some time due to the non-constant nature of the rebounding calculation
         if (velocityInhibitionTimer.seconds() < MANUAL_VELOCITY_INHIBITION_TIME) {
-            // Too small of resolutions are too small for floating point calculations
-            if (deltaTime.seconds() >= MANUAL_VELOCITY_DT_RESOLUTION) {
-                velocity = new PoseVelocity2d(
-                        // Derivative of position and keep unaffected angular velocity
-                        currentPose.position.minus(lastPos).div(deltaTime.seconds()),
-                        twist.velocity().value().angVel
-                );
-                lastVel = velocity;
-                lastPos = currentPose.position;
-                deltaTime.reset();
-            } else {
-                // We still need to inhibit the velocity, so we keep the last manual velocity calculation
-                velocity = lastVel;
-            }
+            velocity = new PoseVelocity2d(
+                    new Vector2d(xVel.apply(currentPose.position.x), yVel.apply(currentPose.position.y)),
+                    twist.velocity().value().angVel
+            );
         }
 
         pose = currentPose;
