@@ -121,7 +121,7 @@ abstract class BunyipsOpMode : BOMInternal() {
          *
          * You may also choose to access the currently running base `OpMode` instance through the [BunyipsLib] class.
          *
-         * @throws UninitializedPropertyAccessException If a [BunyipsOpMode] is not running, this exception will be raised.
+         * @throws EmergencyStop If a [BunyipsOpMode] is not running, this exception will be raised with a cause of [UninitializedPropertyAccessException].
          * @return The instance of the current [BunyipsOpMode].
          */
         @JvmStatic
@@ -129,11 +129,12 @@ abstract class BunyipsOpMode : BOMInternal() {
             // If Kotlin throws an UninitializedPropertyAccessException, it will crash the DS and require a full
             // restart, so we will handle this exception ourselves and supply a more informative message.
             get() = _instance
-                ?: throw UninitializedPropertyAccessException(
+                ?: throw EmergencyStop(
                     "Attempted to access a BunyipsOpMode that is not running! " +
                             "This is due to a `BunyipsOpMode.getInstance()` call that has been invoked without checking if there is an active BunyipsOpMode running. " +
                             "The most likely cause is that a component has tried to access a running BunyipsOpMode when none is running. " +
-                            "For this component to function properly, it must be run during the execution of a BunyipsOpMode or initialisation should be delayed until an instance is available."
+                            "For this component to function properly, it must be run during the execution of a BunyipsOpMode or initialisation should be delayed until an instance is available.",
+                    UninitializedPropertyAccessException("`BunyipsOpMode._instance` field is null, due to access prior to the `configureObjects()` hook.")
                 )
 
         /**
@@ -722,6 +723,9 @@ abstract class BunyipsOpMode : BOMInternal() {
     /**
      * Dangerous method: call to IMMEDIATELY terminate the OpMode.
      * **No further code will run**, and this should only be used in emergencies.
+     *
+     * See the [EmergencyStop] for terminating the OpMode through an exception
+     * that does not silently terminate the OpMode.
      */
     fun emergencyStop() {
         Dbg.logd("BunyipsOpMode: emergency stop requested.")

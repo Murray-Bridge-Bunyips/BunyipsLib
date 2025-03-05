@@ -87,7 +87,8 @@ class Scheduler {
             val taskCount = (allocatedTasks.size - allocatedTasks.stream()
                 .filter { task -> task.taskToRun.dependency.isPresent }.count()
                     + subsystems.size - subsystems.stream().filter { s -> s.isIdle }.count())
-            DualTelemetry.smartAdd("\nRunning % task% (%s, %c) on % subsystem%",
+            DualTelemetry.smartAdd(
+                "\nRunning % task% (%s, %c) on % subsystem%",
                 taskCount,
                 if (taskCount == 1L) "" else "s",
                 allocatedTasks.stream().filter { task -> task.taskToRun.dependency.isPresent }

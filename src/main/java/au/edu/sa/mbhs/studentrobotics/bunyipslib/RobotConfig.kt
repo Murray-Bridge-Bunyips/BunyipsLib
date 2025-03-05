@@ -250,8 +250,9 @@ abstract class RobotConfig {
         }
 
         override fun filter(clazz: Class<*>) {
-            candidates.addAll(clazz.staticInstancesOf(RobotConfig::class.java)
-                .filter { clazz.isAnnotationPresent(AutoInit::class.java) })
+            candidates.addAll(
+                clazz.staticInstancesOf(RobotConfig::class.java)
+                    .filter { clazz.isAnnotationPresent(AutoInit::class.java) })
         }
     }
 
