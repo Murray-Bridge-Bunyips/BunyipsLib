@@ -177,32 +177,32 @@ class MeasureTest {
         Measure<Distance> m1 = Units.Meters.of(6);
         Measure<Dimensionless> m2 = Units.Value.of(3);
         Measure<?> result = m1.div(m2);
-        assertEquals(m1.div(m2).magnitude(), 2);
-        assertEquals(result.unit(), Units.Meters);
+        assertEquals(2, m1.div(m2).magnitude());
+        assertEquals(Units.Meters, result.unit());
         // Velocity divide
         Measure<Distance> m3 = Units.Meters.of(8);
         Measure<Velocity<Distance>> m4 = Units.Meters.per(Units.Second).of(4);
         result = m3.div(m4);
-        assertEquals(result.magnitude(), 2);
-        assertEquals(result.unit(), Units.Second);
+        assertEquals(2, result.magnitude());
+        assertEquals(Units.Second, result.unit());
         // Per divide
         Measure<Voltage> m5 = Units.Volts.of(6);
         Measure<Per<Voltage, Distance>> m6 = Units.Volts.per(Units.Meter).of(2);
         result = m5.div(m6);
-        assertEquals(result.magnitude(), 3);
-        assertEquals(result.unit(), Units.Meter);
+        assertEquals(3, result.magnitude());
+        assertEquals(Units.Meter, result.unit());
         // Fallthrough divide
         Measure<Time> m7 = Units.Seconds.of(10);
         Measure<Current> m8 = Units.Amps.of(2);
         result = m7.div(m8);
-        assertEquals(result.magnitude(), 5);
+        assertEquals(5, result.magnitude());
         assertEquals(result.unit(), Units.Seconds.per(Units.Amps));
         // Same base unit divide
         Measure<Distance> m9 = Units.Meters.of(8);
         Measure<Distance> m10 = Units.Meters.of(4);
         result = m9.div(m10);
-        assertEquals(result.magnitude(), 2);
-        assertEquals(result.unit(), Units.Value);
+        assertEquals(2, result.magnitude());
+        assertEquals(Units.Value, result.unit());
     }
 
     @Test

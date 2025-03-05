@@ -49,6 +49,7 @@ public class OTOSLocalizer implements Localizer {
     /**
      * Create a new OTOS localizer that uses this OTOS.
      *
+     * @param params the parameters for the OTOS
      * @param otos the OTOS to use. Do note this localizer must use linear and angular units of inches and radians
      *             to conform to the standard geometry standards of RoadRunner. Do not modify them yourself.
      *             Constructing this localizer will perform a <b>blocking</b> IMU calibration, which will last for
@@ -131,6 +132,9 @@ public class OTOSLocalizer implements Localizer {
          */
         public SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
 
+        /**
+         * Utility builder for the OTOS parameters.
+         */
         public static class Builder {
             private final Params params = new Params();
             private final ArrayList<Double> linearScalarMeasurements = new ArrayList<>();

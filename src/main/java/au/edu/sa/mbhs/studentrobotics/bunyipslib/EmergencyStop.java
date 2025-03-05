@@ -29,7 +29,7 @@ public class EmergencyStop extends RuntimeException {
      * Emergency stop and bypass the {@link Exceptions} handler.
      *
      * @param message the message to display on the Driver Station.
-     * @param cause the cause to affix to this exception, if any.
+     * @param cause   the cause to affix to this exception, if any.
      */
     public EmergencyStop(@NonNull String message, @Nullable Throwable cause) {
         super(message, cause);

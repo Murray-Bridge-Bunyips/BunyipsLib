@@ -85,7 +85,6 @@ abstract class RobotConfig {
         this.hardwareMap = BunyipsLib.opMode.hardwareMap
         Exceptions.runUserMethod(::onRuntime)
         DualTelemetry.smartAdd(
-            false,
             "<b>${javaClass.simpleName}</b>",
             "Hardware initialised with ${if (Storage.memory().hardwareErrors.size > 0) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}."
         )

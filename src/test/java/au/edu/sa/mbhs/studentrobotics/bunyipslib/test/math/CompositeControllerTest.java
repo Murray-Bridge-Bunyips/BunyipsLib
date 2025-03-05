@@ -23,7 +23,7 @@ class CompositeControllerTest {
         PIDController b = new PIDController(10, 0.5, 0.6);
 
         CompositeController c = a.compose(b, Double::sum);
-        assertEquals(c.calculate(1, 2), 10.1);
+        assertEquals(10.1, c.calculate(1, 2));
     }
 
     @Test
@@ -34,11 +34,11 @@ class CompositeControllerTest {
 
         a.setCoefficients(3.0, 5.0, 7.0);
         b.setCoefficients(11.0, 13.0, 17.0);
-        assertArrayEquals(c.getCoefficients(), new double[]{3.0, 5.0, 7.0, 0.0, 11.0, 13.0, 17.0, 0.0});
+        assertArrayEquals(new double[]{3.0, 5.0, 7.0, 0.0, 11.0, 13.0, 17.0, 0.0}, c.getCoefficients());
 
         c.setCoefficients(1.0, 2.0, 3.0, 0.0, 4.0, 5.0, 6.0, 0.0);
-        assertArrayEquals(a.getCoefficients(), new double[]{1.0, 2.0, 3.0, 0.0});
-        assertArrayEquals(b.getCoefficients(), new double[]{4.0, 5.0, 6.0, 0.0});
+        assertArrayEquals(new double[]{1.0, 2.0, 3.0, 0.0}, a.getCoefficients());
+        assertArrayEquals(new double[]{4.0, 5.0, 6.0, 0.0}, b.getCoefficients());
     }
 
     @Test
@@ -103,7 +103,7 @@ class CompositeControllerTest {
     void testkG() {
         PController p = new PController(1);
         CompositeController c = p.compose(new ElevatorFeedforward(0.0, 0.3, 0.0, 0.0, () -> 0, () -> 0), Double::sum);
-        assertEquals(c.calculate(0, 0), 0.3);
-        assertEquals(c.calculate(0, 10), 10.3);
+        assertEquals(0.3, c.calculate(0, 0));
+        assertEquals(10.3, c.calculate(0, 10));
     }
 }

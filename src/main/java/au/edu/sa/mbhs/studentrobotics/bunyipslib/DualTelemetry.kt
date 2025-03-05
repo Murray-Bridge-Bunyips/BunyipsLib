@@ -7,6 +7,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Millisecon
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Second
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref.ref
@@ -601,7 +602,7 @@ class DualTelemetry @JvmOverloads constructor(
      */
     inner class HtmlItem(
         private var value: String,
-        retained: Boolean,
+        private val retained: Boolean,
         /**
          * Whether this item failed to send to the DS because of telemetry queue overload.
          */
@@ -921,7 +922,7 @@ class DualTelemetry @JvmOverloads constructor(
          * @see setRetained
          */
         override fun isRetained(): Boolean {
-            return item?.isRetained ?: false
+            return item?.isRetained ?: retained
         }
 
         /**
@@ -1012,7 +1013,7 @@ class DualTelemetry @JvmOverloads constructor(
 
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
-        "Function providers are not used via DualTelemetry. Use a polling loop which the current value of the provider, or hook an add() call to telemetry actions.",
+        "Function providers are not used via DualTelemetry. Use a polling loop with the current value of the provider, or hook an add() call to telemetry actions.",
         replaceWith = ReplaceWith("add(caption, valueProvider.value())")
     )
     override fun <T : Any> addData(caption: String, valueProducer: Func<T>): Item {
@@ -1021,7 +1022,7 @@ class DualTelemetry @JvmOverloads constructor(
 
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
-        "Function providers are not used via DualTelemetry. Use a polling loop which the current value of the provider.",
+        "Function providers are not used via DualTelemetry. Use a polling loop with the current value of the provider.",
         replaceWith = ReplaceWith("add(caption, valueProvider.value())")
     )
     override fun <T : Any> addData(caption: String, format: String, valueProducer: Func<T>): Item {
@@ -1100,6 +1101,14 @@ class DualTelemetry @JvmOverloads constructor(
     }
 
     companion object {
+        private val cachedItems = mutableMapOf<String, Item>()
+
+        @JvmStatic
+        @Hook(on = Hook.Target.POST_STOP)
+        private fun reset() {
+            cachedItems.clear()
+        }
+
         /**
          * The maximum number of telemetry logs that can be stored in the telemetry log.
          *
@@ -1127,19 +1136,32 @@ class DualTelemetry @JvmOverloads constructor(
          * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
          * instances to work similarly with FtcDashboard routing and smart parsing.
          *
+         * Using [smartAdd] will result in caption caching if telemetry is set to not auto-clear.
+         * That is to say, if you were to call [smartAdd] updating the same caption in the same OpMode during a period
+         * where auto-clear is disabled, you will update a cached copy as adding a new object to telemetry is likely not desired.
+         *
          * @since 7.0.0
          */
         @JvmStatic
         fun smartAdd(retained: Boolean, caption: String, format: String, vararg objs: Any?): Item {
-            if (BunyipsOpMode.isRunning) {
+            if (!BunyipsLib.isOpModeRunning)
+                throw IllegalStateException("No OpMode is running!")
+            val item: Item
+            val cacheHit = cachedItems[caption]
+            if (!BunyipsLib.opMode.telemetry.isAutoClear && cacheHit != null) {
+                item = cacheHit
+                // Cast to Any to invoke `Object.toString()` cast avoiding dual format issues
+                item.setValue(Text.format(format, *objs) as Any)
+                item.setRetained(retained)
+            } else if (BunyipsOpMode.isRunning) {
                 val t = BunyipsOpMode.instance.telemetry
-                return if (caption.isBlank()) {
+                item = if (caption.isBlank()) {
                     if (!retained) t.add(format, *objs) else t.addRetained(format, *objs)
                 } else {
                     if (!retained) t.addData(caption, format, *objs) else
                         t.addRetained(caption + t.dashboardCaptionValueAutoSeparator + format, *objs)
                 }
-            } else if (BunyipsLib.isOpModeRunning) {
+            } else {
                 val formatted = Text.format(format, *objs)
                     .replace("%", "%%") // May be piped into String.format so we properly format now
                 val nCap = caption.ifBlank { System.currentTimeMillis().toString() }
@@ -1148,9 +1170,11 @@ class DualTelemetry @JvmOverloads constructor(
                 Dashboard.usePacket {
                     it.put(nCap, formatted)
                 }
-                return BunyipsLib.opMode.telemetry.addData(cap, str).setRetained(retained)
+                item = BunyipsLib.opMode.telemetry.addData(cap, str).setRetained(retained)
             }
-            throw IllegalStateException("No OpMode is running!")
+            if (!BunyipsLib.opMode.telemetry.isAutoClear && caption.isNotBlank())
+                cachedItems[caption] = item
+            return item
         }
 
         /**
@@ -1161,6 +1185,10 @@ class DualTelemetry @JvmOverloads constructor(
          * This provides components such as subsystems the ability to add telemetry regardless of whether a [BunyipsOpMode]
          * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
          * instances to work similarly with FtcDashboard routing and smart parsing.
+         *
+         * Using [smartAdd] will result in caption caching if telemetry is set to not auto-clear.
+         * That is to say, if you were to call [smartAdd] updating the same caption in the same OpMode during a period
+         * where auto-clear is disabled, you will update a cached copy as adding a new object to telemetry is likely not desired.
          *
          * @since 7.0.0
          */
@@ -1176,6 +1204,10 @@ class DualTelemetry @JvmOverloads constructor(
          * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
          * instances to work similarly with FtcDashboard routing and smart parsing.
          *
+         * Using [smartAdd] will result in caption caching if telemetry is set to not auto-clear.
+         * That is to say, if you were to call [smartAdd] updating the same caption in the same OpMode during a period
+         * where auto-clear is disabled, you will update a cached copy as adding a new object to telemetry is likely not desired.
+         *
          * @since 7.0.0
          */
         @JvmStatic
@@ -1189,6 +1221,10 @@ class DualTelemetry @JvmOverloads constructor(
          * This provides components such as subsystems the ability to add telemetry regardless of whether a [BunyipsOpMode]
          * or a standard [OpMode] is currently executing, while using [Text] utilities. This also allows non-DualTelemetry
          * instances to work similarly with FtcDashboard routing and smart parsing.
+         *
+         * Using [smartAdd] will result in caption caching if telemetry is set to not auto-clear.
+         * That is to say, if you were to call [smartAdd] updating the same caption in the same OpMode during a period
+         * where auto-clear is disabled, you will update a cached copy as adding a new object to telemetry is likely not desired.
          *
          * @since 7.0.0
          */

@@ -13,10 +13,10 @@ class ExtendedPIDInputOutputTest {
 
         controller.setP(1);
         controller.enableContinuousInput(-180, 180);
-        assertEquals(controller.calculate(-179, 179), -2, 1.0e-5);
+        assertEquals(-2, controller.calculate(-179, 179), 1.0e-5);
 
         controller.enableContinuousInput(0, 360);
-        assertEquals(controller.calculate(1, 359), -2, 1.0e-5);
+        assertEquals(-2, controller.calculate(1, 359), 1.0e-5);
     }
 
     @Test

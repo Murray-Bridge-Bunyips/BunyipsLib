@@ -85,11 +85,11 @@ class MathfTest {
         assertEquals(0.0, Mathf.wrapRadians(-Mathf.TWO_PI));
         assertEquals(Mathf.wrapDeltaRadians(Math.toRadians(-2000)), Math.toRadians(160), 1.0e-6);
         assertEquals(Mathf.wrapDeltaRadians(Math.toRadians(358)), Math.toRadians(-2), 1.0e-6);
-        assertEquals(Mathf.wrapDeltaRadians(Math.toRadians(360)), 0, 1.0e-6);
-        assertEquals(Mathf.wrapDeltaRadians(5 * Math.PI), Math.PI);
-        assertEquals(Mathf.wrapDeltaRadians(-5 * Math.PI), Math.PI);
-        assertEquals(Mathf.wrapDeltaRadians(Math.PI / 2), Math.PI / 2);
-        assertEquals(Mathf.wrapDeltaRadians(-Math.PI / 2), -Math.PI / 2);
+        assertEquals(0, Mathf.wrapDeltaRadians(Math.toRadians(360)), 1.0e-6);
+        assertEquals(Math.PI, Mathf.wrapDeltaRadians(5 * Math.PI));
+        assertEquals(Math.PI, Mathf.wrapDeltaRadians(-5 * Math.PI));
+        assertEquals(Math.PI / 2, Mathf.wrapDeltaRadians(Math.PI / 2));
+        assertEquals(-Math.PI / 2, Mathf.wrapDeltaRadians(-Math.PI / 2));
     }
 
     @Test
@@ -385,7 +385,7 @@ class MathfTest {
 
         // Test moving towards target
         assertEquals(2.79411764, Mathf.smoothDamp(0.0, 5.0, velocity, Seconds.of(1.0), 10.0, Seconds.of(1.0)), 1.0e-6);
-        assertEquals(velocity.get(), 2.94117647, 1.0e-6);
+        assertEquals(2.94117647, velocity.get(), 1.0e-6);
         assertEquals(8.22664359, Mathf.smoothDamp(5.0, 10.0, velocity, Seconds.of(1.0), 10.0, Seconds.of(1.0)), 1.0e-6);
 
         velocity.accept(0.0);
@@ -518,8 +518,8 @@ class MathfTest {
     @Test
     void testLineCircleIntersection() {
         Pair<Vector2d, Vector2d> intersections = Mathf.lineCircleIntersection(new Vector2d(4, 8), new Vector2d(-2, -7), new Vector2d(4, -3), 5);
-        assertEquals(intersections.getFirst(), new Vector2d(-0.8637361859489676, -4.159340464872418));
-        assertEquals(intersections.getSecond(), new Vector2d(1.277529289397243, 1.1938232234931077));
+        assertEquals(new Vector2d(-0.8637361859489676, -4.159340464872418), intersections.getFirst());
+        assertEquals(new Vector2d(1.277529289397243, 1.1938232234931077), intersections.getSecond());
         assertThrows(Mathf.NoInterceptException.class, () -> Mathf.lineCircleIntersection(new Vector2d(4, 8), new Vector2d(-2, -7), new Vector2d(4, -3), 1));
     }
 

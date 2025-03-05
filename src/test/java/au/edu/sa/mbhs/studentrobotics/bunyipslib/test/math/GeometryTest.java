@@ -147,8 +147,8 @@ class GeometryTest {
 
         assertEquals(1, v.get(), 0.1);
         Vector2d res = Geometry.smoothDamp(a, b, v, Seconds.of(10), 2, Seconds.of(1));
-        assertEquals(res.x, 1, 0.1);
-        assertEquals(res.y, 1, 0.1);
+        assertEquals(1, res.x, 0.1);
+        assertEquals(1, res.y, 0.1);
     }
 
     @Test
