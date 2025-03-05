@@ -1150,8 +1150,14 @@ class DualTelemetry @JvmOverloads constructor(
             val cacheHit = cachedItems[caption]
             if (!BunyipsLib.opMode.telemetry.isAutoClear && cacheHit != null) {
                 item = cacheHit
-                // Cast to Any to invoke `Object.toString()` cast avoiding dual format issues
-                item.setValue(Text.format(format, *objs) as Any)
+                if (BunyipsOpMode.isRunning) {
+                    val t = BunyipsOpMode.instance.telemetry
+                    // Cast to Any to invoke `Object.toString()` cast avoiding dual format issues
+                    item.setValue((caption + t.dashboardCaptionValueAutoSeparator + Text.format(format, *objs)) as Any)
+                } else {
+                    val str = Text.format(format, *objs)
+                    item.setValue((if (SMART_CALL_BASE_OPMODE_HTML_STRIP) Text.removeHtml(str) else str) as Any)
+                }
                 item.setRetained(retained)
             } else if (BunyipsOpMode.isRunning) {
                 val t = BunyipsOpMode.instance.telemetry
