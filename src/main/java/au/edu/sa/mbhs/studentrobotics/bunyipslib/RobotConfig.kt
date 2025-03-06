@@ -239,7 +239,7 @@ abstract class RobotConfig {
     @Retention(AnnotationRetention.RUNTIME)
     annotation class InhibitAutoInit
 
-    private object AutoInitHookFilter : AppHookScanner<RobotConfig>() {
+    private object AutoInitScanner : AppHookScanner<RobotConfig>() {
         override val targets = StdSearch()
         override fun scan(cls: Class<*>, registrationHelper: RegistrationHelper) {
             cls.staticInstancesOf(RobotConfig::class.java)
@@ -255,7 +255,7 @@ abstract class RobotConfig {
         @Hook(on = Hook.Target.POST_STOP)
         private fun reset() {
             globalInitCalled = false
-            AutoInitHookFilter.iterateAppHooks {
+            AutoInitScanner.iterateAppHooks {
                 it.hasInitCalled = false
             }
         }
@@ -263,7 +263,7 @@ abstract class RobotConfig {
         @JvmStatic
         @Hook(on = Hook.Target.PRE_INIT, priority = 2)
         private fun autoInit() {
-            AutoInitHookFilter.iterateAppHooks {
+            AutoInitScanner.iterateAppHooks {
                 if (BunyipsLib.opMode.javaClass.isAnnotationPresent(InhibitAutoInit::class.java)) {
                     Dbg.log(
                         RobotConfig::class.java,

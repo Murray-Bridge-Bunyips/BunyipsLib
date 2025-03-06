@@ -100,7 +100,7 @@ object BunyipsLib {
                 opModeManager.activeOpModeName
             )
             val preInit = mutableSetOf<Pair<Method, Hook>>()
-            HookFilter.iterateAppHooks {
+            HookScanner.iterateAppHooks {
                 if (it.second.on == Hook.Target.PRE_INIT)
                     preInit.add(it)
             }
@@ -124,7 +124,7 @@ object BunyipsLib {
                 opModeManager.activeOpModeName
             )
             val preStart = mutableSetOf<Pair<Method, Hook>>()
-            HookFilter.iterateAppHooks {
+            HookScanner.iterateAppHooks {
                 if (it.second.on == Hook.Target.PRE_START)
                     preStart.add(it)
             }
@@ -148,7 +148,7 @@ object BunyipsLib {
                 opModeManager.activeOpModeName
             )
             val postStop = mutableSetOf<Pair<Method, Hook>>()
-            HookFilter.iterateAppHooks {
+            HookScanner.iterateAppHooks {
                 if (it.second.on == Hook.Target.POST_STOP)
                     postStop.add(it)
             }
@@ -165,7 +165,7 @@ object BunyipsLib {
         }
     }
 
-    private object HookFilter : AppHookScanner<Pair<Method, Hook>>() {
+    private object HookScanner : AppHookScanner<Pair<Method, Hook>>() {
         override val targets = StdSearch()
         override fun scan(cls: Class<*>, registrationHelper: RegistrationHelper) {
             cls.declaredMethods
