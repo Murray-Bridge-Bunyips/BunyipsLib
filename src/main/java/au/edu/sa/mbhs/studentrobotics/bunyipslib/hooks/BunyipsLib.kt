@@ -5,20 +5,16 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BuildConfig
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions
-import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.dashboard.config.reflection.ReflectionConfig
 import com.qualcomm.ftccommon.FtcEventLoop
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.DefaultOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier.Notifications
 import com.qualcomm.robotcore.util.RobotLog
 import com.qualcomm.robotcore.util.Version
-import dev.frozenmilk.sinister.SinisterFilter
-import dev.frozenmilk.sinister.apphooks.OnCreateEventLoop
 import dev.frozenmilk.sinister.isStatic
+import dev.frozenmilk.sinister.sdk.apphooks.AppHookScanner
+import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop
 import dev.frozenmilk.sinister.targeting.FocusedSearch
 import dev.frozenmilk.util.cell.LateInitCell
 import org.firstinspires.ftc.ftccommon.internal.manualcontrol.ManualControlOpMode
@@ -92,25 +88,23 @@ object BunyipsLib {
                 )
                 RobotLog.addGlobalWarningMessage("The version of the Robot Controller running on this robot is not the same as the recommended version for BunyipsLib. This may cause incompatibilities. Please ensure you are updated to the SDK version specified in the BunyipsLib documentation.")
             }
-            // Manual reload all FtcDashboard entries, this makes it so Restart Robot will also refresh dashboard
-            for (clazz in DashFilter.loaded) {
-                FtcDashboard.getInstance()?.withConfigRoot {
-                    val name = clazz.getAnnotation(Config::class.java)!!.value.ifEmpty { clazz.simpleName }
-                    it.putVariable(name, ReflectionConfig.createVariableFromClass(clazz))
-                }
-            }
         }
     }
 
     private object OpModeHook : Notifications {
         override fun onOpModePreInit(opMode: OpMode) {
-            if (opMode is DefaultOpMode) return
+            if (opMode is DefaultOpMode || opMode is ManualControlOpMode || opMode.javaClass.simpleName == "ProcessLoadEvent") return
             Dbg.log(
                 "******************** INIT OPMODE - %: \"%\" ********************",
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
-            HookFilter.preInit.sortedByDescending { it.second.priority }
+            val preInit = mutableSetOf<Pair<Method, Hook>>()
+            HookFilter.iterateAppHooks {
+                if (it.second.on == Hook.Target.PRE_INIT)
+                    preInit.add(it)
+            }
+            preInit.sortedByDescending { it.second.priority }
                 .forEach {
                     Dbg.logv(
                         javaClass, "invoking PRE_INIT(priority=%): %.%() ...",
@@ -123,13 +117,18 @@ object BunyipsLib {
         }
 
         override fun onOpModePreStart(opMode: OpMode) {
-            if (opMode is DefaultOpMode) return
+            if (opMode is DefaultOpMode || opMode is ManualControlOpMode || opMode.javaClass.simpleName == "ProcessLoadEvent") return
             Dbg.log(
                 "******************** START OPMODE - %: \"%\" ********************",
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
-            HookFilter.preStart.sortedByDescending { it.second.priority }
+            val preStart = mutableSetOf<Pair<Method, Hook>>()
+            HookFilter.iterateAppHooks {
+                if (it.second.on == Hook.Target.PRE_START)
+                    preStart.add(it)
+            }
+            preStart.sortedByDescending { it.second.priority }
                 .forEach {
                     Dbg.logv(
                         javaClass, "invoking PRE_START(priority=%): %.%() ...",
@@ -142,13 +141,18 @@ object BunyipsLib {
         }
 
         override fun onOpModePostStop(opMode: OpMode) {
-            if (opMode is DefaultOpMode) return
+            if (opMode is DefaultOpMode || opMode is ManualControlOpMode || opMode.javaClass.simpleName == "ProcessLoadEvent") return
             Dbg.log(
                 "******************** STOP OPMODE - %: \"%\" ********************",
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
-            HookFilter.postStop.sortedByDescending { it.second.priority }
+            val postStop = mutableSetOf<Pair<Method, Hook>>()
+            HookFilter.iterateAppHooks {
+                if (it.second.on == Hook.Target.POST_STOP)
+                    postStop.add(it)
+            }
+            postStop.sortedByDescending { it.second.priority }
                 .forEach {
                     Dbg.logv(
                         javaClass, "invoking POST_STOP(priority=%): %.%() ...",
@@ -161,52 +165,19 @@ object BunyipsLib {
         }
     }
 
-    private object HookFilter : SinisterFilter {
-        val preInit = LinkedHashSet<Pair<Method, Hook>>()
-        val preStart = LinkedHashSet<Pair<Method, Hook>>()
-        val postStop = LinkedHashSet<Pair<Method, Hook>>()
-
+    private object HookFilter : AppHookScanner<Pair<Method, Hook>>() {
         override val targets = StdSearch()
-
-        override fun init() {
-            preInit.clear()
-            preStart.clear()
-            postStop.clear()
-        }
-
-        override fun filter(clazz: Class<*>) {
-            val allHooks = clazz.declaredMethods.filter {
-                it.isStatic() && it.isAnnotationPresent(Hook::class.java) && it.parameterCount == 0
-            }.onEach { it.isAccessible = true }
-
-            allHooks.map { it to it.getAnnotation(Hook::class.java)!! }
-                .forEach {
-                    when (it.second.on) {
-                        Hook.Target.PRE_INIT -> preInit.add(it)
-                        Hook.Target.PRE_START -> preStart.add(it)
-                        Hook.Target.POST_STOP -> postStop.add(it)
-                    }
-                }
-        }
-    }
-
-    private object DashFilter : SinisterFilter {
-        val loaded = mutableSetOf<Class<*>>()
-
-        override val targets = StdSearch()
-
-        override fun init() {
-            loaded.clear()
-        }
-
-        override fun filter(clazz: Class<*>) {
-            if (!clazz.isAnnotationPresent(Config::class.java) || clazz.isAnnotationPresent(Disabled::class.java)) return
-            loaded.add(clazz)
+        override fun scan(cls: Class<*>, registrationHelper: RegistrationHelper) {
+            cls.declaredMethods
+                .filter { it.isStatic() && it.isAnnotationPresent(Hook::class.java) && it.parameterCount == 0 }
+                .onEach { it.isAccessible = true }
+                .map { it to it.getAnnotation(Hook::class.java)!! }
+                .forEach { registrationHelper.register(it) }
         }
     }
 
     /**
-     * [SinisterFilter] target for BunyipsLib + User code.
+     * Scanner target for BunyipsLib + User code.
      */
     class StdSearch : FocusedSearch() {
         init {

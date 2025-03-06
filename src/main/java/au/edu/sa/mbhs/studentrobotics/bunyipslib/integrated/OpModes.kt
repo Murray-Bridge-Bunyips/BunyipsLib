@@ -1,7 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated
 
-import com.qualcomm.robotcore.eventloop.opmode.AnnotatedOpModeManager
-import dev.frozenmilk.sinister.apphooks.OpModeRegistrar
+import dev.frozenmilk.sinister.sdk.apphooks.SinisterOpModeRegistrar
+import dev.frozenmilk.sinister.sdk.opmodes.OpModeScanner
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
 
 /**
@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
  * @author Lucas Bubner, 2024
  * @since 6.0.0
  */
-object OpModes : OpModeRegistrar {
+object OpModes : SinisterOpModeRegistrar {
     private var suppressOpModes = false
 
     /**
@@ -24,11 +24,11 @@ object OpModes : OpModeRegistrar {
     /**
      * Register all the BunyipsLib integrated OpModes.
      *
-     * @param opModeManager used manager
+     * @param registrationHelper used register
      */
-    override fun registerOpModes(opModeManager: AnnotatedOpModeManager) {
+    override fun registerOpModes(registrationHelper: OpModeScanner.RegistrationHelper) {
         if (suppressOpModes) return
-        opModeManager.register(
+        registrationHelper.register(
             OpModeMeta.Builder()
                 .setName("Hardware Tester")
                 .setFlavor(OpModeMeta.Flavor.TELEOP)
@@ -36,7 +36,7 @@ object OpModes : OpModeRegistrar {
                 .build(),
             HardwareTester()
         )
-        opModeManager.register(
+        registrationHelper.register(
             OpModeMeta.Builder()
                 .setName("Reset Last Known Positions")
                 .setFlavor(OpModeMeta.Flavor.TELEOP)
@@ -44,7 +44,7 @@ object OpModes : OpModeRegistrar {
                 .build(),
             ResetLastKnowns()
         )
-        opModeManager.register(
+        registrationHelper.register(
             OpModeMeta.Builder()
                 .setName("Reset Motor Encoders")
                 .setFlavor(OpModeMeta.Flavor.TELEOP)
@@ -52,7 +52,7 @@ object OpModes : OpModeRegistrar {
                 .build(),
             ResetEncoders()
         )
-        opModeManager.register(
+        registrationHelper.register(
             OpModeMeta.Builder()
                 .setName("Reset Robot Controller Lights")
                 .setFlavor(OpModeMeta.Flavor.TELEOP)

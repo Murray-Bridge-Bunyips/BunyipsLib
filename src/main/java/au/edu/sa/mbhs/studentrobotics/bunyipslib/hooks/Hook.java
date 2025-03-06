@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
-import dev.frozenmilk.sinister.Preload;
+import dev.frozenmilk.sinister.loading.Preload;
 
 /**
  * Annotation to mark a static method as a OpMode lifecycle hook, which will be executed at

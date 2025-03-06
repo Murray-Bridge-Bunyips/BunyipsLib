@@ -19,8 +19,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.TouchSensor
-import dev.frozenmilk.sinister.Preload
-import dev.frozenmilk.sinister.SinisterFilter
+import dev.frozenmilk.sinister.loading.Preload
+import dev.frozenmilk.sinister.sdk.apphooks.AppHookScanner
 import dev.frozenmilk.sinister.staticInstancesOf
 import java.util.function.Consumer
 
@@ -239,19 +239,12 @@ abstract class RobotConfig {
     @Retention(AnnotationRetention.RUNTIME)
     annotation class InhibitAutoInit
 
-    private object AutoInitHookFilter : SinisterFilter {
-        val candidates = mutableSetOf<RobotConfig>()
-
+    private object AutoInitHookFilter : AppHookScanner<RobotConfig>() {
         override val targets = StdSearch()
-
-        override fun init() {
-            candidates.clear()
-        }
-
-        override fun filter(clazz: Class<*>) {
-            candidates.addAll(
-                clazz.staticInstancesOf(RobotConfig::class.java)
-                    .filter { clazz.isAnnotationPresent(AutoInit::class.java) })
+        override fun scan(cls: Class<*>, registrationHelper: RegistrationHelper) {
+            cls.staticInstancesOf(RobotConfig::class.java)
+                .filter { cls.isAnnotationPresent(AutoInit::class.java) }
+                .forEach { registrationHelper.register(it) }
         }
     }
 
@@ -262,21 +255,23 @@ abstract class RobotConfig {
         @Hook(on = Hook.Target.POST_STOP)
         private fun reset() {
             globalInitCalled = false
-            AutoInitHookFilter.candidates.forEach { it.hasInitCalled = false }
+            AutoInitHookFilter.iterateAppHooks {
+                it.hasInitCalled = false
+            }
         }
 
         @JvmStatic
         @Hook(on = Hook.Target.PRE_INIT, priority = 2)
         private fun autoInit() {
-            AutoInitHookFilter.candidates.forEach {
+            AutoInitHookFilter.iterateAppHooks {
                 if (BunyipsLib.opMode.javaClass.isAnnotationPresent(InhibitAutoInit::class.java)) {
                     Dbg.log(
                         RobotConfig::class.java,
                         "auto-initialisation of % inhibited by `@RobotConfig.InhibitAutoInit`",
                         it.javaClass.simpleName
                     )
-                    // Stop all iteration
-                    return
+                    // Don't initialise
+                    return@iterateAppHooks
                 }
                 Dbg.logd(RobotConfig::class.java, "auto-initialising: % ...", it.javaClass.simpleName)
                 it.init()
