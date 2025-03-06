@@ -88,7 +88,7 @@ abstract class RobotConfig {
             "<b>${javaClass.simpleName}</b>",
             "Hardware initialised with ${if (Storage.memory().hardwareErrors.size > 0) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}."
         )
-        Dbg.logd(javaClass, "hardware initialised with % errors.", Storage.memory().hardwareErrors.size)
+        Dbg.logd(javaClass, "hardware initialised with % error(s).", Storage.memory().hardwareErrors.size)
         for (error in Storage.memory().hardwareErrors) {
             DualTelemetry.smartAdd(true, error, "<font color='red'><b>MISSING DEVICE!</b></font>")
             DualTelemetry.smartLog("<font color='red'>error:</font> <i>$error</i> was not found in the current saved configuration.")
@@ -168,7 +168,7 @@ abstract class RobotConfig {
             ok = true
         } catch (e: Exception) {
             Storage.memory().hardwareErrors.add(name)
-            e.localizedMessage?.let { Dbg.warn(it) }
+            e.localizedMessage?.let { Dbg.error(it) }
         }
         // Run the user callback if the device was successfully configured, outside the hardware device
         // catch block as exceptions raised in onSuccess will be mishandled. We also know that the device
