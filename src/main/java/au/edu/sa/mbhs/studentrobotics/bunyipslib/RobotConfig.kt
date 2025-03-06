@@ -164,7 +164,7 @@ abstract class RobotConfig {
             hardwareDevice = getAndDynamicCast(name, device)
             // Paranoia check as custom device classes may not throw exceptions when not found
             if (hardwareDevice == null)
-                throw NullPointerException()
+                throw NullPointerException("An error occurred configuring '$name' of type ${device.simpleName}.")
             ok = true
         } catch (e: Exception) {
             Storage.memory().hardwareErrors.add(name)
