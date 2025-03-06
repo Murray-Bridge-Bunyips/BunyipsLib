@@ -50,10 +50,10 @@ public class OTOSLocalizer implements Localizer {
      * Create a new OTOS localizer that uses this OTOS.
      *
      * @param params the parameters for the OTOS
-     * @param otos the OTOS to use. Do note this localizer must use linear and angular units of inches and radians
-     *             to conform to the standard geometry standards of RoadRunner. Do not modify them yourself.
-     *             Constructing this localizer will perform a <b>blocking</b> IMU calibration, which will last for
-     *             roughly 600 milliseconds.
+     * @param otos   the OTOS to use. Do note this localizer must use linear and angular units of inches and radians
+     *               to conform to the standard geometry standards of RoadRunner. Do not modify them yourself.
+     *               Constructing this localizer will perform a <b>blocking</b> IMU calibration, which will last for
+     *               roughly 600 milliseconds.
      */
     public OTOSLocalizer(@NonNull Params params, @Nullable SparkFunOTOS otos) {
         this.params = params;

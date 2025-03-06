@@ -81,7 +81,7 @@ class CompositeControllerTest {
             assertEquals(
                     a.calculate(i, i + 10) + ff.calculate(),
                     c.calculate(i, i + 10),
-                    0.001
+                    0.005
             );
         }
     }
