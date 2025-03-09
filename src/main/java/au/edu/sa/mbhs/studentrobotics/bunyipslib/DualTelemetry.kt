@@ -1145,7 +1145,7 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @JvmStatic
         fun smartAdd(retained: Boolean, caption: String, format: String, vararg objs: Any?): Item {
-            if (!BunyipsLib.isOpModeRunning)
+            if (!BunyipsLib.isUserOpModeRunning)
                 throw IllegalStateException("No OpMode is running!")
             val item: Item
             val cacheHit = cachedItems[caption]
@@ -1253,7 +1253,7 @@ class DualTelemetry @JvmOverloads constructor(
         fun smartLog(format: Any, vararg objs: Any?) {
             if (BunyipsOpMode.isRunning) {
                 BunyipsOpMode.instance.telemetry.log(format, *objs)
-            } else if (BunyipsLib.isOpModeRunning) {
+            } else if (BunyipsLib.isUserOpModeRunning) {
                 val formatted = Text.format(format.toString(), *objs)
                     .replace("%", "%%")
                 BunyipsLib.opMode.telemetry.log().add(

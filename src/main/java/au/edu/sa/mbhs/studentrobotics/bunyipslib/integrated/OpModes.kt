@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook
 import dev.frozenmilk.sinister.sdk.apphooks.SinisterOpModeRegistrar
 import dev.frozenmilk.sinister.sdk.opmodes.OpModeScanner
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
@@ -11,6 +13,8 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
  * @since 6.0.0
  */
 object OpModes : SinisterOpModeRegistrar {
+    private const val RESET_ROBOT_CONTROLLER_LIGHTS_OPMDOE = "\$Reset\$RC\$Lights\$"
+    private var lightsDirty = false
     private var suppressOpModes = false
 
     /**
@@ -54,11 +58,26 @@ object OpModes : SinisterOpModeRegistrar {
         )
         registrationHelper.register(
             OpModeMeta.Builder()
-                .setName("Reset Robot Controller Lights")
-                .setFlavor(OpModeMeta.Flavor.TELEOP)
-                .setGroup("dash")
+                .setName(RESET_ROBOT_CONTROLLER_LIGHTS_OPMDOE)
+                .setFlavor(OpModeMeta.Flavor.SYSTEM)
+                .setSystemOpModeBaseDisplayName("Reset Robot Controller Lights")
                 .build(),
             ResetRobotControllerLights()
         )
+    }
+
+    @JvmStatic
+    @Hook(on = Hook.Target.PRE_INIT, priority = Int.MAX_VALUE)
+    fun markRobotControllerLightsAsDirty() {
+        lightsDirty = true
+    }
+
+    @JvmStatic
+    @Hook(on = Hook.Target.POST_STOP, priority = -Int.MAX_VALUE, ignoreOpModeType = true)
+    fun tryResetRobotControllerLights() {
+        if (lightsDirty) {
+            BunyipsLib.opModeManager.initOpMode(RESET_ROBOT_CONTROLLER_LIGHTS_OPMDOE, true)
+            lightsDirty = false
+        }
     }
 }

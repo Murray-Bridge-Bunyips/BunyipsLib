@@ -431,11 +431,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             timer.reset()
             telemetry.logBracketColor = "green"
             robotControllers.forEach { module ->
-                // Limitation, flashing here and the OpMode ending will leave the light flashing,
-                // but we can't control LynxModules after the OpMode ends. This can be reset when the user
-                // restarts the robot or runs the ResetRobotControllerLights OpMode. This applies to all set RC lights.
-                // Future: investigate whether the RC can be "re-enabled" for lights control via the OpModeManagerImpl,
-                //         thus removing the need for the reset OpMode as it can be simply handled by BOMs finally
+                // Note any changes we make to lights will be undone later by the ResetRobotControllerLights system
                 module.pattern = listOf(
                     Blinker.Step(Color.GREEN, 200, TimeUnit.MILLISECONDS),
                     Blinker.Step(Color.BLACK, 200, TimeUnit.MILLISECONDS)

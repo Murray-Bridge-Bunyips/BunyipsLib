@@ -10,7 +10,7 @@ import dev.frozenmilk.sinister.loading.Preload;
 
 /**
  * Annotation to mark a static method as a OpMode lifecycle hook, which will be executed at
- * the desired phase of the OpMode lifecycle, via the {@link BunyipsLib} listener.
+ * the desired phase of any OpMode lifecycle, via the {@link BunyipsLib} listener.
  * <p>
  * Methods marked with this annotation must have <b>exactly zero method parameters</b>,
  * and <b>must be static</b>, or they will not be executed.
@@ -19,6 +19,9 @@ import dev.frozenmilk.sinister.loading.Preload;
  * These methods are executed even if a {@link BunyipsOpMode} is not running.
  * <p>
  * To access the current OpMode from these hooks, see {@link BunyipsLib#getOpMode()}.
+ * <p>
+ * Do note the Hook will not execute on System OpModes or BunyipsLib-integrated OpModes (such as HardwareTester).
+ * You can bypass this by passing in a boolean flag {@link #ignoreOpModeType()}, but should be used with caution.
  *
  * @author Lucas Bubner, 2024
  * @since 7.0.0
@@ -38,9 +41,9 @@ public @interface Hook {
      * @return the priority of this hook; higher value numbers are run before other hooks of lower numbers.
      * By default, hooks are assigned a priority of "level 0", running at whichever order the class loader does.
      * <p>
-     * Priorities used for integrated hooks are as follows:
+     * Priorities used for some integrated hooks are as follows:
      * <ol start=0>
-     *     <li>Static cleanup methods</li>
+     *     <li>General static cleanup methods</li>
      *     <li><i>Unused</i></li>
      *     <li>RobotConfig AutoInit</li>
      *     <li><i>Unused</i></li>
@@ -50,6 +53,18 @@ public @interface Hook {
      * </ol>
      */
     int priority() default 0;
+
+    /**
+     * Setting this flag to true will cause this hook to also execute for System and BunyipsLib-integrated OpModes.
+     * <p>
+     * Be advised this will run for <b>all</b> OpModes, including the default "Robot is stopped" OpMode, and system
+     * events such as Sloth's <i>ProcessLoadEvent</i> and BunyipsLib's <i>ResetRobotControllerLights</i>. It is advised
+     * to filter these out yourself through instance/classname checks to {@link BunyipsLib#getOpMode()}
+     * if you have this flag enabled.
+     *
+     * @return whether to always run this hook even on system opmodes including the default "robot is stopped" opmode.
+     */
+    boolean ignoreOpModeType() default false;
 
     /**
      * The times at which this method can be executed in the OpMode lifecycle.

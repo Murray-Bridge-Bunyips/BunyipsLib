@@ -1,6 +1,10 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import android.content.Context
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.HardwareTester
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetEncoders
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetLastKnowns
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetRobotControllerLights
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions
 import com.qualcomm.ftccommon.FtcEventLoop
@@ -52,17 +56,32 @@ object BunyipsLib {
         get() = if (BunyipsOpMode.isRunning) BunyipsOpMode.instance else opModeManager.activeOpMode
 
     /**
-     * Whether an active user OpMode is running.
+     * Whether an active *user* OpMode is running. Excludes BunyipsLib-integrated or system OpModes.
      */
     @JvmStatic
-    val isOpModeRunning: Boolean
-        get() = opMode !is DefaultOpMode && opMode !is ManualControlOpMode
+    val isUserOpModeRunning: Boolean
+        get() = isOpModeUserOpMode(opMode)
 
     /**
      * Runs [ifRunning] if the [opMode] is an active user OpMode.
      */
     @JvmStatic
-    fun ifOpModeRunning(ifRunning: Consumer<OpMode>) = if (isOpModeRunning) ifRunning.accept(opMode) else Unit
+    fun ifUserOpModeRunning(ifRunning: Consumer<OpMode>) = if (isUserOpModeRunning) ifRunning.accept(opMode) else Unit
+
+    /**
+     * Check if an [opMode] is a user (not System or BunyipsLib-integrated) OpMode.
+     */
+    @JvmStatic
+    fun isOpModeUserOpMode(opMode: OpMode) =
+        opMode.let {
+            it !is DefaultOpMode
+                    && it !is ManualControlOpMode
+                    && it !is ResetRobotControllerLights
+                    && it !is ResetEncoders
+                    && it !is ResetLastKnowns
+                    && it !is HardwareTester
+                    && it.javaClass.simpleName != "ProcessLoadEvent"
+        }
 
     private val _opModeManager = LateInitCell<OpModeManagerImpl>()
 
@@ -90,22 +109,39 @@ object BunyipsLib {
     }
 
     private object OpModeHook : Notifications {
-        override fun onOpModePreInit(opMode: OpMode) {
-            if (opMode is DefaultOpMode || opMode is ManualControlOpMode || opMode.javaClass.simpleName == "ProcessLoadEvent") return
+        private fun handleOpModeCycle(opMode: OpMode, cycle: Hook.Target) {
+            val hooks = mutableSetOf<Pair<Method, Hook>>()
+            HookScanner.iterateAppHooks {
+                if (it.second.on == cycle)
+                    hooks.add(it)
+            }
+            if (!isOpModeUserOpMode(opMode)) {
+                hooks.filter { it.second.ignoreOpModeType }
+                    .sortedByDescending { it.second.priority }
+                    .forEach {
+                        Dbg.logv(
+                            javaClass, "invoking %(priority=%, bypassedOpMode='%'): %.%()",
+                            cycle.name,
+                            it.second.priority,
+                            opModeManager.activeOpModeName,
+                            it.first.declaringClass.simpleName,
+                            it.first.name
+                        )
+                        Exceptions.runUserMethod { it.first.invoke(null) }
+                    }
+                return
+            }
             Dbg.log(
-                "******************** INIT OPMODE - %: \"%\" ********************",
+                "******************** % OPMODE - %: \"%\" ********************",
+                cycle.name.substringAfter("_"),
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
-            val preInit = mutableSetOf<Pair<Method, Hook>>()
-            HookScanner.iterateAppHooks {
-                if (it.second.on == Hook.Target.PRE_INIT)
-                    preInit.add(it)
-            }
-            preInit.sortedByDescending { it.second.priority }
+            hooks.sortedByDescending { it.second.priority }
                 .forEach {
                     Dbg.logv(
-                        javaClass, "invoking PRE_INIT(priority=%): %.%() ...",
+                        javaClass, "invoking %(priority=%): %.%() ...",
+                        cycle.name,
                         it.second.priority,
                         it.first.declaringClass.simpleName,
                         it.first.name
@@ -114,53 +150,9 @@ object BunyipsLib {
                 }
         }
 
-        override fun onOpModePreStart(opMode: OpMode) {
-            if (opMode is DefaultOpMode || opMode is ManualControlOpMode || opMode.javaClass.simpleName == "ProcessLoadEvent") return
-            Dbg.log(
-                "******************** START OPMODE - %: \"%\" ********************",
-                opMode.javaClass.simpleName,
-                opModeManager.activeOpModeName
-            )
-            val preStart = mutableSetOf<Pair<Method, Hook>>()
-            HookScanner.iterateAppHooks {
-                if (it.second.on == Hook.Target.PRE_START)
-                    preStart.add(it)
-            }
-            preStart.sortedByDescending { it.second.priority }
-                .forEach {
-                    Dbg.logv(
-                        javaClass, "invoking PRE_START(priority=%): %.%() ...",
-                        it.second.priority,
-                        it.first.declaringClass.simpleName,
-                        it.first.name
-                    )
-                    Exceptions.runUserMethod { it.first.invoke(null) }
-                }
-        }
-
-        override fun onOpModePostStop(opMode: OpMode) {
-            if (opMode is DefaultOpMode || opMode is ManualControlOpMode || opMode.javaClass.simpleName == "ProcessLoadEvent") return
-            Dbg.log(
-                "******************** STOP OPMODE - %: \"%\" ********************",
-                opMode.javaClass.simpleName,
-                opModeManager.activeOpModeName
-            )
-            val postStop = mutableSetOf<Pair<Method, Hook>>()
-            HookScanner.iterateAppHooks {
-                if (it.second.on == Hook.Target.POST_STOP)
-                    postStop.add(it)
-            }
-            postStop.sortedByDescending { it.second.priority }
-                .forEach {
-                    Dbg.logv(
-                        javaClass, "invoking POST_STOP(priority=%): %.%() ...",
-                        it.second.priority,
-                        it.first.declaringClass.simpleName,
-                        it.first.name
-                    )
-                    Exceptions.runUserMethod { it.first.invoke(null) }
-                }
-        }
+        override fun onOpModePreInit(opMode: OpMode) = handleOpModeCycle(opMode, Hook.Target.PRE_INIT)
+        override fun onOpModePreStart(opMode: OpMode) = handleOpModeCycle(opMode, Hook.Target.PRE_START)
+        override fun onOpModePostStop(opMode: OpMode) = handleOpModeCycle(opMode, Hook.Target.POST_STOP)
     }
 
     private object HookScanner : AppHookScanner<Pair<Method, Hook>>() {
