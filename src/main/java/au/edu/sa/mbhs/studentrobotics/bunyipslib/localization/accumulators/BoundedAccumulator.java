@@ -85,6 +85,7 @@ public class BoundedAccumulator extends Accumulator {
         super.accumulate(twist);
 
         Pose2d currentPose = pose;
+        // Note we don't consider heading for a possible intersections at an angle, but it has enough accuracy as-is
         Rect pos = robotBoundingBox.centeredAt(currentPose.position);
 
         Rect bounds = Rect.normalise(MAX_BOUNDS);
@@ -104,23 +105,27 @@ public class BoundedAccumulator extends Accumulator {
                 double newX = currentPose.position.x;
                 double newY = currentPose.position.y;
 
-                // Recalculate the new position to be the nearest edge of the bounding box
-                // Future: Cases where the robot is in the corner of the area perform a bit strangely as
-                // they are snapped to the nearest corner of the bounding box
-                if (currentPose.position.x < area.point1.x || currentPose.position.x > area.point2.x) {
-                    if (currentPose.position.x < area.point1.x) {
-                        newX = area.point1.x - robotBoundingBox.point2.x;
-                    } else {
-                        newX = area.point2.x + robotBoundingBox.point2.x;
-                    }
-                }
+                // Calculate how much overlap the two positions have
+                double overlapX = Math.min(pos.point2.x - area.point1.x, area.point2.x - pos.point1.x);
+                double overlapY = Math.min(pos.point2.y - area.point1.y, area.point2.y - pos.point1.y);
 
-                if (currentPose.position.y < area.point1.y || currentPose.position.y > area.point2.y) {
-                    if (currentPose.position.y < area.point1.y) {
-                        newY = area.point1.y - robotBoundingBox.point2.y;
-                    } else {
-                        newY = area.point2.y + robotBoundingBox.point2.y;
-                    }
+                double robotCenterX = (pos.point1.x + pos.point2.x) / 2.0;
+                double robotCenterY = (pos.point1.y + pos.point2.y) / 2.0;
+                double areaCenterX = (area.point1.x + area.point2.x) / 2.0;
+                double areaCenterY = (area.point1.y + area.point2.y) / 2.0;
+
+                // Decide which way to "push" the robot back out of the overlapping box
+                double correctionX = robotCenterX < areaCenterX ? -overlapX : overlapX;
+                double correctionY = robotCenterY < areaCenterY ? -overlapY : overlapY;
+
+                // Prefer one axis to let the robot slide along an axis not affected by the bounding box
+                if (Math.abs(correctionX) < Math.abs(correctionY)) {
+                    newX = currentPose.position.x + correctionX;
+                } else if (Math.abs(correctionY) < Math.abs(correctionX)) {
+                    newY = currentPose.position.y + correctionY;
+                } else {
+                    newX = currentPose.position.x + correctionX;
+                    newY = currentPose.position.y + correctionY;
                 }
 
                 // Run the new position through the bounds check again for other boxes

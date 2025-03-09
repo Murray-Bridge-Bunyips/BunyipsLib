@@ -182,13 +182,13 @@ public abstract class CommandBasedBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Run a task always. This is the same as calling {@code .when(() -> true)}.
+     * Run a task immediately with no start condition. This is the same as calling {@code .when(() -> true)}.
      *
      * @return Task scheduling builder
      */
     @NonNull
-    public Scheduler.ScheduledTask always() {
-        return scheduler.always();
+    public Scheduler.ScheduledTask immediately() {
+        return scheduler.immediately();
     }
 
     /**

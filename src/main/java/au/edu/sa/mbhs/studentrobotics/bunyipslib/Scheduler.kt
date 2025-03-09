@@ -282,11 +282,11 @@ class Scheduler {
     )
 
     /**
-     * Run a task always. This is the same as calling `.when(() -> true)`.
+     * Run a task immediately with no start condition. This is the same as calling `.when(() -> true)`.
      *
      * @return Task scheduling builder
      */
-    fun always() = ScheduledTask(Condition { true })
+    fun immediately() = ScheduledTask(Condition { true })
 
     private class ControllerButtonBind(
         val controller: Gamepad,
