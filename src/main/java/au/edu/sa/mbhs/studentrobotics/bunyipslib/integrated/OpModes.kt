@@ -68,13 +68,13 @@ object OpModes : SinisterOpModeRegistrar {
 
     @JvmStatic
     @Hook(on = Hook.Target.PRE_INIT, priority = Int.MAX_VALUE)
-    fun markRobotControllerLightsAsDirty() {
+    private fun markRobotControllerLightsAsDirty() {
         lightsDirty = true
     }
 
     @JvmStatic
     @Hook(on = Hook.Target.POST_STOP, priority = -Int.MAX_VALUE, ignoreOpModeType = true)
-    fun tryResetRobotControllerLights() {
+    private fun tryResetRobotControllerLights() {
         if (lightsDirty) {
             BunyipsLib.opModeManager.initOpMode(RESET_ROBOT_CONTROLLER_LIGHTS_OPMDOE, true)
             lightsDirty = false
