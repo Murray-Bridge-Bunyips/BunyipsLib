@@ -28,10 +28,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
 
 import java.util.ArrayList;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Encoder;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.EncoderTicks;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.InterpolatedLookupTable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
@@ -42,6 +38,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFContro
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Voltage;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.logic.Encoder;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.EncoderTicks;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
@@ -863,7 +863,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
                 if (!rueGains.isEmpty())
                     rueController.setCoefficients(rueGains.stream().mapToDouble(this::getClampedInterpolatedGain).toArray());
                 if (rueInfo == null || rueInfo.first == null || rueInfo.second == null)
-                    throw new EmergencyStop("Invalid motor information configuration passed for RUN_USING_ENCODER.");
+                    throw new Exceptions.EmergencyStop("Invalid motor information configuration passed for RUN_USING_ENCODER.");
                 // In RUN_USING_ENCODER, the controller is expected to take in the current velocity and target velocity,
                 // which usually consists internally of a PID and feedforward controller.
                 if (power == 0) {

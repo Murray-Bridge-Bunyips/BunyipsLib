@@ -11,12 +11,12 @@ import org.opencv.core.Scalar;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.ColourThreshold;
 
@@ -69,7 +69,7 @@ public abstract class ColourTunerOpMode extends BunyipsOpMode {
         vision = new Vision(setCamera());
         processors = setThresholdsToTune();
         if (processors.length == 0)
-            throw new EmergencyStop("No processors to tune");
+            throw new Exceptions.EmergencyStop("No processors to tune");
         // Initialise all processors but start only one
         vision.init(processors);
         vision.startPreview();

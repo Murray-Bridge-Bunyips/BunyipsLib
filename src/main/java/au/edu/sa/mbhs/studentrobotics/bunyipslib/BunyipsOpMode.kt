@@ -1,14 +1,15 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import android.graphics.Color
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.executables.MovingAverageTimer
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.*
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.ftc.throwIfModulesAreOutdated
@@ -121,7 +122,7 @@ abstract class BunyipsOpMode : BOMInternal() {
          *
          * You may also choose to access the currently running base `OpMode` instance through the [BunyipsLib] class.
          *
-         * @throws EmergencyStop If a [BunyipsOpMode] is not running, this exception will be raised with a cause of [UninitializedPropertyAccessException].
+         * @throws Exceptions.EmergencyStop If a [BunyipsOpMode] is not running, this exception will be raised with a cause of [UninitializedPropertyAccessException].
          * @return The instance of the current [BunyipsOpMode].
          */
         @JvmStatic
@@ -129,7 +130,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             // If Kotlin throws an UninitializedPropertyAccessException, it will crash the DS and require a full
             // restart, so we will handle this exception ourselves and supply a more informative message.
             get() = _instance
-                ?: throw EmergencyStop(
+                ?: throw Exceptions.EmergencyStop(
                     "Attempted to access a BunyipsOpMode that is not running! " +
                             "This is due to a `BunyipsOpMode.getInstance()` call that has been invoked without checking if there is an active BunyipsOpMode running. " +
                             "The most likely cause is that a component has tried to access a running BunyipsOpMode when none is running. " +
@@ -724,7 +725,7 @@ abstract class BunyipsOpMode : BOMInternal() {
      * Dangerous method: call to IMMEDIATELY terminate the OpMode.
      * **No further code will run**, and this should only be used in emergencies.
      *
-     * See the [EmergencyStop] for terminating the OpMode through an exception
+     * See the [Exceptions.EmergencyStop] for terminating the OpMode through an exception
      * that does not silently terminate the OpMode.
      */
     fun emergencyStop() {

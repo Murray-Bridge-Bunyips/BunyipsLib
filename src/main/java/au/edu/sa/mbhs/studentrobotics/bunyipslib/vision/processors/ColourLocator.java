@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.Processor;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.ColourBlob;
 

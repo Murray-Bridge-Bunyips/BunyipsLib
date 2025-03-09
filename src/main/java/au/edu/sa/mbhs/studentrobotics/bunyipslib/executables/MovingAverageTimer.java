@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.executables;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds;
@@ -15,7 +15,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  * @author Shaun, 11/06/2017
  * @since 1.0.0-pre
  */
-public class MovingAverageTimer {
+public class MovingAverageTimer implements Runnable {
     // A ring buffer is used to keep track of a moving average
     private final int ringBufferSize;
     private final long[] loopTimeRingBuffer;
@@ -233,5 +233,10 @@ public class MovingAverageTimer {
     @Override
     public String toString() {
         return String.format(toStringFormatStr, loopCount, elapsedTime().in(formatResolution), movingAverage, average, minLoopTime().in(formatResolution), minMovingAverage, minAverage, maxLoopTime().in(formatResolution), maxMovingAverage, maxAverage);
+    }
+
+    @Override
+    public void run() {
+        update();
     }
 }

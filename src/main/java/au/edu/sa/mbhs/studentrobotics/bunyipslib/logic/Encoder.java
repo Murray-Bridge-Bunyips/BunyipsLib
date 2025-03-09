@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.logic;
 
 import androidx.annotation.NonNull;
 

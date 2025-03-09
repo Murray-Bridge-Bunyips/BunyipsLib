@@ -1,6 +1,9 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.executables;
 
 import androidx.annotation.NonNull;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
 
 /**
  * Multipurpose index-based table with increment and decrement functionality.
@@ -32,7 +35,7 @@ public class IndexedTable implements Runnable {
     @NonNull
     public IndexedTable withDefaultIndex(int defaultIndex) {
         if (defaultIndex < 0 || defaultIndex >= tableValues.length)
-            throw new EmergencyStop("Default index out of bounds");
+            throw new Exceptions.EmergencyStop("Default index out of bounds");
         index = defaultIndex;
         return this;
     }

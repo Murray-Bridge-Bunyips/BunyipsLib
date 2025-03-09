@@ -2,7 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
 

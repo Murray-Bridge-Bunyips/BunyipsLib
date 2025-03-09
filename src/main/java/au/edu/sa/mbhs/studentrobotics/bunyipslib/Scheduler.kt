@@ -6,14 +6,15 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.logic.Condition
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Analog
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Companion.get
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.qualcomm.robotcore.hardware.Gamepad
 import java.util.function.BooleanSupplier
@@ -259,7 +260,12 @@ class Scheduler {
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
-    fun whenRising(condition: BooleanSupplier) = ScheduledTask(Condition(Condition.Edge.RISING, condition))
+    fun whenRising(condition: BooleanSupplier) = ScheduledTask(
+        Condition(
+            Condition.Edge.RISING,
+            condition
+        )
+    )
 
     /**
      * Run a task when a condition is met.
@@ -268,7 +274,12 @@ class Scheduler {
      * @param condition Supplier to provide a boolean value of when the task should be run.
      * @return Task scheduling builder
      */
-    fun whenFalling(condition: BooleanSupplier) = ScheduledTask(Condition(Condition.Edge.FALLING, condition))
+    fun whenFalling(condition: BooleanSupplier) = ScheduledTask(
+        Condition(
+            Condition.Edge.FALLING,
+            condition
+        )
+    )
 
     /**
      * Run a task always. This is the same as calling `.when(() -> true)`.
@@ -463,7 +474,7 @@ class Scheduler {
          */
         infix fun run(task: Task) = apply {
             if (taskToRun !is IdleTask) {
-                throw EmergencyStop("A run(Task) method has been called more than once on a scheduler task. If you wish to run multiple tasks see about using a task group as your task.")
+                throw Exceptions.EmergencyStop("A run(Task) method has been called more than once on a scheduler task. If you wish to run multiple tasks see about using a task group as your task.")
             }
             taskToRun = task
         }

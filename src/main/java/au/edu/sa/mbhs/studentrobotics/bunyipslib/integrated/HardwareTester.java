@@ -55,11 +55,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.MovingAverageTimer;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.executables.MovingAverageTimer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
@@ -93,10 +93,10 @@ public final class HardwareTester extends LinearOpMode {
             allDevicesMapField.setAccessible(true);
             hardware = (Map<String, List<HardwareDevice>>) allDevicesMapField.get(hardwareMap);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new EmergencyStop("Failed to access HardwareMap!");
+            throw new Exceptions.EmergencyStop("Failed to access HardwareMap!");
         }
         if (hardware == null || hardware.isEmpty())
-            throw new EmergencyStop("No hardware devices found!");
+            throw new Exceptions.EmergencyStop("No hardware devices found!");
         hardwareMap.getAll(LynxModule.class).forEach(h -> h.setPattern(Arrays.asList(
                 new Blinker.Step(Color.GREEN.color, 400, TimeUnit.MILLISECONDS),
                 new Blinker.Step(Color.LTGRAY.color, 400, TimeUnit.MILLISECONDS)

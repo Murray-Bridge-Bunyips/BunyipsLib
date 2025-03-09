@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.executables;
 
 import androidx.annotation.RawRes;
 
@@ -20,7 +20,7 @@ import java.io.File;
  * @see SoundPlayer
  * @since 6.1.0
  */
-public class Sound {
+public class Sound implements Runnable {
     private final SoundPlayer.PlaySoundParams params = new SoundPlayer.PlaySoundParams(false);
     private final Object res;
     private Consumer<Integer> startAction = (i) -> {
@@ -136,5 +136,13 @@ public class Sound {
      */
     public void playForever() {
         play(-1);
+    }
+
+    /**
+     * Equivalent to {@link #play()}.
+     */
+    @Override
+    public void run() {
+        play();
     }
 }

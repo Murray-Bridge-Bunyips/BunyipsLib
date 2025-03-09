@@ -6,9 +6,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.InvertibleTouchSensor
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.ServoEx
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.SimpleRotator
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.BunyipsLib.StdSearch
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.logic.Ramping
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
@@ -240,7 +240,7 @@ abstract class RobotConfig {
     annotation class InhibitAutoInit
 
     private object AutoInitScanner : AppHookScanner<RobotConfig>() {
-        override val targets = StdSearch()
+        override val targets = BunyipsLib.StandardSearch()
         override fun scan(cls: Class<*>, registrationHelper: RegistrationHelper) {
             cls.staticInstancesOf(RobotConfig::class.java)
                 .filter { cls.isAnnotationPresent(AutoInit::class.java) }

@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
 
 /**
  * Reset OpMode to clear all motors of their last known positions.
@@ -26,7 +26,7 @@ public final class ResetEncoders extends LinearOpMode {
             mapping.setAccessible(true);
             map = (Map<String, DcMotor>) mapping.get(hardwareMap.dcMotor);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new EmergencyStop("Failed to access HardwareMap fields!");
+            throw new Exceptions.EmergencyStop("Failed to access HardwareMap fields!");
         }
         if (map != null) {
             for (Map.Entry<String, DcMotor> motor : map.entrySet()) {

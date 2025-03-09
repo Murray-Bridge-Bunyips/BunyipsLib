@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -6,7 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import dev.frozenmilk.sinister.loading.Preload;
 
 /**

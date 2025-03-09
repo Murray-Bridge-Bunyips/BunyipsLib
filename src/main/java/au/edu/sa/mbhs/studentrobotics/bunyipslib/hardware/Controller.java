@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.function.Predicate;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Condition;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.logic.Condition;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 
 /**

@@ -26,15 +26,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.EmergencyStop;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Periodic;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.RobotConfig;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.executables.Periodic;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Velocity;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 
 /**
@@ -261,7 +261,7 @@ public class IMUEx implements IMU, LazyImu, Runnable {
 
     private boolean tryInit(String reason) {
         if (parameters == null)
-            throw new EmergencyStop("IMUEx does not have any information available to initialise the required IMU! Since this data is unavailable when it is needed, use `lazyInitialize` or `initialize` on this object to resolve this error.");
+            throw new Exceptions.EmergencyStop("IMUEx does not have any information available to initialise the required IMU! Since this data is unavailable when it is needed, use `lazyInitialize` or `initialize` on this object to resolve this error.");
 
         if (triedInit) return true;
         triedInit = true;

@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook;
 
 /**
  * Set of helper functions for drawing on the FtcDashboard canvas and operating various FtcDashboard functions.

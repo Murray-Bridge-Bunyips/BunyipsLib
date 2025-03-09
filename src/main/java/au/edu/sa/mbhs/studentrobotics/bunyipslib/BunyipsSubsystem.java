@@ -14,9 +14,10 @@ import java.util.function.Consumer;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 
@@ -395,7 +396,7 @@ public abstract class BunyipsSubsystem {
         Task task = getCurrentTask();
         if (task != null) {
             if (task == defaultTask && defaultTask.poll()) {
-                throw new EmergencyStop("Default task (of " + name + ", " + getClass().getSimpleName() + ") should never finish!");
+                throw new Exceptions.EmergencyStop("Default task (of " + name + ", " + getClass().getSimpleName() + ") should never finish!");
             }
             // Run the task on our subsystem
             task.run();

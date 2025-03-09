@@ -1,10 +1,8 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks
+package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import android.content.Context
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BuildConfig
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Dbg
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Exceptions
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions
 import com.qualcomm.ftccommon.FtcEventLoop
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
@@ -166,7 +164,7 @@ object BunyipsLib {
     }
 
     private object HookScanner : AppHookScanner<Pair<Method, Hook>>() {
-        override val targets = StdSearch()
+        override val targets = StandardSearch()
         override fun scan(cls: Class<*>, registrationHelper: RegistrationHelper) {
             cls.declaredMethods
                 .filter { it.isStatic() && it.isAnnotationPresent(Hook::class.java) && it.parameterCount == 0 }
@@ -179,7 +177,7 @@ object BunyipsLib {
     /**
      * Scanner target for BunyipsLib + User code.
      */
-    class StdSearch : FocusedSearch() {
+    class StandardSearch : FocusedSearch() {
         init {
             // Also excludes other libraries relevant to BunyipsLib but won't ever have hook targets
             exclude("com.acmerobotics.roadrunner")

@@ -1,19 +1,26 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.util
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.hooks.Hook
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BuildConfig
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions.EmergencyStop
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions.handle
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions.runUserMethod
+import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.ForceStopException
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.function.Consumer
 
 /**
- * OpMode "userspace" util to prevent user-code unhandled exceptions from crashing the app.
+ * A collection of BunyipsLib global utilities for handling and managing user exceptions.
  *
- * This will log the exception and stacktrace to the Driver Station, allowing OpModes to continue running.
- * In the past, exceptions used to cause an EMERGENCY STOP condition, but has changed to a more modern popup window,
- * however, this class is still useful as it will not terminate the OpMode and will allow code to continue
- * while providing full logging in both Logcat and the Driver Station.
+ * Provides automatic swallowing of non-critical exceptions while logging to Logcat and the Driver Station, used
+ * to "safeguard" the behaviour of user-space code via [runUserMethod] and [handle].
  *
+ * The [EmergencyStop] exception can be thrown to bypass the capturing nature of this class.
+ *
+ * @author Lucas Bubner, 2025
  * @since 1.0.0-pre
  */
 object Exceptions {
@@ -122,5 +129,32 @@ object Exceptions {
     @JvmStatic
     private fun reset() {
         THROWN_EXCEPTIONS.clear()
+    }
+
+    /**
+     * Custom exception to be thrown when BunyipsLib should end the OpMode following a critical error.
+     * This ensures the [Exceptions] handler will be called but also allows the OpMode to be ended immediately.
+     *
+     * To ensure no code can run and to immediately transition to stop with no stacktrace,
+     * throw the [OpModeManagerImpl.ForceStopException] or call the relevant terminate method.
+     *
+     * @author Lucas Bubner, 2024
+     * @since 1.0.0-pre
+     */
+    class EmergencyStop : RuntimeException {
+        /**
+         * Emergency stop and bypass the [Exceptions] handler.
+         *
+         * @param message the message to display on the Driver Station.
+         */
+        constructor(message: String) : super(message)
+
+        /**
+         * Emergency stop and bypass the [Exceptions] handler.
+         *
+         * @param message the message to display on the Driver Station.
+         * @param cause   the cause to affix to this exception, if any.
+         */
+        constructor(message: String, cause: Throwable?) : super(message, cause)
     }
 }
