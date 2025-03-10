@@ -238,13 +238,13 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 @Override
                 public int getParEncoderPosition() {
                     assert pl.pinpoint != null;
-                    return pl.pinpoint.getEncoderX();
+                    return pl.pinpoint.getEncoderX() * (parDirection == GoBildaPinpointDriver.EncoderDirection.REVERSED ? -1 : 1);
                 }
 
                 @Override
                 public int getPerpEncoderPosition() {
                     assert pl.pinpoint != null;
-                    return pl.pinpoint.getEncoderY();
+                    return pl.pinpoint.getEncoderY() * (perpDirection == GoBildaPinpointDriver.EncoderDirection.REVERSED ? -1 : 1);
                 }
 
                 @Override
@@ -495,13 +495,11 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
         });
 
         TelemetryMenu.StaticClickableOption[] opModeSelections = new TelemetryMenu.StaticClickableOption[opModes.size()];
-        // Have to use array access due to inner class variable mutation
         LateInitCell<LinearOpMode> selection = new LateInitCell<>();
         for (int i = 0; i < opModes.size(); i++) {
-            // Must be considered final as it is used in the inner class
-            int finalI = i;
-            opModeSelections[i] = new TelemetryMenu.StaticClickableOption(opModes.get(finalI).getClass().getSimpleName(),
-                    () -> selection.accept(opModes.get(finalI)));
+            LinearOpMode opMode = opModes.get(i);
+            opModeSelections[i] = new TelemetryMenu.StaticClickableOption(opMode.getClass().getSimpleName(),
+                    () -> selection.accept(opMode));
         }
         root.addChildren(opModeSelections);
         TelemetryMenu menu = new TelemetryMenu(fusedTelemetry, root);
