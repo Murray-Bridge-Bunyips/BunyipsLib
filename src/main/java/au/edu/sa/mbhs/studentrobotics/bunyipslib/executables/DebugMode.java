@@ -20,6 +20,7 @@ import java.util.function.BooleanSupplier;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetRobotControllerLights;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
 
@@ -175,6 +176,7 @@ public class DebugMode implements Runnable {
             return;
         }
 
+        ResetRobotControllerLights.inhibitNext = true;
         opMode.getRobotControllers()
                 .forEach((controller) -> controller.setConstant(Color.YELLOW));
 
