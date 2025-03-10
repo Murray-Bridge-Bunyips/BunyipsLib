@@ -479,7 +479,13 @@ abstract class BunyipsOpMode : BOMInternal() {
             telemetry.update()
             Dbg.logd("BunyipsOpMode: all tasks finished.")
             robotControllers.forEach { module ->
-                module.setConstant(Color.LTGRAY)
+                if (safeHaltHardwareOnStop)
+                    module.setConstant(Color.LTGRAY)
+                else
+                    module.pattern = listOf(
+                        Blinker.Step(Color.LTGRAY, 600, TimeUnit.MILLISECONDS),
+                        Blinker.Step(Color.BLACK, 600, TimeUnit.MILLISECONDS)
+                    )
             }
             // Wait for user to hit stop or for the OpMode to be terminated
             // We will continue running the OpMode as there might be some other user threads
