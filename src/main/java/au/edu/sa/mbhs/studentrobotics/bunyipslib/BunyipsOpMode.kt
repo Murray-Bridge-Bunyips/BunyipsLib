@@ -6,6 +6,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.*
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetRobotControllerLights
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
@@ -502,6 +503,7 @@ abstract class BunyipsOpMode : BOMInternal() {
         } catch (t: Throwable) {
             Dbg.error("BunyipsOpMode: unhandled throwable! <${t.message}>")
             Dbg.sendStacktrace(t)
+            ResetRobotControllerLights.inhibitNext = true
             robotControllers.forEach { module ->
                 module.setConstant(Color.RED)
             }
