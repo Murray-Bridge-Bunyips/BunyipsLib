@@ -2,6 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.tuning;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 
+import android.graphics.Color;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -37,6 +39,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -48,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
@@ -155,6 +159,11 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     @SuppressWarnings("unchecked")
     public final void runOpMode() throws InterruptedException {
         opModes.clear();
+        // We are not a system OpMode so lights will be automatically cleaned up on completion
+        hardwareMap.getAll(LynxModule.class).forEach(h -> h.setPattern(Arrays.asList(
+                new Blinker.Step(Color.GREEN, 400, TimeUnit.MILLISECONDS),
+                new Blinker.Step(Color.LTGRAY, 400, TimeUnit.MILLISECONDS)
+        )));
 
         // Still need to send some telemetry to the dashboard, instead of using DualTelemetry which is overkill
         // for this purpose, we'll just use MultipleTelemetry.

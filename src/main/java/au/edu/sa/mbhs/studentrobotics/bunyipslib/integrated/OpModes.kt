@@ -14,8 +14,10 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
  */
 object OpModes : SinisterOpModeRegistrar {
     private const val RESET_ROBOT_CONTROLLER_LIGHTS_OPMDOE = "\$Reset\$RC\$Lights\$"
-    private var lightsDirty = false
     private var suppressOpModes = false
+    // Have to expose this so HardwareTester can override the Hook filtering (as HardwareTester is integrated)
+    @set:JvmName("__setLightsDirty")
+    internal var lightsDirty = false
 
     /**
      * Call this method before start to suppress all BunyipsLib OpModes from appearing in the OpMode list.

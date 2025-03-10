@@ -97,6 +97,7 @@ public final class HardwareTester extends LinearOpMode {
         }
         if (hardware == null || hardware.isEmpty())
             throw new Exceptions.EmergencyStop("No hardware devices found!");
+        OpModes.INSTANCE.__setLightsDirty(true); // HardwareTester does not qualify as a user-OpMode but we modify the lights
         hardwareMap.getAll(LynxModule.class).forEach(h -> h.setPattern(Arrays.asList(
                 new Blinker.Step(Color.GREEN.color, 400, TimeUnit.MILLISECONDS),
                 new Blinker.Step(Color.LTGRAY.color, 400, TimeUnit.MILLISECONDS)
