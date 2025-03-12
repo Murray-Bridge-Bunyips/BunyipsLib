@@ -2,6 +2,371 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.0.0 (2025-03-12)
+
+Offseason major library operation and behaviour revamp.
+
+### Breaking changes
+
+- BunyipsLib has been updated to SDK v10.2
+- General package and class restructure
+    - New packages `executables` and `logic` which move more classes out of the primary root package for better
+      organisation
+    - All class movements that were made include:
+        - Merging `EmergencyStop` and `Exceptions` classes. To access EmergencyStop, it can be accessed through
+          `Exceptions.EmergencyStop`
+        - Moving `Condition`, `Encoder`, `Ramping` to new `logic` package
+        - Moving `Dbg`, `EncoderTicks`, `Exceptions` to `util` package
+        - Moving `DebugMode`, `IndexedTable`, `MovingAverageTimer`, `Periodic`, `Sound`, `UserSelection` to new
+          `executables` package
+- RoadRunner has been updated to RR FTC v0.1.21
+    - BunyipsLib now supports tuning goBILDA® Pinpoint Computers and SparkFun OTOS devices through new upstream features
+        - New localizers to accommodate include the `PinpointLocalizer` and `OTOSLocalizer`, with similar parameter
+          paradigms to the other localizers already in BunyipsLib
+        - **WARNING:** Upstream & BunyipsLib support for the Pinpoint and OTOS in RoadRunner is incubating. Bugs may
+          exist that may cause the tuning process or localization to not work properly in this specific release.
+        - Add the `GoBildaPinpointDriver` source file under `external`
+            - Some minor documented changes have been made to the file but does not break the public API surface
+        - Note that BunyipsLib continues to use the "old" localizer definition where localizers *do not* store the pose
+            - This step happens in the `Accumulator`, and continues to function this way with the old delta-based
+              localizers
+    - `RoadRunnerTuningOpMode` has been optimised for brevity, better functionality and to support the new tuners
+        - This includes setting the Robot Controller LED blink pattern, which will be the same as the one for Hardware
+          Tester
+    - The Wiki has been updated accordingly with the new tuning instructions from the upstream RoadRunner documentation
+    - Includes the removal of `LazyImu` representing a class but is now an interface
+        - Since `LazyImu` is an interface, the `MecanumDrive` and `TankDrive` constructors have been modified to simply
+          take in `IMU`
+            - This removes the `getLazyImu()` from `RobotConfig` as well, as it is redundant and no longer necessary
+            - All instances where `LazyImu` is expected can be replaced with `LazyImu`, as it is shimmed internally
+              where required
+            - To use lazy initialisation of an IMU, consult the newly merged `IMUEx` class, the RoadRunner IMU shims are
+              considered obsolete in BunyipsLib
+- Removed the `DynIMU` class and merge the dynamic initialisation and null IMU features to `IMUEx`
+    - All the previous `DynIMU` features are now located on `IMUEx`
+    - To lazy initialise, simply pass your `initialize` parameters to `lazyInitialize`, which will lazy-init your IMU
+      when a field is requested or the `LazyImu` interface accessor is touched
+- New dependencies to BunyipsLib have been added and removed
+    - Apache Commons Math has been removed and BunyipsLib no longer references it
+    - RoadRunner has been updated to v1.0.1
+    - The `Sloth` library, a new FTC library, from the Dairy Foundation has been added
+        - Sloth provides classpath scanning, fast loading, and cell utilities through Dairy Util
+        - Sloth may also referred to as Sinister, as it is the implementation of the Dairy Sinister specification
+    - RR FTC dependency updated as mentioned previously
+    - Review the wiki installation instructions again to update the correct dependencies, compilation will fail until
+      this is correct
+- `Scheduler.always()` and `CommandBasedBunyipsOpMode.always()` task bindings have been renamed to `immediately()`
+    - The previous name, `always()` was misleading as it led programmers to think it would "always execute" a task,
+      rather the actual behaviour is to "immediately allow scheduling" for the given task to the `run` method
+- The `Task` execution cycle has been revamped to properly run tasks with the context they were designed for
+    - Previously, `Task.run()` would run the task wherever it was called, forcing implementations to schedule subsystem
+      tasks
+    - This behaviour introduced uncertainty to whether tasks were executed on subsystems, as calling `on` for a task did
+      not guarantee it would run on the subsystem
+    - Implementations such as the `Scheduler` did respect subsystem tasks, however, `AutonomousBunyipsOpMode` did not
+    - This implementation ambiguity caused default tasks in Autonomous to not work properly, always causing conflicts
+      with default tasks
+    - Several task wrappers also did not respect subsystem attachment, causing similar issues
+    - The new implementation keeps the original `Task.run()` method, which is required, but introduces a new
+      `Task.execute()` method which is preferred
+    - The `execute` method will run the task on the subsystem it was scheduled on, automatically delegating the `run`
+      method to the subsystem if required
+    - The task will also be auto-cancelled from the subsystem if the task is finished
+    - Internal uses of `Task.run()` have been updated to `Task.execute()`
+    - It is now recommended to use `Task.execute()` when running tasks yourself as it will handle subsystems
+      automatically
+    - Tasks that do not want to be scheduled on a subsystem at any time, such as the task composition classes can elect
+      to enable the protected `disableSubsystemAttachment` field
+        - This behaviour allows the `on` method to be final again
+- `Reference` has been removed and replaced with the `RefCell` class from the Util library
+    - This change was made to reduce conflicting dependencies and allows for more flexible reference handling
+    - `RefCell` has similar functionality to `Reference`, but has a more flexible API
+    - New utility methods for constructing `RefCell` instances are a part of the new `Ref` utility class, including
+      Kotlin extension functions
+        - A note is that since cells override `toString()`, `Ref.stringify()` exists to only stringify the cell value
+        - Additional functions include familiar methods such as `Ref.of`, `Ref.empty`, and a new `Ref.lazy`
+- `AutonomousBunyipsOpMode` `onReady` parameters have been updated
+    - `onReady` no longer takes a `Reference<?>`, but instead a `RefCell<?>` following the `Reference` removal
+    - `onReady` also no longer takes a `Controls` parameter for selected button, which has been removed
+        - `selectedButton` can be accessed via a static utility `UserSelection.getLastSelectedButtons()` which returns
+          the last series of selected buttons in order from the start of the OpMode
+            - This method can be used for any running `UserSelection`, which auto-resets on a new OpMode init
+        - This change was made as the `selectedButton` parameter was not used in every observed implementation of
+          `onReady`, increasing boilerplate
+        - Following the chaining of `UserSelection`, it did also not make sense to have a `Controls` parameter as it
+          would be ambiguous
+- Several `Task` fields have been updated
+    - `isPriority()` is now a field `isPriority` which can be updated
+    - `Task` no longer exposes `p` and `fieldOverlay`, but instead a single `dashboard` packet
+        - To add information to the dashboard or field overlay, use `dashboard` and `dashboard.fieldOverlay()`
+- `BunyipsComponent` has been removed
+    - Accessors for the current OpMode should be done statically via `BunyipsLib` or `BunyipsOpMode` directly
+    - This improves flexibility and removes the absolute need for OpModes to be `BunyipsOpMode` instances
+    - Several instances where `BunyipsOpMode` is required have been updated to use an internal static reference to
+      `BunyipsLib`
+        - This includes `Exceptions.runUserMethod` and `Scheduler` task scheduling requiring a `Controller`
+    - Review the new `DualTelemetry` methods in the Additions section
+- `Threads` has been completely rewritten to use a thread pool in Kotlin
+    - Thread tasks must now have a name, and the `Threads` class will schedule these tasks on the default SDK thread
+      pool
+    - Results and computations are processed through the `Threads.Result` class, in the same way as the Java
+      `ExecutorService` as it is an extension of Java's `Future`
+        - This extended interface gives access to some additional utilities, such as being able to ignore the
+          `stopAll()` request which is now automated via a `@Hook`, and accessing the original `Callable` function
+    - Threads continue to have `Exceptions` catch-all handling and will log exceptions in the same way as any standard
+      exception
+    - The documentation for `Threads` has also been updated to reflect these changes and provide warnings on the dangers
+      of threading in FTC
+- `AutonomousBunyipsOpMode` has updated on finish behaviours
+    - The previous `disableHardwareStopOnFinish()` method has been removed
+    - Instead, the `setCompletionBehaviour` method has been added to specify finish behaviour via an enum
+    - The enum has options for finishing the OpMode (default), finishing with no halt, and continuing exeuction
+    - The new continuing execution behaviour is used to allow default tasks on subsystems to continue after Autonomous
+      is finished
+- `UserSelection` now is a `Callable<T>` to be supported by `Threads`, where the result from the selection is returned
+  via the `Future<T>`
+    - This means the `result` field has been removed in favour of the `Future` result, or via the callback
+- `SwitchableVisionSender` is no longer blocking, and is designed to be a Runnable to be polled by `Threads` or an
+  active loop
+- Refactored holonomic drive tasks to use the new `FieldOrientableDriveTask` interface
+    - This interface is a common interface used between all drive tasks capable of field-centric driving
+    - Methods including `resetFieldCentricOrigin` and other methods that were originally implemented independently are
+      now part of this interface
+    - Enabling field-centric controls is now done BunyipsLib-style via a builder-like
+      `withFieldCentric(BooleanSupplier)` method
+        - The old method of enabling field-centric with a parameter to the constructor has been removed
+    - This approach allows a common interface between various drive tasks that may use field-centric as a common base
+- Protected method `sout` from `BunyipsSubsystem` is now final
+- `Controller` instances now require a second parameter to indicate which gamepad user the controller is associated with
+    - It was discovered the conventional `getUser()` on the `Gamepad` object was not reliable
+    - A field `designatedUser` was added to `Controller` to store the user, which is exposed through a try-getter
+      `Controller.tryGetUser`
+    - For more information to this change, read
+      issue [#101](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/issues/101)
+- `DualTelemetry` takes in an instance of `Telemetry` instead of `OpMode`, using static references internally where
+  required
+    - This also fixes the stack overflow issue where the SDK telemetry used to be passed to `DualTelemetry`
+      inadvertently, but a field update made it so `DualTelemetry` was passed into itself
+- `AutonomousBunyipsOpMode` `setOpModes(List<Object>)` method has been removed
+    - Use `<T> setOpModes(T...)` instead, or by converting your list via `toArray()`
+    - Varargs are preferred way to use `setOpModes` and there was compatibility issues when reintroducing generics for
+      lists
+
+### Non-breaking changes
+
+- `BunyipsOpMode` and variants no longer forces the `onInit()` (or related) method to be implemented
+- `UserSelection` now listens to both `gamepad1` and `gamepad2` simultaneously when a selection is being made
+- The `ResetRobotControllerLights` OpMode no longer can be manually started, being removed from the TeleOp list
+    - This OpMode, with the assistance of the new `Hook` system, activates automagically at the end of any OpMode
+    - RC lights will auto-reset when OpModes naturally stop, solving the problem which caused
+      `ResetRobotControllerLights` to be publicly exposed
+    - This makes lighting patterns a source of truth regarding the robot's state, vastly improving safety like the Robot
+      Signal Light in FRC
+- Improved Kotlin compatibility for `RoadRunnerDrive` with `setAccumulator`
+- Binding logs have been improved for `Scheduler` and `BunyipsSubsystem` tasks
+- Telemetry message on `UserSelection` instances has been updated to provide more information on what to do
+- `Scheduler` muting via `mute()` and `unmute()` applies to all active schedulers for the rest of the OpMode (static
+  method)
+- `RoadRunnerTuningOpMode` default values have been reduced to 0.2 `POWER_PER_SEC` for rampers and 96 inches for
+  `ManualFeedforwardTuner.DISTANCE`
+- Usage of `Dbg.log` in BunyipsLib internal structures have been removed
+    - Replaced with other `Dbg` functions to not pollute `Dbg.log` for user code
+- Dashboard pose colours updated to be more consistent across tasks
+- Task names are now spliced per word for better readability
+    - Task names will be spliced with spaces and Task removed, such that a task with the name MoveToPosTask will have
+      the name "Move To Pos"
+- Task naming for tasks such as the composition utilities, (`until`, `forAtLeast` etc) have been updated to assist
+  readability in composition
+    - Tasks such as `WaitTask` have a name that is simply the number of seconds to wait (e.g. `5.0s`)
+- `TaskBuilder.addTask()` now returns the result of `fresh()` to assist in chaining
+- `DualTelemetry` overrides the new SDK v10.0 `setNumDecimalPlaces` method
+    - It no-ops but now shows deprecation notices and to instead use `Mathf.round`
+- Add more Kotlin operator overloads for WPIUnits
+- `BunyipsOpMode` now raises an official init-error if the gamepads are not at rest on init
+- FtcDashboard fields are auto re-initialised whenever the event loop is reattached to avoid stale values
+- Improved dynamic localizer switching capabilities
+- General JavaDoc updates to remove legacy behaviours and improve clarity in function descriptions
+- `DynamicTask` and `Lambda` now have alternative constructors/methods which take in `Consumer<Task>` instead of just
+  `Runnable`
+    - This allows control over the task that is being run, such as setting a timeout or task name without needing a full
+      instance
+    - Do note for Kotlin type erasure compatibility there is an extra dummy parameter `ktCompatUnusedIgnore` in the old
+      `Runnable` variants, which is hidden via `@JvmOverloads`
+        - This is to ensure the correct method is called in Kotlin
+        - The existence of this parameter does not impact the operation of the method, so you can ignore it
+- WPIUnits system has been cleaned up and the MeepMeep classes have been rearranged to be updated and easier to port
+    - This includes adding Dairy Util for references to the library
+    - Do note since BunyipsLib is an Android library it does not work well with MeepMeep, hence a manual copy of the
+      util classes is still required
+        - This continuing doubling up of code is not ideal but is necessary for the time being
+- Task naming conventions on subsystems has been formalised into the `forThisSubsystem` methodA
+- General Kotlin styling updates to increase readability
+- `Task.toVerboseString` no longer has confusing formatting when mixed with `TaskGroup` instances
+- Some task name defaults have been updated, including `Lambda`, and the task composition accomplished by `then`/`after`
+- New unit tests added to test new features and ensure compatibility
+- Improved debug logging for `UserSelection`
+- Flags on `StartingConfiguration` objects will now be stringified and appended to the end of `toString()`
+    - For example, having two flags "a", "b" will display as `On X, Y from Z [a, b]`
+    - This is to assist in differentiating between otherwise similar looking `StartingConfiguration` objects
+- `UserSelection` now updates telemetry automatically if it is not running on a thread
+- BunyipsLib integrated OpModes now use Sinister/Sloth for registration, for consistency
+    - These OpModes have also been given more Logcat logging on execution to assist programmers
+- `Periodic` can now have the interval changed dynamically via `setInterval`
+- Improved RoadRunner channel logging
+- Improved documentation and removal of inconsistencies/misleading statements
+- `RoadRunnerDrive` instances that use trajectories optimised to use the built-in delta-time functions
+- Telemetry for all standard `Moveable` instances when `Accumulator` instances are present has been updated for clarity
+    - The reference frame for velocity used to be robot-centric, but has now been rotated to be field-centric to match
+      the bracketing on telemetry
+- `EmergencyStop` has been updated to allow a cause to be passed into the constructor/set via `initCause`, removing the
+  previous always-cause of a `ForceStopException`
+- The exception from attempting to access the `instance` from `BunyipsOpMode` when it is not initialised is now an
+  `EmergencyStop` with cause `UninitializedPropertyAccessException`
+
+### Bug fixes
+
+- Fixed a critical bug where the SDK fields from BunyipsOpMode were not being updated properly
+    - This meant that while BunyipsOpMode was running, the backing SDK fields were still the default instances
+    - Accessing the gamepads or telemetry through the upper OpModeInternal instance would be incorrect as a result
+    - This also inadvertently raised a bug where `DualTelemetry` was avoiding a stack overflow through this bug
+- Fixed a critical bug where `DynamicTask.onReset()` calls were not being fired properly
+- Exception messages on the DS and Logcat no longer hide useful information
+    - This includes the "caused by" messages being suppressed when `Exceptions` was handling an exception
+    - General improvements to the exception handling behaviour makes it clearer about what went wrong
+    - `Exceptions` also no longer swallows `Error` instances, which was a design error
+- Fixed a bug where the derivative term of the `PIDFController` and variants could be NaN if the period was too short
+    - Although this may have been expected behaviour in the previous version of the library and the original source, it
+      causes substantial issues with the new v6.1.1 derivative smoothing filter
+    - Unit tests have been updated to expect 0 derivative error if the period is too short
+- `DynamicTask` odd/missing inherited behaviour when using `Task.mutate` has been fixed
+- All drive instances now reset internal power fields when they are disabled
+- Task composite naming operations are no longer inconsistent
+- `BunyipsSubsystem` string representations are no longer inaccurate or inconsistent
+- Fixed faulty idle check for subsystems
+- `SelectTask` has been fixed to work properly with subsystem integration
+- `Runnable` callback tasks for task group composition utilities now work properly with naming and are no longer
+  inconsistent
+- Subtask heuristic debugging updated for more clarity
+- Fix up WPIUnits JavaDoc formatting
+- Fix a NPE thrown when some Vision instances are initialised
+- Naming conventions for the HolonomicDriveTasks have been updated to specify the normalisation of the velocity vector
+- Internal changes to AutonomousBunyipsOpMode and UserSelection interaction, including misleading docs updates and a
+  missing call to stringify the reference properly
+- Patch false nullability warnings for text formatting
+- `Cannon` properly clamps servo open/close position values
+- `StartingPositions.use()` now returns `Array<StartingPositions>` instead of `Array<Any>`
+- Fix `UserSelection` type `T` bounds and annotate constructor with `@SafeVarargs`
+- Fix `HardwareTester` not displaying some information for certain devices
+- Fix a bug with `Encoder` sharing the last timestamp for velocity calculations with acceleration
+- `BoundedAccumulator` restricted areas now behave properly around corners using a vector-based approach
+
+### Additions
+
+- Through Sinister/Sloth, BunyipsLib now performs classpath scanning
+    - This exposes the `BunyipsLib` static class, which regulates static, global library functions
+    - Cleanup of static resources is now handled by OpModeNotifications hooks through the help of Sinister
+    - This allows for flexible behaviours, where `BunyipsOpMode` is no longer an absolute necessity to use the library
+    - The `BunyipsLib` class also exposes a `getOpMode` method to retrieve the current OpMode, among other utilities
+        - If possible, `BunyipsLib.getOpMode()` will try to return from `BunyipsOpMode`, otherwise it will return from
+          the SDK event loop
+- Sloth Load, which is an integrated way of hot-reloading your TeamCode module, is now available as an integrated
+  feature
+    - To use it, review the bottom of the Installation section of the BunyipsLib wiki, or review the official docs
+- The `@Hook` annotation has been added to perform injection on any running OpMode
+    - This leverages the power of classpath scanning mentioned above
+    - A `@Hook` annotated method will inject itself to run before a specific operation in *any* OpMode that executes
+    - This is useful for operations that need to run before or after the OpMode, such as cleanup or setup
+    - The `@Hook` annotation can be used on any method, and the method must be static and take no parameters
+    - A target must also be provided to the `@Hook` annotation to specify the operation to hook into (pre-init,
+      pre-start, post-stop)
+    - Hooks have user exception protection through `Exceptions.runUserMethod`, and can have a "priority" to run in order
+    - Internally, several static cleanups use a post-stop hook and `BunyipsOpMode` uses a pre-init hook to initialise
+      gamepads and telemetry
+- RobotConfig now supports auto-initialisation
+    - Leveraging a `@Hook` on pre-init, RobotConfig instances can be initialised fully automatically before an OpMode
+      starts
+    - This greatly reduces boilerplate in OpModes and removes the need to manually instantiate RobotConfig
+    - To use auto-initialisation, annotate your RobotConfig with `@RobotConfig.AutoInit` and expose a public static
+      final field of which the instance will be stored in
+    - In OpModes, you will be able to access your fully initialised RobotConfig instance via the public static final
+      field
+    - For OpModes you don't want auto initialisation for, you can annotate the OpMode with
+      `@RobotConfig.InhibitAutoInit`, which will cancel auto initialisation for that OpMode
+    - Review the extensive API documentation and wiki for more information on this utility feature
+- `UserSelection` can now be chained, if a `T[]` or `Collection<T>` is passed in, the selection will be chained
+    - This is useful for composing multiple selections together, returning the result as an array of selected items
+    - If you don't want array or list chaining and to keep legacy behaviour, simply call `.disableChaining()` on the
+      `UserSelection`/`setOpModes` object
+    - This comes with new features, including setting layering messages to have OpMode permutations via `captionLayers`
+    - See `UserSelection` documentation and the wiki for more information
+- `DualTelemetry` now exposes the methods `smartAdd` and `smartLog`
+    - These methods add telemetry data to telemetry from a fully static context while respecting `DualTelemetry` and
+      forwarding to the dashboard
+    - `smartAdd` will add telemetry data to the telemetry instance, and `smartLog` will add telemetry data to the
+      telemetry log
+    - Subsystems that need compatibility between both OpMode types can use these methods to ensure consistent telemetry
+      behaviour
+    - `smartAdd` also performs caching of telemetry items when auto-clear is disabled, allowing periodic data to be
+      updated without "spamming" telemetry by adding new objects or having to store a `Telemetry.Item`
+    - Review the API documentation for more information
+- `MecanumDrive` has a default task option to schedule a `HoldLastPoseTask`
+    - This task will automatically hold the last pose even if no trajectory is running
+    - It can be enabled via the `MecanumGains` object
+    - Review the API documentation in `MecanumGains` for more information
+- `Scheduler` tasks can now be unbinded by `ScheduledTask` instance or creation index via `unbind`
+    - A new final field, `id` is now affixed to each `ScheduledTask` to assist in indexing
+- `DynamicTask` now has `add` methods to append to the current task phase code
+    - The `DynamicTask` is also referred to as a mutable task, and can be created by using the `.mutate()` method on a
+      `Task`
+    - A manual constructor still exists for convenience and compatibility
+- New `IncrementingTaskGroup`, which serves as a `SequentialTaskGroup` but only cycles on initialisation
+    - This task group is useful for toggles
+- `HardwareTester` now supports FtcDashboard controls
+    - Hardware devices can be "activated" for power/position controls, and allows multiple devices to be controlled on
+      the dashboard
+    - The OpMode now uses a DualTelemetry instance interally to support the dashboard
+- `DeferredTask` has a `getTask()` method to retrieve the internal task
+- Added additional Kotlin extension functions for `Gamepad`
+- `Task.cast` method which can perform null assertions as well as casting in one convenience method
+    - This is useful for reducing boilerplate when calling `subsystem.getCurrentTask()` (where something like
+      `Objects.requireNonNull((DriveTask) drive.getCurrentTask())` is required)
+- RoadRunner data classes, including `DriveModel`, `MotionProfile`, expose a new `copyTo` method
+    - This is to allow different drive models to work in tandem, as different localizer implementations need different
+      drive model data
+- New `Scope` class which allows Java users to perform Kotlin-like scope function operations
+    - Includes `let`, `run`, and `apply`, as well as null-safe `letSafe` and `applySafe`
+- `Tasks` now has a getter by string
+- New group utilities for `TaskGroups` via `Task`
+    - `Task.next` allows construction of an `IncrementingTaskGroup` from an existing task
+    - New shorthand utilities for static construction of task groups, which include:
+        - `Task.seq` for `SequentialTaskGroup`
+        - `Task.par` for `ParallelTaskGroup`
+        - `Task.rce` for `RaceTaskGroup`
+        - `Task.ddl` for `DeadlineTaskGroup`
+        - `Task.inc` for `IncrementingTaskGroup`
+        - These utilities construct the respective task group with the given tasks
+        - Static imports can be used to reduce boilerplate (e.g. `seq(par(task1, task2, task3), task4)`)
+- `Task` also adds reimplemented equivalents for the old `RunForTask`, `ContinuousTask`, and `WaitForTask`
+    - These can be accessed with `Task.runFor`, `Task.loop`, and `Task.waitFor`, which construct a utility `DynamicTask`
+      for you
+    - This is useful as it brings back the handiness of the previously removed task compositions without impacting
+      permutations
+- `ServoEx` now has an end-to-end-time setting, which is a heuristic used by tasks to mock a servo encoder
+    - This time is measured from servo position 0 to 1 or vice versa, after scaleRange.
+    - This is useful for tasks that need to wait for servo movement to complete
+    - By default, the end to end time is 0.5 seconds, and can be adjusted via the `setEndToEndTime` method
+    - A try-getter `tryGetEndToEndTime` is used in servo tasks to determine the end-to-end time then rescales it
+      depending on the range needed to travel
+- `Ramping` now includes a zero input ramping cutoff option, which can bypass the ramping function if 0 is passed as an
+  input
+    - This option is disabled by default to preserve old behaviour
+- `Geometry` adds a `toUserString()` for `PoseVelocity2d`, much like the `Pose2d` class
+- `IMUEx` can now set a refresh rate to set the minimum interval the IMU can perform a hardware read
+    - This can be done via the new `setRefreshRate` method
+- New `Diff` class, which can be used to perform numerical differentiation with respect to time
+    - This class is used internally for the `Encoder` and can be used for any purpose
+    - The differentiator is also equipped with a low-pass filter to smoothen out results, with a default gain of 0.95
+
 ## v6.1.1 (2024-12-13)
 
 PID systems refactoring and improvements.
