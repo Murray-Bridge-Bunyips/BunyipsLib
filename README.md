@@ -32,8 +32,7 @@ the latest and greatest features from the FTC SDK and other libraries.
 > BunyipsLib is in active and continually experimental development, expect bugs and to keep up to
 > date!
 
-![BunyipsLib](https://github.com/user-attachments/assets/b1a843bb-cc6e-4528-ad48-d49ca1c88155)
-
+![BunyipsLib](https://github.com/user-attachments/assets/fd85fde3-4be2-4034-9498-e443d61c7c0e)
 
 BunyipsLib is a developer-focused framework, directed at components that are well-documented and able to be
 used as learning resources.
