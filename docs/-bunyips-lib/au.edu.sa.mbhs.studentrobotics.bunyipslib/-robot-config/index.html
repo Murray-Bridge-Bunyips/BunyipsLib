@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v6.1.1-master-734ac949e            </div>
+v7.0.0-master-c2c08a393            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,7 +66,7 @@ v6.1.1-master-734ac949e            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">au.edu.sa.mbhs.studentrobotics.bunyipslib</a><span class="delimiter">/</span><span class="current">RobotConfig</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Robot</span><wbr></wbr><span><span>Config</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="index.html">RobotConfig</a></div><p class="paragraph">Abstract class to use as parent to the class you will define to mirror a &quot;saved configuration&quot; on the Robot Controller, and to define any robot related constants or subsystems. Supported for use in both BunyipsOpModes and any other normal SDK OpMode. This paradigm is known as RobotHardware.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">    private final YourConfig config = new YourConfig();</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">In your OpMode's init method, call the <code class="lang-kotlin">init</code> method of your config class, passing in the OpMode.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">    config.init(this);</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">1.0.0-pre</p></span></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="index.html">RobotConfig</a></div><p class="paragraph">Abstract class to use as parent to the class you will define to mirror a &quot;saved configuration&quot; on the Robot Controller, and to define any robot related constants or subsystems. Supported for use in both BunyipsOpModes and any other normal SDK OpMode. This paradigm is known as RobotHardware.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">    private final YourConfig config = new YourConfig();</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">In your OpMode's init method, call the <code class="lang-kotlin">init</code> method of your config class, passing in the OpMode.</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">    config.init();</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">Alternatively as of v7.0.0, you can choose to use a singleton pattern where the <a href="index.html">RobotConfig</a> will be initialised just before any OpMode starts, via a <a href="../-bunyips-lib/index.html">BunyipsLib</a> hook. See <a href="-auto-init/index.html">AutoInit</a> for more details.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">1.0.0-pre</p></span></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -84,6 +84,55 @@ v6.1.1-master-734ac949e            </div>
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-1050335716%2FClasslikes%2F-325384828" anchor-label="AutoInit" id="-1050335716%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-auto-init/index.html"><span>Auto</span><wbr></wbr><span><span>Init</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1050335716%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-target/index.html"><span class="token annotation builtin">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-annotation-target/-c-l-a-s-s/index.html">AnnotationTarget.CLASS</a></span><wbr></wbr><span class="token punctuation">]</span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">annotation class </span><a href="-auto-init/index.html">AutoInit</a></div><div class="brief "><p class="paragraph">Attaching this annotation to a <a href="index.html">RobotConfig</a> derivative class will cause the <a href="init.html">init</a> method to be executed automatically on the initialisation of <i>any</i> OpMode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="831399803%2FClasslikes%2F-325384828" anchor-label="Companion" id="831399803%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="831399803%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1263812705%2FClasslikes%2F-325384828" anchor-label="InhibitAutoInit" id="1263812705%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-inhibit-auto-init/index.html"><span>Inhibit</span><wbr></wbr><span>Auto</span><wbr></wbr><span><span>Init</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1263812705%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-target/index.html"><span class="token annotation builtin">Target</span></a><span class="token punctuation">(</span><span>allowedTargets<span class="token operator"> = </span><span class="token punctuation">[</span><span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.annotation/-annotation-target/-c-l-a-s-s/index.html">AnnotationTarget.CLASS</a></span><wbr></wbr><span class="token punctuation">]</span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">annotation class </span><a href="-inhibit-auto-init/index.html">InhibitAutoInit</a></div><div class="brief "><p class="paragraph">Inhibits the effect of <a href="-auto-init/index.html">AutoInit</a> on an <span data-unresolved-link="com.qualcomm.robotcore.eventloop.opmode/OpMode///PointingToDeclaration/">OpMode</span> derivative. This is useful if you don't wish to initialise hardware automatically on this <span data-unresolved-link="com.qualcomm.robotcore.eventloop.opmode/OpMode///PointingToDeclaration/">OpMode</span>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -121,37 +170,22 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">protected </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="get-hardware.html">T</a><span class="token operator">&gt; </span><a href="get-hardware.html"><span class="token function">getHardware</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">device<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><a href="get-hardware.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">onSuccess<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/Consumer.html">Consumer</a><span class="token operator">&lt;</span><a href="get-hardware.html">T</a><span class="token operator">&gt;</span><span class="token operator"> = </span>Consumer { }</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="get-hardware.html">T</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Convenience method for reading the device from the hardwareMap without having to check for exceptions. This method can be passed a Runnable to run if the device is successfully configured, useful for setting up directions or other configurations that will only run if the device was successfully found.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">protected </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="get-hardware.html">T</a><span class="token operator">&gt; </span><a href="get-hardware.html"><span class="token function">getHardware</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">device<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><a href="get-hardware.html">T</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">onSuccess<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/Consumer.html">Consumer</a><span class="token operator">&lt;</span><a href="get-hardware.html">T</a><span class="token operator">&gt;</span><span class="token operator"> = </span>Consumer { }</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="get-hardware.html">T</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Convenience method for reading the device from the hardwareMap without having to check for exceptions. This method can be passed a Runnable to run if the device is successfully configured, useful for setting up directions or other configurations that will only run if the device was successfully found.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1204295287%2FFunctions%2F-325384828" anchor-label="getLazyImu" id="1204295287%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="get-lazy-imu.html"><span>get</span><wbr></wbr><span>Lazy</span><wbr></wbr><span><span>Imu</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1204295287%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="get-lazy-imu.html"><span class="token function">getLazyImu</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator"> = </span><span class="token string">&quot;imu&quot;</span><span class="token punctuation">, </span></span><span class="parameter ">orientationOnRobot<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/ImuOrientationOnRobot///PointingToDeclaration/">ImuOrientationOnRobot</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner.ftc/LazyImu///PointingToDeclaration/">LazyImu</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Returns a <span data-unresolved-link="com.acmerobotics.roadrunner.ftc/LazyImu///PointingToDeclaration/">LazyImu</span> instance to use with RoadRunner drives. The difference between a regular IMU and a LazyImu is that the LazyImu is auto-initialised only when it is required via the <code class="lang-kotlin">get()</code> call.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1955863783%2FFunctions%2F-325384828" anchor-label="init" id="-1955863783%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-1253609514%2FFunctions%2F-325384828" anchor-label="init" id="-1253609514%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="init.html"><span><span>init</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1955863783%2FFunctions%2F-325384828"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1253609514%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="init.html"><span class="token function">init</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">RobotConfig</a></div><div class="brief "><p class="paragraph">Implicit OpMode config initialisation for use in BunyipsOpModes. This will not work in normal SDK OpModes.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="init.html"><span class="token function">init</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">opMode<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.eventloop.opmode/OpMode///PointingToDeclaration/">OpMode</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">RobotConfig</a></div><div class="brief "><p class="paragraph">Uses the HardwareMap to fetch HardwareDevices and assign instances from <code class="lang-kotlin">onRuntime</code>. Should be called as the first line in your init cycle. This method can only be executed once.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="init.html"><span class="token function">init</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">RobotConfig</a></div><div class="brief "><p class="paragraph">Uses the HardwareMap to fetch HardwareDevices and assign instances from <code class="lang-kotlin">onRuntime</code>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -177,7 +211,7 @@ v6.1.1-master-734ac949e            </div>
   </div>
 </div>
       <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
                 class="pull-right"><span>Generated by </span><a
                 href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
       </div>

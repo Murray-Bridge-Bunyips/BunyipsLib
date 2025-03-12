@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v6.1.1-master-734ac949e            </div>
+v7.0.0-master-c2c08a393            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,7 +66,7 @@ v6.1.1-master-734ac949e            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.tuning</a><span class="delimiter">/</span><span class="current">RoadRunnerTuningOpMode</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Road</span><wbr></wbr><span>Runner</span><wbr></wbr><span>Tuning</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Mode</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="index.html">RoadRunnerTuningOpMode</a> : <span data-unresolved-link="com.qualcomm.robotcore.eventloop.opmode/LinearOpMode///PointingToDeclaration/">LinearOpMode</span></div><p class="paragraph">Utility OpMode you will extend to enable an OpMode to tune your RoadRunner coefficients and parameters. This uses Telemetry to show a menu of tuning options, with static fields being adjusted here, essentially collecting all RoadRunner tuning into one OpMode. You may choose to run the OpModes yourself as they consume the instances you provide, but using this class makes it more straightforward and has built-in dashboard tuning. It is not recommended you run the tuning OpModes yourself, and instead run them using this class. </p><p class="paragraph"> To use this class, extend it, supply an appropriately configured instance of your drive, and ensure the localizer you wish to use has been set for it. It is not recommended to use an alternate Accumulator while tuning. Then, treat is like a normal OpMode (<span data-unresolved-link="com.qualcomm.robotcore.eventloop.opmode/TeleOp///PointingToDeclaration/">TeleOp</span> annotation). You can adjust all the constants used in testing via FtcDashboard, nested under this class definition. </p><p class="paragraph"> Telemetry is mirrored between FtcDashboard and the Driver Station using a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-dual-telemetry/index.html">DualTelemetry</a> instance, the same used in <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a>. It is not required that a Driver Station be active for tuning. </p><p class="paragraph"> To look at details of a tuning process, follow the <a href="https://github.com/Murray-Bridge-Bunyips/BunyipsLib/wiki/RoadRunner">BunyipsLib RoadRunner tuning guide</a>.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">6.0.0</p></span></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">class </span><a href="index.html">RoadRunnerTuningOpMode</a> : <span data-unresolved-link="com.qualcomm.robotcore.eventloop.opmode/LinearOpMode///PointingToDeclaration/">LinearOpMode</span></div><p class="paragraph">Utility OpMode you will extend to enable an OpMode to tune your RoadRunner coefficients and parameters. This uses Telemetry to show a menu of tuning options, with static fields being adjusted here, essentially collecting all RoadRunner tuning into one OpMode. You may choose to run the OpModes yourself as they consume the instances you provide, but using this class makes it more straightforward and has built-in dashboard tuning. It is not recommended you run the tuning OpModes yourself, and instead run them using this class. </p><p class="paragraph"> To use this class, extend it, supply an appropriately configured instance of your drive, and ensure the localizer you wish to use has been set for it. It is not recommended to use an alternate Accumulator while tuning. Then, treat is like a normal OpMode (<span data-unresolved-link="com.qualcomm.robotcore.eventloop.opmode/TeleOp///PointingToDeclaration/">TeleOp</span> annotation). You can adjust all the constants used in testing via FtcDashboard, nested under this class definition. </p><p class="paragraph"> Telemetry is mirrored between FtcDashboard and the Driver Station using a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-dual-telemetry/index.html">DualTelemetry</a> instance, the same used in <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a>. It is not required that a Driver Station be active for tuning. </p><p class="paragraph"> As of BunyipsLib v7.0.0, tuning is now supported for the goBILDA® Pinpoint Computer and SparkFun OTOS. </p><p class="paragraph"> To look at details of a tuning process, follow the <a href="https://github.com/Murray-Bridge-Bunyips/BunyipsLib/wiki/RoadRunner">BunyipsLib RoadRunner tuning guide</a>.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">6.0.0</p></span></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -102,7 +102,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-drive-model_in-per-tick.html">tuningDriveModel_inPerTick</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-drive-model_in-per-tick.html">tuningDriveModel_inPerTick</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -117,7 +117,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-drive-model_lateral-in-per-tick.html">tuningDriveModel_lateralInPerTick</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-drive-model_lateral-in-per-tick.html">tuningDriveModel_lateralInPerTick</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -132,7 +132,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-drive-model_track-width-ticks.html">tuningDriveModel_trackWidthTicks</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-drive-model_track-width-ticks.html">tuningDriveModel_trackWidthTicks</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -237,7 +237,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_k-a.html">tuningMotionProfile_kA</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_k-a.html">tuningMotionProfile_kA</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -252,7 +252,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_k-s.html">tuningMotionProfile_kS</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_k-s.html">tuningMotionProfile_kS</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -267,7 +267,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_k-v.html">tuningMotionProfile_kV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_k-v.html">tuningMotionProfile_kV</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -282,7 +282,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_max-ang-accel.html">tuningMotionProfile_maxAngAccel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_max-ang-accel.html">tuningMotionProfile_maxAngAccel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -297,7 +297,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_max-ang-vel.html">tuningMotionProfile_maxAngVel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_max-ang-vel.html">tuningMotionProfile_maxAngVel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -312,7 +312,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_max-profile-accel.html">tuningMotionProfile_maxProfileAccel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_max-profile-accel.html">tuningMotionProfile_maxProfileAccel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -327,7 +327,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_max-wheel-vel.html">tuningMotionProfile_maxWheelVel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_max-wheel-vel.html">tuningMotionProfile_maxWheelVel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -342,7 +342,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_min-profile-accel.html">tuningMotionProfile_minProfileAccel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="tuning-motion-profile_min-profile-accel.html">tuningMotionProfile_minProfileAccel</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -466,7 +466,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#1892877380%2FProperties%2F-325384828">isStarted</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#1892877380%2FProperties%2F-325384828">isStarted</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -481,7 +481,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#-681153211%2FProperties%2F-325384828">MS_BEFORE_FORCE_STOP_AFTER_STOP_REQUESTED</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">900</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#-681153211%2FProperties%2F-325384828">MS_BEFORE_FORCE_STOP_AFTER_STOP_REQUESTED</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">900</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -496,7 +496,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#1483349743%2FProperties%2F-325384828">msStuckDetectInit</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#1483349743%2FProperties%2F-325384828">msStuckDetectInit</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -511,7 +511,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#-553001045%2FProperties%2F-325384828">msStuckDetectInitLoop</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#-553001045%2FProperties%2F-325384828">msStuckDetectInitLoop</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -526,7 +526,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#363588571%2FProperties%2F-325384828">msStuckDetectLoop</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#363588571%2FProperties%2F-325384828">msStuckDetectLoop</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -541,7 +541,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#427944857%2FProperties%2F-325384828">msStuckDetectStart</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#427944857%2FProperties%2F-325384828">msStuckDetectStart</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -556,7 +556,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#-409341632%2FProperties%2F-325384828">msStuckDetectStop</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#-409341632%2FProperties%2F-325384828">msStuckDetectStop</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -586,7 +586,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#-591827947%2FProperties%2F-325384828">time</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#-591827947%2FProperties%2F-325384828">time</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -639,7 +639,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#503260448%2FFunctions%2F-325384828"><span class="token function">getRuntime</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#503260448%2FFunctions%2F-325384828"><span class="token function">getRuntime</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -759,7 +759,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#157279217%2FFunctions%2F-325384828"><span class="token function">isStopRequested</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#157279217%2FFunctions%2F-325384828"><span class="token function">isStopRequested</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -789,7 +789,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#1015161614%2FFunctions%2F-325384828"><span class="token function">opModeInInit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#1015161614%2FFunctions%2F-325384828"><span class="token function">opModeInInit</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -804,7 +804,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#-911330061%2FFunctions%2F-325384828"><span class="token function">opModeIsActive</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#-911330061%2FFunctions%2F-325384828"><span class="token function">opModeIsActive</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -849,7 +849,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#1872548672%2FFunctions%2F-325384828"><span class="token function">sleep</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">milliseconds<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision/-colour-tuner-op-mode/index.html#1872548672%2FFunctions%2F-325384828"><span class="token function">sleep</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">milliseconds<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
@@ -935,7 +935,7 @@ v6.1.1-master-734ac949e            </div>
   </div>
 </div>
       <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
                 class="pull-right"><span>Generated by </span><a
                 href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
       </div>

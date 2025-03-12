@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v6.1.1-master-734ac949e            </div>
+v7.0.0-master-c2c08a393            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,7 +66,7 @@ v6.1.1-master-734ac949e            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks</a><span class="delimiter">/</span><span class="current">AlignToAprilTagTask</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Align</span><wbr></wbr><span>To</span><wbr></wbr><span>April</span><wbr></wbr><span>Tag</span><wbr></wbr><span><span>Task</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">AlignToAprilTagTask</a> : <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a></div><p class="paragraph">Task to align to an AprilTag.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">1.0.0-pre</p></span></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">AlignToAprilTagTask</a> : <a href="../-field-orientable-drive-task/index.html">FieldOrientableDriveTask</a></div><p class="paragraph">Task to align to an AprilTag.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">1.0.0-pre</p></span></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -83,7 +83,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>drive<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive/-moveable/index.html">Moveable</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>at<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors/-april-tag/index.html">AprilTag</a><span class="token punctuation">, </span></span><span class="parameter ">targetTag<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Autonomous constructor.</div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>passthrough<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/Supplier.html">Supplier</a><span class="token operator">&lt;</span><span data-unresolved-link="com.acmerobotics.roadrunner/PoseVelocity2d///PointingToDeclaration/">PoseVelocity2d</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>drive<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive/-moveable/index.html">Moveable</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>at<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors/-april-tag/index.html">AprilTag</a><span class="token punctuation">, </span></span><span class="parameter ">targetTag<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief ">TeleOp constructor.</div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>driver<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/Gamepad///PointingToDeclaration/">Gamepad</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>drive<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive/-moveable/index.html">Moveable</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>at<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors/-april-tag/index.html">AprilTag</a><span class="token punctuation">, </span></span><span class="parameter ">targetTag<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Constructor for AlignToAprilTagTask using a default Mecanum binding.</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>drive<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive/-moveable/index.html">Moveable</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>at<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors/-april-tag/index.html">AprilTag</a><span class="token punctuation">, </span></span><span class="parameter ">targetTag<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Autonomous constructor.</div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>passthrough<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/Supplier.html">Supplier</a><span class="token operator">&lt;</span><span data-unresolved-link="com.acmerobotics.roadrunner/PoseVelocity2d///PointingToDeclaration/">PoseVelocity2d</span><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>drive<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive/-moveable/index.html">Moveable</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>at<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors/-april-tag/index.html">AprilTag</a><span class="token punctuation">, </span></span><span class="parameter ">targetTag<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief ">TeleOp constructor.</div><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>driver<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/Gamepad///PointingToDeclaration/">Gamepad</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>drive<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive/-moveable/index.html">Moveable</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>at<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors/-april-tag/index.html">AprilTag</a><span class="token punctuation">, </span></span><span class="parameter ">targetTag<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief ">Constructor for AlignToAprilTagTask using a default Mecanum binding.</div></div></div>
                 </div>
               </div>
             </div>
@@ -117,7 +117,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-r_-t-o-l-e-r-a-n-c-e.html">R_TOLERANCE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a></div><div class="brief ">Tolerance for the R error to be considered at the setpoint.</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-r_-t-o-l-e-r-a-n-c-e.html">R_TOLERANCE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a></div><div class="brief ">Tolerance for the R error to be considered at the setpoint.</div></div></div>
                 </div>
               </div>
             </div>
@@ -132,7 +132,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-t-a-r-g-e-t_-t-a-g.html">TARGET_TAG</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div><div class="brief ">The target tag to align to.</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="-t-a-r-g-e-t_-t-a-g.html">TARGET_TAG</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief ">The target tag to align to.</div></div></div>
                 </div>
               </div>
             </div>
@@ -156,17 +156,77 @@ v6.1.1-master-734ac949e            </div>
               </div>
             </div>
           </div>
-<a data-name="234725085%2FProperties%2F-325384828" anchor-label="fieldOverlay" id="234725085%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-1667543277%2FProperties%2F-325384828" anchor-label="dashboard" id="-1667543277%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/field-overlay.html"><span>field</span><wbr></wbr><span><span>Overlay</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="234725085%2FProperties%2F-325384828"></span>
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/dashboard.html"><span><span>dashboard</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1667543277%2FProperties%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/field-overlay.html">fieldOverlay</a><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.canvas/Canvas///PointingToDeclaration/">Canvas</span></div><div class="brief "><p class="paragraph">Convenience field to get a reference to FtcDashboard's field overlay for drawing on the field. Available as soon as <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> has been called for this task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/dashboard.html">dashboard</a><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span></div><div class="brief "><p class="paragraph">Convenience field to get a reference to a <span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span> for sending telemetry to the dashboard. Available as soon as <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> has been called for this task.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1520618007%2FProperties%2F-325384828" anchor-label="disableSubsystemAttachment" id="-1520618007%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/disable-subsystem-attachment.html"><span>disable</span><wbr></wbr><span>Subsystem</span><wbr></wbr><span><span>Attachment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1520618007%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/disable-subsystem-attachment.html">disableSubsystemAttachment</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Enabling will reject all future <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/on.html">on</a> calls. Useful for composing tasks that will internally re-schedule a wrapped Task.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-858258760%2FProperties%2F-325384828" anchor-label="drive" id="-858258760%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-field-orientable-drive-task/drive.html"><span><span>drive</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-858258760%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../-field-orientable-drive-task/drive.html">drive</a><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive/-moveable/index.html">Moveable</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-484654424%2FProperties%2F-325384828" anchor-label="fcOffset" id="-484654424%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-field-orientable-drive-task/fc-offset.html"><span>fc</span><wbr></wbr><span><span>Offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-484654424%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../-field-orientable-drive-task/fc-offset.html">fcOffset</a><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/Rotation2d///PointingToDeclaration/">Rotation2d</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="356684875%2FProperties%2F-325384828" anchor-label="fieldCentricEnabled" id="356684875%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-field-orientable-drive-task/field-centric-enabled.html"><span>field</span><wbr></wbr><span>Centric</span><wbr></wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="356684875%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../-field-orientable-drive-task/field-centric-enabled.html">fieldCentricEnabled</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BooleanSupplier.html">BooleanSupplier</a></div></div></div>
                 </div>
               </div>
             </div>
@@ -196,37 +256,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/is-priority.html">isPriority</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether this task should override other tasks in the queue if they conflict with this task. Will only apply if this task has a dependency to run on (see <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/dependency.html">dependency</a>).</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1175185299%2FProperties%2F-325384828" anchor-label="opMode" id="-1175185299%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-component/op-mode.html"><span>op</span><wbr></wbr><span><span>Mode</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1175185299%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a></div></div><span class="token keyword">protected </span><span class="token keyword">val </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-component/op-mode.html">opMode</a><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></div><div class="brief ">Get a reference to the currently running <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a>.</div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="350638775%2FProperties%2F-325384828" anchor-label="p" id="350638775%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/p.html"><span><span>p</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="350638775%2FProperties%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/p.html">p</a><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span></div><div class="brief "><p class="paragraph">Convenience field to get a reference to a <span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span> for sending telemetry to the dashboard. Available as soon as <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> has been called for this task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">var </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/is-priority.html">isPriority</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether this task should override other tasks in the queue if they conflict with this task. Will only apply if this task has a dependency to run on (see <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/dependency.html">dependency</a>).</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -275,7 +305,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="is-task-finished.html"><span class="token function">isTaskFinished</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief ">Return a boolean to this method to add custom criteria if a task should be considered finished.</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="is-task-finished.html"><span class="token function">isTaskFinished</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief ">Return a boolean to this method to add custom criteria if a task should be considered finished.</div></div></div>
                 </div>
               </div>
             </div>
@@ -324,7 +354,52 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#331067597%2FFunctions%2F-325384828"><span class="token function">after</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a> with the supplied tasks to run before this one.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#331067597%2FFunctions%2F-325384828"><span class="token function">after</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a> with the supplied tasks to run before this one.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1749704592%2FFunctions%2F-325384828" anchor-label="applyOrientation" id="1749704592%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-field-orientable-drive-task/apply-orientation.html"><span>apply</span><wbr></wbr><span><span>Orientation</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1749704592%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-field-orientable-drive-task/apply-orientation.html"><span class="token function">applyOrientation</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">robotFrameVel<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/PoseVelocity2d///PointingToDeclaration/">PoseVelocity2d</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.roadrunner/PoseVelocity2d///PointingToDeclaration/">PoseVelocity2d</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1568398291%2FFunctions%2F-325384828" anchor-label="cast" id="-1568398291%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1568398291%2FFunctions%2F-325384828"><span><span>cast</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1568398291%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1568398291%2FFunctions%2F-325384828">T</a><span class="token operator"> : </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">?</span><span class="token operator">&gt; </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1568398291%2FFunctions%2F-325384828"><span class="token function">cast</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">task<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token punctuation">, </span></span><span class="parameter ">cast<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1568398291%2FFunctions%2F-325384828">T</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1568398291%2FFunctions%2F-325384828">T</a></div><div class="brief "><p class="paragraph">Utility to cast a task into the desired task class. Useful for ignoring task nullability to cast into a new type - ensure your task exists before calling.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1204404317%2FFunctions%2F-325384828" anchor-label="ddl" id="1204404317%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1204404317%2FFunctions%2F-325384828"><span><span>ddl</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1204404317%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1204404317%2FFunctions%2F-325384828"><span class="token function">ddl</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-deadline-task-group/index.html">DeadlineTaskGroup</a></div><div class="brief "><p class="paragraph">Shorthand group utility for creating a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-deadline-task-group/index.html">DeadlineTaskGroup</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -339,7 +414,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1730729972%2FFunctions%2F-325384828"><span class="token function">defer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">taskBuilder<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword">out </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-deferred-task/index.html">DeferredTask</a></div><div class="brief "><p class="paragraph">Utility to create a new <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-deferred-task/index.html">DeferredTask</a> based on the supplied task builder. Useful for constructing tasks that use data that is not available at the build time of the wrapped task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1730729972%2FFunctions%2F-325384828"><span class="token function">defer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">taskBuilder<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword">out </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-deferred-task/index.html">DeferredTask</a></div><div class="brief "><p class="paragraph">Constructor utility to create a new <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-deferred-task/index.html">DeferredTask</a> based on the supplied task builder.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -354,7 +429,22 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1379033734%2FFunctions%2F-325384828"><span class="token function">during</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-deadline-task-group/index.html">DeadlineTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-deadline-task-group/index.html">DeadlineTaskGroup</a> with the supplied tasks to run these extra tasks until this task is done.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1379033734%2FFunctions%2F-325384828"><span class="token function">during</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-deadline-task-group/index.html">DeadlineTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-deadline-task-group/index.html">DeadlineTaskGroup</a> with the supplied tasks to run these extra tasks until this task is done.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="731096018%2FFunctions%2F-325384828" anchor-label="execute" id="731096018%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/execute.html"><span><span>execute</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="731096018%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/execute.html"><span class="token function">execute</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Scheduling method that will either attach this task to a subsystem or run it as part of the standard <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/run.html">run</a> method. This is the recommended way to run a task as it will attempt to run on the context as provided by the <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/dependency.html">dependency</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -404,6 +494,21 @@ v6.1.1-master-734ac949e            </div>
               </div>
             </div>
           </div>
+<a data-name="596198901%2FFunctions%2F-325384828" anchor-label="getDashboard" id="596198901%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#596198901%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>Dashboard</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="596198901%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#596198901%2FFunctions%2F-325384828"><span class="token function">getDashboard</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span></div><div class="brief "><p class="paragraph">Convenience field to get a reference to a <span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span> for sending telemetry to the dashboard. Available as soon as <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> has been called for this task.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="1781681924%2FFunctions%2F-325384828" anchor-label="getDeltaTime" id="1781681924%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
@@ -434,32 +539,17 @@ v6.1.1-master-734ac949e            </div>
               </div>
             </div>
           </div>
-<a data-name="-198531909%2FFunctions%2F-325384828" anchor-label="getFieldOverlay" id="-198531909%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-910171441%2FFunctions%2F-325384828" anchor-label="inc" id="-910171441%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-198531909%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span>Field</span><wbr></wbr><span><span>Overlay</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-198531909%2FFunctions%2F-325384828"></span>
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-910171441%2FFunctions%2F-325384828"><span><span>inc</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-910171441%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-198531909%2FFunctions%2F-325384828"><span class="token function">getFieldOverlay</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.canvas/Canvas///PointingToDeclaration/">Canvas</span></div><div class="brief "><p class="paragraph">Convenience field to get a reference to FtcDashboard's field overlay for drawing on the field. Available as soon as <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> has been called for this task.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1763554407%2FFunctions%2F-325384828" anchor-label="getP" id="-1763554407%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1763554407%2FFunctions%2F-325384828"><span>get</span><wbr></wbr><span><span>P</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1763554407%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1763554407%2FFunctions%2F-325384828"><span class="token function">getP</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span></div><div class="brief "><p class="paragraph">Convenience field to get a reference to a <span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span> for sending telemetry to the dashboard. Available as soon as <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> has been called for this task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-910171441%2FFunctions%2F-325384828"><span class="token function">inc</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-incrementing-task-group/index.html">IncrementingTaskGroup</a></div><div class="brief "><p class="paragraph">Shorthand group utility for creating a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-incrementing-task-group/index.html">IncrementingTaskGroup</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -474,7 +564,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/is-finished.html"><span class="token function">isFinished</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Query (but not update) the finished state of the task. This will return true if the task is finished and the finisher has been fired.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/is-finished.html"><span class="token function">isFinished</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Query (but not update) the finished state of the task. This will return true if the task is finished and the finisher has been fired.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -489,7 +579,37 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/is-running.html"><span class="token function">isRunning</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether the task is currently running (i.e. has been started (<a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> called) and not finished).</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/is-running.html"><span class="token function">isRunning</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether the task is currently running (i.e. has been started (<a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> called) and not finished).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-707638050%2FFunctions%2F-325384828" anchor-label="loop" id="-707638050%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-707638050%2FFunctions%2F-325384828"><span><span>loop</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-707638050%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-707638050%2FFunctions%2F-325384828"><span class="token function">loop</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">function<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Runnable.html">Runnable</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-dynamic-task/index.html">DynamicTask</a></div><div class="brief "><p class="paragraph">Utility for creating a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-dynamic-task/index.html">DynamicTask</a> that will loop some <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/-companion/loop.html">function</a> until the task is manually finished.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1200484339%2FFunctions%2F-325384828" anchor-label="mutate" id="-1200484339%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/mutate.html"><span><span>mutate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1200484339%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/mutate.html"><span class="token function">mutate</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-dynamic-task/index.html">DynamicTask</a></div><div class="brief "><p class="paragraph">Creates a new <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-dynamic-task/index.html">DynamicTask</a> instance by wrapping this existing <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a> instance, allowing you to add new functionality to a task without modifying the original task.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -504,7 +624,22 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-196245239%2FFunctions%2F-325384828"><span class="token function">named</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the name of this task to be displayed in the OpMode. You may override this method if required to enforce a naming convention/prefix.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-196245239%2FFunctions%2F-325384828"><span class="token function">named</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/String.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the name of this task to be displayed in the OpMode. You may override this method if required to enforce a naming convention/prefix. Null values are ignored.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1397434312%2FFunctions%2F-325384828" anchor-label="next" id="-1397434312%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1397434312%2FFunctions%2F-325384828"><span><span>next</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1397434312%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1397434312%2FFunctions%2F-325384828"><span class="token function">next</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-incrementing-task-group/index.html">IncrementingTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-incrementing-task-group/index.html">IncrementingTaskGroup</a> with the supplied tasks to run the next task in sequence after the previous one finishes, while looping back to the first task.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -513,13 +648,13 @@ v6.1.1-master-734ac949e            </div>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-deadline-task-group/index.html#-864625605%2FFunctions%2F-325384828"><span><span>on</span></span></a></div>
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-864625605%2FFunctions%2F-325384828"><span><span>on</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-864625605%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-deadline-task-group/index.html#-864625605%2FFunctions%2F-325384828"><span class="token function">on</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">subsystem<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a><span class="token punctuation">, </span></span><span class="parameter ">override<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-864625605%2FFunctions%2F-325384828"><span class="token function">on</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">subsystem<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-subsystem/index.html">BunyipsSubsystem</a><span class="token punctuation">, </span></span><span class="parameter ">override<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -569,17 +704,17 @@ v6.1.1-master-734ac949e            </div>
               </div>
             </div>
           </div>
-<a data-name="182507102%2FFunctions%2F-325384828" anchor-label="opMode" id="182507102%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-1539301550%2FFunctions%2F-325384828" anchor-label="par" id="-1539301550%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-component/op-mode.html"><span>op</span><wbr></wbr><span><span>Mode</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="182507102%2FFunctions%2F-325384828"></span>
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1539301550%2FFunctions%2F-325384828"><span><span>par</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1539301550%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-component/op-mode.html"><span class="token function">opMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>ifRunning<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/Consumer.html">Consumer</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Null check consumer for the <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-component/op-mode.html">opMode</a> field which will no-op the given consumer if an active <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a> is not present (i.e.</div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1539301550%2FFunctions%2F-325384828"><span class="token function">par</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-parallel-task-group/index.html">ParallelTaskGroup</a></div><div class="brief "><p class="paragraph">Shorthand group utility for creating a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-parallel-task-group/index.html">ParallelTaskGroup</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -594,7 +729,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/poll.html"><span class="token function">poll</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Update and query the state of the task if it is finished. This will return true if the task is fully completed with all callbacks processed.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/poll.html"><span class="token function">poll</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Update and query the state of the task if it is finished. This will return true if the task is fully completed with all callbacks processed.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -624,7 +759,22 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1559645590%2FFunctions%2F-325384828"><span class="token function">race</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-race-task-group/index.html">RaceTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-race-task-group/index.html">RaceTaskGroup</a> with the supplied tasks to run all of these tasks until one finishes.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1559645590%2FFunctions%2F-325384828"><span class="token function">race</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-race-task-group/index.html">RaceTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-race-task-group/index.html">RaceTaskGroup</a> with the supplied tasks to run all of these tasks until one finishes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1641417019%2FFunctions%2F-325384828" anchor-label="rce" id="-1641417019%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1641417019%2FFunctions%2F-325384828"><span><span>rce</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1641417019%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1641417019%2FFunctions%2F-325384828"><span class="token function">rce</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-race-task-group/index.html">RaceTaskGroup</a></div><div class="brief "><p class="paragraph">Shorthand group utility for creating a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-race-task-group/index.html">RaceTaskGroup</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -644,21 +794,6 @@ v6.1.1-master-734ac949e            </div>
               </div>
             </div>
           </div>
-<a data-name="282022879%2FFunctions%2F-325384828" anchor-label="require" id="282022879%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-component/require.html"><span><span>require</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="282022879%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-component/require.html"><span class="token function">require</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Nullable.html"><span class="token annotation builtin">Nullable</span></a> </span>nullableOpMode<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a></div><div class="brief ">Null assertion for the <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-component/op-mode.html">opMode</a> field which throws a <a href="https://developer.android.com/reference/kotlin/java/lang/NullPointerException.html">NullPointerException</a> if an active <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib/-bunyips-op-mode/index.html">BunyipsOpMode</a> is not present (i.e.</div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
 <a data-name="1859934648%2FFunctions%2F-325384828" anchor-label="reset" id="1859934648%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
@@ -674,6 +809,21 @@ v6.1.1-master-734ac949e            </div>
               </div>
             </div>
           </div>
+<a data-name="2128182051%2FFunctions%2F-325384828" anchor-label="resetFieldCentricOrigin" id="2128182051%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-field-orientable-drive-task/reset-field-centric-origin.html"><span>reset</span><wbr></wbr><span>Field</span><wbr></wbr><span>Centric</span><wbr></wbr><span><span>Origin</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2128182051%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-field-orientable-drive-task/reset-field-centric-origin.html"><span class="token function">resetFieldCentricOrigin</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief ">Sets the origin angle for Field-Centric driving to the current drive pose of the robot (effectively resetting the offset).</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1053589257%2FFunctions%2F-325384828" anchor-label="run" id="-1053589257%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
@@ -684,37 +834,67 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/run.html"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Execute one cycle of this task. The finish condition is separately polled in the <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/poll.html">poll</a> method.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-648026430%2FFunctions%2F-325384828"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">RoadRunner <span data-unresolved-link="com.acmerobotics.roadrunner/Action///PointingToDeclaration/">Action</span> implementation to run this Task.</p></div><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#729598762%2FFunctions%2F-325384828"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-853624561%2FFunctions%2F-325384828"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/run.html"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Execute one cycle of this task. The finish condition is separately polled in the <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/poll.html">poll</a> method.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-648026430%2FFunctions%2F-325384828"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">RoadRunner <span data-unresolved-link="com.acmerobotics.roadrunner/Action///PointingToDeclaration/">Action</span> implementation to run this Task.</p></div><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#729598762%2FFunctions%2F-325384828"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-853624561%2FFunctions%2F-325384828"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-263015373%2FFunctions%2F-325384828" anchor-label="setFieldOverlay" id="-263015373%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="435247952%2FFunctions%2F-325384828" anchor-label="runFor" id="435247952%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-263015373%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span>Field</span><wbr></wbr><span><span>Overlay</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-263015373%2FFunctions%2F-325384828"></span>
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#435247952%2FFunctions%2F-325384828"><span>run</span><wbr></wbr><span><span>For</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="435247952%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-263015373%2FFunctions%2F-325384828"><span class="token function">setFieldOverlay</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">&lt;set-?&gt;<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.canvas/Canvas///PointingToDeclaration/">Canvas</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Convenience field to get a reference to FtcDashboard's field overlay for drawing on the field. Available as soon as <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> has been called for this task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#435247952%2FFunctions%2F-325384828"><span class="token function">runFor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">time<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">function<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/lang/Runnable.html">Runnable</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-dynamic-task/index.html">DynamicTask</a></div><div class="brief "><p class="paragraph">Utility for creating a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-dynamic-task/index.html">DynamicTask</a> that will loop some <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/-companion/run-for.html">function</a> for some <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/-companion/run-for.html">time</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="542305131%2FFunctions%2F-325384828" anchor-label="setP" id="542305131%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="2050799760%2FFunctions%2F-325384828" anchor-label="seq" id="2050799760%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#542305131%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span><span>P</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="542305131%2FFunctions%2F-325384828"></span>
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#2050799760%2FFunctions%2F-325384828"><span><span>seq</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2050799760%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#542305131%2FFunctions%2F-325384828"><span class="token function">setP</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">&lt;set-?&gt;<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Convenience field to get a reference to a <span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span> for sending telemetry to the dashboard. Available as soon as <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> has been called for this task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#2050799760%2FFunctions%2F-325384828"><span class="token function">seq</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a></div><div class="brief "><p class="paragraph">Shorthand group utility for creating a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1058399175%2FFunctions%2F-325384828" anchor-label="setDashboard" id="1058399175%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1058399175%2FFunctions%2F-325384828"><span>set</span><wbr></wbr><span><span>Dashboard</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1058399175%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">protected </span><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1058399175%2FFunctions%2F-325384828"><span class="token function">setDashboard</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">&lt;set-?&gt;<span class="token operator">: </span><span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Convenience field to get a reference to a <span data-unresolved-link="com.acmerobotics.dashboard.telemetry/TelemetryPacket///PointingToDeclaration/">TelemetryPacket</span> for sending telemetry to the dashboard. Available as soon as <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/init.html">init</a> has been called for this task.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-491331914%2FFunctions%2F-325384828" anchor-label="setFieldCentricOffset" id="-491331914%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-field-orientable-drive-task/set-field-centric-offset.html"><span>set</span><wbr></wbr><span>Field</span><wbr></wbr><span>Centric</span><wbr></wbr><span><span>Offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-491331914%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-field-orientable-drive-task/set-field-centric-offset.html"><span class="token function">setFieldCentricOffset</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>fcOffset<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-angle/index.html">Angle</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief ">Sets an angle to use as the origin for Field-Centric driving.</div></div></div>
                 </div>
               </div>
             </div>
@@ -744,7 +924,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-746311710%2FFunctions%2F-325384828"><span class="token function">then</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a> with the supplied tasks to follow after this one.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-746311710%2FFunctions%2F-325384828"><span class="token function">then</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-sequential-task-group/index.html">SequentialTaskGroup</a> with the supplied tasks to follow after this one.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -759,7 +939,7 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#241380845%2FFunctions%2F-325384828"><span class="token function">timeout</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">timeout<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the timeout of this task dynamically and return the task.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#241380845%2FFunctions%2F-325384828"><span class="token function">timeout</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">timeout<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-measure/index.html">Measure</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units/-time/index.html">Time</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a></div><div class="brief "><p class="paragraph">Set the timeout of this task dynamically and return the task. Null values are ignored.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -809,6 +989,21 @@ v6.1.1-master-734ac949e            </div>
               </div>
             </div>
           </div>
+<a data-name="1958566229%2FFunctions%2F-325384828" anchor-label="waitFor" id="1958566229%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1958566229%2FFunctions%2F-325384828"><span>wait</span><wbr></wbr><span><span>For</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1958566229%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#1958566229%2FFunctions%2F-325384828"><span class="token function">waitFor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">condition<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BooleanSupplier.html">BooleanSupplier</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-dynamic-task/index.html">DynamicTask</a></div><div class="brief "><p class="paragraph">Utility for creating a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-dynamic-task/index.html">DynamicTask</a> that will wait for some <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/-companion/wait-for.html">condition</a> and finish when the condition is true.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
 <a data-name="-1869974069%2FFunctions%2F-325384828" anchor-label="with" id="-1869974069%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
@@ -819,7 +1014,22 @@ v6.1.1-master-734ac949e            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1869974069%2FFunctions%2F-325384828"><span class="token function">with</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-parallel-task-group/index.html">ParallelTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-parallel-task-group/index.html">ParallelTaskGroup</a> with the supplied tasks to run all of these tasks at once.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-task-group/index.html#-1869974069%2FFunctions%2F-325384828"><span class="token function">with</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">otherTasks<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-parallel-task-group/index.html">ParallelTaskGroup</a></div><div class="brief "><p class="paragraph">Compose this task into a <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups/-parallel-task-group/index.html">ParallelTaskGroup</a> with the supplied tasks to run all of these tasks at once.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-279899542%2FFunctions%2F-325384828" anchor-label="withFieldCentric" id="-279899542%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../-field-orientable-drive-task/with-field-centric.html"><span>with</span><wbr></wbr><span>Field</span><wbr></wbr><span><span>Centric</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-279899542%2FFunctions%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../-field-orientable-drive-task/with-field-centric.html"><span class="token function">withFieldCentric</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/NonNull.html"><span class="token annotation builtin">NonNull</span></a> </span>enabled<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BooleanSupplier.html">BooleanSupplier</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-field-orientable-drive-task/index.html">FieldOrientableDriveTask</a></div><div class="brief ">Whether to use field-centric control on the passed-through translation.</div></div></div>
                 </div>
               </div>
             </div>
@@ -830,7 +1040,7 @@ v6.1.1-master-734ac949e            </div>
   </div>
 </div>
       <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
                 class="pull-right"><span>Generated by </span><a
                 href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
       </div>
