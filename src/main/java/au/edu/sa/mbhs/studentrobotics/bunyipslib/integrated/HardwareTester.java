@@ -78,7 +78,7 @@ public final class HardwareTester extends LinearOpMode {
     private DualTelemetry telemetry;
 
     @Override
-    @SuppressWarnings({"unchecked", "ExtractMethodRecommender"})
+    @SuppressWarnings({"unchecked", "ExtractMethodRecommender", "DataFlowIssue"})
     public void runOpMode() {
         dashboardControlled.clear();
         actuators = new double[0];

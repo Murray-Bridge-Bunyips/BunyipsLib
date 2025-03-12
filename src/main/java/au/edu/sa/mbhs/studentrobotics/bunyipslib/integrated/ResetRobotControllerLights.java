@@ -20,9 +20,12 @@ public final class ResetRobotControllerLights extends LinearOpMode {
      * Whether to inhibit the next iteration of resetting the RC lights. Used for keeping a status light.
      */
     public static volatile boolean inhibitNext = false;
+    // Used by `OpModes` for tracking whether the lights were tried to reset
+    static volatile boolean hasInvoked = false;
 
     @Override
     public void runOpMode() {
+        hasInvoked = true;
         if (!inhibitNext) {
             List<LynxModule> rcs = hardwareMap.getAll(LynxModule.class);
             for (int i = 0; i < rcs.size(); i++) {

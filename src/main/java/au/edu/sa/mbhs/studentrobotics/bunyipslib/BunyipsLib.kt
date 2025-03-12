@@ -109,7 +109,11 @@ object BunyipsLib {
     }
 
     private object OpModeHook : Notifications {
+        // Sometimes, our stop handler can double fire when using FtcDashboard. We track this so we don't fire twice.
+        private var handledInit = false
+
         private fun handleOpModeCycle(opMode: OpMode, cycle: Hook.Target) {
+            if (cycle == Hook.Target.POST_STOP && !handledInit) return
             val hooks = mutableSetOf<Pair<Method, Hook>>()
             HookScanner.iterateAppHooks {
                 if (it.second.on == cycle)
@@ -148,6 +152,8 @@ object BunyipsLib {
                     )
                     Exceptions.runUserMethod { it.first.invoke(null) }
                 }
+            if (cycle == Hook.Target.PRE_INIT) handledInit = true
+            if (cycle == Hook.Target.POST_STOP) handledInit = false // Reset for next OpMode or double fire
         }
 
         override fun onOpModePreInit(opMode: OpMode) = handleOpModeCycle(opMode, Hook.Target.PRE_INIT)
