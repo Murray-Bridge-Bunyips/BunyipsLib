@@ -22,7 +22,8 @@ object OpModes : SinisterOpModeRegistrar {
     internal var lightsDirty = false
 
     /**
-     * Call this method before start to suppress all BunyipsLib OpModes from appearing in the OpMode list.
+     * Call this method before start (such as via an `@OnCreate` hook) to suppress the utility BunyipsLib OpModes from
+     * appearing in the OpMode list (Hardware Tester, Reset Last Known Positions, and Reset Motor Encoders).
      */
     @JvmStatic
     fun suppressOpModes() {
@@ -35,6 +36,15 @@ object OpModes : SinisterOpModeRegistrar {
      * @param registrationHelper used register
      */
     override fun registerOpModes(registrationHelper: OpModeScanner.RegistrationHelper) {
+        // Always register the reset lights OpMode
+        registrationHelper.register(
+            OpModeMeta.Builder()
+                .setName(RESET_ROBOT_CONTROLLER_LIGHTS_OPMODE)
+                .setFlavor(OpModeMeta.Flavor.SYSTEM)
+                .setSystemOpModeBaseDisplayName("Reset Robot Controller Lights")
+                .build(),
+            ResetRobotControllerLights()
+        )
         if (suppressOpModes) return
         registrationHelper.register(
             OpModeMeta.Builder()
@@ -59,14 +69,6 @@ object OpModes : SinisterOpModeRegistrar {
                 .setGroup("dash")
                 .build(),
             ResetEncoders()
-        )
-        registrationHelper.register(
-            OpModeMeta.Builder()
-                .setName(RESET_ROBOT_CONTROLLER_LIGHTS_OPMODE)
-                .setFlavor(OpModeMeta.Flavor.SYSTEM)
-                .setSystemOpModeBaseDisplayName("Reset Robot Controller Lights")
-                .build(),
-            ResetRobotControllerLights()
         )
     }
 

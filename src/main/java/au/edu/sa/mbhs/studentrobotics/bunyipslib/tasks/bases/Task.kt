@@ -87,6 +87,8 @@ abstract class Task : Runnable, Action {
     /**
      * Get the subsystem reference that this task has elected a dependency on.
      * Will return an Optional where if it is not present, this task is not dependent on any subsystem.
+     *
+     * See [on].
      */
     val dependency: Optional<BunyipsSubsystem>
         get() = Optional.ofNullable(_dependency)
@@ -128,8 +130,8 @@ abstract class Task : Runnable, Action {
     /**
      * Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.
      *
-     * @param subsystem The subsystem to elect as the runner of this task
-     * @param override  Whether this task should override conflicting tasks on this subsystem (not incl. default tasks)
+     * @param subsystem The subsystem to elect as the runner of this task stored in [dependency]
+     * @param override  Whether this task should override conflicting tasks on this subsystem (not incl. default tasks), stored in [isPriority]
      * @return this task
      */
     fun on(subsystem: BunyipsSubsystem, override: Boolean) = apply {
@@ -381,6 +383,26 @@ abstract class Task : Runnable, Action {
                 }
             }
         }
+    }
+
+    /**
+     * Attempts to assign this task as the default task of the current [dependency].
+     *
+     * If a [dependency] is not attached to this task, meaning that this task has not elected a subsystem to run this task on
+     * via [on], this method will no-op and throw a warning in Logcat. Most BunyipsLib-integrated tasks, including ones
+     * found in the `tasks` field of subsystems are elected to run on the correct [dependency], so this method can be used.
+     *
+     * Note that an assigned default task must not have a finish condition, otherwise an emergency stop will be issued.
+     *
+     * @since 7.0.1
+     */
+    fun setAsDefaultTask() {
+        val dep = _dependency
+        if (dep == null) {
+            Dbg.warn(javaClass, "tried assigning this task (%) to a dependency when none was present!", this)
+            return
+        }
+        dep default this
     }
 
     /**
