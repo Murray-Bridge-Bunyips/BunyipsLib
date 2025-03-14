@@ -2,6 +2,28 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.0.1 (2025-03-14)
+
+Minor subsystem default task QoL changes.
+
+### Additions
+
+- `Task` exposes a new `setAsDefaultTask()`, which will internally access its `dependency` to assign the task as the default
+  task to that subsystem
+    - This method is designed to reduce the repetitive pattern of calling
+      `robot.subsystem.setDefaultTask(robot.subsystem.tasks.etc())`
+    - By using this method, it reduces the probability of bugs as it is technically unnecessary to do a dual reference
+      when all BunyipsLib-integrated tasks set the dependency internally via `on`
+
+### Bug fixes
+
+- Resolve a bug where the required `ResetRobotControllerLights` system OpMode was not registered if integrated OpModes
+  were suppressed
+- `MecanumDrive.HoldLastPoseTask` now assigns itself to the drive subsystem on construction
+    - Technically unnecessary since `setDefaultTask` will auto-assign a task to the subsystem, but added for consistency
+      and to support `setAsDefaultTask()`
+- Fixed an oversight where assigned default task task groups are assigned with `on()`, raising a warning
+
 ## v7.0.0 (2025-03-12)
 
 Offseason major library operation and behaviour revamp.
