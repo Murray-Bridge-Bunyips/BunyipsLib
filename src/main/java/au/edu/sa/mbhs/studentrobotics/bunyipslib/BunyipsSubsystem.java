@@ -5,6 +5,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Sec
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -285,11 +286,20 @@ public abstract class BunyipsSubsystem {
     /**
      * Set the default task for this subsystem, which will be run when no other task is running.
      *
-     * @param defaultTask The task to set as the default task
+     * @param defaultTask The task to set as the default task, which will also internally make the dependency
+     *                    of this task to be this subsystem if possible
      */
     public final void setDefaultTask(@NonNull Task defaultTask) {
         Task def = Objects.requireNonNull(defaultTask);
-        def.on(this, false);
+        // We use reflection so we don't bloat up the public API
+        try {
+            Field f = Task.class.getDeclaredField("disableSubsystemAttachment");
+            f.setAccessible(true);
+            if (!f.getBoolean(def))
+                def.on(this, false);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to access internal fields on Task, this shouldn't happen!");
+        }
         this.defaultTask = def;
     }
 

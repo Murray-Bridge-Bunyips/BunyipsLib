@@ -394,6 +394,13 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public final class HoldLastPoseTask extends Task {
         private Pose2d hold;
 
+        /**
+         * Construct a new HoldLastPoseTask.
+         */
+        public HoldLastPoseTask() {
+            on(MecanumDrive.this, false);
+        }
+
         @Override
         protected void init() {
             hold = accumulator.getPose();
