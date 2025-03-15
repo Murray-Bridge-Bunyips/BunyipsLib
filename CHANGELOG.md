@@ -2,13 +2,27 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.0.2 (2025-03-15)
+
+`IMUEx` angular velocity and task hotfixes.
+
+### Bug fixes
+
+- Resolve a critical bug where `IMUEx` instances did not respect the `angleUnit` parameter of `getRobotAngularVelocity`,
+  always returning in degrees
+    - This led to radians being interpreted as degrees, causing unexpected behaviour for localizers that access the IMU
+- Add a minimum execution time for `HoldableActuator`'s `goTo` and `home` tasks
+    - This ensures actuator tasks do not end prematurely as they must wait a minimum duration of 700 milliseconds to
+      ensure the internal state has been updated
+
 ## v7.0.1 (2025-03-14)
 
 Minor subsystem default task QoL changes.
 
 ### Additions
 
-- `Task` exposes a new `setAsDefaultTask()`, which will internally access its `dependency` to assign the task as the default
+- `Task` exposes a new `setAsDefaultTask()`, which will internally access its `dependency` to assign the task as the
+  default
   task to that subsystem
     - This method is designed to reduce the repetitive pattern of calling
       `robot.subsystem.setDefaultTask(robot.subsystem.tasks.etc())`
