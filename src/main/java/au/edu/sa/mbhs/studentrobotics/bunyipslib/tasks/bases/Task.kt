@@ -573,7 +573,9 @@ abstract class Task : Runnable, Action {
                         this@Task.dashboard = it
                         val startTimeField = Task::class.java.getDeclaredField("startTime")
                         startTimeField.isAccessible = true
-                        startTimeField.setLong(this@Task, startTime)
+                        val time = System.nanoTime()
+                        startTimeField.setLong(this, time)
+                        startTimeField.setLong(this@Task, time)
                         this@Task.init()
                         this@Task.poll()
                     }
