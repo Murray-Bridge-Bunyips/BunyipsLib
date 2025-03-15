@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Amps;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
@@ -652,6 +653,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
         private Task homingOperation(int direction) {
             return new Task() {
+                private final int MIN_DURATION_MS = 700; // Paranoia
                 private final TouchSensor targetSwitch;
                 private ElapsedTime overcurrentTimer;
                 private double zeroHits;
@@ -703,7 +705,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                         overcurrentTimer = null;
                     }
                     boolean sustainedOvercurrent = overcurrentTimer != null && overcurrentTimer.seconds() >= overcurrentTime.in(Seconds);
-                    return inputMode != Mode.HOMING || (hardStop || velocityZeroed || sustainedOvercurrent);
+                    return getDeltaTime().in(Milliseconds) >= MIN_DURATION_MS && (inputMode != Mode.HOMING || (hardStop || velocityZeroed || sustainedOvercurrent));
                 }
             };
         }
@@ -763,6 +765,7 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task goTo(int targetPosition) {
+            int MIN_DURATION_MS = 700; // Paranoia
             return Task.task()
                     .init(() -> {
                         sustainedTolerated.reset();
@@ -771,7 +774,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                         motor.setPower(0);
                         inputMode = Mode.AUTO;
                     })
-                    .isFinished(() -> inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), tolerance)))
+                    .isFinished((t) -> t.getDeltaTime().in(Milliseconds) >= MIN_DURATION_MS && (inputMode != Mode.AUTO || (!motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), tolerance))))
                     .onFinish(HoldableActuator.this::setInputModeToUser)
                     .on(HoldableActuator.this, true)
                     .named(forThisSubsystem("Run To " + targetPosition + " Ticks"));
