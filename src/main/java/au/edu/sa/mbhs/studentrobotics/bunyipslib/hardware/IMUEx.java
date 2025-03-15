@@ -383,7 +383,8 @@ public class IMUEx implements IMU, LazyImu, Runnable {
     public AngularVelocity getRobotAngularVelocity(@NonNull AngleUnit angleUnit) {
         tryInit("GET_ROBOT_ANGULAR_VELOCITY");
         run();
-        return new AngularVelocity(AngleUnit.DEGREES, (float) pitchVel.magnitude(), (float) rollVel.magnitude(), (float) yawVel.magnitude(), lastAcquisitionTimeNanos);
+        return new AngularVelocity(AngleUnit.DEGREES, (float) pitchVel.magnitude(), (float) rollVel.magnitude(), (float) yawVel.magnitude(), lastAcquisitionTimeNanos)
+                .toAngleUnit(angleUnit);
     }
 
     @NonNull
