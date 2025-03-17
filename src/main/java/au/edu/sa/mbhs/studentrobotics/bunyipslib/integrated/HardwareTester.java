@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.ValueProvider;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -58,9 +60,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.executables.MovingAverageTimer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * Dynamic OpMode to test hardware functionality of most {@link HardwareDevice} objects.
@@ -69,11 +69,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  * @since 6.0.0
  */
 public final class HardwareTester extends LinearOpMode {
-    /**
-     * Array of motor powers and servo positions that can be controlled via FtcDashboard.
-     * Must be enabled for each device that is willing to delegate to the dashboard.
-     */
-    public static double[] actuators = new double[0];
     private final List<DashboardControls> dashboardControlled = new ArrayList<>();
     private DualTelemetry telemetry;
 
@@ -81,7 +76,6 @@ public final class HardwareTester extends LinearOpMode {
     @SuppressWarnings({"unchecked", "ExtractMethodRecommender", "DataFlowIssue"})
     public void runOpMode() {
         dashboardControlled.clear();
-        actuators = new double[0];
         MovingAverageTimer timer = new MovingAverageTimer();
         telemetry = new DualTelemetry(super.telemetry, timer);
         telemetry.overheadTag = "<b>HardwareTester</b>";
@@ -124,14 +118,6 @@ public final class HardwareTester extends LinearOpMode {
                     }).resetIf(() -> gamepad1.b || dashboardControls.active);
                     // We can also supply a controller for the dashboard
                     TelemetryMenu.InteractiveToggle dashboardControl = new TelemetryMenu.InteractiveToggle("Use Dashboard", false, a -> {
-                        if (a && dashboardControls.index == -1) {
-                            double[] newActuators = new double[actuators.length + 1];
-                            System.arraycopy(actuators, 0, newActuators, 0, actuators.length);
-                            newActuators[actuators.length] = 0;
-                            actuators = newActuators;
-                            dashboardControls.index = actuators.length - 1;
-                            Dashboard.enableConfig(getClass());
-                        }
                         dashboardControls.active = a;
                         return a ? "active" : "inactive";
                     }).withColours("green", "white");
@@ -206,14 +192,6 @@ public final class HardwareTester extends LinearOpMode {
                     TelemetryMenu.StaticClickableOption setToZero = new TelemetryMenu.StaticClickableOption("Set to 0", () -> servo.setPosition(0));
                     TelemetryMenu.StaticClickableOption setToOne = new TelemetryMenu.StaticClickableOption("Set to 1", () -> servo.setPosition(1));
                     TelemetryMenu.InteractiveToggle dashboardControl = new TelemetryMenu.InteractiveToggle("Use Dashboard", false, a -> {
-                        if (a && dashboardControls.index == -1) {
-                            double[] newActuators = new double[actuators.length + 1];
-                            System.arraycopy(actuators, 0, newActuators, 0, actuators.length);
-                            newActuators[actuators.length] = servo.getPosition();
-                            actuators = newActuators;
-                            dashboardControls.index = actuators.length - 1;
-                            Dashboard.enableConfig(getClass());
-                        }
                         dashboardControls.active = a;
                         return a ? "active" : "inactive";
                     }).withColours("green", "white");
@@ -542,15 +520,14 @@ public final class HardwareTester extends LinearOpMode {
                 terminateOpModeNow();
             menu.loop(gamepad1);
             for (DashboardControls dc : dashboardControlled) {
-                if (dc.index == -1)
-                    continue;
-                telemetry.addDashboard("<font face='monospace'>HardwareTester/actuators</font> index <b>" + dc.index + "</b>", dc.active ? Text.format("<b>%</b> (%)", dc.name, dc.device) : "inactive");
-                if (!dc.active)
-                    continue;
-                if (dc.device instanceof DcMotorSimple dms) {
-                    dms.setPower(actuators[dc.index]);
-                } else if (dc.device instanceof ServoImplEx servo) {
-                    servo.setPosition(actuators[dc.index]);
+                String category = dc.device instanceof DcMotorSimple ? "[HardwareTester] Motors & CRServos" : "[HardwareTester] Servos";
+                if (!dc.active && dc.lastActive) {
+                    FtcDashboard.getInstance().removeConfigVariable(category, dc.name);
+                    dc.lastActive = false;
+                }
+                if (dc.active && !dc.lastActive) {
+                    FtcDashboard.getInstance().addConfigVariable(category, dc.name, dc, true);
+                    dc.lastActive = true;
                 }
             }
             timer.update();
@@ -578,15 +555,31 @@ public final class HardwareTester extends LinearOpMode {
         }
     }
 
-    private static class DashboardControls {
+    private static class DashboardControls implements ValueProvider<Double> {
         public final HardwareDevice device;
         public final String name;
-        public int index = -1;
         public boolean active = false;
+        public boolean lastActive = false;
 
         public DashboardControls(String name, HardwareDevice device) {
             this.name = name;
             this.device = device;
+        }
+
+        @Override
+        public Double get() {
+            return device instanceof DcMotorSimple dms ? dms.getPower() : device instanceof Servo s ? s.getPosition() : 0.0;
+        }
+
+        @Override
+        public void set(Double value) {
+            if (!active)
+                return;
+            if (device instanceof DcMotorSimple dms) {
+                dms.setPower(value);
+            } else if (device instanceof Servo s) {
+                s.setPosition(value);
+            }
         }
     }
 }
