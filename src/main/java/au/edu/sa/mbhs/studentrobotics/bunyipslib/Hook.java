@@ -60,7 +60,7 @@ public @interface Hook {
      * Be advised this will run for <b>all</b> OpModes, including the default "Robot is stopped" OpMode, and system
      * events such as Sloth's <i>ProcessLoadEvent</i> and BunyipsLib's <i>ResetRobotControllerLights</i>. It is advised
      * to filter these out yourself through instance/classname checks to {@link BunyipsLib#getOpMode()}
-     * if you have this flag enabled.
+     * if you have this flag enabled. Enabling this flag will also disable double-fire protections for POST_STOP.
      *
      * @return whether to always run this hook even on system opmodes including the default "robot is stopped" opmode.
      */

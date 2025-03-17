@@ -98,8 +98,8 @@ object Threads {
      */
     @JvmStatic
     fun <T> start(name: String, task: Callable<T?>): Result<T?> {
-        require(!tasks.keys.stream().anyMatch { it == name }) {
-            "name parameter '$name' is already being used as a Threads task name; it must be unique"
+        require(tasks.all { it.key != name || it.value.second.isDone }) {
+            "name parameter '$name' is already being used as an active Threads task name; it must be unique"
         }
         val t = Callable {
             try {
@@ -130,8 +130,8 @@ object Threads {
      */
     @JvmStatic
     fun startLoop(name: String, minLoopTime: Measure<Time>, loopTask: Runnable): Result<*> {
-        require(!tasks.keys.stream().anyMatch { it == name }) {
-            "name parameter '$name' is already being used as a Threads task name; it must be unique"
+        require(tasks.all { it.key != name || it.value.second.isDone }) {
+            "name parameter '$name' is already being used as an active Threads task name; it must be unique"
         }
         val magMillis = (minLoopTime to Milliseconds).toLong()
         val t = Callable {

@@ -113,7 +113,6 @@ object BunyipsLib {
         private var handledInit = false
 
         private fun handleOpModeCycle(opMode: OpMode, cycle: Hook.Target) {
-            if (cycle == Hook.Target.POST_STOP && !handledInit) return
             val hooks = mutableSetOf<Pair<Method, Hook>>()
             HookScanner.iterateAppHooks {
                 if (it.second.on == cycle)
@@ -135,6 +134,7 @@ object BunyipsLib {
                     }
                 return
             }
+            if (cycle == Hook.Target.POST_STOP && !handledInit) return
             Dbg.log(
                 "******************** % OPMODE - %: \"%\" ********************",
                 cycle.name.substringAfter("_"),

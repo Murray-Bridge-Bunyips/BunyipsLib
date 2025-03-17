@@ -18,6 +18,7 @@ object OpModes : SinisterOpModeRegistrar {
     private var suppressOpModes = false
 
     // Have to expose this so HardwareTester can override the Hook filtering (as HardwareTester is integrated)
+    @Volatile
     @set:JvmName("__setLightsDirty")
     internal var lightsDirty = false
 
@@ -83,7 +84,10 @@ object OpModes : SinisterOpModeRegistrar {
     private fun tryResetRobotControllerLights() {
         if (lightsDirty) {
             lightsDirty = false
-            Threads.start("schedule reset rc lights opmode") {
+            val name = "schedule reset rc lights opmode"
+            if (Threads.isRunning(name))
+                return
+            Threads.start(name) {
                 // We must persist init calls as FtcDashboard handles stops strangely, and the first invocation
                 // may not cause the OpMode to run at all. We try to check in with the OpMode to ensure the finisher is run.
                 ResetRobotControllerLights.hasInvoked = false

@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.ValueProvider;
+import com.acmerobotics.dashboard.config.variable.CustomVariable;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -69,11 +70,13 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
  * @since 6.0.0
  */
 public final class HardwareTester extends LinearOpMode {
+    private static final String MOTOR_DASHBOARD_CATEGORY = "[HardwareTester] Motors & CRServos";
+    private static final String SERVO_DASHBOARD_CATEGORY = "[HardwareTester] Servos";
     private final List<DashboardControls> dashboardControlled = new ArrayList<>();
     private DualTelemetry telemetry;
 
     @Override
-    @SuppressWarnings({"unchecked", "ExtractMethodRecommender", "DataFlowIssue"})
+    @SuppressWarnings({"unchecked", "ExtractMethodRecommender"})
     public void runOpMode() {
         dashboardControlled.clear();
         MovingAverageTimer timer = new MovingAverageTimer();
@@ -109,6 +112,11 @@ public final class HardwareTester extends LinearOpMode {
                 dev.addChildren(deviceType, connInfo);
 
                 if (device instanceof DcMotorSimple motor) {
+                    FtcDashboard.getInstance().withConfigRoot((c) -> {
+                        CustomVariable mcv = ((CustomVariable) c.getVariable(MOTOR_DASHBOARD_CATEGORY));
+                        if (mcv != null)
+                            mcv.removeVariable(entry.getKey());
+                    });
                     DashboardControls dashboardControls = new DashboardControls(entry.getKey(), motor);
                     // First, we map DcMotorSimple interfaces (including CRServos) to supply power and change direction
                     TelemetryMenu.InteractiveToggle powerControl = new TelemetryMenu.InteractiveToggle("Power", false, a -> {
@@ -175,6 +183,11 @@ public final class HardwareTester extends LinearOpMode {
                 }
 
                 if (device instanceof ServoImplEx servo) {
+                    FtcDashboard.getInstance().withConfigRoot((c) -> {
+                        CustomVariable mcv = ((CustomVariable) c.getVariable(SERVO_DASHBOARD_CATEGORY));
+                        if (mcv != null)
+                            mcv.removeVariable(entry.getKey());
+                    });
                     DashboardControls dashboardControls = new DashboardControls(entry.getKey(), servo);
                     // Servo controls are simpler and only require directionality and position controls
                     TelemetryMenu.InteractiveToggle enabledControl = new TelemetryMenu.InteractiveToggle("Enabled", false, a -> {
@@ -520,13 +533,13 @@ public final class HardwareTester extends LinearOpMode {
                 terminateOpModeNow();
             menu.loop(gamepad1);
             for (DashboardControls dc : dashboardControlled) {
-                String category = dc.device instanceof DcMotorSimple ? "[HardwareTester] Motors & CRServos" : "[HardwareTester] Servos";
+                String category = dc.device instanceof DcMotorSimple ? MOTOR_DASHBOARD_CATEGORY : SERVO_DASHBOARD_CATEGORY;
                 if (!dc.active && dc.lastActive) {
                     FtcDashboard.getInstance().removeConfigVariable(category, dc.name);
                     dc.lastActive = false;
                 }
                 if (dc.active && !dc.lastActive) {
-                    FtcDashboard.getInstance().addConfigVariable(category, dc.name, dc, true);
+                    FtcDashboard.getInstance().addConfigVariable(category, dc.name, dc);
                     dc.lastActive = true;
                 }
             }
