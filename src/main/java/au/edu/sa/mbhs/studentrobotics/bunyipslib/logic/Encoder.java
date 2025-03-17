@@ -28,6 +28,9 @@ public class Encoder {
     private double lastTimestamp, veloEstimate;
     private boolean overflowCorrection;
     private Supplier<DcMotorSimple.Direction> directionSupplier;
+    private boolean useCache;
+    private Integer cachedPosition;
+    private Double cachedVelocity;
     private int accumulation;
 
     /**
@@ -55,6 +58,27 @@ public class Encoder {
      */
     public void trackDirection(@NonNull Supplier<DcMotorSimple.Direction> supplier) {
         directionSupplier = supplier;
+    }
+
+    /**
+     * Whether to cache readings such that calling a getter will cache the last known value until {@link #clearCache()}
+     * is called. This applies for position and velocity getters independently.
+     * <p>
+     * <b>WARNING:</b> When using this mode, it is exceedingly important that you clear the cache with {@link #clearCache()},
+     * otherwise your encoder will not report any non-stale data after the first run.
+     *
+     * @param useCache whether to cache reading for position and velocity (separate), default false
+     */
+    public void setCaching(boolean useCache) {
+        this.useCache = useCache;
+    }
+
+    /**
+     * Clears the cache when in {@link #setCaching(boolean)} mode, allowing a new read to come in for velocity and position.
+     */
+    public void clearCache() {
+        cachedPosition = null;
+        cachedVelocity = null;
     }
 
     /**
@@ -89,7 +113,13 @@ public class Encoder {
      * @return the current position of the encoder
      */
     public int getPosition() {
-        int currentPosition = (getDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * position.get();
+        int currentPosition;
+        if (!useCache || cachedPosition == null) {
+            currentPosition = (getDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * position.get();
+            cachedPosition = currentPosition;
+        } else {
+            currentPosition = cachedPosition;
+        }
         accumulation += currentPosition - lastPosition;
         if (currentPosition != lastPosition) {
             double currentTime = System.nanoTime() / 1.0E9;
@@ -148,7 +178,13 @@ public class Encoder {
      * @return the raw velocity of the encoder, may overflow if ticks/sec exceed 32767/sec
      */
     public double getRawVelocity() {
-        double velo = (getDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
+        double velo;
+        if (!useCache || cachedVelocity == null) {
+            velo = (getDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
+            cachedVelocity = velo;
+        } else {
+            velo = cachedPosition;
+        }
         acceleration.apply(velo);
         return velo;
     }

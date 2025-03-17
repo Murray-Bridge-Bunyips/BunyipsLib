@@ -79,6 +79,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     private VoltageSensor nominalVoltageSensor = null;
     private double nominalVoltage = 12.0;
 
+    private int targetPositionTolerance;
     private int rawTargetPosition = 0;
 
     /**
@@ -98,6 +99,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         }
         DcMotorEx dme = (DcMotorEx) motor;
         encoder = new Encoder(motor::getCurrentPosition, dme::getVelocity);
+        targetPositionTolerance = dme.getTargetPositionTolerance();
         rawTargetPosition = getCurrentPosition();
     }
 
@@ -551,42 +553,38 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     /**
-     * Note that this method will try to access the {@link DcMotor.RunMode#RUN_TO_POSITION} controller to access information there. This
-     * is otherwise unsupported, and you should try to access the actual controller to see this information, unless
-     * you are downcasting in which this will assume you are using a PIDF controller.
+     * Retrieves the tolerance in encoder ticks at which this arm uses for {@link DcMotor.RunMode#RUN_TO_POSITION}.
+     * <p>
+     * Note that this method will try to access the {@link DcMotor.RunMode#RUN_TO_POSITION} controller to access target position
+     * tolerance information.
      *
      * @inheritDoc
-     * @deprecated the RUN_TO_POSITION controller should be accessed directly coming from this Motor instance via {@link #getRunToPositionController()},
-     * as this method context is not from a DcMotor downcast.
      */
-    @Deprecated
     @Override
     public int getTargetPositionTolerance() {
-        // Built-in support for PIDF as it is the most common use case for RTP,
-        // the Motor class does not manage target position tolerance at all
+        // Built-in support for PIDF as it is the most common use case for RTP. We also try to store it for consistency.
         if (rtpController != null && rtpController.pidf().isPresent()) {
-            return (int) Math.ceil(rtpController.pidf().get().getTolerance()[0]);
+            int tolerance = (int) Math.ceil(rtpController.pidf().get().getTolerance()[0]);
+            targetPositionTolerance = tolerance;
+            return tolerance;
         }
-        throw new UnsupportedOperationException("Can't access target position information on the currently used RTP controller. It may be the case that this controller is open-loop, or not a PID controller, as any tolerance configuration should be modified by your controller, not by this method.");
+        return targetPositionTolerance;
     }
 
     /**
-     * Note that this method will try to access the {@link DcMotor.RunMode#RUN_TO_POSITION} controller to access information there. This
-     * is otherwise unsupported, and you should try to access the actual controller to see this information, unless
-     * you are downcasting in which this will assume you are using a PIDF controller.
+     * Retrieves the tolerance in encoder ticks at which this arm uses for {@link DcMotor.RunMode#RUN_TO_POSITION}.
+     * <p>
+     * Note that this method will try to access the {@link DcMotor.RunMode#RUN_TO_POSITION} controller to access target position
+     * tolerance information.
      *
      * @inheritDoc
-     * @deprecated the RUN_TO_POSITION controller should be accessed directly coming from this Motor instance via {@link #getRunToPositionController()},
-     * as this method context is not from a DcMotor downcast.
      */
-    @Deprecated
     @Override
     public void setTargetPositionTolerance(int tolerance) {
+        targetPositionTolerance = tolerance;
         if (rtpController != null && rtpController.pidf().isPresent()) {
             rtpController.pidf().get().setTolerance(tolerance);
-            return;
         }
-        throw new UnsupportedOperationException("Can't access target position information on the currently used RTP controller. It may be the case that this controller is open-loop, or not a PID controller, as any tolerance configuration should be modified by your controller, not by this method.");
     }
 
     /**

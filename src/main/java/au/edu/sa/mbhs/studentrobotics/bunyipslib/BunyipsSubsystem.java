@@ -292,13 +292,15 @@ public abstract class BunyipsSubsystem {
     public final void setDefaultTask(@NonNull Task defaultTask) {
         Task def = Objects.requireNonNull(defaultTask);
         // We use reflection so we don't bloat up the public API
-        try {
-            Field f = Task.class.getDeclaredField("disableSubsystemAttachment");
-            f.setAccessible(true);
-            if (!f.getBoolean(def))
-                def.on(this, false);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException("Failed to access internal fields on Task, this shouldn't happen!");
+        if (def.getDependency().isEmpty() || !def.getDependency().get().equals(this)) {
+            try {
+                Field f = Task.class.getDeclaredField("disableSubsystemAttachment");
+                f.setAccessible(true);
+                if (!f.getBoolean(def))
+                    def.on(this, false);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException("Failed to access internal fields on Task, this shouldn't happen!");
+            }
         }
         this.defaultTask = def;
     }
