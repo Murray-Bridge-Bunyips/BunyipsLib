@@ -81,7 +81,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         this.motor = (DcMotorEx) motor;
         // Always default to BRAKE because HoldableActuators are meant to hold
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.motor.setTargetPosition(this.encoder.getPosition());
+        this.motor.setTargetPosition(this.motor.getCurrentPosition());
         this.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.motor.setPower(autoPower);
         // Encoder instance is used for awareness of the encoder position, we generally don't care about direction
