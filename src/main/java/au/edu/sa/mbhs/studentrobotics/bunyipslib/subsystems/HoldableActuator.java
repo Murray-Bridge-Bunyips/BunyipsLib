@@ -1,5 +1,9 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Amps;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -28,8 +32,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
-
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.*;
 
 /**
  * Controls a generic encoder motor that can be controlled through various means and commanded to hold a position.
@@ -124,7 +126,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     /**
-     * Disable the zero hit duration.
+     * Disable the zero velocity duration used for the Home Task.
      *
      * @return this
      */
