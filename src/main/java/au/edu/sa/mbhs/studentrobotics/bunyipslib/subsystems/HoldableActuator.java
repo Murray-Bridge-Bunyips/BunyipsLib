@@ -530,7 +530,6 @@ public class HoldableActuator extends BunyipsSubsystem {
 
         if (isRunningDefaultTask()) {
             // Manual user control
-            // TODO: this conflicts with task runtime
             if (userSetpointControl != null)
                 usc.accept(pwr);
             else
@@ -661,6 +660,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
         @Override
         protected void onFinish() {
+            power = 0;
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             encoder.reset();
         }
@@ -708,6 +708,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             // Although we could allocate this task as a default task ourselves, we want to have the user
             // do it as we don't want to enforce behaviours in the event other behaviour is wanted.
             return Task.task().periodic(() -> HoldableActuator.this.setPower(powerSupplier.getAsDouble()))
+                    .onFinish(() -> power = 0)
                     .on(HoldableActuator.this, false)
                     // It's fine for this task name to be stale since we shouldn't expect dynamic disabling of sp. ctrl.
                     .named(userSetpointControl != null ? "Setpoint Delta Control" : "Power Target Control");
@@ -811,6 +812,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                         power = autoPower * Math.signum(target - current);
                         DualTelemetry.smartAdd(HoldableActuator.this.toString(), "<font color='#FF5F1F'>MOVING -> %/% ticks</font> [%tps]", current, target, Math.round(encoder.getVelocity()));
                     })
+                    .onFinish(() -> power = 0)
                     .isFinished(() -> !motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance()))
                     .on(HoldableActuator.this, true)
                     .named(forThisSubsystem("Run To " + targetPosition + " Ticks"));
