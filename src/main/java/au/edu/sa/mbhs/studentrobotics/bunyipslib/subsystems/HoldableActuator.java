@@ -1,8 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems;
 
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Amps;
-import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -32,6 +29,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.*;
+
 /**
  * Controls a generic encoder motor that can be controlled through various means and commanded to hold a position.
  *
@@ -43,18 +42,18 @@ public class HoldableActuator extends BunyipsSubsystem {
      * Tasks for HoldableActuator.
      */
     public final Tasks tasks = new Tasks();
-    // Hardware
+
     private final HashMap<TouchSensor, Integer> switchMapping = new HashMap<>();
-    // Safety and hardware protections
     private final ElapsedTime sustainedOvercurrent = new ElapsedTime();
     private final ElapsedTime sustainedTolerated = new ElapsedTime();
-    // Operation modes
     private final BidirectionalHomingTask.Parameters homingParameters = new BidirectionalHomingTask.Parameters();
     private final UserPowerControl upc = new UserPowerControl();
     // In v5.1.0+ user setpoint control has been offered to instead interpret power as a multiple of some delta-time
     // multiplied constant which allows finer control over the setpoint rather than feeding raw power.
     private final UserSetpointControl usc = new UserSetpointControl();
-    private double power;
+    private UnaryFunction userSetpointControl;
+    private volatile double power;
+    private volatile double userPower;
     private TouchSensor topSwitch;
     private TouchSensor bottomSwitch;
     private DcMotorEx motor;
@@ -62,13 +61,11 @@ public class HoldableActuator extends BunyipsSubsystem {
     private Measure<Time> overcurrentTime;
     private Measure<Time> maxSteadyState;
     private boolean autoZeroingLatch;
-    // Clampings
     private long minLimit = -Long.MAX_VALUE;
     private long maxLimit = Long.MAX_VALUE;
     private double lowerPower = -1.0;
     private double upperPower = 1.0;
     private double autoPower = 1.0;
-    private UnaryFunction userSetpointControl;
 
     /**
      * Create a new HoldableActuator.
@@ -113,27 +110,27 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     /**
-     * Set the zero hit threshold to how many greater than or equal to zero velocity hits are required for the Home Task.
-     * If the actuator has a continuous negative velocity of zero for this many hits, the Home Task will complete.
+     * Set the zero/negative velocity duration required for the Home Task to finish automatically.
+     * If the actuator has a continuous negative velocity or zero for this amount of time, the Home Task will complete.
      *
-     * @param threshold the new threshold of continuous hits of zero velocity to complete homing. Default is 30.
+     * @param threshold the new interval of continuous zero velocity to complete homing. Default is 700 milliseconds.
      * @return this
-     * @see #disableHomingZeroHits()
+     * @see #disableHomingZeroVelocityDuration()
      */
     @NonNull
-    public HoldableActuator withHomingZeroHits(int threshold) {
-        homingParameters.zeroHitThreshold = threshold;
+    public HoldableActuator withHomingZeroVelocityDuration(Measure<Time> threshold) {
+        homingParameters.zeroVelocityDuration = threshold;
         return this;
     }
 
     /**
-     * Disable the zero hit threshold for the Home Task.
+     * Disable the zero hit duration.
      *
      * @return this
      */
     @NonNull
-    public HoldableActuator disableHomingZeroHits() {
-        return withHomingZeroHits(0);
+    public HoldableActuator disableHomingZeroVelocityDuration() {
+        return withHomingZeroVelocityDuration(Seconds.zero());
     }
 
     /**
@@ -232,7 +229,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      *
      * @param bottomLimitSwitch the limit switch to set as the bottom switch where the arm would be "homed"
      * @return this
-     * @see #disableHomingZeroHits()
+     * @see #disableHomingZeroVelocityDuration()
      * @see #disableOvercurrent()
      */
     @NonNull
@@ -423,7 +420,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     /**
      * Instantaneously set the user input power for the actuator.
      * <p>
-     * <b>Note:</b> This method is ignored when a task other than the default is running. This is intentional behaviour
+     * <b>Note:</b> This value is ignored when a task other than the default is running. This is intentional behaviour
      * to avoid power conflicts.
      *
      * @param p power level in domain [-1.0, 1.0], will be clamped
@@ -431,15 +428,22 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator setPower(double p) {
-        if (isRunningDefaultTask())
-            power = Mathf.clamp(p, lowerPower, upperPower);
+        userPower = Mathf.clamp(p, lowerPower, upperPower);
         return this;
     }
 
     @Override
     protected void periodic() {
-        double pwr = power;
         encoder.clearCache();
+
+        if (isRunningDefaultTask()) {
+            // Manual user control
+            power = userPower;
+            if (userSetpointControl != null)
+                usc.accept(power);
+            else
+                upc.accept(power);
+        }
 
         // Limit switch position rebounding
         for (TouchSensor limitSwitch : switchMapping.keySet()) {
@@ -453,11 +457,11 @@ public class HoldableActuator extends BunyipsSubsystem {
 
         // Bottom limit switch protection
         if (bottomSwitch != null) {
-            if (bottomSwitch.isPressed() && pwr < 0) {
+            if (bottomSwitch.isPressed() && power < 0) {
                 // Cancel and stop any tasks that would move the actuator out of bounds as defined by the limit switch
                 cancelCurrentTask();
                 encoder.reset();
-                pwr = 0;
+                power = 0;
                 if (motor.getTargetPosition() < 0)
                     motor.setTargetPosition(0);
             }
@@ -479,9 +483,9 @@ public class HoldableActuator extends BunyipsSubsystem {
         }
 
         // Top limit switch protection
-        if (topSwitch != null && topSwitch.isPressed() && pwr > 0) {
+        if (topSwitch != null && topSwitch.isPressed() && power > 0) {
             cancelCurrentTask();
-            pwr = 0;
+            power = 0;
             int current = encoder.getPosition();
             if (motor.getTargetPosition() > current)
                 motor.setTargetPosition(current);
@@ -495,11 +499,11 @@ public class HoldableActuator extends BunyipsSubsystem {
         // Bounds protection when the actuator is not homing
         if (!(getCurrentTask() instanceof BidirectionalHomingTask)) {
             int currentPosition = encoder.getPosition();
-            if ((currentPosition < minLimit && pwr < 0.0) || (currentPosition > maxLimit && pwr > 0.0)) {
+            if ((currentPosition < minLimit && power < 0.0) || (currentPosition > maxLimit && power > 0.0)) {
                 // Try to cancel any tasks that would move the actuator out of bounds by autonomous operation
                 cancelCurrentTask();
                 // We also set the power to 0 to nullify any user input
-                pwr = 0;
+                power = 0;
             }
         }
 
@@ -528,15 +532,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             }
         }
 
-        if (isRunningDefaultTask()) {
-            // Manual user control
-            if (userSetpointControl != null)
-                usc.accept(pwr);
-            else
-                upc.accept(pwr);
-        }
-
-        motor.setPower(Mathf.clamp(pwr, lowerPower, upperPower));
+        motor.setPower(Mathf.clamp(power, lowerPower, upperPower));
     }
 
     @Override
@@ -612,10 +608,10 @@ public class HoldableActuator extends BunyipsSubsystem {
      * Available through {@code tasks.home()} and {@code tasks.ceil()}.
      */
     public class BidirectionalHomingTask extends Task {
+        private final ElapsedTime overcurrentTimer = new ElapsedTime();
+        private final ElapsedTime zeroVelocityTimer = new ElapsedTime();
         private final int homingDirection;
         private final TouchSensor targetSwitch;
-        private ElapsedTime overcurrentTimer;
-        private double zeroHits;
 
         /**
          * Create a new BidirectionalHomingTask.
@@ -641,19 +637,17 @@ public class HoldableActuator extends BunyipsSubsystem {
                 finishNow();
                 return;
             }
-            zeroHits = 0;
+            zeroVelocityTimer.reset();
+            overcurrentTimer.reset();
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         @Override
         protected void periodic() {
-            if (homingParameters.zeroHitThreshold >= 0) {
-                if (homingDirection == -1 ? encoder.getVelocity() >= 0 : encoder.getVelocity() <= 0) {
-                    zeroHits++;
-                } else {
-                    zeroHits = 0;
-                }
-            }
+            if (homingDirection == -1 ? encoder.getVelocity() < 0 : encoder.getVelocity() > 0)
+                zeroVelocityTimer.reset();
+            if (!motor.isOverCurrent())
+                overcurrentTimer.reset();
             power = homingParameters.homePower * Math.signum(homingDirection);
             DualTelemetry.smartAdd(HoldableActuator.this.toString(), "<font color='yellow'><b>HOMING</b></font> [%tps]", Math.round(encoder.getVelocity()));
         }
@@ -668,22 +662,18 @@ public class HoldableActuator extends BunyipsSubsystem {
         @Override
         protected boolean isTaskFinished() {
             boolean hardStop = targetSwitch != null && targetSwitch.isPressed();
-            boolean velocityZeroed = homingParameters.zeroHitThreshold > 0 && zeroHits >= homingParameters.zeroHitThreshold;
-            boolean overCurrent = overcurrentTime.magnitude() > 0 && motor.isOverCurrent();
-            if (overcurrentTime.magnitude() > 0 && overCurrent && overcurrentTimer == null) {
-                overcurrentTimer = new ElapsedTime();
-            } else if (!overCurrent) {
-                overcurrentTimer = null;
-            }
-            boolean sustainedOvercurrent = overcurrentTimer != null && overcurrentTimer.seconds() >= overcurrentTime.in(Seconds);
+            boolean velocityZeroed = homingParameters.zeroVelocityDuration.gt(Seconds.zero())
+                    && zeroVelocityTimer.seconds() >= homingParameters.zeroVelocityDuration.in(Seconds);
+            boolean sustainedOvercurrent = homingParameters.zeroVelocityDuration.gt(Seconds.zero())
+                    && overcurrentTimer.seconds() >= overcurrentTime.in(Seconds);
             return hardStop || velocityZeroed || sustainedOvercurrent;
         }
 
         private static class Parameters {
             // Sane defaults
             public Measure<Time> homingTimeout = Seconds.of(5);
+            public Measure<Time> zeroVelocityDuration = Milliseconds.of(700);
             public double homePower = 0.7;
-            public int zeroHitThreshold = 30;
         }
     }
 
@@ -711,7 +701,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     .onFinish(() -> power = 0)
                     .on(HoldableActuator.this, false)
                     // It's fine for this task name to be stale since we shouldn't expect dynamic disabling of sp. ctrl.
-                    .named(userSetpointControl != null ? "Setpoint Delta Control" : "Power Target Control");
+                    .named(forThisSubsystem(userSetpointControl != null ? "Setpoint Delta Control" : "Power Target Control"));
         }
 
         /**
