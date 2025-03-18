@@ -509,7 +509,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 sleep(500)
             }
         } catch (t: Throwable) {
-            Dbg.error("BunyipsOpMode: unhandled throwable! <${t.message}>")
+            Dbg.error("BunyipsOpMode: unhandled throwable! Stacktrace:")
             Dbg.sendStacktrace(t)
             OpModes.inhibitNextLightsReset()
             robotControllers.forEach { module ->
