@@ -119,6 +119,7 @@ class DualTelemetry @JvmOverloads constructor(
     fun init(info: String = "") {
         this.info = info
         clearAll()
+        msTransmissionInterval = DEFAULT_TRANSMISSION_INTERVAL_MS
         telemetry.setDisplayFormat(DisplayFormat.HTML)
         telemetry.log().displayOrder = Telemetry.Log.DisplayOrder.OLDEST_FIRST
         telemetry.captionValueSeparator = ""
@@ -1118,6 +1119,12 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @JvmField
         var TELEMETRY_LOG_LINE_LIMIT = 200
+
+        /**
+         * The default interval for telemetry transmissions to the Driver Station and FtcDashboard.
+         */
+        @JvmField
+        var DEFAULT_TRANSMISSION_INTERVAL_MS = 100
 
         /**
          * Whether to strip HTML from [smartAdd] and [smartLog] calls for [OpMode] instances.

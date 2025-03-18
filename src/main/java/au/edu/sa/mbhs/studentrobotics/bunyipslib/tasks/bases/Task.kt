@@ -227,7 +227,11 @@ abstract class Task : Runnable, Action {
      */
     fun execute() {
         if (attached) return
-        dependency.ifPresentOrElse({ attached = it.setCurrentTask(this) }, this::run)
+        dependency.ifPresentOrElse({
+            if (it.isDisabled)
+                finishNow()
+            attached = it.setCurrentTask(this)
+        }, this::run)
     }
 
     /**
@@ -237,7 +241,11 @@ abstract class Task : Runnable, Action {
      * if you wish to respect the [dependency], use the [execute] method.
      */
     final override fun run() {
-        dependency.ifPresentOrElse({ attached = it.currentTask == this }, { attached = false })
+        dependency.ifPresentOrElse({
+            if (it.isDisabled)
+                finishNow()
+            attached = it.currentTask == this
+        }, { attached = false })
         Dashboard.usePacket {
             dashboard = it
             if (startTime == 0L) {
