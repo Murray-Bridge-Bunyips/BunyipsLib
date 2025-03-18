@@ -292,6 +292,11 @@ abstract class BunyipsOpMode : BOMInternal() {
             }
             telemetry.init("<small><font color='#e5ffde'>bunyipslib</font> <font color='gray'>v${BuildConfig.SEMVER}-${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME}</font></small>")
             telemetry.overheadTag = "<b>${javaClass.simpleName}</b>"
+            // An EmergencyStop which is handled by Exceptions may be raised on another thread.
+            // However, we need this throw operation to be on this thread and polled often, so we attach it as a telemetry action.
+            telemetry.addAction {
+                Exceptions.THROWN_EXCEPTIONS.filterIsInstance<Exceptions.EmergencyStop>().forEach { throw it }
+            }
             telemetry.update()
 
             telemetry.opModeStatus = "<b><font color='yellow'>static_init</font></b>"

@@ -347,6 +347,9 @@ class UserSelection<T : Any> @SafeVarargs constructor(
         } else {
             results.first() as? T
         }
+
+        // NOTE: EmergencyStop instances will not be rethrown through these callbacks and must rely on BOMs
+        // check for EmergencyStop via a telemetry hook. This is due to the nature of the ThreadPool.
         Exceptions.runUserMethod { callback.accept(userRes) }
         return userRes
     }

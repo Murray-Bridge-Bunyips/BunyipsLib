@@ -26,10 +26,12 @@ import kotlin.math.max
  * for the SDK, so attempting to multi-thread hardware for loop times will drastically hinder robot performance.
  * Threads are best used for blocking operations that do not access hardware reads and writes.
  *
- * Tasks are scheduled through the SDK's default cached [ThreadPool].
- * Exceptions thrown during a thread task are caught by the [Exceptions] handler.
+ * Tasks are scheduled through the SDK's default cached [ThreadPool]. Do note that by executing tasks on this pool,
+ * exceptions will not be rethrown to the OpMode thread when required (such as when an `EmergencyStop` is requested).
+ * Exceptions are still logged to the DS and Logcat in standard `Exceptions` fashion, and `BunyipsOpMode` tries
+ * to look for these exceptions manually to terminate the OpMode, but do note the reduced exception safety in a thread.
  *
- * Threads started via this class are automatically shut down at the end of OpModes, via the [.stopAll] method
+ * Threads started via this class are automatically shut down at the end of OpModes, via the [stopAll] method
  * and a BunyipsLib [Hook].
  *
  * @author Lucas Bubner, 2025

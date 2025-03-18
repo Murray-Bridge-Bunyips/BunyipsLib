@@ -48,7 +48,7 @@ object Exceptions {
         var out = stderr
         Dbg.error("Exception caught! Stacktrace:")
         Dbg.sendStacktrace(e)
-        if (THROWN_EXCEPTIONS.stream().anyMatch { it.toString() == e.toString() } || !THROWN_EXCEPTIONS.add(e)) {
+        if (!THROWN_EXCEPTIONS.add(e) || THROWN_EXCEPTIONS.stream().anyMatch { it.toString() == e.toString() }) {
             // Don't log out the same exception twice
             out = null
         }
