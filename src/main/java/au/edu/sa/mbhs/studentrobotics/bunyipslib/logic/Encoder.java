@@ -183,7 +183,7 @@ public class Encoder {
             velo = (getDirection() == DcMotorSimple.Direction.FORWARD ? 1 : -1) * velocity.get();
             cachedVelocity = velo;
         } else {
-            velo = cachedPosition;
+            velo = cachedVelocity;
         }
         acceleration.apply(velo);
         return velo;
