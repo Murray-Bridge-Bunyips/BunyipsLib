@@ -100,7 +100,7 @@ object Exceptions {
     fun runUserMethod(method: Runnable) {
         try {
             method.run()
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             handle(e) { DualTelemetry.smartLog(it) }
         }
     }

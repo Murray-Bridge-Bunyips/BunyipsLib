@@ -4,7 +4,6 @@ import android.content.Context
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.HardwareTester
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetEncoders
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetLastKnowns
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetRobotControllerLights
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions
 import com.qualcomm.ftccommon.FtcEventLoop
@@ -76,7 +75,6 @@ object BunyipsLib {
         opMode.let {
             it !is DefaultOpMode
                     && it !is ManualControlOpMode
-                    && it !is ResetRobotControllerLights
                     && it !is ResetEncoders
                     && it !is ResetLastKnowns
                     && it !is HardwareTester

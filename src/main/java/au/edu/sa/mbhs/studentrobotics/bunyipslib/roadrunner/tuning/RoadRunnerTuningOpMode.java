@@ -175,7 +175,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             selectedIdxField = TelemetryMenu.class.getDeclaredField("selectedIdx");
             selectedIdxField.setAccessible(true);
         } catch (NoSuchFieldException e) {
-            throw new RuntimeException("Unable to find an internal field! This shouldn't happen!");
+            throw new RuntimeException("Unable to find an internal field! This shouldn't happen!", e);
         }
 
         List<EncoderGroup> encoderGroups = new ArrayList<>();
@@ -336,7 +336,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     rightBackField = mdClass.getDeclaredField("rightBack");
                     imuField = mdClass.getDeclaredField("imu");
                 } catch (NoSuchFieldException e) {
-                    throw new RuntimeException("MecanumDrive is missing fields for motors or IMU! This shouldn't happen!");
+                    throw new RuntimeException("MecanumDrive is missing fields for motors or IMU! This shouldn't happen!", e);
                 }
                 leftFrontField.setAccessible(true);
                 leftBackField.setAccessible(true);
@@ -352,7 +352,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     if (!imu.getInitialised())
                         imu.accept((IMU) imuField.get(md));
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Unable to access objects on MecanumDrive! This shouldn't happen!");
+                    throw new RuntimeException("Unable to access objects on MecanumDrive! This shouldn't happen!", e);
                 }
 
                 // Init once to allow editing
@@ -415,7 +415,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     rightMotorsField = tdClass.getDeclaredField("rightMotors");
                     imuField = tdClass.getDeclaredField("imu");
                 } catch (NoSuchFieldException e) {
-                    throw new RuntimeException("TankDrive is missing fields for motors or IMU! This shouldn't happen!");
+                    throw new RuntimeException("TankDrive is missing fields for motors or IMU! This shouldn't happen!", e);
                 }
                 leftMotorsField.setAccessible(true);
                 rightMotorsField.setAccessible(true);
@@ -427,7 +427,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     if (!imu.getInitialised())
                         imu.accept((IMU) imuField.get(td));
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException("Unable to access the objects on TankDrive! This shouldn't happen!");
+                    throw new RuntimeException("Unable to access the objects on TankDrive! This shouldn't happen!", e);
                 }
 
                 if (tuningTankGains_ramseteZeta == null) {
@@ -515,7 +515,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
         try {
             selectedIdxField.setInt(menu, lastSelectedIndex);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("Access exception! This shouldn't happen!");
+            throw new RuntimeException("Access exception! This shouldn't happen!", e);
         }
 
         while (!selection.getInitialised() && opModeInInit()) {
@@ -524,7 +524,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             try {
                 lastSelectedIndex = selectedIdxField.getInt(menu);
             } catch (IllegalAccessException e) {
-                throw new RuntimeException("Access exception! This shouldn't happen!");
+                throw new RuntimeException("Access exception! This shouldn't happen!", e);
             }
         }
 
@@ -578,7 +578,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                         notifier.notifyAll();
                     }
                 } catch (NoSuchFieldException | IllegalAccessException | NullPointerException e) {
-                    throw new RuntimeException("Internal error while starting OpMode. This shouldn't happen!");
+                    throw new RuntimeException("Internal error while starting OpMode. This shouldn't happen!", e);
                 }
                 return null;
             });

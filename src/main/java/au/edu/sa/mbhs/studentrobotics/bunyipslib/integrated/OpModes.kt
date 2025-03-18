@@ -2,7 +2,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
+import com.qualcomm.hardware.lynx.LynxModule
 import dev.frozenmilk.sinister.sdk.apphooks.SinisterOpModeRegistrar
 import dev.frozenmilk.sinister.sdk.opmodes.OpModeScanner
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
@@ -14,8 +15,8 @@ import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
  * @since 6.0.0
  */
 object OpModes : SinisterOpModeRegistrar {
-    private const val RESET_ROBOT_CONTROLLER_LIGHTS_OPMODE = "\$Reset\$RC\$Lights\$"
     private var suppressOpModes = false
+    private var inhibitNext = false
 
     // Have to expose this so HardwareTester can override the Hook filtering (as HardwareTester is integrated)
     @Volatile
@@ -32,20 +33,19 @@ object OpModes : SinisterOpModeRegistrar {
     }
 
     /**
+     * Whether to inhibit the next invocation of robot controller lights being reset through the post-stop hook.
+     */
+    @JvmStatic
+    fun inhibitNextLightsReset() {
+        inhibitNext = true
+    }
+
+    /**
      * Register all the BunyipsLib integrated OpModes.
      *
      * @param registrationHelper used register
      */
     override fun registerOpModes(registrationHelper: OpModeScanner.RegistrationHelper) {
-        // Always register the reset lights OpMode
-        registrationHelper.register(
-            OpModeMeta.Builder()
-                .setName(RESET_ROBOT_CONTROLLER_LIGHTS_OPMODE)
-                .setFlavor(OpModeMeta.Flavor.SYSTEM)
-                .setSystemOpModeBaseDisplayName("Reset Robot Controller Lights")
-                .build(),
-            ResetRobotControllerLights()
-        )
         if (suppressOpModes) return
         registrationHelper.register(
             OpModeMeta.Builder()
@@ -84,19 +84,17 @@ object OpModes : SinisterOpModeRegistrar {
     private fun tryResetRobotControllerLights() {
         if (lightsDirty) {
             lightsDirty = false
-            val name = "schedule reset rc lights opmode"
-            if (Threads.isRunning(name))
+            if (inhibitNext) {
+                inhibitNext = false
                 return
-            Threads.start(name) {
-                // We must persist init calls as FtcDashboard handles stops strangely, and the first invocation
-                // may not cause the OpMode to run at all. We try to check in with the OpMode to ensure the finisher is run.
-                ResetRobotControllerLights.hasInvoked = false
-                while (!ResetRobotControllerLights.hasInvoked && !lightsDirty) {
-                    BunyipsLib.opModeManager.initOpMode(RESET_ROBOT_CONTROLLER_LIGHTS_OPMODE, true)
-                    // We can't poll too fast as OpModes need some time to start/stop
-                    Thread.sleep(500)
-                }
-            }.also { it.ignoreStopAll = true }
+            }
+            val rcs = BunyipsLib.opModeManager.hardwareMap.getAll(LynxModule::class.java)
+            for (i in rcs.indices) {
+                val module = rcs[i]
+                Dbg.logv(javaClass, "Resetting Robot Controller (#%) lights from % ...", i + 1, module.pattern)
+                // TODO: these patterns should be accepted without the need for an OpMode, figure out if they don't and why
+                module.pattern = LynxModule.blinkerPolicy.getIdlePattern(module)
+            }
         }
     }
 }

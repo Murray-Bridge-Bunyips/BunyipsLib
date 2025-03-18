@@ -299,7 +299,7 @@ public abstract class BunyipsSubsystem {
                 if (!f.getBoolean(def))
                     def.on(this, false);
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException("Failed to access internal fields on Task, this shouldn't happen!");
+                throw new RuntimeException("Failed to access internal fields on Task, this shouldn't happen!", e);
             }
         }
         this.defaultTask = def;

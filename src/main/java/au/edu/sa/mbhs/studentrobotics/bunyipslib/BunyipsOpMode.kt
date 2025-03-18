@@ -6,7 +6,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.*
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetRobotControllerLights
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.OpModes
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
@@ -178,6 +178,8 @@ abstract class BunyipsOpMode : BOMInternal() {
                 it.sdkTelemetry = it.telemetry
             }
         }
+
+        const val ERROR = "<font color='red'><b>error</b></font>"
     }
 
     init {
@@ -311,7 +313,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 // Catch all exceptions, log them, and continue running the OpMode
                 // All InterruptedExceptions are handled by the FTC SDK and are raised in the Exceptions handler
                 ok = false
-                telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                telemetry.overrideStatus = ERROR
                 Exceptions.handle(e, telemetry::log)
             }
 
@@ -343,7 +345,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                         done = onInitLoop() && (initTask == null || !initTask!!.run(it))
                     } catch (e: Exception) {
                         ok = false
-                        telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                        telemetry.overrideStatus = ERROR
                         Exceptions.handle(e, telemetry::log)
                     }
                 }
@@ -369,7 +371,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 }
             } catch (e: Exception) {
                 ok = false
-                telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                telemetry.overrideStatus = ERROR
                 Exceptions.handle(e, telemetry::log)
             }
             telemetry.update()
@@ -379,12 +381,12 @@ abstract class BunyipsOpMode : BOMInternal() {
                 onInitDone()
             } catch (e: Exception) {
                 ok = false
-                telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                telemetry.overrideStatus = ERROR
                 Exceptions.handle(e, telemetry::log)
             }
             // Other related exceptions may have been thrown nested or on threads
             if (ok && Exceptions.THROWN_EXCEPTIONS.isNotEmpty()) {
-                telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                telemetry.overrideStatus = ERROR
                 ok = false
             }
             robotControllers.forEach { module ->
@@ -423,16 +425,16 @@ abstract class BunyipsOpMode : BOMInternal() {
             try {
                 // Run user-defined start operations
                 onStart()
-                telemetry.overrideStatus = null
+                telemetry.overrideStatus = if (telemetry.overrideStatus == ERROR) null else telemetry.overrideStatus
             } catch (e: Exception) {
-                telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                telemetry.overrideStatus = ERROR
                 Exceptions.handle(e, telemetry::log)
             }
             telemetry.update()
             timer.reset()
             telemetry.logBracketColor = "green"
             robotControllers.forEach { module ->
-                // Note any changes we make to lights will be undone later by the ResetRobotControllerLights system
+                // Note any changes we make to lights will be undone later by an automatic hook
                 module.pattern = listOf(
                     Blinker.Step(Color.GREEN, 200, TimeUnit.MILLISECONDS),
                     Blinker.Step(Color.BLACK, 200, TimeUnit.MILLISECONDS)
@@ -458,7 +460,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                     runnables.forEach { Exceptions.runUserMethod(it) }
                     activeLoop()
                 } catch (e: Exception) {
-                    telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                    telemetry.overrideStatus = ERROR
                     Exceptions.handle(e, telemetry::log)
                 }
                 // Update telemetry and timers
@@ -472,7 +474,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             try {
                 onFinish()
             } catch (e: Exception) {
-                telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                telemetry.overrideStatus = ERROR
                 Exceptions.handle(e, telemetry::log)
             }
             // overheadTelemetry will no longer update, will remain frozen on last value
@@ -503,7 +505,7 @@ abstract class BunyipsOpMode : BOMInternal() {
         } catch (t: Throwable) {
             Dbg.error("BunyipsOpMode: unhandled throwable! <${t.message}>")
             Dbg.sendStacktrace(t)
-            ResetRobotControllerLights.inhibitNext = true
+            OpModes.inhibitNextLightsReset()
             robotControllers.forEach { module ->
                 module.setConstant(Color.RED)
             }
@@ -519,7 +521,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             try {
                 onStop()
             } catch (e: Exception) {
-                telemetry.overrideStatus = "<font color='red'><b>error</b></font>"
+                telemetry.overrideStatus = ERROR
                 Exceptions.handle(e, telemetry::log)
             }
             _instance = null

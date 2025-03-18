@@ -99,6 +99,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             out.append("   :: %\n", subsystem.toVerboseString());
         }
         Dbg.logd(out.toString());
+
+        resume();
     }
 
     @Override
@@ -139,11 +141,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             // but we should cancel here too to be pedantic
             Threads.stop(userSelection);
         }
-        // Busy wait here until onReady() has processed and the callback is fully joined
-        // This is safe to do as there are no main thread operations left to run
-        while (!callbackReceived && !isStopRequested()) {
-            sleep(1);
-        }
+        // Awaiting thread joining
+        if (!callbackReceived)
+            halt();
     }
 
     @Override
