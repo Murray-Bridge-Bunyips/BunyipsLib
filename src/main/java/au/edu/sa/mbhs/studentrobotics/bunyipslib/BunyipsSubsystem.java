@@ -224,7 +224,11 @@ public abstract class BunyipsSubsystem {
         if (!shouldRun) return;
         shouldRun = false;
         sout(Dbg::logv, "Subsystem disabled via disable() call.");
-        DualTelemetry.smartLog(getClass(), Text.html().color("yellow", "disabled. ").small("check logcat for more info."));
+        DualTelemetry.smartLog(Text.html()
+                .append("[").append(toString()).append("] ")
+                .color("yellow", "disabled. ")
+                .small("check logcat for more info.")
+        );
         onDisable();
         for (BunyipsSubsystem child : children)
             child.disable();
@@ -238,7 +242,11 @@ public abstract class BunyipsSubsystem {
         if (shouldRun || assertionFailed) return;
         shouldRun = true;
         sout(Dbg::logv, "Subsystem enabled via enable() call.");
-        DualTelemetry.smartLog(getClass(), Text.html().color("green", "enabled. ").small("check logcat for more info."));
+        DualTelemetry.smartLog(Text.html()
+                .append("[").append(toString()).append("] ")
+                .color("green", "enabled. ")
+                .small("check logcat for more info.")
+        );
         onEnable();
         for (BunyipsSubsystem child : children)
             child.enable();
