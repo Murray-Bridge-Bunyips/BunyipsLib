@@ -289,7 +289,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withAutoPower(double targetPower) {
-        autoPower = Math.abs(targetPower);
+        autoPower = Math.min(Math.abs(targetPower), 1);
         return this;
     }
 
@@ -308,7 +308,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     @NonNull
     public HoldableActuator withHomingPower(double targetPower) {
-        homingParameters.homePower = Math.abs(targetPower);
+        homingParameters.homePower = Math.min(Math.abs(targetPower), 1);
         return this;
     }
 
@@ -445,6 +445,8 @@ public class HoldableActuator extends BunyipsSubsystem {
                 usc.accept(power);
             else
                 upc.accept(power);
+        } else {
+            usc.resetState();
         }
 
         // Limit switch position rebounding
@@ -464,14 +466,17 @@ public class HoldableActuator extends BunyipsSubsystem {
                 cancelCurrentTask();
                 encoder.reset();
                 power = 0;
-                if (motor.getTargetPosition() < 0)
+                if (motor.getTargetPosition() < 0) {
+                    usc.resetState();
                     motor.setTargetPosition(0);
+                }
             }
 
             if (bottomSwitch.isPressed() && !autoZeroingLatch) {
                 DcMotor.RunMode prev = motor.getMode();
                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 encoder.reset();
+                usc.resetState();
                 // Must propagate now as we're switching the mode
                 sustainedTolerated.reset();
                 motor.setTargetPosition(0);
@@ -489,8 +494,10 @@ public class HoldableActuator extends BunyipsSubsystem {
             cancelCurrentTask();
             power = 0;
             int current = encoder.getPosition();
-            if (motor.getTargetPosition() > current)
+            if (motor.getTargetPosition() > current) {
+                usc.resetState();
                 motor.setTargetPosition(current);
+            }
         }
 
         // Unusual state that could lead to infinite homing
@@ -515,6 +522,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             boolean overCurrent = motor.isOverCurrent();
             if (sustainedOvercurrent.seconds() >= overcurrentTime.in(Seconds) && overCurrent) {
                 sout(Dbg::warn, "Warning: Stall detection (continued % A for % sec) has been activated. To prevent motor damage, the target position has been auto set to the current position (% -> %).", Mathf.round(motor.getCurrentAlert(CurrentUnit.AMPS), 1), Mathf.round(overcurrentTime.in(Seconds), 1), motor.getTargetPosition(), encoder.getPosition());
+                usc.resetState();
                 motor.setTargetPosition(encoder.getPosition());
             } else if (!overCurrent) {
                 sustainedOvercurrent.reset();
@@ -529,6 +537,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 }
                 if (sustainedTolerated.seconds() >= maxSteadyState.in(Seconds)) {
                     sout(Dbg::warn, "Warning: Steady state error has been detected for % sec. To prevent motor damage, the target position has been auto set to the current position (% -> %).", Mathf.round(maxSteadyState.in(Seconds), 1), motor.getTargetPosition(), encoder.getPosition());
+                    usc.resetState();
                     motor.setTargetPosition(encoder.getPosition());
                 }
             }
@@ -582,17 +591,26 @@ public class HoldableActuator extends BunyipsSubsystem {
 
     private class UserSetpointControl implements DoubleConsumer {
         private double lastTime = -1;
+        // We should track the target ourselves due to round-off error in using the motor
+        private double target;
+        
+        // Called when user setpoint control should use a new capture point
+        public void resetState() {
+            lastTime = -1;
+        }
 
         @Override
         public void accept(double pwr) {
             double now = System.nanoTime() / 1.0E9;
-            if (lastTime == -1)
+            if (lastTime == -1) {
+                target = motor.getTargetPosition();
                 lastTime = now;
+            }
             double dt = now - lastTime;
             lastTime = now;
 
             int current = encoder.getPosition();
-            double target = motor.getTargetPosition() + pwr * Objects.requireNonNull(userSetpointControl).apply(dt);
+            target += pwr * Objects.requireNonNull(userSetpointControl).apply(dt);
 
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setTargetPosition(Math.round((float) target));
