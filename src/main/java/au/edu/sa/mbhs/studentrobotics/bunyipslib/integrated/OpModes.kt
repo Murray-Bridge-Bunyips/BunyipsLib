@@ -92,7 +92,6 @@ object OpModes : SinisterOpModeRegistrar {
             for (i in rcs.indices) {
                 val module = rcs[i]
                 Dbg.logv(javaClass, "Resetting Robot Controller (#%) lights from % ...", i + 1, module.pattern)
-                // TODO: these patterns should be accepted without the need for an OpMode, figure out if they don't and why
                 module.pattern = LynxModule.blinkerPolicy.getIdlePattern(module)
             }
         }

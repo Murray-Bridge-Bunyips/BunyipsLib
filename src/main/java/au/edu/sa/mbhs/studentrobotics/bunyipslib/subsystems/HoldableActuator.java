@@ -664,6 +664,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         @Override
         protected boolean isTaskFinished() {
             boolean hardStop = targetSwitch != null && targetSwitch.isPressed();
+            // TODO: this zeroing may fire too early as v initial is not present
             boolean velocityZeroed = homingParameters.zeroVelocityDuration.gt(Seconds.zero())
                     && zeroVelocityTimer.seconds() >= homingParameters.zeroVelocityDuration.in(Seconds);
             boolean sustainedOvercurrent = homingParameters.zeroVelocityDuration.gt(Seconds.zero())
