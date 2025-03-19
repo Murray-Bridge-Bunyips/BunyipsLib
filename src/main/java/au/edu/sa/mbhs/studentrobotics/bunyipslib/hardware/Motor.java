@@ -181,7 +181,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
             return;
         rtpController = controller;
         if (rtpController.pidf().isPresent())
-            rtpController.pidf().get().setTolerance(LynxConstants.DEFAULT_TARGET_POSITION_TOLERANCE);
+            rtpController.pidf().get().setTolerance(targetPositionTolerance);
     }
 
     /**
