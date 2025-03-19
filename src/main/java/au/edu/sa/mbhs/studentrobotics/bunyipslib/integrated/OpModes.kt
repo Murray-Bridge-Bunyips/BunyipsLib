@@ -85,6 +85,7 @@ object OpModes : SinisterOpModeRegistrar {
         if (lightsDirty) {
             lightsDirty = false
             if (inhibitNext) {
+                Dbg.logv(javaClass, "Robot Controller lights reset operation inhibited by `inhibitNext`.")
                 inhibitNext = false
                 return
             }
