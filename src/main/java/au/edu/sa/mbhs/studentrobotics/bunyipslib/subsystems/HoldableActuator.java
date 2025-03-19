@@ -193,7 +193,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     /**
      * Set the timeout for the Home Task.
      *
-     * @param timeout the time to set for the Home Task to complete. Default is 5s.
+     * @param timeout the time to set for the Home Task to complete. Default is 4s.
      * @return this
      */
     @NonNull
@@ -614,6 +614,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         private final ElapsedTime zeroVelocityTimer = new ElapsedTime();
         private final int homingDirection;
         private final TouchSensor targetSwitch;
+        private boolean initialVelocityChecked;
 
         /**
          * Create a new BidirectionalHomingTask.
@@ -646,7 +647,10 @@ public class HoldableActuator extends BunyipsSubsystem {
 
         @Override
         protected void periodic() {
-            if (homingDirection == -1 ? encoder.getVelocity() < 0 : encoder.getVelocity() > 0)
+            double tps = encoder.getVelocity();
+            if (!Mathf.isNear(tps, 0, 10))
+                initialVelocityChecked = true;
+            if (homingDirection == -1 ? tps < 0 : tps > 0)
                 zeroVelocityTimer.reset();
             if (!motor.isOverCurrent())
                 overcurrentTimer.reset();
@@ -664,9 +668,8 @@ public class HoldableActuator extends BunyipsSubsystem {
         @Override
         protected boolean isTaskFinished() {
             boolean hardStop = targetSwitch != null && targetSwitch.isPressed();
-            // TODO: this zeroing may fire too early as v initial is not present
             boolean velocityZeroed = homingParameters.zeroVelocityDuration.gt(Seconds.zero())
-                    && zeroVelocityTimer.seconds() >= homingParameters.zeroVelocityDuration.in(Seconds);
+                    && initialVelocityChecked && zeroVelocityTimer.seconds() >= homingParameters.zeroVelocityDuration.in(Seconds);
             boolean sustainedOvercurrent = homingParameters.zeroVelocityDuration.gt(Seconds.zero())
                     && overcurrentTimer.seconds() >= overcurrentTime.in(Seconds);
             return hardStop || velocityZeroed || sustainedOvercurrent;
@@ -674,7 +677,7 @@ public class HoldableActuator extends BunyipsSubsystem {
 
         private static class Parameters {
             // Sane defaults
-            public Measure<Time> homingTimeout = Seconds.of(5);
+            public Measure<Time> homingTimeout = Seconds.of(4);
             public Measure<Time> zeroVelocityDuration = Milliseconds.of(700);
             public double homePower = 0.7;
         }
