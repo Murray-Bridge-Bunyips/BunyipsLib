@@ -593,7 +593,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         private double lastTime = -1;
         // We should track the target ourselves due to round-off error in using the motor
         private double target;
-        
+
         // Called when user setpoint control should use a new capture point
         public void resetState() {
             lastTime = -1;

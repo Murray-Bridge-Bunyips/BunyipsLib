@@ -2,6 +2,88 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.0.3 (2025-03-19)
+
+Critical refactors and bugfixes for general library operation.
+
+### Breaking changes
+
+- Refactor and rewrite `HoldableActuator`
+    - Removes unstable and dodgy patterns by the state machine in `periodic()`, following a cleaner code standard which
+      may reduce the number of task-based bugs
+    - The task-based paradigm continues to be the recommended way to control actuators, so `HoldableActuator` has been
+      updated to follow this system with improved task interactions
+    - This removes the hotfix made in v7.0.2 for a minimum execution duration
+    - Some redundant methods and functionalities have been upgraded or removed
+        - `withTolerance(double, boolean)` removed as target position tolerances will now always be applied to the motor
+          object
+        - `withHomingZeroHits` and `disableHomingZeroHits` replaced with `withHomingZeroVelocityDuration` and
+          `disableHomingZeroVelocityDuration`
+            - This homing threshold now takes in a `Measure<Time>` and uses a timer to determine how long of a zero
+              velocity should be accepted as homed
+            - This functionality is effectively the same as the homing hits but no longer relies on loop time but
+              instead real time
+            - New safety checks have been added to check if the actuator has initially moved before triggering the zero
+              velocity condition, improving homing operations
+            - The now-default zero velocity duration is 700 milliseconds
+        - Default homing timeout reduced from 5 seconds to 4 seconds
+- Updated `Sloth` dependency to `0.2.0`
+    - Resolves a bug where the conventional app hooks were not being executed
+    - This caused RoadRunner tuning to be broken with no workaround as the HTML pages were not being registered
+    - Review the wiki for updated Gradle configurations, or simply bump the Sloth version
+- Removed `ResetRobotControllerLights` OpMode
+    - It was found that this OpMode isn't even required and since the command is not dangerous, it can be executed at
+      any time
+    - Robot controller light reset operations are now executed as a POST_STOP `@Hook`, which are substantially faster
+      and will no longer break `preSelectTeleOp` or uninitialisation
+    - Functionality from the reset lights OpMode is now fully located in the `OpModes` object
+
+### Non-breaking changes
+
+- `HardwareTester` motor and servo dashboard controls have been greatly improved
+    - Motors and servos are now grouped in the Configuration tab and are correlated with the name of the motor or servo
+    - These controls dynamically update, so by enabling or disabling dashboard controls for a motor or servo it will be
+      reflected live without needing to transcribe an array
+- `AutonomousBunyipsOpMode` now handles `setOpModes` thread callback better by halting the `BunyipsOpMode` instance
+  until the threads have joined, rather than an empty while loop
+- `BunyipsOpMode` instances now try to scan for `EmergencyStop` instances proactively to rethrow them if one is found
+  via `Exceptions`
+    - This change was made as `Threads` was running on a ThreadPool which swallows all Throwables, thereby ignoring
+      EmergencyStop instances
+- Fix Driver Station subsystem disabled warnings to display the elected name of the subsystem instead of just the ID
+- Improved idempotency for `setDefaultTask` on `BunyipsSubsystem`
+- `DualTelemetry` now increases the default transmission rate to 100ms by default
+    - This default can be changed through the public static field `DEFAULT_TRANSMISSION_INTERVAL_MS`
+- Undeprecated `getTargetPositionTolerance` and `setTargetPositionTolerance` for `Motor`
+    - These tolerances are now reflected at the motor object level and attempted to be copied into the current system
+      controller if possible (to align with old behaviour)
+- `Encoder` instances now support caching values
+    - Through `setCaching` and `clearCache` the last position and velocity readings will be cached, not calling another
+      invocation of the hardware methods until after cache is cleared
+    - This serves as a way to cache reused calls to getPosition or getVelocity without needing the guarantee that bulk
+      reads are enabled
+    - Caching options are used (and cleared on update) by default with `HoldableActuator` as it composes or hooks into
+      an internal `Encoder`, so be aware of this behaviour when the actuator is active
+- Improved exception causes for reflection access failures
+- `Task` instances that are dependent on a disabled subsystem and try to run now internally auto-complete via
+  `finishNow()`
+- `Threads` duplicate task detection has been adjusted to allow completed tasks with the same ID to start and override
+  the finished one
+    - This will now allow tasks that have the same name but are overriding a finished task to run, instead of forcing
+      the task to use a new name
+
+### Bug fixes
+
+- Fixed a critical bug where tasks that were created with `.mutate()` (`DynamicTask`) did not have a proper `startTime`,
+  which led to the task always being "inactive" and delta time returning 0 permanently
+    - This notably causes tasks that rely on delta time and are mutated to never end
+- `ignoreOpModeType` on the `@Hook` now also ignores the double-stop firing protection
+    - This means a user OpMode does not need to have run in order to fire the hook when this mode is active, allowing
+      full hooking capabilities for idle and stop OpModes
+- Fixed a bug where `Exceptions.runUserMethod` would ignore `Throwable` instances, silently swallowing `Error` instances
+  for logging
+- Fix override statuses for `BunyipsOpMode` not being respected following `onStart()`
+
 ## v7.0.2 (2025-03-15)
 
 `IMUEx` angular velocity and task hotfixes.
