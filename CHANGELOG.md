@@ -2,6 +2,26 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.0.4 (2025-03-20)
+
+Minor telemetry and logging bugfixes.
+
+### Non-breaking changes
+
+- `Exceptions.THROWN_EXCEPTIONS` set now runs an additional string equality check to determine if a new exception should
+  be added to the set
+    - Previously, this is how deduping on the Driver Station and dashboard was accomplished, but has been expanded to
+      the stored set of exceptions
+    - This reduces the chance of a memory leak due to an infinitely expanding list in the event of a repeated exception
+
+### Bug fixes
+
+- `Exceptions.handle` is now fixed so exceptions show up in the Telemetry log on dashboard and the Driver Station,
+  rather than just Logcat
+    - This bug was introduced in v7.0.3
+- `SimpleMecanumDrive` periodic telemetry is no longer formatted incorrectly, attempting to format with a stray `this`
+  call
+
 ## v7.0.3 (2025-03-19)
 
 Critical refactors and bugfixes for general library operation.
