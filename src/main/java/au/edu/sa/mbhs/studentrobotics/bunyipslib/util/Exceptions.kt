@@ -25,7 +25,7 @@ import java.util.function.Consumer
  */
 object Exceptions {
     /**
-     * Exceptions thrown since the last reset of this set.
+     * Unique exceptions thrown and caught by [handle] during the execution of the currently executing OpMode.
      */
     @JvmField
     val THROWN_EXCEPTIONS = mutableSetOf<Throwable>()
@@ -50,8 +50,10 @@ object Exceptions {
         if (THROWN_EXCEPTIONS.contains(e) || THROWN_EXCEPTIONS.stream().anyMatch { it.toString() == e.toString() }) {
             // Don't log out the same exception twice
             out = null
+        } else {
+            // We don't want unique string-equal exceptions in this set either otherwise we'll start a memory leak
+            THROWN_EXCEPTIONS.add(e)
         }
-        THROWN_EXCEPTIONS.add(e)
         Dbg.error("Exception (#${THROWN_EXCEPTIONS.size}) caught! Stacktrace:")
         Dbg.sendStacktrace(e)
         val sw = StringWriter()
