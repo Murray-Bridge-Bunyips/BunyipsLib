@@ -171,7 +171,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         rightBack.setPower(rightBackPower);
         rightFront.setPower(rightFrontPower);
 
-        DualTelemetry.smartAdd(toString(), "%\\% %, %\\% %, %\\% %", this,
+        DualTelemetry.smartAdd(toString(), "%\\% %, %\\% %, %\\% %",
                 Math.round(Math.abs(speedX * 100)), speedX >= 0 ? "↑" : "↓",
                 Math.round(Math.abs(speedY * 100)), speedY >= 0 ? "←" : "→",
                 Math.round(Math.abs(speedR * 100)), speedR >= 0 ? "↺" : "↻"

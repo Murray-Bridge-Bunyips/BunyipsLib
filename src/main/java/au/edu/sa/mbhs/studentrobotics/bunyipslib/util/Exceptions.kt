@@ -46,10 +46,12 @@ object Exceptions {
     @JvmStatic
     fun handle(e: Throwable, stderr: Consumer<String>?) {
         var out = stderr
-        if (!THROWN_EXCEPTIONS.add(e) || THROWN_EXCEPTIONS.stream().anyMatch { it.toString() == e.toString() }) {
+        // Check strings as well in case we have different exceptions but with the same error
+        if (THROWN_EXCEPTIONS.contains(e) || THROWN_EXCEPTIONS.stream().anyMatch { it.toString() == e.toString() }) {
             // Don't log out the same exception twice
             out = null
         }
+        THROWN_EXCEPTIONS.add(e)
         Dbg.error("Exception (#${THROWN_EXCEPTIONS.size}) caught! Stacktrace:")
         Dbg.sendStacktrace(e)
         val sw = StringWriter()
