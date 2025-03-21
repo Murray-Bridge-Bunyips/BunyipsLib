@@ -46,8 +46,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
     public double speedR = 0;
     @Nullable
     private Localizer localizer;
-    @Nullable
-    private Accumulator accumulator;
+    private Accumulator accumulator = new Accumulator(Storage.memory().lastKnownPosition);
     private Priority priority = Priority.NORMALISED;
 
     /**
@@ -88,10 +87,6 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         if (localizer != null) {
             Twist2dDual<Time> twist = localizer.update();
 
-            // Auto set to the last known position if the user has not defined one themselves
-            if (accumulator == null) {
-                accumulator = new Accumulator(Storage.memory().lastKnownPosition);
-            }
             accumulator.accumulate(twist);
 
             Pose2d pose = accumulator.getPose();
@@ -225,8 +220,7 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
      */
     @NonNull
     public SimpleMecanumDrive withAccumulator(@NonNull Accumulator accumulator) {
-        if (this.accumulator != null)
-            this.accumulator.copyTo(accumulator);
+        this.accumulator.copyTo(accumulator);
         this.accumulator = accumulator;
         return this;
     }
@@ -252,19 +246,18 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
     @Nullable
     @Override
     public Pose2d getPose() {
-        return accumulator != null ? accumulator.getPose() : null;
+        return localizer != null ? accumulator.getPose() : null;
     }
 
     @Override
     public void setPose(@NonNull Pose2d newPose) {
-        if (accumulator != null)
-            accumulator.setPose(newPose);
+        accumulator.setPose(newPose);
     }
 
     @Nullable
     @Override
     public PoseVelocity2d getVelocity() {
-        return accumulator != null ? accumulator.getVelocity() : null;
+        return localizer != null ? accumulator.getVelocity() : null;
     }
 
     /**
