@@ -2,6 +2,21 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.0.5 (2025-03-21)
+
+Simple drive accumulator and localizer patches.
+
+### Bug fixes
+
+- `SimpleMecanumDrive` and `SimpleTankDrive` now apply `Accumulator` and `Localizer`s on initialisation to match the
+  other `RoadRunnerDrive` variants
+    - This fixes tasks that run early that try to access a manually set localizer for pose information and corrects the
+      initial behaviour of nullability for `setPose` and `getPose`
+    - Note that now the initial pose of the Accumulator is now `Storage.memory().lastKnownPosition` as defined at
+      subsystem construction, matching the other subsystem behaviour
+        - Before, the initial pose from the Accumulator was captured at runtime on the first run of the localizer, but
+          has been changed to capturing on construction
+
 ## v7.0.4 (2025-03-20)
 
 Minor telemetry and logging bugfixes.
