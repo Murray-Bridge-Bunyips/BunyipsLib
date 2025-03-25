@@ -45,6 +45,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -259,7 +260,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 @Override
                 public float getHeadingVelocity() {
                     assert pl.pinpoint != null;
-                    return (float) pl.pinpoint.getHeadingVelocity();
+                    return (float) pl.pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
                 }
 
                 @Override

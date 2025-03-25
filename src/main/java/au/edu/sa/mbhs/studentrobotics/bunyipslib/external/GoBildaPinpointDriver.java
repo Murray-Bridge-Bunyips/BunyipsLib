@@ -1,6 +1,6 @@
 /*
  *  MIT License
- *  Copyright (c) [2024] [Base 10 Assets, LLC]
+ *  Copyright (c) [2025] [Base 10 Assets, LLC]
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.util.TypeConversion;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -51,9 +52,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
  * <p>
  * To use this in BunyipsLib, use this as any other HardwareDevice (such as DcMotor).
  * <p>
- * File copy acquired 19/02/25, keeping the public API surface backwards compatible with other distributions of the driver.
+ * File copy acquired 25th March 2025, keeping the public API surface backwards compatible with other distributions of the driver.
  *
- * @since 7.0.0
+ * @since 7.0.6
  */
 @I2cDeviceType
 @DeviceProperties(
@@ -193,35 +194,74 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @return the Odometry Computer state
      */
     private DeviceStatus lookupStatus(int s) {
-        if ((s & DeviceStatus.CALIBRATING.status) != 0) {
+        if ((s & DeviceStatus.CALIBRATING.status) != 0)
             return DeviceStatus.CALIBRATING;
-        }
         boolean xPodDetected = (s & DeviceStatus.FAULT_X_POD_NOT_DETECTED.status) == 0;
         boolean yPodDetected = (s & DeviceStatus.FAULT_Y_POD_NOT_DETECTED.status) == 0;
-
-        if (!xPodDetected && !yPodDetected) {
+        if (!xPodDetected && !yPodDetected)
             return DeviceStatus.FAULT_NO_PODS_DETECTED;
-        }
-        if (!xPodDetected) {
+        if (!xPodDetected)
             return DeviceStatus.FAULT_X_POD_NOT_DETECTED;
-        }
-        if (!yPodDetected) {
+        if (!yPodDetected)
             return DeviceStatus.FAULT_Y_POD_NOT_DETECTED;
-        }
-        if ((s & DeviceStatus.FAULT_IMU_RUNAWAY.status) != 0) {
+        if ((s & DeviceStatus.FAULT_IMU_RUNAWAY.status) != 0)
             return DeviceStatus.FAULT_IMU_RUNAWAY;
-        }
-        if ((s & DeviceStatus.READY.status) != 0) {
+        if ((s & DeviceStatus.READY.status) != 0)
             return DeviceStatus.READY;
-        } else {
-            return DeviceStatus.NOT_READY;
-        }
+        if ((s & DeviceStatus.FAULT_BAD_READ.status) != 0)
+            return DeviceStatus.FAULT_BAD_READ;
+        return DeviceStatus.NOT_READY;
+    }
+
+    /**
+     * Confirm that the number received is a number, and does not include a change above the threshold.
+     *
+     * @param oldValue   the reading from the previous cycle
+     * @param newValue   the new reading
+     * @param threshold  the maximum change between this reading and the previous one
+     * @param bulkUpdate true if we are updating the loopTime variable. If not it should be false.
+     * @return newValue if the position is good, oldValue otherwise
+     */
+    private Float isPositionCorrupt(float oldValue, float newValue, int threshold, boolean bulkUpdate) {
+        boolean noData = bulkUpdate && loopTime < 1;
+        boolean isCorrupt = noData || Float.isNaN(newValue) || Math.abs(newValue - oldValue) > threshold;
+        if (!isCorrupt)
+            return newValue;
+        deviceStatus = DeviceStatus.FAULT_BAD_READ.status;
+        return oldValue;
+    }
+
+    /**
+     * Confirm that the number received is a number, and does not include a change above the threshold.
+     *
+     * @param oldValue  the reading from the previous cycle
+     * @param newValue  the new reading
+     * @param threshold the velocity allowed to be reported
+     * @return newValue if the velocity is good, oldValue otherwise
+     */
+    private Float isVelocityCorrupt(float oldValue, float newValue, int threshold) {
+        boolean isCorrupt = Float.isNaN(newValue) || Math.abs(newValue) > threshold;
+        boolean noData = loopTime <= 1;
+        if (!isCorrupt)
+            return newValue;
+        deviceStatus = DeviceStatus.FAULT_BAD_READ.status;
+        return oldValue;
     }
 
     /**
      * Call this once per loop to read new data from the Odometry Computer. Data will only update once this is called.
      */
     public void update() {
+        final int positionThreshold = 5000; // More than one FTC field in mm
+        final int headingThreshold = 120; // About 20 full rotations in Radians
+        final int velocityThreshold = 10000; // 10k mm/sec is faster than an FTC robot should be going...
+        final int headingVelocityThreshold = 120; // About 20 rotations per second
+        float oldPosX = xPosition;
+        float oldPosY = yPosition;
+        float oldPosH = hOrientation;
+        float oldVelX = xVelocity;
+        float oldVelY = yVelocity;
+        float oldVelH = hVelocity;
         byte[] bArr = deviceClient.read(Register.BULK_READ.bVal, 40);
         deviceStatus = byteArrayToInt(Arrays.copyOfRange(bArr, 0, 4), ByteOrder.LITTLE_ENDIAN);
         loopTime = byteArrayToInt(Arrays.copyOfRange(bArr, 4, 8), ByteOrder.LITTLE_ENDIAN);
@@ -233,6 +273,16 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
         xVelocity = byteArrayToFloat(Arrays.copyOfRange(bArr, 28, 32), ByteOrder.LITTLE_ENDIAN);
         yVelocity = byteArrayToFloat(Arrays.copyOfRange(bArr, 32, 36), ByteOrder.LITTLE_ENDIAN);
         hVelocity = byteArrayToFloat(Arrays.copyOfRange(bArr, 36, 40), ByteOrder.LITTLE_ENDIAN);
+        /*
+         * Check to see if any of the floats we have received from the device are NaN or are too large
+         * if they are, we return the previously read value and alert the user via the DeviceStatus Enum.
+         */
+        xPosition = isPositionCorrupt(oldPosX, xPosition, positionThreshold, true);
+        yPosition = isPositionCorrupt(oldPosY, yPosition, positionThreshold, true);
+        hOrientation = isPositionCorrupt(oldPosH, hOrientation, headingThreshold, true);
+        xVelocity = isVelocityCorrupt(oldVelX, xVelocity, velocityThreshold);
+        yVelocity = isVelocityCorrupt(oldVelY, yVelocity, velocityThreshold);
+        hVelocity = isVelocityCorrupt(oldVelH, hVelocity, headingVelocityThreshold);
     }
 
     /**
@@ -242,9 +292,14 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      *
      * @param data GoBildaPinpointDriver.readData.ONLY_UPDATE_HEADING
      */
-    public void update(readData data) {
-        if (data == readData.ONLY_UPDATE_HEADING) {
+    public void update(ReadData data) {
+        if (data == ReadData.ONLY_UPDATE_HEADING) {
+            final int headingThreshold = 120;
+            float oldPosH = hOrientation;
             hOrientation = byteArrayToFloat(deviceClient.read(Register.H_ORIENTATION.bVal, 4), ByteOrder.LITTLE_ENDIAN);
+            hOrientation = isPositionCorrupt(oldPosH, hOrientation, headingThreshold, false);
+            if (deviceStatus == DeviceStatus.FAULT_BAD_READ.status)
+                deviceStatus = DeviceStatus.READY.status;
         }
     }
 
@@ -260,6 +315,21 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     public void setOffsets(double xOffset, double yOffset) {
         writeFloat(Register.X_POD_OFFSET, (float) xOffset);
         writeFloat(Register.Y_POD_OFFSET, (float) yOffset);
+    }
+
+    /**
+     * Sets the odometry pod positions relative to the point that the odometry computer tracks around.<br><br>
+     * The most common tracking position is the center of the robot. <br> <br>
+     * The X pod offset refers to how far sideways from the tracking point the X (forward) odometry pod is. Left of the center is a positive number, right of center is a negative number. <br>
+     * the Y pod offset refers to how far forwards from the tracking point the Y (strafe) odometry pod is. forward of center is a positive number, backwards is a negative number.<br>
+     *
+     * @param xOffset      how sideways from the center of the robot is the X (forward) pod? Left increases
+     * @param yOffset      how far forward from the center of the robot is the Y (Strafe) pod? forward increases
+     * @param distanceUnit the unit of distance used for offsets.
+     */
+    public void setOffsets(double xOffset, double yOffset, DistanceUnit distanceUnit) {
+        writeFloat(Register.X_POD_OFFSET, (float) distanceUnit.toMm(xOffset));
+        writeFloat(Register.Y_POD_OFFSET, (float) distanceUnit.toMm(yOffset));
     }
 
     /**
@@ -325,7 +395,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @param pods goBILDA_SWINGARM_POD or goBILDA_4_BAR_POD
      */
     public void setEncoderResolution(GoBildaOdometryPods pods) {
-        setEncoderResolution(GoBildaOdometryPods.goBILDA_SWINGARM_POD.ticksPerMm);
+        setEncoderResolution(GoBildaOdometryPods.goBILDA_SWINGARM_POD.ticksPerMm, DistanceUnit.MM);
     }
 
     /**
@@ -333,9 +403,23 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * You can find this number by dividing the counts-per-revolution of your encoder by the circumference of the wheel.
      *
      * @param ticksPerMm should be somewhere between 10 ticks/mm and 100 ticks/mm a goBILDA Swingarm pod is ~13.26291192
+     * @deprecated The overflow for this function has a DistanceUnit, which can reduce the chance of unit confusion.
      */
+    @Deprecated
     public void setEncoderResolution(double ticksPerMm) {
         writeByteArray(Register.MM_PER_TICK, (floatToByteArray((float) ticksPerMm, ByteOrder.LITTLE_ENDIAN)));
+    }
+
+    /**
+     * Sets the encoder resolution in ticks per mm of the odometry pods. <br>
+     * You can find this number by dividing the counts-per-revolution of your encoder by the circumference of the wheel.
+     *
+     * @param ticksPerUnit should be somewhere between 10 ticks/mm and 100 ticks/mm a goBILDA Swingarm pod is ~13.26291192
+     * @param distanceUnit unit used for distance
+     */
+    public void setEncoderResolution(double ticksPerUnit, DistanceUnit distanceUnit) {
+        double resolution = distanceUnit.toMm(ticksPerUnit);
+        writeByteArray(Register.MM_PER_TICK, (floatToByteArray((float) resolution, ByteOrder.LITTLE_ENDIAN)));
     }
 
     /**
@@ -346,7 +430,7 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @param wheelRadius radius of the encoder wheels
      */
     public void setEncoderResolution(double cpr, Measure<Distance> wheelRadius) {
-        setEncoderResolution(cpr / (wheelRadius.in(Millimeters) * Mathf.TWO_PI));
+        setEncoderResolution(cpr / (wheelRadius.in(Millimeters) * Mathf.TWO_PI), DistanceUnit.MM);
     }
 
     /**
@@ -384,6 +468,42 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     }
 
     /**
+     * Send a position that the Pinpoint should use to track your robot relative to.
+     * You can use this to update the estimated position of your robot with new external
+     * sensor data, or to run a robot in field coordinates.
+     *
+     * @param posX         the new X position you'd like the Pinpoint to track your robot relive to.
+     * @param distanceUnit the unit for posX
+     */
+    public void setPosX(double posX, DistanceUnit distanceUnit) {
+        writeByteArray(Register.X_POSITION, (floatToByteArray((float) distanceUnit.toMm(posX), ByteOrder.LITTLE_ENDIAN)));
+    }
+
+    /**
+     * Send a position that the Pinpoint should use to track your robot relative to.
+     * You can use this to update the estimated position of your robot with new external
+     * sensor data, or to run a robot in field coordinates.
+     *
+     * @param posY         the new Y position you'd like the Pinpoint to track your robot relive to.
+     * @param distanceUnit the unit for posY
+     */
+    public void setPosY(double posY, DistanceUnit distanceUnit) {
+        writeByteArray(Register.Y_POSITION, (floatToByteArray((float) distanceUnit.toMm(posY), ByteOrder.LITTLE_ENDIAN)));
+    }
+
+    /**
+     * Send a heading that the Pinpoint should use to track your robot relative to.
+     * You can use this to update the estimated position of your robot with new external
+     * sensor data, or to run a robot in field coordinates.
+     *
+     * @param heading   the new heading you'd like the Pinpoint to track your robot relive to.
+     * @param angleUnit Radians or Degrees
+     */
+    public void setHeading(double heading, AngleUnit angleUnit) {
+        writeByteArray(Register.H_ORIENTATION, (floatToByteArray((float) angleUnit.toRadians(heading), ByteOrder.LITTLE_ENDIAN)));
+    }
+
+    /**
      * Checks the deviceID of the Odometry Computer. Should return 1.
      *
      * @return 1 if device is functional.
@@ -399,6 +519,10 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
         return readInt(Register.DEVICE_VERSION);
     }
 
+    /**
+     * @return a scalar that the IMU measured heading is multiplied by. This is tuned for each unit
+     * and should not need adjusted.
+     */
     public float getYawScalar() {
         return readFloat(Register.YAW_SCALAR);
     }
@@ -480,6 +604,14 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     }
 
     /**
+     * @param distanceUnit the unit that the estimated position will return in
+     * @return the estimated X (forward) position of the robot in specified unit
+     */
+    public double getPosX(DistanceUnit distanceUnit) {
+        return distanceUnit.fromMm(xPosition);
+    }
+
+    /**
      * @return the estimated Y (Strafe) position of the robot in mm
      */
     public double getPosY() {
@@ -487,71 +619,136 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     }
 
     /**
-     * @return the estimated H (heading) position of the robot in Radians
+     * @param distanceUnit the unit that the estimated position will return in
+     * @return the estimated Y (Strafe) position of the robot in specified unit
      */
+    public double getPosY(DistanceUnit distanceUnit) {
+        return distanceUnit.fromMm(yPosition);
+    }
+
+    /**
+     * @return the unnormalized estimated H (heading) position of the robot in radians.
+     * This heading is unnormalized, not constrained from -180° to 180°. It will continue counting multiple rotations.
+     * @deprecated two overload for this function exist with AngleUnit parameter. These minimize the possibility of unit confusion.
+     */
+    @Deprecated
     public double getHeading() {
         return hOrientation;
     }
 
     /**
-     * @return the estimated X (forward) velocity of the robot in mm/sec
+     * @param angleUnit the unit to use
+     * @return the normalized estimated H (heading) position of the robot in specified unit. This heading is a normalized heading, wrapped from -180°, to 180°.
      */
+    public double getHeading(AngleUnit angleUnit) {
+        return angleUnit.fromRadians((hOrientation + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
+    }
+
+    /**
+     * @param unnormalizedAngleUnit the unit to use that will not wrap angle
+     * @return the unnormalized estimated H (heading) position of the robot in specified unit
+     * This heading is unnormalized, not constrained from -180° to 180°. It will continue counting
+     * multiple rotations.
+     */
+    public double getHeading(UnnormalizedAngleUnit unnormalizedAngleUnit) {
+        return unnormalizedAngleUnit.fromRadians(hOrientation);
+    }
+
+    /**
+     * @return the estimated X (forward) velocity of the robot in mm/sec
+     * @deprecated The overflow for this function has a DistanceUnit, which can reduce the chance of unit confusion.
+     */
+    @Deprecated
     public double getVelX() {
         return xVelocity;
     }
 
     /**
-     * @return the estimated Y (strafe) velocity of the robot in mm/sec
+     * @param distanceUnit the unit to use
+     * @return the estimated X (forward) velocity of the robot in specified unit/sec
      */
+    public double getVelX(DistanceUnit distanceUnit) {
+        return distanceUnit.fromMm(xVelocity);
+    }
+
+    /**
+     * @return the estimated Y (strafe) velocity of the robot in mm/sec
+     * @deprecated The overflow for this function has a DistanceUnit, which can reduce the chance of unit confusion.
+     */
+    @Deprecated
     public double getVelY() {
         return yVelocity;
     }
 
     /**
-     * @return the estimated H (heading) velocity of the robot in radians/sec
+     * @param distanceUnit the unit to use
+     * @return the estimated Y (strafe) velocity of the robot in specified unit/sec
      */
+    public double getVelY(DistanceUnit distanceUnit) {
+        return distanceUnit.fromMm(yVelocity);
+    }
+
+    /**
+     * @return the estimated H (heading) velocity of the robot in radians/sec
+     * @deprecated The overflow for this function has an AngleUnit, which can reduce the chance of unit confusion.
+     */
+    @Deprecated
     public double getHeadingVelocity() {
         return hVelocity;
     }
 
     /**
-     * <strong> This uses its own I2C read, avoid calling this every loop. </strong>
-     *
-     * @return the user-set offset for the X (forward) pod
+     * @param unnormalizedAngleUnit the unit to use
+     * @return the estimated H (heading) velocity of the robot in specified unit/sec
      */
-    public float getXOffset() {
-        return readFloat(Register.X_POD_OFFSET);
+    public double getHeadingVelocity(UnnormalizedAngleUnit unnormalizedAngleUnit) {
+        return unnormalizedAngleUnit.fromRadians(hVelocity);
     }
 
     /**
      * <strong> This uses its own I2C read, avoid calling this every loop. </strong>
      *
+     * @param distanceUnit the unit to use
+     * @return the user-set offset for the X (forward) pod in specified unit
+     */
+    public float getXOffset(DistanceUnit distanceUnit) {
+        return (float) distanceUnit.fromMm(readFloat(Register.X_POD_OFFSET));
+    }
+
+    /**
+     * <strong> This uses its own I2C read, avoid calling this every loop. </strong>
+     *
+     * @param distanceUnit the unit to use
      * @return the user-set offset for the Y (strafe) pod
      */
-    public float getYOffset() {
-        return readFloat(Register.Y_POD_OFFSET);
+    public float getYOffset(DistanceUnit distanceUnit) {
+        return (float) distanceUnit.fromMm(readFloat(Register.Y_POD_OFFSET));
     }
 
     /**
-     * @return a Pose2D containing the estimated position of the robot
+     * @return a Pose2D containing the estimated position of the robot, angle will be wrapped from -180 to 180 deg.
      */
     public Pose2D getPosition() {
         return new Pose2D(DistanceUnit.MM,
                 xPosition,
                 yPosition,
                 AngleUnit.RADIANS,
-                hOrientation);
+                // Wrap from -180 to 180 degrees
+                ((hOrientation + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI);
     }
 
     /**
      * @return a Pose2D containing the estimated velocity of the robot, velocity is unit per second
+     * @deprecated This function is not recommended, as velocity is wrapped from -180° to 180°.
+     * instead use individual getters.
      */
+    @Deprecated
     public Pose2D getVelocity() {
         return new Pose2D(DistanceUnit.MM,
                 xVelocity,
                 yVelocity,
                 AngleUnit.RADIANS,
-                hVelocity);
+                ((hVelocity + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI);
     }
 
     private enum Register {
@@ -586,33 +783,37 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      */
     public enum DeviceStatus {
         /**
-         * Device is not ready.
+         * Device is not ready (red LED).
          */
         NOT_READY(0),
         /**
-         * Device is ready.
+         * Device is ready (green LED).
          */
         READY(1),
         /**
-         * Device is calibrating.
+         * Device is calibrating the gyro (red LED).
          */
         CALIBRATING(1 << 1),
         /**
-         * Device detects no X pod.
+         * Device detects no X pod (blue LED).
          */
         FAULT_X_POD_NOT_DETECTED(1 << 2),
         /**
-         * Device detects no Y pod.
+         * Device detects no Y pod (orange LED).
          */
         FAULT_Y_POD_NOT_DETECTED(1 << 3),
         /**
-         * Device detects no pods.
+         * Device detects no pods (purple LED).
          */
         FAULT_NO_PODS_DETECTED(1 << 2 | 1 << 3),
         /**
          * Device has detected an IMU runaway event.
          */
-        FAULT_IMU_RUNAWAY(1 << 4);
+        FAULT_IMU_RUNAWAY(1 << 4),
+        /**
+         * Driver has detected a bad/corrupted read.
+         */
+        FAULT_BAD_READ(1 << 5);
 
         private final int status;
 
@@ -661,10 +862,9 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
     }
 
     /**
-     * Captures a limited scope of read data. More options may be added in future update
+     * Captures a limited scope of read data. More options may be added in future updates.
      */
-    // I really don't like this naming inconsistency but we keep it for backwards compat. for other distributed drivers
-    public enum readData {
+    public enum ReadData {
         /**
          * Only update heading data
          */

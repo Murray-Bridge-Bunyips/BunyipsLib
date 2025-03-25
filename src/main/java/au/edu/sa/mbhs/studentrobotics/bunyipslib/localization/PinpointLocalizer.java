@@ -12,6 +12,10 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.GoBildaPinpointDriver;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.DriveModel;
@@ -27,7 +31,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * @since 7.0.0
  */
 public class PinpointLocalizer implements Localizer {
-    private static final double INCH_MM_CONVERSION_FACTOR = 25.4;
     /**
      * The Pinpoint Computer in use.
      */
@@ -51,9 +54,8 @@ public class PinpointLocalizer implements Localizer {
             return;
 
         // Pinpoint uses millimeters as its standard unit
-        double mmPerTick = INCH_MM_CONVERSION_FACTOR * driveModel.inPerTick;
-        pinpoint.setEncoderResolution(1 / mmPerTick);
-        pinpoint.setOffsets(mmPerTick * params.parYTicks, mmPerTick * params.perpXTicks);
+        pinpoint.setEncoderResolution(1 / driveModel.inPerTick, DistanceUnit.INCH);
+        pinpoint.setOffsets(driveModel.inPerTick * params.parYTicks, driveModel.inPerTick * params.perpXTicks, DistanceUnit.INCH);
 
         pinpoint.resetPosAndIMU();
     }
@@ -67,15 +69,15 @@ public class PinpointLocalizer implements Localizer {
             return new Twist2dDual<>(Vector2dDual.constant(Geometry.zeroVec(), 2), DualNum.constant(0, 2));
 
         Pose2d pose = new Pose2d(
-                pinpoint.getPosX() / INCH_MM_CONVERSION_FACTOR,
-                pinpoint.getPosY() / INCH_MM_CONVERSION_FACTOR,
-                pinpoint.getHeading()
+                pinpoint.getPosX(DistanceUnit.INCH),
+                pinpoint.getPosY(DistanceUnit.INCH),
+                pinpoint.getHeading(AngleUnit.RADIANS)
         );
         PoseVelocity2d vel = new PoseVelocity2d(
                 // Note: Pinpoint velocity is in the global reference frame
                 // https://discord.com/channels/225450307654647808/356086067033538570/1340040945470804022
-                pose.heading.inverse().times(new Vector2d(pinpoint.getVelX() / INCH_MM_CONVERSION_FACTOR, pinpoint.getVelY() / INCH_MM_CONVERSION_FACTOR)),
-                pinpoint.getHeadingVelocity()
+                pose.heading.inverse().times(new Vector2d(pinpoint.getVelX(DistanceUnit.INCH), pinpoint.getVelY(DistanceUnit.INCH))),
+                pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS)
         );
 
         FlightRecorder.write("PINPOINT_POSE", new PoseMessage(pose));
