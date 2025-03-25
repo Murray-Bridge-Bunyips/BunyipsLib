@@ -2,6 +2,19 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.0.6 (2025-03-25)
+
+Dependency updates.
+
+### Breaking changes
+
+- Updated `Sloth` to version `0.2.1`
+    - New installation configuration is available on the installation page of the wiki
+    - Alternatively, bumping all Sloth-related libs from 0.2.0 to 0.2.1 with a find and replace also works
+- Updated the `GoBildaPinpointDriver` from GoBilda to the latest version
+    - Includes new features for bad read detection, and unit-friendly getters/setters
+    - Some old properties (such as `readData` now `ReadData`, etc.) have been renamed
+
 ## v7.0.5 (2025-03-21)
 
 Simple drive accumulator and localizer patches.
