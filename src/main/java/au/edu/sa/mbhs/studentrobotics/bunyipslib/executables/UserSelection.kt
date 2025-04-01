@@ -216,19 +216,21 @@ class UserSelection<T : Any> @SafeVarargs constructor(
         }
 
         fun mapArgs(layer: Int, selections: Array<*>): HashMap<Any?, Controls> {
-            val mappings: HashMap<Any?, Controls> = hashMapOf()
-            val nonModified = selections.mapIndexedNotNull { i, sel ->
+            val mappings = hashMapOf<Any?, Controls>()
+            val nonModified = mutableListOf<Any?>()
+            selections.forEachIndexed { i, sel ->
                 assignedButtons[layer to i]?.let {
                     // Allocate this button for this particular item
                     mappings[sel] = it
-                    null
+                    return@forEachIndexed
                 }
-                sel
+                nonModified.add(sel)
             }
-            // Fill the rest of the items in, not accounting the ones we manually mapped
-            val filled = Controls.mapArgs(nonModified.toTypedArray(), mappings.map { it.value })
-            mappings.putAll(filled)
-            return mappings
+            return hashMapOf<Any?, Controls>().apply {
+                // First fills entries that were not mapped by a manual button binding
+                putAll(Controls.mapArgs(nonModified.toTypedArray(), mappings.map { m -> m.value }))
+                putAll(mappings)
+            }
         }
 
         val opMode = BunyipsOpMode.instance
