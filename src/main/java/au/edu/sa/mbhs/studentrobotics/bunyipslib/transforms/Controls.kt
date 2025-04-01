@@ -171,7 +171,7 @@ enum class Controls {
         fun <T> mapArgs(args: Array<out T>, skipOver: Collection<Controls> = setOf()): HashMap<T, Controls> {
             // Map strings of args to every controller enum in order
             if (args.size >= entries.size - skipOver.size) {
-                throw IllegalArgumentException("Tried to map too many (${args.size}/${entries.size - skipOver.size}) arguments to controller buttons! There are not enough buttons for the desired number of mappings.")
+                throw IllegalArgumentException("Tried to map too many (${args.size}/${entries.size - skipOver.size - 1}) arguments to controller buttons! There are not enough buttons for the desired number of mappings.")
             }
             val map = HashMap<T, Controls>()
             val reducedButtons = entries.toTypedArray().filter { !skipOver.contains(it) }

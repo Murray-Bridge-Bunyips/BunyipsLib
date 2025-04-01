@@ -243,15 +243,12 @@ class UserSelection<T : Any> @SafeVarargs constructor(
             buttonLayers.add(mapArgs(0, selections))
         } else {
             if (selections.all { tryAutoboxArray(it) is Array<*> }) {
-                selections.forEachIndexed { i, it -> buttonLayers.add(mapArgs(i, tryAutoboxArray(it) as Array<*>)) }
+                selections.forEachIndexed { i, it ->
+                    buttonLayers.add(mapArgs(i, tryAutoboxArray(it) as Array<*>))
+                }
             } else if (selections.isArrayOf<Collection<*>>()) {
                 selections.forEachIndexed { i, it ->
-                    buttonLayers.add(
-                        mapArgs(
-                            i,
-                            (it as Collection<*>).toTypedArray()
-                        )
-                    )
+                    buttonLayers.add(mapArgs(i, (it as Collection<*>).toTypedArray()))
                 }
             } else {
                 buttonLayers.add(mapArgs(0, selections))
