@@ -167,15 +167,16 @@ enum class Controls {
          * Map an array of arguments to controller buttons in order of the enum.
          */
         @JvmStatic
-        fun <T> mapArgs(args: Array<out T>): HashMap<T, Controls> {
+        @JvmOverloads
+        fun <T> mapArgs(args: Array<out T>, skipOver: Collection<Controls> = setOf()): HashMap<T, Controls> {
             // Map strings of args to every controller enum in order
-            if (args.size >= entries.size) {
-                throw IllegalArgumentException("Controller: Number of args exceeds number of possible gamepad buttons (14).")
+            if (args.size >= entries.size - skipOver.size) {
+                throw IllegalArgumentException("Tried to map too many (${args.size}/${entries.size - skipOver.size}) arguments to controller buttons! There are not enough buttons for the desired number of mappings.")
             }
             val map = HashMap<T, Controls>()
+            val reducedButtons = entries.toTypedArray().filter { !skipOver.contains(it) }
             for (i in args.indices) {
-                // For every arg, map it to the corresponding enum
-                map[args[i]] = entries.toTypedArray()[i]
+                map[args[i]] = reducedButtons[i]
             }
             return map
         }

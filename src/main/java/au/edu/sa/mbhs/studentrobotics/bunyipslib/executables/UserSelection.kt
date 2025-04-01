@@ -111,6 +111,22 @@ class UserSelection<T : Any> @SafeVarargs constructor(
     @JvmField
     val captionLayers = mutableMapOf<Int, String>()
 
+    /**
+     * The buttons a particular item in a layer should use, if defined.
+     *
+     * If you populate this map, with the first index being the layer and second index being the selection in the layer, UserSelection will
+     * prioritise a desired button to be used on that selection. For example, layer 0 and index 0 will be first item in the first layer,
+     * which can be defined in this map to correspond with a custom button to use.
+     *
+     * Using duplicate assigned buttons on the *same layer* is not permitted, as well as assigning a selection to [Controls.NONE].
+     *
+     * If you don't add custom orderings, the default enum progression from [Controls] will be used.
+     *
+     * @since 7.1.0
+     */
+    @JvmField
+    val assignedButtons = mutableMapOf<Pair<Int, Int>, Controls>()
+
     companion object {
         private val _lastSelectedButtons = mutableListOf<Controls>()
 
@@ -151,6 +167,27 @@ class UserSelection<T : Any> @SafeVarargs constructor(
     fun captionLayer(layer: Int, caption: String) = apply { captionLayers[layer] = caption }
 
     /**
+     * Chaining utility that assigns the indexed [layerItem] on the indexed [layer] to correspond with a desired [button] to use when prompted.
+     *
+     * These button mappings are exposed through [assignedButtons].
+     *
+     * This allows you to set a button you want UserSelection to use for a particular selection.
+     * ```
+     * .assignButton(0, 0, Controls.A) // Assigns the first selection of the first layer to use Controls.A
+     * .assignButton(1, 0, Controls.B) // Assigns the first selection of the second layer to use Controls.B
+     * .assignButton(1, 2, Controls.X) // Assigns the third selection of the second layer to use Controls.X
+     * ```
+     *
+     * If you're only using 1 layer, use [layer] to be 0, and index to your selections in order as you normally would.
+     *
+     * Duplicating buttons on the same layer or using [Controls.NONE] will throw an exception at runtime.
+     *
+     * @since 7.1.0
+     */
+    fun assignButton(layer: Int, layerItem: Int, button: Controls) =
+        apply { assignedButtons[layer to layerItem] = button }
+
+    /**
      * Maps a set of operation modes to a set of buttons, then blocks until the user inputs an option via `gamepad1`.
      *
      * Currently only supports runtime within a [BunyipsOpMode].
@@ -163,6 +200,37 @@ class UserSelection<T : Any> @SafeVarargs constructor(
             return null
         }
 
+        for ((assignment, button) in assignedButtons) {
+            val (layer, item) = assignment
+
+            if (button == Controls.NONE)
+                throw Exceptions.EmergencyStop("Assigned button for layer $layer on layer item $item cannot be Controls.NONE!")
+
+            assignedButtons.entries
+                .filter { it.value == button && it.key.first == layer }
+                .forEachIndexed { i, it ->
+                    // If we have more than one result there's a duplicate (being two of the same button in the same layer)
+                    if (i >= 1)
+                        throw Exceptions.EmergencyStop("Assigned button for layer ${it.key.first} (${it.value}) on layer item ${it.key.second} is duplicated!")
+                }
+        }
+
+        fun mapArgs(layer: Int, selections: Array<*>): HashMap<Any?, Controls> {
+            val mappings: HashMap<Any?, Controls> = hashMapOf()
+            val nonModified = selections.mapIndexedNotNull { i, sel ->
+                assignedButtons[layer to i]?.let {
+                    // Allocate this button for this particular item
+                    mappings[sel] = it
+                    null
+                }
+                sel
+            }
+            // Fill the rest of the items in, not accounting the ones we manually mapped
+            val filled = Controls.mapArgs(nonModified.toTypedArray(), mappings.map { it.value })
+            mappings.putAll(filled)
+            return mappings
+        }
+
         val opMode = BunyipsOpMode.instance
         val runningOnThread = Threads.isRunning(this)
 
@@ -170,14 +238,21 @@ class UserSelection<T : Any> @SafeVarargs constructor(
         // We lose type clarity, but usually we would be dealing with incompatible types when we have multiple arrays
         val buttonLayers: MutableList<HashMap<Any?, Controls>> = mutableListOf()
         if (disableChaining) {
-            buttonLayers.add(Controls.mapArgs(selections))
+            buttonLayers.add(mapArgs(0, selections))
         } else {
             if (selections.all { tryAutoboxArray(it) is Array<*> }) {
-                selections.forEach { buttonLayers.add(Controls.mapArgs(tryAutoboxArray(it) as Array<*>)) }
+                selections.forEachIndexed { i, it -> buttonLayers.add(mapArgs(i, tryAutoboxArray(it) as Array<*>)) }
             } else if (selections.isArrayOf<Collection<*>>()) {
-                selections.forEach { buttonLayers.add(Controls.mapArgs((it as Collection<*>).toTypedArray())) }
+                selections.forEachIndexed { i, it ->
+                    buttonLayers.add(
+                        mapArgs(
+                            i,
+                            (it as Collection<*>).toTypedArray()
+                        )
+                    )
+                }
             } else {
-                buttonLayers.add(Controls.mapArgs(selections))
+                buttonLayers.add(mapArgs(0, selections))
             }
         }
 

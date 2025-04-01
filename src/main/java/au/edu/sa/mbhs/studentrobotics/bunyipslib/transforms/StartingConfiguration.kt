@@ -40,26 +40,32 @@ object StartingConfiguration {
         /**
          * The alliance this robot is starting in.
          */
+        @JvmField
         val alliance: Alliance,
         /**
          * The side the robot is biased or has been placed on.
          */
+        @JvmField
         val origin: Origin,
         /**
          * The translation from the center of the field tile to the robot center, in order to touch the field wall.
          */
+        @JvmField
         val backwardTranslation: Measure<Distance>,
         /**
          * The translation from the origin to the robot center.
          */
+        @JvmField
         val horizontalTranslation: Measure<Distance>,
         /**
          * Counter-clockwise rotation of the robot in the starting position.
          */
+        @JvmField
         val ccwRotation: Measure<Angle>,
         /**
          * Read-only arbitrary user flags for this starting configuration.
          */
+        @JvmField
         val flags: Set<Any> = emptySet()
     ) {
         /**
