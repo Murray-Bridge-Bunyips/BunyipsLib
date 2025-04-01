@@ -301,16 +301,16 @@ class UserSelection<T : Any> @SafeVarargs constructor(
                 "$buttonsName -> $selectionsName@T+${opMode.timer.elapsedTime() to Seconds round 1}s"
             )
 
-            // We also auto-parse starting alliance data for Storage, to assist in heuristics
-            // Note this only applies for the first found results which is a starting alliance
+            // We also auto-parse starting configuration data for Storage, to assist in heuristics
+            // Note this only applies for the first found results which is a starting configuration
             run loop@{
                 results.forEach {
                     if (it is StartingPositions) {
-                        Storage.memory().lastKnownAlliance = it.toStartingConfiguration().alliance
+                        Storage.memory().lastKnownStartingConfiguration = it.toStartingConfiguration()
                         return@loop
                     }
                     if (it is StartingConfiguration.Position) {
-                        Storage.memory().lastKnownAlliance = it.alliance
+                        Storage.memory().lastKnownStartingConfiguration = it
                         return@loop
                     }
                 }

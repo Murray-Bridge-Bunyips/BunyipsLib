@@ -13,6 +13,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguratio
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Alliance.RED
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.LEFT
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.RIGHT
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry.toUserString
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.acmerobotics.roadrunner.Pose2d
 import kotlin.math.abs
@@ -33,7 +34,7 @@ import kotlin.math.abs
  */
 object StartingConfiguration {
     /**
-     * Represents a position that a robot is able to start a match in.
+     * Represents a position, state, and configuration that a robot is able to start a match in.
      */
     data class Position @JvmOverloads constructor(
         /**
@@ -110,9 +111,14 @@ object StartingConfiguration {
          * Invert this starting configuration over the center of the field, returning a new starting configuration
          * that is a direct mirror on the other alliance (symmetrical mirror).
          */
-        fun invert(): Position {
-            return Position(alliance.invert(), origin.invert(), backwardTranslation, horizontalTranslation, ccwRotation)
-        }
+        fun invert() = Position(
+            alliance.invert(),
+            origin.invert(),
+            backwardTranslation,
+            horizontalTranslation,
+            ccwRotation,
+            flags
+        )
 
         /**
          * Return an informative string about this starting configuration.
@@ -125,7 +131,7 @@ object StartingConfiguration {
                 backwardTranslation,
                 horizontalTranslation,
                 ccwRotation,
-                toFieldPose()
+                toFieldPose().toUserString()
             )
         }
 

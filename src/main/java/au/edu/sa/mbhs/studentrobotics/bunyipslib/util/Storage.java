@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.RobotConfig;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.executables.UserSelection;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration;
 
@@ -82,12 +83,17 @@ public final class Storage {
         public final ArrayList<String> hardwareErrors = new ArrayList<>();
         private final HashMap<String, Object> store = new HashMap<>();
         /**
-         * The last known player Alliance.
+         * The last known/selected {@link StartingConfiguration.Position} object, which can be used to access
+         * the last selected alliance, starting position, or other flags as defined by this object selected.
+         * <p>
+         * This object is automatically filled by {@link UserSelection} immediately when a selection is made, which
+         * can fire a maximum of once per selection.
          *
          * @see StartingConfiguration
+         * @since 7.1.0
          */
         @Nullable
-        public StartingConfiguration.Alliance lastKnownAlliance = null;
+        public StartingConfiguration.Position lastKnownStartingConfiguration = null;
         /**
          * The last known position of the robot from odometry localization.
          * Defaults to the origin.
@@ -106,7 +112,7 @@ public final class Storage {
         public void clear() {
             store.clear();
             hardwareErrors.clear();
-            lastKnownAlliance = null;
+            lastKnownStartingConfiguration = null;
             lastKnownPosition = Geometry.zeroPose();
         }
 
