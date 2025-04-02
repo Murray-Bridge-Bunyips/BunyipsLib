@@ -2,8 +2,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian
-import com.acmerobotics.roadrunner.PoseVelocity2d
-import com.acmerobotics.roadrunner.Vector2d
 import com.qualcomm.robotcore.hardware.Gamepad
 import kotlin.collections.set
 
@@ -30,30 +28,26 @@ enum class Controls {
              * Get the value of an analog input on a gamepad.
              */
             @JvmStatic
-            fun get(gamepad: Gamepad, analog: Analog): Float {
-                return when (analog) {
-                    LEFT_STICK_X -> gamepad.left_stick_x
-                    LEFT_STICK_Y -> gamepad.left_stick_y
-                    RIGHT_STICK_X -> gamepad.right_stick_x
-                    RIGHT_STICK_Y -> gamepad.right_stick_y
-                    LEFT_TRIGGER -> gamepad.left_trigger
-                    RIGHT_TRIGGER -> gamepad.right_trigger
-                }
+            fun get(gamepad: Gamepad, analog: Analog) = when (analog) {
+                LEFT_STICK_X -> gamepad.left_stick_x
+                LEFT_STICK_Y -> gamepad.left_stick_y
+                RIGHT_STICK_X -> gamepad.right_stick_x
+                RIGHT_STICK_Y -> gamepad.right_stick_y
+                LEFT_TRIGGER -> gamepad.left_trigger
+                RIGHT_TRIGGER -> gamepad.right_trigger
             }
 
             /**
              * Get the value of an analog input on a gamepad, with the Y axis inverted for the left and right sticks.
              */
             @JvmStatic
-            fun getCartesian(gamepad: Gamepad, analog: Analog): Float {
-                return when (analog) {
-                    LEFT_STICK_X -> gamepad.left_stick_x
-                    LEFT_STICK_Y -> -gamepad.left_stick_y
-                    RIGHT_STICK_X -> gamepad.right_stick_x
-                    RIGHT_STICK_Y -> -gamepad.right_stick_y
-                    LEFT_TRIGGER -> gamepad.left_trigger
-                    RIGHT_TRIGGER -> gamepad.right_trigger
-                }
+            fun getCartesian(gamepad: Gamepad, analog: Analog) = when (analog) {
+                LEFT_STICK_X -> gamepad.left_stick_x
+                LEFT_STICK_Y -> -gamepad.left_stick_y
+                RIGHT_STICK_X -> gamepad.right_stick_x
+                RIGHT_STICK_Y -> -gamepad.right_stick_y
+                LEFT_TRIGGER -> gamepad.left_trigger
+                RIGHT_TRIGGER -> gamepad.right_trigger
             }
         }
     }
@@ -63,27 +57,27 @@ enum class Controls {
      */
     enum class ButtonGroup {
         /**
-         * All bumpers
+         * All bumpers.
          */
         BUMPERS,
 
         /**
-         * All face buttons
+         * All face buttons.
          */
         DPAD,
 
         /**
-         * ABXY buttons
+         * ABXY buttons.
          */
         BUTTONS,
 
         /**
-         * Start, back, and stick buttons
+         * Start, back, and stick buttons.
          */
         SPECIAL,
 
         /**
-         * All buttons
+         * All buttons.
          */
         ALL
     }
@@ -94,17 +88,17 @@ enum class Controls {
      */
     enum class AnalogGroup {
         /**
-         * Both analog sticks
+         * Both analog sticks.
          */
         STICKS,
 
         /**
-         * Both triggers
+         * Both triggers.
          */
         TRIGGERS,
 
         /**
-         * All analog inputs
+         * All analog inputs.
          */
         ALL
     }
@@ -133,7 +127,6 @@ enum class Controls {
                 RIGHT_BUMPER -> buttonPressed = gamepad.right_bumper
                 LEFT_STICK_BUTTON -> buttonPressed = gamepad.left_stick_button
                 RIGHT_STICK_BUTTON -> buttonPressed = gamepad.right_stick_button
-
                 NONE -> {}
             }
             return buttonPressed
@@ -143,24 +136,22 @@ enum class Controls {
          * Get the character representation of a button.
          */
         @JvmStatic
-        fun getChar(button: Controls): Char {
-            when (button) {
-                DPAD_UP -> return 'u'
-                DPAD_DOWN -> return 'd'
-                DPAD_LEFT -> return 'l'
-                DPAD_RIGHT -> return 'r'
-                A -> return 'a'
-                B -> return 'b'
-                X -> return 'x'
-                Y -> return 'y'
-                START -> return '*'
-                BACK -> return '-'
-                LEFT_BUMPER -> return '\\'
-                RIGHT_BUMPER -> return '/'
-                LEFT_STICK_BUTTON -> return 'L'
-                RIGHT_STICK_BUTTON -> return 'R'
-                NONE -> return 'n'
-            }
+        fun getChar(button: Controls) = when (button) {
+            DPAD_UP -> 'u'
+            DPAD_DOWN -> 'd'
+            DPAD_LEFT -> 'l'
+            DPAD_RIGHT -> 'r'
+            A -> 'a'
+            B -> 'b'
+            X -> 'x'
+            Y -> 'y'
+            START -> '*'
+            BACK -> '-'
+            LEFT_BUMPER -> '\\'
+            RIGHT_BUMPER -> '/'
+            LEFT_STICK_BUTTON -> 'L'
+            RIGHT_STICK_BUTTON -> 'R'
+            NONE -> 'n'
         }
 
         /**
@@ -170,14 +161,12 @@ enum class Controls {
         @JvmOverloads
         fun <T> mapArgs(args: Array<out T>, skipOver: Collection<Controls> = setOf()): HashMap<T, Controls> {
             // Map strings of args to every controller enum in order
-            if (args.size >= entries.size - skipOver.size) {
+            if (args.size >= entries.size - skipOver.size)
                 throw IllegalArgumentException("Tried to map too many (${args.size}/${entries.size - skipOver.size - 1}) arguments to controller buttons! There are not enough buttons for the desired number of mappings.")
-            }
             val map = HashMap<T, Controls>()
             val reducedButtons = entries.toTypedArray().filter { !skipOver.contains(it) }
-            for (i in args.indices) {
+            for (i in args.indices)
                 map[args[i]] = reducedButtons[i]
-            }
             return map
         }
 
@@ -186,18 +175,14 @@ enum class Controls {
          * This inverts the y value as the gamepad y stick is inverted.
          */
         @JvmStatic
-        fun vel(lsx: Double, lsy: Double, rsx: Double): PoseVelocity2d {
-            return Cartesian.toVel(lsx, -lsy, rsx)
-        }
+        fun vel(lsx: Double, lsy: Double, rsx: Double) = Cartesian.toVel(lsx, -lsy, rsx)
 
         /**
          * Convert the gamepad translation values to a robot vector.
          * This inverts the y value as the gamepad y stick is inverted.
          */
         @JvmStatic
-        fun vec(lsx: Double, lsy: Double): Vector2d {
-            return Cartesian.toVec(lsx, -lsy)
-        }
+        fun vec(lsx: Double, lsy: Double) = Cartesian.toVec(lsx, -lsy)
 
         /**
          * Return a string of all buttons and values currently pressed.
@@ -234,32 +219,28 @@ enum class Controls {
          * Get the buttons in a specified ButtonGroup.
          */
         @JvmStatic
-        fun getButtons(group: ButtonGroup): Array<Controls> {
-            return when (group) {
-                ButtonGroup.BUMPERS -> arrayOf(LEFT_BUMPER, RIGHT_BUMPER)
-                ButtonGroup.DPAD -> arrayOf(DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT)
-                ButtonGroup.BUTTONS -> arrayOf(A, B, X, Y)
-                ButtonGroup.SPECIAL -> arrayOf(START, BACK, LEFT_STICK_BUTTON, RIGHT_STICK_BUTTON)
-                ButtonGroup.ALL -> entries.toTypedArray()
-            }
+        fun getButtons(group: ButtonGroup) = when (group) {
+            ButtonGroup.BUMPERS -> arrayOf(LEFT_BUMPER, RIGHT_BUMPER)
+            ButtonGroup.DPAD -> arrayOf(DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT)
+            ButtonGroup.BUTTONS -> arrayOf(A, B, X, Y)
+            ButtonGroup.SPECIAL -> arrayOf(START, BACK, LEFT_STICK_BUTTON, RIGHT_STICK_BUTTON)
+            ButtonGroup.ALL -> entries.toTypedArray()
         }
 
         /**
          * Get the axes in a specified AnalogGroup.
          */
         @JvmStatic
-        fun getAxes(group: AnalogGroup): Array<Analog> {
-            return when (group) {
-                AnalogGroup.STICKS -> arrayOf(
-                    Analog.LEFT_STICK_X,
-                    Analog.LEFT_STICK_Y,
-                    Analog.RIGHT_STICK_X,
-                    Analog.RIGHT_STICK_Y
-                )
+        fun getAxes(group: AnalogGroup) = when (group) {
+            AnalogGroup.STICKS -> arrayOf(
+                Analog.LEFT_STICK_X,
+                Analog.LEFT_STICK_Y,
+                Analog.RIGHT_STICK_X,
+                Analog.RIGHT_STICK_Y
+            )
 
-                AnalogGroup.TRIGGERS -> arrayOf(Analog.LEFT_TRIGGER, Analog.RIGHT_TRIGGER)
-                AnalogGroup.ALL -> Analog.entries.toTypedArray()
-            }
+            AnalogGroup.TRIGGERS -> arrayOf(Analog.LEFT_TRIGGER, Analog.RIGHT_TRIGGER)
+            AnalogGroup.ALL -> Analog.entries.toTypedArray()
         }
 
         /**
