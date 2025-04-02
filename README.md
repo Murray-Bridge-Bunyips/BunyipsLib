@@ -1,7 +1,7 @@
 ![BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/.github/blob/main/bunyipslib_banner.png)
 [![GitHub Release](https://img.shields.io/github/v/release/Murray-Bridge-Bunyips/BunyipsLib?color=darkgreen&label=latest%20release)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/releases/latest)
 [![GitHub commits since latest release](https://img.shields.io/github/commits-since/Murray-Bridge-Bunyips/BunyipsLib/latest)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/commits/master/)
-[![Recommended FTC SDK version (v7.0.6)](https://img.shields.io/static/v1?label=sdk%20(v7.0.6)&message=v10.2&color=c76114)](https://github.com/FIRST-Tech-Challenge/FtcRobotController/tree/v10.2)
+[![Recommended FTC SDK version (v7.1.0)](https://img.shields.io/static/v1?label=sdk%20(v7.1.0)&message=v10.2&color=c76114)](https://github.com/FIRST-Tech-Challenge/FtcRobotController/tree/v10.2)
 [![Recommended FTC SDK version (latest commit on master)](https://img.shields.io/static/v1?label=sdk%20(latest%20commit)&message=v10.2&color=ffa159)](https://github.com/FIRST-Tech-Challenge/FtcRobotController/tree/v10.2)
 [![View Changelog](https://img.shields.io/static/v1?label=changelog&message=View&color=informational)](/CHANGELOG.md)<br>
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Murray-Bridge-Bunyips/BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/pulse/monthly)

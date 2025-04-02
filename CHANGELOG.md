@@ -2,6 +2,43 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.1.0 (2025-04-02)
+
+Quality of life changes.
+
+### Breaking changes
+
+- `Storage.memory().lastKnownAlliance` has been replaced with `Storage.memory().lastKnownStartingConfiguration`
+    - This removes the narrowing of `StartingConfiguration.Position` by `UserSelection` and opens the rest of the object
+      for the user to use
+    - Functionally, `Storage.memory().lastKnownAlliance` is the same now as
+      `Storage.memory().lastKnownStartingConfiguration.alliance`
+    - Note this field is still only auto-updated by a `UserSelection`, it simply removes the unnecessary narrowing
+- `StartingConfiguration.Position` exposes all data class fields via `@JvmField`
+    - This means getters for any StartingConfiguration object will no longer work in Java, and need to be replaced (e.g.
+      `.getAlliance()` is now just `.alliance`)
+    - This change was made for conciseness and since these fields are final
+
+### Non-breaking changes
+
+- `StartingConfiguration.Position.toVerboseString()` now calls `.toUserString()` on the field Pose2d for better
+  readability
+- General reformatting
+
+### Bug fixes
+
+- Fix a bug where calling `invert()` on a `StartingConfiguration.Position` would silently drop all user-attached `flags`
+
+### Additions
+
+- UserSelection now has a new feature `assignButton` to assign a desired button for each selection
+    - This opens flexibility for which specific button a particular selection should use
+    - An assigned button applies to the whole layer - if an assigned button is not mentioned the default enum ordering (
+      previous behaviour) is used
+    - To use this feature, call `.assignButton(int, int, Controls)`, where you can pass in the layer index, item index
+      in the layer, and desired button
+    - Review the API docs for more information
+
 ## v7.0.6 (2025-03-25)
 
 Dependency updates.
