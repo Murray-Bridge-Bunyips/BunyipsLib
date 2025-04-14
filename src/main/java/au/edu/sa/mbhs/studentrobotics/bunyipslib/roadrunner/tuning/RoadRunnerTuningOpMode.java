@@ -474,7 +474,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
         ForwardRampLogger.POWER_PER_SEC = 0.2;
         LateralRampLogger.POWER_PER_SEC = 0.2;
-        ManualFeedforwardTuner.DISTANCE = 96;
+        ManualFeedforwardTuner.DISTANCE = 72;
 
         TelemetryMenu.MenuElement root = new TelemetryMenu.MenuElement("RoadRunner Tuning Selection", true);
         opModes.addAll(Arrays.asList(
