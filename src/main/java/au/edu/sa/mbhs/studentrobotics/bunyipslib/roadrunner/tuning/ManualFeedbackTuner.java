@@ -9,6 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.ThreeWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TwoWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.TankDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ConditionalTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup;
@@ -53,7 +54,7 @@ public final class ManualFeedbackTuner extends LinearOpMode {
             Actions.runBlocking(
                     new DeadlineTaskGroup(
                             new ConditionalTask(
-                                    Task.task().periodic(() -> drive.setPower(Controls.vel(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x)))
+                                    Task.task().periodic(() -> drive.setPower(Controls.vel(drive instanceof TankDrive ? 0.0 : gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x)))
                                             .until(() -> !gamepad1.right_bumper)
                                             .then(() -> drive.setPose(Geometry.zeroPose())),
                                     drive.makeTrajectory(new Pose2d(0, 0, 0))
