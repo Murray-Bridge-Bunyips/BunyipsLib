@@ -63,8 +63,11 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * <p>
      * To reverse the directionality of the encoder, but not the output power, you can access this object
      * and call the {@code setDirection} method on it. Updating the general direction of the motor will update both.
+     * <p>
+     * This encoder object is mutable. Reassigning this object will use a different {@link Encoder} instance to
+     * regulate all encoder operations. Use with caution.
      */
-    public final Encoder encoder;
+    public Encoder encoder;
 
     protected final DcMotorControllerEx controller;
     protected final int port;
