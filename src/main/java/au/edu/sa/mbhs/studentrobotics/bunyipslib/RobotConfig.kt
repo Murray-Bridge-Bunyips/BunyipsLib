@@ -185,7 +185,7 @@ abstract class RobotConfig {
      * This is useful if you wish to make a "singleton" pattern for your [RobotConfig] class, where instantiating
      * and initialising this class can be handled automatically via a hook.
      *
-     * NOTE: A singleton field on the classpath is required for your config, otherwise an instance can't be known to initialise.
+     * **NOTE:** A singleton field on the classpath is required for your config, otherwise an instance can't be known to initialise.
      *
      * ```java
      * @RobotConfig.AutoInit // annotation attached
@@ -203,6 +203,23 @@ abstract class RobotConfig {
      *
      *       // calling init() manually will no-op now
      *     }
+     * }
+     * ```
+     *
+     * **WARNING:** Attaching `@Config` to your `RobotConfig` instance may cause the class to not show up on the dashboard,
+     * as it will try to recursively add itself to the config. To combat this you will need to use inner static classes
+     * or an entirely different class to hold your constants:
+     * ```java
+     * @RobotConfig.AutoInit
+     * public class Robot extends RobotConfig {
+     *     @Config
+     *     public static class Constants {
+     *         public static double SOME_CONSTANT = 1;
+     *         // ...
+     *     }
+     *
+     *     public static final Robot instance = new Robot();
+     *     // ...
      * }
      * ```
      *
