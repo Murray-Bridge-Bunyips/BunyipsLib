@@ -2,6 +2,39 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.2.0 (2025-05-04)
+
+Non-breaking library operation refinements.
+
+### Non-breaking changes
+
+- General wiki and documentation updates
+    - Highlighted that the use of `@Config` and `@RobotConfig.AutoInit`  together on the same class is not allowed (see
+      the amendment to the bottom
+      of [this wiki section](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/wiki/Robot-Configuration#auto-initialisation))
+- `Motor.encoder` is now exposed at mutable
+    - Allows users to overwrite the `Encoder` object used on a `Motor` object
+    - Useful for analog or external encoders while still being able to use the `DcMotor` interface
+- `ManualFeedforwardTuner` has reduced the default distance from 96 to 72 inches
+
+### Bug fixes
+
+- Fix a critical bug where `ManualFeedbackTuner` would crash on tank drive robots if lateral movement was attempted in
+  override mode
+
+### Additions
+
+- New `Actuator` standard subsystem
+    - Wraps a `DcMotorSimple` to provide simple motor power controls
+    - Supports CRServos and motors that don't have encoders on them
+    - API is very similar to the `HoldableActuator` without many of the features
+    - Useful for intakes or other mechanisms that only need to rotate
+- Actuator subsystems now have an `actuator.tasks.run(power)` task convenience method
+    - This task is syntactic sugar for `tasks.control(() -> power)` for tasks that continuously set the power of the
+      actuator
+    - Useful for the new `Actuator` subsystem when paired with an active intake, without the drawbacks of `setPower` or
+      `runFor`
+
 ## v7.1.0 (2025-04-02)
 
 Quality of life changes.
