@@ -729,16 +729,16 @@ public class HoldableActuator extends BunyipsSubsystem {
         }
 
         /**
-         * Directly set the power of the actuator.
+         * Instantly set the power of the actuator.
          *
-         * @param p the power to set
-         * @return a task to set the power
+         * @param pwr the power to set
+         * @return a one-shot task to set the power instantly then end
          */
         @NonNull
-        public Task setPower(double p) {
-            return new Lambda(() -> power = Mathf.clamp(p, -1, 1))
+        public Task setPower(double pwr) {
+            return new Lambda(() -> power = Mathf.clamp(pwr, -1, 1))
                     .on(HoldableActuator.this, false)
-                    .named(forThisSubsystem("Set Power to " + p));
+                    .named(forThisSubsystem("Set Power to " + pwr));
         }
 
         /**

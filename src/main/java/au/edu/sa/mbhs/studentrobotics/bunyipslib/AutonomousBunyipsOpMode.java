@@ -254,7 +254,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Call to add {@link Task} instances that will be executed sequentially during the active loop.
-     * This task will be internally wrapped into a {@link DeferredTask}.
+     * This task will be internally wrapped into a {@link DeferredTask}, and added to the queue automatically.
+     * <p>
+     * <b>Note:</b> You do not need to call {@link #add(Task)} on this task, it is called for you automatically.
      *
      * @param newDynamicTask deferred task to add to the run queue
      * @param <T>            the inherited task type
@@ -266,7 +268,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Implicitly constructs a new {@link Lambda} to add to the run queue.
+     * Implicitly constructs a new {@link Lambda} and adds it to the run queue.
+     * <p>
+     * <b>Note:</b> You do not need to call {@link #add(Task)} on this task, it is called for you automatically.
      *
      * @param runnable the code to add to the run queue to run once
      * @return the added {@link Lambda}
@@ -277,7 +281,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Implicitly constructs a new {@link Lambda} to add to the run queue.
+     * Implicitly constructs a new {@link Lambda} and adds it to the run queue.
+     * <p>
+     * <b>Note:</b> You do not need to call {@link #add(Task)} on this task, it is called for you automatically.
      *
      * @param name     the name of the task
      * @param runnable the code to add to the run queue to run once
@@ -291,7 +297,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Implicitly constructs a new {@link WaitTask} to add to the run queue.
+     * Implicitly constructs a new {@link WaitTask} and adds it to the run queue.
+     * <p>
+     * <b>Note:</b> You do not need to call {@link #add(Task)} on this task, it is called for you automatically.
      *
      * @param duration the duration to wait
      * @return the added {@link WaitTask}
@@ -302,7 +310,9 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
     }
 
     /**
-     * Implicitly constructs a new {@link WaitTask} to add to the run queue.
+     * Implicitly constructs a new {@link WaitTask} and adds it to the run queue.
+     * <p>
+     * <b>Note:</b> You do not need to call {@link #add(Task)} on this task, it is called for you automatically.
      *
      * @param duration the duration to wait
      * @param unit     the unit of the duration
@@ -359,6 +369,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * and subsequent calls will not be able to insert tasks at the same index due to the shifting of tasks.
      * <p>
      * This task will be internally wrapped into a {@link DeferredTask}.
+     * <p>
+     * <b>Note:</b> You do not need to call {@link #addAtIndex(int, Task)} on this task, it is called for you automatically.
      *
      * @param index          the index to insert the task at, starting from 0
      * @param newDynamicTask deferred task to add to the run queue
@@ -419,6 +431,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Add a task to the run queue at a specified run queue priority.
      * <p>
      * This task will be internally wrapped into a {@link DeferredTask}.
+     * <p>
+     * <b>Note:</b> You do not need to call {@link #add(Task)} on this task, it is called for you automatically.
      *
      * @param runQueuePriority the run queue priority.
      * @param newDynamicTask   deferred task to add to the run queue
@@ -464,6 +478,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * being able to add tasks asynchronously with user input in {@link #onReady(RefCell)}.
      * <p>
      * This task will be internally wrapped into a {@link DeferredTask}.
+     * <p>
+     * <b>Note:</b> You do not need to call {@link #add(Task)} on this task, it is called for you automatically.
      *
      * @param newDynamicTask deferred task to add to the run queue
      * @param <T>            the inherited task type
@@ -506,6 +522,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * asynchronously with user input in {@link #onReady(RefCell)}.
      * <p>
      * This task will be internally wrapped into a {@link DeferredTask}.
+     * <p>
+     * <b>Note:</b> You do not need to call {@link #add(Task)} on this task, it is called for you automatically.
      *
      * @param newDynamicTask deferred task to add to the run queue
      * @param <T>            the inherited task type

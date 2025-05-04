@@ -58,6 +58,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
  */
 @SuppressWarnings("deprecation")
 public class Motor extends SimpleRotator implements DcMotorEx {
+    protected final DcMotorControllerEx controller;
+    protected final int port;
+    private final ArrayList<InterpolatedLookupTable> rtpGains = new ArrayList<>();
+    private final ArrayList<InterpolatedLookupTable> rueGains = new ArrayList<>();
     /**
      * The encoder object that is used for position and velocity readings on this motor.
      * <p>
@@ -68,13 +72,6 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * regulate all encoder operations. Use with caution.
      */
     public Encoder encoder;
-
-    protected final DcMotorControllerEx controller;
-    protected final int port;
-
-    private final ArrayList<InterpolatedLookupTable> rtpGains = new ArrayList<>();
-    private final ArrayList<InterpolatedLookupTable> rueGains = new ArrayList<>();
-
     private DcMotor.RunMode mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
     private SystemController rtpController;
     private SystemController rueController;
