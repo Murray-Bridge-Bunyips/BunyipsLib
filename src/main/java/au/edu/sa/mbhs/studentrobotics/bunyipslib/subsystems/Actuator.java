@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.function.DoubleSupplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
@@ -47,7 +48,7 @@ public class Actuator extends BunyipsSubsystem {
      * @return this
      */
     public Actuator setPower(double power) {
-        this.power = power;
+        this.power = Mathf.clamp(power, -1.0, 1.0);
         return this;
     }
 
@@ -78,6 +79,17 @@ public class Actuator extends BunyipsSubsystem {
                     .onFinish(() -> power = 0)
                     .on(Actuator.this, false)
                     .named(forThisSubsystem("Power Target Control"));
+        }
+
+        /**
+         * Continuously commands the actuator to control with this power value.
+         *
+         * @param power the constant power
+         * @return a task to move the actuator, syntactic sugar to {@code control(() -> power)}.
+         */
+        @NonNull
+        public Task run(double power) {
+            return control(() -> power).named(forThisSubsystem("Run Power at " + power));
         }
 
         /**

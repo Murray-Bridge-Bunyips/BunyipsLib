@@ -729,6 +729,23 @@ public class HoldableActuator extends BunyipsSubsystem {
         }
 
         /**
+         * Continuously commands the actuator to control with this power value.
+         * <p>
+         * <b>Note:</b> Should be allocated as a default task, otherwise this task will not trigger the auto-capturing
+         * power setters and nothing will happen.
+         * <p>
+         * Power will be translated accordingly depending on the state of {@link #withUserSetpointControl(UnaryFunction)}
+         * and if it has been called.
+         *
+         * @param power the constant power
+         * @return a task to move the actuator, syntactic sugar to {@code control(() -> power)}.
+         */
+        @NonNull
+        public Task run(double power) {
+            return control(() -> power).named(forThisSubsystem("Run Power at " + power));
+        }
+
+        /**
          * Instantly set the power of the actuator.
          *
          * @param pwr the power to set
