@@ -162,6 +162,15 @@ abstract class Task : Runnable, Action {
     infix fun on(subsystem: BunyipsSubsystem) = on(subsystem, false)
 
     /**
+     * Declares that this task should override conflicting tasks on the current [dependency] (not incl. default tasks).
+     *
+     * May need to be called if your subsystem is ignoring changing to this task as another task is running, but you wish to override it.
+     *
+     * @since 7.2.1
+     */
+    fun asPriority() = apply { isPriority = true }
+
+    /**
      * Set the name of this task to be displayed in the OpMode.
      * You may override this method if required to enforce a naming convention/prefix.
      * Null values are ignored.
