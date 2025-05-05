@@ -55,6 +55,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     // multiplied constant which allows finer control over the setpoint rather than feeding raw power.
     private final UserSetpointControl usc = new UserSetpointControl();
     private UnaryFunction userSetpointControl;
+    private boolean uscInExternalUse;
     private volatile double power;
     private volatile double userPower;
     private TouchSensor topSwitch;
@@ -459,7 +460,9 @@ public class HoldableActuator extends BunyipsSubsystem {
             } else {
                 upc.accept(power);
             }
-        } else {
+        } else if (!uscInExternalUse) {
+            // Reset state if nothing can be using it
+            // If we don't reset, the task reinitialising will send the actuator to it's last commanded user position
             usc.resetState();
         }
 
@@ -691,6 +694,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         protected void onFinish() {
             power = 0;
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setTargetPosition(0);
             encoder.reset();
         }
 
@@ -930,6 +934,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 throw new Exceptions.EmergencyStop("Tried to create a profiled task when withUserSetpointControl(...) was not called!");
             return Task.task()
                     .init(() -> {
+                        uscInExternalUse = true;
                         usc.resetState();
                         sustainedTolerated.reset();
                         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -943,7 +948,10 @@ public class HoldableActuator extends BunyipsSubsystem {
                             motor.setTargetPosition(targetPosition);
                         DualTelemetry.smartAdd(HoldableActuator.this.toString(), "<font color='#FF5F1F'>PROFILING -> %/% ticks</font> [%tps]", encoder.getPosition(), targetPosition, Math.round(encoder.getVelocity()));
                     })
-                    .onFinish(() -> power = 0)
+                    .onFinish(() -> {
+                        uscInExternalUse = false;
+                        power = 0;
+                    })
                     .isFinished(() -> !motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance()))
                     .on(HoldableActuator.this, true)
                     .named(forThisSubsystem("Move To " + targetPosition + " Ticks"));
