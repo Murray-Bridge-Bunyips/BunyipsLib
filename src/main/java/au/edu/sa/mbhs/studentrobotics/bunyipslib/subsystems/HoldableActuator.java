@@ -96,7 +96,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         // We manage caching manually
         encoder.setCaching(true);
         // Sane default, will need adjusting manually
-        withOvercurrent(Amps.of(8), Seconds.of(2));
+        withOvercurrent(Amps.of(8), Seconds.of(5));
     }
 
     /**
@@ -538,6 +538,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             // Stall detection
             boolean overCurrent = motor.isOverCurrent();
             if (sustainedOvercurrent.seconds() >= overcurrentTime.in(Seconds) && overCurrent) {
+                cancelCurrentTask();
                 sout(Dbg::warn, "Warning: Stall detection (continued % A for % sec) has been activated. To prevent motor damage, the target position has been auto set to the current position (% -> %).", Mathf.round(motor.getCurrentAlert(CurrentUnit.AMPS), 1), Mathf.round(overcurrentTime.in(Seconds), 1), motor.getTargetPosition(), encoder.getPosition());
                 usc.resetState();
                 motor.setTargetPosition(encoder.getPosition());
@@ -553,6 +554,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     sustainedTolerated.reset();
                 }
                 if (sustainedTolerated.seconds() >= maxSteadyState.in(Seconds)) {
+                    cancelCurrentTask();
                     sout(Dbg::warn, "Warning: Steady state error has been detected for % sec. To prevent motor damage, the target position has been auto set to the current position (% -> %).", Mathf.round(maxSteadyState.in(Seconds), 1), motor.getTargetPosition(), encoder.getPosition());
                     usc.resetState();
                     motor.setTargetPosition(encoder.getPosition());
