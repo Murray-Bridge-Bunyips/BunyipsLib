@@ -392,6 +392,10 @@ public class HoldableActuator extends BunyipsSubsystem {
      * <p>
      * This mode is useful to call on high-frequency system controllers, like those accomplished via {@link Motor},
      * and switches over the manual control from raw input to system controls.
+     * <p>
+     * User setpoint control is also used in certain tasks suffixed with {@code profiled}, emulating user input to
+     * adjust the setpoint in a linear fashion rather than instantly. Be advised that user setpoint control does not
+     * apply elsewhere other than these tasks and the user input mode.
      *
      * @param setpointDeltaMul the multiplicative scale to translate power into target position delta, which returns
      *                         the desired delta step in encoder ticks, <b>while supplying you with a delta time (dt) in seconds</b>.
@@ -441,10 +445,13 @@ public class HoldableActuator extends BunyipsSubsystem {
         if (isRunningDefaultTask()) {
             // Manual user control
             power = userPower;
-            if (userSetpointControl != null)
+            if (userSetpointControl != null) {
                 usc.accept(power);
-            else
+                double current = encoder.getPosition();
+                DualTelemetry.smartAdd(HoldableActuator.this.toString(), "% at % ticks [%tps], % error", !motor.isBusy() ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, Math.round(encoder.getVelocity()), Math.round(Math.abs(motor.getTargetPosition() - current)));
+            } else {
                 upc.accept(power);
+            }
         } else {
             usc.resetState();
         }
@@ -609,15 +616,12 @@ public class HoldableActuator extends BunyipsSubsystem {
             double dt = now - lastTime;
             lastTime = now;
 
-            int current = encoder.getPosition();
             target += pwr * Objects.requireNonNull(userSetpointControl).apply(dt);
 
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setTargetPosition(Math.round((float) target));
 
-            power = autoPower * Math.signum(target - current);
-
-            DualTelemetry.smartAdd(HoldableActuator.this.toString(), "% at % ticks [%tps], % error", !motor.isBusy() ? "<font color='green'>SUSTAINING</font>" : "<font color='#FF5F1F'><b>RESPONDING</b></font>", current, Math.round(encoder.getVelocity()), Math.round(Math.abs(target - current)));
+            power = autoPower * Math.signum(target - encoder.getPosition());
         }
     }
 
@@ -747,6 +751,11 @@ public class HoldableActuator extends BunyipsSubsystem {
 
         /**
          * Instantly set the power of the actuator.
+         * <p>
+         * This differs from the {@code setPower()} method on HoldableActuator as it will set the direct power
+         * of the motor, unless a safety constraint is triggered. {@code setPower()} on the parent object
+         * defines a user-desired power which will be further translated. See {@link #control(DoubleSupplier)} for
+         * that behaviour.
          *
          * @param pwr the power to set
          * @return a one-shot task to set the power instantly then end
@@ -759,7 +768,10 @@ public class HoldableActuator extends BunyipsSubsystem {
         }
 
         /**
-         * Run the actuator for a certain amount of time.
+         * Run the actuator for a certain amount of time using raw power.
+         * <p>
+         * Power will be translated according to the user setpoint control defined in
+         * {@link #withUserSetpointControl(UnaryFunction)} if a default task is scheduled.
          *
          * @param time the time to run for
          * @param pwr  the power to run at
@@ -779,6 +791,8 @@ public class HoldableActuator extends BunyipsSubsystem {
         /**
          * Home the actuator based on encoders against a hard stop or limit switch. This task ignores
          * the lower and upper limits as defined by this class.
+         * <p>
+         * The power used will follow the homing power, and ignore user setpoint control. Use with caution.
          *
          * @return a task to home the actuator
          */
@@ -794,6 +808,8 @@ public class HoldableActuator extends BunyipsSubsystem {
          * Note: Without an interrupt or top limit switch, this may be a dangerous task to call. Use with care, as
          * this task is intended for homing operations in the opposite direction instead of simply travelling
          * to some arbitrary limit while respecting the upper and lower bounds.
+         * <p>
+         * The power used will follow the homing power, and ignore user setpoint control. Use with caution.
          *
          * @return a task to ceiling the actuator
          */
@@ -806,6 +822,8 @@ public class HoldableActuator extends BunyipsSubsystem {
          * Set the position of the actuator based on a mapped limit switch.
          * This task will run the actuator to the position mapped by the limit switch, and has a condition to
          * stop the actuator if the limit switch is pressed.
+         * <p>
+         * This task does not use user setpoint control. Be advised of speed controls.
          *
          * @param limitSwitch the position to set based on the limit switch, MUST be mapped by the actuator
          * @return a task to set the position
@@ -825,6 +843,8 @@ public class HoldableActuator extends BunyipsSubsystem {
          * Commands the actuator to go to a particular encoder tick reading by advancing or retreating the motor.
          * <p>
          * Informally known as the Doinky-Rubber-Bandy Task.
+         * <p>
+         * This task does not use user setpoint control. Be advised of speed controls.
          *
          * @param targetPosition the position to set
          * @return a task to set the position
@@ -852,6 +872,8 @@ public class HoldableActuator extends BunyipsSubsystem {
         /**
          * Commands the actuator to go to a particular encoder position as an offset of the current position when
          * this task is executed.
+         * <p>
+         * This task does not use user setpoint control. Be advised of speed controls.
          *
          * @param deltaPosition the delta to add to the current position of the actuator at task runtime
          * @return a task to delta the position
@@ -860,6 +882,81 @@ public class HoldableActuator extends BunyipsSubsystem {
         public Task delta(int deltaPosition) {
             return Task.defer(() -> goTo(encoder.getPosition() + deltaPosition))
                     .named(forThisSubsystem("Run To " + deltaPosition + " Delta Ticks"));
+        }
+
+        /**
+         * Set the position of the actuator based on a mapped limit switch.
+         * This task will run the actuator to the position mapped by the limit switch, and has a condition to
+         * stop the actuator if the limit switch is pressed.
+         * <p>
+         * <b>NOTE:</b> This task hooks into the defined User Setpoint Control parameters to step the setpoint according to the unary function defined
+         * in {@link #withUserSetpointControl(UnaryFunction)}. As a result, USC <b>must</b> be enabled for a profiled task to be
+         * created, or a fatal exception will be thrown. This method will then limit the setpoint velocity to your unary function's output per loop.
+         *
+         * @param limitSwitch the position to set based on the limit switch, MUST be mapped by the actuator
+         * @return a task to set the position
+         */
+        @NonNull
+        public Task goToProfiled(@NonNull TouchSensor limitSwitch) {
+            Integer position = switchMapping.get(limitSwitch);
+            if (position == null) {
+                sout(Dbg::error, "Attempted to go to a limit switch that was not mapped. This task will not run.");
+                return new Lambda();
+            }
+            // Since this is a static mapping we can return the task
+            return goToProfiled(position).until(limitSwitch::isPressed).named(forThisSubsystem("Move To Limit Switch"));
+        }
+
+        /**
+         * Commands the actuator to go to a particular encoder tick reading by advancing or retreating the motor.
+         * <p>
+         * <b>NOTE:</b> This task hooks into the defined User Setpoint Control parameters to step the setpoint according to the unary function defined
+         * in {@link #withUserSetpointControl(UnaryFunction)}. As a result, USC <b>must</b> be enabled for a profiled task to be
+         * created, or a fatal exception will be thrown. This method will then limit the setpoint velocity to your unary function's output per loop.
+         *
+         * @param targetPosition the position to set
+         * @return a task to set the position
+         */
+        @NonNull
+        public Task goToProfiled(int targetPosition) {
+            if (userSetpointControl == null)
+                throw new Exceptions.EmergencyStop("Tried to create a profiled task when withUserSetpointControl(...) was not called!");
+            return Task.task()
+                    .init(() -> {
+                        usc.resetState();
+                        sustainedTolerated.reset();
+                        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    })
+                    .periodic((t) -> {
+                        int currentTarget = motor.getTargetPosition();
+                        // Uses USC calculation to push the setpoint in the direction of our target
+                        usc.accept(Math.signum(targetPosition - currentTarget));
+                        // Snap to target if we're within target position tolerance, prevents oscillation
+                        if (Mathf.isNear(currentTarget, targetPosition, motor.getTargetPositionTolerance()))
+                            motor.setTargetPosition(targetPosition);
+                        DualTelemetry.smartAdd(HoldableActuator.this.toString(), "<font color='#FF5F1F'>PROFILING -> %/% ticks</font> [%tps]", encoder.getPosition(), targetPosition, Math.round(encoder.getVelocity()));
+                    })
+                    .onFinish(() -> power = 0)
+                    .isFinished(() -> !motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance()))
+                    .on(HoldableActuator.this, true)
+                    .named(forThisSubsystem("Move To " + targetPosition + " Ticks"));
+        }
+
+        /**
+         * Commands the actuator to go to a particular encoder position as an offset of the current position when
+         * this task is executed.
+         * <p>
+         * <b>NOTE:</b> This task hooks into the defined User Setpoint Control parameters to step the setpoint according to the unary function defined
+         * in {@link #withUserSetpointControl(UnaryFunction)}. As a result, USC <b>must</b> be enabled for a profiled task to be
+         * created, or a fatal exception will be thrown. This method will then limit the setpoint velocity to your unary function's output per loop.
+         *
+         * @param deltaPosition the delta to add to the current position of the actuator at task runtime
+         * @return a task to delta the position
+         */
+        @NonNull
+        public Task deltaProfiled(int deltaPosition) {
+            return Task.defer(() -> goToProfiled(encoder.getPosition() + deltaPosition))
+                    .named(forThisSubsystem("Move To " + deltaPosition + " Delta Ticks"));
         }
     }
 }
