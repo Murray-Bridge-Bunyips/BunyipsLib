@@ -22,6 +22,7 @@ import java.util.function.DoubleSupplier;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.ProfiledPIDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Current;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
@@ -387,23 +388,29 @@ public class HoldableActuator extends BunyipsSubsystem {
     }
 
     /**
-     * Calling this method will enable the user input mode to instead adjust the setpoint dynamically, rather
-     * than unlocking the setpoint then relocking it when the mode transitions to holding.
+     * Calling this method will enable the user input mode and {@code profiled} task variants to instead adjust the setpoint dynamically at a user-defined velocity,
+     * rather than unlocking the setpoint then relocking it when the mode transitions to holding, or instantaneously setting a new setpoint for tasks.
      * <p>
      * This mode is useful to call on high-frequency system controllers, like those accomplished via {@link Motor},
-     * and switches over the manual control from raw input to system controls.
+     * and switches over the manual control from raw input to system controls. It may also be desired to use this mode
+     * if you do not wish to use a {@link ProfiledPIDController} for tasks.
      * <p>
      * User setpoint control is also used in certain tasks suffixed with {@code profiled}, emulating user input to
      * adjust the setpoint in a linear fashion rather than instantly. Be advised that user setpoint control does not
      * apply elsewhere other than these tasks and the user input mode.
+     * <p>
+     * Enabling user setpoint control by this method is highly recommended and will not only improve system accuracy
+     * but will also enable profiled task variants. The only drawback to this mode is that user input modes may experience
+     * some input lag as the setpoint needs to move to overcome friction, rather than directly sending power.
      *
      * @param setpointDeltaMul the multiplicative scale to translate power into target position delta, which returns
      *                         the desired delta step in encoder ticks, <b>while supplying you with a delta time (dt) in seconds</b>.
      *                         Delta time is calculated as the time between the last two evaluations of the function. It can
      *                         be used to define a rate of change in the setpoint with respect to time rather than loop times.
-     *                         E.g. 100 ticks per second ({@code (dt) -> 100 * dt}).
+     *                         E.g. 100 ticks per second ({@code (dt) -> 100 * dt}). This form is effectively your max actuator TPS.
+     *                         {@code profiled} task variants will use the full max actuator TPS when moving, unless otherwise scaled
+     *                         via {@link #withAutoPower(double)}.
      * @return this
-     * @see #disableOvercurrent()
      */
     @NonNull
     public HoldableActuator withUserSetpointControl(@Nullable UnaryFunction setpointDeltaMul) {
