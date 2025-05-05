@@ -132,7 +132,7 @@ public class Encoder {
     }
 
     /**
-     * Resets the encoder without having to adjust output speed.
+     * Resets the encoder by offsetting the new zero to the current encoder count.
      */
     public void reset() {
         resetVal += getPosition();

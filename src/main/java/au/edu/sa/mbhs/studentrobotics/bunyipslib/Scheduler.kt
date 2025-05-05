@@ -656,7 +656,7 @@ class Scheduler {
          * **WARNING:** This method will only work if you have used a [ControllerButtonBind] (such as through `whenPressed`, etc.)
          * AND you used a [Controller] instance to create the bind (such as by a [BunyipsOpMode]).
          *
-         * @since 7.2.1
+         * @since 7.3.0
          */
         fun finishIfButtonRetriggered() = apply {
             if (originalRunCondition !is ControllerButtonBind)

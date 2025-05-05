@@ -166,7 +166,7 @@ abstract class Task : Runnable, Action {
      *
      * May need to be called if your subsystem is ignoring changing to this task as another task is running, but you wish to override it.
      *
-     * @since 7.2.1
+     * @since 7.3.0
      */
     fun asPriority() = apply { isPriority = true }
 

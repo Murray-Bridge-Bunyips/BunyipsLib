@@ -291,10 +291,22 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     /**
-     * Reset the encoder value without stopping the motor. Will internally be called if the motor is attempted
-     * to be set to {@link DcMotor.RunMode#STOP_AND_RESET_ENCODER}. The target position will also be reset to 0.
+     * Reset the encoder value back to 0 by resetting tracking and commanding the firmware to reset the encoder count.
+     * Will internally be called if the motor is attempted to be set to {@link DcMotor.RunMode#STOP_AND_RESET_ENCODER}.
+     * The target position will also be reset to 0. Power will attempt to be restored across this reset.
+     * <p>
+     * The previous (true) operating mode, {@code RUN_WITHOUT_ENCODER}, of the motor will be restored after this operation.
+     * <p>
+     * <b>Note: </b> Pre-BunyipsLib 7.3.0, this method did not reset the actual encoder on the motor object, causing
+     * OpMode restarts or changes to report the motor position at the original, not reset value.
      */
     public synchronized void resetEncoder() {
+        synchronized (controller) {
+            double rawPreviousPower = actuator.getPower();
+            controller.setMotorMode(port, RunMode.STOP_AND_RESET_ENCODER);
+            controller.setMotorMode(port, RunMode.RUN_WITHOUT_ENCODER);
+            actuator.setPower(rawPreviousPower);
+        }
         encoder.reset();
         setTargetPosition(0);
     }
@@ -538,7 +550,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     /**
      * Modified version of {@code setMode} where the modes will never actually be propagated to the motors, and instead
      * managed internally by the modified {@link #setPower(double)} method. The actual motor object will always be in
-     * {@link DcMotor.RunMode#RUN_WITHOUT_ENCODER}.
+     * {@link DcMotor.RunMode#RUN_WITHOUT_ENCODER}, unless a reset is in progress by {@link #resetEncoder()}.
      *
      * @param mode the new current run mode for this motor
      */
