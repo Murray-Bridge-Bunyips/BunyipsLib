@@ -135,6 +135,7 @@ public class Encoder {
      * Resets the encoder by offsetting the new zero to the current encoder count.
      */
     public void reset() {
+        cachedPosition = null;
         resetVal += getPosition();
     }
 

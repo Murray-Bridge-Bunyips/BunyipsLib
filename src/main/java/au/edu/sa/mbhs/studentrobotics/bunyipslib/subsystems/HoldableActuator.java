@@ -649,6 +649,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         private final int homingDirection;
         private final TouchSensor targetSwitch;
         private boolean initialVelocityChecked;
+        private DcMotor.RunMode prev = DcMotor.RunMode.RUN_TO_POSITION;
 
         /**
          * Create a new BidirectionalHomingTask.
@@ -676,6 +677,7 @@ public class HoldableActuator extends BunyipsSubsystem {
             }
             zeroVelocityTimer.reset();
             overcurrentTimer.reset();
+            prev = motor.getMode();
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
@@ -695,9 +697,13 @@ public class HoldableActuator extends BunyipsSubsystem {
         @Override
         protected void onFinish() {
             power = 0;
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setTargetPosition(0);
-            encoder.reset();
+            if (homingDirection == -1) {
+                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                motor.setTargetPosition(0);
+                motor.setMode(prev);
+                encoder.reset();
+                usc.resetState();
+            }
         }
 
         @Override
