@@ -204,7 +204,7 @@ class Scheduler {
      *
      * @return The controller trigger creator.
      */
-    fun driver() = ControllerTriggerCreator(BunyipsLib.opMode.gamepad1)
+    fun driver() = ControllerTriggerCreator(if (BunyipsOpMode.isRunning) BunyipsOpMode.instance.gamepad1 else BunyipsLib.opMode.gamepad1)
 
     /**
      * Create a new controller trigger creator for gamepad 1 (driver).
@@ -218,7 +218,7 @@ class Scheduler {
      *
      * @return The controller trigger creator.
      */
-    fun operator() = ControllerTriggerCreator(BunyipsLib.opMode.gamepad2)
+    fun operator() = ControllerTriggerCreator(if (BunyipsOpMode.isRunning) BunyipsOpMode.instance.gamepad2 else BunyipsLib.opMode.gamepad2)
 
     /**
      * Create a new controller trigger creator for gamepad 2 (operator).

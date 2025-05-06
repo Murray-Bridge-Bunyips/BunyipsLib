@@ -18,7 +18,8 @@ import dev.frozenmilk.sinister.loading.Preload;
  * Method visibility does not impact the ability for this method to be run.
  * These methods are executed even if a {@link BunyipsOpMode} is not running.
  * <p>
- * To access the current OpMode from these hooks, see {@link BunyipsLib#getOpMode()}.
+ * To access the current OpMode from these hooks, see {@link BunyipsLib#getOpMode()}. Do be warned that hooks
+ * are not called on the same thread as the OpMode thread. Be cautious of race conditions.
  * <p>
  * Do note the Hook will not execute on System OpModes or BunyipsLib-integrated OpModes (such as HardwareTester).
  * You can bypass this by passing in a boolean flag {@link #ignoreOpModeType()}, but should be used with caution.
