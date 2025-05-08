@@ -99,6 +99,12 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         }
         DcMotorEx dme = (DcMotorEx) motor;
         encoder = new Encoder(motor::getCurrentPosition, dme::getVelocity);
+        encoder.setResetOperation((crv, pos) -> {
+            RunMode prev = motor.getMode();
+            motor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(prev);
+            return 0;
+        });
         targetPositionTolerance = dme.getTargetPositionTolerance();
         rawTargetPosition = getCurrentPosition();
     }

@@ -92,6 +92,12 @@ public class HoldableActuator extends BunyipsSubsystem {
             encoder = ((Motor) motor).encoder;
         } else {
             encoder = new Encoder(this.motor::getCurrentPosition, this.motor::getVelocity);
+            encoder.setResetOperation((crv, pos) -> {
+                DcMotor.RunMode prev = motor.getMode();
+                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                motor.setMode(prev);
+                return 0;
+            });
         }
         // We manage caching manually
         encoder.setCaching(true);
@@ -490,14 +496,10 @@ public class HoldableActuator extends BunyipsSubsystem {
             }
 
             if (bottomSwitch.isPressed() && !autoZeroingLatch) {
-                DcMotor.RunMode prev = motor.getMode();
-                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 encoder.reset();
                 usc.resetState();
-                // Must propagate now as we're switching the mode
                 sustainedTolerated.reset();
                 motor.setTargetPosition(0);
-                motor.setMode(prev);
                 // Ensure we only run the reset once every time the switch is pressed
                 autoZeroingLatch = true;
             }
@@ -532,6 +534,9 @@ public class HoldableActuator extends BunyipsSubsystem {
                 power = 0;
             }
         }
+
+        // Target position clamps
+        motor.setTargetPosition((int) Math.round(Mathf.clamp(motor.getTargetPosition(), minLimit, maxLimit)));
 
         // Autonomous protections
         if (motor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) {
@@ -629,6 +634,8 @@ public class HoldableActuator extends BunyipsSubsystem {
             lastTime = now;
 
             target += pwr * Objects.requireNonNull(userSetpointControl).apply(dt);
+            // Clamp here as well as the motor to not create dead zones
+            target = Mathf.clamp(target, minLimit, maxLimit);
 
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setTargetPosition(Math.round((float) target));
@@ -698,12 +705,11 @@ public class HoldableActuator extends BunyipsSubsystem {
         protected void onFinish() {
             power = 0;
             if (homingDirection == -1) {
-                motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motor.setTargetPosition(0);
-                motor.setMode(prev);
                 encoder.reset();
+                motor.setTargetPosition(0);
                 usc.resetState();
             }
+            motor.setMode(prev);
         }
 
         @Override

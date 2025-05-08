@@ -3,8 +3,10 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.logic;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import java.util.function.IntBinaryOperator;
 import java.util.function.Supplier;
 
 /**
@@ -24,6 +26,7 @@ public class Encoder {
     private final Supplier<Double> velocity;
     private final Diff acceleration = new Diff();
     private int resetVal, lastPosition;
+    private IntBinaryOperator resetOperation = Integer::sum;
     private DcMotorSimple.Direction direction;
     private double lastTimestamp, veloEstimate;
     private boolean overflowCorrection;
@@ -58,6 +61,23 @@ public class Encoder {
      */
     public void trackDirection(@NonNull Supplier<DcMotorSimple.Direction> supplier) {
         directionSupplier = supplier;
+    }
+
+    /**
+     * Defines the operation to perform when an encoder reset is executed.
+     * <p>
+     * For motor objects, it is often desired to switch to {@link DcMotor.RunMode#STOP_AND_RESET_ENCODER} and back,
+     * not returning an offset for Encoder to use, and for other cases (including the default) it is desired
+     * to offset the current accumulation by the current value.
+     *
+     * @param resetOperation A function that has inputs {@code (currentResetVal, currentPosition)} and should return {@code (newResetVal)}
+     *                       which will be used in the next reset operation. {@code newResetVal} will be subtracted from the current
+     *                       encoder accumulation, and sent into {@code currentResetVal} on the next reset. {@code currentPosition}
+     *                       is a fresh reading of the {@link #getPosition()} method at the time of invocation. Default behaviour is
+     *                       to sum the current position to the reset value (e.g. {@code resetVal += currentPosition}).
+     */
+    public void setResetOperation(@NonNull IntBinaryOperator resetOperation) {
+        this.resetOperation = resetOperation;
     }
 
     /**
@@ -135,8 +155,9 @@ public class Encoder {
      * Resets the encoder by offsetting the new zero to the current encoder count.
      */
     public void reset() {
+        // Use new read for getPosition()
         cachedPosition = null;
-        resetVal += getPosition();
+        resetVal = resetOperation.applyAsInt(resetVal, getPosition());
     }
 
     /**

@@ -7,6 +7,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 import androidx.annotation.NonNull;
 
 import java.util.Objects;
+import java.util.function.DoubleUnaryOperator;
 
 /**
  * A function that accepts a single {@code double} and returns a {@code double} result. This is used
@@ -18,7 +19,7 @@ import java.util.Objects;
  * @since 1.0.0-pre
  */
 @FunctionalInterface
-public interface UnaryFunction {
+public interface UnaryFunction extends DoubleUnaryOperator {
     /**
      * The identity function that simply returns the input value.
      */
@@ -51,6 +52,17 @@ public interface UnaryFunction {
      * @return the result
      */
     double apply(double input);
+
+    /**
+     * Applies this function to the input value and returns the result.
+     *
+     * @param operand the input value to the function
+     * @return the result
+     */
+    @Override
+    default double applyAsDouble(double operand) {
+        return apply(operand);
+    }
 
     /**
      * Constructs a new function that first calls this function, then passes the result to another as
