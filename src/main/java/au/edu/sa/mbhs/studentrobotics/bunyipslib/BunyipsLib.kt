@@ -19,7 +19,6 @@ import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop
 import dev.frozenmilk.sinister.targeting.FocusedSearch
 import dev.frozenmilk.util.cell.LateInitCell
 import org.firstinspires.ftc.ftccommon.internal.manualcontrol.ManualControlOpMode
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil
 import java.lang.reflect.Method
 import java.util.function.Consumer
 
@@ -35,17 +34,22 @@ import java.util.function.Consumer
  */
 object BunyipsLib {
     /**
+     * Utility to get the event loop for the robot from any context.
+     *
+     * @return Instance for the FTC Event Loop
+     */
+    @JvmStatic
+    val ftcEventLoop: FtcEventLoop
+        get() = _ftcEventLoop.get()
+
+    /**
      * Utility to get the OpMode manager for the robot from any context.
      *
      * @return Instance for the OpMode manager
      */
     @JvmStatic
     val opModeManager: OpModeManagerImpl
-        get() {
-            if (!_opModeManager.initialised)
-                _opModeManager.accept(OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().activity))
-            return _opModeManager.get()
-        }
+        get() = _ftcEventLoop.get().opModeManager
 
     /**
      * @return The currently active OpMode via [opModeManager] or [BunyipsOpMode] (if available)
@@ -81,12 +85,12 @@ object BunyipsLib {
                     && it.javaClass.simpleName != "ProcessLoadEvent"
         }
 
-    private val _opModeManager = LateInitCell<OpModeManagerImpl>()
+    private val _ftcEventLoop = LateInitCell<FtcEventLoop>()
 
     private object EventLoopHook : OnCreateEventLoop {
         override fun onCreateEventLoop(context: Context, ftcEventLoop: FtcEventLoop) {
-            _opModeManager.safeInvoke { it.unregisterListener(OpModeHook) }
-            _opModeManager.accept(ftcEventLoop.opModeManager)
+            _ftcEventLoop.safeInvoke { it.opModeManager.unregisterListener(OpModeHook) }
+            _ftcEventLoop.accept(ftcEventLoop)
             opModeManager.registerListener(OpModeHook)
             Dbg.log(
                 "loaded BunyipsLib v% %-% uid:%",

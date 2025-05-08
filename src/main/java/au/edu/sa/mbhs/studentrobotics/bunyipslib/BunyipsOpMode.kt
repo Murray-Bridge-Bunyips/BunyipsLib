@@ -170,9 +170,10 @@ abstract class BunyipsOpMode : BOMInternal() {
                 it.timer = MovingAverageTimer()
                 it.telemetry = DualTelemetry(it.sdkTelemetry, it.timer)
                 it.t = it.telemetry
-                it.gamepad1 = Controller(it.sdkGamepad1, GamepadUser.ONE)
-                it.gamepad2 = Controller(it.sdkGamepad2, GamepadUser.TWO)
-                // Update OpModeInternal fields
+                it.gamepad1 = Controller(GamepadUser.ONE)
+                it.gamepad2 = Controller(GamepadUser.TWO)
+                Controller.inject(it.gamepad1, it.gamepad2)
+                // Update OpModeInternal fields (partial paranoia, inject handles this)
                 it.sdkGamepad1 = it.gamepad1
                 it.sdkGamepad2 = it.gamepad2
                 it.sdkTelemetry = it.telemetry
@@ -282,13 +283,6 @@ abstract class BunyipsOpMode : BOMInternal() {
             robotControllers.forEach { module ->
                 module.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
                 module.setConstant(Color.CYAN)
-            }
-            // Gamepad monitors to update gamepad custom functions
-            Threads.startLoop("bom gamepad1") {
-                gamepad1.update()
-            }
-            Threads.startLoop("bom gamepad2") {
-                gamepad2.update()
             }
             telemetry.init("<small><font color='#e5ffde'>bunyipslib</font> <font color='gray'>v${BuildConfig.SEMVER}-${BuildConfig.GIT_COMMIT}-${BuildConfig.BUILD_TIME}</font></small>")
             telemetry.overheadTag = "<b>${javaClass.simpleName}</b>"

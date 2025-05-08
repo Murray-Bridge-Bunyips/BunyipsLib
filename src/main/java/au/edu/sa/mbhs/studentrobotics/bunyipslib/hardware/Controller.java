@@ -3,14 +3,19 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.qualcomm.ftccommon.FtcEventLoopBase;
+import com.qualcomm.ftccommon.FtcEventLoopHandler;
+import com.qualcomm.robotcore.eventloop.EventLoopManager;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
 
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.function.Predicate;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.logic.Condition;
@@ -19,19 +24,13 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 /**
  * A wrapper around a {@link Gamepad} object that provides a {@link Controls} interface and custom input calculations.
  * These gamepad objects are used natively in {@link BunyipsOpMode}, and are the drop-in replacements for {@code gamepad1} and {@code gamepad2}.
+ * Controller instances are injected into the FtcEventLoop through {@link #inject(Controller, Controller)}.
  *
  * @author Lucas Bubner, 2024
  * @see BunyipsOpMode
- * @since 1.0.0-pre
+ * @since 7.3.0
  */
 public class Controller extends Gamepad {
-    /**
-     * The SDK gamepad that this Controller wraps and takes input from.
-     * <p>
-     * This is public for advanced users who need to access the raw gamepad values, or need to access hardware
-     * related gamepad methods that are not available in the Controller class which copies state.
-     */
-    public final Gamepad sdk;
     /**
      * The user defined designated user for this gamepad controller.
      * <p>
@@ -100,8 +99,9 @@ public class Controller extends Gamepad {
 
     /**
      * Create a new Controller to manage.
+     * <p>
+     * The Controller instance must be injected into the {@link EventLoopManager} through the static method {@link #inject(Controller, Controller)}.
      *
-     * @param gamepad        The Gamepad to wrap (gamepad1, gamepad2)
      * @param designatedUser The user this gamepad is designated to. Normally, accessing the {@code gamepad.getUser()}
      *                       method can return null if the gamepad has not been "activated" via the controller by
      *                       the user doing Start + A or B. This behaviour is a strange oddity of the SDK but leads
@@ -112,11 +112,39 @@ public class Controller extends Gamepad {
      *                       being parsed directly from the SDK to ensure consistent behaviour and eliminate risk
      *                       of race conditions. A try-getter, {@link #tryGetUser} exists for convenience.
      */
-    public Controller(@NonNull Gamepad gamepad, @NonNull GamepadUser designatedUser) {
+    public Controller(@NonNull GamepadUser designatedUser) {
         this.designatedUser = designatedUser;
-        sdk = gamepad;
-        copy(gamepad);
-        update();
+    }
+
+    /**
+     * Injects two instances of Controller into the event loop manager and OpMode, causing the underlying gamepad objects
+     * to be instances of a Controller, extending Gamepad.
+     * <p>
+     * BunyipsOpMode automatically calls this method as part of a pre-initialisation hook.
+     * <p>
+     * e.g. Injecting new unmanaged Controller objects into all current and future run OpModes of this power cycle:
+     * {@code Controller.inject(new Controller(GamepadUser.ONE), new Controller(GamepadUser.TWO);}
+     *
+     * @param gamepad1 gamepad user 1 to inject
+     * @param gamepad2 gamepad user 2 to inject
+     */
+    public static void inject(@NonNull Controller gamepad1, @NonNull Controller gamepad2) {
+        // We could do this one controller at a time and check designatedUser for allocation but
+        // realistically this method should never be called for just one controller.
+        try {
+            Field felh = FtcEventLoopBase.class.getDeclaredField("ftcEventLoopHandler");
+            felh.setAccessible(true);
+            Field elm = FtcEventLoopHandler.class.getDeclaredField("eventLoopManager");
+            elm.setAccessible(true);
+            Field gamepads = EventLoopManager.class.getDeclaredField("opModeGamepads");
+            gamepads.setAccessible(true);
+            gamepads.set(elm.get(felh.get(BunyipsLib.getFtcEventLoop())), new Gamepad[]{gamepad1, gamepad2});
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Could not access internal event loop fields, this shouldn't happen!", e);
+        }
+        // Update any stale instances
+        BunyipsLib.getOpMode().gamepad1 = gamepad1;
+        BunyipsLib.getOpMode().gamepad2 = gamepad2;
     }
 
     /**
@@ -137,89 +165,94 @@ public class Controller extends Gamepad {
         return user;
     }
 
-    private void parseUnmanagedControllerBuffer() {
-        byte[] buf = sdk.toByteArray();
-        // Size of the Robocol header length is 5, minus 2 to skip the sequence number
-        ByteBuffer byteBuffer = ByteBuffer.wrap(buf, 3, buf.length - 3);
-        // Skip over the sequence number as we don't need it, but still need to read the next bytes
-        byteBuffer.getShort();
+    /**
+     * Copies new state into this gamepad. This method is where new data is added into this gamepad.
+     *
+     * @param gamepad state to be copied from
+     */
+    @Override
+    public void copy(Gamepad gamepad) {
+        fromByteArray(gamepad.toByteArray());
+    }
 
+    /**
+     * Parse gamepad info and assign it to the public fields. This method is the primary updater called periodically.
+     *
+     * @param byteArray byte array containing valid gamepad data
+     */
+    @Override
+    public void fromByteArray(byte[] byteArray) {
+        // Extracted from Gamepad, lifted here to assign custom functions
+        final int BUFFER_SIZE = 65;
+        if (byteArray.length < BUFFER_SIZE) {
+            throw new RuntimeException("Expected buffer of at least " + BUFFER_SIZE + " bytes, received " + byteArray.length);
+        }
+        ByteBuffer byteBuffer = getReadBuffer(byteArray);
+        int buttons;
         byte version = byteBuffer.get();
-
+        // Extract version 1 values
         if (version >= 1) {
             id = byteBuffer.getInt();
             timestamp = byteBuffer.getLong();
-            // Skip over buffers we don't care about
-            for (int i = 0; i < 6; i++) {
-                byteBuffer.getFloat();
-            }
-
-            int buttons = byteBuffer.getInt();
-            // These controls are not handled by Controller, and we can just pass them through,
-            // while ignoring values we will update ourselves
+            left_stick_x = transform(byteBuffer.getFloat(), Controls.Analog.LEFT_STICK_X);
+            left_stick_y = transform(byteBuffer.getFloat(), Controls.Analog.LEFT_STICK_Y);
+            right_stick_x = transform(byteBuffer.getFloat(), Controls.Analog.RIGHT_STICK_X);
+            right_stick_y = transform(byteBuffer.getFloat(), Controls.Analog.RIGHT_STICK_Y);
+            left_trigger = transform(byteBuffer.getFloat(), Controls.Analog.LEFT_TRIGGER);
+            right_trigger = transform(byteBuffer.getFloat(), Controls.Analog.RIGHT_TRIGGER);
+            buttons = byteBuffer.getInt();
             touchpad_finger_1 = (buttons & 0x20000) != 0;
             touchpad_finger_2 = (buttons & 0x10000) != 0;
             touchpad = (buttons & 0x08000) != 0;
+            left_stick_button = transform((buttons & 0x04000) != 0, Controls.LEFT_STICK_BUTTON);
+            right_stick_button = transform((buttons & 0x02000) != 0, Controls.RIGHT_STICK_BUTTON);
+            dpad_up = transform((buttons & 0x01000) != 0, Controls.DPAD_UP);
+            dpad_down = transform((buttons & 0x00800) != 0, Controls.DPAD_DOWN);
+            dpad_left = transform((buttons & 0x00400) != 0, Controls.DPAD_LEFT);
+            dpad_right = transform((buttons & 0x00200) != 0, Controls.DPAD_RIGHT);
+            a = transform((buttons & 0x00100) != 0, Controls.A);
+            b = transform((buttons & 0x00080) != 0, Controls.B);
+            x = transform((buttons & 0x00040) != 0, Controls.X);
+            y = transform((buttons & 0x00020) != 0, Controls.Y);
             guide = (buttons & 0x00010) != 0;
+            start = transform((buttons & 0x00008) != 0, Controls.START);
+            back = transform((buttons & 0x00004) != 0, Controls.BACK);
+            left_bumper = transform((buttons & 0x00002) != 0, Controls.LEFT_BUMPER);
+            right_bumper = transform((buttons & 0x00001) != 0, Controls.RIGHT_BUMPER);
         }
-
+        // Extract version 2 values
         if (version >= 2) {
             user = byteBuffer.get();
         }
-
+        // Extract version 3 values
         if (version >= 3) {
             type = Type.values()[byteBuffer.get()];
         }
-
         if (version >= 4) {
             byte v4TypeValue = byteBuffer.get();
             if (v4TypeValue < Type.values().length) {
+                // Yes, this will replace the version 3 value. That is a good thing, since the version 3
+                // value was not forwards-compatible.
                 type = Type.values()[v4TypeValue];
-            }
+            } // Else, we don't know what the number means, so we just stick with the value we got from the v3 type field
         }
-
         if (version >= 5) {
-            // These values are also not managed by Controller
             touchpad_finger_1_x = byteBuffer.getFloat();
             touchpad_finger_1_y = byteBuffer.getFloat();
             touchpad_finger_2_x = byteBuffer.getFloat();
             touchpad_finger_2_y = byteBuffer.getFloat();
         }
+        updateButtonAliases();
     }
 
-    /**
-     * Update the public fields of this Controller with the values from the wrapped Gamepad, performing calculations
-     * on the inputs as specified by the user.
-     * This method must be called in a loop of the OpMode to update the Controller's values. This is automatically
-     * called in BunyipsOpMode on another thread.
-     */
-    public void update() {
-        parseUnmanagedControllerBuffer();
+    private boolean transform(boolean sdk, Controls button) {
+        Predicate<Boolean> predicate = buttons.get(button);
+        return predicate == null ? sdk : predicate.test(sdk);
+    }
 
-        // Recalculate all custom inputs, these accommodate for the custom functions set by the user
-        // and are the same controls that we intentionally didn't update in parseUnmanagedControllerBuffer().
-        left_stick_x = get(Controls.Analog.LEFT_STICK_X);
-        left_stick_y = get(Controls.Analog.LEFT_STICK_Y);
-        right_stick_x = get(Controls.Analog.RIGHT_STICK_X);
-        right_stick_y = get(Controls.Analog.RIGHT_STICK_Y);
-        left_trigger = get(Controls.Analog.LEFT_TRIGGER);
-        right_trigger = get(Controls.Analog.RIGHT_TRIGGER);
-        left_bumper = get(Controls.LEFT_BUMPER);
-        right_bumper = get(Controls.RIGHT_BUMPER);
-        dpad_up = get(Controls.DPAD_UP);
-        dpad_down = get(Controls.DPAD_DOWN);
-        dpad_left = get(Controls.DPAD_LEFT);
-        dpad_right = get(Controls.DPAD_RIGHT);
-        left_stick_button = get(Controls.LEFT_STICK_BUTTON);
-        right_stick_button = get(Controls.RIGHT_STICK_BUTTON);
-        a = get(Controls.A);
-        b = get(Controls.B);
-        x = get(Controls.X);
-        y = get(Controls.Y);
-        start = get(Controls.START);
-        back = get(Controls.BACK);
-
-        updateButtonAliases();
+    private float transform(float sdk, Controls.Analog axis) {
+        UnaryFunction function = axes.get(axis);
+        return function == null ? sdk : (float) function.apply(sdk);
     }
 
     @Override
@@ -257,6 +290,8 @@ public class Controller extends Gamepad {
         }
         if (button != Controls.NONE)
             buttons.put(button, predicate);
+        // Propagate an update
+        fromByteArray(toByteArray());
         return this;
     }
 
@@ -274,6 +309,8 @@ public class Controller extends Gamepad {
             return this;
         }
         axes.put(axis, function);
+        // Propagate an update
+        fromByteArray(toByteArray());
         return this;
     }
 
@@ -308,30 +345,6 @@ public class Controller extends Gamepad {
     }
 
     /**
-     * Get the value of a button.
-     *
-     * @param button The button to get the value of
-     * @return The value of the button
-     */
-    public boolean get(@NonNull Controls button) {
-        boolean isPressed = Controls.isSelected(sdk, button);
-        Predicate<Boolean> predicate = buttons.get(button);
-        return predicate == null ? isPressed : predicate.test(isPressed);
-    }
-
-    /**
-     * Get the value of an axis.
-     *
-     * @param axis The axis to get the value of
-     * @return The value of the axis
-     */
-    public float get(@NonNull Controls.Analog axis) {
-        float value = Controls.Analog.get(sdk, axis);
-        UnaryFunction function = axes.get(axis);
-        return function == null ? value : (float) function.apply(value);
-    }
-
-    /**
      * Check if a button is currently pressed on a gamepad, with debounce to ignore a press that was already detected
      * upon the <b>first call of this function and button</b>. This is an implementation of rising edge detection, but also
      * applies a check for the initial state of the button, making it useful for task toggles.
@@ -342,7 +355,7 @@ public class Controller extends Gamepad {
      * @return True if the button is pressed and not debounced by the definition of this method
      */
     public boolean getDebounced(@NonNull Controls button) {
-        boolean buttonPressed = get(button);
+        boolean buttonPressed = Controls.isSelected(this, button);
         boolean pressedPreviously = Boolean.TRUE.equals(debounces.getOrDefault(button, buttonPressed));
         if (buttonPressed && !pressedPreviously) {
             debounces.put(button, true);
