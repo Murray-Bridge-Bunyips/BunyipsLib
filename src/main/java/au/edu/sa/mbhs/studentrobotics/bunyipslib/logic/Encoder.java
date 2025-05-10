@@ -152,7 +152,8 @@ public class Encoder {
     }
 
     /**
-     * Resets the encoder by offsetting the new zero to the current encoder count.
+     * Resets the encoder as defined by {@link #setResetOperation(IntBinaryOperator)}. Defaults to incrementing
+     * an offset value to subtract from the final accumulation.
      */
     public void reset() {
         // Use new read for getPosition()
@@ -162,6 +163,8 @@ public class Encoder {
 
     /**
      * Sets the current (known) position of the encoder to this value.
+     * <p>
+     * <b>Note:</b> For motor objects, this value can't be sent to firmware and will be lost after an OpMode switch.
      *
      * @param position the known position to set this encoder to
      */

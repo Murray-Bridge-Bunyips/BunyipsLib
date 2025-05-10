@@ -2,6 +2,74 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.3.0 (2025-05-10)
+
+QoL and critical robot operation improvements.
+
+### Breaking changes
+
+- `Controller` has been rewritten to use an injection-based pattern
+    - When constructing, the only parameter required is to fill the desiredUser field as per previous implementation,
+      but these instances no longer wrap the SDK gamepad
+    - Controllers must be injected into the event loop via `Controller.inject(gamepad1, gamepad2)`
+        - `BunyipsOpMode` automatically handles injection and no modification to user code is required
+        - This change fixes a bug where `BunyipsLib.getOpMode().gamepad1` or 2 kept getting overwritten, breaking new
+          functionality that depends on `Controller` being in the superclassed OpMode
+        - An update has previously attempted to do this but did not account for the reassignment, causing undefined
+          behaviour
+    - The new injection scheme also removes the need to call `.update()`, since the SDK will directly update the Gamepad
+      object through `fromByteArray`, fully replicating the event loop gamepads and causing less erratic behaviour
+    - This change removes methods such as `get(Controls)` and `update()` from the Controller instance since the
+      Controller instance will expose the direct fields as the modified values
+    - Methods such as `get(Controls)` can be instead found in the `Controls.isPressed` and analog
+      `.get(Controls.Analog)` equivalent
+- `Encoder` now defines a new `setResetOperation` infrastructure to handle encoder homing and reset operations
+    - Allows a more flexible way to manage what happens when the `Encoder` object resets, as motor objects will switch
+      to `STOP_AND_RESET_ENCODER`, whereas other inputs may just need to accumulate an offset
+    - The default behaviour for `Encoder` instances is to accumulate an offset named `resetVal` which is subtracted from
+      the total accumulation
+    - An `IntBinaryOperator` is supplied to the user to define a new reset operation, which provides you with the
+      current position of the motor and the current offset, to return a new offset to use
+    - Motor objects return `0` for offset and simply reset the motor using the motor modes, described in the bug fixes
+      below and fixing a critical operation bug with `Motor` instances
+
+### Non-breaking changes
+
+- `UnaryFunction` now extends `DoubleUnaryOperator`
+
+### Bug fixes
+
+- Motor encoder resets through `Motor` (and `Encoder`) now write to the motor mode
+    - Previously, current position was stored locally and discarded after each OpMode, which causes the motor to
+      spontaneously report in another position even after homing
+    - This bug is a major oversight that required the rewriting of the `Encoder` class reset operations
+    - New `Motor` and `HoldableActuator` implementations that depend on `Encoder` now define their reset operation to
+      only impact the motor, leaving legacy behaviour for non-motor encoders for a resetVal offset
+- `HoldableActuator` now resets the encoder only on a `home` task, not on a `ceil` task as it previously was
+- `HoldableActuator` tasks are now cancelled if autonomous limit protections are called
+- `HoldableActuator` target positions are now clamped to the `minLimit` and `maxLimit`, preventing windup
+- `Encoder` resets now grab a fresh value of the current value for the reset operation when using caching
+- `HoldableActuator` home tasks now restore the old motor mode when completing, instead of relying on other tasks
+
+### Additions
+
+- `Task.asPriority()` added to promote the task to a priority status for subsystem conflicts
+    - Equivalent to setting the second argument of `on()` to true, but allows dynamically setting it
+- `ScheduledTask.finishIfButtonRetriggered()` added as an automagic method for toggles in Command Based
+    - This is equivalent to the pattern of calling `.getDebounced` on a Controller instance to "toggle" a task, but has
+      improved operation in resetting this debounce if the scheduled task ends prematurely
+    - This method should handle the case when a task needs to be "toggled twice" to be reactivated if the task ends on
+      its own instead of via the `finishIf` trigger
+- `HoldableActuator` has new tasks `goToProfiled` and `deltaProfiled`
+    - These tasks will use the User Setpoint Control as defined by `withUserSetpointControl` to gradually move the
+      setpoint from the current target to the new target
+    - This emulates the standard user setpoint control mode maximum constraints, similar to when a
+      `ProfiledPIDController` is being used; this is useful for cases where tuning one is not desired/inconvenient
+    - These tasks allow the target position to not jump to the new position immediately and cause extremely fast or
+      dangerous actuator movements, and allows more control for fragile components
+    - User setpoint control must be defined for these tasks to work. Note the functionality of `goTo` and `delta` remain
+      the same.
+
 ## v7.2.0 (2025-05-04)
 
 Non-breaking library operation refinements.

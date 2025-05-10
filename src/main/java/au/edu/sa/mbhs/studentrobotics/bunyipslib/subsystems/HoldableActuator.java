@@ -93,9 +93,11 @@ public class HoldableActuator extends BunyipsSubsystem {
         } else {
             encoder = new Encoder(this.motor::getCurrentPosition, this.motor::getVelocity);
             encoder.setResetOperation((crv, pos) -> {
-                DcMotor.RunMode prev = motor.getMode();
+                double prevPower = motor.getPower();
+                DcMotor.RunMode prevMode = motor.getMode();
                 motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motor.setMode(prev);
+                motor.setMode(prevMode);
+                motor.setPower(prevPower);
                 return 0;
             });
         }

@@ -100,9 +100,11 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         DcMotorEx dme = (DcMotorEx) motor;
         encoder = new Encoder(motor::getCurrentPosition, dme::getVelocity);
         encoder.setResetOperation((crv, pos) -> {
-            RunMode prev = motor.getMode();
+            double prevPower = motor.getPower();
+            RunMode prevMode = motor.getMode();
             motor.setMode(RunMode.STOP_AND_RESET_ENCODER);
-            motor.setMode(prev);
+            motor.setMode(prevMode);
+            motor.setPower(prevPower);
             return 0;
         });
         targetPositionTolerance = dme.getTargetPositionTolerance();
@@ -297,7 +299,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     /**
-     * Reset the encoder value back to 0 by resetting tracking and commanding the firmware to reset the encoder count.
+     * Reset the encoder value back to 0 by commanding the firmware to reset the encoder count.
      * Will internally be called if the motor is attempted to be set to {@link DcMotor.RunMode#STOP_AND_RESET_ENCODER}.
      * The target position will also be reset to 0. Power will attempt to be restored across this reset.
      * <p>
@@ -307,12 +309,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * OpMode restarts or changes to report the motor position at the original, not reset value.
      */
     public synchronized void resetEncoder() {
-        synchronized (controller) {
-            double rawPreviousPower = actuator.getPower();
-            controller.setMotorMode(port, RunMode.STOP_AND_RESET_ENCODER);
-            controller.setMotorMode(port, RunMode.RUN_WITHOUT_ENCODER);
-            actuator.setPower(rawPreviousPower);
-        }
+        // Encoder reset operation handles motor firmware mode switching
         encoder.reset();
         setTargetPosition(0);
     }

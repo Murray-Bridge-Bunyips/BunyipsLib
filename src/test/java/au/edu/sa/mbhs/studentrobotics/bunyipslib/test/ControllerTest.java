@@ -17,63 +17,65 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 /**
  * Tests for {@link au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller}.
  *
- * @author Lucas Bubner, 2024
+ * @author Lucas Bubner, 2025
  */
 class ControllerTest {
-    Gamepad gamepad;
+    Gamepad target;
     Controller controller;
 
     @BeforeEach
     void setUp() {
-        gamepad = new Gamepad();
-        controller = new Controller(gamepad, GamepadUser.ONE);
+        target = new Gamepad();
+        controller = new Controller(GamepadUser.ONE);
     }
 
     @Test
     void testState() {
-        assertEquals(controller.sdk, gamepad);
-        gamepad.a = true;
-        controller.update();
-        assertArrayEquals(controller.toByteArray(), gamepad.toByteArray());
+        target.a = true;
+        target.dpad_left = true;
+        target.left_stick_x = (float) Math.random();
+        target.right_stick_x = (float) Math.random();
+        controller.copy(target);
+        assertArrayEquals(controller.toByteArray(), target.toByteArray());
     }
 
     @Test
     void testLinkedAlias() {
-        gamepad.left_stick_x = 0.5f;
-        controller.update();
+        target.left_stick_x = 0.5f;
+        controller.copy(target);
         assertEquals(0.5f, controller.lsx);
     }
 
     @Test
     void testUnaryFunction() {
         controller.set(Controls.Analog.LEFT_STICK_X, (v) -> v * 2);
-        gamepad.left_stick_x = 0.5f;
-        controller.update();
+        target.left_stick_x = 0.5f;
+        controller.copy(target);
         assertEquals(1.0f, controller.lsx);
     }
 
     @Test
     void testPredicate() {
         controller.set(Controls.A, (v) -> !v);
-        gamepad.a = true;
-        controller.update();
+        target.a = true;
+        controller.copy(target);
         assertFalse(controller.a);
-        gamepad.a = false;
-        controller.update();
+        target.a = false;
+        controller.copy(target);
         assertTrue(controller.a);
     }
 
     @Test
     void testDebounce() {
-        gamepad.x = false;
-        controller.update();
+        target.x = false;
+        controller.copy(target);
         assertFalse(controller.getDebounced(Controls.X)); // initial condition
-        gamepad.x = true;
-        controller.update();
+        target.x = true;
+        controller.copy(target);
         assertTrue(controller.getDebounced(Controls.X)); // actual debounce state
         assertFalse(controller.getDebounced(Controls.X));
-        gamepad.x = false;
-        controller.update();
+        target.x = false;
+        controller.copy(target);
         assertFalse(controller.getDebounced(Controls.X));
     }
 }
