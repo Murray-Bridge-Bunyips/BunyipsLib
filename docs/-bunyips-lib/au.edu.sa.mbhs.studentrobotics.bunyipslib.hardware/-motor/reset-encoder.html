@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v7.2.0-master-3c67b5867            </div>
+v7.3.0-master-94a93d2d7            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -67,7 +67,7 @@ v7.2.0-master-3c67b5867            </div>
   <div class="cover ">
     <h1 class="cover"><span>reset</span><wbr></wbr><span><span>Encoder</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="reset-encoder.html"><span class="token function">resetEncoder</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Reset the encoder value without stopping the motor. Will internally be called if the motor is attempted to be set to <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.STOP_AND_RESET_ENCODER///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">STOP_AND_RESET_ENCODER</span>. The target position will also be reset to 0.</p></div></div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="reset-encoder.html"><span class="token function">resetEncoder</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Reset the encoder value back to 0 by commanding the firmware to reset the encoder count. Will internally be called if the motor is attempted to be set to <span data-unresolved-link="com.qualcomm.robotcore.hardware/DcMotor.RunMode.STOP_AND_RESET_ENCODER///PointingToDeclaration/{&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;:{&amp;quot;key&amp;quot;:&amp;quot;org.jetbrains.dokka.links.EnumEntryDRIExtra&amp;quot;}}">STOP_AND_RESET_ENCODER</span>. The target position will also be reset to 0. Power will attempt to be restored across this reset. </p><p class="paragraph"> The previous (true) operating mode, <code class="lang-kotlin">RUN_WITHOUT_ENCODER</code>, of the motor will be restored after this operation. </p><p class="paragraph"><strong>Note: </strong> Pre-BunyipsLib 7.3.0, this method did not reset the actual encoder on the motor object, causing OpMode restarts or changes to report the motor position at the original, not reset value.</p></div></div>
 </div>
       <div class="footer">
         <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span

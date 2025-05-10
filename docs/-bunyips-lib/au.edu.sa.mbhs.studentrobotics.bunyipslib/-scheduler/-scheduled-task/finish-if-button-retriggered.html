@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>finishIfButtonRetriggered</title>
+    <link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+<link href="../../../../images/logo-icon.svg">
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+                    <a class="library-name--link" href="../../../../index.html">
+                            BunyipsLib
+                    </a>
+            </div>
+            <div class="library-version">
+v7.3.0-master-94a93d2d7            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="member" id="content" pageIds="BunyipsLib::au.edu.sa.mbhs.studentrobotics.bunyipslib/Scheduler.ScheduledTask/finishIfButtonRetriggered/#/PointingToDeclaration//-325384828">
+  <div class="breadcrumbs"><a href="../../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../../index.html">au.edu.sa.mbhs.studentrobotics.bunyipslib</a><span class="delimiter">/</span><a href="../index.html">Scheduler</a><span class="delimiter">/</span><a href="index.html">ScheduledTask</a><span class="delimiter">/</span><span class="current">finishIfButtonRetriggered</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>finish</span><wbr></wbr><span>If</span><wbr></wbr><span>Button</span><wbr></wbr><span><span>Retriggered</span></span></h1>
+  </div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="finish-if-button-retriggered.html"><span class="token function">finishIfButtonRetriggered</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">Scheduler.ScheduledTask</a></div><p class="paragraph">Automagic finish condition that will run the task assigned in <a href="run.html">run</a> until the button used to trigger this execution is retriggered. This is effectively a <a href="finish-if.html">finishIf</a> convenience method for an edge detector applied to the button you used to declare this task binding, creating a task toggle.</p><p class="paragraph">This method is equivalent to writing:</p><div class="sample-container"><pre><code class="block lang-java" theme="idea">gp1().whenPressed(Controls.A)<br>     .run(/* ... */)<br>     .finishIf(() -&gt; gamepad1.getDebounced(Controls.A)) // Common pattern to implement toggles</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">However, this method will also take efforts to manage the <a href="../../../au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware/-controller/index.html">Controller</a> debounce resets (through <code class="lang-kotlin">resetDebounce</code>) in the event your task finishes, which cannot be replicated through a simple <a href="finish-if.html">finishIf</a>. Without proper debounce resets, your task may require two triggers to restart if it is stopped early or automatically, since <code class="lang-kotlin">getDebounced</code> is a stateful function unaware of your task's running state by default. This method also reduces repetition that can introduce typo bugs.</p><p class="paragraph"><strong>WARNING:</strong> This method will only work if you have used a <span data-unresolved-link="au.edu.sa.mbhs.studentrobotics.bunyipslib/Scheduler.ControllerButtonBind///PointingToDeclaration/">ControllerButtonBind</span> (such as through <code class="lang-kotlin">whenPressed</code>, etc.) AND you used a <a href="../../../au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware/-controller/index.html">Controller</a> instance to create the bind (such as by a <a href="../../-bunyips-op-mode/index.html">BunyipsOpMode</a>).</p><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">7.3.0</p></span></div></div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2025 Lucas Bubner, Murray Bridge High School Student Robotics Club</span><span
+                class="pull-right"><span>Generated by </span><a
+                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
