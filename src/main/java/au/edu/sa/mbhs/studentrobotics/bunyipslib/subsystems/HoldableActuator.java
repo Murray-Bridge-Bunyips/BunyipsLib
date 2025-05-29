@@ -882,10 +882,13 @@ public class HoldableActuator extends BunyipsSubsystem {
         @NonNull
         public Task goTo(int targetPosition) {
             return Task.task()
-                    .init(() -> {
+                    .init((t) -> {
                         sustainedTolerated.reset();
                         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         motor.setTargetPosition(targetPosition);
+                        encoder.clearCache();
+                        if (Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance()))
+                            t.finish();
                     })
                     .periodic(() -> {
                         int target = motor.getTargetPosition();
@@ -957,11 +960,14 @@ public class HoldableActuator extends BunyipsSubsystem {
             if (userSetpointControl == null)
                 throw new Exceptions.EmergencyStop("Tried to create a profiled task when withUserSetpointControl(...) was not called!");
             return Task.task()
-                    .init(() -> {
+                    .init((t) -> {
                         uscInExternalUse = true;
                         usc.resetState();
                         sustainedTolerated.reset();
                         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        encoder.clearCache();
+                        if (Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance()))
+                            t.finish();
                     })
                     .periodic((t) -> {
                         int currentTarget = motor.getTargetPosition();
