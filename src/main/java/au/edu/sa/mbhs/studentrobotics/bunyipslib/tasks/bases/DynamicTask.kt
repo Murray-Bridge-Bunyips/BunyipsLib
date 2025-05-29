@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases
 
+import dev.frozenmilk.util.cell.LateInitCell
 import java.util.function.BiFunction
 import java.util.function.BooleanSupplier
 import java.util.function.Consumer
@@ -19,6 +20,14 @@ class DynamicTask() : Task() {
     private var finish = {}
     private var interrupt = {}
     private var reset = {}
+
+    /**
+     * A shared [LateInitCell] that can be used for storing state across task execution phases for the [DynamicTask].
+     *
+     * This cell is not typed and is late-initialised, so type cast and access this cell carefully.
+     */
+    @JvmField
+    val sharedRef = LateInitCell<Any>()
 
     init {
         named("Task (dyn.)")
@@ -46,44 +55,44 @@ class DynamicTask() : Task() {
     /**
      * Runs once when the task is initialised.
      */
-    infix fun init(onInitialise: Consumer<Task>) = apply { init = { onInitialise.accept(this) } }
+    infix fun init(onInitialise: Consumer<DynamicTask>) = apply { init = { onInitialise.accept(this) } }
 
     /**
      * Runs periodically while the task is active.
      */
-    infix fun periodic(periodic: Consumer<Task>) = apply { loop = { periodic.accept(this) } }
+    infix fun periodic(periodic: Consumer<DynamicTask>) = apply { loop = { periodic.accept(this) } }
 
     /**
      * Returning true will end the task.
      */
-    infix fun isFinished(isTaskFinished: java.util.function.Function<Task, Boolean>) =
+    infix fun isFinished(isTaskFinished: java.util.function.Function<DynamicTask, Boolean>) =
         apply { until = { isTaskFinished.apply(this) } }
 
     /**
      * Runs once when the task is finished.
      */
-    infix fun onFinish(onFinish: Consumer<Task>) = apply { finish = { onFinish.accept(this) } }
+    infix fun onFinish(onFinish: Consumer<DynamicTask>) = apply { finish = { onFinish.accept(this) } }
 
     /**
      * Runs when the task is interrupted (finished but not by [isFinished]).
      */
-    infix fun onInterrupt(onInterrupt: Consumer<Task>) = apply { interrupt = { onInterrupt.accept(this) } }
+    infix fun onInterrupt(onInterrupt: Consumer<DynamicTask>) = apply { interrupt = { onInterrupt.accept(this) } }
 
     /**
      * Runs when the task is reset to its initial state.
      */
-    infix fun onReset(onReset: Consumer<Task>) = apply { reset = { onReset.accept(this) } }
+    infix fun onReset(onReset: Consumer<DynamicTask>) = apply { reset = { onReset.accept(this) } }
 
     /**
      * Adds additional [init] to run after the current [init] code.
      */
-    infix fun addInit(onInitialise: Consumer<Task>) =
+    infix fun addInit(onInitialise: Consumer<DynamicTask>) =
         apply { val f = init; init = { f.invoke(); onInitialise.accept(this) } }
 
     /**
      * Adds additional [periodic] code to run after the current [periodic] code.
      */
-    infix fun addPeriodic(periodic: Consumer<Task>) =
+    infix fun addPeriodic(periodic: Consumer<DynamicTask>) =
         apply { val f = loop; loop = { f.invoke(); periodic.accept(this) } }
 
     /**
@@ -91,25 +100,25 @@ class DynamicTask() : Task() {
      *
      * This function takes in a boolean being the current [isFinished] evaluation, and returns the new [isFinished] evaluation.
      */
-    infix fun addIsFinished(isTaskFinished: BiFunction<Task, Boolean, Boolean>) =
+    infix fun addIsFinished(isTaskFinished: BiFunction<DynamicTask, Boolean, Boolean>) =
         apply { val f = until; until = { isTaskFinished.apply(this, f.invoke()) } }
 
     /**
      * Adds additional [onFinish] code to run after the current [onFinish] code.
      */
-    infix fun addOnFinish(onFinish: Consumer<Task>) =
+    infix fun addOnFinish(onFinish: Consumer<DynamicTask>) =
         apply { val f = finish; finish = { f.invoke(); onFinish.accept(this) } }
 
     /**
      * Adds additional [onInterrupt] code to run after the current [onInterrupt] code.
      */
-    infix fun addOnInterrupt(onInterrupt: Consumer<Task>) =
+    infix fun addOnInterrupt(onInterrupt: Consumer<DynamicTask>) =
         apply { val f = interrupt; interrupt = { f.invoke(); onInterrupt.accept(this) } }
 
     /**
      * Adds additional [onReset] code to run after the current [onReset] code.
      */
-    infix fun addOnReset(onReset: Consumer<Task>) =
+    infix fun addOnReset(onReset: Consumer<DynamicTask>) =
         apply { val f = reset; reset = { f.invoke(); onReset.accept(this) } }
 
     // Task-injection-less overloads

@@ -736,6 +736,9 @@ public class HoldableActuator extends BunyipsSubsystem {
      * Tasks for HoldableActuator, access with {@link #tasks}.
      */
     public class Tasks {
+        // Paranoia, we don't want to limit a goTo indefinitely if isBusy doesn't switch state
+        private static final Measure<Time> PRE_EXIT_SAFETY_MARGIN = Seconds.of(2);
+
         /**
          * Controls the actuator with a supplier of power.
          * <p>
@@ -891,7 +894,12 @@ public class HoldableActuator extends BunyipsSubsystem {
                         DualTelemetry.smartAdd(HoldableActuator.this.toString(), "<font color='#FF5F1F'>MOVING -> %/% ticks</font> [%tps]", current, target, Math.round(encoder.getVelocity()));
                     })
                     .onFinish(() -> power = 0)
-                    .isFinished(() -> !motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance()))
+                    .isFinished((t) -> {
+                        // Only consider finishing if the motor reports as busy first, with a safety margin
+                        if (motor.isBusy() || t.getDeltaTime().gte(PRE_EXIT_SAFETY_MARGIN))
+                            t.sharedRef.accept(true);
+                        return t.sharedRef.getInitialised() && !motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance());
+                    })
                     .on(HoldableActuator.this, true)
                     .named(forThisSubsystem("Run To " + targetPosition + " Ticks"));
         }
@@ -968,7 +976,11 @@ public class HoldableActuator extends BunyipsSubsystem {
                         uscInExternalUse = false;
                         power = 0;
                     })
-                    .isFinished(() -> !motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance()))
+                    .isFinished((t) -> {
+                        if (motor.isBusy() || t.getDeltaTime().gte(PRE_EXIT_SAFETY_MARGIN))
+                            t.sharedRef.accept(true);
+                        return t.sharedRef.getInitialised() && !motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance());
+                    })
                     .on(HoldableActuator.this, true)
                     .named(forThisSubsystem("Move To " + targetPosition + " Ticks"));
         }
