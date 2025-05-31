@@ -142,7 +142,6 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     public static Double tuningTankGains_turnVelGain;
 
     private static int lastSelectedIndex;
-    private final ArrayList<LinearOpMode> opModes = new ArrayList<>();
 
     /**
      * Instantiate hardware and return the fully configured RoadRunner drive instance to use for tuning.
@@ -159,7 +158,6 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
     @Override
     @SuppressWarnings("unchecked")
     public final void runOpMode() throws InterruptedException {
-        opModes.clear();
         // We are not a system OpMode so lights will be automatically cleaned up on completion
         hardwareMap.getAll(LynxModule.class).forEach(h -> h.setPattern(Arrays.asList(
                 new Blinker.Step(Color.GREEN, 400, TimeUnit.MILLISECONDS),
@@ -228,12 +226,6 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             parEncs.add(new EncoderRef(0, 0));
             perpEncs.add(new EncoderRef(0, 1));
             imu.accept(new OTOSIMU(ol.otos));
-            opModes.addAll(Arrays.asList(
-                    new OTOSAngularScalarTuner(ol.otos),
-                    new OTOSLinearScalarTuner(ol.otos),
-                    new OTOSHeadingOffsetTuner(ol.otos),
-                    new OTOSPositionOffsetTuner(ol.otos)
-            ));
         } else if (localizer instanceof PinpointLocalizer pl) {
             PinpointView pv = new PinpointView() {
                 private GoBildaPinpointDriver.EncoderDirection parDirection = pl.pinpoint.getXDirection();
@@ -248,13 +240,13 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 @Override
                 public int getParEncoderPosition() {
                     assert pl.pinpoint != null;
-                    return pl.pinpoint.getEncoderX() * (parDirection == GoBildaPinpointDriver.EncoderDirection.REVERSED ? -1 : 1);
+                    return pl.pinpoint.getEncoderX();
                 }
 
                 @Override
                 public int getPerpEncoderPosition() {
                     assert pl.pinpoint != null;
-                    return pl.pinpoint.getEncoderY() * (perpDirection == GoBildaPinpointDriver.EncoderDirection.REVERSED ? -1 : 1);
+                    return pl.pinpoint.getEncoderY();
                 }
 
                 @Override
@@ -263,21 +255,35 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     return (float) pl.pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
                 }
 
+                @NonNull
+                @Override
+                public DcMotorSimple.Direction getParDirection() {
+                    return parDirection == GoBildaPinpointDriver.EncoderDirection.FORWARD ?
+                            DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE;
+                }
+
                 @Override
                 public void setParDirection(@NonNull DcMotorSimple.Direction direction) {
-                    assert pl.pinpoint != null;
                     parDirection = direction == DcMotorSimple.Direction.FORWARD ?
                             GoBildaPinpointDriver.EncoderDirection.FORWARD :
                             GoBildaPinpointDriver.EncoderDirection.REVERSED;
+                    assert pl.pinpoint != null;
                     pl.pinpoint.setEncoderDirections(parDirection, perpDirection);
+                }
+
+                @NonNull
+                @Override
+                public DcMotorSimple.Direction getPerpDirection() {
+                    return perpDirection == GoBildaPinpointDriver.EncoderDirection.FORWARD ?
+                            DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE;
                 }
 
                 @Override
                 public void setPerpDirection(@NonNull DcMotorSimple.Direction direction) {
-                    assert pl.pinpoint != null;
                     perpDirection = direction == DcMotorSimple.Direction.FORWARD ?
                             GoBildaPinpointDriver.EncoderDirection.FORWARD :
                             GoBildaPinpointDriver.EncoderDirection.REVERSED;
+                    assert pl.pinpoint != null;
                     pl.pinpoint.setEncoderDirections(parDirection, perpDirection);
                 }
             };
@@ -477,7 +483,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
         ManualFeedforwardTuner.DISTANCE = 72;
 
         TelemetryMenu.MenuElement root = new TelemetryMenu.MenuElement("RoadRunner Tuning Selection", true);
-        opModes.addAll(Arrays.asList(
+        LinearOpMode[] opModes = {
                 new AngularRampLogger(dvf),
                 new ForwardPushTest(dvf),
                 new ForwardRampLogger(dvf),
@@ -486,10 +492,14 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 new ManualFeedforwardTuner(dvf),
                 new MecanumMotorDirectionDebugger(dvf),
                 new DeadWheelDirectionDebugger(dvf),
+                new OTOSAngularScalarTuner(dvf),
+                new OTOSLinearScalarTuner(dvf),
+                new OTOSHeadingOffsetTuner(dvf),
+                new OTOSPositionOffsetTuner(dvf),
                 new ManualFeedbackTuner(drive),
                 new SplineTest(drive),
                 new LocalizationTest(drive)
-        ));
+        };
 
         FtcDashboard.getInstance().withConfigRoot(configRoot -> {
             for (Class<?> cls : Arrays.asList(
@@ -504,10 +514,10 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             }
         });
 
-        TelemetryMenu.StaticClickableOption[] opModeSelections = new TelemetryMenu.StaticClickableOption[opModes.size()];
+        TelemetryMenu.StaticClickableOption[] opModeSelections = new TelemetryMenu.StaticClickableOption[opModes.length];
         LateInitCell<LinearOpMode> selection = new LateInitCell<>();
-        for (int i = 0; i < opModes.size(); i++) {
-            LinearOpMode opMode = opModes.get(i);
+        for (int i = 0; i < opModes.length; i++) {
+            LinearOpMode opMode = opModes[i];
             opModeSelections[i] = new TelemetryMenu.StaticClickableOption(opMode.getClass().getSimpleName(),
                     () -> selection.accept(opMode));
         }
@@ -535,7 +545,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
         fusedTelemetry.clearAll();
         if (!selection.getInitialised()) {
             // Force select current option if none was selected
-            selection.accept(opModes.get(lastSelectedIndex));
+            selection.accept(opModes[lastSelectedIndex]);
         }
 
         try {
@@ -586,13 +596,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
             // Quickly construct the DriveView even for OpModes that don't need it, though still required for FtcDashboard tuning.
             // This mostly applies to the ManualFeedbackTuner and allows the constants on the drive to be adjusted.
-            if (opMode instanceof ManualFeedbackTuner
-                    || opMode instanceof SplineTest
-                    || opMode instanceof LocalizationTest
-                    || opMode instanceof OTOSAngularScalarTuner
-                    || opMode instanceof OTOSLinearScalarTuner
-                    || opMode instanceof OTOSHeadingOffsetTuner
-                    || opMode instanceof OTOSPositionOffsetTuner) {
+            if (opMode instanceof ManualFeedbackTuner || opMode instanceof SplineTest || opMode instanceof LocalizationTest) {
                 // Ensures the update loop is started for the gains
                 dvf.make(hardwareMap);
             }
