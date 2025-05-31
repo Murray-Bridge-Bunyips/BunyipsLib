@@ -2,6 +2,24 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.3.1 (2025-05-31)
+
+Stability improvements and dependency updates.
+
+### Non-breaking changes
+
+- Update RoadRunner FTC to `v0.1.23`
+    - Upstream changes integrated, no user-facing breaking changes
+    - The wiki has been updated with the version bump
+- `DynamicTask` now exposes a final field of type `LateInitCell` called `sharedRef` which can be accessed to handle
+  simple state
+    - This is designed to be used for tasks that need to share state between execution branches, but is otherwise too
+      simple to put into a conventional anonymous task
+    - This field is accessible only on the `DynamicTask` designed for simple cross-branch state
+- Improved stability of `HoldableActuator` `goTo` tasks
+    - Automatic checks for `isBusy()` state capturing has been added to prevent pre-finishing tasks
+    - A timeout and same-position check have been added to ensure this safety feature does not harm operation
+
 ## v7.3.0 (2025-05-10)
 
 QoL and critical robot operation improvements.
