@@ -2,6 +2,25 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.3.2 (2025-06-05)
+
+Drive task patches.
+
+### Bug fixes
+
+- Patch a bug where drive tasks were not being set to zero power on completion, affecting:
+    - `AlignToAprilTagTask`
+    - `AlignToContourTask`
+    - `AlignToPointDriveTask`
+    - `MoveToAprilTagTask`
+    - `MoveToContourTask`
+    - `TurnTask`
+
+### Non-breaking changes
+
+- Heuristic value `Lambda.EPSILON_MS` is now mutable for Runnables that take a long time that should block the task
+  queue
+
 ## v7.3.1 (2025-05-31)
 
 Stability improvements and dependency updates.
