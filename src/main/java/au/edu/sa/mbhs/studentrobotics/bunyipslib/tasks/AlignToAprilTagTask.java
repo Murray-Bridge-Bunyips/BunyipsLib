@@ -154,4 +154,9 @@ public class AlignToAprilTagTask extends FieldOrientableDriveTask {
     protected boolean isTaskFinished() {
         return vel == null && bearing != null && Mathf.isNear(bearing, 0, R_TOLERANCE);
     }
+
+    @Override
+    protected void onFinish() {
+        drive.setPower(Geometry.zeroVel());
+    }
 }

@@ -33,8 +33,4 @@ class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = false) 
                 timeout to Seconds
             )
     }
-
-    override fun isTaskFinished(): Boolean {
-        return false
-    }
 }

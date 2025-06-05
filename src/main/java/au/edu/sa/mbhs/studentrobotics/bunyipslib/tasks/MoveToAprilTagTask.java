@@ -297,4 +297,9 @@ public class MoveToAprilTagTask extends FieldOrientableDriveTask {
     protected boolean isTaskFinished() {
         return vel == null && Math.abs(rangeError) < X_TOLERANCE && Math.abs(yawError) < Y_TOLERANCE && Math.abs(headingError) < R_TOLERANCE;
     }
+
+    @Override
+    protected void onFinish() {
+        drive.setPower(Geometry.zeroVel());
+    }
 }

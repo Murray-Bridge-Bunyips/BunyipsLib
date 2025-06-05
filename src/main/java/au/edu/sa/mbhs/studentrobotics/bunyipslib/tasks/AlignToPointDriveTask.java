@@ -168,4 +168,9 @@ public class AlignToPointDriveTask extends FieldOrientableDriveTask {
                 .strokeLine(point.x, point.y, point.x, poseEstimate.position.y)
                 .strokeLine(point.x, poseEstimate.position.y, poseEstimate.position.x, poseEstimate.position.y);
     }
+
+    @Override
+    protected void onFinish() {
+        drive.setPower(Geometry.zeroVel());
+    }
 }

@@ -154,4 +154,9 @@ public class TurnTask extends Task {
     protected boolean isTaskFinished() {
         return Mathf.isNear(Mathf.wrap(poseEstimate.get().heading.toDouble(), -Math.PI, Math.PI), angRad, tolerance.in(Radians));
     }
+
+    @Override
+    protected void onFinish() {
+        powerIn.accept(Geometry.zeroVel());
+    }
 }

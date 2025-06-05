@@ -24,7 +24,7 @@ public class Lambda extends Task {
     /**
      * The epsilon value for the Lambda timeout.
      */
-    public static final int EPSILON_MS = 300;
+    public static int EPSILON_MS = 300;
     private final Consumer<Task> callback;
 
     /**

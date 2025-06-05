@@ -120,4 +120,9 @@ public class AlignToContourTask extends FieldOrientableDriveTask {
     protected boolean isTaskFinished() {
         return vel == null && biggestContour != null && Math.abs(biggestContour.getYaw()) < R_TOLERANCE;
     }
+
+    @Override
+    protected void onFinish() {
+        drive.setPower(Geometry.zeroVel());
+    }
 }
