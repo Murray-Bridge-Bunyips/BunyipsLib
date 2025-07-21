@@ -35,6 +35,7 @@ import com.acmerobotics.roadrunner.ftc.OTOSPositionOffsetTuner;
 import com.acmerobotics.roadrunner.ftc.PinpointEncoderGroup;
 import com.acmerobotics.roadrunner.ftc.PinpointIMU;
 import com.acmerobotics.roadrunner.ftc.PinpointView;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -56,7 +57,6 @@ import java.util.concurrent.TimeUnit;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.GoBildaPinpointDriver;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.MecanumLocalizer;
@@ -228,8 +228,8 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             imu.accept(new OTOSIMU(ol.otos));
         } else if (localizer instanceof PinpointLocalizer pl) {
             PinpointView pv = new PinpointView() {
-                private GoBildaPinpointDriver.EncoderDirection parDirection = pl.pinpoint.getXDirection();
-                private GoBildaPinpointDriver.EncoderDirection perpDirection = pl.pinpoint.getYDirection();
+                GoBildaPinpointDriver.EncoderDirection parDirection = pl.params.initialParDirection;
+                GoBildaPinpointDriver.EncoderDirection perpDirection = pl.params.initialPerpDirection;
 
                 @Override
                 public void update() {
@@ -250,16 +250,9 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                 }
 
                 @Override
-                public float getHeadingVelocity() {
+                public float getHeadingVelocity(@NonNull UnnormalizedAngleUnit unit) {
                     assert pl.pinpoint != null;
-                    return (float) pl.pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
-                }
-
-                @NonNull
-                @Override
-                public DcMotorSimple.Direction getParDirection() {
-                    return parDirection == GoBildaPinpointDriver.EncoderDirection.FORWARD ?
-                            DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE;
+                    return (float) pl.pinpoint.getHeadingVelocity(unit);
                 }
 
                 @Override
@@ -273,8 +266,8 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
                 @NonNull
                 @Override
-                public DcMotorSimple.Direction getPerpDirection() {
-                    return perpDirection == GoBildaPinpointDriver.EncoderDirection.FORWARD ?
+                public DcMotorSimple.Direction getParDirection() {
+                    return parDirection == GoBildaPinpointDriver.EncoderDirection.FORWARD ?
                             DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE;
                 }
 
@@ -285,6 +278,13 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                             GoBildaPinpointDriver.EncoderDirection.REVERSED;
                     assert pl.pinpoint != null;
                     pl.pinpoint.setEncoderDirections(parDirection, perpDirection);
+                }
+
+                @NonNull
+                @Override
+                public DcMotorSimple.Direction getPerpDirection() {
+                    return perpDirection == GoBildaPinpointDriver.EncoderDirection.FORWARD ?
+                            DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE;
                 }
             };
             encoderGroups.add(new PinpointEncoderGroup(pv));

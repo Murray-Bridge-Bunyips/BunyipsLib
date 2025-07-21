@@ -11,12 +11,12 @@ import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.GoBildaPinpointDriver;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.DriveModel;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
@@ -35,6 +35,10 @@ public class PinpointLocalizer implements Localizer {
      * The Pinpoint Computer in use.
      */
     public final GoBildaPinpointDriver pinpoint;
+    /**
+     * Used two-wheel and Pinpoint direction localizer parameters.
+     */
+    public final Params params;
 
     private Pose2d lastPose = Geometry.zeroPose();
 
@@ -42,16 +46,22 @@ public class PinpointLocalizer implements Localizer {
      * Create a new Pinpoint localizer operating on two internally connected dead wheels.
      *
      * @param driveModel the drive model to use for kinematics
-     * @param params     parameters to use, note since they are the same as if you were to use two wheels alone, the two wheel localizer
-     *                   parameters object is being used.
-     * @param pinpoint   the Pinpoint Computer from HardwareMap. Will be IMU and position reset on construction.
+     * @param params     parameters to use, note this set of parameters is an extension of the two-wheel localizer parameters.
+     *                   Additional parameters exclusive to Pinpoint are the initial directions, which should be set here
+     *                   instead of directly on the driver to ensure tuning support. These directions are auto-applied to the driver.
+     * @param pinpoint   the Pinpoint Computer from HardwareMap. Will be IMU and position reset on construction. To set wheel directions,
+     *                   set them in the {@code params} object, <b>NOT</b> on this object directly.
      */
-    public PinpointLocalizer(@NonNull DriveModel driveModel, @NonNull TwoWheelLocalizer.Params params, @Nullable GoBildaPinpointDriver pinpoint) {
+    public PinpointLocalizer(@NonNull DriveModel driveModel, @NonNull PinpointLocalizer.Params params, @Nullable GoBildaPinpointDriver pinpoint) {
         this.pinpoint = pinpoint;
+        this.params = params;
 
         FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", params);
         if (pinpoint == null)
             return;
+
+        // Directions are now applied, it is important to ensure the user does not do this themselves to not break tuning
+        pinpoint.setEncoderDirections(params.initialParDirection, params.initialPerpDirection);
 
         // Pinpoint uses millimeters as its standard unit
         pinpoint.setEncoderResolution(1 / driveModel.inPerTick, DistanceUnit.INCH);
@@ -94,5 +104,78 @@ public class PinpointLocalizer implements Localizer {
                 ),
                 new DualNum<>(new double[]{headingDelta, vel.angVel})
         );
+    }
+
+    /**
+     * Parameters for the Pinpoint. Note this extends the two-wheel localizer and supplies two additional fields
+     * to set the direction of these wheels.
+     */
+    public static class Params extends TwoWheelLocalizer.Params {
+        // Since the driver does not track the direction, we have to, so we track the initial directions here. This
+        // provides tuning support and is accessed by the tuning OpMode.
+        /**
+         * The initial tracking direction of the parallel wheel. This is not updated when the {@link GoBildaPinpointDriver}
+         * direction is updated, but will be applied to the driver at time of localizer construction.
+         */
+        public GoBildaPinpointDriver.EncoderDirection initialParDirection;
+        /**
+         * The initial tracking direction of the perpendicular wheel. This is not updated when the {@link GoBildaPinpointDriver}
+         * direction is updated, but will be applied to the driver at time of localizer construction.
+         */
+        public GoBildaPinpointDriver.EncoderDirection initialPerpDirection;
+
+        /**
+         * Utility builder for the two wheel and Pinpoint directions parameters.
+         */
+        public static class Builder extends TwoWheelLocalizer.Params.Builder {
+            /**
+             * Create a new builder.
+             */
+            public Builder() {
+                params = new PinpointLocalizer.Params();
+            }
+
+            /**
+             * Sets the initial tracking direction of the parallel wheel, which will be sent to the Pinpoint driver
+             * on construction of the localizer. This initial direction will be stored in the parameters object and is used for tuning.
+             * <p>
+             * During initialisation, <b>you must</b> set the direction of your Pinpoint wheels here using these methods,
+             * otherwise tuning will not work. <b>Do not</b> set the directions of your wheels directly on the driver, it is applied here.
+             *
+             * @param initialParDirection the direction of the parallel wheel such that forward movement is positive reading
+             * @return the builder
+             */
+            @NonNull
+            public TwoWheelLocalizer.Params.Builder setInitialParDirection(GoBildaPinpointDriver.EncoderDirection initialParDirection) {
+                ((Params) params).initialParDirection = initialParDirection;
+                return this;
+            }
+
+            /**
+             * Sets the initial tracking direction of the perpendicular wheel, which will be sent to the Pinpoint driver
+             * on construction of the localizer. This initial direction will be stored in the parameters object and is used for tuning.
+             * <p>
+             * During initialisation, <b>you must</b> set the direction of your Pinpoint wheels here using these methods,
+             * otherwise tuning will not work. <b>Do not</b> set the directions of your wheels directly on the driver, it is applied here.
+             *
+             * @param initialParDirection the direction of the perpendicular wheel such that left movement is positive reading
+             * @return the builder
+             */
+            @NonNull
+            public TwoWheelLocalizer.Params.Builder setInitialPerpDirection(GoBildaPinpointDriver.EncoderDirection initialParDirection) {
+                ((Params) params).initialParDirection = initialParDirection;
+                return this;
+            }
+
+            /**
+             * Build the parameters.
+             *
+             * @return the parameters
+             */
+            @NonNull
+            public PinpointLocalizer.Params build() {
+                return (PinpointLocalizer.Params) params;
+            }
+        }
     }
 }

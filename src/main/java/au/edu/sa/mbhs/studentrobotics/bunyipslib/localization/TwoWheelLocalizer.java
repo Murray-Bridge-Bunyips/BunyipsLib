@@ -156,7 +156,7 @@ public class TwoWheelLocalizer implements Localizer {
          * Utility builder for the two dead wheel localizer parameters.
          */
         public static class Builder {
-            private final Params params = new Params();
+            protected Params params = new Params();
 
             /**
              * Set the y position of the parallel encoder.
