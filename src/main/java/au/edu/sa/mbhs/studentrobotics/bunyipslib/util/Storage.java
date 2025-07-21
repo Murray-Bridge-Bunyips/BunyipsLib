@@ -15,6 +15,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
@@ -73,6 +74,9 @@ public final class Storage {
 
     /**
      * Represents in-memory storage for the robot.
+     * <p>
+     * The volatile memory HashMap, previously in this class, is now stored in the OpMode {@code blackboard},
+     * introduced in SDK v10.3.
      */
     public static class Memory {
         /**
@@ -81,7 +85,6 @@ public final class Storage {
          * @see RobotConfig
          */
         public final ArrayList<String> hardwareErrors = new ArrayList<>();
-        private final HashMap<String, Object> store = new HashMap<>();
         /**
          * The last known/selected {@link StartingConfiguration.Position} object, which can be used to access
          * the last selected alliance, starting position, or other flags as defined by this object selected.
@@ -107,24 +110,26 @@ public final class Storage {
         }
 
         /**
-         * Clear all volatile memory related to the robot.
+         * Clear all volatile memory related to the robot, including the HashMap.
          */
         public void clear() {
-            store.clear();
+            OpMode.blackboard.clear();
             hardwareErrors.clear();
             lastKnownStartingConfiguration = null;
             lastKnownPosition = Geometry.zeroPose();
         }
 
         /**
-         * Clear the volatile HashMap.
+         * Clear the volatile HashMap. This is linked to the OpMode {@code blackboard} member introduced in SDK v10.3.
          */
         public void clearVolatile() {
-            store.clear();
+            OpMode.blackboard.clear();
         }
 
         /**
          * Get a volatile value from memory stored by key in {@link #setVolatile(String, Object)}.
+         * <p>
+         * This is linked to the OpMode {@code blackboard} member introduced in SDK v10.3.
          *
          * @param key the key to search for
          * @return the value associated with the key
@@ -132,19 +137,21 @@ public final class Storage {
          */
         @Nullable
         public Object getVolatile(@NonNull String key) throws IllegalArgumentException {
-            if (!store.containsKey(key))
+            if (!OpMode.blackboard.containsKey(key))
                 throw new IllegalArgumentException("Key not found in memory: " + key);
-            return store.get(key);
+            return OpMode.blackboard.get(key);
         }
 
         /**
          * Set a volatile value in memory stored by key.
+         * <p>
+         * This is linked to the OpMode {@code blackboard} member introduced in SDK v10.3.
          *
          * @param key   the key to store the value under
          * @param value the value to store
          */
         public void setVolatile(@NonNull String key, @NonNull Object value) {
-            store.put(key, value);
+            OpMode.blackboard.put(key, value);
         }
     }
 
@@ -177,8 +184,10 @@ public final class Storage {
 
         /**
          * Access the HashMap of all stored values in the filesystem.
+         * <p>
          * When this resource is closed, the values are saved to the file, so ensure to use
          * a try-with-resources block or call {@link #close()} when done.
+         * <p>
          * <b>Warning</b>: Trying to add objects to the HashMap that are not serializable by Gson will throw an exception on write,
          * and may cause in the corruption of the storage file (other valid objects may be lost)
          *
