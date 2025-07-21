@@ -255,6 +255,13 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                     return (float) pl.pinpoint.getHeadingVelocity(unit);
                 }
 
+                @NonNull
+                @Override
+                public DcMotorSimple.Direction getParDirection() {
+                    return parDirection == GoBildaPinpointDriver.EncoderDirection.FORWARD ?
+                            DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE;
+                }
+
                 @Override
                 public void setParDirection(@NonNull DcMotorSimple.Direction direction) {
                     parDirection = direction == DcMotorSimple.Direction.FORWARD ?
@@ -266,8 +273,8 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
 
                 @NonNull
                 @Override
-                public DcMotorSimple.Direction getParDirection() {
-                    return parDirection == GoBildaPinpointDriver.EncoderDirection.FORWARD ?
+                public DcMotorSimple.Direction getPerpDirection() {
+                    return perpDirection == GoBildaPinpointDriver.EncoderDirection.FORWARD ?
                             DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE;
                 }
 
@@ -278,13 +285,6 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
                             GoBildaPinpointDriver.EncoderDirection.REVERSED;
                     assert pl.pinpoint != null;
                     pl.pinpoint.setEncoderDirections(parDirection, perpDirection);
-                }
-
-                @NonNull
-                @Override
-                public DcMotorSimple.Direction getPerpDirection() {
-                    return perpDirection == GoBildaPinpointDriver.EncoderDirection.FORWARD ?
-                            DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE;
                 }
             };
             encoderGroups.add(new PinpointEncoderGroup(pv));
