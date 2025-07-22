@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.function.Predicate;
@@ -20,6 +22,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.logic.Condition;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
+import dev.frozenmilk.util.cell.MirroredCell;
 
 /**
  * A wrapper around a {@link Gamepad} object that provides a {@link Controls} interface and custom input calculations.
@@ -40,6 +43,8 @@ public class Controller extends Gamepad {
     private final HashMap<Controls, Predicate<Boolean>> buttons = new HashMap<>();
     private final HashMap<Controls.Analog, UnaryFunction> axes = new HashMap<>();
     private final HashMap<Controls, Boolean> debounces = new HashMap<>();
+    // GamepadStateChanges and all methods that update it are private, we do some reflection to expose this method
+    private final Method updateGamepadStateChanges;
     /**
      * Shorthand for left_stick_x
      */
@@ -114,6 +119,16 @@ public class Controller extends Gamepad {
      */
     public Controller(@NonNull GamepadUser designatedUser) {
         this.designatedUser = designatedUser;
+        // Can't use GamepadStateChanges class directly as it is package-private
+        MirroredCell<Object> gamepadStateChanges = new MirroredCell<>(this, "changes");
+        // Reference to the edge detector lets us update it in our overridden fromByteArray
+        try {
+            updateGamepadStateChanges = gamepadStateChanges.get().getClass()
+                    .getDeclaredMethod("updateAllButtons", Gamepad.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Failed to access an internal field, this shouldn't happen!", e);
+        }
+        updateGamepadStateChanges.setAccessible(true);
     }
 
     /**
@@ -243,6 +258,12 @@ public class Controller extends Gamepad {
             touchpad_finger_2_y = byteBuffer.getFloat();
         }
         updateButtonAliases();
+        try {
+            // Update edge detectors that we can't access conventionally
+            updateGamepadStateChanges.invoke(this, this);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to invoke an internal method, this shouldn't happen!", e);
+        }
     }
 
     private boolean transform(boolean sdk, Controls button) {
