@@ -43,6 +43,8 @@ public class Controller extends Gamepad {
     private final HashMap<Controls, Predicate<Boolean>> buttons = new HashMap<>();
     private final HashMap<Controls.Analog, UnaryFunction> axes = new HashMap<>();
     private final HashMap<Controls, Boolean> debounces = new HashMap<>();
+    // Can't use GamepadStateChanges class directly as it is package-private
+    private final MirroredCell<Object> gamepadStateChanges = new MirroredCell<>(this, "changes");
     // GamepadStateChanges and all methods that update it are private, we do some reflection to expose this method
     private final Method updateGamepadStateChanges;
     /**
@@ -119,8 +121,6 @@ public class Controller extends Gamepad {
      */
     public Controller(@NonNull GamepadUser designatedUser) {
         this.designatedUser = designatedUser;
-        // Can't use GamepadStateChanges class directly as it is package-private
-        MirroredCell<Object> gamepadStateChanges = new MirroredCell<>(this, "changes");
         // Reference to the edge detector lets us update it in our overridden fromByteArray
         try {
             updateGamepadStateChanges = gamepadStateChanges.get().getClass()
@@ -260,7 +260,7 @@ public class Controller extends Gamepad {
         updateButtonAliases();
         try {
             // Update edge detectors that we can't access conventionally
-            updateGamepadStateChanges.invoke(this, this);
+            updateGamepadStateChanges.invoke(gamepadStateChanges, this);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Failed to invoke an internal method, this shouldn't happen!", e);
         }
