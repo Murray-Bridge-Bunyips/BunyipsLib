@@ -45,6 +45,14 @@ public class HoldableActuator extends BunyipsSubsystem {
      * Tasks for HoldableActuator.
      */
     public final Tasks tasks = new Tasks();
+    /**
+     * The encoder object that is used for position and velocity readings on this actuator.
+     * <p>
+     * This is automatically set on construction of the actuator, and if using a {@link Motor} instance, the internal
+     * {@link Encoder} instance of that motor will be used. Otherwise for normal motors, an equivalent instance will
+     * be automagically constructed and exposed here for use.
+     */
+    public final Encoder encoder;
 
     private final HashMap<TouchSensor, Integer> switchMapping = new HashMap<>();
     private final ElapsedTime sustainedOvercurrent = new ElapsedTime();
@@ -61,7 +69,6 @@ public class HoldableActuator extends BunyipsSubsystem {
     private TouchSensor topSwitch;
     private TouchSensor bottomSwitch;
     private DcMotorEx motor;
-    private Encoder encoder;
     private Measure<Time> overcurrentTime;
     private Measure<Time> maxSteadyState;
     private boolean autoZeroingLatch;
@@ -77,7 +84,11 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param motor the motor to control
      */
     public HoldableActuator(@Nullable DcMotor motor) {
-        if (!assertParamsNotNull(motor)) return;
+        if (!assertParamsNotNull(motor)) {
+            // Allow exposure as final field
+            encoder = new Encoder(() -> 0, () -> 0.0);
+            return;
+        }
         assert motor != null;
         this.motor = (DcMotorEx) motor;
         // Always default to BRAKE because HoldableActuators are meant to hold
