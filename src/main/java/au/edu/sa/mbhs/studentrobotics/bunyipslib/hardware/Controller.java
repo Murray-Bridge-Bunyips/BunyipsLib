@@ -346,8 +346,11 @@ public class Controller extends Gamepad {
 
     /**
      * Check if a button is currently pressed on a gamepad, with debounce to ignore a press that was already detected
-     * upon the <b>first call of this function and button</b>. This is an implementation of rising edge detection, but also
-     * applies a check for the initial state of the button, making it useful for task toggles.
+     * upon the <b>first call of this function and button</b>. This is an implementation of rising edge detection,
+     * but also applies a check for the initial state of the button, making it useful for task toggles and <b>is stateful</b>.
+     * <p>
+     * Standard edge detectors that are stateless are available natively as of SDK v10.3 through
+     * {@code wasPressed} and {@code wasReleased}. Use these if idempotency is required.
      * <p>
      * See the {@link Condition} class for more boolean state management.
      *
@@ -368,8 +371,12 @@ public class Controller extends Gamepad {
 
     /**
      * Call to reset the initial debounce state of {@link #getDebounced(Controls)}, allowing further calls to
-     * this method to capture the initial state of the button again. For implementations that do not call this method,
-     * the {@link #getDebounced(Controls)} method will operate as a simple rising edge detector.
+     * this method to capture the initial state of the button again. This resets the statefulness of the debounce.
+     * For implementations that do not call this method, the {@link #getDebounced(Controls)} method will
+     * operate as a simple rising edge detector.
+     * <p>
+     * Standard edge detectors that are stateless are available natively as of SDK v10.3 through
+     * {@code wasPressed} and {@code wasReleased}. Use these if idempotency is required.
      *
      * @param button The button to reset the debounce state of
      */
