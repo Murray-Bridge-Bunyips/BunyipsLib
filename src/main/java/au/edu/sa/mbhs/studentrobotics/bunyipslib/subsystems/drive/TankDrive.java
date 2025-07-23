@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive;
 
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.IMUEx;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TankLocalizer;
@@ -54,6 +56,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.TankCommandMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.Constants;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.DriveModel;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.ErrorThresholds;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.MotionProfile;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.TankGains;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
@@ -88,6 +91,8 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private Localizer localizer;
     private Accumulator accumulator;
     private TankKinematics kinematics;
+    // Sane default
+    private Measure<au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time> stabilizationTime = Milliseconds.of(500);
     private volatile double leftPower;
     private volatile double rightPower;
 
@@ -194,6 +199,22 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public TankDrive withAccumulator(@NonNull Accumulator accumulator) {
         this.accumulator.copyTo(accumulator);
         this.accumulator = accumulator;
+        return this;
+    }
+
+    /**
+     * Sets a fixed buffer amount of time to wait after each trajectory segment to allow the
+     * feedback controllers additional time to respond to residual error.
+     * <p>
+     * This encapsulates the {@link ErrorThresholds} equivalent for TankDrive, but applies the full timeout to
+     * the end of each segment to stabilise. This is particularly useful in heading overshoot.
+     *
+     * @param stabilizationTime the fixed buffer of extra time to add to each task to stabilize the robot.
+     *                          Defaults to 500ms. Set to 0 or negative to disable.
+     * @return this
+     */
+    public TankDrive withStabilizationTime(Measure<au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time> stabilizationTime) {
+        this.stabilizationTime = stabilizationTime;
         return this;
     }
 
@@ -332,7 +353,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
                 yPoints[i] = p.position.y;
             }
 
-            timeout(Seconds.of(t.duration));
+            timeout(Seconds.of(t.duration).plus(stabilizationTime));
             named(Text.format("Trajectory %->%",
                     Geometry.toUserString(t.path.begin(1).value()).replace("Pose2d", ""),
                     Geometry.toUserString(t.path.end(1).value())).replace("Pose2d", ""));
@@ -376,7 +397,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return getDeltaTime().in(Seconds) >= timeTrajectory.duration;
+            return getDeltaTime().in(Seconds) >= timeTrajectory.duration + stabilizationTime.in(Seconds);
         }
 
         @Override
@@ -399,7 +420,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
          */
         public TurnTask(@NonNull TimeTurn turn) {
             this.turn = turn;
-            timeout(Seconds.of(turn.duration));
+            timeout(Seconds.of(turn.duration).plus(stabilizationTime));
             named(Text.format("Turn %°->%°",
                     Mathf.round(Math.toDegrees(turn.get(0).value().heading.log()), 1),
                     Mathf.round(Math.toDegrees(turn.get(turn.duration).value().heading.log()), 1)));
@@ -442,7 +463,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return getDeltaTime().in(Seconds) >= turn.duration;
+            return getDeltaTime().in(Seconds) >= turn.duration + stabilizationTime.in(Seconds);
         }
 
         @Override
