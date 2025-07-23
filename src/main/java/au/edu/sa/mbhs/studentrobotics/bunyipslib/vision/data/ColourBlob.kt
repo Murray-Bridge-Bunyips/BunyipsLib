@@ -2,9 +2,12 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data
 
 import android.util.Size
 import com.qualcomm.robotcore.util.SortOrder
+import org.firstinspires.ftc.vision.opencv.Circle
+import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor.BlobCriteria
 import org.opencv.core.MatOfPoint
 import org.opencv.core.Point
 import org.opencv.core.RotatedRect
+import kotlin.math.sign
 
 /**
  * Data class for storing data related to the return results of a ColorBlobLocatorProcessor.
@@ -35,7 +38,19 @@ data class ColourBlob(
     /**
      * "Best fit" bounding box for this blob.
      */
-    val boxFit: RotatedRect
+    val boxFit: RotatedRect,
+    /**
+     * The arc length for this blob.
+     */
+    val arcLength: Double,
+    /**
+     * The circularity for this blob.
+     */
+    val circularity: Double,
+    /**
+     * The center Point and radius of the circle enclosing this blob.
+     */
+    val circle: Circle
 ) : VisionData() {
     private var cameraDimensions: Size? = null
 
@@ -49,8 +64,11 @@ data class ColourBlob(
         contourArea: Int,
         density: Double,
         aspectRatio: Double,
-        boxFit: RotatedRect
-    ) : this(contour, contourPoints, contourArea, density, aspectRatio, boxFit) {
+        boxFit: RotatedRect,
+        arcLength: Double,
+        circularity: Double,
+        circle: Circle
+    ) : this(contour, contourPoints, contourArea, density, aspectRatio, boxFit, arcLength, circularity, circle) {
         this.cameraDimensions = cameraDimensions
     }
 
@@ -74,65 +92,58 @@ data class ColourBlob(
     }
 
     /**
-     * Collection of utility functions found via the Util inner class of ColorBlobLocatorProcessor.
+     * Collection of in-place sorting and filtering functions found via the Util inner class of ColorBlobLocatorProcessor.
      */
     companion object {
         /**
-         * Filter blobs by minimum and maximum area.
+         * Remove from a mutable list of [ColourBlob]s those which fail to meet a given criteria.
+         *
+         * @param criteria criteria by which to filter by
+         * @param minValue minimum value
+         * @param maxValue maximum value
+         * @param blobs List of [ColourBlob]s to operate on
          */
-        @JvmStatic
-        fun filterByArea(minArea: Int, maxArea: Int, blobs: List<ColourBlob>): List<ColourBlob> {
-            return blobs.filter { it.contourArea in minArea..maxArea }
+        fun filterByCriteria(
+            criteria: BlobCriteria,
+            minValue: Double,
+            maxValue: Double,
+            blobs: MutableList<ColourBlob>
+        ) {
+            val toRemove = ArrayList<ColourBlob>()
+            for (b in blobs) {
+                val value = when (criteria) {
+                    BlobCriteria.BY_CONTOUR_AREA -> b.contourArea.toDouble()
+                    BlobCriteria.BY_DENSITY -> b.density
+                    BlobCriteria.BY_ASPECT_RATIO -> b.aspectRatio
+                    BlobCriteria.BY_ARC_LENGTH -> b.arcLength
+                    BlobCriteria.BY_CIRCULARITY -> b.circularity
+                }
+                if (value > maxValue || value < minValue)
+                    toRemove.add(b)
+            }
+            blobs.removeAll(toRemove)
         }
 
         /**
-         * Sorts a list of blobs by area.
+         * Rearrange a mutable list of [ColourBlob]s to sort by a criteria.
+         *
+         * @param criteria criteria by which to sort by
+         * @param sortOrder sort order, ascending or descending
+         * @param blobs List of [ColourBlob]s to operate on
          */
-        @JvmStatic
-        fun sortByArea(sortOrder: SortOrder, blobs: List<ColourBlob>): List<ColourBlob> {
-            return blobs.sortedWith(compareBy<ColourBlob> { it.contourArea }.let {
-                if (sortOrder == SortOrder.ASCENDING) it else it.reversed()
-            })
-        }
-
-        /**
-         * Filter blobs by minimum and maximum density.
-         */
-        @JvmStatic
-        fun filterByDensity(minDensity: Double, maxDensity: Double, blobs: List<ColourBlob>): List<ColourBlob> {
-            return blobs.filter { it.density in minDensity..maxDensity }
-        }
-
-        /**
-         * Sorts a list of blobs by density.
-         */
-        @JvmStatic
-        fun sortByDensity(sortOrder: SortOrder, blobs: List<ColourBlob>): List<ColourBlob> {
-            return blobs.sortedWith(compareBy<ColourBlob> { it.density }.let {
-                if (sortOrder == SortOrder.ASCENDING) it else it.reversed()
-            })
-        }
-
-        /**
-         * Filter blobs by minimum and maximum aspect ratio.
-         */
-        @JvmStatic
-        fun filterByAspectRatio(
-            minAspectRatio: Double,
-            maxAspectRatio: Double,
-            blobs: List<ColourBlob>
-        ): List<ColourBlob> {
-            return blobs.filter { it.aspectRatio in minAspectRatio..maxAspectRatio }
-        }
-
-        /**
-         * Sorts a list of blobs by aspect ratio.
-         */
-        @JvmStatic
-        fun sortByAspectRatio(sortOrder: SortOrder, blobs: List<ColourBlob>): List<ColourBlob> {
-            return blobs.sortedWith(compareBy<ColourBlob> { it.aspectRatio }.let {
-                if (sortOrder == SortOrder.ASCENDING) it else it.reversed()
-            })
+        fun sortByCriteria(criteria: BlobCriteria, sortOrder: SortOrder, blobs: MutableList<ColourBlob>) {
+            blobs.sortWith { c1, c2 ->
+                var diff = when (criteria) {
+                    BlobCriteria.BY_CONTOUR_AREA -> sign(c2.contourArea.toDouble() - c1.contourArea)
+                    BlobCriteria.BY_DENSITY -> sign(c2.density - c1.density)
+                    BlobCriteria.BY_ASPECT_RATIO -> sign(c2.aspectRatio - c1.aspectRatio)
+                    BlobCriteria.BY_ARC_LENGTH -> sign(c2.arcLength - c1.arcLength)
+                    BlobCriteria.BY_CIRCULARITY -> sign(c2.circularity - c1.circularity)
+                }
+                if (sortOrder == SortOrder.ASCENDING)
+                    diff = -diff
+                diff.toInt()
+            }
         }
     }
 }

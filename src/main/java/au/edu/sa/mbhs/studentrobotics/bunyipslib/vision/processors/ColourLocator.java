@@ -142,7 +142,10 @@ public class ColourLocator extends Processor<ColourBlob> {
                     blob.getContourArea(),
                     blob.getDensity(),
                     blob.getAspectRatio(),
-                    blob.getBoxFit()
+                    blob.getBoxFit(),
+                    blob.getArcLength(),
+                    blob.getCircularity(),
+                    blob.getCircle()
             ));
         }
     }
