@@ -74,7 +74,7 @@ public class ColourSensor extends Processor<ColourSample> {
     protected void update() {
         PredominantColorProcessor.Result res = instance.getAnalysis();
         // Guaranteed to be only one colour sample instance in the data object at all times
-        data.add(new ColourSample(res.closestSwatch, res.rgb));
+        data.add(new ColourSample(res.closestSwatch, res.RGB, res.HSV, res.YCrCb));
     }
 
     @Override
