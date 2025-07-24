@@ -13,11 +13,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Velocity
 
 /**
  * Data class for storing constants related to extra correction for Mecanum drive stabilization.
+ * This extra correction is not possible in Tank drives due to the non-holonomic constraints.
  *
- * This extra correction, minus the stabilization time commonly for turns, is not possible in Tank drives
- * due to the non-holonomic constraints that cannot be stabilized by running the feedback controllers for longer.
- *
- * @param stabilizationTimeout the maximum buffer of extra time that can be used on top of the task to stabilize the robot
+ * @param stabilizationTimeout the buffer of extra time to add to the task to stabilize the robot
  * @param maxTranslationalError the maximum translational error
  * @param minVelStab the minimum velocity to be considered for stabilization
  * @param maxAngularError the maximum angular error
