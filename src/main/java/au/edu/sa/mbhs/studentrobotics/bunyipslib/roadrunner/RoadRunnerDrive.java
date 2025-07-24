@@ -14,8 +14,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.Constants;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
+import dev.frozenmilk.util.cell.RefCell;
 
 /**
  * Interface implemented by all RoadRunner drive classes.
@@ -99,10 +101,17 @@ public interface RoadRunnerDrive extends Moveable {
     }
 
     /**
-     * Begin building a RoadRunner trajectory from the last-known robot position when this method is called.
-     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
+     * Builds a RoadRunner trajectory starting from the robot's last-known position <b>at the time of this method being called.</b>
+     * Users should be aware that improperly calling this method multiple times can create trajectories that start from the wrong spot,
+     * as the start pose used will be the one set during initialisation and <b>*NOT*</b> the endpoint of the last trajectory.
+     * <p>
+     * The start pose of this trajectory is captured implicitly from {@link Storage#memory()}. For chaining or splicing trajectories,
+     * see {@link TaskBuilder#fresh()} or using a {@link RefCell} as a parameter to {@code addTask} or {@code build} to keep track
+     * of the end position of the last trajectory. For runtime pose evaluation, use {@link Task#defer}.
+     * <p>
+     * See the RoadRunner section in the wiki for more details, and ensure to review your trajectories on a Field dashboard.
      *
-     * @return extended RoadRunner trajectory task builder
+     * @return a {@link TaskBuilder} for trajectory creation
      */
     @NonNull
     default TaskBuilder makeTrajectory() {
@@ -110,30 +119,40 @@ public interface RoadRunnerDrive extends Moveable {
     }
 
     /**
-     * Begin building a RoadRunner trajectory from the <b>inverse (PoseMap piped)</b> last-known robot position when this method is called.
-     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
+     * Builds a RoadRunner trajectory starting from the robot's last-known position <b>at the time of this method being called.</b>
+     * Users should be aware that improperly calling this method multiple times can create trajectories that start from the wrong spot,
+     * as the start pose used will be the one set during initialisation and <b>*NOT*</b> the endpoint of the last trajectory.
+     * <p>
+     * The start pose of this trajectory is captured implicitly from {@link Storage#memory()}. For chaining or splicing trajectories,
+     * see {@link TaskBuilder#fresh()} or using a {@link RefCell} as a parameter to {@code addTask} or {@code build} to keep track
+     * of the end position of the last trajectory. For runtime pose evaluation, use {@link Task#defer}.
+     * <p>
+     * See the RoadRunner section in the wiki for more details, and ensure to review your trajectories on a Field dashboard.
      *
      * @param poseMap the PoseMap to use for this builder, note that the implicit last-known position is used and
-     *                automatically passed into the PoseMap now to later 'invert' it. This assumes your PoseMap is idempotent to inversion.
+     *                automatically passed into the PoseMap now to later 'invert' it. <b>Using this method assumes your PoseMap is self-invertible.</b>
      *                For most mappings, this will result in the absolute last-known position being used as the starting pose, which
      *                is usually the case when you are trying to use the current position of the robot.
      *                If you wish the PoseMap to apply normally, consider using the other makeTrajectory methods
      *                and manually passing the last-known position from {@link Storage}.
-     * @return extended RoadRunner trajectory task builder
+     * @return a {@link TaskBuilder} for trajectory creation
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull PoseMap poseMap) {
-        // Map the last known position using the PoseMap, will be mapped back to the last known position later, assuming
-        // that this PoseMap is idempotent to inversion.
         return new TaskBuilder(getConstants(), poseMap.map(Pose2dDual.constant(Storage.memory().lastKnownPosition, 1)).value(), poseMap);
     }
 
     /**
-     * Begin building a RoadRunner trajectory from the supplied pose when this method is called.
-     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
+     * Builds a RoadRunner trajectory from an explicit start pose. This method yields the best accuracy.
+     * <p>
+     * Use this for precise control over the trajectory's starting position.
+     * <p>
+     * For chaining or splicing trajectories, see {@link TaskBuilder#fresh()} or using a {@link RefCell} to splice
+     * when {@code addTask} or {@code build} is called. For runtime pose evaluation, use {@link Task#defer}.
+     * See the RoadRunner section in the wiki for more details.
      *
-     * @param startPose the pose to start the trajectory generation from
-     * @return extended RoadRunner trajectory task builder
+     * @param startPose the explicit start {@link Pose2d} for this trajectory
+     * @return a {@link TaskBuilder} for trajectory creation
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull Pose2d startPose) {
@@ -141,12 +160,15 @@ public interface RoadRunnerDrive extends Moveable {
     }
 
     /**
-     * Begin building a RoadRunner trajectory from the supplied pose when this method is called.
-     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
+     * Builds a RoadRunner trajectory from an explicit start pose, mapped through a {@link PoseMap}.
+     * <p>
+     * For chaining or splicing trajectories, see {@link TaskBuilder#fresh()} or using a {@link RefCell} to splice
+     * when {@code addTask} or {@code build} is called. For runtime pose evaluation, use {@link Task#defer}.
+     * See the RoadRunner section in the wiki for more details.
      *
-     * @param startPose the pose to start the trajectory generation from
-     * @param poseMap   the PoseMap to use for this builder
-     * @return extended RoadRunner trajectory task builder
+     * @param startPose the explicit start {@link Pose2d} for this trajectory
+     * @param poseMap   the {@link PoseMap} to transform the start pose
+     * @return a {@link TaskBuilder} for trajectory creation
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull Pose2d startPose, @NonNull PoseMap poseMap) {
@@ -154,14 +176,17 @@ public interface RoadRunnerDrive extends Moveable {
     }
 
     /**
-     * Begin building a RoadRunner trajectory from the supplied pose when this method is called.
-     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
+     * Builds a RoadRunner trajectory from a vector and angle, with explicit units.
+     * <p>
+     * For chaining or splicing trajectories, see {@link TaskBuilder#fresh()} or using a {@link RefCell} to splice
+     * when {@code addTask} or {@code build} is called. For runtime pose evaluation, use {@link Task#defer}.
+     * See the RoadRunner section in the wiki for more details.
      *
-     * @param startVec the vector to start the trajectory at and where the robot will be placed
-     * @param distUnit the unit of distance of the start pose
-     * @param ang      the angle of the start pose
-     * @param angUnit  the unit of angle of the start pose
-     * @return extended RoadRunner trajectory task builder
+     * @param startVec the start {@link Vector2d} of this trajectory
+     * @param distUnit the {@link Distance} unit
+     * @param ang      the angle value
+     * @param angUnit  the {@link Angle} unit
+     * @return a {@link TaskBuilder} for trajectory creation
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull Vector2d startVec, @NonNull Distance distUnit, double ang, @NonNull Angle angUnit) {
@@ -169,15 +194,18 @@ public interface RoadRunnerDrive extends Moveable {
     }
 
     /**
-     * Begin building a RoadRunner trajectory from the supplied pose when this method is called.
-     * For deferring this starting pose dynamically, consider a DeferredTask (util. `Task.defer`) builder.
+     * Builds a RoadRunner trajectory from a vector and angle, with explicit units and pose mapping.
+     * <p>
+     * For chaining or splicing trajectories, see {@link TaskBuilder#fresh()} or using a {@link RefCell} to splice
+     * when {@code addTask} or {@code build} is called. For runtime pose evaluation, use {@link Task#defer}.
+     * See the RoadRunner section in the wiki for more details.
      *
-     * @param startVec the vector to start the trajectory at and where the robot will be placed
-     * @param distUnit the unit of distance of the start pose
-     * @param ang      the angle of the start pose
-     * @param angUnit  the unit of angle of the start pose
-     * @param poseMap  the PoseMap to use for this builder
-     * @return extended RoadRunner trajectory task builder
+     * @param startVec the start {@link Vector2d} of this trajectory
+     * @param distUnit the {@link Distance} unit
+     * @param ang      the angle value
+     * @param angUnit  the {@link Angle} unit
+     * @param poseMap  the {@link PoseMap} to transform the start pose
+     * @return a {@link TaskBuilder} for trajectory creation
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull Vector2d startVec, @NonNull Distance distUnit, double ang, @NonNull Angle angUnit, @NonNull PoseMap poseMap) {
