@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v7.3.2-master-9ba02dc55            </div>
+v7.4.0-master-f9b8b9f8b            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,99 +66,39 @@ v7.3.2-master-9ba02dc55            </div>
   <div class="breadcrumbs"><a href="../../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../../index.html">au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data</a><span class="delimiter">/</span><a href="../index.html">ColourBlob</a><span class="delimiter">/</span><span class="current">Companion</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Companion</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">Companion</a></div><p class="paragraph">Collection of utility functions found via the Util inner class of ColorBlobLocatorProcessor.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">Companion</a></div><p class="paragraph">Collection of in-place sorting and filtering functions found via the Util inner class of ColorBlobLocatorProcessor.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
       <div data-togglable="FUNCTION">
         <h2 class="">Functions</h2>
-        <div class="table"><a data-name="1672339019%2FFunctions%2F-325384828" anchor-label="filterByArea" id="1672339019%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="1283665015%2FFunctions%2F-325384828" anchor-label="filterByCriteria" id="1283665015%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="filter-by-area.html"><span>filter</span><wbr></wbr><span>By</span><wbr></wbr><span><span>Area</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1672339019%2FFunctions%2F-325384828"></span>
+                  <div><a href="filter-by-criteria.html"><span>filter</span><wbr></wbr><span>By</span><wbr></wbr><span><span>Criteria</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1283665015%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="filter-by-area.html"><span class="token function">filterByArea</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">minArea<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">maxArea<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">blobs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Filter blobs by minimum and maximum area.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="filter-by-criteria.html"><span class="token function">filterByCriteria</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">criteria<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.vision.opencv/ColorBlobLocatorProcessor.BlobCriteria///PointingToDeclaration/">ColorBlobLocatorProcessor.BlobCriteria</span><span class="token punctuation">, </span></span><span class="parameter ">minValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">maxValue<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">blobs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-list/index.html">MutableList</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Remove from a mutable list of <a href="../index.html">ColourBlob</a>s those which fail to meet a given criteria.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-546899759%2FFunctions%2F-325384828" anchor-label="filterByAspectRatio" id="-546899759%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-78725709%2FFunctions%2F-325384828" anchor-label="sortByCriteria" id="-78725709%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="filter-by-aspect-ratio.html"><span>filter</span><wbr></wbr><span>By</span><wbr></wbr><span>Aspect</span><wbr></wbr><span><span>Ratio</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-546899759%2FFunctions%2F-325384828"></span>
+                  <div><a href="sort-by-criteria.html"><span>sort</span><wbr></wbr><span>By</span><wbr></wbr><span><span>Criteria</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-78725709%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="filter-by-aspect-ratio.html"><span class="token function">filterByAspectRatio</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">minAspectRatio<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">maxAspectRatio<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">blobs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Filter blobs by minimum and maximum aspect ratio.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="2039826406%2FFunctions%2F-325384828" anchor-label="filterByDensity" id="2039826406%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="filter-by-density.html"><span>filter</span><wbr></wbr><span>By</span><wbr></wbr><span><span>Density</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2039826406%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="filter-by-density.html"><span class="token function">filterByDensity</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">minDensity<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">maxDensity<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-double/index.html">Double</a><span class="token punctuation">, </span></span><span class="parameter ">blobs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Filter blobs by minimum and maximum density.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1746306363%2FFunctions%2F-325384828" anchor-label="sortByArea" id="-1746306363%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="sort-by-area.html"><span>sort</span><wbr></wbr><span>By</span><wbr></wbr><span><span>Area</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1746306363%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="sort-by-area.html"><span class="token function">sortByArea</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sortOrder<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.util/SortOrder///PointingToDeclaration/">SortOrder</span><span class="token punctuation">, </span></span><span class="parameter ">blobs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Sorts a list of blobs by area.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="85251861%2FFunctions%2F-325384828" anchor-label="sortByAspectRatio" id="85251861%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="sort-by-aspect-ratio.html"><span>sort</span><wbr></wbr><span>By</span><wbr></wbr><span>Aspect</span><wbr></wbr><span><span>Ratio</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="85251861%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="sort-by-aspect-ratio.html"><span class="token function">sortByAspectRatio</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sortOrder<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.util/SortOrder///PointingToDeclaration/">SortOrder</span><span class="token punctuation">, </span></span><span class="parameter ">blobs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Sorts a list of blobs by aspect ratio.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1486302442%2FFunctions%2F-325384828" anchor-label="sortByDensity" id="1486302442%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="sort-by-density.html"><span>sort</span><wbr></wbr><span>By</span><wbr></wbr><span><span>Density</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1486302442%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="sort-by-density.html"><span class="token function">sortByDensity</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sortOrder<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.util/SortOrder///PointingToDeclaration/">SortOrder</span><span class="token punctuation">, </span></span><span class="parameter ">blobs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Sorts a list of blobs by density.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="sort-by-criteria.html"><span class="token function">sortByCriteria</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">criteria<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.vision.opencv/ColorBlobLocatorProcessor.BlobCriteria///PointingToDeclaration/">ColorBlobLocatorProcessor.BlobCriteria</span><span class="token punctuation">, </span></span><span class="parameter ">sortOrder<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.util/SortOrder///PointingToDeclaration/">SortOrder</span><span class="token punctuation">, </span></span><span class="parameter ">blobs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-mutable-list/index.html">MutableList</a><span class="token operator">&lt;</span><a href="../index.html">ColourBlob</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Rearrange a mutable list of <a href="../index.html">ColourBlob</a>s to sort by a criteria.</p></div></div></div>
                 </div>
               </div>
             </div>
