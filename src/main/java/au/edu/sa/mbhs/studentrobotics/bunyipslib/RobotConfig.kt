@@ -1,6 +1,5 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.RobotConfig.AutoInit
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.IMUEx
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.InvertibleTouchSensor
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Motor
@@ -86,7 +85,7 @@ abstract class RobotConfig {
         Exceptions.runUserMethod(::onRuntime)
         DualTelemetry.smartAdd(
             "<b>${javaClass.simpleName}</b>",
-            "Hardware initialised with ${if (Storage.memory().hardwareErrors.size > 0) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}."
+            "Hardware initialised with ${if (Storage.memory().hardwareErrors.isNotEmpty()) "<font color='red'>${Storage.memory().hardwareErrors.size} error(s)</font>" else "<font color='green'>0 errors</font>"}."
         )
         Dbg.logd(javaClass, "hardware initialised with % error(s).", Storage.memory().hardwareErrors.size)
         for (error in Storage.memory().hardwareErrors) {

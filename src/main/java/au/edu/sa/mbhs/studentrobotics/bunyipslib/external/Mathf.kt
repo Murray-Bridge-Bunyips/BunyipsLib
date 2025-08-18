@@ -1,5 +1,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.gamma
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.lerp
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.moveTowards
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
@@ -18,6 +21,7 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
+import kotlin.math.roundToLong
 import kotlin.math.sign
 import kotlin.math.sqrt
 
@@ -45,7 +49,7 @@ object Mathf {
     fun Number?.round(thDigits: Int, sigFigs: Int = -1): Double {
         if (this == null || this.toDouble().isNaN()) return 0.0
         val n = this.toDouble()
-        if (thDigits == 0) return Math.round(n).toDouble()
+        if (thDigits == 0) return n.roundToLong().toDouble()
         var bd = BigDecimal(n.toString())
         bd = bd.setScale(thDigits, RoundingMode.HALF_UP)
         if (sigFigs != -1) bd = bd.round(MathContext(sigFigs, RoundingMode.HALF_UP))

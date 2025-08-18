@@ -407,7 +407,7 @@ abstract class Task : Runnable, Action {
      *
      * If a [dependency] is not attached to this task, meaning that this task has not elected a subsystem to run this task on
      * via [on], this method will no-op and throw a warning in Logcat. Most BunyipsLib-integrated tasks, including ones
-     * found in the `tasks` field of subsystems are elected to run on the correct [dependency], so this method can be used.
+     * found in the `tasks` field of subsystems is elected to run on the correct [dependency], so this method can be used.
      *
      * Note that an assigned default task must not have a finish condition, otherwise an emergency stop will be issued.
      *
@@ -579,35 +579,33 @@ abstract class Task : Runnable, Action {
      * @since 7.0.0
      */
     fun mutate(): DynamicTask {
-        return if (this is DynamicTask) this else {
-            task {
-                named(this@Task.name)
-                timeout(this@Task.timeout)
-                if (this@Task.dependency.isPresent)
-                    on(this@Task.dependency.get(), this@Task.isPriority)
-                init {
-                    Dashboard.usePacket {
-                        this@Task.dashboard = it
-                        val startTimeField = Task::class.java.getDeclaredField("startTime")
-                        startTimeField.isAccessible = true
-                        val time = System.nanoTime()
-                        startTimeField.setLong(this, time)
-                        startTimeField.setLong(this@Task, time)
-                        this@Task.init()
-                        this@Task.poll()
-                    }
+        return this as? DynamicTask ?: task {
+            named(this@Task.name)
+            timeout(this@Task.timeout)
+            if (this@Task.dependency.isPresent)
+                on(this@Task.dependency.get(), this@Task.isPriority)
+            init {
+                Dashboard.usePacket {
+                    this@Task.dashboard = it
+                    val startTimeField = Task::class.java.getDeclaredField("startTime")
+                    startTimeField.isAccessible = true
+                    val time = System.nanoTime()
+                    startTimeField.setLong(this, time)
+                    startTimeField.setLong(this@Task, time)
+                    this@Task.init()
+                    this@Task.poll()
                 }
-                periodic {
-                    Dashboard.usePacket {
-                        this@Task.dashboard = it
-                        this@Task.periodic()
-                    }
-                }
-                isFinished { this@Task.isTaskFinished() }
-                onInterrupt { this@Task.onInterrupt() }
-                onReset { this@Task.onReset() }
-                onFinish { this@Task.onFinish() }
             }
+            periodic {
+                Dashboard.usePacket {
+                    this@Task.dashboard = it
+                    this@Task.periodic()
+                }
+            }
+            isFinished { this@Task.isTaskFinished() }
+            onInterrupt { this@Task.onInterrupt() }
+            onReset { this@Task.onReset() }
+            onFinish { this@Task.onFinish() }
         }
     }
 

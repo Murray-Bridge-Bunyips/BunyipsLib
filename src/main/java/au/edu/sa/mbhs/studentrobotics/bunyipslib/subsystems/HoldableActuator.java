@@ -586,7 +586,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     @Override
     protected void onEnable() {
         // HoldableActuator will handle the encoder reports if we're on a Motor class
-        // Technically not required if we have bulk reads but may still occur and we want to be positively sure
+        // Technically not required if we have bulk reads but may still occur, and we want to be positively sure
         // we aren't reading more than we need to be
         encoder.setCaching(true);
     }

@@ -392,7 +392,7 @@ public class Controller extends Gamepad {
 
     /**
      * Call to reset the initial debounce state of {@link #getDebounced(Controls)}, allowing further calls to
-     * this method to capture the initial state of the button again. This resets the statefulness of the debounce.
+     * this method to capture the initial state of the button again. This resets the statefulness of the debounced state.
      * For implementations that do not call this method, the {@link #getDebounced(Controls)} method will
      * operate as a simple rising edge detector.
      * <p>

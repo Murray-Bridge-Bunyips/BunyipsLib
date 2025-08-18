@@ -686,10 +686,10 @@ class Scheduler {
                     .append(handler.button)
                     .append(" is ")
                     .append(handler.edge)
-                val delay = originalRunCondition.getActiveDelay()
+                val delay = originalRunCondition.activeDelay
                 if (delay.magnitude() > 0) {
                     out.append(" after ")
-                        .append(originalRunCondition.getActiveDelay() to Seconds round 1)
+                        .append(originalRunCondition.activeDelay to Seconds round 1)
                         .append("s")
                 }
             } else {

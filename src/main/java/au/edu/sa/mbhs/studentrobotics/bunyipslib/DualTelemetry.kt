@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry.Companion.smartAdd
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry.Companion.smartLog
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.executables.MovingAverageTimer
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
@@ -291,7 +293,7 @@ class DualTelemetry @JvmOverloads constructor(
         var prepend = ""
         if (movingAverageTimer != null)
             prepend =
-                "<small><font color='$logBracketColor'>[</font>T+${Math.round(movingAverageTimer.elapsedTime() to Seconds)}s<font color='$logBracketColor'>]</font></small> "
+                "<small><font color='$logBracketColor'>[</font>T+${(movingAverageTimer.elapsedTime() to Seconds).roundToInt()}s<font color='$logBracketColor'>]</font></small> "
         telemetry.log().add(prepend + msg)
         synchronized(dashboardItems) {
             dashboardItems.add(Pair(ItemType.LOG, msg.ref()))
@@ -361,7 +363,7 @@ class DualTelemetry @JvmOverloads constructor(
             if (!loopsPerSec.isNaN()) loopsPerSec round 1 else 0.0
         } ?: 0.0
         val elapsedTime = movingAverageTimer?.elapsedTime()?.to(Seconds)?.roundToInt()?.toString() ?: "?"
-        val status = if (overrideStatus != null) overrideStatus.toString() else opModeStatus
+        val status = overrideStatus ?: opModeStatus
         val overheadStatus = StringBuilder()
         overheadStatus.append(status).append("\n")
         if (overheadSubtitle.isNotEmpty())

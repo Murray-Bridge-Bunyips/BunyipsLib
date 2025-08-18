@@ -1,6 +1,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import android.content.Context
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib.opMode
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib.opModeManager
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.HardwareTester
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetEncoders
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetLastKnowns

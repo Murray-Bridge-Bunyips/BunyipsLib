@@ -1,9 +1,9 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware.Controller
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Companion.isSelected
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Cartesian
 import com.qualcomm.robotcore.hardware.Gamepad
-import kotlin.collections.set
 
 /**
  * Utility class for the different button and analog controls on the gamepad.

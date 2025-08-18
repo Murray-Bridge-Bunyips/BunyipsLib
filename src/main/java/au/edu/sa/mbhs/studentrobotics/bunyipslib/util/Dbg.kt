@@ -32,6 +32,9 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg.error
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg.log
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg.warn
 import com.qualcomm.robotcore.util.RobotLog
 
 /**
