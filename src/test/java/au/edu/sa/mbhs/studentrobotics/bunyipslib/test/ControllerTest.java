@@ -78,4 +78,27 @@ class ControllerTest {
         controller.copy(target);
         assertFalse(controller.getDebounced(Controls.X));
     }
+
+    @Test
+    void testSDKRisingEdge() {
+        target.a = true;
+        controller.copy(target);
+        assertTrue(controller.aWasPressed());
+        assertFalse(controller.aWasPressed());
+        controller.copy(target);
+        assertFalse(controller.aWasPressed());
+    }
+
+    @Test
+    void testSDKFallingEdge() {
+        target.dpad_left = true;
+        controller.copy(target);
+        target.dpad_left = false;
+        assertFalse(controller.dpadLeftWasReleased());
+        controller.copy(target);
+        assertTrue(controller.dpadLeftWasReleased());
+        assertFalse(controller.dpadLeftWasReleased());
+        controller.copy(target);
+        assertFalse(controller.dpadLeftWasReleased());
+    }
 }

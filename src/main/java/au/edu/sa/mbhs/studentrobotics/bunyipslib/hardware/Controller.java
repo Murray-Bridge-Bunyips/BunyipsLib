@@ -260,7 +260,7 @@ public class Controller extends Gamepad {
         updateButtonAliases();
         try {
             // Update edge detectors that we can't access conventionally
-            updateGamepadStateChanges.invoke(gamepadStateChanges, this);
+            updateGamepadStateChanges.invoke(gamepadStateChanges.get(), this);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Failed to invoke an internal method, this shouldn't happen!", e);
         }
