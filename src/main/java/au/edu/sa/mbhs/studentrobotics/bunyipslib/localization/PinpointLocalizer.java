@@ -146,7 +146,7 @@ public class PinpointLocalizer implements Localizer {
              * @return the builder
              */
             @NonNull
-            public TwoWheelLocalizer.Params.Builder setInitialParDirection(GoBildaPinpointDriver.EncoderDirection initialParDirection) {
+            public Builder setInitialParDirection(GoBildaPinpointDriver.EncoderDirection initialParDirection) {
                 ((Params) params).initialParDirection = initialParDirection;
                 return this;
             }
@@ -162,7 +162,7 @@ public class PinpointLocalizer implements Localizer {
              * @return the builder
              */
             @NonNull
-            public TwoWheelLocalizer.Params.Builder setInitialPerpDirection(GoBildaPinpointDriver.EncoderDirection initialParDirection) {
+            public Builder setInitialPerpDirection(GoBildaPinpointDriver.EncoderDirection initialParDirection) {
                 ((Params) params).initialParDirection = initialParDirection;
                 return this;
             }
