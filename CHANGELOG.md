@@ -2,6 +2,48 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v7.4.0 (2025-08-18)
+
+SDK + dependency updates and reorganising.
+
+### Breaking changes
+
+- Various dependency updates
+    - FTC SDK updated to v10.3
+    - Sloth updated to v0.2.4
+    - FtcDashboard updated to v0.4.17
+    - These dependency versions have been updated in the wiki
+- Removed the `GoBildaPinpointDriver` as this now exists in the SDK
+    - RoadRunner support has subsequently been changed, note now the directions of the Pinpoint wheels are defined in
+      the Params object, not directly to the device
+    - The corresponding JavaDoc and wiki section has been updated accordingly to accommodate this change
+- Filtering `ColourBlobs` are no longer done with the `filterByX` static methods
+    - Following the SDK's change to filtering the `filterByCriteria` and `sortByCriteria` methods are used instead to *
+      *in-place** filter and sort lists
+    - These changes follow the SDK's choice of an enum to determine criteria, as well as using in-place operations to
+      save memory use
+- The `ColourSample` constructor now takes in three colour spaces through `IntArray`s to expose them as separate
+  components
+    - This also means `ColourSample` data instances now store colour information in three colour spaces (RGB, HSV,
+      YCrCb) instead of one (RGB)
+
+### Non-breaking changes
+
+- Added missing `ofMaxVel` `Measure` overloads for `Turn` class
+- The `Encoder` instance used by the `HoldableActuator` is now exposed as a public final field, allowing users to access
+  the encoder through the subsystem without needing to grab it directly from hardware
+    - This mirrors the `Motor` class but for the subsystem where it would be most likely used
+- Various linting and docs improvements
+- The new `blackboard` member of SDK v10.3 is now used as the backing array for `Storage.memory().getVolatile()` and
+  `setVolatile()`
+    - Since the functionality overlaps, this change allows the OpMode to also access any volatile information through
+      the `blackboard` field
+- Added `arcLength`, `circularity`, and `circle` to the `ColourBlob` vision data class to mirror the SDK
+- Upstream SDK updates including controller edge detections are now part of BunyipsLib
+    - Exposes methods on the Gamepad such as `wasPressed` and `wasReleased` for built-in support for debouncing
+    - Ties hand-in-hand with the `Controller.getDebounced` method, and can be used in place of any regular controller
+      operation
+
 ## v7.3.2 (2025-06-05)
 
 Drive task patches.
