@@ -1,11 +1,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.transforms
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Geometry.toUserString
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Text
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.transforms.StartingConfiguration.Alliance.BLUE
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.transforms.StartingConfiguration.Alliance.RED
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.transforms.StartingConfiguration.Origin.LEFT
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.transforms.StartingConfiguration.Origin.RIGHT
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Angle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Distance
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Measure
@@ -14,6 +11,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.FieldTiles
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Inches
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Radians
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.transforms.StartingConfiguration.Alliance.BLUE
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.transforms.StartingConfiguration.Alliance.RED
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.transforms.StartingConfiguration.Origin.LEFT
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.transforms.StartingConfiguration.Origin.RIGHT
 import com.acmerobotics.roadrunner.Pose2d
 import kotlin.math.abs
 
@@ -33,32 +34,38 @@ import kotlin.math.abs
  */
 object StartingConfiguration {
     /**
-     * Represents a position that a robot is able to start a match in.
+     * Represents a position, state, and configuration that a robot is able to start a match in.
      */
     data class Position @JvmOverloads constructor(
         /**
          * The alliance this robot is starting in.
          */
+        @JvmField
         val alliance: Alliance,
         /**
          * The side the robot is biased or has been placed on.
          */
+        @JvmField
         val origin: Origin,
         /**
          * The translation from the center of the field tile to the robot center, in order to touch the field wall.
          */
+        @JvmField
         val backwardTranslation: Measure<Distance>,
         /**
          * The translation from the origin to the robot center.
          */
+        @JvmField
         val horizontalTranslation: Measure<Distance>,
         /**
          * Counter-clockwise rotation of the robot in the starting position.
          */
+        @JvmField
         val ccwRotation: Measure<Angle>,
         /**
          * Read-only arbitrary user flags for this starting configuration.
          */
+        @JvmField
         val flags: Set<Any> = emptySet()
     ) {
         /**
@@ -110,9 +117,14 @@ object StartingConfiguration {
          * Invert this starting configuration over the center of the field, returning a new starting configuration
          * that is a direct mirror on the other alliance (symmetrical mirror).
          */
-        fun invert(): Position {
-            return Position(alliance.invert(), origin.invert(), backwardTranslation, horizontalTranslation, ccwRotation)
-        }
+        fun invert() = Position(
+            alliance.invert(),
+            origin.invert(),
+            backwardTranslation,
+            horizontalTranslation,
+            ccwRotation,
+            flags
+        )
 
         /**
          * Return an informative string about this starting configuration.
@@ -125,7 +137,7 @@ object StartingConfiguration {
                 backwardTranslation,
                 horizontalTranslation,
                 ccwRotation,
-                toFieldPose()
+                toFieldPose().toUserString()
             )
         }
 
@@ -135,7 +147,7 @@ object StartingConfiguration {
         override fun toString(): String {
             val lowCaseAlliance = Text.lower(alliance.name)
             return Text.format(
-                "On <font color='%'>%</font>, % from % wall%%",
+                "On <font color='%'>%</font>: % from % wall%%%",
                 if (isRed) "red" else "#3863ff",
                 Text.upper(lowCaseAlliance.substring(0, 1))
                         + lowCaseAlliance.substring(1),
@@ -154,6 +166,11 @@ object StartingConfiguration {
                 },
                 if (ccwRotation.magnitude() != 0.0) {
                     ", ↺ ${ccwRotation to Degrees}°"
+                } else {
+                    ""
+                },
+                if (flags.isNotEmpty()) {
+                    " $flags"
                 } else {
                     ""
                 }

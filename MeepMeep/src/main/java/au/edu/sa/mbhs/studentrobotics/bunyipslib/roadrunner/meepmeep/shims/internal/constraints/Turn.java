@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.acmerobotics.roadrunner.TurnConstraints;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Angle;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Velocity;
 
 
@@ -54,6 +55,17 @@ public final class Turn {
     }
 
     /**
+     * Create a new Turn object with the specified maximum angular velocity.
+     *
+     * @param maxAngVel The maximum angular velocity.
+     * @return The new Turn object.
+     */
+    @NonNull
+    public static Turn ofMaxVel(@NonNull Measure<Velocity<Angle>> maxAngVel) {
+        return new Turn(maxAngVel.in(RadiansPerSecond), null, null);
+    }
+
+    /**
      * Create a new Turn object with the specified minimum angular acceleration.
      *
      * @param minAngAccel The minimum angular acceleration in radians per second squared.
@@ -63,6 +75,17 @@ public final class Turn {
     @NonNull
     public static Turn ofMinAccel(double minAngAccel, @NonNull Velocity<Velocity<Angle>> unit) {
         return new Turn(null, unit.of(minAngAccel).in(RadiansPerSecondPerSecond), null);
+    }
+
+    /**
+     * Create a new Turn object with the specified minimum angular acceleration.
+     *
+     * @param minAngAccel The minimum angular acceleration.
+     * @return The new Turn object.
+     */
+    @NonNull
+    public static Turn ofMinAccel(@NonNull Measure<Velocity<Velocity<Angle>>> minAngAccel) {
+        return new Turn(null, minAngAccel.in(RadiansPerSecondPerSecond), null);
     }
 
     /**
@@ -78,6 +101,17 @@ public final class Turn {
     }
 
     /**
+     * Create a new Turn object with the specified maximum angular acceleration.
+     *
+     * @param maxAngAccel The maximum angular acceleration.
+     * @return The new Turn object.
+     */
+    @NonNull
+    public static Turn ofMaxAccel(@NonNull Measure<Velocity<Velocity<Angle>>> maxAngAccel) {
+        return new Turn(null, null, maxAngAccel.in(RadiansPerSecondPerSecond));
+    }
+
+    /**
      * Compose this Turn object with a maximum angular velocity constraint.
      *
      * @param maxAngVel The maximum angular velocity in radians per second.
@@ -87,6 +121,17 @@ public final class Turn {
     @NonNull
     public Turn andMaxVel(double maxAngVel, @NonNull Velocity<Angle> unit) {
         return new Turn(unit.of(maxAngVel).in(RadiansPerSecond), minAngAccelRadsPerSecSquared, maxAngAccelRadsPerSecSquared);
+    }
+
+    /**
+     * Compose this Turn object with a maximum angular velocity constraint.
+     *
+     * @param maxAngVel The maximum angular velocity.
+     * @return The new Turn object.
+     */
+    @NonNull
+    public Turn andMaxVel(@NonNull Measure<Velocity<Angle>> maxAngVel) {
+        return new Turn(maxAngVel.in(RadiansPerSecond), minAngAccelRadsPerSecSquared, maxAngAccelRadsPerSecSquared);
     }
 
     /**
@@ -102,6 +147,17 @@ public final class Turn {
     }
 
     /**
+     * Compose this Turn object with a minimum angular acceleration constraint.
+     *
+     * @param minAngAccel The minimum angular acceleration.
+     * @return The new Turn object.
+     */
+    @NonNull
+    public Turn andMinAccel(@NonNull Measure<Velocity<Velocity<Angle>>> minAngAccel) {
+        return new Turn(maxAngVelRadsPerSec, minAngAccel.in(RadiansPerSecondPerSecond), maxAngAccelRadsPerSecSquared);
+    }
+
+    /**
      * Compose this Turn object with a maximum angular acceleration constraint.
      *
      * @param maxAngAccel The maximum angular acceleration in radians per second squared.
@@ -111,6 +167,17 @@ public final class Turn {
     @NonNull
     public Turn andMaxAccel(double maxAngAccel, @NonNull Velocity<Velocity<Angle>> unit) {
         return new Turn(maxAngVelRadsPerSec, minAngAccelRadsPerSecSquared, unit.of(maxAngAccel).in(RadiansPerSecondPerSecond));
+    }
+
+    /**
+     * Compose this Turn object with a maximum angular acceleration constraint.
+     *
+     * @param maxAngAccel The maximum angular acceleration.
+     * @return The new Turn object.
+     */
+    @NonNull
+    public Turn andMaxAccel(@NonNull Measure<Velocity<Velocity<Angle>>> maxAngAccel) {
+        return new Turn(maxAngVelRadsPerSec, minAngAccelRadsPerSecSquared, maxAngAccel.in(RadiansPerSecondPerSecond));
     }
 
     /**

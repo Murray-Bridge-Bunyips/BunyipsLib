@@ -176,6 +176,20 @@ object Geometry {
     }
 
     /**
+     * Returns a user-friendly representation of a [PoseVelocity2d].
+     *
+     * @return the user-friendly string
+     */
+    @JvmStatic
+    fun PoseVelocity2d.toUserString(): String {
+        return "PoseVelocity2d(x=%.1f, y=%.1f, r=%.1f°)".format(
+            this.linearVel.x,
+            this.linearVel.y,
+            Math.toDegrees(this.angVel)
+        )
+    }
+
+    /**
      * Linearly interpolate between two vectors.
      * The [t] parameter is not clamped between 0-1.
      */
