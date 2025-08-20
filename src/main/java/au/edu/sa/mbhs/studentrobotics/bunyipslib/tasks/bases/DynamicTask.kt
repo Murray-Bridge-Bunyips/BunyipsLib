@@ -129,56 +129,56 @@ class DynamicTask() : Task() {
      * Runs once when the task is initialised.
      */
     @JvmOverloads
-    fun init(onInitialise: Runnable, ktCompatUnusedIgnore: Any? = null) =
+    fun init(onInitialise: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         init { _ -> onInitialise.run() }
 
     /**
      * Runs periodically while the task is active.
      */
     @JvmOverloads
-    fun periodic(periodic: Runnable, ktCompatUnusedIgnore: Any? = null) =
+    fun periodic(periodic: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         periodic { _ -> periodic.run() }
 
     /**
      * Returning true will end the task.
      */
     @JvmOverloads
-    fun isFinished(isTaskFinished: BooleanSupplier, ktCompatUnusedIgnore: Any? = null) =
+    fun isFinished(isTaskFinished: BooleanSupplier, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         isFinished { _ -> isTaskFinished.asBoolean }
 
     /**
      * Runs once when the task is finished.
      */
     @JvmOverloads
-    fun onFinish(onFinish: Runnable, ktCompatUnusedIgnore: Any? = null) =
+    fun onFinish(onFinish: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         onFinish { _ -> onFinish.run() }
 
     /**
      * Runs when the task is interrupted (finished but not by [isFinished]).
      */
     @JvmOverloads
-    fun onInterrupt(onInterrupt: Runnable, ktCompatUnusedIgnore: Any? = null) =
+    fun onInterrupt(onInterrupt: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         onInterrupt { _ -> onInterrupt.run() }
 
     /**
      * Runs when the task is reset to its initial state.
      */
     @JvmOverloads
-    fun onReset(onReset: Runnable, ktCompatUnusedIgnore: Any? = null) =
+    fun onReset(onReset: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         onReset { _ -> onReset.run() }
 
     /**
      * Adds additional [init] to run after the current [init] code.
      */
     @JvmOverloads
-    fun addInit(onInitialise: Runnable, ktCompatUnusedIgnore: Any? = null) =
+    fun addInit(onInitialise: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         addInit { _ -> onInitialise.run() }
 
     /**
      * Adds additional [periodic] code to run after the current [periodic] code.
      */
     @JvmOverloads
-    fun addPeriodic(periodic: Runnable, ktCompatUnusedIgnore: Any? = null) =
+    fun addPeriodic(periodic: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         addPeriodic { _ -> periodic.run() }
 
     /**
@@ -189,7 +189,7 @@ class DynamicTask() : Task() {
     @JvmOverloads
     fun addIsFinished(
         isTaskFinished: Predicate<Boolean>,
-        ktCompatUnusedIgnore: Any? = null
+        @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null
     ) =
         addIsFinished { _, b -> isTaskFinished.test(b) }
 
@@ -197,21 +197,21 @@ class DynamicTask() : Task() {
      * Adds additional [onFinish] code to run after the current [onFinish] code.
      */
     @JvmOverloads
-    fun addOnFinish(onFinish: Runnable, ktCompatUnusedIgnore: Any? = null) =
+    fun addOnFinish(onFinish: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         addOnFinish { _ -> onFinish.run() }
 
     /**
      * Adds additional [onInterrupt] code to run after the current [onInterrupt] code.
      */
     @JvmOverloads
-    fun addOnInterrupt(onInterrupt: Runnable, ktCompatUnusedIgnore: Any? = null) =
+    fun addOnInterrupt(onInterrupt: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         addOnInterrupt { _ -> onInterrupt.run() }
 
     /**
      * Adds additional [onReset] code to run after the current [onReset] code.
      */
     @JvmOverloads
-    fun addOnReset(onReset: Runnable, ktCompatUnusedIgnore: Any? = null) =
+    fun addOnReset(onReset: Runnable, @Suppress("UNUSED_PARAMETER") ktCompatUnusedIgnore: Any? = null) =
         addOnReset { _ -> onReset.run() }
 
     override fun init() {
