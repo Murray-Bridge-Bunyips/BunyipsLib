@@ -176,7 +176,7 @@ public abstract class BunyipsSubsystem {
     }
 
     /**
-     * Utility function to run {@code NullSafety.assertComponentArgs()} on the given parameters, usually on
+     * Utility assertion to check for null on the given parameters, usually on
      * the motors/hardware/critical objects passed into the constructor. If this check fails, your subsystem
      * will automatically disable the {@code update()} method from calling to prevent exceptions, no-oping
      * the subsystem. A 'SUBSYSTEM FAULT' will be added to telemetry, and exceptions from this class will be muted.
