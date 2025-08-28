@@ -202,19 +202,21 @@ public abstract class BunyipsSubsystem {
     }
 
     /**
-     * Call to delegate the update of this subsystem, usually a component of another subsystem, to this subsystem.
+     * Call to delegate the update of the supplied subsystems, usually a component of another subsystem, to this subsystem.
      * This is useful in applications where a subsystem is being used as a component of another subsystem, and the
      * parent subsystem wishes to update the child subsystem.
      * <p>
-     * Do note that the child subsystem will be updated after the main subsystem update dispatch, and do be aware
-     * that performing any operations such as disabling/enabling will be done on the child subsystem. The only
+     * Do note that the child subsystem(s) will be updated after the main subsystem update dispatch, and do be aware
+     * that performing any operations such as disabling/enabling will be done on the child subsystem(s). The only
      * operation that is not delegated is the current task, which is managed by the parent subsystem manually.
      *
-     * @param child the subsystem to add to the list of children of this subsystem
+     * @param children the subsystems to add to the list of children of this subsystem
      */
-    protected final void delegate(@NonNull BunyipsSubsystem child) {
-        child.parent = this;
-        children.add(child);
+    protected final void delegate(@NonNull BunyipsSubsystem... children) {
+        for (BunyipsSubsystem child : children) {
+            child.parent = this;
+            this.children.add(child);
+        }
     }
 
     /**
