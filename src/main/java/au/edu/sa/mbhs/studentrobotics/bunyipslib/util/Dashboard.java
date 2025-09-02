@@ -10,7 +10,9 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.SortedMap;
 import java.util.function.Consumer;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
@@ -97,6 +99,39 @@ public final class Dashboard {
         if (dash != null)
             dash.withConfigRoot(c ->
                     c.putVariable(clazz.getSimpleName(), ReflectionConfig.createVariableFromClass(clazz)));
+    }
+
+    /**
+     * Merges two {@link TelemetryPacket} instances.
+     *
+     * @param a the first (leading) packet, this will be used as the parent
+     * @param b the second packet, this packet will be deconstructed and merged into the leading packet
+     * @return a merged packet leading with the first packet
+     * @noinspection unchecked
+     */
+    public static TelemetryPacket mergePackets(TelemetryPacket a, TelemetryPacket b) {
+        // Access all data fields from each packet, not including the field itself
+        a.fieldOverlay().getOperations().addAll(b.fieldOverlay().getOperations());
+        try {
+            Field dataField = a.getClass().getDeclaredField("data");
+            Field logField = a.getClass().getDeclaredField("log");
+            dataField.setAccessible(true);
+            logField.setAccessible(true);
+            SortedMap<String, String> dataDst = (SortedMap<String, String>) dataField.get(a);
+            List<String> logDst = (List<String>) logField.get(a);
+            SortedMap<String, String> dataSrc = (SortedMap<String, String>) dataField.get(b);
+            List<String> logSrc = (List<String>) logField.get(b);
+            // Merge them all together
+            assert dataDst != null && dataSrc != null;
+            dataDst.putAll(dataSrc);
+            dataField.set(a, dataDst);
+            assert logDst != null && logSrc != null;
+            logDst.addAll(logSrc);
+            logField.set(a, logDst);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to access internal fields, this shouldn't happen!", e);
+        }
+        return a;
     }
 
     /**
