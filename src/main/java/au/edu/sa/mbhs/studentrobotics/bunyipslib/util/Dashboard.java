@@ -11,9 +11,11 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
@@ -40,6 +42,7 @@ public final class Dashboard {
      * be sent automatically if this is enabled, {@link #sendAndClearSyncedPackets()} must be called manually.
      */
     public static boolean USING_SYNCED_PACKETS = false;
+    private static final ArrayList<Supplier<String>> observations = new ArrayList<>();
     private static volatile TelemetryPacket accumulatedPacket = new TelemetryPacket();
 
     private Dashboard() {
@@ -108,6 +111,7 @@ public final class Dashboard {
      * @param b the second packet, this packet will be deconstructed and merged into the leading packet
      * @return a merged packet leading with the first packet
      * @noinspection unchecked
+     * @since ?.?.?
      */
     public static TelemetryPacket mergePackets(TelemetryPacket a, TelemetryPacket b) {
         // Access all data fields from each packet, not including the field itself
@@ -132,6 +136,46 @@ public final class Dashboard {
             throw new RuntimeException("Failed to access internal fields, this shouldn't happen!", e);
         }
         return a;
+    }
+
+    /**
+     * Updates all registered objects in {@link #observe(Object...)} and returns a dashboard packet with the resultant payload.
+     * <p>
+     * This method is called automatically by {@link DualTelemetry} and {@link #sendAndClearSyncedPackets()}.
+     * Calling this method yourself is often unnecessary unless you want to perform some advanced operations.
+     *
+     * @return a packet with text information regarding all registered items in {@link #observe(Object...)}
+     * @since ?.?.?
+     */
+    @NonNull
+    public static TelemetryPacket updateObservations() {
+        TelemetryPacket p = new TelemetryPacket();
+        if (observations.isEmpty()) return p;
+        for (Supplier<String> supplier : observations) {
+            // TODO
+        }
+        return p;
+    }
+
+    /**
+     * Appends regular status updates from the supplied objects to draw next to the robot on the dashboard's field overlay.
+     * <p>
+     * Calling this method can be used in conjunction with the Replay View feature, allowing you to observe the state of specific
+     * robot components as Telemetry is not replayed. This is an assistance feature to aid post-match analysis.
+     * <p>
+     * Objects passed through here will be periodically updated if a {@link Supplier} is used or converted to generic base information,
+     * such as motor/servo statistics, IMU reading, and other common use cases depending on the type of the objects provided.
+     *
+     * @param objects the objects that should be observed to draw on the dashboard field canvas. Some objects are
+     *                automagically converted into useful base information, such as hardware devices. Suppliers will
+     *                be updated. Other objects will simply have {@code .toString()} called.
+     * @since ?.?.?
+     */
+    public static void observe(Object... objects) {
+        for (Object object : objects) {
+            if (object == null) continue;
+            // TODO
+        }
     }
 
     /**
@@ -169,7 +213,9 @@ public final class Dashboard {
         synchronized (Dashboard.class) {
             if (!USING_SYNCED_PACKETS)
                 return;
-            FtcDashboard.getInstance().sendTelemetryPacket(accumulatedPacket);
+            FtcDashboard.getInstance().sendTelemetryPacket(
+                    mergePackets(accumulatedPacket, updateObservations())
+            );
             accumulatedPacket = new TelemetryPacket();
         }
     }
