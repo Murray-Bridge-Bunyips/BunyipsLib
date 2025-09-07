@@ -110,9 +110,9 @@ public final class Dashboard {
      * @param a the first (leading) packet, this will be used as the parent
      * @param b the second packet, this packet will be deconstructed and merged into the leading packet
      * @return a merged packet leading with the first packet
-     * @noinspection unchecked
      * @since ?.?.?
      */
+    @SuppressWarnings("unchecked")
     public static TelemetryPacket mergePackets(TelemetryPacket a, TelemetryPacket b) {
         // Access all data fields from each packet, not including the field itself
         a.fieldOverlay().getOperations().addAll(b.fieldOverlay().getOperations());

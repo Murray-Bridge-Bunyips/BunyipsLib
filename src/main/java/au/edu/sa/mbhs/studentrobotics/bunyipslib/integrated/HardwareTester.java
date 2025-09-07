@@ -494,8 +494,10 @@ public final class HardwareTester extends LinearOpMode {
                 }
 
                 if (device instanceof OctoQuad octo) {
-                    TelemetryMenu.DynamicItem position = new TelemetryMenu.DynamicItem("Positions", () -> Arrays.toString(octo.readAllPositions()));
-                    TelemetryMenu.DynamicItem velocity = new TelemetryMenu.DynamicItem("Velocities", () -> Arrays.toString(octo.readAllVelocities()));
+                    // Not including localizer API, just encoder positions/vels
+                    OctoQuad.EncoderDataBlock data = octo.readAllEncoderData();
+                    TelemetryMenu.DynamicItem position = new TelemetryMenu.DynamicItem("Positions", () -> Arrays.toString(data.positions));
+                    TelemetryMenu.DynamicItem velocity = new TelemetryMenu.DynamicItem("Velocities", () -> Arrays.toString(data.velocities));
                     dev.addChildren(position, velocity);
                 }
 

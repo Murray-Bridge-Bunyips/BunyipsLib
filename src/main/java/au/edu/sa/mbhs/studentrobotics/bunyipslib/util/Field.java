@@ -35,6 +35,25 @@ public final class Field {
      */
     public enum Season {
         /**
+         * 2025-2026 season field.
+         */
+        DECODE {
+            @NonNull
+            @Override
+            public List<Rect> getRestrictedAreas() {
+                return Arrays.asList(
+                        // TODO
+                );
+            }
+
+            @NonNull
+            @Override
+            public AprilTagLibrary getAprilTagLibrary() {
+                return AprilTagGameDatabase.getDecodeTagLibrary();
+            }
+        },
+
+        /**
          * 2024-2025 season field.
          */
         INTO_THE_DEEP {
