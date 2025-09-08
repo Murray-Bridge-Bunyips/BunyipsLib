@@ -42,7 +42,13 @@ public final class Field {
             @Override
             public List<Rect> getRestrictedAreas() {
                 return Arrays.asList(
-                        // TODO
+                        // Red classifier
+                        new Rect(new Vector2d(-72, 72), new Vector2d(0, 65), Inches),
+                        // Blue classifier
+                        new Rect(new Vector2d(0, -65), new Vector2d(-72, -72), Inches),
+                        // Red and blue goal zones (square estimate)
+                        new Rect(new Vector2d(-72, 65), new Vector2d(-60, 56.8), Inches),
+                        new Rect(new Vector2d(-72, -65), new Vector2d(-60, -56.8), Inches)
                 );
             }
 
