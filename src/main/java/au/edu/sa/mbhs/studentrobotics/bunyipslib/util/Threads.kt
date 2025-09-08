@@ -12,11 +12,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads.stopAll
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads.task
 import com.qualcomm.robotcore.util.ThreadPool
 import java.util.concurrent.Callable
-import java.util.concurrent.CancellationException
-import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.max
 
@@ -74,18 +71,15 @@ object Threads {
          *
          * @param timeout the maximum time to wait using WPIUnits
          * @return the computed result
-         * @throws CancellationException if the computation was cancelled
-         * @throws ExecutionException if the computation threw an exception
-         * @throws InterruptedException if the current thread was interrupted while waiting
-         * @throws TimeoutException if the wait timed out
          */
-        @Throws(
-            CancellationException::class,
-            ExecutionException::class,
-            InterruptedException::class,
-            TimeoutException::class
-        )
         fun get(timeout: Measure<Time>): T = get((timeout to Milliseconds).toLong(), TimeUnit.MILLISECONDS)
+
+        /**
+         * Waits if necessary for the computation to complete, and then retrieves its result.
+         *
+         * @returns the computed result
+         */
+        fun getResult(): T = get()
     }
 
     /**
