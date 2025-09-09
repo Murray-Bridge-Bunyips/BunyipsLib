@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseMap;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.Constraints;
 import com.noahbres.meepmeep.roadrunner.DriveTrainType;
 
@@ -37,6 +38,10 @@ public abstract class MeepMeepInternal {
      * order of creation index.
      */
     public static final Drive drive = new Drive();
+    /**
+     * A reference to the current (dark mode) game field background for the current BunyipsLib release.
+     */
+    public static final MeepMeep.Background CURRENT_GAME_BACKGROUND_DARK = MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK; // TODO: update
 
     /**
      * BunyipsLib MeepMeep drive shim.

@@ -13,7 +13,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.MeepM
  * Runner file for MeepMeep. This is where you will create your MeepMeep path and run it.
  * <p>
  * You may wish to ignore this file from Git using `git update-index --skip-worktree MeepMeepRunner.java`
- * in the current directory from the command line.
+ * in the current directory of the MeepMeepRunner file from the command line.
+ * <p>
+ * Note that ignoring this file from the Git tree can cause problems if trying to update it when it has been changed
+ * upstream. You can run `git update-index --no-skip-worktree MeepMeepRunner.java` to undo the skipping.
  *
  * @since 6.0.0
  */
@@ -45,8 +48,7 @@ public final class MeepMeepRunner extends MeepMeepInternal {
         drive.makeTrajectory(new Pose2d(0, 0, 0))
                 .addTask();
 
-        meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
-                .setDarkMode(true)
+        meepMeep.setBackground(CURRENT_GAME_BACKGROUND_DARK)
                 .setBackgroundAlpha(0.8f)
                 .addEntity(bot)
                 .start();

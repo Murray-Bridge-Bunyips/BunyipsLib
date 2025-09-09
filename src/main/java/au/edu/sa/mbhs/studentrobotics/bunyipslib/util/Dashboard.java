@@ -110,7 +110,7 @@ public final class Dashboard {
      * @param a the first (leading) packet, this will be used as the parent
      * @param b the second packet, this packet will be deconstructed and merged into the leading packet
      * @return a merged packet leading with the first packet
-     * @since ?.?.?
+     * @since 7.5.0
      */
     @SuppressWarnings("unchecked")
     public static TelemetryPacket mergePackets(TelemetryPacket a, TelemetryPacket b) {
@@ -145,7 +145,7 @@ public final class Dashboard {
      * Calling this method yourself is often unnecessary unless you want to perform some advanced operations.
      *
      * @return a packet with text information regarding all registered items in {@link #observe(Object...)}
-     * @since ?.?.?
+     * @since 7.5.0
      */
     @NonNull
     public static TelemetryPacket updateObservations() {
@@ -153,6 +153,7 @@ public final class Dashboard {
         if (observations.isEmpty()) return p;
         for (Supplier<String> supplier : observations) {
             // TODO
+            // TODO: FlightRecorder?
         }
         return p;
     }
@@ -169,7 +170,7 @@ public final class Dashboard {
      * @param objects the objects that should be observed to draw on the dashboard field canvas. Some objects are
      *                automagically converted into useful base information, such as hardware devices. Suppliers will
      *                be updated. Other objects will simply have {@code .toString()} called.
-     * @since ?.?.?
+     * @since 7.5.0
      */
     public static void observe(Object... objects) {
         for (Object object : objects) {
