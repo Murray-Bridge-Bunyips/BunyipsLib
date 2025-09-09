@@ -9,9 +9,10 @@ import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.function.Consumer;
@@ -42,7 +43,12 @@ public final class Dashboard {
      * be sent automatically if this is enabled, {@link #sendAndClearSyncedPackets()} must be called manually.
      */
     public static boolean USING_SYNCED_PACKETS = false;
-    private static final ArrayList<Supplier<String>> observations = new ArrayList<>();
+    /**
+     * The interval at which observed objects registered in {@link #observe(Object...)} are updated and sent to the
+     * RoadRunner log {@link FlightRecorder} on {@link #updateObservations()} invocations.
+     */
+    public static int FLIGHT_RECORDER_OBSERVATION_INTERVAL_MS = 10;
+    private static final HashMap<String, Supplier<String>> observations = new HashMap<>();
     private static volatile TelemetryPacket accumulatedPacket = new TelemetryPacket();
 
     private Dashboard() {
@@ -151,8 +157,7 @@ public final class Dashboard {
     public static TelemetryPacket updateObservations() {
         TelemetryPacket p = new TelemetryPacket();
         if (observations.isEmpty()) return p;
-        for (Supplier<String> supplier : observations) {
-            // TODO
+        for (String key : observations.keySet()) {
             // TODO: FlightRecorder?
         }
         return p;
