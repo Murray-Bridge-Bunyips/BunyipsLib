@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.6'
+    implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.7'
     // We have dependency troubles trying to import BunyipsLib, since it is an Android
     // library and we explicitly need a Java-only lib for JavaFx. We could split BunyipsLib
     // into both a core/ftc subpackage system, but it is easier to just shim away duplicates

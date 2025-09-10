@@ -41,7 +41,7 @@ public abstract class MeepMeepInternal {
     /**
      * A reference to the current (dark mode) game field background for the current BunyipsLib release.
      */
-    public static final MeepMeep.Background CURRENT_GAME_BACKGROUND_DARK = MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK; // TODO: update
+    public static final MeepMeep.Background CURRENT_GAME_BACKGROUND_DARK = MeepMeep.Background.FIELD_DECODE_JUICE_DARK;
 
     /**
      * BunyipsLib MeepMeep drive shim.
