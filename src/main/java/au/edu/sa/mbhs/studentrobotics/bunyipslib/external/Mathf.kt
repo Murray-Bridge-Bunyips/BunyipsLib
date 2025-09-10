@@ -305,7 +305,7 @@ object Mathf {
     }
 
     /**
-     * Wraps an angle to the range -pi to pi radians.
+     * Wraps an angle to the range -π to π radians (-180 to 180 degrees).
      *
      * @return The wrapped angle.
      */
@@ -315,9 +315,9 @@ object Mathf {
     }
 
     /**
-     * Wraps radians to the range -pi to pi.
+     * Wraps radians to the range -π to π (-180 to 180 degrees).
      *
-     * @return Wrapped angle between -pi and pi
+     * @return Wrapped angle between -π and π
      */
     @JvmStatic
     fun Number.wrapDeltaRadians(): Double {

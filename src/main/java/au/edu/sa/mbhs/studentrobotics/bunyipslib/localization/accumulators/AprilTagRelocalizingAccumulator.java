@@ -10,9 +10,11 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -20,7 +22,6 @@ import java.util.function.Predicate;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Filter;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.data.AprilTagData;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.AprilTag;
 
@@ -175,48 +176,36 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
 
             // Future: latency compensation techniques
 
-            // Need to convert this pose from Cartesian to Robot coordinate frames - we also don't care about
-            // the other rotational and translational properties of this pose so we ignore them
+            // We don't care about the other rotational and translational properties of this pose so we ignore them
             Pose3D pose = robotPose.get();
-            // noinspection SuspiciousNameCombination
-            double x = pose.getPosition().y;
-            double y = -pose.getPosition().x;
-            double r = pose.getOrientation().getYaw(AngleUnit.RADIANS);
-
-            // We also need to rotate the entire pose by 90 degrees to match the coordinate systems up
-            estimates.add(new Pose2d(Rotation2d.exp(Math.PI / 2).times(new Vector2d(x, y)), r + Math.PI / 2));
+            Position pos = pose.getPosition();
+            // TODO: check necessity of + PI / 2
+            estimates.add(new Pose2d(pos.x, pos.y, pose.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI / 2));
         }
 
-        // Take averages based on all the estimates we collected, then apply it to the current pose
-        Vector2d positionAvg = estimates.stream()
-                .map(p -> p.position)
-                .reduce(Geometry.zeroVec(), Vector2d::plus)
-                .div(estimates.size());
-        double headingAvgRad = estimates.stream()
-                .map(p -> p.heading.toDouble())
-                .reduce(0.0, Double::sum) / estimates.size();
+        // For multiple estimates, use the positionally closest pose to the robot's current pose for accuracy
+        estimates.sort(Comparator.comparingDouble(q -> q.minus(pose).line.norm()));
+        Pose2d newPose = estimates.get(0);
 
-        Vector2d newVec;
-        Rotation2d newHeading;
+        Vector2d newVec = newPose.position;
+        Rotation2d newHeading = newPose.heading;
         if (useKf) {
             Vector2d twistedTwist = pose.heading.times(twist.value().line);
             newVec = new Vector2d(
                     // Use deltas supplied directly from the pose twist to avoid integrating twice and causing oscillations
-                    xf.calculateFromDelta(twistedTwist.x, positionAvg.x),
-                    yf.calculateFromDelta(twistedTwist.y, positionAvg.y)
+                    xf.calculateFromDelta(twistedTwist.x, newPose.position.x),
+                    yf.calculateFromDelta(twistedTwist.y, newPose.position.y)
             );
 
+            double currentHeading = newHeading.log();
             double headingTwist = twist.value().angle;
-            if (Math.abs(headingAvgRad - lastHeading) > Math.PI) {
+            if (Math.abs(currentHeading - lastHeading) > Math.PI) {
                 // If we're at the heading modulus boundary, the filter should be reset and updated with the new heading
                 headingTwist = pose.heading.inverse().log();
                 rf.reset();
             }
-            newHeading = Rotation2d.exp(rf.calculateFromDelta(headingTwist, headingAvgRad));
-            lastHeading = headingAvgRad;
-        } else {
-            newVec = positionAvg;
-            newHeading = Rotation2d.exp(headingAvgRad);
+            newHeading = Rotation2d.exp(rf.calculateFromDelta(headingTwist, currentHeading));
+            lastHeading = currentHeading;
         }
 
         pose = new Pose2d(newVec, updateHeading ? newHeading : pose.heading);
