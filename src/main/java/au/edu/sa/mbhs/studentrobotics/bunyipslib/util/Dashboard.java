@@ -30,6 +30,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook;
  */
 @Config
 public final class Dashboard {
+    private static final HashMap<String, Supplier<String>> observations = new HashMap<>();
     /**
      * The radius of the robot for drawing in inches.
      */
@@ -48,7 +49,6 @@ public final class Dashboard {
      * RoadRunner log {@link FlightRecorder} on {@link #updateObservations()} invocations.
      */
     public static int FLIGHT_RECORDER_OBSERVATION_INTERVAL_MS = 10;
-    private static final HashMap<String, Supplier<String>> observations = new HashMap<>();
     private static volatile TelemetryPacket accumulatedPacket = new TelemetryPacket();
 
     private Dashboard() {
