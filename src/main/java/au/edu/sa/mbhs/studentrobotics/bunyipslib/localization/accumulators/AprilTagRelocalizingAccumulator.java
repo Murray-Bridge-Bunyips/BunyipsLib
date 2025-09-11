@@ -179,7 +179,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
             // We don't care about the other rotational and translational properties of this pose so we ignore them
             Pose3D pose = robotPose.get();
             Position pos = pose.getPosition();
-            // TODO: check necessity of + PI / 2
+            // Rotate heading to match up with the field coordinate system
             estimates.add(new Pose2d(pos.x, pos.y, pose.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI / 2));
         }
 
