@@ -77,12 +77,16 @@ public class Accumulator implements Localizable {
         estimatedPoseWriter.write(new PoseMessage(pose));
 
         Dashboard.usePacket(p -> {
-            p.put("x (in)", pose.position.x);
-            p.put("y (in)", pose.position.y);
-            p.put("heading (deg)", Math.toDegrees(pose.heading.toDouble()));
-            p.put("xRelativeVel (in/s)", velocity.linearVel.x);
-            p.put("yRelativeVel (in/s)", velocity.linearVel.y);
-            p.put("headingVel (deg/s)", Math.toDegrees(velocity.angVel));
+            p.put("pose x", pose.position.x);
+            p.put("pose y", pose.position.y);
+            double heading = pose.heading.toDouble();
+            p.put("pose heading", heading);
+            p.put("pose (deg) heading", Math.toDegrees(heading));
+            p.put("relativeVel x", velocity.linearVel.x);
+            p.put("relativeVel y", velocity.linearVel.y);
+            double headingVel = velocity.angVel;
+            p.put("relativeVel heading", headingVel);
+            p.put("relativeVel (deg/s) heading", Math.toDegrees(headingVel));
 
             Canvas c = p.fieldOverlay();
             c.setStrokeWidth(1);
