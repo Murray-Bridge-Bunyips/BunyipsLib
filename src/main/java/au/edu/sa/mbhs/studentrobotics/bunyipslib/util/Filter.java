@@ -73,32 +73,27 @@ public final class Filter {
      */
     public static class Kalman {
         /**
-         * Number of iterations to take during construction to converge the K gain.
+         * Higher values of R puts more trust in the model.
          */
-        public static int K_CONVERGE = 2000;
+        public double R;
+        /**
+         * Higher values of Q trusts the external sensor more.
+         */
+        public double Q;
 
-        private double kGain;
-        private double x, lm;
+        private double p = 1;
+        private double x;
+        private double lx;
 
         /**
-         * Construct a new 1D Kalman filter. K gain is calculated at construction.
+         * Construct a new 1D Kalman filter.
          *
-         * @param R higher values of R put more trust in the model
+         * @param R higher values of R puts more trust in the model
          * @param Q higher values of Q trusts the sensor more
          */
         public Kalman(double R, double Q) {
-            // We should converge K and P to calculate the gain that will be used for the duration of this filter
-            kGain = 0;
-            double p = 1;
-            for (int i = 0; i < K_CONVERGE; i++) {
-                // p_t=p_{t-1}+q
-                // where p_{t-1} is supplied from the previous loop
-                p += Q;
-                // k_t=\frac{p_t}{p_t+r}
-                kGain = p / (p + R);
-                // Update uncertainty p_t=(1-K)p_t
-                p = (1 - kGain) * p;
-            }
+            this.R = R;
+            this.Q = Q;
         }
 
         /**
@@ -109,11 +104,10 @@ public final class Filter {
          * @return Kalman gain compensated output
          */
         public double calculate(double absModel, double sensor) {
-            // Since we're only dealing with scalars, we can make a lot of simplifications
-            // Therefore filtered x_t=x_{t-1}+K(z_t-x_t)
-            x += absModel - lm;
-            x += kGain * (sensor - x);
-            lm = absModel;
+            // Take a delta here
+            x += absModel - lx;
+            update(sensor);
+            lx = absModel;
             return x;
         }
 
@@ -125,26 +119,51 @@ public final class Filter {
          * @return Kalman gain compensated output
          */
         public double calculateFromDelta(double incModel, double sensor) {
-            // Run calculate but don't accumulate lm
+            // Run calculate but don't accumulate lx
             x += incModel;
-            x += kGain * (sensor - x);
+            update(sensor);
             return x;
         }
 
+        // https://www.ctrlaltftc.com/advanced/the-kalman-filter
+        private void update(double sensor) {
+            // New variance projection
+            double np = p + Q;
+            // Converge new K gain
+            double K = np / (np + R);
+            // Apply K gain
+            x += K * (sensor - x);
+            p = (1 - K) * np;
+        }
+
         /**
-         * Reset accumulated value to zero.
+         * Resets the accumulated system state to zero. May need to be called in tandem with {@link #resetVariance()}.
          */
         public void reset() {
             x = 0;
         }
 
         /**
-         * Sets the accumulated value.
+         * Sets the accumulated running value.
          *
-         * @param val the accumulated value to respect.
+         * @param val the new accumulated value (system state) this filter should continue from.
          */
         public void setAccumulatedValue(double val) {
             x = val;
+        }
+
+        /**
+         * Reset the projected model variance to 1. May need to be called in tandem with {@link #reset()}.
+         */
+        public void resetVariance() {
+            p = 1;
+        }
+
+        /**
+         * Set an initial guess of the model's variance. Can cause the model to converge faster.
+         */
+        public void setVariance(double var) {
+            p = var;
         }
     }
 
