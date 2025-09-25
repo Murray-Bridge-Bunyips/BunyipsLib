@@ -114,12 +114,13 @@ object Exceptions {
     @JvmStatic
     fun getCallingUserCodeFunction(): StackTraceElement {
         val stackTrace = Thread.currentThread().stackTrace
-        // Keep going down the stack trace until we leave the BunyipsLib package
+        // Keep going down the stack trace until we leave the BunyipsLib package OR we find "lambda" in the name,
+        // as we have a good chance that this lambda is user code.
         for (stackTraceElement in stackTrace) {
+            val str = stackTraceElement.toString()
             // dalvik.system.VMStack.getThreadStackTrace(Native Method) is not useful, which shows up in the stacktrace
-            if (stackTraceElement.toString().contains("stacktrace", true)) continue
-            // If porting, ensure the string below is set to the package name of BunyipsLib
-            if (!stackTraceElement.className.startsWith(BuildConfig.LIBRARY_PACKAGE_NAME)) {
+            if (str.contains("stacktrace", true)) continue
+            if (!stackTraceElement.className.startsWith(BuildConfig.LIBRARY_PACKAGE_NAME) || str.contains("lambda")) {
                 return stackTraceElement
             }
         }

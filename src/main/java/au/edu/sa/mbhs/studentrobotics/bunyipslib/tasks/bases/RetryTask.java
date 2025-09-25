@@ -41,7 +41,7 @@ public class RetryTask extends Task {
         this.shouldRetry = shouldRetry;
         this.maxRetries = maxRetries;
         named(task + " || " + retryTask + " (rty.)");
-        timeout = task.timeout;
+        timeout = task.timeout.times(Math.max(1, maxRetries));
     }
 
     /**
@@ -66,7 +66,7 @@ public class RetryTask extends Task {
     protected void periodic() {
         if (!currentTask.poll()) {
             named(currentTask.toString());
-            timeout = currentTask.timeout;
+            timeout = currentTask.timeout.times(maxRetries - retryCount + 1);
             currentTask.execute();
             return;
         }
@@ -74,9 +74,10 @@ public class RetryTask extends Task {
         currentTask.finishNow();
 
         // Check if we should retry
-        if (retryCount < maxRetries && !shouldRetry.getAsBoolean()) {
+        if (retryCount < maxRetries && shouldRetry.getAsBoolean()) {
             retryCount++;
             currentTask = retryTask;
+            currentTask.reset();
         } else {
             isFinished = true;
         }
@@ -84,16 +85,14 @@ public class RetryTask extends Task {
 
     @Override
     protected void onFinish() {
-        if (currentTask != null)
-            currentTask.finishNow();
+        currentTask.finishNow();
     }
 
     @Override
     protected void onReset() {
         isFinished = false;
         retryCount = 0;
-        if (currentTask != null)
-            currentTask.reset();
+        currentTask.reset();
     }
 
     @Override
