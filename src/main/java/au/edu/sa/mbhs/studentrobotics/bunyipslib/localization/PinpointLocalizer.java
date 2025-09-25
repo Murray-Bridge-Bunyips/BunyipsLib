@@ -157,12 +157,12 @@ public class PinpointLocalizer implements Localizer {
              * During initialisation, <b>you must</b> set the direction of your Pinpoint wheels here using these methods,
              * otherwise tuning will not work. <b>Do not</b> set the directions of your wheels directly on the driver, it is applied here.
              *
-             * @param initialParDirection the direction of the perpendicular wheel such that left movement is positive reading
+             * @param initialPerpDirection the direction of the perpendicular wheel such that left movement is positive reading
              * @return the builder
              */
             @NonNull
-            public Builder setInitialPerpDirection(GoBildaPinpointDriver.EncoderDirection initialParDirection) {
-                ((Params) params).initialParDirection = initialParDirection;
+            public Builder setInitialPerpDirection(GoBildaPinpointDriver.EncoderDirection initialPerpDirection) {
+                ((Params) params).initialPerpDirection = initialPerpDirection;
                 return this;
             }
 
