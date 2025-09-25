@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.ValueProvider;
 import com.acmerobotics.dashboard.config.variable.CustomVariable;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -45,6 +46,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.TempUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 
@@ -62,6 +64,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.executables.MovingAverageTimer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.TelemetryMenu;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref;
+import dev.frozenmilk.util.cell.RefCell;
 
 /**
  * Dynamic OpMode to test hardware functionality of most {@link HardwareDevice} objects.
@@ -130,9 +134,9 @@ public final class HardwareTester extends LinearOpMode {
                         return a ? "active" : "inactive";
                     }).withColours("green", "white");
                     TelemetryMenu.InteractiveToggle directionControl = new TelemetryMenu.InteractiveToggle("Direction", false, a -> {
-                        motor.setDirection(a ? DcMotorSimple.Direction.FORWARD : DcMotorSimple.Direction.REVERSE);
+                        motor.setDirection(a ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
                         return motor.getDirection();
-                    }).withColours("white", "white");
+                    }).withColours("yellow", "white");
                     dashboardControlled.add(dashboardControls);
                     dev.addChildren(powerControl, dashboardControl, directionControl);
 
@@ -209,9 +213,9 @@ public final class HardwareTester extends LinearOpMode {
                         return a ? "active" : "inactive";
                     }).withColours("green", "white");
                     TelemetryMenu.InteractiveToggle directionControl = new TelemetryMenu.InteractiveToggle("Direction", false, a -> {
-                        servo.setDirection(a ? Servo.Direction.FORWARD : Servo.Direction.REVERSE);
+                        servo.setDirection(a ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
                         return servo.getDirection();
-                    }).withColours("white", "white");
+                    }).withColours("yellow", "white");
                     dashboardControlled.add(dashboardControls);
                     dev.addChildren(enabledControl, positionControl, setToZero, setToOne, dashboardControl, directionControl);
                 }
@@ -454,6 +458,8 @@ public final class HardwareTester extends LinearOpMode {
                 // We're also able to add some info based on the SparkFun OTOS, since we can actually parse the I2C
                 // without doing some magic
                 if (device instanceof SparkFunOTOS otos) {
+                    otos.setLinearUnit(DistanceUnit.INCH);
+                    otos.setAngularUnit(AngleUnit.DEGREES);
                     TelemetryMenu.MenuElement warnings = new TelemetryMenu.MenuElement("Warnings", false);
                     TelemetryMenu.DynamicItem warnTilt = new TelemetryMenu.DynamicItem("Tilt Warning", () -> otos.getStatus().warnTiltAngle);
                     TelemetryMenu.DynamicItem warnTrack = new TelemetryMenu.DynamicItem("Tracking Warning", () -> otos.getStatus().warnOpticalTracking);
@@ -481,15 +487,15 @@ public final class HardwareTester extends LinearOpMode {
                             otos.resetTracking();
                         }
                     };
-                    TelemetryMenu.DynamicItem posX = new TelemetryMenu.DynamicItem("Position X", () -> otos.getPosition().x);
-                    TelemetryMenu.DynamicItem posY = new TelemetryMenu.DynamicItem("Position Y", () -> otos.getPosition().y);
-                    TelemetryMenu.DynamicItem posTheta = new TelemetryMenu.DynamicItem("Position H", () -> otos.getPosition().h);
-                    TelemetryMenu.DynamicItem velX = new TelemetryMenu.DynamicItem("Velocity X", () -> otos.getVelocity().x);
-                    TelemetryMenu.DynamicItem velY = new TelemetryMenu.DynamicItem("Velocity Y", () -> otos.getVelocity().y);
-                    TelemetryMenu.DynamicItem velTheta = new TelemetryMenu.DynamicItem("Velocity H", () -> otos.getVelocity().h);
-                    TelemetryMenu.DynamicItem accX = new TelemetryMenu.DynamicItem("Acceleration X", () -> otos.getAcceleration().x);
-                    TelemetryMenu.DynamicItem accY = new TelemetryMenu.DynamicItem("Acceleration Y", () -> otos.getAcceleration().y);
-                    TelemetryMenu.DynamicItem accTheta = new TelemetryMenu.DynamicItem("Acceleration H", () -> otos.getAcceleration().h);
+                    TelemetryMenu.DynamicItem posX = new TelemetryMenu.DynamicItem("Position X (in)", () -> otos.getPosition().x);
+                    TelemetryMenu.DynamicItem posY = new TelemetryMenu.DynamicItem("Position Y (in)", () -> otos.getPosition().y);
+                    TelemetryMenu.DynamicItem posTheta = new TelemetryMenu.DynamicItem("Position H (deg)", () -> otos.getPosition().h);
+                    TelemetryMenu.DynamicItem velX = new TelemetryMenu.DynamicItem("Velocity X (in/s)", () -> otos.getVelocity().x);
+                    TelemetryMenu.DynamicItem velY = new TelemetryMenu.DynamicItem("Velocity Y (in/s)", () -> otos.getVelocity().y);
+                    TelemetryMenu.DynamicItem velTheta = new TelemetryMenu.DynamicItem("Velocity H (deg/s)", () -> otos.getVelocity().h);
+                    TelemetryMenu.DynamicItem accX = new TelemetryMenu.DynamicItem("Acceleration X (in/s/s)", () -> otos.getAcceleration().x);
+                    TelemetryMenu.DynamicItem accY = new TelemetryMenu.DynamicItem("Acceleration Y (in/s/s)", () -> otos.getAcceleration().y);
+                    TelemetryMenu.DynamicItem accTheta = new TelemetryMenu.DynamicItem("Acceleration H (deg/s/s)", () -> otos.getAcceleration().h);
                     dev.addChildren(warnings, linearScalar, angularScalar, selfTest, calibrateIMU, imuCalibrationStatus, resetTracking, posX, posY, posTheta, velX, velY, velTheta, accX, accY, accTheta);
                 }
 
@@ -509,6 +515,58 @@ public final class HardwareTester extends LinearOpMode {
                 if (device instanceof OrientationSensor sensor) {
                     TelemetryMenu.DynamicItem ori = new TelemetryMenu.DynamicItem("Orientation (ext, XYZ, deg)", () -> sensor.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES));
                     dev.addChild(ori);
+                }
+
+                if (device instanceof GoBildaPinpointDriver pinpoint) {
+                    RefCell<GoBildaPinpointDriver.EncoderDirection> x = Ref.of(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+                    RefCell<GoBildaPinpointDriver.EncoderDirection> y = Ref.of(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+                    pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+                    TelemetryMenu.DynamicItem id = new TelemetryMenu.DynamicItem("Device ID", pinpoint::getDeviceID);
+                    TelemetryMenu.DynamicItem status = new TelemetryMenu.DynamicItem("Device Status", pinpoint::getDeviceStatus);
+                    TelemetryMenu.DynamicItem version = new TelemetryMenu.DynamicItem("Device Version", pinpoint::getDeviceVersion);
+                    TelemetryMenu.DynamicItem encoderX = new TelemetryMenu.DynamicItem("Encoder X", pinpoint::getEncoderX);
+                    TelemetryMenu.DynamicItem encoderY = new TelemetryMenu.DynamicItem("Encoder Y", pinpoint::getEncoderY);
+                    TelemetryMenu.InteractiveToggle xDir = new TelemetryMenu.InteractiveToggle("X Direction", false,
+                            a -> {
+                                x.accept(a ? GoBildaPinpointDriver.EncoderDirection.REVERSED : GoBildaPinpointDriver.EncoderDirection.FORWARD);
+                                return x.get();
+                            }).withColours("yellow", "white");
+                    TelemetryMenu.InteractiveToggle yDir = new TelemetryMenu.InteractiveToggle("Y Direction", false,
+                            a -> {
+                                y.accept(a ? GoBildaPinpointDriver.EncoderDirection.REVERSED : GoBildaPinpointDriver.EncoderDirection.FORWARD);
+                                return y.get();
+                            }).withColours("yellow", "white");
+                    x.bind(o -> pinpoint.setEncoderDirections(o, y.get()));
+                    y.bind(o -> pinpoint.setEncoderDirections(x.get(), o));
+                    TelemetryMenu.StaticClickableOption reset = new TelemetryMenu.StaticClickableOption("Reset Pose and IMU") {
+                        @Override
+                        protected void onClick() {
+                            pinpoint.resetPosAndIMU();
+                            telemetry.log("IMU recalibration and pose reset started, will last approx 250 milliseconds.");
+                        }
+                    };
+                    TelemetryMenu.StaticClickableOption recalibrate = new TelemetryMenu.StaticClickableOption("Recalibrate IMU") {
+                        @Override
+                        protected void onClick() {
+                            pinpoint.recalibrateIMU();
+                            telemetry.log("IMU recalibration started, will last approx 250 milliseconds.");
+                        }
+                    };
+                    TelemetryMenu.DynamicItem poseX = new TelemetryMenu.DynamicItem("Pose X (in)", () -> {
+                        // Attach the update executor to an arbitrary item which will apply for all entries
+                        pinpoint.update();
+                        return pinpoint.getPosX(DistanceUnit.INCH);
+                    });
+                    TelemetryMenu.DynamicItem poseY = new TelemetryMenu.DynamicItem("Pose Y (in)", () -> pinpoint.getPosY(DistanceUnit.INCH));
+                    TelemetryMenu.DynamicItem poseH = new TelemetryMenu.DynamicItem("Pose H (deg)", () -> pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES));
+                    TelemetryMenu.DynamicItem poseHn = new TelemetryMenu.DynamicItem("Pose H (deg,norm)", () -> pinpoint.getHeading(AngleUnit.DEGREES));
+                    TelemetryMenu.DynamicItem velX = new TelemetryMenu.DynamicItem("Velocity X", () -> pinpoint.getVelX(DistanceUnit.INCH));
+                    TelemetryMenu.DynamicItem velY = new TelemetryMenu.DynamicItem("Velocity Y", () -> pinpoint.getVelY(DistanceUnit.INCH));
+                    TelemetryMenu.DynamicItem velH = new TelemetryMenu.DynamicItem("Velocity H", () -> pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
+                    TelemetryMenu.DynamicItem yawScalar = new TelemetryMenu.DynamicItem("Yaw Scalar", pinpoint::getYawScalar);
+                    TelemetryMenu.DynamicItem loopF = new TelemetryMenu.DynamicItem("Loop Frequency", pinpoint::getFrequency);
+                    TelemetryMenu.DynamicItem loopT = new TelemetryMenu.DynamicItem("Loop Time", pinpoint::getLoopTime);
+                    dev.addChildren(id, status, version, encoderX, encoderY, xDir, yDir, reset, recalibrate, poseX, poseY, poseH, poseHn, velX, velY, velH, yawScalar, loopF, loopT);
                 }
 
                 // Finally, we add the device to the category.
