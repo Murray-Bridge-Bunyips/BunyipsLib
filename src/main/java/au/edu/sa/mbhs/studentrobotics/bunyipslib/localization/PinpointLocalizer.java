@@ -56,7 +56,6 @@ public class PinpointLocalizer implements Localizer {
         this.pinpoint = pinpoint;
         this.params = params;
 
-        FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", params);
         if (pinpoint == null)
             return;
 
