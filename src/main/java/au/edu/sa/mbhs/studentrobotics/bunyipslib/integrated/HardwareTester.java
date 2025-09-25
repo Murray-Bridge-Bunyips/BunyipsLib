@@ -542,14 +542,14 @@ public final class HardwareTester extends LinearOpMode {
                         @Override
                         protected void onClick() {
                             pinpoint.resetPosAndIMU();
-                            telemetry.log("IMU recalibration and pose reset started, will last approx 250 milliseconds.");
+                            telemetry.log("IMU recalibration and pose reset started, will last approx. 250 milliseconds.");
                         }
                     };
                     TelemetryMenu.StaticClickableOption recalibrate = new TelemetryMenu.StaticClickableOption("Recalibrate IMU") {
                         @Override
                         protected void onClick() {
                             pinpoint.recalibrateIMU();
-                            telemetry.log("IMU recalibration started, will last approx 250 milliseconds.");
+                            telemetry.log("IMU recalibration started, will last approx. 250 milliseconds.");
                         }
                     };
                     TelemetryMenu.DynamicItem poseX = new TelemetryMenu.DynamicItem("Pose X (in)", () -> {
@@ -560,9 +560,9 @@ public final class HardwareTester extends LinearOpMode {
                     TelemetryMenu.DynamicItem poseY = new TelemetryMenu.DynamicItem("Pose Y (in)", () -> pinpoint.getPosY(DistanceUnit.INCH));
                     TelemetryMenu.DynamicItem poseH = new TelemetryMenu.DynamicItem("Pose H (deg)", () -> pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES));
                     TelemetryMenu.DynamicItem poseHn = new TelemetryMenu.DynamicItem("Pose H (deg,norm)", () -> pinpoint.getHeading(AngleUnit.DEGREES));
-                    TelemetryMenu.DynamicItem velX = new TelemetryMenu.DynamicItem("Velocity X", () -> pinpoint.getVelX(DistanceUnit.INCH));
-                    TelemetryMenu.DynamicItem velY = new TelemetryMenu.DynamicItem("Velocity Y", () -> pinpoint.getVelY(DistanceUnit.INCH));
-                    TelemetryMenu.DynamicItem velH = new TelemetryMenu.DynamicItem("Velocity H", () -> pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
+                    TelemetryMenu.DynamicItem velX = new TelemetryMenu.DynamicItem("Velocity X (in/s)", () -> pinpoint.getVelX(DistanceUnit.INCH));
+                    TelemetryMenu.DynamicItem velY = new TelemetryMenu.DynamicItem("Velocity Y (in/s)", () -> pinpoint.getVelY(DistanceUnit.INCH));
+                    TelemetryMenu.DynamicItem velH = new TelemetryMenu.DynamicItem("Velocity H (deg/s)", () -> pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
                     TelemetryMenu.DynamicItem yawScalar = new TelemetryMenu.DynamicItem("Yaw Scalar", pinpoint::getYawScalar);
                     TelemetryMenu.DynamicItem loopF = new TelemetryMenu.DynamicItem("Loop Frequency", pinpoint::getFrequency);
                     TelemetryMenu.DynamicItem loopT = new TelemetryMenu.DynamicItem("Loop Time", pinpoint::getLoopTime);
