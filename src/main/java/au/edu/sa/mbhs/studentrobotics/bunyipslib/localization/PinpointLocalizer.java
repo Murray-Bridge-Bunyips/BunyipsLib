@@ -1,5 +1,8 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.localization;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Inches;
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Millimeters;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -44,6 +47,9 @@ public class PinpointLocalizer implements Localizer {
 
     /**
      * Create a new Pinpoint localizer operating on two goBILDA® Pinpoint connected dead wheels.
+     * <p>
+     * <b>Note</b>: The Pinpoint will calibrate the IMU when the localizer is constructed. Your robot must remain
+     * stationary during this period (approximately 250 milliseconds).
      *
      * @param driveModel the drive model to use for kinematics
      * @param params     parameters to use, note this set of parameters is similar to the two-wheel localizer parameters.
@@ -62,10 +68,13 @@ public class PinpointLocalizer implements Localizer {
         // Directions are now applied, it is important to ensure the user does not do this themselves to not break tuning
         pinpoint.setEncoderDirections(params.initialParDirection, params.initialPerpDirection);
 
-        // Pinpoint uses millimeters as its standard unit
-        pinpoint.setEncoderResolution(1 / driveModel.inPerTick, DistanceUnit.INCH);
-        pinpoint.setOffsets(driveModel.inPerTick * params.parYTicks, driveModel.inPerTick * params.perpXTicks, DistanceUnit.INCH);
+        // Pinpoint operates in millimeters and conversion is not handled properly, so we need to use millimeters here
+        // https://github.com/acmerobotics/road-runner-quickstart/pull/511
+        double mmPerTick = Millimeters.convertFrom(driveModel.inPerTick, Inches);
+        pinpoint.setEncoderResolution(1 / mmPerTick, DistanceUnit.MM);
+        pinpoint.setOffsets(mmPerTick * params.parYTicks, mmPerTick * params.perpXTicks, DistanceUnit.MM);
 
+        // Robot needs to be stationary during initialisation which is an assumption we can make
         pinpoint.resetPosAndIMU();
     }
 
