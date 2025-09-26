@@ -25,8 +25,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
  * Standard goBILDA® Pinpoint Computer localizer for two-wheel configurations.
  * <a href="https://github.com/acmerobotics/road-runner-quickstart/blob/06d2cb08df827b88cf0286246c44d936c41f6a31/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/PinpointLocalizer.java">Source</a>
  * <p>
- * <b>Note:</b> The Pinpoint localizer uses the {@link TwoWheelLocalizer.Params} object as it uses the same principles and
- * requires the same hardware.
+ * <b>Note:</b> The Pinpoint localizer is tuned the same as the Two Wheel localizer. Calling methods on the {@link GoBildaPinpointDriver}
+ * directly to configure localisation is unnecessary.
  *
  * @since 7.0.0
  */
@@ -43,10 +43,10 @@ public class PinpointLocalizer implements Localizer {
     private Pose2d lastPose = Geometry.zeroPose();
 
     /**
-     * Create a new Pinpoint localizer operating on two internally connected dead wheels.
+     * Create a new Pinpoint localizer operating on two goBILDA® Pinpoint connected dead wheels.
      *
      * @param driveModel the drive model to use for kinematics
-     * @param params     parameters to use, note this set of parameters is an extension of the two-wheel localizer parameters.
+     * @param params     parameters to use, note this set of parameters is similar to the two-wheel localizer parameters.
      *                   Additional parameters exclusive to Pinpoint are the initial directions, which should be set here
      *                   instead of directly on the driver to ensure tuning support. These directions are auto-applied to the driver.
      * @param pinpoint   the Pinpoint Computer from HardwareMap. Will be IMU and position reset on construction. To set wheel directions,
@@ -106,10 +106,10 @@ public class PinpointLocalizer implements Localizer {
     }
 
     /**
-     * Parameters for the Pinpoint. Note this extends the two-wheel localizer and supplies two additional fields
-     * to set the direction of these wheels.
+     * Parameters for the Pinpoint. Note this interface is exactly like the two-wheel localizer but supplies two additional fields
+     * to set the direction of these wheels. Wheel directions must be set using this parameter builder.
      */
-    public static class Params extends TwoWheelLocalizer.Params {
+    public static class Params {
         // Since the driver does not track the direction, we have to, so we track the initial directions here. This
         // provides tuning support and is accessed by the tuning OpMode.
         /**
@@ -117,6 +117,7 @@ public class PinpointLocalizer implements Localizer {
          * direction is updated, but will be applied to the driver at time of localizer construction.
          */
         public GoBildaPinpointDriver.EncoderDirection initialParDirection;
+
         /**
          * The initial tracking direction of the perpendicular wheel. This is not updated when the {@link GoBildaPinpointDriver}
          * direction is updated, but will be applied to the driver at time of localizer construction.
@@ -124,14 +125,43 @@ public class PinpointLocalizer implements Localizer {
         public GoBildaPinpointDriver.EncoderDirection initialPerpDirection;
 
         /**
+         * y position of the parallel encoder (in tick units)
+         */
+        public double parYTicks;
+
+        /**
+         * x position of the perpendicular encoder (in tick units)
+         */
+        public double perpXTicks;
+
+        /**
          * Utility builder for the two wheel and Pinpoint directions parameters.
          */
-        public static class Builder extends TwoWheelLocalizer.Params.Builder {
+        public static class Builder {
+            private final Params params = new Params();
+
             /**
-             * Create a new builder.
+             * Set the y position of the parallel encoder.
+             *
+             * @param parYTicks the y position of the parallel encoder (in tick units), as determined by tuning the deadwheel localizer
+             * @return the builder
              */
-            public Builder() {
-                params = new PinpointLocalizer.Params();
+            @NonNull
+            public Builder setParYTicks(double parYTicks) {
+                params.parYTicks = parYTicks;
+                return this;
+            }
+
+            /**
+             * Set the x position of the perpendicular encoder.
+             *
+             * @param perpXTicks the x position of the perpendicular encoder (in tick units), as determined by tuning the deadwheel localizer
+             * @return the builder
+             */
+            @NonNull
+            public Builder setPerpXTicks(double perpXTicks) {
+                params.perpXTicks = perpXTicks;
+                return this;
             }
 
             /**
@@ -146,7 +176,7 @@ public class PinpointLocalizer implements Localizer {
              */
             @NonNull
             public Builder setInitialParDirection(GoBildaPinpointDriver.EncoderDirection initialParDirection) {
-                ((Params) params).initialParDirection = initialParDirection;
+                params.initialParDirection = initialParDirection;
                 return this;
             }
 
@@ -162,7 +192,7 @@ public class PinpointLocalizer implements Localizer {
              */
             @NonNull
             public Builder setInitialPerpDirection(GoBildaPinpointDriver.EncoderDirection initialPerpDirection) {
-                ((Params) params).initialPerpDirection = initialPerpDirection;
+                params.initialPerpDirection = initialPerpDirection;
                 return this;
             }
 
@@ -173,7 +203,7 @@ public class PinpointLocalizer implements Localizer {
              */
             @NonNull
             public PinpointLocalizer.Params build() {
-                return (PinpointLocalizer.Params) params;
+                return params;
             }
         }
     }
