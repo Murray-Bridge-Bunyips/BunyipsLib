@@ -144,8 +144,8 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         voltageSensor = voltageSensorMapping.iterator().next();
 
-        FlightRecorder.write("MECANUM_GAINS", mecanumGains);
-        FlightRecorder.write("MECANUM_PROFILE", motionProfile);
+        FlightRecorder.write("RR_MECANUM_GAINS", mecanumGains);
+        FlightRecorder.write("RR_MOTION_PROFILE", motionProfile);
 
         if (assertParamsNotNull(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, imu, voltageSensorMapping, startPose)) {
             assert leftFront != null && leftBack != null && rightBack != null && rightFront != null;
@@ -197,7 +197,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     public MecanumDrive withLocalizer(@NonNull Localizer localizer) {
         // Reassign kinematics as it may have been updated
         kinematics = new MecanumKinematics(model.inPerTick * model.trackWidthTicks, model.inPerTick / model.lateralInPerTick);
-        FlightRecorder.write("MECANUM_DRIVE_MODEL", model);
+        FlightRecorder.write("RR_DRIVE_MODEL", model);
         this.localizer = localizer;
         return this;
     }

@@ -100,7 +100,7 @@ public class MecanumLocalizer implements Localizer {
 
         YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
 
-        FlightRecorder.write("MECANUM_LOCALIZER_INPUTS", new MecanumLocalizerInputsMessage(
+        FlightRecorder.write("LOCALIZER_INPUTS_MECANUM", new MecanumLocalizerInputsMessage(
                 leftFrontPosVel, leftBackPosVel, rightBackPosVel, rightFrontPosVel, angles));
 
         Rotation2d heading = Rotation2d.exp(angles.getYaw(AngleUnit.RADIANS));

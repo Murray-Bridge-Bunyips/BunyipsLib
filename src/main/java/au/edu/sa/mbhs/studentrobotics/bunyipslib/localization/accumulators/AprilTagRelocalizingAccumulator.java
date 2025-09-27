@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
@@ -19,6 +20,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Filter;
@@ -186,6 +188,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
         // For multiple estimates, use the positionally closest pose to the robot's current pose for accuracy
         estimates.sort(Comparator.comparingDouble(q -> q.minus(pose).line.norm()));
         Pose2d newPose = estimates.get(0);
+        FlightRecorder.write("APRILTAG_ESTIMATED_POSE", new PoseMessage(newPose));
 
         Vector2d newVec = newPose.position;
         Rotation2d newHeading = newPose.heading;

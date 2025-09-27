@@ -61,7 +61,7 @@ public class ThreeWheelLocalizer implements Localizer {
         this.driveModel = driveModel;
         this.params = params;
 
-        FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", params);
+        FlightRecorder.write("LOCALIZER_PARAMS_THREE_WHEEL", params);
     }
 
     @NonNull
@@ -79,7 +79,7 @@ public class ThreeWheelLocalizer implements Localizer {
         assert par1PosVel.velocity != null;
         assert perpPosVel.velocity != null;
 
-        FlightRecorder.write("THREE_DEAD_WHEEL_INPUTS", new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
+        FlightRecorder.write("LOCALIZER_INPUTS_THREE_WHEEL", new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
 
         if (!initialized) {
             initialized = true;

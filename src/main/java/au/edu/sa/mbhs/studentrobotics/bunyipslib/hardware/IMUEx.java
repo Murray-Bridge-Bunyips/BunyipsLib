@@ -276,13 +276,13 @@ public class IMUEx implements IMU, LazyImu, Runnable {
         do {
             Quaternion q = imu.getRobotOrientationAsQuaternion();
             if (q.acquisitionTime != 0) {
-                FlightRecorder.write("IMU_INIT", new ImuInitMessage(imu.getDeviceName(), start, System.nanoTime(), false));
+                FlightRecorder.write("IMUEX_INIT", new ImuInitMessage(imu.getDeviceName(), start, System.nanoTime(), false));
                 Dbg.logv(getClass(), "IMU initialised.");
                 return res;
             }
         } while (timer.milliseconds() < timeoutMs);
 
-        FlightRecorder.write("IMU_INIT", new ImuInitMessage(imu.getDeviceName(), start, System.nanoTime(), true));
+        FlightRecorder.write("IMUEX_INIT", new ImuInitMessage(imu.getDeviceName(), start, System.nanoTime(), true));
         RobotLog.addGlobalWarningMessage("IMU through a IMUEx instance continues to return invalid data after " + timeoutMs + " ms!");
         return res;
     }

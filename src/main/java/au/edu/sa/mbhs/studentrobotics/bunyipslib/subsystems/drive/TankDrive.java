@@ -135,8 +135,8 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         voltageSensor = voltageSensorMapping.iterator().next();
 
-        FlightRecorder.write("TANK_GAINS", gains);
-        FlightRecorder.write("TANK_PROFILE", profile);
+        FlightRecorder.write("RR_TANK_GAINS", gains);
+        FlightRecorder.write("RR_MOTION_PROFILE", profile);
     }
 
     /**
@@ -165,7 +165,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     @Override
     public TankDrive withLocalizer(@NonNull Localizer localizer) {
         kinematics = new TankKinematics(model.inPerTick * model.trackWidthTicks);
-        FlightRecorder.write("TANK_DRIVE_MODEL", model);
+        FlightRecorder.write("RR_DRIVE_MODEL", model);
         this.localizer = localizer;
         return this;
     }

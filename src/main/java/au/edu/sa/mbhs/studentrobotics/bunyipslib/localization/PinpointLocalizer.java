@@ -20,7 +20,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PinpointLocalizerInputsMessage;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PinpointLocalizerParamsMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.parameters.DriveModel;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
@@ -64,6 +65,7 @@ public class PinpointLocalizer implements Localizer {
 
         if (pinpoint == null)
             return;
+        FlightRecorder.write("LOCALIZER_PARAMS_PINPOINT", new PinpointLocalizerParamsMessage(params, pinpoint.getDeviceID(), pinpoint.getDeviceVersion(), pinpoint.getYawScalar()));
 
         // Directions are now applied, it is important to ensure the user does not do this themselves to not break tuning
         pinpoint.setEncoderDirections(params.initialParDirection, params.initialPerpDirection);
@@ -98,8 +100,8 @@ public class PinpointLocalizer implements Localizer {
                 pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS)
         );
 
-        FlightRecorder.write("PINPOINT_POSE", new PoseMessage(pose));
-        FlightRecorder.write("PINPOINT_VELOCITY", new PoseMessage(vel));
+        FlightRecorder.write("LOCALIZER_INPUTS_PINPOINT",
+                new PinpointLocalizerInputsMessage(pinpoint.getEncoderX(), pinpoint.getEncoderY(), pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES), pinpoint.getDeviceStatus(), pinpoint.getFrequency()));
 
         Vector2d positionDelta = pose.heading.inverse().times(pose.position.minus(lastPose.position));
         double headingDelta = pose.heading.minus(lastPose.heading);
@@ -125,13 +127,13 @@ public class PinpointLocalizer implements Localizer {
          * The initial tracking direction of the parallel wheel. This is not updated when the {@link GoBildaPinpointDriver}
          * direction is updated, but will be applied to the driver at time of localizer construction.
          */
-        public GoBildaPinpointDriver.EncoderDirection initialParDirection;
+        public GoBildaPinpointDriver.EncoderDirection initialParDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
 
         /**
          * The initial tracking direction of the perpendicular wheel. This is not updated when the {@link GoBildaPinpointDriver}
          * direction is updated, but will be applied to the driver at time of localizer construction.
          */
-        public GoBildaPinpointDriver.EncoderDirection initialPerpDirection;
+        public GoBildaPinpointDriver.EncoderDirection initialPerpDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
 
         /**
          * y position of the parallel encoder (in tick units)

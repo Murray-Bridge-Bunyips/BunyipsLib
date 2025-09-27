@@ -34,6 +34,7 @@ public class Accumulator implements Localizable {
     public static int MAX_POSE_HISTORY = 100;
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
+    private final DownsampledWriter estimatedPoseVelocityWriter = new DownsampledWriter("ESTIMATED_POSE_VELOCITY", 50_000_000);
     @NonNull
     protected Pose2d pose;
     @NonNull
@@ -75,6 +76,7 @@ public class Accumulator implements Localizable {
             poseHistory.removeFirst();
         }
         estimatedPoseWriter.write(new PoseMessage(pose));
+        estimatedPoseVelocityWriter.write(new PoseMessage(velocity));
 
         Dashboard.usePacket(p -> {
             p.put("pose x", pose.position.x);

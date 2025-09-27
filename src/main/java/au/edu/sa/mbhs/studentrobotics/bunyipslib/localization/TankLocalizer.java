@@ -97,7 +97,7 @@ public class TankLocalizer implements Localizer {
         meanRightPos /= rightEncs.size();
         meanRightVel /= rightEncs.size();
 
-        FlightRecorder.write("TANK_LOCALIZER_INPUTS",
+        FlightRecorder.write("LOCALIZER_INPUTS_TANK",
                 new TankLocalizerInputsMessage(leftReadings, rightReadings));
 
         if (!initialized) {

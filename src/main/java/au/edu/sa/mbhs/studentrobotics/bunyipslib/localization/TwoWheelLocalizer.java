@@ -73,7 +73,7 @@ public class TwoWheelLocalizer implements Localizer {
         if (imu != null)
             imu.getRobotOrientationAsQuaternion();
 
-        FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", params);
+        FlightRecorder.write("LOCALIZER_PARAMS_TWO_WHEEL", params);
     }
 
     @NonNull
@@ -92,7 +92,7 @@ public class TwoWheelLocalizer implements Localizer {
         YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS);
 
-        FlightRecorder.write("TWO_DEAD_WHEEL_INPUTS", new TwoDeadWheelInputsMessage(parPosVel, perpPosVel, angles, angularVelocity));
+        FlightRecorder.write("LOCALIZER_INPUTS_TWO_WHEEL", new TwoDeadWheelInputsMessage(parPosVel, perpPosVel, angles, angularVelocity));
 
         Rotation2d heading = Rotation2d.exp(angles.getYaw(AngleUnit.RADIANS));
         double headingVel = angularVelocity.zRotationRate;

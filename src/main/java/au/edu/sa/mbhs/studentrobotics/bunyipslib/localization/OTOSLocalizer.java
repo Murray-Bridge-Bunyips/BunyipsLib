@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Distance;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.OTOSLocalizerInputsMessage;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.OTOSLocalizerParamsMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry;
 
 /**
@@ -59,9 +60,12 @@ public class OTOSLocalizer implements Localizer {
         this.params = params;
         this.otos = otos;
 
-        FlightRecorder.write("OTOS_PARAMS", params);
         if (otos == null)
             return;
+        SparkFunOTOS.Version hw = new SparkFunOTOS.Version();
+        SparkFunOTOS.Version fw = new SparkFunOTOS.Version();
+        otos.getVersionInfo(hw, fw);
+        FlightRecorder.write("LOCALIZER_PARAMS_OTOS", new OTOSLocalizerParamsMessage(params, otos.isConnected(), otos.selfTest(), hw, fw));
 
         // RR standard units. Modifying them will result in unit conversions issues.
         otos.setLinearUnit(DistanceUnit.INCH);
@@ -85,8 +89,13 @@ public class OTOSLocalizer implements Localizer {
 
         SparkFunOTOS.Pose2D position = new SparkFunOTOS.Pose2D();
         SparkFunOTOS.Pose2D velocity = new SparkFunOTOS.Pose2D();
-        // Acceleration is unused, but we burst read so we only need to do it once
-        otos.getPosVelAcc(position, velocity, new SparkFunOTOS.Pose2D());
+        SparkFunOTOS.Pose2D logAcc = new SparkFunOTOS.Pose2D();
+        SparkFunOTOS.Pose2D logPosStdDev = new SparkFunOTOS.Pose2D();
+        SparkFunOTOS.Pose2D logVelStdDev = new SparkFunOTOS.Pose2D();
+        SparkFunOTOS.Pose2D logAccStdDev = new SparkFunOTOS.Pose2D();
+        // Burst read everything for efficiency even though we only need position and velocity for operation.
+        // We log the rest so it doesn't go to waste
+        otos.getPosVelAccAndStdDev(position, velocity, logAcc, logPosStdDev, logVelStdDev, logAccStdDev);
 
         Pose2d pose = OTOSKt.toRRPose(position);
         // Note: All OTOS data including velocity is in the global reference frame
@@ -96,8 +105,7 @@ public class OTOSLocalizer implements Localizer {
                 velocity.h
         );
 
-        FlightRecorder.write("OTOS_POSE", new PoseMessage(pose));
-        FlightRecorder.write("OTOS_VELOCITY", new PoseMessage(vel));
+        FlightRecorder.write("LOCALIZER_INPUTS_OTOS", new OTOSLocalizerInputsMessage(otos.getStatus(), logAcc, logPosStdDev, logVelStdDev, logAccStdDev));
 
         Vector2d positionDelta = pose.heading.inverse().times(pose.position.minus(lastPose.position));
         double headingDelta = pose.heading.minus(lastPose.heading);
