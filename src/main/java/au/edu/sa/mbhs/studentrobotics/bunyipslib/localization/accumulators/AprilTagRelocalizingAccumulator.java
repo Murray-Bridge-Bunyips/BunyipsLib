@@ -45,7 +45,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
     public static double DEFAULT_Q = 0.01;
 
     private final AprilTag processor;
-    private final DownsampledWriter flightRecorder = new DownsampledWriter("APRILTAG_ESTIMATED_POSE", 25_000_000);
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("APRILTAG_ESTIMATED_POSE", 10_000_000);
     private final HashSet<Predicate<AprilTagData>> filters = new HashSet<>();
     private final ArrayList<Pose2d> estimates = new ArrayList<>();
 

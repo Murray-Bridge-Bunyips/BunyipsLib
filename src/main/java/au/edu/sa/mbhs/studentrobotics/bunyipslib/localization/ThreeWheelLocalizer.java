@@ -42,7 +42,7 @@ public class ThreeWheelLocalizer implements Localizer {
      */
     public final Params params;
 
-    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_THREE_WHEEL", 25_000_000);
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_THREE_WHEEL", 10_000_000);
     private final DriveModel driveModel;
     private int lastPar0Pos, lastPar1Pos, lastPerpPos;
     private boolean initialized;
