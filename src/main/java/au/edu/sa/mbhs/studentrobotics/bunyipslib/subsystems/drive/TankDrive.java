@@ -77,9 +77,9 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
     private final List<DcMotorEx> leftMotors, rightMotors;
     private final DriveModel model;
     private final MotionProfile profile;
-    private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);
-    private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", 50_000_000);
-    private final DownsampledWriter tankCommandWriter = new DownsampledWriter("TANK_COMMAND", 50_000_000);
+    private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", Accumulator.FLIGHT_RECORDER_INTERVAL_MS * 1_000_000);
+    private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", Accumulator.FLIGHT_RECORDER_INTERVAL_MS * 1_000_000);
+    private final DownsampledWriter tankCommandWriter = new DownsampledWriter("TANK_COMMAND", Accumulator.FLIGHT_RECORDER_INTERVAL_MS * 1_000_000);
     /**
      * Gains used for tank drive control.
      */

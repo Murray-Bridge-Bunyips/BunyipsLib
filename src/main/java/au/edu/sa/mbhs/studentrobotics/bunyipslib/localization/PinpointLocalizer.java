@@ -45,7 +45,7 @@ public class PinpointLocalizer implements Localizer {
      */
     public final Params params;
 
-    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_PINPOINT", 10_000_000);
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_PINPOINT", FLIGHT_RECORDER_INTERVAL_MS.get() * 1_000_000);
     private Pose2d lastPose = Geometry.zeroPose();
 
     /**

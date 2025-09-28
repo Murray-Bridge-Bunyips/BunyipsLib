@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 
 import java.util.LinkedList;
 
@@ -32,9 +33,14 @@ public class Accumulator implements Localizable {
      * The maximum pose history length that should be stored in an accumulator.
      */
     public static int MAX_POSE_HISTORY = 100;
+    /**
+     * The interval at which to auto-log all pose and drive command data to the {@link FlightRecorder}.
+     * Requires a reinitialisation if changed.
+     */
+    public static long FLIGHT_RECORDER_INTERVAL_MS = 50;
 
-    private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
-    private final DownsampledWriter estimatedPoseVelocityWriter = new DownsampledWriter("ESTIMATED_POSE_VELOCITY", 50_000_000);
+    private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", FLIGHT_RECORDER_INTERVAL_MS * 1_000_000);
+    private final DownsampledWriter estimatedPoseVelocityWriter = new DownsampledWriter("ESTIMATED_POSE_VELOCITY", FLIGHT_RECORDER_INTERVAL_MS * 1_000_000);
     @NonNull
     protected Pose2d pose;
     @NonNull

@@ -39,7 +39,7 @@ public class TankLocalizer implements Localizer {
      */
     public final List<Encoder> rightEncs;
 
-    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_TANK", 10_000_000);
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_TANK", FLIGHT_RECORDER_INTERVAL_MS.get() * 1_000_000);
     private final TankKinematics kinematics;
     private final DriveModel driveModel;
     private double lastLeftPos, lastRightPos;

@@ -49,7 +49,7 @@ public class MecanumLocalizer implements Localizer {
      */
     public final Encoder rightFront;
 
-    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_MECANUM", 10_000_000);
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_MECANUM", FLIGHT_RECORDER_INTERVAL_MS.get() * 1_000_000);
     private final MecanumKinematics kinematics;
     private final DriveModel driveModel;
     private final IMU imu;

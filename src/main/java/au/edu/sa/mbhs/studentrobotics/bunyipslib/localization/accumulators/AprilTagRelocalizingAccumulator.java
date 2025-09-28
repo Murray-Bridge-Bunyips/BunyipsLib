@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.Localizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.PoseMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
@@ -45,7 +46,7 @@ public class AprilTagRelocalizingAccumulator extends Accumulator {
     public static double DEFAULT_Q = 0.01;
 
     private final AprilTag processor;
-    private final DownsampledWriter flightRecorder = new DownsampledWriter("APRILTAG_ESTIMATED_POSE", 10_000_000);
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("APRILTAG_ESTIMATED_POSE", Localizer.FLIGHT_RECORDER_INTERVAL_MS.get() * 1_000_000);
     private final HashSet<Predicate<AprilTagData>> filters = new HashSet<>();
     private final ArrayList<Pose2d> estimates = new ArrayList<>();
 
