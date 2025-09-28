@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -169,10 +170,14 @@ public final class Dashboard {
         Field[] newFields = obj.getClass().getFields();
         for (Field newField : newFields) {
             try {
-                if (newField.getType().isPrimitive() || newField.getType() == String.class || newField.getType().isEnum()) {
-                    fields.put(newField.getName(), newField.get(obj));
+                Class<?> type = newField.getType();
+                Object o = Objects.requireNonNull(newField.get(obj), "null object in schema traversal");
+                if (type.isPrimitive() || type == String.class || type.isEnum()) {
+                    fields.put(newField.getName(), o);
+                } else if (type.isArray()) {
+                    fields.put(newField.getName(), Arrays.toString((Object[]) o));
                 } else {
-                    traverseFields(fields, Objects.requireNonNull(newField.get(obj)));
+                    traverseFields(fields, o);
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Unable to access an internal field, this shouldn't happen!", e);
