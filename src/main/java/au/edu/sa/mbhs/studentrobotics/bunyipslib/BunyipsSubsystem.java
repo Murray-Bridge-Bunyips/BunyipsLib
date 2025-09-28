@@ -1,9 +1,12 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.executables.Periodic;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
@@ -33,7 +37,17 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
  */
 public abstract class BunyipsSubsystem {
     private static final HashSet<BunyipsSubsystem> instances = new HashSet<>();
+    /**
+     * The interval at which to auto-log subsystem data to the {@link FlightRecorder}.
+     * Requires a reinitialisation if changed.
+     */
+    public static double FLIGHT_RECORDER_INTERVAL_MS = 10;
     private static int idx = 0;
+    /**
+     * Serialised structure used in logging detailed subsystem status to the {@link FlightRecorder}.
+     */
+    public final LogSchema logger = new LogSchema();
+    private final Periodic flightRecorder;
     private final List<BunyipsSubsystem> children = new ArrayList<>();
     /**
      * Reference to the user-defined or default name of this subsystem.
@@ -52,6 +66,8 @@ public abstract class BunyipsSubsystem {
 
     protected BunyipsSubsystem() {
         instances.add(this);
+        flightRecorder = new Periodic(Milliseconds.of(FLIGHT_RECORDER_INTERVAL_MS), () ->
+                FlightRecorder.write("SUBSYSTEM_" + Text.upper(name).replace(" ", "_"), logger));
     }
 
     // Package-private, should only be accessed by a BunyipsLib operation (such as in BunyipsOpMode)
@@ -217,6 +233,19 @@ public abstract class BunyipsSubsystem {
             child.parent = this;
             this.children.add(child);
         }
+    }
+
+    /**
+     * Call to attach an object that will track additional information about the implemented subsystem, which will be
+     * sent to the {@link FlightRecorder} on every update of this subsystem.
+     * <p>
+     * Do note that the data sent in each field must be non-null and serializable according to the {@link FlightRecorder}'s
+     * specification (primitive, static array, enum).
+     *
+     * @param logSchema the object that stores a running record of serializable and loggable data to log to {@link FlightRecorder}.
+     */
+    protected final void attachLogSchema(Object logSchema) {
+        logger.child = logSchema;
     }
 
     /**
@@ -432,6 +461,10 @@ public abstract class BunyipsSubsystem {
             if (child != null && child.shouldRun)
                 child.internalUpdate();
         }
+        logger.timestamp = System.nanoTime();
+        logger.enabled = shouldRun;
+        logger.currentTask = task != null ? task.toVerboseString() : "";
+        flightRecorder.run();
     }
 
     /**
@@ -502,5 +535,29 @@ public abstract class BunyipsSubsystem {
      */
     protected void onDisable() {
         // no-op
+    }
+
+    /**
+     * Base schema for {@link FlightRecorder} logging.
+     */
+    public static class LogSchema {
+        /**
+         * Timestamp of this log in nanoseconds.
+         */
+        public long timestamp;
+        /**
+         * Enabled status.
+         */
+        public boolean enabled;
+        /**
+         * Currently executing task.
+         */
+        public String currentTask = "";
+        /**
+         * Implemented subsystem attached schema.
+         * <p>
+         * Subsystems with a custom schema of log info should set to this value.
+         */
+        public Object child = "";
     }
 }

@@ -34,6 +34,7 @@ public class Cannon extends BunyipsSubsystem {
      * Tasks for Cannon.
      */
     public final Tasks tasks = new Tasks();
+    private final LogSchema logger = new LogSchema();
     private final double FIRED;
     private final double RESET;
     private Servo prolong;
@@ -53,6 +54,7 @@ public class Cannon extends BunyipsSubsystem {
         FIRED = Mathf.clamp(openPosition, 0, 1);
         RESET = Mathf.clamp(closePosition, 0, 1);
 
+        attachLogSchema(logger);
         if (!assertParamsNotNull(prolong)) return;
         this.prolong = prolong;
 
@@ -113,7 +115,14 @@ public class Cannon extends BunyipsSubsystem {
     @Override
     protected void periodic() {
         DualTelemetry.smartAdd(toString(), target == FIRED ? "<font color='red'><b>FIRED</b></font>" : "<font color='green'>READY</font>");
+        logger.target = target;
+        logger.servoTarget = prolong.getPosition();
         prolong.setPosition(target);
+    }
+
+    private static class LogSchema {
+        public double target;
+        public double servoTarget;
     }
 
     /**

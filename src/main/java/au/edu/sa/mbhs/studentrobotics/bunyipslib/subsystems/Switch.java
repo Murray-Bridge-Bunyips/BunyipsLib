@@ -30,6 +30,7 @@ public class Switch extends BunyipsSubsystem {
      */
     public final Tasks tasks = new Tasks();
 
+    private final LogSchema logger = new LogSchema();
     private final Servo servo;
     private double target;
     private double openPosition = 1;
@@ -50,6 +51,7 @@ public class Switch extends BunyipsSubsystem {
         withName("Switch");
         withBounds(openPosition, closePosition);
         assertParamsNotNull(servo);
+        attachLogSchema(logger);
     }
 
     /**
@@ -209,7 +211,14 @@ public class Switch extends BunyipsSubsystem {
                 ? "<font color='yellow'>OPEN</font> (" + Mathf.round(openPosition, 1) + ")"
                 : target == closePosition ? "<font color='green'>CLOSE</font> (" + Mathf.round(closePosition, 1) + ")"
                 : "<b>" + Mathf.round(target, 2) + "/1.00</b>");
+        logger.target = target;
+        logger.servoTarget = servo.getPosition();
         servo.setPosition(target);
+    }
+
+    private static class LogSchema {
+        public double target;
+        public double servoTarget;
     }
 
     /**

@@ -28,6 +28,7 @@ public class Actuator extends BunyipsSubsystem {
      */
     public final Tasks tasks = new Tasks();
 
+    private final LogSchema logger = new LogSchema();
     private final DcMotorSimple actuator;
     private volatile double power;
 
@@ -38,6 +39,7 @@ public class Actuator extends BunyipsSubsystem {
      */
     public Actuator(DcMotorSimple actuator) {
         assertParamsNotNull(actuator);
+        attachLogSchema(logger);
         this.actuator = actuator;
     }
 
@@ -55,12 +57,18 @@ public class Actuator extends BunyipsSubsystem {
     @Override
     protected void onDisable() {
         power = 0;
+        logger.power = 0;
         actuator.setPower(0);
     }
 
     @Override
     protected void periodic() {
+        logger.power = power;
         actuator.setPower(power);
+    }
+
+    private static class LogSchema {
+        public double power;
     }
 
     /**

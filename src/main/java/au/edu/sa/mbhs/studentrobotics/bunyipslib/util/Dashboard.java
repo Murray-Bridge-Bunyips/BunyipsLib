@@ -14,13 +14,18 @@ import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accumulator;
 
 /**
  * Set of helper functions for drawing on the FtcDashboard canvas and operating various FtcDashboard functions.
@@ -44,11 +49,6 @@ public final class Dashboard {
      * be sent automatically if this is enabled, {@link #sendAndClearSyncedPackets()} must be called manually.
      */
     public static boolean USING_SYNCED_PACKETS = false;
-    /**
-     * The interval at which observed objects registered in {@link #observe(Object...)} are updated and sent to the
-     * RoadRunner log {@link FlightRecorder} on {@link #updateObservations()} invocations.
-     */
-    public static int FLIGHT_RECORDER_OBSERVATION_INTERVAL_MS = 10;
     private static volatile TelemetryPacket accumulatedPacket = new TelemetryPacket();
 
     private Dashboard() {
@@ -145,43 +145,40 @@ public final class Dashboard {
     }
 
     /**
-     * Updates all registered objects in {@link #observe(Object...)} and returns a dashboard packet with the resultant payload.
+     * Extracts the log schema from {@link BunyipsSubsystem} instances to attach to an FtcDashboard packet, allowing live view
+     * of data being saved to the log files. This is useful for live debugging and graphing of subsystems to observe internal
+     * behaviour. An example of this is the {@link Accumulator}, which auto-logs pose estimates to the dashboard packet but can be
+     * manually enabled for subsystems by this method.
      * <p>
-     * This method is called automatically by {@link DualTelemetry} and {@link #sendAndClearSyncedPackets()}.
-     * Calling this method yourself is often unnecessary unless you want to perform some advanced operations.
+     * Must be called periodically.
      *
-     * @return a packet with text information regarding all registered items in {@link #observe(Object...)}
-     * @since 7.5.0
+     * @param subsystems the subsystems to extract {@link FlightRecorder} live log schemas from to display on a live FtcDashboard packet,
+     *                   from {@link #usePacket(Consumer)}. These logs will not be displayed on DS telemetry.
      */
-    @NonNull
-    public static TelemetryPacket updateObservations() {
-        TelemetryPacket p = new TelemetryPacket();
-        if (observations.isEmpty()) return p;
-        for (String key : observations.keySet()) {
-            // TODO: FlightRecorder?
-        }
-        return p;
+    public static void logLiveSchema(BunyipsSubsystem... subsystems) {
+        usePacket(p -> {
+            for (BunyipsSubsystem subsystem : subsystems) {
+                for (Map.Entry<String, Object> field : traverseFields(new TreeMap<>(), subsystem.logger).entrySet()) {
+                    p.put(field.getKey(), field.getValue().toString());
+                }
+            }
+        });
     }
 
-    /**
-     * Appends regular status updates from the supplied objects to draw next to the robot on the dashboard's field overlay.
-     * <p>
-     * Calling this method can be used in conjunction with the Replay View feature, allowing you to observe the state of specific
-     * robot components as Telemetry is not replayed. This is an assistance feature to aid post-match analysis.
-     * <p>
-     * Objects passed through here will be periodically updated if a {@link Supplier} is used or converted to generic base information,
-     * such as motor/servo statistics, IMU reading, and other common use cases depending on the type of the objects provided.
-     *
-     * @param objects the objects that should be observed to draw on the dashboard field canvas. Some objects are
-     *                automagically converted into useful base information, such as hardware devices. Suppliers will
-     *                be updated. Other objects will simply have {@code .toString()} called.
-     * @since 7.5.0
-     */
-    public static void observe(Object... objects) {
-        for (Object object : objects) {
-            if (object == null) continue;
-            // TODO
+    private static TreeMap<String, Object> traverseFields(TreeMap<String, Object> fields, Object obj) {
+        Field[] newFields = obj.getClass().getFields();
+        for (Field newField : newFields) {
+            try {
+                if (newField.getType().isPrimitive() || newField.getType() == String.class || newField.getType().isEnum()) {
+                    fields.put(newField.getName(), newField.get(obj));
+                } else {
+                    traverseFields(fields, Objects.requireNonNull(newField.get(obj)));
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Unable to access an internal field, this shouldn't happen!", e);
+            }
         }
+        return fields;
     }
 
     /**
@@ -219,9 +216,7 @@ public final class Dashboard {
         synchronized (Dashboard.class) {
             if (!USING_SYNCED_PACKETS)
                 return;
-            FtcDashboard.getInstance().sendTelemetryPacket(
-                    mergePackets(accumulatedPacket, updateObservations())
-            );
+            FtcDashboard.getInstance().sendTelemetryPacket(accumulatedPacket);
             accumulatedPacket = new TelemetryPacket();
         }
     }

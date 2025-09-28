@@ -9,6 +9,7 @@ import android.util.Pair;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
@@ -21,13 +22,13 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 import java.util.ArrayList;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.InterpolatedLookupTable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
@@ -112,19 +113,51 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     /**
-     * Utility for debugging an encoder on telemetry with current encoder/power information.
+     * Utility for debugging a motor and encoder on telemetry/logs with current encoder and power information. This will log
+     * to all telemetry sources and log to the {@link FlightRecorder}.
+     * <p>
+     * Must be called periodically.
      *
-     * @param motor     The motor to debug
-     * @param name      The name to debug as
-     * @param telemetry The telemetry to debug to
+     * @param motor The motor to debug
+     * @param name  The name to debug as
      */
-    public static void debug(@NonNull DcMotor motor, @NonNull String name, @NonNull Telemetry telemetry) {
-        telemetry.addData(Text.format("% Position (t, port %)", name, motor.getPortNumber()), motor.getCurrentPosition());
-        telemetry.addData(Text.format("% Target (t, port %)", name, motor.getPortNumber()), motor.getTargetPosition());
-        telemetry.addData(Text.format("% Power (port %)", name, motor.getPortNumber()), motor.getPower());
-        if (motor instanceof DcMotorEx) {
-            telemetry.addData(Text.format("% Velocity (t/s, port %)", name, motor.getPortNumber()), ((DcMotorEx) motor).getVelocity());
-            telemetry.addData(Text.format("% Current (A, port %)", name, motor.getPortNumber()), ((DcMotorEx) motor).getCurrent(CurrentUnit.AMPS));
+    public static void debug(@NonNull DcMotor motor, @NonNull String name) {
+        debug(motor, name, false);
+    }
+
+    /**
+     * Utility for debugging a motor and encoder on telemetry/logs with current encoder and power information.
+     * <p>
+     * Must be called periodically.
+     *
+     * @param motor   The motor to debug
+     * @param name    The name to debug as
+     * @param onlyLog Whether to only record debug information to the {@link FlightRecorder}, not telemetry/live dash.
+     */
+    public static void debug(@NonNull DcMotor motor, @NonNull String name, boolean onlyLog) {
+        int port = motor.getPortNumber();
+        int currentPosition = motor.getCurrentPosition();
+        int targetPosition = motor.getTargetPosition();
+        double power = motor.getPower();
+        String channelPrefix = Text.format("MOTOR_P%_%_", port, Text.upper(name).replace(" ", "_"));
+        if (!onlyLog)
+            DualTelemetry.smartAdd(Text.format("% Position (t, port %)", name, port), currentPosition);
+        FlightRecorder.write(channelPrefix + "POSITION", currentPosition);
+        if (!onlyLog)
+            DualTelemetry.smartAdd(Text.format("% Target (t, port %)", name, port), targetPosition);
+        FlightRecorder.write(channelPrefix + "TARGET", targetPosition);
+        if (!onlyLog)
+            DualTelemetry.smartAdd(Text.format("% Power (port %)", name, port), power);
+        FlightRecorder.write(channelPrefix + "POWER", power);
+        if (motor instanceof DcMotorEx dme) {
+            double velocity = dme.getVelocity();
+            double current = dme.getCurrent(CurrentUnit.AMPS);
+            if (!onlyLog)
+                DualTelemetry.smartAdd(Text.format("% Velocity (t/s, port %)", name, port), velocity);
+            FlightRecorder.write(channelPrefix + "VELOCITY", velocity);
+            if (!onlyLog)
+                DualTelemetry.smartAdd(Text.format("% Current (A, port %)", name, port), current);
+            FlightRecorder.write(channelPrefix + "CURRENT", current);
         }
     }
 

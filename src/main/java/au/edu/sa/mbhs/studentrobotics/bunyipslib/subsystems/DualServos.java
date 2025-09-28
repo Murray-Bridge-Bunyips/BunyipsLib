@@ -27,6 +27,7 @@ public class DualServos extends BunyipsSubsystem {
      * Tasks for DualServos.
      */
     public final Tasks tasks = new Tasks();
+    private final LogSchema logger = new LogSchema();
     private final double leftClosed;
     private final double leftOpen;
     private final double rightClosed;
@@ -55,6 +56,7 @@ public class DualServos extends BunyipsSubsystem {
         this.rightClosed = Mathf.clamp(rightClosed, 0, 1);
         this.rightOpen = Mathf.clamp(rightOpen, 0, 1);
 
+        attachLogSchema(logger);
         if (!assertParamsNotNull(left, right)) return;
         this.left = left;
         this.right = right;
@@ -161,6 +163,10 @@ public class DualServos extends BunyipsSubsystem {
     protected void periodic() {
         left.setPosition(leftServoPosition);
         right.setPosition(rightServoPosition);
+        logger.leftTarget = leftServoPosition;
+        logger.rightTarget = rightServoPosition;
+        logger.leftServoTarget = left.getPosition();
+        logger.rightServoTarget = right.getPosition();
         DualTelemetry.smartAdd(toString(), "Left->% Right->%",
                 leftServoPosition == leftOpen ? "<font color='yellow'>OPEN</font>" : "<font color='green'>CLOSE</font>",
                 rightServoPosition == rightOpen ? "<font color='yellow'>OPEN</font>" : "<font color='green'>CLOSE</font>");
@@ -182,6 +188,13 @@ public class DualServos extends BunyipsSubsystem {
          * Both servos.
          */
         BOTH
+    }
+
+    private static class LogSchema {
+        public double leftTarget;
+        public double leftServoTarget;
+        public double rightTarget;
+        public double rightServoTarget;
     }
 
     /**

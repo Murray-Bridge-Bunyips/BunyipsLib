@@ -34,6 +34,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
  * @since 6.0.0
  */
 public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
+    private final LogSchema logger = new LogSchema();
     private final List<DcMotor> leftMotors;
     private final List<DcMotor> rightMotors;
     @Nullable
@@ -57,6 +58,7 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
             if (assertParamsNotNull(m))
                 m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         });
+        attachLogSchema(logger);
 
         this.leftMotors = leftMotors;
         this.rightMotors = rightMotors;
@@ -123,11 +125,17 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
         }
 
         for (DcMotor m : leftMotors) {
-            m.setPower(wheelVels.left.get(0) / maxPowerMag);
+            double leftPower = wheelVels.left.get(0) / maxPowerMag;
+            logger.leftPower = leftPower;
+            m.setPower(leftPower);
         }
         for (DcMotor m : rightMotors) {
-            m.setPower(wheelVels.right.get(0) / maxPowerMag);
+            double rightPower = wheelVels.right.get(0) / maxPowerMag;
+            logger.rightPower = rightPower;
+            m.setPower(rightPower);
         }
+        logger.speedX = target.linearVel.x;
+        logger.speedR = target.angVel;
 
         DualTelemetry.smartAdd(toString(), "%\\% %, %\\% %",
                 Math.round(Math.min(100, Math.abs(target.linearVel.x * 100))), target.linearVel.x >= 0 ? "↑" : "↓",
@@ -162,5 +170,12 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
     @Override
     public PoseVelocity2d getVelocity() {
         return localizer != null ? accumulator.getVelocity() : null;
+    }
+
+    private static class LogSchema {
+        public double leftPower;
+        public double rightPower;
+        public double speedX;
+        public double speedR;
     }
 }

@@ -54,6 +54,7 @@ public class HoldableActuator extends BunyipsSubsystem {
      */
     public final Encoder encoder;
 
+    private final LogSchema logger = new LogSchema();
     private final HashMap<TouchSensor, Integer> switchMapping = new HashMap<>();
     private final ElapsedTime sustainedOvercurrent = new ElapsedTime();
     private final ElapsedTime sustainedTolerated = new ElapsedTime();
@@ -116,6 +117,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         encoder.setCaching(true);
         // Sane default, will need adjusting manually
         withOvercurrent(Amps.of(8), Seconds.of(5));
+        attachLogSchema(logger);
     }
 
     /**
@@ -580,6 +582,17 @@ public class HoldableActuator extends BunyipsSubsystem {
             }
         }
 
+        logger.position = encoder.getPosition();
+        logger.targetPosition = motor.getTargetPosition();
+        logger.velocity = encoder.getVelocity();
+        logger.overCurrentSec = sustainedOvercurrent.seconds();
+        logger.steadyStateSec = sustainedTolerated.seconds();
+        logger.rawPower = power;
+        logger.userPower = userPower;
+        logger.topSwitchPressed = topSwitch != null && topSwitch.isPressed();
+        logger.bottomSwitchPressed = bottomSwitch != null && bottomSwitch.isPressed();
+        logger.zeroLatched = autoZeroingLatch;
+
         motor.setPower(Mathf.clamp(power, lowerPower, upperPower));
     }
 
@@ -594,8 +607,22 @@ public class HoldableActuator extends BunyipsSubsystem {
     @Override
     protected void onDisable() {
         power = 0;
+        logger.rawPower = 0;
         motor.setPower(0);
         encoder.setCaching(false);
+    }
+
+    private static class LogSchema {
+        public int position;
+        public int targetPosition;
+        public double velocity;
+        public double overCurrentSec;
+        public double steadyStateSec;
+        public double rawPower;
+        public double userPower;
+        public boolean topSwitchPressed;
+        public boolean bottomSwitchPressed;
+        public boolean zeroLatched;
     }
 
     // Internal "tasks" that define user operations as executed by periodic. We can't really use Tasks for runtime via the user

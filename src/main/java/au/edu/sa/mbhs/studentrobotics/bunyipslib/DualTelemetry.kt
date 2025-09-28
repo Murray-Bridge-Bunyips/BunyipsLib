@@ -444,7 +444,7 @@ class DualTelemetry @JvmOverloads constructor(
 
         synchronized(userPacket) {
             FtcDashboard.getInstance().sendTelemetryPacket(
-                Dashboard.mergePackets(Dashboard.mergePackets(packet, userPacket), Dashboard.updateObservations())
+                Dashboard.mergePackets(packet, userPacket)
             )
             userPacket = TelemetryPacket()
         }

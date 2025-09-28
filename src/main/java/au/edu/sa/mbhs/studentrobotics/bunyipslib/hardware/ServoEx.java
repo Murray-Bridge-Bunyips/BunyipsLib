@@ -6,6 +6,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nan
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,12 +15,14 @@ import com.qualcomm.robotcore.hardware.ServoControllerEx;
 import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.TrapezoidProfile;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.DualServos;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.Switch;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text;
 
 /**
  * Extension of the extended {@link Servo} interface that allows for motion profiling via a {@link TrapezoidProfile}.
@@ -53,6 +56,43 @@ public class ServoEx extends ServoImpl implements PwmControl {
      */
     public ServoEx(@NonNull Servo servo) {
         super(servo.getController(), servo.getPortNumber(), servo.getDirection());
+    }
+
+    /**
+     * Utility for debugging a servo on telemetry/logs with current target position information. This will log
+     * to all telemetry sources and log to the {@link FlightRecorder}.
+     * <p>
+     * Must be called periodically.
+     *
+     * @param servo The servo to debug
+     * @param name  The name to debug as
+     */
+    public static void debug(@NonNull Servo servo, @NonNull String name) {
+        debug(servo, name, false);
+    }
+
+    /**
+     * Utility for debugging a servo on telemetry/logs with current target position information.
+     * <p>
+     * Must be called periodically.
+     *
+     * @param servo   The servo to debug
+     * @param name    The name to debug as
+     * @param onlyLog Whether to only record debug information to the {@link FlightRecorder}, not telemetry/live dash.
+     */
+    public static void debug(@NonNull Servo servo, @NonNull String name, boolean onlyLog) {
+        int port = servo.getPortNumber();
+        double target = servo.getPosition();
+        String channelPrefix = Text.format("SERVO_P%_%_", port, Text.upper(name).replace(" ", "_"));
+        if (!onlyLog)
+            DualTelemetry.smartAdd(Text.format("% Target (0-1, port %)", name, port), target);
+        FlightRecorder.write(channelPrefix + "TARGET", target);
+        if (servo instanceof ServoEx sex) {
+            double lastTarget = sex.lastPosition;
+            if (!onlyLog)
+                DualTelemetry.smartAdd(Text.format("% Last Target (0-1, port %)", name, port), lastTarget);
+            FlightRecorder.write(channelPrefix + "LAST_TARGET", lastTarget);
+        }
     }
 
     /**

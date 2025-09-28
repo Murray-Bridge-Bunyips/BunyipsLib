@@ -32,6 +32,7 @@ public class BlinkinLights extends BunyipsSubsystem {
      */
     public final Tasks tasks = new Tasks();
 
+    private final LogSchema logger = new LogSchema();
     private final RevBlinkinLedDriver lights;
     private ServoControllerEx blinkinController;
     private Integer port;
@@ -50,9 +51,11 @@ public class BlinkinLights extends BunyipsSubsystem {
         this.defaultPattern = defaultPattern;
         currentPattern = defaultPattern;
 
+        attachLogSchema(logger);
         if (!assertParamsNotNull(lights)) return;
         assert lights != null;
         lights.setPattern(this.defaultPattern);
+        setPattern = this.defaultPattern;
 
         Field blinkinServoControllerField;
         Field blinkinPortField;
@@ -176,6 +179,9 @@ public class BlinkinLights extends BunyipsSubsystem {
     @Override
     protected void onDisable() {
         turnOff();
+        lights.setPattern(currentPattern);
+        logger.pattern = currentPattern;
+        logger.pwmMapped = blinkinController.getServoPosition(port);
     }
 
     @Override
@@ -191,7 +197,9 @@ public class BlinkinLights extends BunyipsSubsystem {
         if (setPattern != currentPattern) {
             lights.setPattern(currentPattern);
             setPattern = currentPattern;
+            logger.pattern = setPattern;
         }
+        logger.pwmMapped = blinkinController.getServoPosition(port);
     }
 
     /**
@@ -215,6 +223,11 @@ public class BlinkinLights extends BunyipsSubsystem {
         Voltage(int us) {
             pwmCommandUs = us;
         }
+    }
+
+    private static class LogSchema {
+        public RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        public double pwmMapped;
     }
 
     /**

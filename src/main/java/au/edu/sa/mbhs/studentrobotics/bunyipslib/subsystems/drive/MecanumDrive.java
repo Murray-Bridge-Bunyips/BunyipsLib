@@ -347,6 +347,9 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
         rightFront.setPower(rightFrontPower);
+        mecanumCommandWriter.write(new MecanumCommandMessage(
+                voltageSensor.getVoltage(), leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
+        ));
 
         DualTelemetry.smartAdd(toString(), "FL:%\\% %, BL:%\\% %, BR:%\\% %, FR:%\\% %",
                 Math.round(Math.min(100, Math.abs(leftFrontPower * 100))), leftFrontPower >= 0 ? "↑" : "↓",
@@ -435,9 +438,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             leftBackPower = feedforward.compute(wheelVels.leftBack) / voltage;
             rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
             rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
-            mecanumCommandWriter.write(new MecanumCommandMessage(
-                    voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
-            ));
 
             Pose2d error = hold.minusExp(robotPose);
             dashboard.put("xError", error.position.x);
@@ -521,9 +521,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             leftBackPower = feedforward.compute(wheelVels.leftBack) / voltage;
             rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
             rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
-            mecanumCommandWriter.write(new MecanumCommandMessage(
-                    voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
-            ));
 
             error = txWorldTarget.value().minusExp(actualPose);
             dashboard.put("xError", error.position.x);
@@ -634,9 +631,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             leftBackPower = feedforward.compute(wheelVels.leftBack) / voltage;
             rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
             rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
-            mecanumCommandWriter.write(new MecanumCommandMessage(
-                    voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
-            ));
 
             error = txWorldTarget.value().minusExp(robotPose);
             dashboard.put("xError", error.position.x);
@@ -722,9 +716,6 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
             leftBackPower = feedforward.compute(wheelVels.leftBack) / voltage;
             rightBackPower = feedforward.compute(wheelVels.rightBack) / voltage;
             rightFrontPower = feedforward.compute(wheelVels.rightFront) / voltage;
-            mecanumCommandWriter.write(new MecanumCommandMessage(
-                    voltage, leftFrontPower, leftBackPower, rightBackPower, rightFrontPower
-            ));
 
             error = txWorldTarget.value().minusExp(accumulator.getPose());
             dashboard.put("headingError (deg)", Math.toDegrees(error.heading.toDouble()));

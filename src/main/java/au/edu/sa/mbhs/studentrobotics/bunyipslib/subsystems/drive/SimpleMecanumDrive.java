@@ -28,6 +28,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage;
  * @since 6.0.0
  */
 public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
+    private final LogSchema logger = new LogSchema();
     private final DcMotor leftFront;
     private final DcMotor leftBack;
     private final DcMotor rightBack;
@@ -65,6 +66,8 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
             rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+
+        attachLogSchema(logger);
 
         this.leftFront = leftFront;
         this.leftBack = leftBack;
@@ -165,6 +168,13 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         leftBack.setPower(leftBackPower);
         rightBack.setPower(rightBackPower);
         rightFront.setPower(rightFrontPower);
+        logger.speedX = speedX;
+        logger.speedY = speedY;
+        logger.speedR = speedR;
+        logger.leftFrontPower = leftFrontPower;
+        logger.leftBackPower = leftBackPower;
+        logger.rightBackPower = rightBackPower;
+        logger.rightFrontPower = rightFrontPower;
 
         DualTelemetry.smartAdd(toString(), "%\\% %, %\\% %, %\\% %",
                 Math.round(Math.abs(speedX * 100)), speedX >= 0 ? "↑" : "↓",
@@ -234,6 +244,13 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         leftBack.setPower(0);
         rightBack.setPower(0);
         rightFront.setPower(0);
+        logger.speedX = 0;
+        logger.speedY = 0;
+        logger.speedR = 0;
+        logger.leftFrontPower = 0;
+        logger.leftBackPower = 0;
+        logger.rightBackPower = 0;
+        logger.rightFrontPower = 0;
     }
 
     @Override
@@ -272,5 +289,15 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
          * Calculate rotational speeds first, and use the rest for translation.
          */
         ROTATIONAL
+    }
+
+    private static class LogSchema {
+        public double speedX;
+        public double speedY;
+        public double speedR;
+        public double leftFrontPower;
+        public double leftBackPower;
+        public double rightBackPower;
+        public double rightFrontPower;
     }
 }
