@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.OTOSKt;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
@@ -45,6 +46,7 @@ public class OTOSLocalizer implements Localizer {
      */
     public final Params params;
 
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_OTOS", 25_000_000);
     private Pose2d lastPose = Geometry.zeroPose();
 
     /**
@@ -105,7 +107,7 @@ public class OTOSLocalizer implements Localizer {
                 velocity.h
         );
 
-        FlightRecorder.write("LOCALIZER_INPUTS_OTOS", new OTOSLocalizerInputsMessage(otos.getStatus(), logAcc, logPosStdDev, logVelStdDev, logAccStdDev));
+        flightRecorder.write(new OTOSLocalizerInputsMessage(otos.getStatus(), logAcc, logPosStdDev, logVelStdDev, logAccStdDev));
 
         Vector2d positionDelta = pose.heading.inverse().times(pose.position.minus(lastPose.position));
         double headingDelta = pose.heading.minus(lastPose.heading);

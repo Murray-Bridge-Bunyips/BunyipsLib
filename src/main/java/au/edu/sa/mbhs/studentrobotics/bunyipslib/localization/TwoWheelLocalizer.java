@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
@@ -47,6 +48,7 @@ public class TwoWheelLocalizer implements Localizer {
      * Used two-wheel localizer parameters.
      */
     public final Params params;
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_TWO_WHEEL", 25_000_000);
     private final DriveModel driveModel;
     private int lastParPos, lastPerpPos;
     private Rotation2d lastHeading;
@@ -92,7 +94,7 @@ public class TwoWheelLocalizer implements Localizer {
         YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS);
 
-        FlightRecorder.write("LOCALIZER_INPUTS_TWO_WHEEL", new TwoDeadWheelInputsMessage(parPosVel, perpPosVel, angles, angularVelocity));
+        flightRecorder.write(new TwoDeadWheelInputsMessage(parPosVel, perpPosVel, angles, angularVelocity));
 
         Rotation2d heading = Rotation2d.exp(angles.getYaw(AngleUnit.RADIANS));
         double headingVel = angularVelocity.zRotationRate;

@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.Encoder;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
@@ -41,6 +42,7 @@ public class ThreeWheelLocalizer implements Localizer {
      */
     public final Params params;
 
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_THREE_WHEEL", 25_000_000);
     private final DriveModel driveModel;
     private int lastPar0Pos, lastPar1Pos, lastPerpPos;
     private boolean initialized;
@@ -79,7 +81,7 @@ public class ThreeWheelLocalizer implements Localizer {
         assert par1PosVel.velocity != null;
         assert perpPosVel.velocity != null;
 
-        FlightRecorder.write("LOCALIZER_INPUTS_THREE_WHEEL", new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
+        flightRecorder.write(new ThreeDeadWheelInputsMessage(par0PosVel, par1PosVel, perpPosVel));
 
         if (!initialized) {
             initialized = true;

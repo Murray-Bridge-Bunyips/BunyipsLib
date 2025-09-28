@@ -10,8 +10,8 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.Encoder;
-import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
@@ -49,6 +49,7 @@ public class MecanumLocalizer implements Localizer {
      */
     public final Encoder rightFront;
 
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_MECANUM", 25_000_000);
     private final MecanumKinematics kinematics;
     private final DriveModel driveModel;
     private final IMU imu;
@@ -100,7 +101,7 @@ public class MecanumLocalizer implements Localizer {
 
         YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
 
-        FlightRecorder.write("LOCALIZER_INPUTS_MECANUM", new MecanumLocalizerInputsMessage(
+        flightRecorder.write(new MecanumLocalizerInputsMessage(
                 leftFrontPosVel, leftBackPosVel, rightBackPosVel, rightFrontPosVel, angles));
 
         Rotation2d heading = Rotation2d.exp(angles.getYaw(AngleUnit.RADIANS));

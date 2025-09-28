@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
@@ -44,6 +45,7 @@ public class PinpointLocalizer implements Localizer {
      */
     public final Params params;
 
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_PINPOINT", 25_000_000);
     private Pose2d lastPose = Geometry.zeroPose();
 
     /**
@@ -100,8 +102,8 @@ public class PinpointLocalizer implements Localizer {
                 pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS)
         );
 
-        FlightRecorder.write("LOCALIZER_INPUTS_PINPOINT",
-                new PinpointLocalizerInputsMessage(pinpoint.getEncoderX(), pinpoint.getEncoderY(), pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES), pinpoint.getDeviceStatus(), pinpoint.getFrequency()));
+        flightRecorder.write(new PinpointLocalizerInputsMessage(
+                pinpoint.getEncoderX(), pinpoint.getEncoderY(), pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES), pinpoint.getDeviceStatus(), pinpoint.getFrequency()));
 
         Vector2d positionDelta = pose.heading.inverse().times(pose.position.minus(lastPose.position));
         double headingDelta = pose.heading.minus(lastPose.heading);

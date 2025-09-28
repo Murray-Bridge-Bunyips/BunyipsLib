@@ -8,8 +8,8 @@ import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.Encoder;
-import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
@@ -39,6 +39,7 @@ public class TankLocalizer implements Localizer {
      */
     public final List<Encoder> rightEncs;
 
+    private final DownsampledWriter flightRecorder = new DownsampledWriter("LOCALIZER_INPUTS_TANK", 25_000_000);
     private final TankKinematics kinematics;
     private final DriveModel driveModel;
     private double lastLeftPos, lastRightPos;
@@ -97,8 +98,7 @@ public class TankLocalizer implements Localizer {
         meanRightPos /= rightEncs.size();
         meanRightVel /= rightEncs.size();
 
-        FlightRecorder.write("LOCALIZER_INPUTS_TANK",
-                new TankLocalizerInputsMessage(leftReadings, rightReadings));
+        flightRecorder.write(new TankLocalizerInputsMessage(leftReadings, rightReadings));
 
         if (!initialized) {
             initialized = true;
