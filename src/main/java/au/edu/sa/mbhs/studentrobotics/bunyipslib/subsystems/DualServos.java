@@ -190,10 +190,25 @@ public class DualServos extends BunyipsSubsystem {
         BOTH
     }
 
-    private static class LogSchema {
+    /**
+     * Log schema for DualServos instances.
+     */
+    public static class LogSchema extends BunyipsSubsystem.LogSchema {
+        /**
+         * Desired target for the left servo.
+         */
         public double leftTarget;
+        /**
+         * Commanded target for the left servo.
+         */
         public double leftServoTarget;
+        /**
+         * Desired target for the right servo.
+         */
         public double rightTarget;
+        /**
+         * Commanded target for the right servo.
+         */
         public double rightServoTarget;
     }
 

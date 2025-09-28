@@ -291,13 +291,37 @@ public class SimpleMecanumDrive extends BunyipsSubsystem implements Moveable {
         ROTATIONAL
     }
 
-    private static class LogSchema {
+    /**
+     * Log schema for SimpleMecanumDrive instances.
+     */
+    public static class LogSchema extends BunyipsSubsystem.LogSchema {
+        /**
+         * Commanded forward speed.
+         */
         public double speedX;
+        /**
+         * Commanded left speed.
+         */
         public double speedY;
+        /**
+         * Commanded CCW speed.
+         */
         public double speedR;
+        /**
+         * Commanded fl motor power.
+         */
         public double leftFrontPower;
+        /**
+         * Commanded bl motor power.
+         */
         public double leftBackPower;
+        /**
+         * Commanded br motor power.
+         */
         public double rightBackPower;
+        /**
+         * Commanded fr motor power.
+         */
         public double rightFrontPower;
     }
 }

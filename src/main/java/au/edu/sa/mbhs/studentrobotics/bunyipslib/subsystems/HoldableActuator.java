@@ -612,16 +612,49 @@ public class HoldableActuator extends BunyipsSubsystem {
         encoder.setCaching(false);
     }
 
-    private static class LogSchema {
+    /**
+     * Log schema for HoldableActuator instances.
+     */
+    public static class LogSchema extends BunyipsSubsystem.LogSchema {
+        /**
+         * The current position of the actuator.
+         */
         public int position;
+        /**
+         * The current target position of the actuator.
+         */
         public int targetPosition;
+        /**
+         * The current velocity of the actuator.
+         */
         public double velocity;
+        /**
+         * Duration at which the actuator has been running overcurrent.
+         */
         public double overCurrentSec;
+        /**
+         * Duration at which the actuator has been in a steady-state of error.
+         */
         public double steadyStateSec;
+        /**
+         * Raw commanded power to dispatch to the arm before clamping.
+         */
         public double rawPower;
+        /**
+         * User (usually gamepad) supplied power.
+         */
         public double userPower;
+        /**
+         * Whether the top limit switch is currently pressed.
+         */
         public boolean topSwitchPressed;
+        /**
+         * Whether the bottom limit switch is currently pressed.
+         */
         public boolean bottomSwitchPressed;
+        /**
+         * Whether the homing latch is triggered from a bottom switch press.
+         */
         public boolean zeroLatched;
     }
 

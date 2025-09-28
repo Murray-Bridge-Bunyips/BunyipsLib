@@ -216,8 +216,17 @@ public class Switch extends BunyipsSubsystem {
         servo.setPosition(target);
     }
 
-    private static class LogSchema {
+    /**
+     * Log schema for Switch instances.
+     */
+    public static class LogSchema extends BunyipsSubsystem.LogSchema {
+        /**
+         * Desired target.
+         */
         public double target;
+        /**
+         * Servo commanded target.
+         */
         public double servoTarget;
     }
 

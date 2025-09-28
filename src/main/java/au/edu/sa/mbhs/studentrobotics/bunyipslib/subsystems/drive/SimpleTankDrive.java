@@ -172,10 +172,25 @@ public class SimpleTankDrive extends BunyipsSubsystem implements Moveable {
         return localizer != null ? accumulator.getVelocity() : null;
     }
 
-    private static class LogSchema {
+    /**
+     * Log schema for SimpleTankDrive instances.
+     */
+    public static class LogSchema extends BunyipsSubsystem.LogSchema {
+        /**
+         * Commanded power for the left side.
+         */
         public double leftPower;
+        /**
+         * Commanded power for the right side.
+         */
         public double rightPower;
+        /**
+         * Target forward speed.
+         */
         public double speedX;
+        /**
+         * Target CCW speed.
+         */
         public double speedR;
     }
 }

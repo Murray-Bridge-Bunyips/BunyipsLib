@@ -225,8 +225,17 @@ public class BlinkinLights extends BunyipsSubsystem {
         }
     }
 
-    private static class LogSchema {
+    /**
+     * Log schema for BlinkinLights instances.
+     */
+    public static class LogSchema extends BunyipsSubsystem.LogSchema {
+        /**
+         * Current commanded pattern.
+         */
         public RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.BLACK;
+        /**
+         * Current raw commanded PWM signal (mapped).
+         */
         public double pwmMapped;
     }
 
