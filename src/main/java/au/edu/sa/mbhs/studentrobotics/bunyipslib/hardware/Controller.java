@@ -3,6 +3,8 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.hardware;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 import com.qualcomm.ftccommon.FtcEventLoopBase;
 import com.qualcomm.ftccommon.FtcEventLoopHandler;
 import com.qualcomm.robotcore.eventloop.EventLoopManager;
@@ -21,6 +23,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.logic.Condition;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.GamepadInputsMessage;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import dev.frozenmilk.util.cell.MirroredCell;
 
@@ -35,6 +38,11 @@ import dev.frozenmilk.util.cell.MirroredCell;
  */
 public class Controller extends Gamepad {
     /**
+     * The interval at which to auto-log all controller input data to the {@link FlightRecorder}.
+     * Requires a reinitialisation if changed.
+     */
+    public static long FLIGHT_RECORDER_INTERVAL_MS = 75;
+    /**
      * The user defined designated user for this gamepad controller.
      * <p>
      * See the constructor notes for more information.
@@ -47,6 +55,7 @@ public class Controller extends Gamepad {
     private final MirroredCell<Object> gamepadStateChanges = new MirroredCell<>(this, "changes");
     // GamepadStateChanges and all methods that update it are private, we do some reflection to expose this method
     private final Method updateGamepadStateChanges;
+    private final DownsampledWriter flightRecorder;
     /**
      * Shorthand for left_stick_x
      */
@@ -129,6 +138,7 @@ public class Controller extends Gamepad {
             throw new RuntimeException("Failed to access an internal field, this shouldn't happen!", e);
         }
         updateGamepadStateChanges.setAccessible(true);
+        flightRecorder = new DownsampledWriter("GAMEPAD_" + designatedUser.id, FLIGHT_RECORDER_INTERVAL_MS * 1_000_000);
     }
 
     /**
@@ -264,6 +274,7 @@ public class Controller extends Gamepad {
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Failed to invoke an internal method, this shouldn't happen!", e);
         }
+        flightRecorder.write(new GamepadInputsMessage(this));
     }
 
     private boolean transform(boolean sdk, Controls button) {
