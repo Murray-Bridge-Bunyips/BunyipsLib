@@ -138,7 +138,7 @@ public class Controller extends Gamepad {
             throw new RuntimeException("Failed to access an internal field, this shouldn't happen!", e);
         }
         updateGamepadStateChanges.setAccessible(true);
-        flightRecorder = new DownsampledWriter("GAMEPAD_" + designatedUser.id, FLIGHT_RECORDER_INTERVAL_MS * 1_000_000);
+        flightRecorder = new DownsampledWriter("DS:joystick" + (designatedUser.id - 1), FLIGHT_RECORDER_INTERVAL_MS * 1_000_000);
     }
 
     /**
