@@ -20,19 +20,19 @@ public final class GamepadInputsMessage {
     /**
      * left analog stick horizontal axis
      */
-    public float left_stick_x;
+    public double left_stick_x;
     /**
      * left analog stick vertical axis
      */
-    public float left_stick_y;
+    public double left_stick_y;
     /**
      * right analog stick horizontal axis
      */
-    public float right_stick_x;
+    public double right_stick_x;
     /**
      * right analog stick vertical axis
      */
-    public float right_stick_y;
+    public double right_stick_y;
     /**
      * dpad up
      */
@@ -98,11 +98,11 @@ public final class GamepadInputsMessage {
     /**
      * left trigger
      */
-    public float left_trigger;
+    public double left_trigger;
     /**
      * right trigger
      */
-    public float right_trigger;
+    public double right_trigger;
     /**
      * PS4 Support - touchpad
      */
@@ -118,19 +118,19 @@ public final class GamepadInputsMessage {
     /**
      * PS4 Support - finger 1 x position
      */
-    public float touchpad_finger_1_x;
+    public double touchpad_finger_1_x;
     /**
      * PS4 Support - finger 1 y position
      */
-    public float touchpad_finger_1_y;
+    public double touchpad_finger_1_y;
     /**
      * PS4 Support - finger 2 x position
      */
-    public float touchpad_finger_2_x;
+    public double touchpad_finger_2_x;
     /**
      * PS4 Support - finger 2 y position
      */
-    public float touchpad_finger_2_y;
+    public double touchpad_finger_2_y;
 
     @SuppressWarnings("MissingJavadoc")
     public GamepadInputsMessage(Gamepad gamepad) {
