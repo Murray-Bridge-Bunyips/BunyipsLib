@@ -8,11 +8,14 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetEncoders
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetLastKnowns
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions
+import com.acmerobotics.roadrunner.ftc.FlightRecorder
 import com.qualcomm.ftccommon.FtcEventLoop
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.DefaultOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier.Notifications
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.RobotLog
 import com.qualcomm.robotcore.util.Version
 import dev.frozenmilk.sinister.isStatic
@@ -21,6 +24,7 @@ import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop
 import dev.frozenmilk.sinister.targeting.FocusedSearch
 import dev.frozenmilk.util.cell.LateInitCell
 import org.firstinspires.ftc.ftccommon.internal.manualcontrol.ManualControlOpMode
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
 import java.lang.reflect.Method
 import java.util.function.Consumer
 
@@ -87,6 +91,20 @@ object BunyipsLib {
                     && it.javaClass.simpleName != "ProcessLoadEvent"
         }
 
+    /**
+     * Gets the flavor (Autonomous, TeleOp) of a particular [opMode].
+     */
+    @JvmStatic
+    fun getOpModeFlavor(opMode: OpMode) =
+        opMode.javaClass.let {
+            if (it.isAnnotationPresent(TeleOp::class.java))
+                OpModeMeta.Flavor.TELEOP
+            else if (it.isAnnotationPresent(Autonomous::class.java))
+                OpModeMeta.Flavor.AUTONOMOUS
+            else
+                OpModeMeta.Flavor.SYSTEM
+        }
+
     private val _ftcEventLoop = LateInitCell<FtcEventLoop>()
 
     private object EventLoopHook : OnCreateEventLoop {
@@ -145,6 +163,14 @@ object BunyipsLib {
                 opMode.javaClass.simpleName,
                 opModeManager.activeOpModeName
             )
+            if (cycle == Hook.Target.PRE_INIT) {
+                FlightRecorder.write("/Metadata/BUILD_TIME", BuildConfig.BUILD_TIME)
+                FlightRecorder.write("/Metadata/GIT_COMMIT", BuildConfig.GIT_COMMIT)
+                FlightRecorder.write("/Metadata/BUILD_UID", BuildConfig.ID)
+                FlightRecorder.write("/Metadata/BUNYIPSLIB_VERSION", BuildConfig.SEMVER)
+                FlightRecorder.write("/Metadata/SDK_VERSION", BuildConfig.SDK_VER)
+                FlightRecorder.write("/Metadata/OPMODE_FLAVOR", getOpModeFlavor(opMode))
+            }
             hooks.sortedByDescending { it.second.priority }
                 .forEach {
                     Dbg.logv(
