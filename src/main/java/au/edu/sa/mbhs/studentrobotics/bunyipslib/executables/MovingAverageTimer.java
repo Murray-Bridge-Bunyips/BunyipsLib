@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
+import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 
 /**
  * Time utilities for robot operation.
@@ -16,6 +18,12 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  * @since 1.0.0-pre
  */
 public class MovingAverageTimer implements Runnable {
+    /**
+     * The minimum interval at which to auto-log loop time data to the {@link FlightRecorder}.
+     * Requires a reinitialisation if changed.
+     */
+    public static long FLIGHT_RECORDER_INTERVAL_MS = 15;
+    
     // A ring buffer is used to keep track of a moving average
     private final int ringBufferSize;
     private final long[] loopTimeRingBuffer;
@@ -35,6 +43,7 @@ public class MovingAverageTimer implements Runnable {
     private double maxAverage = Double.MIN_VALUE;
     private double minLoopTime = Double.MAX_VALUE;
     private double maxLoopTime = Double.MIN_VALUE;
+    private DownsampledWriter flightRecorder;
 
     /**
      * Create a new MovingAverageTimer with a ring buffer size of 100 and a resolution of milliseconds.
@@ -69,6 +78,17 @@ public class MovingAverageTimer implements Runnable {
     }
 
     /**
+     * Periodically records loop time data to the {@link FlightRecorder}.
+     * <p>
+     * <b>Note:</b> This recording will be in milliseconds.
+     * 
+     * @param channel the channel to record the loop time to on every update (in milliseconds)
+     */
+    public void recordOnChannel(String channel) {
+        flightRecorder = new DownsampledWriter(channel, FLIGHT_RECORDER_INTERVAL_MS * 1_000_000);
+    }
+
+    /**
      * Reset the timer.
      */
     public void reset() {
@@ -87,6 +107,9 @@ public class MovingAverageTimer implements Runnable {
         long now = System.nanoTime();
         loopTime = now - previousTime;
         previousTime = now;
+        
+        if (flightRecorder != null)
+            flightRecorder.write(Milliseconds.convertFrom(loopTime, Nanoseconds));
 
         if (loopCount > 0) {
             minLoopTime = Math.min(minLoopTime, loopTime);

@@ -34,7 +34,7 @@ public class Accumulator implements Localizable {
      */
     public static int MAX_POSE_HISTORY = 100;
     /**
-     * The interval at which to auto-log all pose and drive command data to the {@link FlightRecorder}.
+     * The minimum interval at which to auto-log all pose and drive command data to the {@link FlightRecorder}.
      * Requires a reinitialisation if changed.
      */
     public static long FLIGHT_RECORDER_INTERVAL_MS = 50;

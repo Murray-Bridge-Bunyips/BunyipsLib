@@ -38,7 +38,7 @@ import dev.frozenmilk.util.cell.MirroredCell;
  */
 public class Controller extends Gamepad {
     /**
-     * The interval at which to auto-log all controller input data to the {@link FlightRecorder}.
+     * The minimum interval at which to auto-log all controller input data to the {@link FlightRecorder}.
      * Requires a reinitialisation if changed.
      */
     public static long FLIGHT_RECORDER_INTERVAL_MS = 75;

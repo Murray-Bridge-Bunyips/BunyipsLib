@@ -18,7 +18,7 @@ import dev.frozenmilk.util.cell.RefCell;
 @FunctionalInterface
 public interface Localizer {
     /**
-     * The interval at which to auto-log localizer inputs to the {@link FlightRecorder}.
+     * The minimum interval at which to auto-log localizer inputs to the {@link FlightRecorder}.
      * Requires a reinitialisation if changed.
      */
     RefCell<Long> FLIGHT_RECORDER_INTERVAL_MS = Ref.of(25L);

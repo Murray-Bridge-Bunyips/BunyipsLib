@@ -169,7 +169,7 @@ abstract class BunyipsOpMode : BOMInternal() {
             val bom = _instance ?: return
             Dbg.logv("BunyipsOpMode: setting up ...")
             bom.let {
-                it.timer = MovingAverageTimer()
+                it.timer = MovingAverageTimer().also { t -> t.recordOnChannel("LOOP_TIME_MS") }
                 it.telemetry = DualTelemetry(it.sdkTelemetry, it.timer)
                 it.t = it.telemetry
                 it.gamepad1 = Controller(GamepadUser.ONE)

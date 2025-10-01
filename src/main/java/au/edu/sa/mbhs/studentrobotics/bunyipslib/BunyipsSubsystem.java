@@ -38,7 +38,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads;
 public abstract class BunyipsSubsystem {
     private static final HashSet<BunyipsSubsystem> instances = new HashSet<>();
     /**
-     * The interval at which to auto-log subsystem data to the {@link FlightRecorder}.
+     * The minimum interval at which to auto-log subsystem data to the {@link FlightRecorder}.
      * Requires a reinitialisation if changed.
      */
     public static double FLIGHT_RECORDER_INTERVAL_MS = 10;
