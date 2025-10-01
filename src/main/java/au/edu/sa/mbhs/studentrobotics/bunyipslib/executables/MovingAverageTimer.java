@@ -5,10 +5,11 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nan
 
 import androidx.annotation.NonNull;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import com.acmerobotics.roadrunner.ftc.DownsampledWriter;
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 
 /**
  * Time utilities for robot operation.
@@ -23,7 +24,7 @@ public class MovingAverageTimer implements Runnable {
      * Requires a reinitialisation if changed.
      */
     public static long FLIGHT_RECORDER_INTERVAL_MS = 15;
-    
+
     // A ring buffer is used to keep track of a moving average
     private final int ringBufferSize;
     private final long[] loopTimeRingBuffer;
@@ -81,7 +82,7 @@ public class MovingAverageTimer implements Runnable {
      * Periodically records loop time data to the {@link FlightRecorder}.
      * <p>
      * <b>Note:</b> This recording will be in milliseconds.
-     * 
+     *
      * @param channel the channel to record the loop time to on every update (in milliseconds)
      */
     public void recordOnChannel(String channel) {
@@ -107,7 +108,7 @@ public class MovingAverageTimer implements Runnable {
         long now = System.nanoTime();
         loopTime = now - previousTime;
         previousTime = now;
-        
+
         if (flightRecorder != null)
             flightRecorder.write(Milliseconds.convertFrom(loopTime, Nanoseconds));
 

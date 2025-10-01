@@ -13,14 +13,12 @@ import com.acmerobotics.roadrunner.ftc.FlightRecorder;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
@@ -36,7 +34,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.accumulators.Accum
  */
 @Config
 public final class Dashboard {
-    private static final HashMap<String, Supplier<String>> observations = new HashMap<>();
     /**
      * The radius of the robot for drawing in inches.
      */
@@ -50,6 +47,11 @@ public final class Dashboard {
      * be sent automatically if this is enabled, {@link #sendAndClearSyncedPackets()} must be called manually.
      */
     public static boolean USING_SYNCED_PACKETS = false;
+    /**
+     * Increasing this reduction factor reduces the fineness of logged and previewed trajectories on the Dashboard
+     * and recorded to the {@link FlightRecorder}. Reducing this value will increase fidelity but increase lag/log size.
+     */
+    public static int TRAJECTORY_PREVIEW_SAMPLING_REDUCTION = 5;
     private static volatile TelemetryPacket accumulatedPacket = new TelemetryPacket();
 
     private Dashboard() {
