@@ -43,6 +43,8 @@ public class MecanumGains {
     public boolean pathFollowingEnabled;
     /**
      * Whether the default task of the drive should be a {@link MecanumDrive.HoldLastPoseTask}, instead of an idle task.
+     * <p>
+     * Only active during Autonomous.
      */
     public boolean poseHoldingEnabled;
 

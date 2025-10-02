@@ -42,10 +42,12 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 
 import java.util.Arrays;
 import java.util.List;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook;
@@ -165,7 +167,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         this.rightFront = (DcMotorEx) rightFront;
         this.imu = imu;
 
-        if (gains.poseHoldingEnabled) {
+        if (gains.poseHoldingEnabled && BunyipsLib.getOpModeFlavor(BunyipsLib.getOpMode()) == OpModeMeta.Flavor.AUTONOMOUS) {
             setDefaultTask(new HoldLastPoseTask());
         }
 
