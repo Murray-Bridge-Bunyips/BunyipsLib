@@ -162,7 +162,7 @@ public final class Dashboard {
         usePacket(p -> {
             for (BunyipsSubsystem subsystem : subsystems) {
                 for (Map.Entry<String, Object> field : traverseFields(new TreeMap<>(), subsystem.logger).entrySet()) {
-                    p.put(field.getKey(), field.getValue().toString());
+                    p.put(subsystem + " " + field.getKey(), field.getValue().toString());
                 }
             }
         });
