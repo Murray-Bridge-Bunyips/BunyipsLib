@@ -27,6 +27,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.InterpolatedLookupTable;
@@ -113,55 +115,74 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     /**
-     * Utility for debugging a motor and encoder on telemetry/logs with current encoder and power information. This will log
+     * Utility for debugging a motor and encoder on telemetry/logs for the desired scopes. This will log
      * to all telemetry sources and log to the {@link FlightRecorder}.
      * <p>
      * Must be called periodically.
      *
-     * @param motor The motor to debug
-     * @param name  The name to debug as
+     * @param motor  The motor to debug
+     * @param name   The name to debug as
+     * @param scopes The motor properties to record and log. No passed scope parameters will log all scopes.
      */
-    public static void debug(@NonNull DcMotor motor, @NonNull String name) {
-        debug(motor, name, false);
+    public static void debug(@NonNull DcMotor motor, @NonNull String name, @NonNull Motor.Scope... scopes) {
+        debug(motor, name, false, scopes);
     }
 
     /**
-     * Utility for debugging a motor and encoder on telemetry/logs with current encoder and power information.
+     * Utility for debugging a motor and encoder on telemetry/logs for the desired scopes.
      * <p>
      * Must be called periodically.
      *
      * @param motor   The motor to debug
      * @param name    The name to debug as
      * @param onlyLog Whether to only record debug information to the {@link FlightRecorder}, not telemetry/live dash.
+     * @param scopes  The motor properties to record and log. No passed scope parameters will log all scopes.
      */
-    public static void debug(@NonNull DcMotor motor, @NonNull String name, boolean onlyLog) {
+    public static void debug(@NonNull DcMotor motor, @NonNull String name, boolean onlyLog, @NonNull Motor.Scope... scopes) {
+        if (scopes.length == 0)
+            scopes = Scope.values();
         int port = motor.getPortNumber();
-        int currentPosition = motor.getCurrentPosition();
-        int targetPosition = motor.getTargetPosition();
-        double power = motor.getPower();
         String channelPrefix = Text.format("MOTOR_P%_%_", port, Text.upper(name).replace(" ", "_"));
-        if (!onlyLog)
-            DualTelemetry.smartAdd(Text.format("% Position (t, port %)", name, port), currentPosition);
-        FlightRecorder.write(channelPrefix + "POSITION", currentPosition);
-        if (!onlyLog)
-            DualTelemetry.smartAdd(Text.format("% Target (t, port %)", name, port), targetPosition);
-        FlightRecorder.write(channelPrefix + "TARGET", targetPosition);
-        if (!onlyLog)
-            DualTelemetry.smartAdd(Text.format("% Power (port %)", name, port), power);
-        FlightRecorder.write(channelPrefix + "POWER", power);
+        HashSet<Scope> sc = new HashSet<>(5);
+        sc.addAll(Arrays.asList(scopes));
+
+        if (sc.contains(Scope.POSITION)) {
+            int currentPosition = motor.getCurrentPosition();
+            if (!onlyLog)
+                DualTelemetry.smartAdd(Text.format("% Position (t, port %)", name, port), currentPosition);
+            FlightRecorder.write(channelPrefix + "POSITION", currentPosition);
+        }
+
+        if (sc.contains(Scope.TARGET)) {
+            int targetPosition = motor.getTargetPosition();
+            if (!onlyLog)
+                DualTelemetry.smartAdd(Text.format("% Target (t, port %)", name, port), targetPosition);
+            FlightRecorder.write(channelPrefix + "TARGET", targetPosition);
+        }
+
+        if (sc.contains(Scope.POWER)) {
+            double power = motor.getPower();
+            if (!onlyLog)
+                DualTelemetry.smartAdd(Text.format("% Power (port %)", name, port), power);
+            FlightRecorder.write(channelPrefix + "POWER", power);
+        }
+
         if (motor instanceof DcMotorEx dme) {
-            double velocity = dme.getVelocity();
-            double current = dme.getCurrent(CurrentUnit.AMPS);
-            if (!onlyLog)
-                DualTelemetry.smartAdd(Text.format("% Velocity (t/s, port %)", name, port), velocity);
-            FlightRecorder.write(channelPrefix + "VELOCITY", velocity);
-            if (!onlyLog)
-                DualTelemetry.smartAdd(Text.format("% Current (A, port %)", name, port), current);
-            FlightRecorder.write(channelPrefix + "CURRENT", current);
+            if (sc.contains(Scope.VELOCITY)) {
+                double velocity = dme.getVelocity();
+                if (!onlyLog)
+                    DualTelemetry.smartAdd(Text.format("% Velocity (t/s, port %)", name, port), velocity);
+                FlightRecorder.write(channelPrefix + "VELOCITY", velocity);
+            }
+
+            if (sc.contains(Scope.CURRENT)) {
+                double current = dme.getCurrent(CurrentUnit.AMPS);
+                if (!onlyLog)
+                    DualTelemetry.smartAdd(Text.format("% Current (A, port %)", name, port), current);
+                FlightRecorder.write(channelPrefix + "CURRENT", current);
+            }
         }
     }
-
-    // hello i am Giulio
 
     /**
      * Sets a voltage sensor to use for nominal power calculation.
@@ -172,6 +193,8 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     public void setNominalVoltageSensor(@NonNull HardwareMap.DeviceMapping<VoltageSensor> nominalVoltageSensorMapping) {
         nominalVoltageSensor = nominalVoltageSensorMapping.iterator().next();
     }
+
+    // hello i am Giulio
 
     /**
      * Sets the nominal voltage to use for power calculations.
@@ -937,6 +960,36 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         int res = lut.testOutOfRange(curr);
         if (res == 0) return lut.get(curr);
         return res == -1 ? lut.getMin() : lut.getMax();
+    }
+
+    /**
+     * A motor property to log.
+     *
+     * @since 7.5.0
+     */
+    public enum Scope {
+        /**
+         * Current position.
+         */
+        POSITION,
+        /**
+         * Target position.
+         */
+        TARGET,
+        /**
+         * Commanded power.
+         */
+        POWER,
+        /**
+         * Current velocity.
+         */
+        VELOCITY,
+        /**
+         * Current (amperage) draw.
+         * <p>
+         * Note that current does not use bulk reads like encoders and can greatly increase loop times.
+         */
+        CURRENT
     }
 
     /**
