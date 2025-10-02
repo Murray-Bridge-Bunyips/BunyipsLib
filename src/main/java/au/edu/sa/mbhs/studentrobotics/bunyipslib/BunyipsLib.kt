@@ -8,6 +8,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetEncoders
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetLastKnowns
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Threads
 import com.acmerobotics.roadrunner.ftc.FlightRecorder
 import com.qualcomm.ftccommon.FtcEventLoop
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
@@ -164,12 +165,20 @@ object BunyipsLib {
                 opModeManager.activeOpModeName
             )
             if (cycle == Hook.Target.PRE_INIT) {
-                FlightRecorder.write("/Metadata/BUILD_TIME", BuildConfig.BUILD_TIME)
-                FlightRecorder.write("/Metadata/GIT_COMMIT", BuildConfig.GIT_COMMIT)
-                FlightRecorder.write("/Metadata/BUILD_UID", BuildConfig.ID)
-                FlightRecorder.write("/Metadata/BUNYIPSLIB_VERSION", BuildConfig.SEMVER)
-                FlightRecorder.write("/Metadata/SDK_VERSION", BuildConfig.SDK_VER)
-                FlightRecorder.write("/Metadata/OPMODE_FLAVOR", getOpModeFlavor(opMode))
+                Threads.start("record metadata") {
+                    // Need to wait for the FlightRecorder to be ready
+                    val flightLogWriter = FlightRecorder::class.java.getDeclaredField("writer").also { it.isAccessible = true }
+                    while (flightLogWriter.get(FlightRecorder) == null && !Thread.currentThread().isInterrupted) {
+                        // We don't need a particularly fast poll rate
+                        Thread.sleep(500)
+                    }
+                    FlightRecorder.write("/Metadata/BUILD_TIME", BuildConfig.BUILD_TIME)
+                    FlightRecorder.write("/Metadata/GIT_COMMIT", BuildConfig.GIT_COMMIT)
+                    FlightRecorder.write("/Metadata/BUILD_UID", BuildConfig.ID)
+                    FlightRecorder.write("/Metadata/BUNYIPSLIB_VERSION", BuildConfig.SEMVER)
+                    FlightRecorder.write("/Metadata/SDK_VERSION", BuildConfig.SDK_VER)
+                    FlightRecorder.write("/Metadata/OPMODE_FLAVOR", getOpModeFlavor(opMode))
+                }
             }
             hooks.sortedByDescending { it.second.priority }
                 .forEach {
