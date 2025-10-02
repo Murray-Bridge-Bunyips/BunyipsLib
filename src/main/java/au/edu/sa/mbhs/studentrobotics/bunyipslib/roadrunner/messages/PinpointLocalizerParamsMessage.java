@@ -24,7 +24,7 @@ public final class PinpointLocalizerParamsMessage {
      */
     public int deviceVersion;
     /**
-     * Scaling yaw factor used by the Pinpoint;
+     * Scaling yaw factor used by the Pinpoint.
      */
     public double yawScalar;
 
