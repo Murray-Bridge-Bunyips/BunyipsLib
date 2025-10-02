@@ -167,7 +167,8 @@ object BunyipsLib {
             if (cycle == Hook.Target.PRE_INIT) {
                 Threads.start("record metadata") {
                     // Need to wait for the FlightRecorder to be ready
-                    val flightLogWriter = FlightRecorder::class.java.getDeclaredField("writer").also { it.isAccessible = true }
+                    val flightLogWriter =
+                        FlightRecorder::class.java.getDeclaredField("writer").also { it.isAccessible = true }
                     while (flightLogWriter.get(FlightRecorder) == null && !Thread.currentThread().isInterrupted) {
                         // We don't need a particularly fast poll rate
                         Thread.sleep(500)
