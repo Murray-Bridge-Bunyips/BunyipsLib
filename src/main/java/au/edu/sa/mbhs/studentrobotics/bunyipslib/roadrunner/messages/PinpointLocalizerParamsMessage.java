@@ -26,7 +26,7 @@ public final class PinpointLocalizerParamsMessage {
     /**
      * Scaling yaw factor used by the Pinpoint;
      */
-    public float yawScalar;
+    public double yawScalar;
 
     @SuppressWarnings("MissingJavadoc")
     public PinpointLocalizerParamsMessage(@NonNull PinpointLocalizer.Params params, int deviceId, int deviceVersion, float yawScalar) {

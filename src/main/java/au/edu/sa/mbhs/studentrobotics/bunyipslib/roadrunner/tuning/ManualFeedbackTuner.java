@@ -10,6 +10,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.ThreeWheelLocalize
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.TwoWheelLocalizer;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.RoadRunnerDrive;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.TankDrive;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.IdleTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ConditionalTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup;
@@ -49,6 +50,9 @@ public final class ManualFeedbackTuner extends LinearOpMode {
 
         Dashboard.USING_SYNCED_PACKETS = true;
         waitForStart();
+
+        if (drive instanceof BunyipsSubsystem d)
+            d.setDefaultTask(new IdleTask()); // Cancel any pose holding
 
         while (opModeIsActive()) {
             Actions.runBlocking(
