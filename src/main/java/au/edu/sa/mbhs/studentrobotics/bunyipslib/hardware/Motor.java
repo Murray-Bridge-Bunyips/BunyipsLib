@@ -217,9 +217,8 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     /**
-     * @return the currently set RUN_TO_POSITION system controller
+     * @return the currently set RUN_TO_POSITION system controller, can be null if not set
      */
-    @Nullable
     public SystemController getRunToPositionController() {
         return rtpController;
     }
@@ -249,9 +248,8 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     /**
-     * @return the currently set RUN_USING_ENCODER system controller
+     * @return the currently set RUN_USING_ENCODER system controller, can be null if not set
      */
-    @Nullable
     public SystemController getRunUsingEncoderController() {
         return rueController;
     }

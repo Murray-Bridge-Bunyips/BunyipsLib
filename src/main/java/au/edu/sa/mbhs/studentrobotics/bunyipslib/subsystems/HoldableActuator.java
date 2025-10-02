@@ -292,7 +292,6 @@ public class HoldableActuator extends BunyipsSubsystem {
      * @param switchSensor the switch sensor to get the mapped position of, must be mapped
      * @return the mapped position of the switch sensor, nullable if not mapped
      */
-    @Nullable
     public Integer getMappedPosition(@Nullable TouchSensor switchSensor) {
         return switchMapping.get(switchSensor);
     }

@@ -306,7 +306,6 @@ public abstract class BunyipsSubsystem {
      *
      * @return The current task, null if the subsystem is disabled
      */
-    @Nullable
     public final Task getCurrentTask() {
         if (!shouldRun) return null;
         if (currentTask == null || currentTask.isFinished() && currentTask != defaultTask) {

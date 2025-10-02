@@ -135,7 +135,6 @@ public final class Storage {
          * @return the value associated with the key
          * @throws IllegalArgumentException if key not found
          */
-        @Nullable
         public Object getVolatile(@NonNull String key) throws IllegalArgumentException {
             if (!OpMode.blackboard.containsKey(key))
                 throw new IllegalArgumentException("Key not found in memory: " + key);
