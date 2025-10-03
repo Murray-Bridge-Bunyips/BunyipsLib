@@ -377,7 +377,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     /**
-     * @return the estimated acceleration of this motor. Ticks per second.
+     * @return the estimated acceleration of this motor. Returns ticks per second squared.
      */
     public synchronized double getAcceleration() {
         return encoder.getAcceleration();
@@ -392,7 +392,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     /**
-     * @return the current velocity of this motor as specified by your settings, while performing acceleration estimation. Return ticks per second.
+     * @return the current velocity of this motor as specified by your settings, while performing acceleration estimation. Returns ticks per second.
      */
     @Override
     public synchronized double getVelocity() {

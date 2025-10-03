@@ -130,7 +130,7 @@ public class Encoder {
     }
 
     /**
-     * @return the current position of the encoder
+     * @return the current position of the encoder in ticks
      */
     public int getPosition() {
         int currentPosition;
@@ -192,7 +192,7 @@ public class Encoder {
     }
 
     /**
-     * @return the velocity of the encoder, will correct for overflow if told to do so
+     * @return the velocity of the encoder in ticks per second, will correct for overflow if told to do so
      * by {@link #useEncoderOverflowCorrection()}.
      */
     public double getVelocity() {
