@@ -80,6 +80,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     private Pair<Double, Double> rueInfo = null;
     private VoltageSensor nominalVoltageSensor = null;
     private double nominalVoltage = 12.0;
+    private boolean stopPowerOnZeroVelocity = true;
 
     private int targetPositionTolerance;
     private int rawTargetPosition = 0;
@@ -209,6 +210,20 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     }
 
     /**
+     * Sets the zero power behaviour of the motor in the {@link RunMode#RUN_USING_ENCODER} mode. Stop power on zero velocity
+     * will cut all power to the motor if a desired velocity of zero is requested, allowing it to naturally decelerate.
+     * <p>
+     * This is enabled by default. With this functionality disabled, the system controller will supply active inputs to
+     * bring the motor to a stop treating 0 as a setpoint. This behaviour may be unsafe and caution should be taken
+     * if this mode is disabled.
+     *
+     * @param stopPowerOnZeroVelocity whether to stop motor output when the desired velocity is 0. Default is true.
+     */
+    public void setStopPowerOnZeroVelocity(boolean stopPowerOnZeroVelocity) {
+        this.stopPowerOnZeroVelocity = stopPowerOnZeroVelocity;
+    }
+
+    /**
      * Call to use encoder overflow (exceeding 32767 ticks/sec) correction on {@link #getVelocity()}.
      */
     public void useEncoderOverflowCorrection() {
@@ -239,10 +254,8 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * @param controller the controller to use, recommended to use a closed-loop controller such as PID
      */
     public void setRunToPositionController(@Nullable SystemController controller) {
-        if (controller == null)
-            return;
         rtpController = controller;
-        if (rtpController.pidf().isPresent())
+        if (rtpController != null && rtpController.pidf().isPresent())
             rtpController.pidf().get().setTolerance(targetPositionTolerance);
     }
 
@@ -290,8 +303,6 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * @param controller                  the controller to use, recommended to use a PIDFF controller.
      */
     public void setRunUsingEncoderController(double bufferFraction, double maxAchievableTicksPerSecond, @Nullable SystemController controller) {
-        if (controller == null)
-            return;
         if (bufferFraction <= 0 || bufferFraction > 1) {
             throw new IllegalStateException("buffer fraction out of domain (0, 1]");
         }
@@ -316,8 +327,6 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * @param controller     the controller to use, recommended to use a PIDFF controller.
      */
     public void setRunUsingEncoderController(double bufferFraction, @Nullable SystemController controller) {
-        if (controller == null)
-            return;
         if (bufferFraction <= 0 || bufferFraction > 1) {
             throw new IllegalStateException("buffer fraction out of domain (0, 1]");
         }
@@ -903,39 +912,40 @@ public class Motor extends SimpleRotator implements DcMotorEx {
             case RUN_TO_POSITION:
                 if (rtpController == null) {
                     PIDFCoefficients coeffs = getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
-                    String msg = Text.format("[Port %] No RUN_TO_POSITION controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. You must set your own controller through setRunToPositionController().", port, coeffs);
+                    String msg = Text.format("[Port % Motor] No RUN_TO_POSITION controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. You must set your own controller through setRunToPositionController().", port, coeffs);
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
                     rtpController = new PIDFController(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
                     ((PIDFController) rtpController).setTolerance(LynxConstants.DEFAULT_TARGET_POSITION_TOLERANCE);
                 }
+                int target = getTargetPosition();
                 if (!rtpGains.isEmpty())
-                    rtpController.setCoefficients(rtpGains.stream().mapToDouble(this::getClampedInterpolatedGain).toArray());
+                    rtpController.setCoefficients(rtpGains.stream().mapToDouble((t) -> t.get(target)).toArray());
                 // In a RUN_TO_POSITION context, the controller is used for error correction, which will multiply the
                 // allowed power by the user against the encoder error by your (usually PID) controller.
-                magnitude = Math.abs(power) * Mathf.clamp(rtpController.calculate(getCurrentPosition(), getTargetPosition()), -1, 1);
+                magnitude = Math.abs(power) * Mathf.clamp(rtpController.calculate(getCurrentPosition(), target), -1, 1);
                 break;
             case RUN_USING_ENCODER:
                 if (rueController == null) {
                     PIDFCoefficients coeffs = getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-                    String msg = Text.format("[Port %] No RUN_USING_ENCODER controller was specified. This motor will be using the default PIDF coefficients to create a fallback PID and static FF controller with values from %. You must set your own controller through setRunUsingEncoderController().", port, coeffs);
+                    String msg = Text.format("[Port % Motor] No RUN_USING_ENCODER controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. You must set your own controller through setRunUsingEncoderController().", port, coeffs);
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
                     rueController = new PIDFController(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
                     rueInfo = new Pair<>(1.0, getMotorType().getAchieveableMaxTicksPerSecond());
                 }
-                if (!rueGains.isEmpty())
-                    rueController.setCoefficients(rueGains.stream().mapToDouble(this::getClampedInterpolatedGain).toArray());
-                if (rueInfo == null || rueInfo.first == null || rueInfo.second == null)
-                    throw new Exceptions.EmergencyStop("Invalid motor information configuration passed for RUN_USING_ENCODER.");
                 // In RUN_USING_ENCODER, the controller is expected to take in the current velocity and target velocity,
                 // which usually consists internally of a PID and feedforward controller.
-                if (power == 0) {
-                    // We need an immediate stop if there's no power/velo requested
+                if (power == 0 && stopPowerOnZeroVelocity) {
+                    // We need an immediate stop if there's no power/velo requested under the default stop mode
                     magnitude = 0;
                     break;
                 }
+                if (rueInfo == null || rueInfo.first == null || rueInfo.second == null)
+                    throw new Exceptions.EmergencyStop("Invalid motor information configuration passed for RUN_USING_ENCODER.");
                 double targetVel = rueInfo.first * rueInfo.second * power;
+                if (!rueGains.isEmpty())
+                    rueController.setCoefficients(rueGains.stream().mapToDouble((t) -> t.get(targetVel)).toArray());
                 double output = rueController.calculate(getVelocity(), targetVel);
                 magnitude = output / rueInfo.second;
                 break;
@@ -948,13 +958,6 @@ public class Motor extends SimpleRotator implements DcMotorEx {
             mul = nominalVoltage / nominalVoltageSensor.getVoltage();
         // Clamping, rescaling, and performance optimisations occur in SimpleRotator
         super.setPower(magnitude * mul);
-    }
-
-    private double getClampedInterpolatedGain(InterpolatedLookupTable lut) {
-        int curr = getCurrentPosition();
-        int res = lut.testOutOfRange(curr);
-        if (res == 0) return lut.get(curr);
-        return res == -1 ? lut.getMin() : lut.getMax();
     }
 
     /**
@@ -1001,7 +1004,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         }
 
         /**
-         * Specify a position in encoder ticks that you want the gains of your system controller to be.
+         * Specify a position or velocity in encoder ticks that you want the gains of your system controller to be during this state.
          * This should be used with known values, such as knowing for 0 ticks the gains should be 1,0,0, etc.
          * <p>
          * The more positions that are added to this builder, the more accurate your final gain scheduling model will be.
@@ -1011,17 +1014,16 @@ public class Motor extends SimpleRotator implements DcMotorEx {
          * <p>
          * Multiple calls to construct this builder will discard old gain scheduling.
          *
-         * @param positionTicks the position in encoder ticks that the system controller coefficients should be
-         * @param coeffs        the coefficients at encoder ticks position
+         * @param encoderState the position (or velocity) system state in encoder ticks that the controller coefficients should be set to
+         * @param coeffs       the coefficients at encoder ticks position or velocity
          * @return the builder
          */
         @NonNull
-        public GainScheduling atPosition(double positionTicks, @NonNull double... coeffs) {
+        public GainScheduling atState(double encoderState, @NonNull double... coeffs) {
             for (int i = 0; i < coeffs.length; i++) {
-                if (gains.size() <= i) {
+                if (gains.size() <= i)
                     gains.add(new InterpolatedLookupTable());
-                }
-                gains.get(i).add(positionTicks, coeffs[i]);
+                gains.get(i).add(encoderState, coeffs[i]);
             }
             return this;
         }
@@ -1030,9 +1032,8 @@ public class Motor extends SimpleRotator implements DcMotorEx {
          * Create the interpolated lookup tables for use in gains scheduling.
          */
         public void build() {
-            for (InterpolatedLookupTable lut : gains) {
+            for (InterpolatedLookupTable lut : gains)
                 lut.createLUT();
-            }
         }
     }
 }
