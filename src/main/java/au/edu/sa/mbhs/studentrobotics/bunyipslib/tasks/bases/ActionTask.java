@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.ParallelTaskGroup;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.RaceTaskGroup;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.SequentialTaskGroup;
 
 /**
@@ -43,6 +45,9 @@ public class ActionTask extends Task {
         }
         if (parentAction instanceof SequentialAction seq) {
             parentAction = new SequentialTaskGroup(seq.getInitialActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
+        }
+        if (parentAction instanceof RaceAction race) {
+            parentAction = new RaceTaskGroup(race.getActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
         }
         named(parentAction instanceof Task ? parentAction.toString() : parentAction.getClass().getSimpleName());
         if (parentAction instanceof Task task) {
