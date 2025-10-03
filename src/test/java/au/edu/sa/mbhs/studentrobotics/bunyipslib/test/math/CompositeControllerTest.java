@@ -14,6 +14,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.kG;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.kS;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.kV;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDController;
 
 class CompositeControllerTest {
@@ -41,6 +42,22 @@ class CompositeControllerTest {
         c.setCoefficients(1.0, 2.0, 3.0, 0.0, 4.0, 5.0, 6.0, 0.0);
         assertArrayEquals(new double[]{1.0, 2.0, 3.0, 0.0}, a.getCoefficients());
         assertArrayEquals(new double[]{4.0, 5.0, 6.0, 0.0}, b.getCoefficients());
+    }
+
+    @Test
+    void testCoefficientsWithFeedforward() {
+        SystemController a = new kV(0.5);
+        SystemController b = new PDController(0.6, 1);
+        SystemController c = new kG(0.2).compose(new kS(0.9));
+        SystemController all = a.compose(b.compose(c));
+
+        assertArrayEquals(new double[]{0.5, 0.6, 0.0, 1.0, 0.0, 0.2, 0.9}, all.getCoefficients());
+        a.setCoefficients(1.0);
+        b.setCoefficients(1.0, 2.0, 3.0, 4.0);
+        assertArrayEquals(new double[]{1.0, 1.0, 2.0, 3.0, 4.0, 0.2, 0.9}, all.getCoefficients());
+        all.setCoefficients(1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0);
+        assertArrayEquals(new double[]{2.0, 2.0}, c.getCoefficients());
+        assertEquals(3, a.compose(c).getCoefficients().length);
     }
 
     @Test
