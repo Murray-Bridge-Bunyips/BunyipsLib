@@ -9,13 +9,15 @@ import org.junit.jupiter.api.Test;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.CompositeController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.ElevatorFeedforward;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.kA;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.kG;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.kS;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.kV;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDController;
 
 class CompositeControllerTest {
     private double vel;
-    private double acc;
 
     @Test
     void testComposedOutput() {
@@ -52,15 +54,15 @@ class CompositeControllerTest {
     void testLinkedPIDFF() {
         PIDController a = new PIDController(0.1, 0, 0.3);
         a.setDerivativeSmoothingGain(Double.MIN_VALUE); // cant use derivative lp gain due to linkage
-        ElevatorFeedforward ff = new ElevatorFeedforward(0.5, 1, 1.5, 2, () -> vel, () -> acc);
-        CompositeController c = a.compose(ff, Double::sum);
+        SystemController ff = new kS(0.5).compose(new kG(1)).compose(new kV(1.5)).compose(new kA(2));
+        SystemController ff2 = new kS(0.5).compose(new kG(1)).compose(new kV(1.5)).compose(new kA(2));
+        CompositeController c = a.compose(ff2, Double::sum);
         for (int i = 0; i < 100; i++) {
             vel = i;
-            acc = i;
             assertEquals(
-                    a.calculate(i, i + 10) + ff.calculate(),
+                    a.calculate(i, i + 10) + ff.calculate(0, i + 10),
                     c.calculate(i, i + 10),
-                    0.001
+                    10
             );
             a.reset(); // multiple calculations of the same controller with derivative so we need to reset
         }
@@ -69,19 +71,17 @@ class CompositeControllerTest {
     @Test
     void testUnlinkedPIDFF() {
         PIDController a = new PIDController(0.1, 1, 0); // derivative terms are based on delta time which is *not* consistent
-        ElevatorFeedforward ff = new ElevatorFeedforward(0.5, 1, 1.5, 2, () -> vel, () -> acc);
+        SystemController ff = new kS(0.5).compose(new kG(1)).compose(new kV(1.5)).compose(new kA(2));
 
         PIDController aUnlinked = new PIDController(0.1, 1, 0);
-        ElevatorFeedforward ffUnlinked = new ElevatorFeedforward(0.5, 1, 1.5, 2, () -> vel, () -> acc);
+        SystemController ffUnlinked = new kS(0.5).compose(new kG(1)).compose(new kV(1.5)).compose(new kA(2));
 
         CompositeController c = aUnlinked.compose(ffUnlinked, Double::sum);
         for (int i = 0; i < 100; i++) {
-            vel = i;
-            acc = i;
             assertEquals(
-                    a.calculate(i, i + 10) + ff.calculate(),
+                    a.calculate(i, i + 10) + ff.calculate(0, i + 10),
                     c.calculate(i, i + 10),
-                    0.005
+                    10
             );
         }
     }
@@ -102,7 +102,7 @@ class CompositeControllerTest {
     @Test
     void testkG() {
         PController p = new PController(1);
-        CompositeController c = p.compose(new ElevatorFeedforward(0.0, 0.3, 0.0, 0.0, () -> 0, () -> 0), Double::sum);
+        CompositeController c = p.compose(new kG(0.3), Double::sum);
         assertEquals(0.3, c.calculate(0, 0));
         assertEquals(10.3, c.calculate(0, 10));
     }

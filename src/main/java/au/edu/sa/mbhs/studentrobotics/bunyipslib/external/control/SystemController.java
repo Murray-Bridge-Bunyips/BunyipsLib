@@ -67,10 +67,26 @@ public interface SystemController {
     }
 
     /**
+     * Composes this controller with another controller, returning a new controller that is the composition of the two
+     * by summing the outputs of each controller together.
+     * <p>
+     * A {@link DoubleBinaryOperator} can be appended to this method's overload to specify specific combinatory behaviour.
+     * <p>
+     * This method is sugar for {@code compose(other, Double::sum)}.
+     *
+     * @param plus the other controller {@code B} to compose with for a composition in output {@code this + B}
+     * @return a new controller that is the additive composition of the two
+     */
+    @NonNull
+    default CompositeController compose(@NonNull SystemController plus) {
+        return compose(plus, Double::sum);
+    }
+
+    /**
      * Composes this controller with another controller, returning a new controller that is the composition of the two.
      * <p>
-     * The specified BiConsumer that returns a Double is expected to be a function that indicates how the two controllers
-     * should be combined. (e.g. addition, multiplication, etc.).
+     * The specified {@link DoubleBinaryOperator} that returns a double is expected to be a function that indicates how the two controllers
+     * should be combined (e.g. addition, multiplication, modifying the output of a particular controller, etc.).
      *
      * @param other    the other controller to compose with
      * @param combiner the function that combines the two controllers

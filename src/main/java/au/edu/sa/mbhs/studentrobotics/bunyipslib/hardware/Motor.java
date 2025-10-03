@@ -34,7 +34,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.InterpolatedLookupTable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.SimpleMotorFeedforward;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
@@ -922,9 +921,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
                     String msg = Text.format("[Port %] No RUN_USING_ENCODER controller was specified. This motor will be using the default PIDF coefficients to create a fallback PID and static FF controller with values from %. You must set your own controller through setRunUsingEncoderController().", port, coeffs);
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
-                    PIDController pid = new PIDController(coeffs.p, coeffs.i, coeffs.d);
-                    SimpleMotorFeedforward ff = new SimpleMotorFeedforward(coeffs.f, 0, 0, encoder::getVelocity, encoder::getAcceleration);
-                    rueController = pid.compose(ff, Double::sum);
+                    rueController = new PIDFController(coeffs.p, coeffs.i, coeffs.d, coeffs.f);
                     rueInfo = new Pair<>(1.0, getMotorType().getAchieveableMaxTicksPerSecond());
                 }
                 if (!rueGains.isEmpty())

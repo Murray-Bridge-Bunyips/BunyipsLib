@@ -33,8 +33,10 @@ public class Diff implements UnaryFunction {
     @Override
     public double apply(double input) {
         double timestamp = System.nanoTime() / 1.0E9;
-        if (lastTimestamp == -1)
+        if (lastTimestamp == -1) {
             lastTimestamp = timestamp;
+            lastInput = input;
+        }
         double deltaTime = timestamp - lastTimestamp;
         // Reject values too small for dt due to division
         if (deltaTime > 1.0E-3) {
@@ -51,5 +53,15 @@ public class Diff implements UnaryFunction {
      */
     public double getLast() {
         return derivative;
+    }
+
+    /**
+     * Resets to initial accumulated conditions.
+     */
+    public void reset() {
+        lastTimestamp = -1;
+        derivative = 0;
+        lastInput = 0;
+        filter = new Filter.LowPass(filter.gain);
     }
 }

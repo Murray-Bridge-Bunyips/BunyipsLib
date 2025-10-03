@@ -64,7 +64,7 @@ public class CompositeController implements SystemController {
      * Sets the coefficients of both controllers in this composite controller.
      * <p>
      * The order of the coefficients is expected to be the same as the return of the get method of both controllers
-     * that have been concatenated. For example, a PIDF controller followed by  3-arg system controller would have
+     * that have been concatenated. For example, a PIDF controller followed by 3-arg system controller would have
      * the form {@code [kP, kI, kD, kF, k1, k2, k3]}.
      *
      * @param coeffs a list of coefficients to set this controller to
