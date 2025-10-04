@@ -83,36 +83,78 @@ public class MecanumGains {
     public static class Builder {
         private final MecanumGains gains = new MecanumGains();
 
+        /**
+         * Set the proportional correction gain for forward/backward motion.
+         *
+         * @param axialGain axial (forward/backward) gain
+         * @return the builder
+         */
         @NonNull
         public Builder setAxialGain(double axialGain) {
             gains.axialGain = axialGain;
             return this;
         }
 
+        /**
+         * Set the proportional correction gain for sideways motion.
+         *
+         * @param lateralGain lateral (sideways) gain
+         * @return the builder
+         */
         @NonNull
         public Builder setLateralGain(double lateralGain) {
             gains.lateralGain = lateralGain;
             return this;
         }
 
+        /**
+         * Set the proportional correction gain for rotation.
+         *
+         * @param headingGain heading (rotational) gain
+         * @return the builder
+         */
         @NonNull
         public Builder setHeadingGain(double headingGain) {
             gains.headingGain = headingGain;
             return this;
         }
 
+        /**
+         * Set the dampening correction gain for forward/backward motion.
+         * <p>
+         * Usually does not need to be set.
+         *
+         * @param axialVelGain axial (forward/backward) velocity gain
+         * @return the builder
+         */
         @NonNull
         public Builder setAxialVelGain(double axialVelGain) {
             gains.axialVelGain = axialVelGain;
             return this;
         }
 
+        /**
+         * Set the dampening correction gain for sideways motion.
+         * <p>
+         * Usually does not need to be set.
+         *
+         * @param lateralVelGain lateral (sideways) velocity gain
+         * @return the builder
+         */
         @NonNull
         public Builder setLateralVelGain(double lateralVelGain) {
             gains.lateralVelGain = lateralVelGain;
             return this;
         }
 
+        /**
+         * Set the dampening correction gain for rotation.
+         * <p>
+         * Usually does not need to be set.
+         *
+         * @param headingVelGain heading (rotational) velocity gain
+         * @return the builder
+         */
         @NonNull
         public Builder setHeadingVelGain(double headingVelGain) {
             gains.headingVelGain = headingVelGain;
@@ -140,6 +182,8 @@ public class MecanumGains {
          * to be a {@link MecanumDrive.HoldLastPoseTask}. This task will continue to run the RoadRunner feedback loops
          * even when no trajectory is running, ensuring the robot corrects for disturbances despite the fact a trajectory
          * is not active.
+         * <p>
+         * Will only auto-schedule in Autonomous OpModes.
          * <p>
          * Without pose holding, and by default, disturbances that occur while the drive is not running a trajectory
          * will not be corrected for. Enabling this option ensures it will correct in the context of a running task.
