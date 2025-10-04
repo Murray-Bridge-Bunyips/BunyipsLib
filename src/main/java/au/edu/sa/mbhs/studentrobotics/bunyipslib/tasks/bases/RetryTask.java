@@ -14,7 +14,7 @@ import java.util.function.BooleanSupplier;
  * This task is implemented from the Marrow library by FTC 23644, Skeleton Army.
  * <a href="https://github.com/Skeleton-Army/Marrow/blob/1fa47b6e286f5925c4e44e9ce1afeefbd9c22040/customLibraries/solverslib/src/main/java/com/skeletonarmy/marrow/solverslib/RetryCommand.java">Source</a>
  *
- * @since 7.5.0
+ * @since 8.0.0
  */
 public class RetryTask extends Task {
     private final Task task;

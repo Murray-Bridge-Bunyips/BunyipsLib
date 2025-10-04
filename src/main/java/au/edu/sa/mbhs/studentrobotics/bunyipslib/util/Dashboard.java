@@ -119,7 +119,7 @@ public final class Dashboard {
      * @param a the first (leading) packet, this will be used as the parent
      * @param b the second packet, this packet will be deconstructed and merged into the leading packet
      * @return a merged packet leading with the first packet
-     * @since 7.5.0
+     * @since 8.0.0
      */
     @SuppressWarnings("unchecked")
     public static TelemetryPacket mergePackets(TelemetryPacket a, TelemetryPacket b) {

@@ -6,7 +6,7 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
  * RoadRunner v1.0 logging message for the Pinpoint localizer.
  *
  * @author Lucas Bubner, 2025
- * @since 7.5.0
+ * @since 8.0.0
  */
 public final class PinpointLocalizerInputsMessage {
     /**

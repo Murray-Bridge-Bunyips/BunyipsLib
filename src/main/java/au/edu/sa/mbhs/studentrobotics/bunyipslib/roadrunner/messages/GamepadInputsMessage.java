@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  * RoadRunner v1.0 logging message for AdvantageScope-compatible Joystick inputs.
  *
  * @author Lucas Bubner, 2025
- * @since 7.5.0
+ * @since 8.0.0
  */
 public final class GamepadInputsMessage {
     /**

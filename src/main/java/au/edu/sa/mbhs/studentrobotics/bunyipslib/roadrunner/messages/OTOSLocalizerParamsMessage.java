@@ -10,7 +10,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.localization.OTOSLocalizer;
  * RoadRunner v1.0 logging message for the initialisation of the OTOS localizer.
  *
  * @author Lucas Bubner, 2025
- * @since 7.5.0
+ * @since 8.0.0
  */
 public final class OTOSLocalizerParamsMessage {
     /**

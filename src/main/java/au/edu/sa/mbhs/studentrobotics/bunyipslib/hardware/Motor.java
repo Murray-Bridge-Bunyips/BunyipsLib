@@ -963,7 +963,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
     /**
      * A motor property to log.
      *
-     * @since 7.5.0
+     * @since 8.0.0
      */
     public enum Scope {
         /**

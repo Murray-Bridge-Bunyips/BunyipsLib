@@ -8,7 +8,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemControll
  * Static feedforward gain. Used to overcome friction.
  *
  * @author Lucas Bubner, 2025
- * @since 7.5.0
+ * @since 8.0.0
  */
 public class kS implements SystemController {
     private double kS;

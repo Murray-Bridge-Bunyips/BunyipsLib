@@ -4,7 +4,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.decode;
  * Motif states on the Obelisk.
  *
  * @author Lucas Bubner, 2025
- * @since 7.5.0
+ * @since 8.0.0
  */
 public enum Motif {
     /**

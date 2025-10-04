@@ -7,7 +7,7 @@ import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Met
  * RoadRunner v1.0 logging message for a trajectory sequence.
  *
  * @author Lucas Bubner, 2025
- * @since 7.5.0
+ * @since 8.0.0
  */
 public final class TrajectoryMessage {
     /**

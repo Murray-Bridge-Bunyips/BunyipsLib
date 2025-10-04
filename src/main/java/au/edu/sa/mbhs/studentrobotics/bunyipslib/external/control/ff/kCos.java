@@ -18,7 +18,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.EncoderTicks;
  * Exposes two constructors for applying cosine on the setpoint or on the current angular position of the system.
  *
  * @author Lucas Bubner, 2025
- * @since 7.5.0
+ * @since 8.0.0
  */
 public class kCos implements SystemController {
     private double kCos;

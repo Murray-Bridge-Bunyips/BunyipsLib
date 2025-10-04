@@ -20,7 +20,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.vision.processors.AprilTag;
  * via the {@link Threads.Result} interface. Will log to Logcat and BOM telemetry logs on completion if available.
  *
  * @author Lucas Bubner, 2025
- * @since 7.5.0
+ * @since 8.0.0
  */
 public class MotifFinder implements Callable<Motif> {
     /**

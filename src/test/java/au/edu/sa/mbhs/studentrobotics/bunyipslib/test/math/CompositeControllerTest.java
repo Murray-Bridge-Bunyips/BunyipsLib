@@ -16,6 +16,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.ff.kV;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
 
 class CompositeControllerTest {
     private double vel;
@@ -58,6 +59,18 @@ class CompositeControllerTest {
         all.setCoefficients(1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0);
         assertArrayEquals(new double[]{2.0, 2.0}, c.getCoefficients());
         assertEquals(3, a.compose(c).getCoefficients().length);
+    }
+
+    @Test
+    void testCompositionEquivalence() {
+        double kP = Math.random() * 10;
+        PIDFController a = new PIDFController(kP, 0, 0, 1);
+        SystemController b = new kV(1).compose((p, s) -> kP * (s - p));
+
+        for (int i = 0; i < 1000; i++) {
+            double random = Math.random() * Math.random() * 100 * (Math.random() - 0.5);
+            assertEquals(a.calculate(0, random), b.calculate(0, random));
+        }
     }
 
     @Test
