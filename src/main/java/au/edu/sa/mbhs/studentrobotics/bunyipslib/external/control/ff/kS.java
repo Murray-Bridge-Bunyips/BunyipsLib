@@ -23,8 +23,8 @@ public class kS implements SystemController {
     }
 
     @Override
-    public double calculate(double ignored, double setpoint) {
-        return kS * Math.signum(setpoint);
+    public double calculate(double process, double setpoint) {
+        return kS * Math.signum(setpoint - process);
     }
 
     @NonNull
