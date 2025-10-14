@@ -911,7 +911,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         switch (mode) {
             case RUN_TO_POSITION:
                 if (rtpController == null) {
-                    PIDFCoefficients coeffs = getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+                    PIDFCoefficients coeffs = controller.getPIDFCoefficients(port, DcMotor.RunMode.RUN_TO_POSITION);
                     String msg = Text.format("[Port % Motor] No RUN_TO_POSITION controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. You must set your own controller through setRunToPositionController().", port, coeffs);
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
@@ -927,7 +927,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
                 break;
             case RUN_USING_ENCODER:
                 if (rueController == null) {
-                    PIDFCoefficients coeffs = getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+                    PIDFCoefficients coeffs = controller.getPIDFCoefficients(port, DcMotor.RunMode.RUN_USING_ENCODER);
                     String msg = Text.format("[Port % Motor] No RUN_USING_ENCODER controller was specified. This motor will be using the default PIDF coefficients to create a fallback PIDF controller with values from %. You must set your own controller through setRunUsingEncoderController().", port, coeffs);
                     Dbg.error(msg);
                     RobotLog.addGlobalWarningMessage(msg);
@@ -939,6 +939,8 @@ public class Motor extends SimpleRotator implements DcMotorEx {
                 if (power == 0 && stopPowerOnZeroVelocity) {
                     // We need an immediate stop if there's no power/velo requested under the default stop mode
                     magnitude = 0;
+                    // This output is ignored, but we keep the controller updated for when power returns
+                    rueController.calculate(getVelocity(), 0);
                     break;
                 }
                 if (rueInfo == null || rueInfo.first == null || rueInfo.second == null)

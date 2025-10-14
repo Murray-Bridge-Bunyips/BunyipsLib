@@ -310,6 +310,15 @@ public class PIDFController implements SystemController {
     }
 
     /**
+     * Get the current process variable (last updated state) of the controller.
+     *
+     * @return the last process variable
+     */
+    public double getCurrentProcess() {
+        return currentPv;
+    }
+
+    /**
      * @return the PIDF coefficients
      */
     @NonNull
