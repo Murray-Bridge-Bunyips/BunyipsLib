@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.CommandBasedBunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.RepeatTask;
@@ -17,7 +16,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
  * This is useful for OpModes that are not using a command-based structure, such as the base {@link BunyipsOpMode},
  * but still needs support to run tasks on subsystems that only return Tasks. This class simplifies the task run process to
  * a more intermediate "register and run" system. Do note it is recommended to use a more integrated system such as
- * the {@link Scheduler}, which is integrated into {@link CommandBasedBunyipsOpMode}.
+ * the {@link Scheduler}.
  * <p>
  * This class will allow you to simply pass a task instance that you wish to run (with run conditions being managed
  * at your own discretion), where continuous calls to {@code runRepeatedly()} will execute the task continually, resetting it if it is done.
@@ -30,7 +29,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
  * <p>
  * This class is used maximally where you will manage the instances of the tasks you retrieve from your subsystems/methods, to allow you finer-grain
  * control over your tasks and their reset/runtime methods. Do note however it may be more worthwhile migrating to a command-based structure such
- * as the {@link Scheduler} or {@link CommandBasedBunyipsOpMode}.
+ * as the {@link Scheduler}.
  * This pattern is useful for the standard {@link #run} method that will execute one start-to-finish cycle of a task, with the added benefit
  * that a task will only iterate when being told to do so by methods in this utility.
  * <p>
@@ -65,7 +64,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
  *
  * @author Lucas Bubner, 2024
  * @see Scheduler
- * @see CommandBasedBunyipsOpMode
  * @since 4.0.0
  */
 public final class Tasks {
