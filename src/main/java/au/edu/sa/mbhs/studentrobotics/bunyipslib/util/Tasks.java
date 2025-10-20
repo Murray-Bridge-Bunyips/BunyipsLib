@@ -20,7 +20,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
  * <p>
  * This class will allow you to simply pass a task instance that you wish to run (with run conditions being managed
  * at your own discretion), where continuous calls to {@code runRepeatedly()} will execute the task continually, resetting it if it is done.
- * This behaviour is similar to how the {@code run()} call works in the {@link Scheduler}, however, this comes with the guarantee
+ * This behaviour is similar to how the {@code update()} call works in the {@link Scheduler}, however, this comes with the guarantee
  * that a task will only execute any time it is being actively told to do so.
  * <p>
  * If you simply wish to run tasks with limited instance management, instantiating them directly in {@link #register}
