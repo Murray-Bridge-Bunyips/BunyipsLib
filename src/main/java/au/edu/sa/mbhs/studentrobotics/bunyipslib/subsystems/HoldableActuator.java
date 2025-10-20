@@ -78,6 +78,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     private double lowerPower = -1.0;
     private double upperPower = 1.0;
     private double autoPower = 1.0;
+    private boolean allowManualControl = true;
 
     /**
      * Create a new HoldableActuator.
@@ -454,8 +455,8 @@ public class HoldableActuator extends BunyipsSubsystem {
     /**
      * Instantaneously set the user input power for the actuator.
      * <p>
-     * <b>Note:</b> This value is ignored when a task other than the default is running. This is intentional behaviour
-     * to avoid power conflicts.
+     * <b>Note:</b> This value is ignored when a specialised motion task is running (goTo, home, etc.).
+     * This is intentional behaviour to avoid power conflicts.
      *
      * @param p power level in domain [-1.0, 1.0], will be clamped
      * @return this
@@ -470,7 +471,7 @@ public class HoldableActuator extends BunyipsSubsystem {
     protected void periodic() {
         encoder.clearCache();
 
-        if (isRunningDefaultTask()) {
+        if (allowManualControl) {
             // Manual user control
             power = userPower;
             if (userSetpointControl != null) {
@@ -503,6 +504,8 @@ public class HoldableActuator extends BunyipsSubsystem {
                 cancelCurrentTask();
                 encoder.reset();
                 power = 0;
+                userPower = 0;
+                upc.zeroInputLatch = false;
                 if (motor.getTargetPosition() < 0) {
                     usc.resetState();
                     motor.setTargetPosition(0);
@@ -526,6 +529,8 @@ public class HoldableActuator extends BunyipsSubsystem {
         if (topSwitch != null && topSwitch.isPressed() && power > 0) {
             cancelCurrentTask();
             power = 0;
+            userPower = 0;
+            upc.zeroInputLatch = false;
             int current = encoder.getPosition();
             if (motor.getTargetPosition() > current) {
                 usc.resetState();
@@ -546,6 +551,8 @@ public class HoldableActuator extends BunyipsSubsystem {
                 cancelCurrentTask();
                 // We also set the power to 0 to nullify any user input
                 power = 0;
+                userPower = 0;
+                upc.zeroInputLatch = false;
             }
         }
 
@@ -591,6 +598,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         logger.topSwitchPressed = topSwitch != null && topSwitch.isPressed();
         logger.bottomSwitchPressed = bottomSwitch != null && bottomSwitch.isPressed();
         logger.zeroLatched = autoZeroingLatch;
+        logger.manualControlEnabled = allowManualControl;
 
         motor.setPower(Mathf.clamp(power, lowerPower, upperPower));
     }
@@ -606,7 +614,10 @@ public class HoldableActuator extends BunyipsSubsystem {
     @Override
     protected void onDisable() {
         power = 0;
+        userPower = 0;
         logger.rawPower = 0;
+        upc.zeroInputLatch = false;
+        usc.resetState();
         motor.setPower(0);
         encoder.setCaching(false);
     }
@@ -655,6 +666,10 @@ public class HoldableActuator extends BunyipsSubsystem {
          * Whether the homing latch is triggered from a bottom switch press.
          */
         public boolean zeroLatched;
+        /**
+         * Whether manual user power control/user setpoint control is enabled.
+         */
+        public boolean manualControlEnabled;
     }
 
     // Internal "tasks" that define user operations as executed by periodic. We can't really use Tasks for runtime via the user
@@ -671,9 +686,9 @@ public class HoldableActuator extends BunyipsSubsystem {
                 // Hold actuator in place
                 if (!zeroInputLatch) {
                     motor.setTargetPosition(motor.getCurrentPosition());
-                    motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     zeroInputLatch = true;
                 }
+                motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 power = autoPower * Math.signum(motor.getTargetPosition() - encoder.getPosition());
             } else {
                 zeroInputLatch = false;
@@ -754,6 +769,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 finishNow();
                 return;
             }
+            allowManualControl = false;
             zeroVelocityTimer.reset();
             overcurrentTimer.reset();
             prev = motor.getMode();
@@ -776,12 +792,15 @@ public class HoldableActuator extends BunyipsSubsystem {
         @Override
         protected void onFinish() {
             power = 0;
+            userPower = 0;
+            upc.zeroInputLatch = false;
             if (homingDirection == -1) {
                 encoder.reset();
                 motor.setTargetPosition(0);
                 usc.resetState();
             }
             motor.setMode(prev);
+            allowManualControl = true;
         }
 
         @Override
@@ -812,9 +831,6 @@ public class HoldableActuator extends BunyipsSubsystem {
         /**
          * Controls the actuator with a supplier of power.
          * <p>
-         * <b>Note:</b> Should be allocated as a default task, otherwise this task will not trigger the auto-capturing
-         * power setters and nothing will happen.
-         * <p>
          * Power will be translated accordingly depending on the state of {@link #withUserSetpointControl(UnaryFunction)}
          * and if it has been called.
          *
@@ -823,10 +839,14 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task control(@NonNull DoubleSupplier powerSupplier) {
-            // Although we could allocate this task as a default task ourselves, we want to have the user
-            // do it as we don't want to enforce behaviours in the event other behaviour is wanted.
+            // Continuous calls to setPower as a normal user
             return Task.task().periodic(() -> HoldableActuator.this.setPower(powerSupplier.getAsDouble()))
-                    .onFinish(() -> power = 0)
+                    .init(() -> allowManualControl = true)
+                    .onFinish(() -> {
+                        power = 0;
+                        userPower = 0;
+                        upc.zeroInputLatch = false;
+                    })
                     .on(HoldableActuator.this, false)
                     // It's fine for this task name to be stale since we shouldn't expect dynamic disabling of sp. ctrl.
                     .named(forThisSubsystem(userSetpointControl != null ? "Setpoint Delta Control" : "Power Target Control"));
@@ -834,9 +854,6 @@ public class HoldableActuator extends BunyipsSubsystem {
 
         /**
          * Continuously commands the actuator to control with this power value.
-         * <p>
-         * <b>Note:</b> Should be allocated as a default task, otherwise this task will not trigger the auto-capturing
-         * power setters and nothing will happen.
          * <p>
          * Power will be translated accordingly depending on the state of {@link #withUserSetpointControl(UnaryFunction)}
          * and if it has been called.
@@ -850,7 +867,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         }
 
         /**
-         * Instantly set the power of the actuator.
+         * Instantly set the raw power of the actuator.
          * <p>
          * This differs from the {@code setPower()} method on HoldableActuator as it will set the direct power
          * of the motor, unless a safety constraint is triggered. {@code setPower()} on the parent object
@@ -862,16 +879,20 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task setPower(double pwr) {
-            return new Lambda(() -> power = Mathf.clamp(pwr, -1, 1))
+            return new Lambda(() -> {
+                // Will stay in raw power delivery mode
+                allowManualControl = false;
+                power = Mathf.clamp(pwr, -1, 1);
+            })
                     .on(HoldableActuator.this, false)
                     .named(forThisSubsystem("Set Power to " + pwr));
         }
 
         /**
-         * Run the actuator for a certain amount of time using raw power.
+         * Run the actuator for a certain amount of time using power.
          * <p>
          * Power will be translated according to the user setpoint control defined in
-         * {@link #withUserSetpointControl(UnaryFunction)} if a default task is scheduled.
+         * {@link #withUserSetpointControl(UnaryFunction)}.
          *
          * @param time the time to run for
          * @param pwr  the power to run at
@@ -879,11 +900,8 @@ public class HoldableActuator extends BunyipsSubsystem {
          */
         @NonNull
         public Task runFor(@NonNull Measure<Time> time, double pwr) {
-            return Task.task()
-                    .init(() -> motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER))
-                    .periodic(() -> power = pwr)
-                    .onFinish(() -> power = 0)
-                    .on(HoldableActuator.this, true)
+            // Same as run(pwr) but with a timeout
+            return run(pwr)
                     .timeout(time)
                     .named(forThisSubsystem("Run For " + time));
         }
@@ -953,6 +971,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         public Task goTo(int targetPosition) {
             return Task.task()
                     .init((t) -> {
+                        allowManualControl = false;
                         sustainedTolerated.reset();
                         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         motor.setTargetPosition(targetPosition);
@@ -966,7 +985,12 @@ public class HoldableActuator extends BunyipsSubsystem {
                         power = autoPower * Math.signum(target - current);
                         DualTelemetry.smartAdd(HoldableActuator.this.toString(), "<font color='#FF5F1F'>MOVING -> %/% ticks</font> [%tps]", current, target, Math.round(encoder.getVelocity()));
                     })
-                    .onFinish(() -> power = 0)
+                    .onFinish(() -> {
+                        power = 0;
+                        userPower = 0;
+                        upc.zeroInputLatch = false;
+                        allowManualControl = true;
+                    })
                     .isFinished((t) -> {
                         // Only consider finishing if the motor reports as busy first, with a safety margin
                         if (motor.isBusy() || t.getDeltaTime().gte(PRE_EXIT_SAFETY_MARGIN))
@@ -1031,6 +1055,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                 throw new Exceptions.EmergencyStop("Tried to create a profiled task when withUserSetpointControl(...) was not called!");
             return Task.task()
                     .init((t) -> {
+                        allowManualControl = false;
                         uscInExternalUse = true;
                         usc.resetState();
                         sustainedTolerated.reset();
@@ -1051,6 +1076,9 @@ public class HoldableActuator extends BunyipsSubsystem {
                     .onFinish(() -> {
                         uscInExternalUse = false;
                         power = 0;
+                        userPower = 0;
+                        allowManualControl = true;
+                        upc.zeroInputLatch = false;
                     })
                     .isFinished((t) -> {
                         if (motor.isBusy() || t.getDeltaTime().gte(PRE_EXIT_SAFETY_MARGIN))
