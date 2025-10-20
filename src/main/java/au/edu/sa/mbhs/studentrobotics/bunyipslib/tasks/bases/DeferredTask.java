@@ -62,6 +62,7 @@ public class DeferredTask extends Task {
     @Override
     protected void periodic() {
         if (builtTask == null) return;
+        builtTask.isPriority = isPriority;
         builtTask.execute();
     }
 

@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 import java.util.function.BooleanSupplier;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 
@@ -15,9 +16,9 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
  * <p>
  * Supports self-typing for type-safe chaining of boolean conditions.
  *
+ * @param <T> self-type
  * @author Lucas Bubner, 2024
  * @since 6.0.0
- * @param <T> self-type
  */
 @SuppressWarnings("unchecked")
 public class Condition<T extends Condition<T>> implements BooleanSupplier {
@@ -170,7 +171,7 @@ public class Condition<T extends Condition<T>> implements BooleanSupplier {
     /**
      * Override this method and construct a new instance of the subclass for self-typing.
      *
-     * @param edge supplied edge for construction
+     * @param edge     supplied edge for construction
      * @param supplier supplied supplier for construction
      * @return new instance of type T
      */
@@ -186,7 +187,7 @@ public class Condition<T extends Condition<T>> implements BooleanSupplier {
      */
     @NonNull
     public T or(@NonNull BooleanSupplier other) {
-        return newInstance(edge, () -> getAsBoolean() || other.getAsBoolean());
+        return newInstance(edge, new Or(this, other));
     }
 
     /**
@@ -197,7 +198,7 @@ public class Condition<T extends Condition<T>> implements BooleanSupplier {
      */
     @NonNull
     public T and(@NonNull BooleanSupplier other) {
-        return newInstance(edge, () -> getAsBoolean() && other.getAsBoolean());
+        return newInstance(edge, new And(this, other));
     }
 
     /**
@@ -208,7 +209,7 @@ public class Condition<T extends Condition<T>> implements BooleanSupplier {
      */
     @NonNull
     public T xor(@NonNull BooleanSupplier other) {
-        return newInstance(edge, () -> getAsBoolean() ^ other.getAsBoolean());
+        return newInstance(edge, new Xor(this, other));
     }
 
     /**
@@ -218,17 +219,13 @@ public class Condition<T extends Condition<T>> implements BooleanSupplier {
      */
     @NonNull
     public T not() {
-        return newInstance(edge, () -> !getAsBoolean());
+        return newInstance(edge, new Not(this));
     }
 
     @NonNull
     @Override
     public String toString() {
-        return "Condition{" +
-                "condition=" + condition +
-                ", edge=" + edge +
-                ", delayMs=" + delayNs / 1.0e6 +
-                '}';
+        return "(" + condition + " (" + edge + ", " + Mathf.round(delayNs / 1.0e6, 1) + " ms))";
     }
 
     /**

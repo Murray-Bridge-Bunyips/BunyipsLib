@@ -67,6 +67,7 @@ public class RetryTask extends Task {
         if (!currentTask.poll()) {
             named(currentTask.toString());
             timeout = currentTask.timeout.times(maxRetries - retryCount + 1);
+            currentTask.isPriority = isPriority;
             currentTask.execute();
             return;
         }

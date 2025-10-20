@@ -30,6 +30,7 @@ public class RepeatTask extends Task {
         }
         named(task + " (repeat)");
         timeout = task.timeout;
+        task.isPriority = isPriority;
         task.execute();
     }
 

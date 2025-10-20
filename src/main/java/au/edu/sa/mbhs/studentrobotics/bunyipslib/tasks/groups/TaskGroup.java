@@ -59,6 +59,7 @@ public abstract class TaskGroup extends Task {
                 Dbg.logd(getClass(), "sub-task (% of %, #%/max %) finished -> %s", task, this, finishedTasks.size(), tasks.size(), task.getDeltaTime().in(Seconds));
             return;
         }
+        task.isPriority = isPriority;
         task.execute();
     }
 

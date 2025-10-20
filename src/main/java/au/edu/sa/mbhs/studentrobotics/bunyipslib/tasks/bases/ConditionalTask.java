@@ -61,6 +61,7 @@ public class ConditionalTask extends Task {
         if (task != null) {
             named(task.toString());
             timeout = task.timeout;
+            task.isPriority = isPriority;
             task.execute();
         }
     }

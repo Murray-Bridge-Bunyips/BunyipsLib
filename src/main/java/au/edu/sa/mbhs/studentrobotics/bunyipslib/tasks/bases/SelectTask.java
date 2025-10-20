@@ -70,6 +70,7 @@ public class SelectTask<T> extends Task {
         if (currentTask == null) return;
         named(currentTask.toString());
         timeout = currentTask.timeout;
+        currentTask.isPriority = isPriority;
         currentTask.execute();
     }
 
