@@ -19,17 +19,15 @@ public class RepeatTask extends Task {
     public RepeatTask(@NonNull Task task) {
         this.task = task;
         named(task + " (rep.)");
-        timeout = task.timeout;
         disableSubsystemAttachment = true;
     }
 
     @Override
     protected void periodic() {
-        if (task.poll()) {
+        if (task.poll())
             task.reset();
-        }
         named(task + " (repeat)");
-        timeout = task.timeout;
+        // Infinite timeout as it will be repeated
         task.isPriority = isPriority;
         task.execute();
     }

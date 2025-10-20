@@ -56,45 +56,12 @@ object Scheduler {
     private val gamepad2ButtonCache = HashMap<Controls, Trigger>()
     private val gamepad2AxisCache = HashMap<Int, Trigger>()
     private val activeTasks = LinkedHashSet<Task>()
-    private val tasksToRemove = ArrayList<Task>()
+    private val tasksToRemove = HashSet<Task>()
     private val scheduledTasks = LinkedHashSet<ScheduledTask>()
     private var taskIdCount = 0
     private var disabled = false
     private var muted = false
-
-    @JvmStatic
-    @Hook(on = Hook.Target.PRE_START)
-    private fun start() {
-        if (!subsystemsCell.initialised)
-            subsystems = BunyipsSubsystem.getInstances()
-        val out = Text.builder()
-        // Task count will account for tasks on subsystems that are not IdleTasks
-        val taskCount =
-            (scheduledTasks.size + subsystems.size - subsystems.stream().filter { it.isIdle() }.count()).toInt()
-        val tasksWithNoDependencies = scheduledTasks.stream().filter { it.task.dependency.isEmpty }.count()
-        out.append(
-            "[Scheduler] active | Managing % subsystem(s) | % task(s) scheduled (% subsystem, % command)\n",
-            subsystems.size,
-            taskCount,
-            taskCount - tasksWithNoDependencies,
-            tasksWithNoDependencies
-        )
-        for (subsystem in subsystems) {
-            out.append(" | %\n", subsystem.toVerboseString())
-            for (binding in scheduledTasks) {
-                val dep = binding.task.dependency
-                if (dep.isEmpty || dep.get() != subsystem) continue
-                out.append("    -> %\n", binding)
-            }
-        }
-        for (binding in scheduledTasks) {
-            if (binding.task.dependency.isPresent) continue
-            out.append("  : %\n", binding)
-        }
-        Dbg.logd(out.toString())
-        if (subsystems.isEmpty())
-            throw RuntimeException("No BunyipsSubsystems were constructed!")
-    }
+    private var initialised = false
 
     @JvmStatic
     @Hook(on = Hook.Target.POST_STOP)
@@ -108,9 +75,10 @@ object Scheduler {
         activeTasks.clear()
         tasksToRemove.clear()
         scheduledTasks.clear()
+        taskIdCount = 0
         disabled = false
         muted = false
-        taskIdCount = 0
+        initialised = false
     }
 
     /**
@@ -124,7 +92,7 @@ object Scheduler {
     }
 
     /**
-     * Schedules a task to execute.
+     * Independently schedules a task to execute.
      *
      * **Note:** Using this method directly is not recommended,
      * you should create a binding with [on], [gamepad1], or [gamepad2].
@@ -138,25 +106,65 @@ object Scheduler {
         if (activeTasks.contains(task))
             return
         // Important step that we ensure the task is ready for execution
-        task.finishNow()
+        if (task.isRunning)
+            task.finishNow()
         task.reset()
         activeTasks.add(task)
     }
 
     /**
      * Updates subsystems, runs bindings, and schedules and executes tasks.
+     * 
+     * Should be called at the bottom of your active loop.
      */
     @JvmStatic
     fun update() {
         if (disabled) return
+        
+        if (!initialised) {
+            if (!subsystemsCell.initialised)
+                subsystems = BunyipsSubsystem.getInstances()
+            val out = Text.builder()
+            // Task count will account for tasks on subsystems that are not IdleTasks
+            val taskCount =
+                (scheduledTasks.size + subsystems.size - subsystems.stream().filter { it.isIdle() }.count()).toInt()
+            val tasksWithNoDependencies = scheduledTasks.stream().filter { it.task.dependency.isEmpty }.count()
+            out.append(
+                "[Scheduler] active | Managing % subsystem(s) | % task(s) scheduled (% subsystem, % command)\n",
+                subsystems.size,
+                taskCount,
+                taskCount - tasksWithNoDependencies,
+                tasksWithNoDependencies
+            )
+            for (subsystem in subsystems) {
+                out.append(" | %\n", subsystem.toVerboseString())
+                for (binding in scheduledTasks) {
+                    val dep = binding.task.dependency
+                    if (dep.isEmpty || dep.get() != subsystem) continue
+                    out.append("    -> %\n", binding)
+                }
+            }
+            for (binding in scheduledTasks) {
+                if (binding.task.dependency.isPresent) continue
+                out.append("  : %\n", binding)
+            }
+            Dbg.logd(out.toString())
+            initialised = true
+            if (subsystems.isEmpty())
+                throw RuntimeException("No BunyipsSubsystems were constructed!")
+        }
 
+        // 1. Update all subsystems
+        subsystems.forEach { it.update() }
+
+        // 2. Send telemetry
         if (!muted) {
             val tasksWithDependencies = scheduledTasks.stream().filter { it.task.dependency.isPresent }.count()
             // Task count will account for tasks on subsystems that are not IdleTasks, and also subsystem tasks
             val taskCount = scheduledTasks.size - tasksWithDependencies + subsystems.size -
                     subsystems.stream().filter { it.isIdle }.count()
             DualTelemetry.smartAdd(
-                "\nRunning % task% (%s, %c) on % subsystem%",
+                "\nManaging % task% (%s, %c) on % subsystem%",
                 taskCount,
                 if (taskCount == 1L) "" else "s",
                 tasksWithDependencies + taskCount - scheduledTasks.size,
@@ -195,13 +203,10 @@ object Scheduler {
             }
         }
 
-        // 1. Update all subsystems
-        subsystems.forEach { it.update() }
-
-        // 2. Poll all binds to populate activeTasks with new tasks
+        // 3. Poll all binds to populate activeTasks with new tasks
         scheduledTasks.forEach { it.poll() }
 
-        // 3. Run scheduled tasks
+        // 4. Run scheduled tasks
         for (task in activeTasks) {
             if (task.isFinished) {
                 // We're done here, schedule for removal
@@ -215,7 +220,7 @@ object Scheduler {
             }
         }
 
-        // 4. Cleanup finished tasks
+        // 5. Cleanup finished tasks
         activeTasks.removeAll(tasksToRemove)
         tasksToRemove.clear()
     }
@@ -243,7 +248,8 @@ object Scheduler {
      */
     @JvmStatic
     fun unbind(id: Int) {
-        scheduledTasks.removeIf { it.id == id }
+        if (scheduledTasks.removeIf { it.id == id })
+            Dbg.logd(javaClass, "deallocated binding #%.", id)
     }
 
     /**
@@ -369,7 +375,7 @@ object Scheduler {
         private inline fun buildScheduledTask(type: String, block: () -> ScheduledTask) = apply {
             val scheduledTask = block.invoke()
             last = scheduledTask
-            Dbg.logv(javaClass, "binding $condition $type -> ${scheduledTask.task}")
+            Dbg.logv(javaClass, "allocating binding #${scheduledTask.id}: $condition $type -> ${scheduledTask.task} ...")
         }
 
         /**
@@ -587,7 +593,7 @@ object Scheduler {
                 out.append(" (t=").append(timeout).append("s)")
             }
             if (task.isPriority) out.append(" (overriding)")
-            out.append("on ").append(trigger)
+            out.append(" on ").append(trigger)
             out.append(if (muted) ", task status muted" else "")
             return out.toString()
         }

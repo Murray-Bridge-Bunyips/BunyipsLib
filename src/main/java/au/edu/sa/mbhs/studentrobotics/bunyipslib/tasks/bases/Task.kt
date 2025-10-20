@@ -332,7 +332,7 @@ abstract class Task : Runnable, Action {
 
     /**
      * Finalising function that will be called after [onFinish] in the event this task is finished via
-     * a call to [finish] or [finishNow].
+     * a call to [finish], [finishNow], or if the [timeout] exceeded.
      * Override to add your own callback.
      */
     protected open fun onInterrupt() {

@@ -225,7 +225,9 @@ public class Condition<T extends Condition<T>> implements BooleanSupplier {
     @NonNull
     @Override
     public String toString() {
-        return "(" + condition + " (" + edge + ", " + Mathf.round(delayNs / 1.0e6, 1) + " ms))";
+        if (edge != Edge.ACTIVE || delayNs != 0)
+            return condition + "{" + edge + "," + Mathf.round(delayNs / 1.0e6, 1) + "ms}";
+        return condition.toString();
     }
 
     /**
