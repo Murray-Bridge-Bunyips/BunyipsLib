@@ -12,11 +12,15 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 
 /**
  * Collection of {@link BooleanSupplier} extensions for rising and falling edge detection.
+ * <p>
+ * Supports self-typing for type-safe chaining of boolean conditions.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
+ * @param <T> self-type
  */
-public class Condition implements BooleanSupplier {
+@SuppressWarnings("unchecked")
+public class Condition<T extends Condition<T>> implements BooleanSupplier {
     private final BooleanSupplier condition;
     /**
      * The currently set edge detection to use for the {@link BooleanSupplier} {@link #getAsBoolean()} method.
@@ -28,18 +32,26 @@ public class Condition implements BooleanSupplier {
     private boolean lastState;
 
     /**
-     * Creates a new Condition with the given {@link BooleanSupplier}.
+     * Creates a new self-type Condition with the given {@link BooleanSupplier}.
      *
      * @param edge      The edge detection to use.
      * @param condition The {@link BooleanSupplier} to use.
      */
     public Condition(@NonNull Edge edge, @NonNull BooleanSupplier condition) {
-        this.condition = condition;
         this.edge = edge;
+        if (condition instanceof Condition<?> self) {
+            // Flatten new Condition instances
+            this.condition = self.condition;
+            self.delayNs = delayNs;
+            self.capture = capture;
+            self.lastState = lastState;
+        } else {
+            this.condition = condition;
+        }
     }
 
     /**
-     * Creates a new Condition with the given {@link BooleanSupplier} and no edge detection.
+     * Creates a new self-type Condition with the given {@link BooleanSupplier} and no edge detection.
      *
      * @param condition The {@link BooleanSupplier} to use.
      */
@@ -48,7 +60,20 @@ public class Condition implements BooleanSupplier {
     }
 
     /**
-     * Composes this Condition with a delay. The delay will be applied to the output of all exposed methods of this
+     * Mutates this Condition to adjust the edge detection for
+     * the {@link BooleanSupplier} {@link #getAsBoolean()} method.
+     *
+     * @param edge the edge to use
+     * @return self with the edge applied
+     */
+    @NonNull
+    public T withEdge(@NonNull Edge edge) {
+        this.edge = edge;
+        return (T) this;
+    }
+
+    /**
+     * Mutates this Condition with a delay. The delay will be applied to the output of all exposed methods of this
      * class and dictates a minimum time that the original condition must be true for the output to be true.
      * <p>
      * This is useful for ensuring that a condition is true for a certain amount of time before acting on it.
@@ -58,17 +83,17 @@ public class Condition implements BooleanSupplier {
      * will fire after the delay has passed after the condition has transitioned from true to false and has remained false.
      *
      * @param delay the delay to apply to the condition. Zero or negative values will disable the delay (default).
-     * @return this Condition with the delay applied
+     * @return self with the delay applied
      */
     @NonNull
-    public Condition withActiveDelay(@Nullable Measure<Time> delay) {
+    public T withActiveDelay(@Nullable Measure<Time> delay) {
         if (delay == null) {
             delayNs = 0;
-            return this;
+            return (T) this;
         }
         double d = delay.in(Nanoseconds);
         delayNs = d <= 0 ? 0 : (long) d;
-        return this;
+        return (T) this;
     }
 
     /**
@@ -143,46 +168,57 @@ public class Condition implements BooleanSupplier {
     }
 
     /**
-     * Creates a new Condition that is the logical OR of this Condition and another {@link BooleanSupplier}.
+     * Override this method and construct a new instance of the subclass for self-typing.
+     *
+     * @param edge supplied edge for construction
+     * @param supplier supplied supplier for construction
+     * @return new instance of type T
+     */
+    protected T newInstance(Condition.Edge edge, BooleanSupplier supplier) {
+        return (T) new Condition<>(edge, supplier);
+    }
+
+    /**
+     * Creates a new self-type Condition that is the logical OR of this Condition and another {@link BooleanSupplier}.
      *
      * @param other The other {@link BooleanSupplier} to OR with.
-     * @return A new Condition that is the logical OR of this Condition and the other {@link BooleanSupplier}.
+     * @return A new self-type Condition that is the logical OR of this Condition and the other {@link BooleanSupplier}.
      */
     @NonNull
-    public Condition or(@NonNull BooleanSupplier other) {
-        return new Condition(edge, () -> getAsBoolean() || other.getAsBoolean());
+    public T or(@NonNull BooleanSupplier other) {
+        return newInstance(edge, () -> getAsBoolean() || other.getAsBoolean());
     }
 
     /**
-     * Creates a new Condition that is the logical AND of this Condition and another {@link BooleanSupplier}.
+     * Creates a new self-type Condition that is the logical AND of this Condition and another {@link BooleanSupplier}.
      *
      * @param other The other {@link BooleanSupplier} to AND with.
-     * @return A new Condition that is the logical AND of this Condition and the other {@link BooleanSupplier}.
+     * @return A new self-type Condition that is the logical AND of this Condition and the other {@link BooleanSupplier}.
      */
     @NonNull
-    public Condition and(@NonNull BooleanSupplier other) {
-        return new Condition(edge, () -> getAsBoolean() && other.getAsBoolean());
+    public T and(@NonNull BooleanSupplier other) {
+        return newInstance(edge, () -> getAsBoolean() && other.getAsBoolean());
     }
 
     /**
-     * Creates a new Condition that is the logical XOR of this Condition and another {@link BooleanSupplier}.
+     * Creates a new self-type Condition that is the logical XOR of this Condition and another {@link BooleanSupplier}.
      *
      * @param other The other {@link BooleanSupplier} to XOR with.
-     * @return A new Condition that is the logical XOR of this Condition and the other {@link BooleanSupplier}.
+     * @return A new self-type Condition that is the logical XOR of this Condition and the other {@link BooleanSupplier}.
      */
     @NonNull
-    public Condition xor(@NonNull BooleanSupplier other) {
-        return new Condition(edge, () -> getAsBoolean() ^ other.getAsBoolean());
+    public T xor(@NonNull BooleanSupplier other) {
+        return newInstance(edge, () -> getAsBoolean() ^ other.getAsBoolean());
     }
 
     /**
-     * Creates a new Condition that is the logical NOT of this Condition.
+     * Creates a new self-type Condition that is the logical NOT of this Condition.
      *
-     * @return A new Condition that is the logical NOT of this Condition.
+     * @return A new self-type Condition that is the logical NOT of this Condition.
      */
     @NonNull
-    public Condition not() {
-        return new Condition(edge, () -> !getAsBoolean());
+    public T not() {
+        return newInstance(edge, () -> !getAsBoolean());
     }
 
     @NonNull
