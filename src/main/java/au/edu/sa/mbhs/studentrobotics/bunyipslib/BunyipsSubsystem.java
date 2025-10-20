@@ -63,6 +63,7 @@ public abstract class BunyipsSubsystem {
     private String threadName = null;
     private BunyipsSubsystem parent = null;
     private boolean assertionFailed = false;
+    private boolean lockoutMessageSent = false;
 
     protected BunyipsSubsystem() {
         instances.add(this);
@@ -386,9 +387,14 @@ public abstract class BunyipsSubsystem {
                 setHighPriorityCurrentTask(newTask);
                 return true;
             }
-            sout(Dbg::logv, "Ignored task change: % -> %", currentTask, newTask);
+            if (!lockoutMessageSent) {
+                // Avoid spamming Logcat
+                sout(Dbg::logv, "Ignored task change: % -> %", currentTask, newTask);
+                lockoutMessageSent = true;
+            }
             return false;
         }
+        lockoutMessageSent = false;
 
         newTask.reset();
         // Default task technically can't finish, but it can be interrupted, so we will just run the finish callback
@@ -416,6 +422,7 @@ public abstract class BunyipsSubsystem {
             sout(Dbg::warn, "Task changed: %(INT) -> %", this.currentTask, currentTask);
             this.currentTask.finishNow();
         }
+        lockoutMessageSent = false;
         currentTask.reset();
         // Default task technically can't finish, but it can be interrupted, so we will just run the finish callback
         if (this.currentTask == defaultTask) {
