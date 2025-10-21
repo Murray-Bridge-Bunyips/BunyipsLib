@@ -84,8 +84,8 @@ class CompositeControllerTest {
     void testLinkedPIDFF() {
         PIDController a = new PIDController(0.1, 0, 0.3);
         a.setDerivativeSmoothingGain(Double.MIN_VALUE); // cant use derivative lp gain due to linkage
-        SystemController ff = new kS(0.5).compose(new kG(1)).compose(new kV(1.5)).compose(new kA(2));
-        SystemController ff2 = new kS(0.5).compose(new kG(1)).compose(new kV(1.5)).compose(new kA(2));
+        SystemController ff = new kS(0.5).compose(new kG(1)).compose(new kV(1.5)).compose(new kA(0));
+        SystemController ff2 = new kS(0.5).compose(new kG(1)).compose(new kV(1.5)).compose(new kA(0));
         CompositeController c = a.compose(ff2, Double::sum);
         for (int i = 0; i < 100; i++) {
             vel = i;

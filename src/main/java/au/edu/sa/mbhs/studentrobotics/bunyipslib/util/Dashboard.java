@@ -52,6 +52,10 @@ public final class Dashboard {
      * and recorded to the {@link FlightRecorder}. Reducing this value will increase fidelity but increase lag/log size.
      */
     public static int TRAJECTORY_PREVIEW_SAMPLING_REDUCTION = 5;
+    /**
+     * Inhibits calls to {@link #usePacket(Consumer)}. Useful to silence certain dashboard operations. Edit with caution.
+     */
+    public static boolean INHIBIT_PACKETS = false;
     private static volatile TelemetryPacket accumulatedPacket = new TelemetryPacket();
 
     private Dashboard() {
@@ -197,6 +201,11 @@ public final class Dashboard {
      *                         by this method or via the available {@link DualTelemetry} instance
      */
     public static void usePacket(@NonNull Consumer<TelemetryPacket> packetOperations) {
+        if (INHIBIT_PACKETS) {
+            // Discarded packet
+            packetOperations.accept(new TelemetryPacket());
+            return;
+        }
         BunyipsOpMode opMode = BunyipsOpMode.isRunning() ? BunyipsOpMode.getInstance() : null;
         TelemetryPacket packet;
         synchronized (Dashboard.class) {

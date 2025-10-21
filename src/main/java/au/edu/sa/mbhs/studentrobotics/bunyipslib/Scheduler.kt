@@ -217,16 +217,13 @@ object Scheduler {
 
         // 4. Run scheduled tasks
         for (task in activeTasks) {
-            if (task.isFinished) {
+            // Update finish conditions for non-subsystem tasks as it is not done elsewhere
+            if ((task.dependency.isEmpty && task.poll()) || task.isFinished) {
                 // We're done here, schedule for removal
                 tasksToRemove.add(task)
                 continue
             }
             task.execute()
-            if (task.dependency.isEmpty) {
-                // Update finish conditions for non-subsystem tasks as it is not done elsewhere
-                task.poll()
-            }
         }
 
         // 5. Cleanup finished tasks

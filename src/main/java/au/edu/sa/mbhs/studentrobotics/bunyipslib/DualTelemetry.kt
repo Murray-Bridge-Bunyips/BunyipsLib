@@ -1122,6 +1122,11 @@ class DualTelemetry @JvmOverloads constructor(
         var SMART_CALL_BASE_OPMODE_HTML_STRIP = false
 
         /**
+         * Inhibit calls to [smartAdd] and [smartLog]. Useful to silence all smart calls. Edit with caution.
+         */
+        var INHIBIT_SMART_CALLS = false
+
+        /**
          * [smartAdd] is a static utility that will attempt to access a [Telemetry] object to add new data to either
          * a [DualTelemetry] object affixed to a [BunyipsOpMode], or a standard [Telemetry] out affixed to any
          * [OpMode] derivative.
@@ -1138,6 +1143,20 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @JvmStatic
         fun smartAdd(retained: Boolean, caption: String, format: String, vararg objs: Any?): Item {
+            if (INHIBIT_SMART_CALLS) return object : Item {
+                override fun getCaption() = null
+                override fun setCaption(caption: String) = null
+                override fun setValue(format: String, vararg args: Any) = null
+                override fun setValue(value: Any) = null
+                override fun <T : Any> setValue(valueProducer: Func<T>) = null
+                override fun <T : Any> setValue(format: String, valueProducer: Func<T>) = null
+                override fun setRetained(retained: Boolean?) = null
+                override fun isRetained() = false
+                override fun addData(caption: String, format: String, vararg args: Any) = null
+                override fun addData(caption: String, value: Any) = null
+                override fun <T : Any> addData(caption: String, valueProducer: Func<T>) = null
+                override fun <T : Any> addData(caption: String, format: String, valueProducer: Func<T>) = null
+            }
             if (!BunyipsLib.isUserOpModeRunning)
                 throw IllegalStateException("No OpMode is running!")
             val item: Item
@@ -1244,6 +1263,7 @@ class DualTelemetry @JvmOverloads constructor(
          */
         @JvmStatic
         fun smartLog(format: Any, vararg objs: Any?) {
+            if (INHIBIT_SMART_CALLS) return
             if (BunyipsOpMode.isRunning) {
                 BunyipsOpMode.instance.telemetry.log(format, *objs)
             } else if (BunyipsLib.isUserOpModeRunning) {

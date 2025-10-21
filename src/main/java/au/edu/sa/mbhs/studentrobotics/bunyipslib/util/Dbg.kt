@@ -58,6 +58,11 @@ object Dbg {
     var WRN_PREPEND = "!"
 
     /**
+     * Inhibit calls to the robot log. Useful to silence all [Dbg] calls. Edit with caution.
+     */
+    var INHIBIT = false
+
+    /**
      * Log an error message.
      * Messages will be prepended with the ERROR_PREPEND string
      * Best used in a scenario where the program cannot continue normally or at required functionality
@@ -67,6 +72,7 @@ object Dbg {
      */
     @JvmStatic
     fun error(stck: StackTraceElement, format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.ee(TAG, "$ERR_PREPEND [$stck] ${Text.format(format.toString(), *args)}")
     }
 
@@ -80,6 +86,7 @@ object Dbg {
      */
     @JvmStatic
     fun error(obj: Class<*>, format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.ee(
             TAG,
             "$ERR_PREPEND [${obj.simpleName}] ${Text.format(format.toString(), *args)}"
@@ -95,6 +102,7 @@ object Dbg {
      */
     @JvmStatic
     fun error(format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.ee(TAG, "$ERR_PREPEND ${Text.format(format.toString(), *args)}")
     }
 
@@ -104,6 +112,7 @@ object Dbg {
      */
     @JvmStatic
     fun sendStacktrace(e: Throwable) {
+        if (INHIBIT) return
         fun sendLayer(t: Throwable, tag: String = "") {
             val msg = t.localizedMessage
             RobotLog.ee(TAG, "$tag${t.javaClass.name}${if (msg == null) "" else " <$msg>"}")
@@ -127,6 +136,7 @@ object Dbg {
      */
     @JvmStatic
     fun warn(stck: StackTraceElement, format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.ww(TAG, "$WRN_PREPEND [$stck] ${Text.format(format.toString(), *args)}")
     }
 
@@ -140,6 +150,7 @@ object Dbg {
      */
     @JvmStatic
     fun warn(obj: Class<*>, format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.ww(
             TAG,
             "$WRN_PREPEND [${obj.simpleName}] ${Text.format(format.toString(), *args)}"
@@ -155,6 +166,7 @@ object Dbg {
      */
     @JvmStatic
     fun warn(format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.ww(TAG, "$WRN_PREPEND ${Text.format(format.toString(), *args)}")
     }
 
@@ -167,6 +179,7 @@ object Dbg {
      */
     @JvmStatic
     fun logd(stck: StackTraceElement, format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.dd(TAG, "[$stck] ${Text.format(format.toString(), *args)}")
     }
 
@@ -179,6 +192,7 @@ object Dbg {
      */
     @JvmStatic
     fun logd(obj: Class<*>, format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.dd(
             TAG,
             "[${obj.simpleName}] ${Text.format(format.toString(), *args)}"
@@ -193,6 +207,7 @@ object Dbg {
      */
     @JvmStatic
     fun logd(format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.dd(TAG, Text.format(format.toString(), *args))
     }
 
@@ -205,6 +220,7 @@ object Dbg {
      */
     @JvmStatic
     fun log(stck: StackTraceElement, format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.ii(TAG, "[$stck] ${Text.format(format.toString(), *args)}")
     }
 
@@ -217,6 +233,7 @@ object Dbg {
      */
     @JvmStatic
     fun log(obj: Class<*>, format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.ii(
             TAG,
             "[${obj.simpleName}] ${Text.format(format.toString(), *args)}"
@@ -231,6 +248,7 @@ object Dbg {
      */
     @JvmStatic
     fun log(format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.ii(TAG, Text.format(format.toString(), *args))
     }
 
@@ -243,6 +261,7 @@ object Dbg {
      */
     @JvmStatic
     fun logv(stck: StackTraceElement, format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.vv(TAG, "[$stck] ${Text.format(format.toString(), *args)}")
     }
 
@@ -255,6 +274,7 @@ object Dbg {
      */
     @JvmStatic
     fun logv(obj: Class<*>, format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.vv(
             TAG,
             "[${obj.simpleName}] ${Text.format(format.toString(), *args)}"
@@ -269,6 +289,7 @@ object Dbg {
      */
     @JvmStatic
     fun logv(format: Any, vararg args: Any?) {
+        if (INHIBIT) return
         RobotLog.vv(TAG, Text.format(format.toString(), *args))
     }
 
