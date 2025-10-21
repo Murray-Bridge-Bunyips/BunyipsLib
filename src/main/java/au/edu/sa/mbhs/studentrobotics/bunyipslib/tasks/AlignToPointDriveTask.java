@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Radians;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -16,6 +18,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
@@ -46,6 +50,7 @@ public class AlignToPointDriveTask extends FieldOrientableDriveTask {
     private final Supplier<Vector2d> vel;
     private final Supplier<Vector2d> pointSupplier;
 
+    private Rotation2d offset = Rotation2d.exp(0);
     private SystemController controller;
     private double maxRotation = 1;
     private Vector2d lastPoint;
@@ -96,6 +101,19 @@ public class AlignToPointDriveTask extends FieldOrientableDriveTask {
     }
 
     /**
+     * Sets an additional robot-centric angle offset to align the point with. This is useful if you don't want
+     * the robot to align head-on with the target and instead align the side or back of the robot depending on the offset.
+     *
+     * @param offset the angle to offset the alignment by. Positive angles increases anti-clockwise. Default is 0 degrees.
+     * @return this
+     */
+    @NonNull
+    public AlignToPointDriveTask withAlignmentOffset(Measure<Angle> offset) {
+        this.offset = Rotation2d.exp(offset.in(Radians));
+        return this;
+    }
+
+    /**
      * Set the controller to use for aligning to the point.
      *
      * @param controller the controller to use
@@ -140,7 +158,7 @@ public class AlignToPointDriveTask extends FieldOrientableDriveTask {
         // Difference between the target vector and the bot's position
         Vector2d difference = point.minus(poseEstimate.position);
         // Obtain the target angle for feedback and derivative for feedforward
-        Rotation2d theta = difference.angleCast();
+        Rotation2d theta = difference.angleCast().times(offset);
 
         // Not technically omega because its power. This is the derivative of atan2
         double thetaFF = Rotation2d.exp(-Math.PI / 2)
