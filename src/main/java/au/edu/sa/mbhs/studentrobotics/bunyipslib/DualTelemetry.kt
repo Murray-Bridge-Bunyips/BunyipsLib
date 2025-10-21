@@ -1183,7 +1183,7 @@ class DualTelemetry @JvmOverloads constructor(
             } else {
                 val formatted = Text.format(format, *objs)
                     .replace("%", "%%") // May be piped into String.format so we properly format now
-                val nCap = caption.ifBlank { System.currentTimeMillis().toString() }
+                val nCap = caption.ifBlank { BunyipsLib.opMode.runtime.round(1).toString() }
                 val cap = if (SMART_CALL_BASE_OPMODE_HTML_STRIP) Text.removeHtml(nCap) else nCap
                 val str = if (SMART_CALL_BASE_OPMODE_HTML_STRIP) Text.removeHtml(formatted) else formatted
                 Dashboard.usePacket {
