@@ -43,7 +43,6 @@ import kotlin.math.abs
  * native custom gamepads ([Controller]), timing utilities ([timer]), exception handling ([Exceptions]),
  * and more through the BunyipsLib suite of tools ([BunyipsSubsystem], [Scheduler], etc.)
  *
- * @see CommandBasedBunyipsOpMode
  * @see AutonomousBunyipsOpMode
  * @author Lucas Bubner, 2024
  * @since 1.0.0-pre
