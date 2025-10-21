@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.gamepad1
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.gamepad2
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.on
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.schedule
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.update
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.isNear
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
@@ -51,12 +52,19 @@ object Scheduler {
      */
     @JvmStatic
     var subsystems by subsystemsCell
+
+    /**
+     * Tasks currently being executed by the Scheduler.
+     *
+     * Be aware of concurrent modification by [update] and [schedule] if you choose to do logic to this list.
+     */
+    @JvmField
+    val activeTasks = LinkedHashSet<Task>()
     private val triggerCache = HashMap<Int, Trigger>()
     private val gamepad1ButtonCache = HashMap<Controls, Trigger>()
     private val gamepad1AxisCache = HashMap<Int, Trigger>()
     private val gamepad2ButtonCache = HashMap<Controls, Trigger>()
     private val gamepad2AxisCache = HashMap<Int, Trigger>()
-    private val activeTasks = LinkedHashSet<Task>()
     private val tasksToRemove = HashSet<Task>()
     private val scheduledTasks = LinkedHashSet<ScheduledTask>()
     private var taskIdCount = 0
