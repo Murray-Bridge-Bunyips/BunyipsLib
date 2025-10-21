@@ -179,8 +179,8 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                     this.currentTask, taskCount, currentTask, getApproximateTimeLeft());
 
             try {
-                // AutonomousBunyipsOpMode is handling all task completion checks, manual checks not required
-                if (currentTask.poll()) {
+                // Poll task for finish condition, subsystems may call poll() themselves
+                if ((currentTask.getDependency().isEmpty() && currentTask.poll()) || currentTask.isFinished()) {
                     tasks.removeFirst();
                     double runTime = currentTask.getDeltaTime().in(Seconds);
                     Dbg.logd("[AutonomousBunyipsOpMode] task %/% (%) finished%", this.currentTask, taskCount, currentTask, runTime != 0 ? " -> " + runTime + "s" : "");
