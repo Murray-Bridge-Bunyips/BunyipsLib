@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.UnaryFunction;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.logic.Condition;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.messages.GamepadInputsMessage;
@@ -414,5 +415,63 @@ public class Controller extends Gamepad {
      */
     public void resetDebounce(@NonNull Controls button) {
         debounces.remove(button);
+    }
+
+    /**
+     * Creates a {@link Scheduler} Trigger bind for this gamepad when the corresponding {@code button} is activated.
+     *
+     * @param button the button to bind
+     * @return a Scheduler trigger
+     */
+    @NonNull
+    public Scheduler.Trigger button(@NonNull Controls button) {
+        return designatedUser == GamepadUser.ONE
+                ? Scheduler.gamepad1().button(button)
+                : Scheduler.gamepad2().button(button);
+    }
+
+    /**
+     * Creates a {@link Scheduler} Trigger bind for this gamepad when the
+     * corresponding {@code axis} is less than {@code threshold}.
+     *
+     * @param axis      the axis to use
+     * @param threshold the less than threshold
+     * @return a Scheduler trigger
+     */
+    @NonNull
+    public Scheduler.Trigger axisLessThan(@NonNull Controls.Analog axis, double threshold) {
+        return designatedUser == GamepadUser.ONE
+                ? Scheduler.gamepad1().axisLessThan(axis, threshold)
+                : Scheduler.gamepad2().axisLessThan(axis, threshold);
+    }
+
+    /**
+     * Creates a {@link Scheduler} Trigger bind for this gamepad when the
+     * corresponding {@code axis} is greater than {@code threshold}.
+     *
+     * @param axis      the axis to use
+     * @param threshold the greater than threshold
+     * @return a Scheduler trigger
+     */
+    @NonNull
+    public Scheduler.Trigger axisGreaterThan(@NonNull Controls.Analog axis, double threshold) {
+        return designatedUser == GamepadUser.ONE
+                ? Scheduler.gamepad1().axisGreaterThan(axis, threshold)
+                : Scheduler.gamepad2().axisGreaterThan(axis, threshold);
+    }
+
+    /**
+     * Creates a {@link Scheduler} Trigger bind for this gamepad when the
+     * corresponding {@code axis}'s magnitude (non-signed value) is greater than {@code threshold}.
+     *
+     * @param axis      the axis to use
+     * @param threshold the magnitude threshold
+     * @return a Scheduler trigger
+     */
+    @NonNull
+    public Scheduler.Trigger axisMagnitudeGreaterThan(@NonNull Controls.Analog axis, double threshold) {
+        return designatedUser == GamepadUser.ONE
+                ? Scheduler.gamepad1().axisMagnitudeGreaterThan(axis, threshold)
+                : Scheduler.gamepad2().axisMagnitudeGreaterThan(axis, threshold);
     }
 }
