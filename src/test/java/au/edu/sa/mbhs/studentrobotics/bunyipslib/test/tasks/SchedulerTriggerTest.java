@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
@@ -260,5 +262,37 @@ class SchedulerTriggerTest {
         assertFalse(button1.and(booleanSupplier).getAsBoolean());
         assertTrue(button1.or(booleanSupplier).getAsBoolean());
     }
-    // TODO
+
+    @Test
+    void debounceTest() throws InterruptedException {
+        AtomicBoolean currBool = new AtomicBoolean(false);
+        AtomicBoolean scheduled = new AtomicBoolean(false);
+
+        Scheduler.on(currBool::get).withActiveDelay(Milliseconds.of(500))
+                .onTrue(new Lambda(() -> scheduled.set(true)));
+
+        Scheduler.update();
+        assertFalse(scheduled.get());
+        currBool.set(true);
+        for (int i = 0; i < 200; i++) {
+            Scheduler.update();
+            assertFalse(scheduled.get());
+            Thread.sleep(1);
+        }
+
+        Thread.sleep(350);
+
+        Scheduler.update();
+        assertTrue(scheduled.get());
+    }
+
+    @Test
+    void booleanSupplierTest() {
+        AtomicBoolean currBool = new AtomicBoolean(false);
+        Scheduler.Trigger bool = Scheduler.on(currBool::get);
+
+        assertFalse(bool.getAsBoolean());
+        currBool.set(true);
+        assertTrue(bool.getAsBoolean());
+    }
 }
