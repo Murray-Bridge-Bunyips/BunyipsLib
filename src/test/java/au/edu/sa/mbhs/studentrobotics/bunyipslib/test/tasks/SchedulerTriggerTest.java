@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.test.tasks;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -12,10 +13,13 @@ import org.junit.jupiter.api.BeforeEach;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BooleanSupplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
@@ -80,7 +84,7 @@ class SchedulerTriggerTest {
     @Test
     void onChangeTest() {
         AtomicBoolean finished = new AtomicBoolean(false);
-        Task task = Task.task().isFinished(finished::get).named("taska");
+        Task task = Task.task().isFinished(finished::get);
         Gamepad gamepad = new Gamepad();
 
         gamepad.x = true;
@@ -105,5 +109,156 @@ class SchedulerTriggerTest {
         assertFalse(task.isRunning());
     }
 
+    @Test
+    void whileTrueRepeatedlyTest() {
+        Gamepad gamepad = new Gamepad();
+        AtomicInteger inits = new AtomicInteger(0);
+        AtomicInteger counter = new AtomicInteger(1);
+        Task task = Task.task().init(inits::incrementAndGet).isFinished(() -> counter.incrementAndGet() % 2 == 0)
+                .repeatedly();
+
+        gamepad.y = false;
+        new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.Y)
+                .whileTrue(task);
+        Scheduler.update();
+        assertEquals(0, inits.get());
+        gamepad.y = true;
+        Scheduler.update();
+        assertEquals(1, inits.get());
+        Scheduler.update();
+        assertEquals(1, inits.get());
+        Scheduler.update();
+        assertEquals(2, inits.get());
+        gamepad.y = false;
+        Scheduler.update();
+        assertEquals(2, inits.get());
+    }
+
+    @Test
+    void whileTrueLambdaRunTest() {
+        Gamepad gamepad = new Gamepad();
+        AtomicInteger counter = new AtomicInteger(0);
+        Task task = new Lambda(counter::incrementAndGet)
+                .repeatedly();
+
+        gamepad.left_stick_button = false;
+        new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.LEFT_STICK_BUTTON)
+                .whileTrue(task);
+        Scheduler.update();
+        assertEquals(0, counter.get());
+        gamepad.left_stick_button = true;
+        Scheduler.update();
+        assertEquals(1, counter.get());
+        Scheduler.update();
+        assertEquals(2, counter.get());
+        gamepad.left_stick_button = false;
+        Scheduler.update();
+        assertEquals(2, counter.get());
+    }
+
+    @Test
+    void whileTrueOnceTest() {
+        AtomicInteger startCounter = new AtomicInteger(0);
+        AtomicInteger endCounter = new AtomicInteger(0);
+        Task task = Task.task().init(startCounter::incrementAndGet).onFinish(endCounter::incrementAndGet);
+        Gamepad gamepad = new Gamepad();
+
+        gamepad.back = false;
+        new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.BACK)
+                .whileTrue(task);
+        Scheduler.update();
+        assertEquals(0, startCounter.get());
+        assertEquals(0, endCounter.get());
+        gamepad.back = true;
+        Scheduler.update();
+        Scheduler.update();
+        assertEquals(1, startCounter.get());
+        assertEquals(0, endCounter.get());
+        gamepad.back = false;
+        Scheduler.update();
+        assertEquals(1, startCounter.get());
+        assertEquals(1, endCounter.get());
+    }
+
+
+    @Test
+    void toggleOnTrueTest() {
+        AtomicInteger startCounter = new AtomicInteger(0);
+        AtomicInteger endCounter = new AtomicInteger(0);
+        Task task = Task.task().init(startCounter::incrementAndGet).onFinish(endCounter::incrementAndGet);
+        Gamepad gamepad = new Gamepad();
+
+        gamepad.a = false;
+        new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.A)
+                .toggleOnTrue(task);
+        Scheduler.update();
+        assertEquals(0, startCounter.get());
+        assertEquals(0, endCounter.get());
+        gamepad.a = true;
+        Scheduler.update();
+        Scheduler.update();
+        assertEquals(1, startCounter.get());
+        assertEquals(0, endCounter.get());
+        gamepad.a = false;
+        Scheduler.update();
+        assertEquals(1, startCounter.get());
+        assertEquals(0, endCounter.get());
+        gamepad.a = true;
+        Scheduler.update();
+        assertEquals(1, startCounter.get());
+        assertEquals(1, endCounter.get());
+    }
+
+    @Test
+    void cancelWhenActiveTest() {
+        AtomicInteger startCounter = new AtomicInteger(0);
+        AtomicInteger endCounter = new AtomicInteger(0);
+        Gamepad gamepad = new Gamepad();
+        Task task = Task.task().init(startCounter::incrementAndGet).onFinish(endCounter::incrementAndGet)
+                .until(() -> gamepad.b);
+
+        gamepad.b = false;
+        Scheduler.schedule(task);
+        Scheduler.update();
+        assertEquals(1, startCounter.get());
+        assertEquals(0, endCounter.get());
+        gamepad.b = true;
+        Scheduler.update(); // catch finish condition
+        Scheduler.update(); // fire finisher
+        assertEquals(1, startCounter.get());
+        assertEquals(1, endCounter.get());
+        Scheduler.update();
+        assertEquals(1, startCounter.get());
+        assertEquals(1, endCounter.get());
+    }
+
+    @Test
+    void triggerCompositionTest() {
+        Gamepad gamepad1 = new Gamepad();
+        Gamepad gamepad2 = new Gamepad();
+
+        gamepad1.dpad_down = true;
+        gamepad2.dpad_up = false;
+
+        Scheduler.Trigger button1 = Scheduler.on(new Scheduler.GamepadTrigger.ButtonBind(gamepad1, Controls.DPAD_DOWN));
+        Scheduler.Trigger button2 = Scheduler.on(new Scheduler.GamepadTrigger.ButtonBind(gamepad1, Controls.DPAD_UP));
+
+        assertFalse(button1.and(button2).getAsBoolean());
+        assertTrue(button1.or(button2).getAsBoolean());
+        assertFalse(button1.negate().getAsBoolean());
+        assertTrue(button1.and(button2.negate()).getAsBoolean());
+    }
+
+    @Test
+    void triggerCompositionSupplierTest() {
+        Gamepad gamepad = new Gamepad();
+        BooleanSupplier booleanSupplier = () -> false;
+
+        gamepad.left_bumper = true;
+        Scheduler.Trigger button1 = Scheduler.on(new Scheduler.GamepadTrigger.ButtonBind(gamepad, Controls.LEFT_BUMPER));
+
+        assertFalse(button1.and(booleanSupplier).getAsBoolean());
+        assertTrue(button1.or(booleanSupplier).getAsBoolean());
+    }
     // TODO
 }
