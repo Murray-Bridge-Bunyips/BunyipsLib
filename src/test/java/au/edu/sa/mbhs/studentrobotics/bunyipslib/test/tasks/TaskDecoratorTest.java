@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 class TaskDecoratorTest extends SchedulerTests {
@@ -101,5 +102,45 @@ class TaskDecoratorTest extends SchedulerTests {
 
         assertAll(() -> assertTrue(firstHasRun.get()), () -> assertTrue(firstWasPolled.get()));
     }
-    // TODO
+
+    @Test
+    void afterTest() {
+        AtomicBoolean finished = new AtomicBoolean();
+        finished.set(false);
+        Task task = new Lambda().after(() -> finished.set(true));
+        Scheduler.schedule(task);
+        assertTrue(finished.get());
+        Scheduler.update();
+        assertTrue(task.isRunning());
+        Scheduler.update();
+        assertFalse(task.isRunning());
+    }
+
+    @Test
+    void thenLambdaTest() {
+        AtomicBoolean finished = new AtomicBoolean(false);
+        Task task = new Lambda().then(() -> finished.set(true));
+        Scheduler.schedule(task);
+        assertFalse(finished.get());
+        Scheduler.update();
+        assertTrue(finished.get());
+        Scheduler.update();
+        assertFalse(task.isRunning());
+    }
+
+    @Test
+    void andThenTest() {
+        AtomicBoolean condition = new AtomicBoolean(false);
+        Task command1 = new Lambda();
+        Task command2 = new Lambda(() -> condition.set(true));
+        Task group = command1.then(command2);
+        Scheduler.schedule(group);
+        assertFalse(condition.get());
+        Scheduler.update();
+        assertTrue(condition.get());
+        Scheduler.update();
+        assertFalse(group.isRunning());
+    }
+
+    // TODO: up to deadlineForTest
 }
