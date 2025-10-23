@@ -33,7 +33,7 @@ public class ConditionalTask extends Task {
         this.trueTask = trueTask;
         this.falseTask = falseTask;
         this.conditionOnInit = conditionOnInit;
-        named(trueTask + " / " + falseTask + " (cnd.)");
+        named(conditionOnInit + " ? " + trueTask + " : " + falseTask);
         disableSubsystemAttachment = true;
     }
 
@@ -47,6 +47,20 @@ public class ConditionalTask extends Task {
      */
     public ConditionalTask(@NonNull Runnable onTrue, @NonNull Runnable onFalse, @NonNull BooleanSupplier conditionOnInit) {
         this(new Lambda(onTrue), new Lambda(onFalse), conditionOnInit);
+    }
+
+    /**
+     * Create a new conditional task with the given callbacks, task names, and condition.
+     * Supplied tasks will be reset on init.
+     *
+     * @param onTrue          the callback to run if the condition is true
+     * @param onTrueCallbackName the task name of the onTrue callback
+     * @param onFalse         the callback to run if the condition is false
+     * @param onFalseCallbackName the task name of the onTrue callback
+     * @param conditionOnInit the condition to evaluate on initialisation
+     */
+    public ConditionalTask(@NonNull Runnable onTrue, @NonNull String onTrueCallbackName, @NonNull Runnable onFalse, @NonNull String onFalseCallbackName, @NonNull BooleanSupplier conditionOnInit) {
+        this(new Lambda(onTrue).named(onTrueCallbackName), new Lambda(onFalse).named(onFalseCallbackName), conditionOnInit);
     }
 
     @Override

@@ -6,6 +6,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.logic.Not
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.IncrementingTaskGroup
@@ -434,7 +435,13 @@ abstract class Task : Runnable, Action {
     /**
      * Compose this task into a [RaceTaskGroup] with a wait condition based on this negation of this condition.
      */
-    infix fun onlyWhile(condition: BooleanSupplier) = until { !condition.asBoolean }
+    infix fun onlyWhile(condition: BooleanSupplier) = until(Not(condition))
+
+    /**
+     * Compose this task into a [DeadlineTaskGroup] to run alongside until
+     * the supplied task is done.
+     */
+    infix fun until(deadline: Task) = DeadlineTaskGroup(deadline, this)
 
     /**
      * Composes a [ParallelTaskGroup] with a [WaitTask] to run before this task.
@@ -574,6 +581,16 @@ abstract class Task : Runnable, Action {
      * Wrap this task in a [RepeatTask] where finish conditions are reset immediately.
      */
     fun repeatedly(): Task = RepeatTask(this)
+
+    /**
+     * Wrap this task in a [ConditionalTask] that will only schedule if [condition] is false.
+     */
+    fun unless(condition: BooleanSupplier) = ConditionalTask(Lambda(), this, condition)
+
+    /**
+     * Wrap this task in a [ConditionalTask] that will only schedule if [condition] is true.
+     */
+    fun onlyIf(condition: BooleanSupplier) = ConditionalTask(this, Lambda(), condition)
 
     /**
      * Creates a new [DynamicTask] instance by wrapping this existing [Task] instance, allowing
