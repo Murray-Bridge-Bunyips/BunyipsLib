@@ -27,23 +27,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
 
-class SchedulerTriggerTest {
-    @BeforeEach
-    void setUp() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method cleanup = Scheduler.class.getDeclaredMethod("cleanup");
-        cleanup.setAccessible(true);
-        cleanup.invoke(null);
-        Dbg.INSTANCE.setINHIBIT(true);
-        Dashboard.INHIBIT_PACKETS = true;
-        DualTelemetry.Companion.setINHIBIT_SMART_CALLS(true);
-        // Required to register
-        new BunyipsSubsystem() {
-            @Override
-            protected void periodic() {
-            }
-        };
-    }
-
+class SchedulerTriggerTest extends SchedulerTests {
     @Test
     void onTrueTest() {
         AtomicBoolean finished = new AtomicBoolean(false);
@@ -98,13 +82,12 @@ class SchedulerTriggerTest {
         Scheduler.update();
         assertTrue(task.isRunning());
         finished.set(true);
-        Scheduler.update(); // task finish condition stops running the task
-        assertFalse(task.isRunning());
-        Scheduler.update(); // task onFinish fires and is removed
+        Scheduler.update();
         assertFalse(Scheduler.activeTasks.contains(task));
+        assertFalse(task.isRunning());
         finished.set(false);
         gamepad.x = true;
-        Scheduler.update(); // rescheduled
+        Scheduler.update();
         assertTrue(task.isRunning());
         finished.set(true);
         Scheduler.update();
@@ -225,8 +208,7 @@ class SchedulerTriggerTest {
         assertEquals(1, startCounter.get());
         assertEquals(0, endCounter.get());
         gamepad.b = true;
-        Scheduler.update(); // catch finish condition
-        Scheduler.update(); // fire finisher
+        Scheduler.update();
         assertEquals(1, startCounter.get());
         assertEquals(1, endCounter.get());
         Scheduler.update();

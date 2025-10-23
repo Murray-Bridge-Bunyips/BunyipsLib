@@ -372,7 +372,7 @@ abstract class Task : Runnable, Action {
     }
 
     /**
-     * Tell a task to finish on the next iteration of [poll].
+     * Tell a task to finish on the next iteration of [run].
      */
     fun finish() {
         taskFinished = true
@@ -430,6 +430,11 @@ abstract class Task : Runnable, Action {
         task.named("until $condition")
         return RaceTaskGroup(this, task)
     }
+
+    /**
+     * Compose this task into a [RaceTaskGroup] with a wait condition based on this negation of this condition.
+     */
+    infix fun onlyWhile(condition: BooleanSupplier) = until { !condition.asBoolean }
 
     /**
      * Composes a [ParallelTaskGroup] with a [WaitTask] to run before this task.
