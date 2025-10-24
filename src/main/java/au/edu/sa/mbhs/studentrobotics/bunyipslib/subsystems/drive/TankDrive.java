@@ -346,7 +346,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            DualNum<Time> x = timeTrajectory.profile.get(getDeltaTime().in(Seconds));
+            DualNum<Time> x = timeTrajectory.profile.get(getElapsedTime().in(Seconds));
 
             Pose2dDual<Arclength> txWorldTarget = timeTrajectory.path.get(x.value(), 3);
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
@@ -380,7 +380,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return getDeltaTime().in(Seconds) >= timeTrajectory.duration;
+            return getElapsedTime().in(Seconds) >= timeTrajectory.duration;
         }
 
         @Override
@@ -412,7 +412,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            Pose2dDual<Time> txWorldTarget = turn.get(getDeltaTime().in(Seconds));
+            Pose2dDual<Time> txWorldTarget = turn.get(getElapsedTime().in(Seconds));
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             PoseVelocity2d robotVelRobot = accumulator.getVelocity();
@@ -444,7 +444,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return getDeltaTime().in(Seconds) >= turn.duration;
+            return getElapsedTime().in(Seconds) >= turn.duration;
         }
 
         @Override

@@ -48,7 +48,7 @@ public class RaceTaskGroup extends TaskGroup {
     @Override
     public final boolean isTaskFinished() {
         for (Task task : tasks) {
-            if (task.poll()) {
+            if (task.isFinished()) {
                 finishAllTasks();
                 return true;
             }

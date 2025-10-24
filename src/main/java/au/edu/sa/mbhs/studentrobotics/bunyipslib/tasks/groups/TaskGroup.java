@@ -39,7 +39,10 @@ public abstract class TaskGroup extends Task {
         taskNames.append(getClass().getSimpleName().replace("TaskGroup", ""));
         taskNames.append(": ");
         for (int i = 0; i < tasks.size() - 1; i++) {
-            taskNames.append(tasks.get(i)).append(", ");
+            Task t = tasks.get(i);
+            taskNames.append(t).append(", ");
+            if (t.isPriority)
+                asPriority();
         }
         taskNames.append(tasks.get(tasks.size() - 1)).append("]");
         named(taskNames.toString());
@@ -56,7 +59,7 @@ public abstract class TaskGroup extends Task {
     protected final void executeTask(@NonNull Task task) {
         if (task.isFinished()) {
             if (finishedTasks.add(task))
-                Dbg.logd(getClass(), "sub-task (% of %, #%/max %) finished -> %s", task, this, finishedTasks.size(), tasks.size(), task.getDeltaTime().in(Seconds));
+                Dbg.logd(getClass(), "sub-task (% of %, #%/max %) finished -> %s", task, this, finishedTasks.size(), tasks.size(), task.getElapsedTime().in(Seconds));
             return;
         }
         task.isPriority = isPriority;
@@ -65,7 +68,7 @@ public abstract class TaskGroup extends Task {
 
     protected final void finishAllTasks() {
         for (Task task : tasks) {
-            task.finishNow();
+            task.finish();
         }
     }
 

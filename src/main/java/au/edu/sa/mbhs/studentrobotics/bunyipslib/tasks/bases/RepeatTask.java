@@ -24,17 +24,17 @@ public class RepeatTask extends Task {
 
     @Override
     protected void periodic() {
-        if (task.poll())
-            task.reset();
         named(task + " (repeat)");
         // Infinite timeout as it will be repeated
         task.isPriority = isPriority;
         task.execute();
+        if (task.isFinished())
+            task.reset();
     }
 
     @Override
     protected void onFinish() {
-        task.finishNow();
+        task.finish();
     }
 
     @Override

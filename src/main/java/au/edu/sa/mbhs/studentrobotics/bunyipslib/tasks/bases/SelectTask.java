@@ -64,7 +64,7 @@ public class SelectTask<T> extends Task {
     protected void periodic() {
         Task task = tasks.get(stateSupplier.get());
         if (task != null && task != currentTask) {
-            currentTask.finishNow();
+            currentTask.finish();
             currentTask = task;
         }
         if (currentTask == null) return;
@@ -77,13 +77,13 @@ public class SelectTask<T> extends Task {
     @Override
     protected boolean isTaskFinished() {
         Task task = tasks.get(stateSupplier.get());
-        return task != null && task.poll();
+        return task != null && task.isFinished();
     }
 
     @Override
     protected void onFinish() {
         for (Task task : tasks.values()) {
-            task.finishNow();
+            task.finish();
         }
     }
 

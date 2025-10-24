@@ -44,7 +44,7 @@ public class SequentialTaskGroup extends TaskGroup {
 
     @Override
     public final void periodic() {
-        if (currentTask.poll()) {
+        if (currentTask.isFinished()) {
             taskIndex++;
             if (taskIndex >= tasks.size()) {
                 finish();

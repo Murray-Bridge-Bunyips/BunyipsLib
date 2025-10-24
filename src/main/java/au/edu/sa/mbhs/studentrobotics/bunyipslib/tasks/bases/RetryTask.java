@@ -64,7 +64,7 @@ public class RetryTask extends Task {
 
     @Override
     protected void periodic() {
-        if (!currentTask.poll()) {
+        if (!currentTask.isFinished()) {
             named(currentTask.toString());
             timeout = currentTask.timeout.times(maxRetries - retryCount + 1);
             currentTask.isPriority = isPriority;
@@ -72,7 +72,7 @@ public class RetryTask extends Task {
             return;
         }
 
-        currentTask.finishNow();
+        currentTask.finish();
 
         // Check if we should retry
         if (retryCount < maxRetries && shouldRetry.getAsBoolean()) {
@@ -86,7 +86,7 @@ public class RetryTask extends Task {
 
     @Override
     protected void onFinish() {
-        currentTask.finishNow();
+        currentTask.finish();
     }
 
     @Override

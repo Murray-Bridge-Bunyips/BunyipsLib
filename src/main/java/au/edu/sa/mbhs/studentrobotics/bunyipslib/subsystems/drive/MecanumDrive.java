@@ -623,7 +623,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
         @Override
         protected void periodic() {
             Pose2d robotPose = accumulator.getPose();
-            Pose2dDual<Time> txWorldTarget = timeTrajectory.get(getDeltaTime().in(Seconds));
+            Pose2dDual<Time> txWorldTarget = timeTrajectory.get(getElapsedTime().in(Seconds));
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             robotVelRobot = accumulator.getVelocity();
@@ -663,7 +663,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return getDeltaTime().in(Seconds) >= timeTrajectory.duration
+            return getElapsedTime().in(Seconds) >= timeTrajectory.duration
                     && error.position.norm() < errorThresholds.getMaxTranslationalError().in(Inches)
                     && robotVelRobot.linearVel.norm() < errorThresholds.getMinVelStab().in(InchesPerSecond)
                     && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
@@ -709,7 +709,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected void periodic() {
-            Pose2dDual<Time> txWorldTarget = turn.get(getDeltaTime().in(Seconds));
+            Pose2dDual<Time> txWorldTarget = turn.get(getElapsedTime().in(Seconds));
             targetPoseWriter.write(new PoseMessage(txWorldTarget.value()));
 
             robotVelRobot = accumulator.getVelocity();
@@ -745,7 +745,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
 
         @Override
         protected boolean isTaskFinished() {
-            return getDeltaTime().in(Seconds) >= turn.duration
+            return getElapsedTime().in(Seconds) >= turn.duration
                     && error.heading.toDouble() < errorThresholds.getMaxAngularError().in(Radians)
                     && robotVelRobot.angVel < errorThresholds.getMinAngVelStab().in(RadiansPerSecond);
         }

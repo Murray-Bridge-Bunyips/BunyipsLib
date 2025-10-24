@@ -82,7 +82,7 @@ public class ConditionalTask extends Task {
 
     @Override
     protected boolean isTaskFinished() {
-        return task != null && task.poll();
+        return task != null && task.isFinished();
     }
 
     @Override

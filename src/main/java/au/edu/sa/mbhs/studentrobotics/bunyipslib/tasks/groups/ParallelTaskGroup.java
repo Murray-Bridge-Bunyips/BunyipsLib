@@ -42,7 +42,6 @@ public class ParallelTaskGroup extends TaskGroup {
     public final void periodic() {
         for (Task task : tasks) {
             executeTask(task);
-            task.poll();
         }
     }
 

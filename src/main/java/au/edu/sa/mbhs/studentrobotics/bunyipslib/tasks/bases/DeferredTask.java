@@ -69,7 +69,7 @@ public class DeferredTask extends Task {
     @Override
     protected void onFinish() {
         if (builtTask == null) return;
-        builtTask.finishNow();
+        builtTask.finish();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class DeferredTask extends Task {
     @Override
     protected boolean isTaskFinished() {
         if (builtTask == null) return false;
-        return builtTask.poll();
+        return builtTask.isFinished();
     }
 
     /**

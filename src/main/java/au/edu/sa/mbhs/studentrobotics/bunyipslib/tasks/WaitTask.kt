@@ -31,11 +31,11 @@ class WaitTask(private val time: Measure<Time>, private val showTelemetry: Boole
         if (showTelemetry)
             DualTelemetry.smartAdd(
                 "Waiting %/% seconds...",
-                deltaTime to Seconds round 1,
+                elapsedTime to Seconds round 1,
                 timeout to Seconds round 1
             )
     }
 
     // Ensure the "user condition" is the reason the task ends, so we don't call onInterrupt from timeout
-    override fun isTaskFinished() = deltaTime >= time - (1 of Nanoseconds)
+    override fun isTaskFinished() = elapsedTime >= time - (1 of Nanoseconds)
 }

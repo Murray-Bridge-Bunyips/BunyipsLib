@@ -55,7 +55,7 @@ public class IncrementingTaskGroup extends TaskGroup {
 
     @Override
     protected boolean isTaskFinished() {
-        return tasks.get(taskIndex).poll();
+        return tasks.get(taskIndex).isFinished();
     }
 
     /**

@@ -364,7 +364,7 @@ abstract class BunyipsOpMode : BOMInternal() {
                 if (initTask is Task && !(initTask as Task).isFinished) {
                     Dbg.warn("BunyipsOpMode: initTask did not finish in time, early finishing -> % ...", initTask)
                     telemetry.log("<font color='gray'>init-task interrupted by start request.</font>")
-                    (initTask as Task).finishNow()
+                    (initTask as Task).finish()
                 } else if (initTask != null) {
                     Dbg.logd("BunyipsOpMode: initTask finished -> % ...", initTask)
                     telemetry.log("<font color='gray'>init-task finished.</font>")

@@ -129,14 +129,18 @@ class SchedulerTriggerTest extends SchedulerTests {
         gamepad.left_stick_button = false;
         new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.LEFT_STICK_BUTTON)
                 .whileTrue(task);
+        System.out.println("updating");
         Scheduler.update();
         assertEquals(0, counter.get());
         gamepad.left_stick_button = true;
+        System.out.println("updating");
         Scheduler.update();
         assertEquals(1, counter.get());
+        System.out.println("updating");
         Scheduler.update();
         assertEquals(2, counter.get());
         gamepad.left_stick_button = false;
+        System.out.println("updating");
         Scheduler.update();
         assertEquals(2, counter.get());
     }

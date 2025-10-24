@@ -4,7 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
@@ -17,6 +19,9 @@ abstract class SchedulerTests {
         Method cleanup = Scheduler.class.getDeclaredMethod("cleanup");
         cleanup.setAccessible(true);
         cleanup.invoke(null);
+        Method reset = BunyipsSubsystem.class.getDeclaredMethod("reset");
+        reset.setAccessible(true);
+        reset.invoke(null);
         Dbg.INSTANCE.setINHIBIT(true);
         Dashboard.INHIBIT_PACKETS = true;
         DualTelemetry.Companion.setINHIBIT_SMART_CALLS(true);

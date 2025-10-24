@@ -25,7 +25,7 @@ class MessageTask(time: Measure<Time>, private val message: String) : Task() {
     }
 
     private fun buildString(): String {
-        return Text.format("%/%s: %", deltaTime to Seconds round 1, timeout to Seconds, message)
+        return Text.format("%/%s: %", elapsedTime to Seconds round 1, timeout to Seconds, message)
     }
 
     override fun init() {

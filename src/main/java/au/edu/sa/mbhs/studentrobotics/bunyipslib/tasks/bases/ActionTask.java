@@ -72,7 +72,7 @@ public class ActionTask extends Task {
     @Override
     protected void onFinish() {
         if (parentAction instanceof Task task)
-            task.finishNow();
+            task.finish();
     }
 
     @Override

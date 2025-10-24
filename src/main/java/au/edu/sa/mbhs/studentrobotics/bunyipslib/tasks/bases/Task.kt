@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds
@@ -29,8 +30,9 @@ import java.util.function.BooleanSupplier
  * to reflect closely the command-based programming style used in FRC, while still being
  * reflective of the past nature of how the Task system was implemented in BunyipsLib.
  *
- * The task system in BunyipsLib has been constructed from the ground-up with a more lightweight ecosystem
- * where Tasks are at their core stripped into running some code for some time, somewhere. The original behaviour of tasks running
+ * The task system in BunyipsLib has been constructed from the ground-up with a more self-sufficient
+ * where Tasks are at their core stripped into running some code for some time, somewhere, where all conditions for
+ * state are handled internally and not by an external scheduler. The original behaviour of tasks running
  * outright used to be the legacy roots of how Tasks worked, and since has adopted some command-based structures that work
  * by running them in the contexts of other subsystems.
  *
@@ -52,9 +54,7 @@ abstract class Task : Runnable, Action {
         .trim()
     private var _dependency: BunyipsSubsystem? = null
     private var attached = false
-    private var userFinished = false
-    private var taskFinished = false
-    private var finisherFired = false
+    private var setConditionFinished = false
     private var startTime = 0L
 
     /**
@@ -68,7 +68,7 @@ abstract class Task : Runnable, Action {
 
     /**
      * Maximum timeout of the task. If set to 0 magnitude (or a timeout-less constructor) this will serve as an indefinite task, and
-     * will only finish when [isTaskFinished] returns true, or this task is manually interrupted via [finish]/[finishNow].
+     * will only finish when [isTaskFinished] returns true, or this task is manually interrupted via [finish]/[finish].
      *
      * By default, tasks have an infinite timeout, and will only finish on user conditions.
      *
@@ -103,7 +103,7 @@ abstract class Task : Runnable, Action {
     /**
      * Time since the task was started.
      */
-    val deltaTime: Measure<Time>
+    val elapsedTime: Measure<Time>
         get() {
             if (startTime == 0L)
                 return Nanoseconds.of(0.0)
@@ -111,11 +111,12 @@ abstract class Task : Runnable, Action {
         }
 
     /**
-     * Query (but not update) the finished state of the task. This will return true if the task is finished and the
-     * finisher has been fired.
+     * Whether the task has been finished and the finisher has fired since the last call to [run]/[execute].
+     *
+     * As of BunyipsLib 8.0.0, the stateful update of the finished state is now handled fully by the [run] cycle.
      */
-    val isFinished: Boolean
-        get() = taskFinished && finisherFired
+    var isFinished = false
+        private set
 
     /**
      * Convenience field to get a reference to a [TelemetryPacket] for sending telemetry to the dashboard.
@@ -196,16 +197,16 @@ abstract class Task : Runnable, Action {
      * Get a verbose string representation of this task, including all of its properties.
      */
     fun toVerboseString(): String {
-        val priority = if (isPriority) "PRIORITY, " else ""
+        val priority = if (isPriority) "priority, " else ""
         val state = when {
-            isFinished -> "FINISHED"
-            isRunning -> deltaTime.toString()
-            else -> "READY"
+            isFinished -> "finished"
+            isRunning -> elapsedTime to Seconds round 2
+            else -> "ready"
         }
-        val time = if (timeout.magnitude() <= 0.0) "INDEFINITE" else timeout.toString()
-        val dep = if (_dependency != null) "DEPENDENT ON ${Text.upper(_dependency.toString())}" else "INDEPENDENT"
+        val time = if (timeout.magnitude() <= 0.0) "∞" else timeout to Seconds round 2
+        val dep = if (_dependency != null) ", dependent on ${_dependency.toString()}" else ""
 
-        return Text.format("%, %%/%, %", name, priority, state, time, dep)
+        return Text.format("(%, %t=%/%s%)", name, priority, state, time, dep)
     }
 
     /**
@@ -239,67 +240,46 @@ abstract class Task : Runnable, Action {
         if (attached) return
         dependency.ifPresentOrElse({
             if (it.isDisabled)
-                finishNow()
+                finish()
             attached = it.setCurrentTask(this)
         }, this::run)
     }
 
     /**
-     * Execute one cycle of this task. The finish condition is separately polled in the [poll] method.
+     * Execute one cycle of this task. As of BunyipsLib 8.0.0, this method will handle all method callback invocation,
+     * apart from [finish] which is internally called.
      *
      * Note that this method will perform one cycle of work for this task in the context it is currently,
      * if you wish to respect the [dependency], use the [execute] method.
      */
     final override fun run() {
+        // TODO: temp
+        if (dependency.isEmpty)
+            println("executing: ${toVerboseString()}")
         dependency.ifPresentOrElse({
             if (it.isDisabled)
-                finishNow()
+                finish()
             attached = it.currentTask == this
         }, { attached = false })
+        if (isFinished) {
+            // No work to do
+            return
+        }
         Dashboard.usePacket {
             dashboard = it
             if (startTime == 0L) {
+                // First call, initialise everything
                 Exceptions.runUserMethod(::init)
                 startTime = System.nanoTime()
-                // Must poll finished on the first iteration to ensure that the task does not overrun
-                poll()
             }
-            // Here we check the taskFinished condition but don't call pollFinished(), to ensure that the task is only
-            // updated with latest finish information at the user's discretion (excluding the first-call requirement)
-            if (taskFinished && !finisherFired) {
-                Exceptions.runUserMethod(::onFinish)
-                if (!userFinished)
-                    Exceptions.runUserMethod(::onInterrupt)
-                finisherFired = true
-                dependency.ifPresent { d ->
-                    if (attached && d.currentTask == this) {
-                        d.cancelCurrentTask()
-                        attached = false
-                    }
-                }
-            }
-            // Don't run the task if it is finished as a safety guard
-            if (isFinished) return@usePacket
+            // Do some work
             Exceptions.runUserMethod(::periodic)
+            // Update isFinished state
+            val timeoutFinished = timeout.magnitude() != 0.0 && System.nanoTime() > startTime + (timeout to Nanoseconds)
+            Exceptions.runUserMethod { setConditionFinished = isTaskFinished() }
+            if (setConditionFinished || timeoutFinished)
+                finish()
         }
-    }
-
-    /**
-     * Update and query the state of the task if it is finished.
-     * This will return true if the task is fully completed with all callbacks processed.
-     */
-    fun poll(): Boolean {
-        // Early return
-        if (taskFinished) return finisherFired
-
-        val startCalled = startTime != 0L
-        val timeoutFinished = timeout.magnitude() != 0.0 && System.nanoTime() > startTime + (timeout to Nanoseconds)
-        Exceptions.runUserMethod { userFinished = isTaskFinished() }
-
-        taskFinished = startCalled && (timeoutFinished || userFinished)
-
-        // run() will handle firing the finisher, in which case we can return true and the polling loop can stop
-        return isFinished
     }
 
     /**
@@ -311,7 +291,7 @@ abstract class Task : Runnable, Action {
         // FtcDashboard parameters are handled by the periodic method of this task, so we can ignore the packet
         // and fieldOverlay here as we will handle them ourselves through the `dashboard` field
         run()
-        return !poll()
+        return !isFinished
     }
 
     /**
@@ -333,7 +313,7 @@ abstract class Task : Runnable, Action {
 
     /**
      * Finalising function that will be called after [onFinish] in the event this task is finished via
-     * a call to [finish], [finishNow], or if the [timeout] exceeded.
+     * a call to [finish], or if the [timeout] exceeded.
      * Override to add your own callback.
      */
     protected open fun onInterrupt() {
@@ -366,39 +346,23 @@ abstract class Task : Runnable, Action {
             return
         Exceptions.runUserMethod(::onReset)
         startTime = 0L
-        taskFinished = false
-        finisherFired = false
-        userFinished = false
+        setConditionFinished = false
         attached = false
     }
 
     /**
-     * Tell a task to finish on the next iteration of [run].
+     * Causes a task to end and fire finishing methods.
      */
     fun finish() {
-        taskFinished = true
-    }
-
-    /**
-     * Force a task to finish immediately, and fire the [onFinish] method without waiting
-     * for the next polling loop.
-     *
-     * This method is useful when your task needs to die and
-     * needs to finish up immediately. If your finisher has already been fired, this method
-     * will do nothing but ensure that the task is marked as finished.
-     */
-    fun finishNow() {
-        taskFinished = true
-        if (!finisherFired) {
-            Exceptions.runUserMethod(::onFinish)
-            if (!userFinished)
-                Exceptions.runUserMethod(::onInterrupt)
-            finisherFired = true
-            dependency.ifPresent {
-                if (attached && it.currentTask == this) {
-                    attached = false
-                    it.cancelCurrentTask()
-                }
+        if (isFinished) return
+        isFinished = true
+        Exceptions.runUserMethod(::onFinish)
+        if (!setConditionFinished)
+            Exceptions.runUserMethod(::onInterrupt)
+        dependency.ifPresent {
+            if (attached && it.currentTask == this) {
+                attached = false
+                it.cancelCurrentTask()
             }
         }
     }
@@ -609,13 +573,7 @@ abstract class Task : Runnable, Action {
             init {
                 Dashboard.usePacket {
                     this@Task.dashboard = it
-                    val startTimeField = Task::class.java.getDeclaredField("startTime")
-                    startTimeField.isAccessible = true
-                    val time = System.nanoTime()
-                    startTimeField.setLong(this, time)
-                    startTimeField.setLong(this@Task, time)
-                    this@Task.init()
-                    this@Task.poll()
+                    this@Task.run()
                 }
             }
             periodic {

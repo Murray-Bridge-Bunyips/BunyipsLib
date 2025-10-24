@@ -57,7 +57,7 @@ public abstract class BunyipsSubsystem {
     @NonNull
     protected String name = getClass().getSimpleName() + idx++;
     private volatile Task currentTask;
-    private volatile Task defaultTask = new IdleTask();
+    private volatile Task defaultTask = new IdleTask().on(this);
     private volatile boolean shouldRun = true;
     @Nullable
     private String threadName = null;
@@ -292,7 +292,7 @@ public abstract class BunyipsSubsystem {
         if (currentTask != defaultTask) {
             if (currentTask != null && !currentTask.isFinished()) {
                 sout(Dbg::logv, "Task changed: % <- %(INT)", defaultTask, currentTask);
-                currentTask.finishNow();
+                currentTask.finish();
                 // Set now to avoid double logging
                 currentTask = defaultTask;
             }
@@ -399,7 +399,7 @@ public abstract class BunyipsSubsystem {
         newTask.reset();
         // Default task technically can't finish, but it can be interrupted, so we will just run the finish callback
         if (currentTask == defaultTask) {
-            defaultTask.finishNow();
+            defaultTask.finish();
             defaultTask.reset();
         }
         sout(Dbg::logd, "Task changed: % -> %", currentTask, newTask);
@@ -420,13 +420,13 @@ public abstract class BunyipsSubsystem {
         // Task will be cancelled abruptly, run the finish callback now
         if (this.currentTask != defaultTask) {
             sout(Dbg::warn, "Task changed: %(INT) -> %", this.currentTask, currentTask);
-            this.currentTask.finishNow();
+            this.currentTask.finish();
         }
         lockoutMessageSent = false;
         currentTask.reset();
         // Default task technically can't finish, but it can be interrupted, so we will just run the finish callback
         if (this.currentTask == defaultTask) {
-            defaultTask.finishNow();
+            defaultTask.finish();
             defaultTask.reset();
         }
         this.currentTask = currentTask;
@@ -452,13 +452,11 @@ public abstract class BunyipsSubsystem {
     private void internalUpdate() {
         Task task = getCurrentTask();
         if (task != null) {
-            if (task == defaultTask && defaultTask.poll()) {
+            if (task == defaultTask && defaultTask.isFinished()) {
                 throw new Exceptions.EmergencyStop("Default task (of " + name + ", " + getClass().getSimpleName() + ") should never finish!");
             }
             // Run the task on our subsystem
             task.run();
-            // Update the state of isFinished() after running the task as it may have changed
-            task.poll();
         }
         // This should be the only place where periodic() is called for this subsystem
         Exceptions.runUserMethod(this::periodic);

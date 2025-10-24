@@ -116,7 +116,7 @@ object Scheduler {
             return
         // Important step that we ensure the task is ready for execution
         if (task.isRunning)
-            task.finishNow()
+            task.finish()
         task.reset()
         activeTasks.add(task)
     }
@@ -189,7 +189,7 @@ object Scheduler {
                     subsystem,
                     if (subsystem.isRunningDefaultTask) " (d.)" else "",
                     task.toString().replace("$subsystem:", ""),
-                    task.deltaTime to Seconds round 1
+                    task.elapsedTime to Seconds round 1
                 )
                 val timeoutSec = task.timeout to Seconds
                 report += if (timeoutSec == 0.0) "s" else "/" + timeoutSec + "s"
@@ -203,7 +203,7 @@ object Scheduler {
                 ) {
                     continue
                 }
-                val deltaTime = binding.task.deltaTime to Seconds round 1
+                val deltaTime = binding.task.elapsedTime to Seconds round 1
                 DualTelemetry.smartAdd(
                     "<small><b>Scheduler</b> (c.) <font color='gray'>|</font> <b>%</b> -> %</small>",
                     binding.task,
@@ -217,13 +217,9 @@ object Scheduler {
 
         // 4. Run scheduled tasks
         for (task in activeTasks) {
-            // Update finish conditions for non-subsystem tasks as it is not done elsewhere
-            if ((task.dependency.isEmpty && task.poll()) || task.isFinished) {
-                // We're done here, schedule for removal
-                tasksToRemove.add(task)
-                continue
-            }
             task.execute()
+            if (task.isFinished)
+                tasksToRemove.add(task)
         }
 
         // 5. Cleanup finished tasks
