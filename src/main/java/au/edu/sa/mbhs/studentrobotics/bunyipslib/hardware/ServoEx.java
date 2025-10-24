@@ -193,6 +193,10 @@ public class ServoEx extends ServoImpl implements PwmControl {
             targetPosition = setpoint.position;
         }
 
+        // Ensure the servo is energised, as calling set position on init may not do anything due to internal cache
+        // This method is valid to call repeatedly as the PWM state is cached and no-ops on repeat calls
+        setPwmEnable();
+
         // Apply refresh rate and cache restrictions
         long now = System.nanoTime();
         if (refreshRateNanos > 0 && Math.abs(lastUpdate - now) < refreshRateNanos) {
