@@ -9,6 +9,10 @@ import java.util.function.Supplier;
 
 /**
  * Select a task to run based on a hashmap of states and a supplier of states.
+ * <p>
+ * Do note that this task is a task wrapper, and will discard already assigned timeout, name, priority, and subsystem information
+ * to match the selected task. Changes to these properties must be done to the child task, which will be reflected upwards.
+ * Updating this wrapper will result in resets.
  *
  * @param <T> the type of the state
  * @author Lucas Bubner, 2024
@@ -68,9 +72,7 @@ public class SelectTask<T> extends Task {
             currentTask = task;
         }
         if (currentTask == null) return;
-        named(currentTask.toString());
-        timeout = currentTask.timeout;
-        currentTask.isPriority = isPriority;
+        sync(currentTask);
         currentTask.execute();
     }
 
@@ -82,15 +84,13 @@ public class SelectTask<T> extends Task {
 
     @Override
     protected void onFinish() {
-        for (Task task : tasks.values()) {
+        for (Task task : tasks.values())
             task.finish();
-        }
     }
 
     @Override
     protected void onReset() {
-        for (Task task : tasks.values()) {
+        for (Task task : tasks.values())
             task.reset();
-        }
     }
 }

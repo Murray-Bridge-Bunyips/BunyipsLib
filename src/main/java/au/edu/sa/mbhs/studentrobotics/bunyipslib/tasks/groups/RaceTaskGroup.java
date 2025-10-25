@@ -40,9 +40,8 @@ public class RaceTaskGroup extends TaskGroup {
 
     @Override
     public final void periodic() {
-        for (Task task : tasks) {
+        for (Task task : tasks)
             executeTask(task);
-        }
     }
 
     @Override

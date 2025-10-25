@@ -10,22 +10,15 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
 
 class SchedulerTriggerTest extends SchedulerTests {
     @Test
@@ -98,7 +91,7 @@ class SchedulerTriggerTest extends SchedulerTests {
     void whileTrueRepeatedlyTest() {
         Gamepad gamepad = new Gamepad();
         AtomicInteger inits = new AtomicInteger(0);
-        AtomicInteger counter = new AtomicInteger(1);
+        AtomicInteger counter = new AtomicInteger(0);
         Task task = Task.task().init(inits::incrementAndGet).isFinished(() -> counter.incrementAndGet() % 2 == 0)
                 .repeatedly();
 
@@ -129,18 +122,14 @@ class SchedulerTriggerTest extends SchedulerTests {
         gamepad.left_stick_button = false;
         new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.LEFT_STICK_BUTTON)
                 .whileTrue(task);
-        System.out.println("updating");
         Scheduler.update();
         assertEquals(0, counter.get());
         gamepad.left_stick_button = true;
-        System.out.println("updating");
         Scheduler.update();
         assertEquals(1, counter.get());
-        System.out.println("updating");
         Scheduler.update();
         assertEquals(2, counter.get());
         gamepad.left_stick_button = false;
-        System.out.println("updating");
         Scheduler.update();
         assertEquals(2, counter.get());
     }

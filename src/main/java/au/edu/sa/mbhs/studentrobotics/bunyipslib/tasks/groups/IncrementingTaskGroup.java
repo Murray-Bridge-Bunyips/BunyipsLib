@@ -13,7 +13,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
  * <p>
  * The timeout of this group is calculated dynamically, based on the currently incremented task.
  * This task retains information across resets and reinitialisation, wrapping around to the first task
- * when the last task is reached and finished.
+ * when the last task is reached and finished. Incremented tasks are finished and the next task is reset to run.
  *
  * @author Lucas Bubner, 2024
  * @since 7.0.0
@@ -28,6 +28,7 @@ public class IncrementingTaskGroup extends TaskGroup {
      */
     public IncrementingTaskGroup(@NonNull Task... tasks) {
         setTasks(Arrays.asList(tasks));
+        // Timeout is dependent on the current task as we need to explicitly finish and restart
         timeout(this.tasks.get(0).timeout);
     }
 
@@ -48,9 +49,8 @@ public class IncrementingTaskGroup extends TaskGroup {
     @Override
     public final void periodic() {
         Task currentTask = tasks.get(taskIndex);
+        timeout = currentTask.timeout;
         executeTask(currentTask);
-        named(currentTask.toString());
-        timeout(currentTask.timeout);
     }
 
     @Override
@@ -62,9 +62,11 @@ public class IncrementingTaskGroup extends TaskGroup {
      * Increment this task group.
      */
     public void increment() {
+        if (taskIndex != -1)
+            tasks.get(taskIndex).finish();
         taskIndex++;
-        if (taskIndex >= tasks.size()) {
+        if (taskIndex >= tasks.size())
             taskIndex = 0;
-        }
+        tasks.get(taskIndex).reset();
     }
 }

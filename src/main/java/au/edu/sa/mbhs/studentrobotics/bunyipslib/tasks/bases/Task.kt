@@ -218,11 +218,39 @@ abstract class Task : Runnable, Action {
     }
 
     /**
+     * Ensures, and if required, initialises this task calling [init].
+     */
+    fun ensureInit() {
+        if (startTime != 0L) return
+        Dashboard.usePacket {
+            Exceptions.runUserMethod(::init)
+            startTime = System.nanoTime()
+        }
+    }
+
+    /**
      * To run as an active loop during this task's duration.
      * Override to implement.
      */
     protected open fun periodic() {
         // no-op
+    }
+
+    /**
+     * Synchronises this task with the properties of the [sync] task.
+     *
+     * This reflects the name, timeout, priority, and subsystem (if [disableSubsystemAttachment] is false) of [sync]
+     * into this instance.
+     */
+    protected fun sync(sync: Task) {
+        // Two-way sync
+        if (sync.isPriority) isPriority = true
+        else if (isPriority) sync.isPriority = true
+        // Reflect [sync] onto this
+        named(sync.toString())
+        timeout = sync.timeout
+        if (sync.dependency.isPresent && !disableSubsystemAttachment)
+            on(sync.dependency.get())
     }
 
     /**
@@ -239,8 +267,10 @@ abstract class Task : Runnable, Action {
     fun execute() {
         if (attached) return
         dependency.ifPresentOrElse({
-            if (it.isDisabled)
+            if (it.isDisabled) {
                 finish()
+                return@ifPresentOrElse
+            }
             attached = it.setCurrentTask(this)
         }, this::run)
     }
@@ -253,14 +283,9 @@ abstract class Task : Runnable, Action {
      * if you wish to respect the [dependency], use the [execute] method.
      */
     final override fun run() {
-        // TODO: temp
-        if (dependency.isEmpty)
-            println("executing: ${toVerboseString()}")
-        dependency.ifPresentOrElse({
-            if (it.isDisabled)
-                finish()
-            attached = it.currentTask == this
-        }, { attached = false })
+        dependency.ifPresentOrElse(
+            { attached = it.currentTask == this },
+            { attached = false })
         if (isFinished) {
             // No work to do
             return
@@ -347,6 +372,7 @@ abstract class Task : Runnable, Action {
         Exceptions.runUserMethod(::onReset)
         startTime = 0L
         setConditionFinished = false
+        isFinished = false
         attached = false
     }
 
@@ -570,10 +596,14 @@ abstract class Task : Runnable, Action {
             timeout(this@Task.timeout)
             if (this@Task.dependency.isPresent)
                 on(this@Task.dependency.get(), this@Task.isPriority)
+            // We shim away the use of run() and execute(), since the DynamicTask will be the new task that is
+            // scheduled onto subsystems. All logic relating to timeouts is handled by the parent wrapping DynamicTask.
+            // The only things we need to pass forward are things the user has adjusted, which include the function
+            // definitions for init, periodic, interrupt, reset, finish, and the finish condition.
             init {
                 Dashboard.usePacket {
                     this@Task.dashboard = it
-                    this@Task.run()
+                    this@Task.init()
                 }
             }
             periodic {

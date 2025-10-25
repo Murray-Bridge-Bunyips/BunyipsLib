@@ -354,7 +354,7 @@ class TaskDecoratorTest extends SchedulerTests {
 
         Task task = Task.task()
                 .onInterrupt(first::incrementAndGet)
-                .isFinished(() -> true)
+                .isFinished(() -> false)
                 .mutate()
                 .addOnInterrupt(() -> {
                     // to differentiate between "didn't run" and "ran before task's `end()`

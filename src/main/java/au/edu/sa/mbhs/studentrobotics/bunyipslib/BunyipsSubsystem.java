@@ -207,13 +207,14 @@ public abstract class BunyipsSubsystem {
         // erase a previous check that failed
         if (!shouldRun) return false;
         // Check nullability
-        shouldRun = Arrays.stream(parameters).allMatch(Objects::nonNull);
+        boolean shouldRun = Arrays.stream(parameters).allMatch(Objects::nonNull);
         if (!shouldRun) {
             assertionFailed = true;
             DualTelemetry.smartAdd(true, toString(), "<font color='red'><b>SUBSYSTEM FAULT!</b></font>");
             DualTelemetry.smartLog("<font color='yellow'><b>warning!</b> <i>%</i> failed a null self-check and was auto disabled.</font>", toString());
             sout(Dbg::error, "Subsystem has been disabled as assertParamsNotNull() failed.");
-            onDisable();
+            disable();
+            this.shouldRun = false;
         }
         return shouldRun;
     }
@@ -262,6 +263,9 @@ public abstract class BunyipsSubsystem {
                 .small("check logcat for more info.")
         );
         onDisable();
+        Task task = getCurrentTask();
+        if (task != null)
+            task.finish();
         for (BunyipsSubsystem child : children)
             child.disable();
     }

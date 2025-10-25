@@ -44,11 +44,6 @@ class DynamicTask() : Task() {
             finish = it.finish
             interrupt = it.interrupt
             reset = it.reset
-        }.also {
-            named(task.toString())
-            timeout(task.timeout)
-            if (task.dependency.isPresent)
-                on(task.dependency.get(), task.isPriority)
         }
     }
 

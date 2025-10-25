@@ -43,7 +43,14 @@ public class SequentialTaskGroup extends TaskGroup {
     }
 
     @Override
+    public final void init() {
+        // Match init behaviour of Sequential groups in WPILib
+        currentTask.ensureInit();
+    }
+
+    @Override
     public final void periodic() {
+        executeTask(currentTask);
         if (currentTask.isFinished()) {
             taskIndex++;
             if (taskIndex >= tasks.size()) {
@@ -51,9 +58,9 @@ public class SequentialTaskGroup extends TaskGroup {
                 return;
             }
             currentTask = tasks.get(taskIndex);
-        } else {
+            // Don't waste a cycle and execute the next task now
+            // Matches WPILib unit tests
             executeTask(currentTask);
-            named(currentTask.toString());
         }
     }
 

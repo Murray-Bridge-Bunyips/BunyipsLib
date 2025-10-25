@@ -118,6 +118,8 @@ object Scheduler {
         if (task.isRunning)
             task.finish()
         task.reset()
+        // Match early-init of the schedule method in WPILib
+        task.ensureInit()
         activeTasks.add(task)
     }
 
@@ -129,7 +131,6 @@ object Scheduler {
     @JvmStatic
     fun update() {
         if (disabled) return
-
         if (!initialised) {
             if (!subsystemsCell.initialised)
                 subsystems = BunyipsSubsystem.getInstances()
