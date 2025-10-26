@@ -255,7 +255,6 @@ public abstract class BunyipsSubsystem {
      */
     public final void disable() {
         if (!shouldRun) return;
-        shouldRun = false;
         sout(Dbg::logv, "Subsystem disabled via disable() call.");
         DualTelemetry.smartLog(Text.html()
                 .append("[").append(toString()).append("] ")
@@ -264,10 +263,14 @@ public abstract class BunyipsSubsystem {
         );
         onDisable();
         Task task = getCurrentTask();
-        if (task != null)
+        if (task != null) {
             task.finish();
+            if (task == defaultTask)
+                task.reset();
+        }
         for (BunyipsSubsystem child : children)
             child.disable();
+        shouldRun = false;
     }
 
     /**

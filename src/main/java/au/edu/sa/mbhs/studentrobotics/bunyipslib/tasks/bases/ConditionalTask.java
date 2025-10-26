@@ -75,6 +75,7 @@ public class ConditionalTask extends Task {
         falseTask.reset();
         boolean eval = conditionOnInit.getAsBoolean();
         task = eval ? trueTask : falseTask;
+        task.ensureInit();
         Dbg.logd(getClass(), "initialised " + eval + ", running: " + task);
     }
 

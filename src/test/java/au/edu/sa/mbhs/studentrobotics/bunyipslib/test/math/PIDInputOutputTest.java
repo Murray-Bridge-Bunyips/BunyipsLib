@@ -53,6 +53,7 @@ class PIDInputOutputTest {
 
         assertEquals(0, controller.calculate(0, 0));
 
+        // This test is dodgy since derivative is not based on a fixed invocation period
         assertEquals(controller.calculate(0.025, 0), -0.1 / controller.getPeriod(), 0.05);
     }
 
