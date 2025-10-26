@@ -66,6 +66,7 @@ public class DeferredTask extends Task {
         super.named(toString().replace(SUFFIX, ""));
         if (timeout.equals(INFINITE_TIMEOUT))
             timeout = t;
+        builtTask.ensureInit();
     }
 
     @Override
