@@ -601,16 +601,12 @@ abstract class Task : Runnable, Action {
             // The only things we need to pass forward are things the user has adjusted, which include the function
             // definitions for init, periodic, interrupt, reset, finish, and the finish condition.
             init {
-                Dashboard.usePacket {
-                    this@Task.dashboard = it
-                    this@Task.init()
-                }
+                this@Task.dashboard = dashboard
+                this@Task.init()
             }
             periodic {
-                Dashboard.usePacket {
-                    this@Task.dashboard = it
-                    this@Task.periodic()
-                }
+                this@Task.dashboard = dashboard
+                this@Task.periodic()
             }
             isFinished { this@Task.isTaskFinished() }
             onInterrupt { this@Task.onInterrupt() }
