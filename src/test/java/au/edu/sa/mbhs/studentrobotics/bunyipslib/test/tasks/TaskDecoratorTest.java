@@ -206,7 +206,7 @@ class TaskDecoratorTest extends SchedulerTests {
                     return true;
                 });
         Task other = new Lambda(() -> assertAll(() -> assertTrue(dictatorHasRun.get()),
-                                        () -> assertTrue(dictatorWasPolled.get())));
+                () -> assertTrue(dictatorWasPolled.get())));
         Task group = other.until(dictator);
         Scheduler.schedule(group);
         Scheduler.update();
@@ -276,9 +276,9 @@ class TaskDecoratorTest extends SchedulerTests {
                     return true;
                 });
         Task task2 = new Lambda(() -> {
-                            assertTrue(firstHasRun.get());
-                            assertTrue(firstWasPolled.get());
-                        });
+            assertTrue(firstHasRun.get());
+            assertTrue(firstWasPolled.get());
+        });
 
         Task group = task1.race(task2);
 
@@ -328,13 +328,13 @@ class TaskDecoratorTest extends SchedulerTests {
         AtomicInteger second = new AtomicInteger(0);
 
         Task task = Task.task()
-                    .onFinish(first::incrementAndGet)
-                    .isFinished(() -> true)
-                    .mutate()
-                    .addOnFinish(() -> {
-                        // to differentiate between "didn't run" and "ran before task's `end()`
-                        second.addAndGet(1 + first.get());
-                    });
+                .onFinish(first::incrementAndGet)
+                .isFinished(() -> true)
+                .mutate()
+                .addOnFinish(() -> {
+                    // to differentiate between "didn't run" and "ran before task's `end()`
+                    second.addAndGet(1 + first.get());
+                });
 
         Scheduler.schedule(task);
         assertEquals(0, first.get());
