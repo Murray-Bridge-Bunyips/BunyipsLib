@@ -330,7 +330,8 @@ public abstract class BunyipsSubsystem {
      * Set the default task for this subsystem, which will be run when no other task is running.
      *
      * @param defaultTask The task to set as the default task, which will also internally make the dependency
-     *                    of this task to be this subsystem if possible
+     *                    of this task to be this subsystem if possible. Tasks with subsystem attachment disabled
+     *                    (TaskGroups, etc.) are <b>not</b> permitted to be default tasks.
      */
     public final void setDefaultTask(@NonNull Task defaultTask) {
         Task def = Objects.requireNonNull(defaultTask);
@@ -339,8 +340,12 @@ public abstract class BunyipsSubsystem {
             try {
                 Field f = Task.class.getDeclaredField("disableSubsystemAttachment");
                 f.setAccessible(true);
-                if (!f.getBoolean(def))
+                if (f.getBoolean(def)) {
+                    throw new Exceptions.EmergencyStop("Cannot set the default task of a subsystem to a task that has disabled subsystem attachment! " +
+                            "This may be due to attaching a TaskGroup to a subsystem as a default task, which is not permitted.");
+                } else {
                     def.on(this, false);
+                }
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException("Failed to access internal fields on Task, this shouldn't happen!", e);
             }
@@ -401,6 +406,8 @@ public abstract class BunyipsSubsystem {
         lockoutMessageSent = false;
 
         newTask.reset();
+        newTask.ensureInit(true);
+
         // Default task technically can't finish, but it can be interrupted, so we will just run the finish callback
         if (currentTask == defaultTask) {
             defaultTask.finish();

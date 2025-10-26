@@ -219,9 +219,17 @@ abstract class Task : Runnable, Action {
 
     /**
      * Ensures, and if required, initialises this task calling [init].
+     *
+     * Also attempts to attach this task to the [dependency] unless [direct] is true (default false).
      */
-    fun ensureInit() {
+    @JvmOverloads
+    fun ensureInit(direct: Boolean = false) {
         if (startTime != 0L) return
+        if (!direct && dependency.isPresent) {
+            // Will be recalled immediately with direct=true by setCurrentTask
+            attached = dependency.get().setCurrentTask(this)
+            return
+        }
         Dashboard.usePacket {
             Exceptions.runUserMethod(::init)
             startTime = System.nanoTime()
