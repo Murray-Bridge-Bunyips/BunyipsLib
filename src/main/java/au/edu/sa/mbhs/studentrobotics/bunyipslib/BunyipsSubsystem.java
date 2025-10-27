@@ -438,6 +438,7 @@ public abstract class BunyipsSubsystem {
         }
         lockoutMessageSent = false;
         currentTask.reset();
+        currentTask.ensureInit(true);
         // Default task technically can't finish, but it can be interrupted, so we will just run the finish callback
         if (this.currentTask == defaultTask) {
             defaultTask.finish();

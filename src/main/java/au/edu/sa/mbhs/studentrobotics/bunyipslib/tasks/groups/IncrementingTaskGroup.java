@@ -44,6 +44,8 @@ public class IncrementingTaskGroup extends TaskGroup {
     @Override
     public final void init() {
         increment();
+        if (taskIndex != -1)
+            tasks.get(taskIndex).ensureInit();
     }
 
     @Override

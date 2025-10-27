@@ -23,7 +23,7 @@ class SchedulerTriggerTest extends SchedulerTests {
     @Test
     void onTrueTest() {
         AtomicBoolean finished = new AtomicBoolean(false);
-        Task task = Task.task().isFinished(finished::get);
+        Task task = Task.waitFor(finished::get);
         Gamepad gamepad = new Gamepad();
 
         gamepad.a = false;
@@ -43,7 +43,7 @@ class SchedulerTriggerTest extends SchedulerTests {
     @Test
     void onFalseTest() {
         AtomicBoolean finished = new AtomicBoolean(false);
-        Task task = Task.task().isFinished(finished::get);
+        Task task = Task.waitFor(finished::get);
         Gamepad gamepad = new Gamepad();
 
         gamepad.b = true;
@@ -62,7 +62,7 @@ class SchedulerTriggerTest extends SchedulerTests {
     @Test
     void onChangeTest() {
         AtomicBoolean finished = new AtomicBoolean(false);
-        Task task = Task.task().isFinished(finished::get);
+        Task task = Task.waitFor(finished::get);
         Gamepad gamepad = new Gamepad();
 
         gamepad.x = true;

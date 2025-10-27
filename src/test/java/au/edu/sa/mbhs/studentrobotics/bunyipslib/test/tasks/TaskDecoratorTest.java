@@ -147,7 +147,7 @@ class TaskDecoratorTest extends SchedulerTests {
     @Test
     void duringTest() {
         AtomicBoolean finish = new AtomicBoolean(false);
-        Task dictator = Task.task().isFinished(finish::get);
+        Task dictator = Task.waitFor(finish::get);
         Task endsBefore = new Lambda();
         Task endsAfter = Task.task();
         Task group = dictator.during(endsBefore, endsAfter);
@@ -168,7 +168,7 @@ class TaskDecoratorTest extends SchedulerTests {
                     dictatorWasPolled.set(true);
                     return true;
                 });
-        Task other = new Lambda(() -> assertAll(() -> assertTrue(dictatorHasRun.get()), () -> assertTrue(dictatorWasPolled.get())));
+        Task other = Task.loop(() -> assertAll(() -> assertTrue(dictatorHasRun.get()), () -> assertTrue(dictatorWasPolled.get())));
         Task group = dictator.during(other);
         Scheduler.schedule(group);
         Scheduler.update();
@@ -178,7 +178,7 @@ class TaskDecoratorTest extends SchedulerTests {
     @Test
     void untilTest() {
         AtomicBoolean finish = new AtomicBoolean(false);
-        Task endsBeforeGroup = new Lambda().until(Task.task().isFinished(finish::get));
+        Task endsBeforeGroup = new Lambda().until(Task.waitFor(finish::get));
         Scheduler.schedule(endsBeforeGroup);
         Scheduler.update();
         assertTrue(endsBeforeGroup.isRunning());
@@ -186,7 +186,7 @@ class TaskDecoratorTest extends SchedulerTests {
         Scheduler.update();
         assertFalse(endsBeforeGroup.isRunning());
         finish.set(false);
-        Task endsAfterGroup = Task.task().until(Task.task().isFinished(finish::get));
+        Task endsAfterGroup = Task.task().until(Task.waitFor(finish::get));
         Scheduler.schedule(endsAfterGroup);
         Scheduler.update();
         assertTrue(endsAfterGroup.isRunning());
@@ -205,7 +205,7 @@ class TaskDecoratorTest extends SchedulerTests {
                     dictatorWasPolled.set(true);
                     return true;
                 });
-        Task other = new Lambda(() -> assertAll(() -> assertTrue(dictatorHasRun.get()),
+        Task other = Task.loop(() -> assertAll(() -> assertTrue(dictatorHasRun.get()),
                 () -> assertTrue(dictatorWasPolled.get())));
         Task group = other.until(dictator);
         Scheduler.schedule(group);
@@ -217,7 +217,7 @@ class TaskDecoratorTest extends SchedulerTests {
     void withTest() {
         AtomicBoolean finish = new AtomicBoolean(false);
 
-        Task task1 = Task.task().isFinished(finish::get);
+        Task task1 = Task.waitFor(finish::get);
         Task task2 = new Lambda();
 
         Task group = task1.with(task2);
@@ -243,7 +243,7 @@ class TaskDecoratorTest extends SchedulerTests {
                     firstWasPolled.set(true);
                     return true;
                 });
-        Task task2 = new Lambda(() ->
+        Task task2 = Task.loop(() ->
                 assertAll(() -> assertTrue(firstHasRun.get()), () -> assertTrue(firstWasPolled.get())));
         Task group = task1.with(task2);
         Scheduler.schedule(group);
@@ -275,7 +275,7 @@ class TaskDecoratorTest extends SchedulerTests {
                     firstWasPolled.set(true);
                     return true;
                 });
-        Task task2 = new Lambda(() -> {
+        Task task2 = Task.loop(() -> {
             assertTrue(firstHasRun.get());
             assertTrue(firstWasPolled.get());
         });
