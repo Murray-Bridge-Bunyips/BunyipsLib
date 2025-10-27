@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
  */
 public class RepeatTask extends Task {
     private final Task task;
+    private boolean needFinish = true;
 
     /**
      * Create a new RepeatTask with the given task.
@@ -27,22 +28,34 @@ public class RepeatTask extends Task {
     }
 
     @Override
+    protected void init() {
+        task.ensureInit();
+    }
+
+    @Override
     protected void periodic() {
         named(task + " (rep.)");
         // Infinite timeout as it will be repeated
-        task.isPriority = isPriority;
+        if (task.isPriority) isPriority = true;
+        else if (isPriority) task.isPriority = true;
         task.execute();
-        if (task.isFinished())
+        needFinish = true;
+        if (task.isFinished()) {
             task.reset();
+            // Make sure we don't call finish erroneously
+            needFinish = false;
+        }
     }
 
     @Override
     protected void onFinish() {
-        task.finish();
+        if (needFinish)
+            task.finish();
     }
 
     @Override
     protected void onReset() {
         task.reset();
+        needFinish = true;
     }
 }
