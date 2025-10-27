@@ -231,5 +231,6 @@ class DynamicTask() : Task() {
 
     override fun onReset() {
         reset.invoke()
+        sharedRef.invalidate()
     }
 }

@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.activeTasks
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.gamepad1
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.gamepad2
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.on
@@ -121,6 +122,17 @@ object Scheduler {
         // Match early-init of the schedule method in WPILib
         task.ensureInit()
         activeTasks.add(task)
+    }
+
+    /**
+     * Calls `finish` on and clears all current [activeTasks].
+     */
+    @JvmStatic
+    fun finishAll() {
+        activeTasks.removeAll {
+            it.finish()
+            true
+        }
     }
 
     /**
