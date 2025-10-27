@@ -604,6 +604,7 @@ abstract class Task : Runnable, Action {
             timeout(this@Task.timeout)
             if (this@Task.dependency.isPresent)
                 on(this@Task.dependency.get(), this@Task.isPriority)
+            this@Task.isPriority = isPriority
             // We shim away the use of run() and execute(), since the DynamicTask will be the new task that is
             // scheduled onto subsystems. All logic relating to timeouts is handled by the parent wrapping DynamicTask.
             // The only things we need to pass forward are things the user has adjusted, which include the function
