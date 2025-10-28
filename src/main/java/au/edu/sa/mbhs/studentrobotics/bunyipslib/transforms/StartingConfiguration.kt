@@ -315,6 +315,12 @@ object StartingConfiguration {
             }
 
             /**
+             * Translate forward from the center of the field tile to your robot center as defined by your translation step.
+             * This is to align your robot to touching the field wall.
+             */
+            fun forward(translationForward: Measure<Distance>) = backward(translationForward.negate())
+
+            /**
              * Rotate the starting position in-place to represent what angle your robot is facing *relative to facing
              * forward* on the chosen alliance side.
              */
