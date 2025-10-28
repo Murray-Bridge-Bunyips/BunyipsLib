@@ -92,8 +92,8 @@ public class SelectTask<T> extends Task {
 
     @Override
     protected void onFinish() {
-        for (Task task : tasks.values())
-            task.finish();
+        if (currentTask != null)
+            currentTask.finish();
     }
 
     @Override
