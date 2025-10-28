@@ -98,6 +98,7 @@ object Scheduler {
      */
     @JvmStatic
     fun use(vararg subsystems: BunyipsSubsystem) {
+        require(subsystems.isNotEmpty()) { "use() called with no arguments!" }
         this.subsystems = subsystems.toHashSet()
     }
 

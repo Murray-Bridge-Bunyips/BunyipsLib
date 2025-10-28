@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import dev.frozenmilk.util.cell.LateInitCell
 import java.util.function.BiFunction
 import java.util.function.BooleanSupplier
@@ -30,6 +31,9 @@ class DynamicTask() : Task() {
      */
     @JvmField
     val sharedRef = LateInitCell<Any>()
+
+    // Required to open the field to dynamic tasks
+    public override lateinit var dashboard: TelemetryPacket
 
     init {
         named("Task (dyn.)")

@@ -127,7 +127,7 @@ abstract class Task : Runnable, Action {
      *
      * @since 7.0.0
      */
-    protected lateinit var dashboard: TelemetryPacket
+    protected open lateinit var dashboard: TelemetryPacket
 
     /**
      * Set the subsystem you want to elect this task to run on, notifying the runner that this task should run there.
@@ -231,6 +231,7 @@ abstract class Task : Runnable, Action {
             return
         }
         Dashboard.usePacket {
+            dashboard = it
             Exceptions.runUserMethod(::init)
             startTime = System.nanoTime()
         }
@@ -610,7 +611,7 @@ abstract class Task : Runnable, Action {
             // The only things we need to pass forward are things the user has adjusted, which include the function
             // definitions for init, periodic, interrupt, reset, finish, and the finish condition.
             init {
-                this@Task.dashboard = dashboard // Need to assign for the  inner instance which may reference `dashboard`
+                this@Task.dashboard = dashboard // Need to assign for the inner instance which may reference `dashboard`
                 this@Task.init()
             }
             periodic {
