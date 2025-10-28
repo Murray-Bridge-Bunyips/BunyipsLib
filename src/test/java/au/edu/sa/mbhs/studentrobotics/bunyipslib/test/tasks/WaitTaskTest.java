@@ -16,13 +16,13 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 class WaitTaskTest extends SchedulerTests {
     @Test
     void waitTaskTest() throws InterruptedException {
-        WaitTask waitTask = new WaitTask(2, Seconds);
+        WaitTask waitTask = new WaitTask(0.5, Seconds);
         Scheduler.schedule(waitTask);
         Scheduler.update();
-        Thread.sleep(1000);
+        Thread.sleep(100);
         Scheduler.update();
         assertTrue(waitTask.isRunning());
-        Thread.sleep(2000);
+        Thread.sleep(450);
         Scheduler.update();
         assertFalse(waitTask.isRunning());
     }
