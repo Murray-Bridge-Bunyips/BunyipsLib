@@ -36,7 +36,6 @@ object StartingConfiguration {
     /**
      * Represents a position, state, and configuration that a robot is able to start a match in.
      */
-    // TODO: fix origin for mixed fields. also fix ftcdashboard being the wrong season
     data class Position @JvmOverloads constructor(
         /**
          * The alliance this robot is starting in.
