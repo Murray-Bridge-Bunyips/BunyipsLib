@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 
 class SchedulingRecursionTest extends SchedulerTests {
@@ -76,10 +77,10 @@ class SchedulingRecursionTest extends SchedulerTests {
     void cancelFromEnd() {
         AtomicInteger counter = new AtomicInteger();
         Task selfCancels = Task.task()
-                        .onFinish((t) -> {
-                            counter.incrementAndGet();
-                            t.finish();
-                        });
+                .onFinish((t) -> {
+                    counter.incrementAndGet();
+                    t.finish();
+                });
         Scheduler.schedule(selfCancels);
 
         assertDoesNotThrow(selfCancels::finish);
@@ -133,11 +134,11 @@ class SchedulingRecursionTest extends SchedulerTests {
         AtomicInteger counter = new AtomicInteger();
         Task bIncrementsCounter = Task.task().onFinish(counter::incrementAndGet).isFinished(() -> true);
         Task aCancelsB = Task.task()
-                        .onFinish((t) -> {
-                            counter.incrementAndGet();
-                            bIncrementsCounter.finish();
-                            t.finish();
-                        });
+                .onFinish((t) -> {
+                    counter.incrementAndGet();
+                    bIncrementsCounter.finish();
+                    t.finish();
+                });
 
         Scheduler.schedule(aCancelsB);
         Scheduler.schedule(bIncrementsCounter);
@@ -148,150 +149,133 @@ class SchedulingRecursionTest extends SchedulerTests {
         assertFalse(bIncrementsCounter.isRunning());
     }
 
-//    @Test
-//    void scheduleFromEndCancel() {
-//        AtomicInteger counter = new AtomicInteger();
-//        Subsystem requirement = new SubsystemBase() {
-//        };
-//        Command other = requirement.runOnce(() -> {
-//        });
-//        FunctionalCommand selfCancels =
-//                new FunctionalCommand(
-//                        () -> {
-//                        },
-//                        () -> {
-//                        },
-//                        interrupted -> {
-//                            counter.incrementAndGet(;
-//                            Scheduler.schedule(other);
-//                        },
-//                        () -> false,
-//                        requirement);
-//
-//        Scheduler.schedule(selfCancels);
-//
-//        assertDoesNotThrow(() -> Scheduler.cancel(selfCancels));
-//        assertEquals(1, counter.get());
-//        assertFalse(selfC.isRunning()ncels));
-//    }
-//
-//    @Test
-//    void scheduleFromEndInterrupt() {
-//        AtomicInteger counter = new AtomicInteger();
-//        Subsystem requirement = new SubsystemBase() {
-//        };
-//        Command other = requirement.runOnce(() -> {
-//        });
-//        FunctionalCommand selfCancels =
-//                new FunctionalCommand(
-//                        () -> {
-//                        },
-//                        () -> {
-//                        },
-//                        interrupted -> {
-//                            counter.incrementAndGet();
-//                            Scheduler.schedule(other);
-//                        },
-//                        () -> false,
-//                        requirement);
-//
-//        Scheduler.schedule(selfCancels);
-//
-//        assertDoesNotThrow(() -> Scheduler.schedule(other));
-//        assertEquals(1, counter.get());
-//        assertFalse(selfC.isRunning()ncels));
-//        assertTrue(other.isRunning());
-//    }
-//
-//    @Test
-//    void scheduleFromEndInterruptAction() {
-//        AtomicInteger counter = new AtomicInteger();
-//        Subsystem requirement = new Subsystem() {
-//        };
-//        Command other = requirement.runOnce(() -> {
-//        });
-//        Command selfCancels = requirement.runOnce(() -> {
-//        });
-//        Scheduler.onCommandInterrupt(
-//                cmd -> {
-//                    counter.incrementAndGet();
-//                    Scheduler.schedule(other);
-//                });
-//        Scheduler.schedule(selfCancels);
-//
-//        assertDoesNotThrow(() -> Scheduler.schedule(other));
-//        assertEquals(1, counter.get());
-//        assertFalse(selfC.isRunning()ncels));
-//        assertTrue(other.isRunning());
-//    }
-//
-//    @Test
-//    void scheduleInitializeFromDefaultCommand() {
-//        AtomicInteger counter = new AtomicInteger();
-//        Subsystem requirement = new SubsystemBase() {
-//        };
-//        Command other = requirement.runOnce(() -> {
-//        }).withInterruptBehavior(interruptionBehavior);
-//        FunctionalCommand defaultCommand =
-//                new FunctionalCommand(
-//                        () -> {
-//                            counter.incrementAndGet();
-//                            Scheduler.schedule(other);
-//                        },
-//                        () -> {
-//                        },
-//                        interrupted -> {
-//                        },
-//                        () -> false,
-//                        requirement);
-//
-//        Scheduler.setDefaultCommand(requirement, defaultCommand);
-//
-//        Scheduler.update();
-//        Scheduler.update();
-//        Scheduler.update();
-//        assertEquals(3, counter.get());
-//        assertFalse(defau.isRunning()tCommand));
-//        assertTrue(other.isRunning());
-//    }
-//
-//    @Test
-//    void cancelDefaultCommandFromEnd() {
-//        AtomicInteger counter = new AtomicInteger();
-//        Subsystem requirement = new Subsystem() {
-//        };
-//        Command defaultCommand =
-//                new FunctionalCommand(
-//                        () -> {
-//                        },
-//                        () -> {
-//                        },
-//                        interrupted -> counter.incrementAndGet(),
-//                        () -> false,
-//                        requirement);
-//        Command other = requirement.runOnce(() -> {
-//        });
-//        Command cancelDefaultCommand =
-//                new FunctionalCommand(
-//                        () -> {
-//                        },
-//                        () -> {
-//                        },
-//                        interrupted -> {
-//                            counter.incrementAndGet();
-//                            Scheduler.schedule(other);
-//                        },
-//                        () -> false);
-//
-//        assertDoesNotThrow(
-//                () -> {
-//                    Scheduler.schedule(cancelDefaultCommand);
-//                    Scheduler.setDefaultCommand(requirement, defaultCommand);
-//                    Scheduler.update();
-//                    Scheduler.cancel(cancelDefaultCommand);
-//                });
-//        assertEquals(2, counter.get());
-//        assertFalse(defau.isRunning()tCommand));
-//        assertTrue(other.isRunning());
-//    }
+    @Test
+    void scheduleFromEndCancel() {
+        AtomicInteger counter = new AtomicInteger();
+        BunyipsSubsystem requirement = new BunyipsSubsystem() {
+            @Override
+            protected void periodic() {
+            }
+        };
+        Task other = new Lambda().on(requirement);
+        Task selfCancels = Task.task()
+                .onFinish(() -> {
+                    counter.incrementAndGet();
+                    Scheduler.schedule(other);
+                })
+                .on(requirement);
+
+        Scheduler.schedule(selfCancels);
+
+        assertDoesNotThrow(selfCancels::finish);
+        assertEquals(1, counter.get());
+        assertFalse(selfCancels.isRunning());
+    }
+
+    @Test
+    void scheduleFromEndInterrupt() {
+        AtomicInteger counter = new AtomicInteger();
+        BunyipsSubsystem requirement = new BunyipsSubsystem() {
+            @Override
+            protected void periodic() {
+            }
+        };
+        Task other = new Lambda().on(requirement).asPriority();
+        Task selfCancels = Task.task()
+                .onFinish(() -> {
+                    counter.incrementAndGet();
+                    Scheduler.schedule(other);
+                })
+                .on(requirement);
+
+        Scheduler.schedule(selfCancels);
+
+        assertDoesNotThrow(() -> Scheduler.schedule(other));
+        assertEquals(1, counter.get());
+        assertFalse(selfCancels.isRunning());
+        assertTrue(other.isRunning());
+    }
+
+    @Test
+    void scheduleFromEndInterruptAction() {
+        AtomicInteger counter = new AtomicInteger();
+        BunyipsSubsystem requirement = new BunyipsSubsystem() {
+            @Override
+            protected void periodic() {
+            }
+        };
+        Task other = new Lambda()
+                .on(requirement)
+                .asPriority();
+        Task selfCancels = new Lambda()
+                .mutate()
+                .onInterrupt(() -> {
+                    counter.incrementAndGet();
+                    Scheduler.schedule(other);
+                })
+                .on(requirement);
+        Scheduler.schedule(selfCancels);
+
+        assertDoesNotThrow(() -> Scheduler.schedule(other));
+        assertEquals(1, counter.get());
+        assertFalse(selfCancels.isRunning());
+        assertTrue(other.isRunning());
+    }
+
+    @Test
+    void scheduleInitializeFromDefaultCommand() {
+        AtomicInteger counter = new AtomicInteger();
+        BunyipsSubsystem requirement = new BunyipsSubsystem() {
+            @Override
+            protected void periodic() {
+            }
+        };
+        Scheduler.use(requirement);
+        Task other = new Lambda().on(requirement).named("Other");
+        Task defaultTask = Task.task()
+                        .init(() -> {
+                            counter.incrementAndGet();
+                            Scheduler.schedule(other);
+                        })
+                        .on(requirement)
+                        .named("Default Task");
+        requirement.setDefaultTask(defaultTask);
+
+        Scheduler.update();
+        Scheduler.update();
+        Scheduler.update();
+        assertEquals(3, counter.get());
+        assertFalse(defaultTask.isRunning());
+        assertTrue(other.isRunning());
+    }
+
+    @Test
+    void cancelDefaultCommandFromEnd() {
+        AtomicInteger counter = new AtomicInteger();
+        BunyipsSubsystem requirement = new BunyipsSubsystem() {
+            @Override
+            protected void periodic() {
+            }
+        };
+        Task defaultTask = Task.task()
+                .onFinish(counter::incrementAndGet)
+                .on(requirement);
+        Task other = new Lambda().on(requirement);
+        Task cancelDefaultTask = Task.task()
+                .onFinish(() -> {
+                    counter.incrementAndGet();
+                    Scheduler.schedule(other);
+                });
+
+        assertDoesNotThrow(
+                () -> {
+                    Scheduler.schedule(cancelDefaultTask);
+                    requirement.setDefaultTask(defaultTask);
+                    Scheduler.update();
+                    cancelDefaultTask.finish();
+                });
+        assertEquals(2, counter.get());
+        assertFalse(defaultTask.isRunning());
+        assertTrue(other.isRunning());
+    }
 }
