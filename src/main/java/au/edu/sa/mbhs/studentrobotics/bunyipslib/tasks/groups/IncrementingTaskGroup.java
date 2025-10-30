@@ -56,6 +56,16 @@ public class IncrementingTaskGroup extends TaskGroup {
     }
 
     @Override
+    protected final void onFinish() {
+        tasks.get(taskIndex).finish();
+    }
+
+    @Override
+    protected final void onReset() {
+        // no-op
+    }
+
+    @Override
     protected boolean isTaskFinished() {
         return tasks.get(taskIndex).isFinished();
     }

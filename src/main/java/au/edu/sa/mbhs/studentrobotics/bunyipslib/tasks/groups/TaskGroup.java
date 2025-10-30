@@ -78,7 +78,7 @@ public abstract class TaskGroup extends Task {
     }
 
     @Override
-    protected final void onFinish() {
+    protected void onFinish() {
         finishAllTasks();
     }
 
