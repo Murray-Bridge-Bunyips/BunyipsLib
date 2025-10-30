@@ -20,14 +20,14 @@ class RepeatTaskTest extends SchedulerTests {
         var isFinishedHook = new AtomicBoolean(false);
 
         var task = Task.task()
-                        .init(initCounter::incrementAndGet)
-                        .periodic(exeCounter::incrementAndGet)
-                        .onFinish(endCounter::incrementAndGet)
-                        .isFinished(() -> {
-                            isFinishedCounter.incrementAndGet();
-                            return isFinishedHook.get();
-                        })
-                        .repeatedly();
+                .init(initCounter::incrementAndGet)
+                .periodic(exeCounter::incrementAndGet)
+                .onFinish(endCounter::incrementAndGet)
+                .isFinished(() -> {
+                    isFinishedCounter.incrementAndGet();
+                    return isFinishedHook.get();
+                })
+                .repeatedly();
 
         assertEquals(0, initCounter.get());
         assertEquals(0, exeCounter.get());

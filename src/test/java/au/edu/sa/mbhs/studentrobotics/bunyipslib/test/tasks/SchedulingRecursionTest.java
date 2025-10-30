@@ -233,12 +233,12 @@ class SchedulingRecursionTest extends SchedulerTests {
         Scheduler.use(requirement);
         Task other = new Lambda().on(requirement).named("Other");
         Task defaultTask = Task.task()
-                        .init(() -> {
-                            counter.incrementAndGet();
-                            Scheduler.schedule(other);
-                        })
-                        .on(requirement)
-                        .named("Default Task");
+                .init(() -> {
+                    counter.incrementAndGet();
+                    Scheduler.schedule(other);
+                })
+                .on(requirement)
+                .named("Default Task");
         requirement.setDefaultTask(defaultTask);
 
         Scheduler.update();

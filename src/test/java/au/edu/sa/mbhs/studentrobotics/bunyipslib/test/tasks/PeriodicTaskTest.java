@@ -2,8 +2,9 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.test.tasks;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;

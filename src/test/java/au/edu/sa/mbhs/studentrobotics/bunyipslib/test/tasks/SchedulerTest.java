@@ -39,7 +39,8 @@ class SchedulerTest extends SchedulerTests {
     @Test
     void schedulerInterruptLoopTest() {
         AtomicInteger counter = new AtomicInteger();
-        Task task = Task.loop(() -> {})
+        Task task = Task.loop(() -> {
+                })
                 .mutate()
                 .onInterrupt(counter::incrementAndGet);
         Scheduler.schedule(task);
@@ -55,7 +56,8 @@ class SchedulerTest extends SchedulerTests {
             protected void periodic() {
             }
         };
-        Task task = Task.loop(() -> {})
+        Task task = Task.loop(() -> {
+                })
                 .onInterrupt(counter::incrementAndGet)
                 .on(subsystem);
         Task interruptor = new Lambda()
@@ -77,7 +79,8 @@ class SchedulerTest extends SchedulerTests {
             protected void periodic() {
             }
         };
-        Task task = Task.loop(() -> {})
+        Task task = Task.loop(() -> {
+                })
                 .onInterrupt(counter::incrementAndGet)
                 .on(subsystem);
         Task interruptor = new Lambda()
