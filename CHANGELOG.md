@@ -2,6 +2,135 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v8.0.0 (2025-10-30)
+
+Logging robustness and API refurbishing.
+
+### Breaking changes
+
+- Task and Scheduler overhaul
+    - Removal of several task methods, simplifying the API
+        - All task behaviours now match WPILib expected behaviour with a few exceptions
+        - For example, `finishNow()` has been replaced with `finish()` and `finish()` does not wait for the polling loop
+          to call the finisher methods
+        - The polling loop in `run()` handles the isFinished condition, `poll()` has been removed and implementations
+          can idempotently poll `isFinished()`
+        - Task childing is also more easily accomplished with the new `sync(Task)` method
+        - Task `deltaTime` renamed to `elapsedTime` to avoid confusion
+        - Task `isRunning` renamed to `isActive` for similar reason
+        - `ensureInit()` method to pre-initalise tasks matching WPILib scheduling
+        - Improved task and scheduler robustness by unit testing
+    - Reimplementation of Scheduler as a static singleton
+    - The `Scheduler` now follows the WPILib trigger bindings such as `onTrue`, `whileTrue`, etc.
+        - Bindings are now also made using `Scheduler.Trigger` instances, with gamepad utilities aliased on
+          `Scheduler.gamepad1().button(...)` or `.axisGreaterThan(...)` etc. and `Controller` instance aliases
+    - Review the new API docs and wiki for more information
+    - Removed `CommandBasedBunyipsOpMode`
+        - New implementations must migrate to a `BunyipsOpMode` and call `Scheduler.update()` in the active loop.
+          Bindings occur in `onInit()`.
+    - Removed `Tasks` utility class, use `Scheduler`
+- Update to SDK v11.0
+    - Other dependencies include MeepMeep v0.1.7, Sloth remains on the old version
+        - Note: FtcDashboard remains out of date and hence the field image is outdated,
+          see [this](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/blob/c9d7eaaf94c6b49b542aa5ddd49814a88fee13a3/TeamCode/Common/src/main/java/org/firstinspires/ftc/teamcode/common/FtcDashboardDecodeField.java)
+          class for a workaround using a resource image. This is not included in the library as it is a workaround.
+    - The wiki has been updated accordingly with these versions
+- MeepMeepRunner has been updated to update the current game
+    - Git ignored copies of this file will need to run `git update-index --no-skip-worktree MeepMeepRunner.java`
+    - The current game has been lifted to the MeepMeepInternal class, so no further changes should occur to this file
+- Reimplemented the Feedforward gains system
+    - The previous implementation of feedforward attempting to mirror WPILib had fatal flaws in assuming the use of
+      system state
+    - The new feedforward gains system now comes with many smaller, separate feedforward gains **applied to the setpoint
+      ** rather than the state
+    - The wiki has been updated with information in the IO section
+    - This new implementation makes better use of the composition API, greatly increasing flexibility
+- Reimplemented the Kalman filter
+    - Now uses an appropriate dynamic gain rather than pre-computing to achieve higher accuracy akin to the conceptual
+      filter
+- `PinpointLocalizer.Params` no longer extends `TwoWheelLocalizer.Params`
+    - Reduce footguns and allow the builder to function normally
+- Fix inaccuracies with `Motor` gain scheduling
+    - Gain scheduling always assumed that it would be based on the current position of the motor
+    - This makes gain scheduling not useful for velocity controllers
+    - The new implementation now renames `atPosition` to `atState` and instead assumes velocity for RUE gains, and
+      position as before for RTP gains
+
+### Non-breaking changes
+
+- Ported missing MeepMeep internal shims
+- `BunyipsSubsystem.delegate` is now a vararg method
+- Simplified the `Threads` result API, supporting `getResult()` to handle checked exceptions
+- `AprilTagRelocalizingAccumulator` now accepts the closest pose to the camera rather than an average
+    - Taking an average was not correct behaviour to do and may have been the cause of previous bugs with the system
+- Update `Accumulator` instances to use the pose convention for AdvantageScope
+- `MecanumDrive` instances now record to the `MECANUM_COMMAND` channel every loop, not just in a trajectory
+- Remove some unnecessary uses of `@Nullable`
+- `ActionTask` now recursively unwraps `RaceAction` instances to `RaceTaskGroup`
+- Condition now uses self-typing to allow for extension classes that compose
+- `HoldableActuator` now has more flexibility in tasks and does not mandate the default tasks for power capturing
+- `BunyipsSubsystem` instances no longer spam Logcat when a task change is ignored
+- `DualTelemetry.smartAdd` now uses a more sensible OpMode runtime caption as a fallback
+- New `ConditionalTask` constructors for Runnable names and improved naming
+- `BunyipsSubsystem` instances will now no longer accept default tasks that have `disableSubsystemAttachment` enabled
+
+### Bug fixes
+
+- Fix the `PinpointLocalizer`
+    - No longer crashes on initialisation
+    - Params object can now be constructed without casting
+    - Directions are applied properly instead of on the same wheel
+    - Millimeter conversion adapted to provide accurate odometry readings
+- Refine various inaccurate or outdated docs and wiki information
+- Fix erroneous double-rotation of `AprilTagRelocalizingAccumulator` poses
+- The `MecanumDrive` pose holding setting is now only applied for autonomous OpModes
+    - Conflicts with non-command-based applications where the default task should be Idle
+    - It also does not make sense to use in TeleOp and instead a `HolonomicVectorDriveTask` is preferred
+- Fix recursive error in `Motor` if a RTP or RUE controller is not specified
+- Velocity controllers now get appropriately updated in Motor when the power is 0
+- WaitTasks no longer call `onInterrupt` when they finish naturally
+- `ServoEx` instances now call `setPwmEnable` on `setPosition` calls
+    - Fixes the problem of servos not responding on init as their cached position has not reactivated the PWM
+- The default IdleTask on subsystems now depends on the subsystem
+- Additional DynamicTask fixes for dashboard packets
+    - Packets can now be accessed by the task lambdas
+
+### Additions
+
+- Default use of the `FlightRecorder` has been vastly improved across the library
+    - All `Localizer` instances now report more information on status and state
+        - This includes the Pinpoint recording the reported status and raw inputs in the event of a failure
+    - Reformatted naming scheme for specific logging events
+    - All integrated `BunyipsSubsystem` instances now opt to supplying a `LogSchema`
+        - This schema is attached internally via `attachLogSchema`, and automatically logged at a 10ms interval to the
+          `FlightRecorder`
+        - These subsystems are logged under the channels `SUBSYSTEM_{NAME}`
+        - Log schemas include all relevant information to the subsystem, such as the current position/stall time/power
+          of a `HoldableActuator`
+        - These logs are fully automated and no user intervention is required
+        - Viewing subsystem log schemas live on the dashboard is accomplishable via `Dashboard.logLiveSchema`
+    - Additional logging is also done in the `Motor.debug` and the new `ServoEx.debug` methods
+    - `gamepad1` and `gamepad2` inputs are automatically logged through the `Controller` class
+        - The log schema used is compatible with the AdvantageScope Joysticks replay tab, by mimicking a WPILog
+    - RoadRunner trajectories are logged on construction to further aid debugging
+    - BunyipsLib metadata (build time, commit) is also recorded on initialisation through the BunyipsLib Hook system
+    - These `FlightRecorder` improvements greatly improve the support for AdvantageScope reviewing capabilities
+- Extracted the `TelemetryPacket` merging implementation from `DualTelemetry` to `Dashboard.mergePackets(a, b)`
+- Add DECODE field to `Field` class
+- New `Motif` enum
+- `Motor.debug` now specifies a `Motor.Scope` vararg to log/telemetry only certain events
+- New `MotifFinder` async task to run via `Threads`
+    - Continuously scans for the Motif AprilTag to return as a result of the task
+- New `GreenArtifact` and `PurpleArtifact` `ColourThreshold` processors
+- New `RetryTask` from Marrow lib
+    - Allows a Task to be retried while a specific condition is not met, useful for re-running tasks that may fail
+- Add the Pinpoint to HardwareTester
+- More unit tests (up to 295 now)
+- `PIDFController` now has a `getCurrentProcess()` method for polling the state of the controller
+- AlignToPointDriveTask now has a `withAlignmentOffset` to add an additional robot-centric offset to the alignment
+- Logging calls across BunyipsLib can now be inhibited with the static variables on DualTelemetry, Dashboard, and Dbg
+- `Task.onlyWhile`, `.onlyIf`, `.unless` and other new composition aliases on Task
+
 ## v7.4.0 (2025-08-18)
 
 SDK + dependency updates and reorganising.
