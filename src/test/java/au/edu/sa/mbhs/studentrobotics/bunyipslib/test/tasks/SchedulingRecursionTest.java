@@ -37,8 +37,8 @@ class SchedulingRecursionTest extends SchedulerTests {
                     Scheduler.update();
                     Scheduler.schedule(other);
                 });
-        assertFalse(selfCancels.isRunning());
-        assertTrue(other.isRunning());
+        assertFalse(selfCancels.isActive());
+        assertTrue(other.isActive());
         assertEquals(1, counter.get());
         Scheduler.update();
         assertTrue(hasOtherRun.get());
@@ -66,8 +66,8 @@ class SchedulingRecursionTest extends SchedulerTests {
                     Scheduler.update();
                 });
         Scheduler.update();
-        assertFalse(selfCancels.isRunning());
-        assertTrue(other.isRunning());
+        assertFalse(selfCancels.isActive());
+        assertTrue(other.isActive());
         assertEquals(1, counter.get());
         Scheduler.update();
         assertTrue(hasOtherRun.get());
@@ -85,7 +85,7 @@ class SchedulingRecursionTest extends SchedulerTests {
 
         assertDoesNotThrow(selfCancels::finish);
         assertEquals(1, counter.get());
-        assertFalse(selfCancels.isRunning());
+        assertFalse(selfCancels.isActive());
     }
 
     @Test
@@ -123,10 +123,10 @@ class SchedulingRecursionTest extends SchedulerTests {
 
         assertDoesNotThrow(aCancelsB::finish);
         assertEquals(4, counter.get());
-        assertFalse(aCancelsB.isRunning());
-        assertFalse(bCancelsC.isRunning());
-        assertFalse(cCancelsD.isRunning());
-        assertFalse(dCancelsAll.isRunning());
+        assertFalse(aCancelsB.isActive());
+        assertFalse(bCancelsC.isActive());
+        assertFalse(cCancelsD.isActive());
+        assertFalse(dCancelsAll.isActive());
     }
 
     @Test
@@ -145,8 +145,8 @@ class SchedulingRecursionTest extends SchedulerTests {
 
         assertDoesNotThrow(aCancelsB::finish);
         assertEquals(2, counter.get());
-        assertFalse(aCancelsB.isRunning());
-        assertFalse(bIncrementsCounter.isRunning());
+        assertFalse(aCancelsB.isActive());
+        assertFalse(bIncrementsCounter.isActive());
     }
 
     @Test
@@ -169,7 +169,7 @@ class SchedulingRecursionTest extends SchedulerTests {
 
         assertDoesNotThrow(selfCancels::finish);
         assertEquals(1, counter.get());
-        assertFalse(selfCancels.isRunning());
+        assertFalse(selfCancels.isActive());
     }
 
     @Test
@@ -192,8 +192,8 @@ class SchedulingRecursionTest extends SchedulerTests {
 
         assertDoesNotThrow(() -> Scheduler.schedule(other));
         assertEquals(1, counter.get());
-        assertFalse(selfCancels.isRunning());
-        assertTrue(other.isRunning());
+        assertFalse(selfCancels.isActive());
+        assertTrue(other.isActive());
     }
 
     @Test
@@ -218,8 +218,8 @@ class SchedulingRecursionTest extends SchedulerTests {
 
         assertDoesNotThrow(() -> Scheduler.schedule(other));
         assertEquals(1, counter.get());
-        assertFalse(selfCancels.isRunning());
-        assertTrue(other.isRunning());
+        assertFalse(selfCancels.isActive());
+        assertTrue(other.isActive());
     }
 
     @Test
@@ -241,12 +241,17 @@ class SchedulingRecursionTest extends SchedulerTests {
                 .named("Default Task");
         requirement.setDefaultTask(defaultTask);
 
-        Scheduler.update();
-        Scheduler.update();
-        Scheduler.update();
+        // BunyipsLib expects that tasks on subsystems are executed/swapped once per cycle and can switch once per cycle.
+        // This differs from WPILib where we would expect counter to increment on each update. This also means we can
+        // have two tasks "active" at the same time for default and rescheduled as ensureInit fires.
+        Scheduler.update(); // init default
+        Scheduler.update(); // execute other
+        Scheduler.update(); // init default
+        Scheduler.update(); // execute other
+        Scheduler.update(); // init default
         assertEquals(3, counter.get());
-        assertFalse(defaultTask.isRunning());
-        assertTrue(other.isRunning());
+        assertTrue(defaultTask.isActive());
+        assertTrue(other.isActive()); // other has been scheduled by init of defaultTask, it is ensureInited but not executing
     }
 
     @Test
@@ -275,7 +280,7 @@ class SchedulingRecursionTest extends SchedulerTests {
                     cancelDefaultTask.finish();
                 });
         assertEquals(2, counter.get());
-        assertFalse(defaultTask.isRunning());
-        assertTrue(other.isRunning());
+        assertFalse(defaultTask.isActive());
+        assertTrue(other.isActive());
     }
 }

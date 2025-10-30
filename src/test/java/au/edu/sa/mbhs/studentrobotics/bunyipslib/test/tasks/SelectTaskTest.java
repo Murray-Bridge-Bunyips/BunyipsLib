@@ -110,7 +110,7 @@ class SelectTaskTest extends SchedulerTests {
         Scheduler.schedule(new Lambda().on(system2));
 
         // BunyipsLib behaviour, disabled attachments are not stopped from execution on dependency conflicts
-        assertTrue(selectTask.isRunning());
+        assertTrue(selectTask.isActive());
 
         sup.set("unknown");
         Scheduler.update();

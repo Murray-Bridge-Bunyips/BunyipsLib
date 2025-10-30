@@ -24,7 +24,7 @@ class DefaultTaskTest extends SchedulerTests {
         defaultTask.setAsDefaultTask();
         Scheduler.update();
 
-        assertTrue(defaultTask.isRunning());
+        assertTrue(defaultTask.isActive());
     }
 
     @Test
@@ -39,12 +39,12 @@ class DefaultTaskTest extends SchedulerTests {
         defaultTask.setAsDefaultTask();
         Scheduler.update();
         Scheduler.schedule(interrupter);
-        assertFalse(defaultTask.isRunning());
-        assertTrue(interrupter.isRunning());
+        assertFalse(defaultTask.isActive());
+        assertTrue(interrupter.isActive());
         interrupter.finish();
         Scheduler.update();
-        assertTrue(defaultTask.isRunning());
-        assertFalse(interrupter.isRunning());
+        assertTrue(defaultTask.isActive());
+        assertFalse(interrupter.isActive());
     }
 
     @Test
@@ -60,13 +60,13 @@ class DefaultTaskTest extends SchedulerTests {
                 .on(hasDefaultTask);
         defaultTask.setAsDefaultTask();
         Scheduler.update();
-        assertTrue(defaultTask.isRunning());
+        assertTrue(defaultTask.isActive());
         BunyipsSubsystem.disableAll();
         Scheduler.update();
-        assertFalse(defaultTask.isRunning());
+        assertFalse(defaultTask.isActive());
         BunyipsSubsystem.enableAll();
         Scheduler.update();
-        assertTrue(defaultTask.isRunning());
+        assertTrue(defaultTask.isActive());
         assertTrue(intr.get());
     }
 }

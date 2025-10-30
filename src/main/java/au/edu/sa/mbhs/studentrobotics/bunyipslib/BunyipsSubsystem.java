@@ -324,6 +324,7 @@ public abstract class BunyipsSubsystem {
                 // Task changes are repetitive to telemetry log, will just leave the important messages to there
                 sout(Dbg::logv, "Task changed: % <- %", defaultTask, currentTask);
             }
+            defaultTask.reset();
             currentTask = defaultTask;
         }
         return currentTask;

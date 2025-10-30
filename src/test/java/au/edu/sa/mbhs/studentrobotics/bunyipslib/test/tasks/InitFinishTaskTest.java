@@ -23,11 +23,11 @@ class InitFinishTaskTest extends SchedulerTests {
         Scheduler.schedule(task);
         Scheduler.update();
 
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
 
         task.finish();
 
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
         assertTrue(cond1.get());
         assertTrue(cond2.get());
     }

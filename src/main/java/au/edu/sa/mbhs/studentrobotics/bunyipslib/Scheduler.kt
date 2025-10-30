@@ -117,7 +117,7 @@ object Scheduler {
         if (activeTasks.contains(task))
             return
         // Important step that we ensure the task is ready for execution
-        if (task.isRunning)
+        if (task.isActive)
             task.finish()
         task.reset()
         // Match early-init of the schedule method in WPILib
@@ -212,7 +212,7 @@ object Scheduler {
             }
             for (binding in scheduledTasks) {
                 if (binding.task.dependency.isPresent // Whether the task is never run from the Scheduler (and task reports were handled above)
-                    || !binding.task.isRunning // Whether this task is actually running
+                    || !binding.task.isActive // Whether this task is actually running
                     || binding.muted // Whether the task has declared itself as muted
                 ) {
                     continue
@@ -486,7 +486,7 @@ object Scheduler {
         infix fun toggleOnTrue(task: Task) = buildScheduledTask("toggleOnTrue") {
             ScheduledTask(task, this) { prev, curr ->
                 if (!prev && curr) {
-                    if (task.isRunning)
+                    if (task.isActive)
                         task.finish()
                     else
                         schedule(task)
@@ -505,7 +505,7 @@ object Scheduler {
         infix fun toggleOnFalse(task: Task) = buildScheduledTask("toggleOnFalse") {
             ScheduledTask(task, this) { prev, curr ->
                 if (prev && !curr) {
-                    if (task.isRunning)
+                    if (task.isActive)
                         task.finish()
                     else
                         schedule(task)

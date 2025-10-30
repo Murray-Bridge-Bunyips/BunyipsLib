@@ -20,10 +20,10 @@ class WaitTaskTest extends SchedulerTests {
         Scheduler.update();
         Thread.sleep(100);
         Scheduler.update();
-        assertTrue(waitTask.isRunning());
+        assertTrue(waitTask.isActive());
         Thread.sleep(450);
         Scheduler.update();
-        assertFalse(waitTask.isRunning());
+        assertFalse(waitTask.isActive());
     }
 
     @Test
@@ -40,12 +40,12 @@ class WaitTaskTest extends SchedulerTests {
 
         assertTrue(task1_init.get());
         assertTrue(task1_periodic.get());
-        assertTrue(task1.isRunning());
+        assertTrue(task1.isActive());
 
         Thread.sleep(150);
         Scheduler.update();
 
         assertTrue(task1_int.get());
-        assertFalse(task1.isRunning());
+        assertFalse(task1.isActive());
     }
 }

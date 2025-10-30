@@ -21,8 +21,8 @@ class ConditionalTaskTest extends SchedulerTests {
         ConditionalTask conditionalTask = new ConditionalTask(task1, task2, () -> true);
         Scheduler.schedule(conditionalTask);
         Scheduler.update();
-        assertTrue(task1.isRunning());
-        assertFalse(task2.isRunning());
+        assertTrue(task1.isActive());
+        assertFalse(task2.isActive());
     }
 
     @Test
@@ -50,7 +50,7 @@ class ConditionalTaskTest extends SchedulerTests {
         Scheduler.schedule(new Lambda().on(system1).asPriority());
         // BunyipsLib does not require groups be unscheduled when one of their children classes has dependency conflicts
         // This differs from WPILib but is a fundamental structure of the old Task system that doesn't matter too much
-        assertFalse(task1.isRunning());
+        assertFalse(task1.isActive());
         assertTrue(task1Int.get());
         assertFalse(task2Int.get());
     }

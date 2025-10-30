@@ -54,7 +54,7 @@ class SequentialTaskGroupTest extends SchedulerTests {
         assertTrue(task2_periodic.get());
         assertTrue(task2_onFinish.get());
 
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
@@ -99,7 +99,7 @@ class SequentialTaskGroupTest extends SchedulerTests {
         assertFalse(task3_onInterrupt.get());
         assertFalse(task3_onFinish.get());
 
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
@@ -136,7 +136,7 @@ class SequentialTaskGroupTest extends SchedulerTests {
         Scheduler.schedule(group);
         Scheduler.schedule(task3);
 
-        assertTrue(group.isRunning()); // BunyipsLib behaviour
-        assertTrue(task3.isRunning());
+        assertTrue(group.isActive()); // BunyipsLib behaviour
+        assertTrue(task3.isActive());
     }
 }

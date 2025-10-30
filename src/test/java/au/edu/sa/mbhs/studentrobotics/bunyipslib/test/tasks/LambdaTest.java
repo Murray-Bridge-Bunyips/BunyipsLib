@@ -18,6 +18,6 @@ class LambdaTest extends SchedulerTests {
         Scheduler.schedule(task);
         Scheduler.update();
         assertTrue(cond.get());
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 }

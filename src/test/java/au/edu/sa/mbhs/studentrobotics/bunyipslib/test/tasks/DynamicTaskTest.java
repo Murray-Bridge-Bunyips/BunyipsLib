@@ -24,10 +24,10 @@ class DynamicTaskTest extends SchedulerTests {
                 .isFinished(cond4::get);
         Scheduler.schedule(task);
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         cond4.set(true);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
         assertTrue(cond1.get());
         assertTrue(cond2.get());
         assertTrue(cond3.get());

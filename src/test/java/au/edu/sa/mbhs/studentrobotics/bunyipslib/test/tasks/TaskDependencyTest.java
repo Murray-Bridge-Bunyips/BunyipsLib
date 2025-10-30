@@ -45,8 +45,8 @@ class TaskDependencyTest extends SchedulerTests {
         assertTrue(interruptedInterrupted.get());
         assertTrue(interrupterInit.get());
         assertTrue(interrupterPeriodic.get());
-        assertFalse(interrupted.isRunning());
-        assertTrue(interrupter.isRunning());
+        assertFalse(interrupted.isActive());
+        assertTrue(interrupter.isActive());
     }
 
     @Test
@@ -60,8 +60,8 @@ class TaskDependencyTest extends SchedulerTests {
         Task interrupter = Task.task().on(system);
         Scheduler.schedule(stoic);
         Scheduler.schedule(interrupter);
-        assertTrue(stoic.isRunning());
-        assertFalse(interrupter.isRunning());
+        assertTrue(stoic.isActive());
+        assertFalse(interrupter.isActive());
     }
 
     @Test

@@ -43,7 +43,7 @@ class RaceTaskGroupTest extends SchedulerTests {
         assertFalse(in1.get());
         assertTrue(p2.get());
         assertTrue(in2.get());
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
@@ -67,7 +67,7 @@ class RaceTaskGroupTest extends SchedulerTests {
         assertTrue(i1.get());
         assertEquals(2, l2.get());
         assertTrue(i2.get());
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
@@ -88,8 +88,8 @@ class RaceTaskGroupTest extends SchedulerTests {
         Task group = new RaceTaskGroup(task1, task2);
         Scheduler.schedule(group);
         Scheduler.schedule(task3);
-        assertTrue(group.isRunning()); // BunyipsLib expected behaviour, group continues
-        assertTrue(task3.isRunning());
+        assertTrue(group.isActive()); // BunyipsLib expected behaviour, group continues
+        assertTrue(task3.isActive());
     }
 
     @Test
@@ -120,7 +120,7 @@ class RaceTaskGroupTest extends SchedulerTests {
         t2.set(true);
         // at this point the sequential group should be done
         assertDoesNotThrow(Scheduler::update);
-        assertFalse(group2.isRunning());
+        assertFalse(group2.isActive());
     }
 
     @Test
@@ -149,7 +149,7 @@ class RaceTaskGroupTest extends SchedulerTests {
         assertTrue(t2periodic.get());
         assertTrue(task2.isFinished());
         assertTrue(t2int.get());
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
         t1.set(false);
         t1init.set(false);
         task1.reset();
@@ -161,9 +161,9 @@ class RaceTaskGroupTest extends SchedulerTests {
         assertTrue(t2init.get());
         Scheduler.update();
         Scheduler.update();
-        assertTrue(group.isRunning());
+        assertTrue(group.isActive());
         t2.set(true);
         Scheduler.update();
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 }

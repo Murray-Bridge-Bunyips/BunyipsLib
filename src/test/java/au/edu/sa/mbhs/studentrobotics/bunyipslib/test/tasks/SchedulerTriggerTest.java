@@ -31,13 +31,13 @@ class SchedulerTriggerTest extends SchedulerTests {
         new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.A)
                 .onTrue(task);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
         gamepad.a = true;
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         finished.set(true);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
@@ -50,13 +50,13 @@ class SchedulerTriggerTest extends SchedulerTests {
         new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.B)
                 .onFalse(task);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
         gamepad.b = false;
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         finished.set(true);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
@@ -69,21 +69,21 @@ class SchedulerTriggerTest extends SchedulerTests {
         new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.X)
                 .onChange(task);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
         gamepad.x = false;
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         finished.set(true);
         Scheduler.update();
         assertFalse(Scheduler.activeTasks.contains(task));
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
         finished.set(false);
         gamepad.x = true;
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         finished.set(true);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test

@@ -24,12 +24,12 @@ class TaskScheduleTest extends SchedulerTests {
                 .onFinish(() -> onFinish.set(true))
                 .isFinished(() -> true);
         Scheduler.schedule(task);
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         assertTrue(init.get());
         Scheduler.update();
         assertTrue(periodic.get());
         assertTrue(onFinish.get());
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
@@ -46,7 +46,7 @@ class TaskScheduleTest extends SchedulerTests {
                 .periodic(loops::incrementAndGet)
                 .isFinished(cond::get);
         Scheduler.schedule(task);
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         Scheduler.update();
         cond.set(true);
         Scheduler.update();
@@ -54,7 +54,7 @@ class TaskScheduleTest extends SchedulerTests {
         assertEquals(2, loops.get());
         assertTrue(onFinish.get());
         assertFalse(onInterrupt.get());
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
@@ -65,28 +65,28 @@ class TaskScheduleTest extends SchedulerTests {
         Scheduler.schedule(task1);
         Scheduler.schedule(task2);
         Scheduler.schedule(task3);
-        assertTrue(task1.isRunning());
-        assertTrue(task2.isRunning());
-        assertTrue(task3.isRunning());
+        assertTrue(task1.isActive());
+        assertTrue(task2.isActive());
+        assertTrue(task3.isActive());
         Scheduler.update();
-        assertTrue(task1.isRunning());
-        assertTrue(task2.isRunning());
-        assertTrue(task3.isRunning());
+        assertTrue(task1.isActive());
+        assertTrue(task2.isActive());
+        assertTrue(task3.isActive());
         task1.finish();
         Scheduler.update();
-        assertTrue(task2.isRunning());
-        assertTrue(task3.isRunning());
-        assertFalse(task1.isRunning());
+        assertTrue(task2.isActive());
+        assertTrue(task3.isActive());
+        assertFalse(task1.isActive());
         task2.finish();
         Scheduler.update();
-        assertTrue(task3.isRunning());
-        assertFalse(task1.isRunning());
-        assertFalse(task2.isRunning());
+        assertTrue(task3.isActive());
+        assertFalse(task1.isActive());
+        assertFalse(task2.isActive());
         task3.finish();
         Scheduler.update();
-        assertFalse(task3.isRunning());
-        assertFalse(task1.isRunning());
-        assertFalse(task2.isRunning());
+        assertFalse(task3.isActive());
+        assertFalse(task1.isActive());
+        assertFalse(task2.isActive());
     }
 
     @Test
@@ -102,7 +102,7 @@ class TaskScheduleTest extends SchedulerTests {
         Scheduler.update();
         assertTrue(fin.get());
         assertTrue(inter.get());
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test

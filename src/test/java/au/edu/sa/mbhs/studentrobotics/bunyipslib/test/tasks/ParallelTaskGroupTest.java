@@ -43,7 +43,7 @@ class ParallelTaskGroupTest extends SchedulerTests {
         assertTrue(task1.isFinished());
         assertEquals(2, task2Loops.get());
         assertTrue(task2.isFinished());
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
@@ -76,7 +76,7 @@ class ParallelTaskGroupTest extends SchedulerTests {
         assertEquals(2, t2periodic.get());
         assertTrue(t2finished.get());
         assertTrue(t2interrupted.get());
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
@@ -100,7 +100,7 @@ class ParallelTaskGroupTest extends SchedulerTests {
         // Note: BunyipsLib does not cancel groups on dependency override, hence this does not match WPILib.
         // Users must instead be careful about their use of groups with subsystem dependencies, and appropriately
         // ensure overwriting tasks are set with correct end conditions and priorities
-        assertTrue(group.isRunning());
-        assertTrue(task3.isRunning());
+        assertTrue(group.isActive());
+        assertTrue(task3.isActive());
     }
 }

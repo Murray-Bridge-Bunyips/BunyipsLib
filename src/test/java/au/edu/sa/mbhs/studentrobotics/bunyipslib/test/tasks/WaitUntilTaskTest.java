@@ -17,9 +17,9 @@ class WaitUntilTaskTest extends SchedulerTests {
         Task command = Task.waitFor(condition::get);
         Scheduler.schedule(command);
         Scheduler.update();
-        assertTrue(command.isRunning());
+        assertTrue(command.isActive());
         condition.set(true);
         Scheduler.update();
-        assertFalse(command.isRunning());
+        assertFalse(command.isActive());
     }
 }

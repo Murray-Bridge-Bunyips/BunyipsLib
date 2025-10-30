@@ -95,9 +95,9 @@ abstract class Task : Runnable, Action {
         get() = Optional.ofNullable(_dependency)
 
     /**
-     * Whether the task is currently running (i.e. has been started ([init] called) and not finished).
+     * Whether the task is currently running/active (i.e. has been started ([init] called) and not finished).
      */
-    val isRunning: Boolean
+    val isActive: Boolean
         get() = startTime != 0L && !isFinished
 
     /**
@@ -200,7 +200,7 @@ abstract class Task : Runnable, Action {
         val priority = if (isPriority) "priority, " else ""
         val state = when {
             isFinished -> "finished"
-            isRunning -> elapsedTime to Seconds round 2
+            isActive -> elapsedTime to Seconds round 2
             else -> "ready"
         }
         val time = if (timeout.magnitude() <= 0.0) "∞" else timeout to Seconds round 2

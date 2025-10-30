@@ -43,10 +43,10 @@ class DeadlineTaskGroupTest extends SchedulerTests {
         Task group = new DeadlineTaskGroup(task1, task2, task3);
         Scheduler.schedule(group);
         Scheduler.update();
-        assertTrue(group.isRunning());
+        assertTrue(group.isActive());
         t1f.set(true);
         Scheduler.update();
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
         assertTrue(i2.get());
         assertTrue(p2.get());
         assertTrue(e2.get());
@@ -88,7 +88,7 @@ class DeadlineTaskGroupTest extends SchedulerTests {
         assertTrue(p2.get());
         assertTrue(e1.get());
         assertTrue(in1.get());
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
@@ -109,7 +109,7 @@ class DeadlineTaskGroupTest extends SchedulerTests {
         Task group = new DeadlineTaskGroup(task1, task2);
         Scheduler.schedule(group);
         Scheduler.schedule(task3);
-        assertTrue(group.isRunning()); // BunyipsLib expected behaviour, group continues
-        assertTrue(task3.isRunning());
+        assertTrue(group.isActive()); // BunyipsLib expected behaviour, group continues
+        assertTrue(task3.isActive());
     }
 }
