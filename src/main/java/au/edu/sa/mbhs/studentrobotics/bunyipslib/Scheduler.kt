@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.activeTasks
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.gamepad1
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.gamepad2
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.on
@@ -38,7 +39,7 @@ import kotlin.math.abs
  *  import static au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.*;
  *  import static au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.*;
  *  import static au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Analog.*;
- *  import static au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task.task;
+ *  import static au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task.*;
  * ```
  *
  * @author Lucas Bubner, 2025
@@ -97,6 +98,7 @@ object Scheduler {
      */
     @JvmStatic
     fun use(vararg subsystems: BunyipsSubsystem) {
+        require(subsystems.isNotEmpty()) { "use() called with no arguments!" }
         this.subsystems = subsystems.toHashSet()
     }
 
@@ -115,10 +117,23 @@ object Scheduler {
         if (activeTasks.contains(task))
             return
         // Important step that we ensure the task is ready for execution
-        if (task.isRunning)
-            task.finishNow()
+        if (task.isActive)
+            task.finish()
         task.reset()
+        // Match early-init of the schedule method in WPILib
+        task.ensureInit()
         activeTasks.add(task)
+    }
+
+    /**
+     * Calls `finish` on and clears all current [activeTasks].
+     */
+    @JvmStatic
+    fun finishAll() {
+        activeTasks.removeAll {
+            it.finish()
+            true
+        }
     }
 
     /**
@@ -129,7 +144,6 @@ object Scheduler {
     @JvmStatic
     fun update() {
         if (disabled) return
-
         if (!initialised) {
             if (!subsystemsCell.initialised)
                 subsystems = BunyipsSubsystem.getInstances()
@@ -189,7 +203,7 @@ object Scheduler {
                     subsystem,
                     if (subsystem.isRunningDefaultTask) " (d.)" else "",
                     task.toString().replace("$subsystem:", ""),
-                    task.deltaTime to Seconds round 1
+                    task.elapsedTime to Seconds round 1
                 )
                 val timeoutSec = task.timeout to Seconds
                 report += if (timeoutSec == 0.0) "s" else "/" + timeoutSec + "s"
@@ -198,12 +212,12 @@ object Scheduler {
             }
             for (binding in scheduledTasks) {
                 if (binding.task.dependency.isPresent // Whether the task is never run from the Scheduler (and task reports were handled above)
-                    || !binding.task.isRunning // Whether this task is actually running
+                    || !binding.task.isActive // Whether this task is actually running
                     || binding.muted // Whether the task has declared itself as muted
                 ) {
                     continue
                 }
-                val deltaTime = binding.task.deltaTime to Seconds round 1
+                val deltaTime = binding.task.elapsedTime to Seconds round 1
                 DualTelemetry.smartAdd(
                     "<small><b>Scheduler</b> (c.) <font color='gray'>|</font> <b>%</b> -> %</small>",
                     binding.task,
@@ -217,13 +231,9 @@ object Scheduler {
 
         // 4. Run scheduled tasks
         for (task in activeTasks) {
-            // Update finish conditions for non-subsystem tasks as it is not done elsewhere
-            if ((task.dependency.isEmpty && task.poll()) || task.isFinished) {
-                // We're done here, schedule for removal
-                tasksToRemove.add(task)
-                continue
-            }
             task.execute()
+            if (task.isFinished)
+                tasksToRemove.add(task)
         }
 
         // 5. Cleanup finished tasks
@@ -476,7 +486,7 @@ object Scheduler {
         infix fun toggleOnTrue(task: Task) = buildScheduledTask("toggleOnTrue") {
             ScheduledTask(task, this) { prev, curr ->
                 if (!prev && curr) {
-                    if (task.isRunning)
+                    if (task.isActive)
                         task.finish()
                     else
                         schedule(task)
@@ -495,7 +505,7 @@ object Scheduler {
         infix fun toggleOnFalse(task: Task) = buildScheduledTask("toggleOnFalse") {
             ScheduledTask(task, this) { prev, curr ->
                 if (prev && !curr) {
-                    if (task.isRunning)
+                    if (task.isActive)
                         task.finish()
                     else
                         schedule(task)

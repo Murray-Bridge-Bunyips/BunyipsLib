@@ -21,10 +21,10 @@ class TaskDecoratorTest extends SchedulerTests {
         Task timeout = Task.task().timeout(Seconds.of(0.1));
         Scheduler.schedule(timeout);
         Scheduler.update();
-        assertTrue(timeout.isRunning());
+        assertTrue(timeout.isActive());
         Thread.sleep(150);
         Scheduler.update();
-        assertFalse(timeout.isRunning());
+        assertFalse(timeout.isActive());
     }
 
     @Test
@@ -33,10 +33,10 @@ class TaskDecoratorTest extends SchedulerTests {
         Task task = Task.task().until(finish::get);
         Scheduler.schedule(task);
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         finish.set(true);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
@@ -72,12 +72,12 @@ class TaskDecoratorTest extends SchedulerTests {
         Scheduler.schedule(task);
         Scheduler.update();
 
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
 
         run.set(false);
         Scheduler.update();
 
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
@@ -113,9 +113,9 @@ class TaskDecoratorTest extends SchedulerTests {
         Scheduler.schedule(task);
         assertTrue(finished.get());
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
@@ -127,7 +127,7 @@ class TaskDecoratorTest extends SchedulerTests {
         Scheduler.update();
         assertTrue(finished.get());
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
@@ -141,22 +141,22 @@ class TaskDecoratorTest extends SchedulerTests {
         Scheduler.update();
         assertTrue(condition.get());
         Scheduler.update();
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
     void duringTest() {
         AtomicBoolean finish = new AtomicBoolean(false);
-        Task dictator = Task.task().isFinished(finish::get);
+        Task dictator = Task.waitFor(finish::get);
         Task endsBefore = new Lambda();
         Task endsAfter = Task.task();
         Task group = dictator.during(endsBefore, endsAfter);
         Scheduler.schedule(group);
         Scheduler.update();
-        assertTrue(group.isRunning());
+        assertTrue(group.isActive());
         finish.set(true);
         Scheduler.update();
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
@@ -168,7 +168,7 @@ class TaskDecoratorTest extends SchedulerTests {
                     dictatorWasPolled.set(true);
                     return true;
                 });
-        Task other = new Lambda(() -> assertAll(() -> assertTrue(dictatorHasRun.get()), () -> assertTrue(dictatorWasPolled.get())));
+        Task other = Task.loop(() -> assertAll(() -> assertTrue(dictatorHasRun.get()), () -> assertTrue(dictatorWasPolled.get())));
         Task group = dictator.during(other);
         Scheduler.schedule(group);
         Scheduler.update();
@@ -178,21 +178,21 @@ class TaskDecoratorTest extends SchedulerTests {
     @Test
     void untilTest() {
         AtomicBoolean finish = new AtomicBoolean(false);
-        Task endsBeforeGroup = new Lambda().until(Task.task().isFinished(finish::get));
+        Task endsBeforeGroup = new Lambda().until(Task.waitFor(finish::get));
         Scheduler.schedule(endsBeforeGroup);
         Scheduler.update();
-        assertTrue(endsBeforeGroup.isRunning());
+        assertTrue(endsBeforeGroup.isActive());
         finish.set(true);
         Scheduler.update();
-        assertFalse(endsBeforeGroup.isRunning());
+        assertFalse(endsBeforeGroup.isActive());
         finish.set(false);
-        Task endsAfterGroup = Task.task().until(Task.task().isFinished(finish::get));
+        Task endsAfterGroup = Task.task().until(Task.waitFor(finish::get));
         Scheduler.schedule(endsAfterGroup);
         Scheduler.update();
-        assertTrue(endsAfterGroup.isRunning());
+        assertTrue(endsAfterGroup.isActive());
         finish.set(true);
         Scheduler.update();
-        assertFalse(endsAfterGroup.isRunning());
+        assertFalse(endsAfterGroup.isActive());
     }
 
     @Test
@@ -205,8 +205,8 @@ class TaskDecoratorTest extends SchedulerTests {
                     dictatorWasPolled.set(true);
                     return true;
                 });
-        Task other = new Lambda(() -> assertAll(() -> assertTrue(dictatorHasRun.get()),
-                                        () -> assertTrue(dictatorWasPolled.get())));
+        Task other = Task.loop(() -> assertAll(() -> assertTrue(dictatorHasRun.get()),
+                () -> assertTrue(dictatorWasPolled.get())));
         Task group = other.until(dictator);
         Scheduler.schedule(group);
         Scheduler.update();
@@ -217,7 +217,7 @@ class TaskDecoratorTest extends SchedulerTests {
     void withTest() {
         AtomicBoolean finish = new AtomicBoolean(false);
 
-        Task task1 = Task.task().isFinished(finish::get);
+        Task task1 = Task.waitFor(finish::get);
         Task task2 = new Lambda();
 
         Task group = task1.with(task2);
@@ -225,12 +225,12 @@ class TaskDecoratorTest extends SchedulerTests {
         Scheduler.schedule(group);
         Scheduler.update();
 
-        assertTrue(group.isRunning());
+        assertTrue(group.isActive());
 
         finish.set(true);
         Scheduler.update();
 
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
@@ -243,7 +243,7 @@ class TaskDecoratorTest extends SchedulerTests {
                     firstWasPolled.set(true);
                     return true;
                 });
-        Task task2 = new Lambda(() ->
+        Task task2 = Task.loop(() ->
                 assertAll(() -> assertTrue(firstHasRun.get()), () -> assertTrue(firstWasPolled.get())));
         Task group = task1.with(task2);
         Scheduler.schedule(group);
@@ -261,7 +261,7 @@ class TaskDecoratorTest extends SchedulerTests {
         Scheduler.schedule(group);
         Scheduler.update();
 
-        assertFalse(group.isRunning());
+        assertFalse(group.isActive());
     }
 
     @Test
@@ -275,10 +275,10 @@ class TaskDecoratorTest extends SchedulerTests {
                     firstWasPolled.set(true);
                     return true;
                 });
-        Task task2 = new Lambda(() -> {
-                            assertTrue(firstHasRun.get());
-                            assertTrue(firstWasPolled.get());
-                        });
+        Task task2 = Task.loop(() -> {
+            assertTrue(firstHasRun.get());
+            assertTrue(firstWasPolled.get());
+        });
 
         Task group = task1.race(task2);
 
@@ -328,13 +328,13 @@ class TaskDecoratorTest extends SchedulerTests {
         AtomicInteger second = new AtomicInteger(0);
 
         Task task = Task.task()
-                    .onFinish(first::incrementAndGet)
-                    .isFinished(() -> true)
-                    .mutate()
-                    .addOnFinish(() -> {
-                        // to differentiate between "didn't run" and "ran before task's `end()`
-                        second.addAndGet(1 + first.get());
-                    });
+                .onFinish(first::incrementAndGet)
+                .isFinished(() -> true)
+                .mutate()
+                .addOnFinish(() -> {
+                    // to differentiate between "didn't run" and "ran before task's `end()`
+                    second.addAndGet(1 + first.get());
+                });
 
         Scheduler.schedule(task);
         assertEquals(0, first.get());
@@ -354,7 +354,7 @@ class TaskDecoratorTest extends SchedulerTests {
 
         Task task = Task.task()
                 .onInterrupt(first::incrementAndGet)
-                .isFinished(() -> true)
+                .isFinished(() -> false)
                 .mutate()
                 .addOnInterrupt(() -> {
                     // to differentiate between "didn't run" and "ran before task's `end()`

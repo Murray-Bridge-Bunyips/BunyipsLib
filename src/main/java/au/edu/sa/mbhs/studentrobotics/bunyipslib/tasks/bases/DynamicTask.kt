@@ -1,5 +1,6 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import dev.frozenmilk.util.cell.LateInitCell
 import java.util.function.BiFunction
 import java.util.function.BooleanSupplier
@@ -9,6 +10,8 @@ import java.util.function.Predicate
 /**
  * Dynamic builder pattern implementation for [Task] instances.
  * By default, constructing a new [DynamicTask] will create a no-oping indefinite task.
+ *
+ * You can convert an existing task to a [DynamicTask] using the `.mutate()` method on Task instances.
  *
  * @author Lucas Bubner, 2024
  * @since 6.1.0
@@ -29,27 +32,11 @@ class DynamicTask() : Task() {
     @JvmField
     val sharedRef = LateInitCell<Any>()
 
+    // Required to open the field to dynamic tasks
+    public override lateinit var dashboard: TelemetryPacket
+
     init {
         named("Task (dyn.)")
-    }
-
-    /**
-     * Wraps a [Task] instance to expose a dynamic builder pattern, adding additional functionality.
-     */
-    constructor(task: Task) : this() {
-        task.mutate().let {
-            init = it.init
-            loop = it.loop
-            until = it.until
-            finish = it.finish
-            interrupt = it.interrupt
-            reset = it.reset
-        }.also {
-            named(task.toString())
-            timeout(task.timeout)
-            if (task.dependency.isPresent)
-                on(task.dependency.get(), task.isPriority)
-        }
     }
 
     /**
@@ -236,5 +223,6 @@ class DynamicTask() : Task() {
 
     override fun onReset() {
         reset.invoke()
+        sharedRef.invalidate()
     }
 }

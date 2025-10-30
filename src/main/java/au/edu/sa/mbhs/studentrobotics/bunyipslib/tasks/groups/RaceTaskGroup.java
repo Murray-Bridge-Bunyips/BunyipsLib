@@ -39,16 +39,21 @@ public class RaceTaskGroup extends TaskGroup {
     }
 
     @Override
+    public final void init() {
+        for (Task task : tasks)
+            task.ensureInit();
+    }
+
+    @Override
     public final void periodic() {
-        for (Task task : tasks) {
+        for (Task task : tasks)
             executeTask(task);
-        }
     }
 
     @Override
     public final boolean isTaskFinished() {
         for (Task task : tasks) {
-            if (task.poll()) {
+            if (task.isFinished()) {
                 finishAllTasks();
                 return true;
             }

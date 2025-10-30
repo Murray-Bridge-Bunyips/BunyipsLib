@@ -11,6 +11,10 @@ import java.util.function.BooleanSupplier;
  * This task is useful for actions that may not succeed on the first attempt
  * and require re-running, such as vision alignment or precise mechanism movement.
  * <p>
+ * Do note that this task is a task wrapper, and will discard already assigned timeout, name, priority, and subsystem information
+ * to match the retried task. Changes to these properties must be done to the child task, which will be reflected upwards.
+ * Updating this wrapper will result in resets.
+ * <p>
  * This task is implemented from the Marrow library by FTC 23644, Skeleton Army.
  * <a href="https://github.com/Skeleton-Army/Marrow/blob/1fa47b6e286f5925c4e44e9ce1afeefbd9c22040/customLibraries/solverslib/src/main/java/com/skeletonarmy/marrow/solverslib/RetryCommand.java">Source</a>
  *
@@ -64,15 +68,16 @@ public class RetryTask extends Task {
 
     @Override
     protected void periodic() {
-        if (!currentTask.poll()) {
+        if (!currentTask.isFinished()) {
             named(currentTask.toString());
             timeout = currentTask.timeout.times(maxRetries - retryCount + 1);
-            currentTask.isPriority = isPriority;
+            if (currentTask.isPriority) isPriority = true;
+            else if (isPriority) currentTask.isPriority = true;
             currentTask.execute();
             return;
         }
 
-        currentTask.finishNow();
+        currentTask.finish();
 
         // Check if we should retry
         if (retryCount < maxRetries && shouldRetry.getAsBoolean()) {
@@ -86,7 +91,7 @@ public class RetryTask extends Task {
 
     @Override
     protected void onFinish() {
-        currentTask.finishNow();
+        currentTask.finish();
     }
 
     @Override

@@ -37,19 +37,23 @@ public class DeadlineTaskGroup extends TaskGroup {
     }
 
     @Override
+    public final void init() {
+        for (Task task : tasks)
+            task.ensureInit();
+    }
+
+    @Override
     public final void periodic() {
-        for (Task task : tasks) {
+        for (Task task : tasks)
             executeTask(task);
-        }
     }
 
     @Override
     public final boolean isTaskFinished() {
         Task firstTask = tasks.get(0);
-        boolean firstTaskFinished = firstTask != null && firstTask.poll();
-        if (firstTaskFinished) {
+        boolean firstTaskFinished = firstTask != null && firstTask.isFinished();
+        if (firstTaskFinished)
             finishAllTasks();
-        }
         return firstTaskFinished;
     }
 }

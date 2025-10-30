@@ -57,7 +57,7 @@ public abstract class BunyipsSubsystem {
     @NonNull
     protected String name = getClass().getSimpleName() + idx++;
     private volatile Task currentTask;
-    private volatile Task defaultTask = new IdleTask();
+    private volatile Task defaultTask = new IdleTask().on(this);
     private volatile boolean shouldRun = true;
     @Nullable
     private String threadName = null;
@@ -207,13 +207,14 @@ public abstract class BunyipsSubsystem {
         // erase a previous check that failed
         if (!shouldRun) return false;
         // Check nullability
-        shouldRun = Arrays.stream(parameters).allMatch(Objects::nonNull);
+        boolean shouldRun = Arrays.stream(parameters).allMatch(Objects::nonNull);
         if (!shouldRun) {
             assertionFailed = true;
             DualTelemetry.smartAdd(true, toString(), "<font color='red'><b>SUBSYSTEM FAULT!</b></font>");
             DualTelemetry.smartLog("<font color='yellow'><b>warning!</b> <i>%</i> failed a null self-check and was auto disabled.</font>", toString());
             sout(Dbg::error, "Subsystem has been disabled as assertParamsNotNull() failed.");
-            onDisable();
+            disable();
+            this.shouldRun = false;
         }
         return shouldRun;
     }
@@ -254,7 +255,6 @@ public abstract class BunyipsSubsystem {
      */
     public final void disable() {
         if (!shouldRun) return;
-        shouldRun = false;
         sout(Dbg::logv, "Subsystem disabled via disable() call.");
         DualTelemetry.smartLog(Text.html()
                 .append("[").append(toString()).append("] ")
@@ -262,8 +262,15 @@ public abstract class BunyipsSubsystem {
                 .small("check logcat for more info.")
         );
         onDisable();
+        Task task = getCurrentTask();
+        if (task != null) {
+            task.finish();
+            if (task == defaultTask)
+                task.reset();
+        }
         for (BunyipsSubsystem child : children)
             child.disable();
+        shouldRun = false;
     }
 
     /**
@@ -292,7 +299,7 @@ public abstract class BunyipsSubsystem {
         if (currentTask != defaultTask) {
             if (currentTask != null && !currentTask.isFinished()) {
                 sout(Dbg::logv, "Task changed: % <- %(INT)", defaultTask, currentTask);
-                currentTask.finishNow();
+                currentTask.finish();
                 // Set now to avoid double logging
                 currentTask = defaultTask;
             }
@@ -317,6 +324,7 @@ public abstract class BunyipsSubsystem {
                 // Task changes are repetitive to telemetry log, will just leave the important messages to there
                 sout(Dbg::logv, "Task changed: % <- %", defaultTask, currentTask);
             }
+            defaultTask.reset();
             currentTask = defaultTask;
         }
         return currentTask;
@@ -326,7 +334,8 @@ public abstract class BunyipsSubsystem {
      * Set the default task for this subsystem, which will be run when no other task is running.
      *
      * @param defaultTask The task to set as the default task, which will also internally make the dependency
-     *                    of this task to be this subsystem if possible
+     *                    of this task to be this subsystem if possible. Tasks with subsystem attachment disabled
+     *                    (TaskGroups, etc.) are <b>not</b> permitted to be default tasks.
      */
     public final void setDefaultTask(@NonNull Task defaultTask) {
         Task def = Objects.requireNonNull(defaultTask);
@@ -335,8 +344,12 @@ public abstract class BunyipsSubsystem {
             try {
                 Field f = Task.class.getDeclaredField("disableSubsystemAttachment");
                 f.setAccessible(true);
-                if (!f.getBoolean(def))
+                if (f.getBoolean(def)) {
+                    throw new Exceptions.EmergencyStop("Cannot set the default task of a subsystem to a task that has disabled subsystem attachment! " +
+                            "This may be due to attaching a TaskGroup to a subsystem as a default task, which is not permitted.");
+                } else {
                     def.on(this, false);
+                }
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException("Failed to access internal fields on Task, this shouldn't happen!", e);
             }
@@ -397,9 +410,11 @@ public abstract class BunyipsSubsystem {
         lockoutMessageSent = false;
 
         newTask.reset();
+        newTask.ensureInit(true);
+
         // Default task technically can't finish, but it can be interrupted, so we will just run the finish callback
         if (currentTask == defaultTask) {
-            defaultTask.finishNow();
+            defaultTask.finish();
             defaultTask.reset();
         }
         sout(Dbg::logd, "Task changed: % -> %", currentTask, newTask);
@@ -420,13 +435,14 @@ public abstract class BunyipsSubsystem {
         // Task will be cancelled abruptly, run the finish callback now
         if (this.currentTask != defaultTask) {
             sout(Dbg::warn, "Task changed: %(INT) -> %", this.currentTask, currentTask);
-            this.currentTask.finishNow();
+            this.currentTask.finish();
         }
         lockoutMessageSent = false;
         currentTask.reset();
+        currentTask.ensureInit(true);
         // Default task technically can't finish, but it can be interrupted, so we will just run the finish callback
         if (this.currentTask == defaultTask) {
-            defaultTask.finishNow();
+            defaultTask.finish();
             defaultTask.reset();
         }
         this.currentTask = currentTask;
@@ -452,13 +468,11 @@ public abstract class BunyipsSubsystem {
     private void internalUpdate() {
         Task task = getCurrentTask();
         if (task != null) {
-            if (task == defaultTask && defaultTask.poll()) {
+            if (task == defaultTask && defaultTask.isFinished()) {
                 throw new Exceptions.EmergencyStop("Default task (of " + name + ", " + getClass().getSimpleName() + ") should never finish!");
             }
             // Run the task on our subsystem
             task.run();
-            // Update the state of isFinished() after running the task as it may have changed
-            task.poll();
         }
         // This should be the only place where periodic() is called for this subsystem
         Exceptions.runUserMethod(this::periodic);

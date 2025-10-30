@@ -77,7 +77,7 @@ public class Lambda extends Task {
 
     @Override
     protected final boolean isTaskFinished() {
-        // OnceTasks may sometimes have their timeouts adjusted at runtime
+        // Lambdas may sometimes have their timeouts adjusted at runtime
         return timeout.lte(Milliseconds.of(EPSILON_MS));
     }
 }

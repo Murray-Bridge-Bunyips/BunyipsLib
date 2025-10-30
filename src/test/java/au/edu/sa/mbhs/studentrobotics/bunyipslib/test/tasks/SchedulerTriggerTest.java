@@ -3,35 +3,27 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.test.tasks;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
 
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
 
 class SchedulerTriggerTest extends SchedulerTests {
     @Test
     void onTrueTest() {
         AtomicBoolean finished = new AtomicBoolean(false);
-        Task task = Task.task().isFinished(finished::get);
+        Task task = Task.waitFor(finished::get);
         Gamepad gamepad = new Gamepad();
 
         gamepad.a = false;
@@ -39,66 +31,66 @@ class SchedulerTriggerTest extends SchedulerTests {
         new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.A)
                 .onTrue(task);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
         gamepad.a = true;
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         finished.set(true);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
     void onFalseTest() {
         AtomicBoolean finished = new AtomicBoolean(false);
-        Task task = Task.task().isFinished(finished::get);
+        Task task = Task.waitFor(finished::get);
         Gamepad gamepad = new Gamepad();
 
         gamepad.b = true;
         new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.B)
                 .onFalse(task);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
         gamepad.b = false;
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         finished.set(true);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
     void onChangeTest() {
         AtomicBoolean finished = new AtomicBoolean(false);
-        Task task = Task.task().isFinished(finished::get);
+        Task task = Task.waitFor(finished::get);
         Gamepad gamepad = new Gamepad();
 
         gamepad.x = true;
         new Scheduler.GamepadTrigger(GamepadUser.ONE, gamepad).button(Controls.X)
                 .onChange(task);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
         gamepad.x = false;
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         finished.set(true);
         Scheduler.update();
         assertFalse(Scheduler.activeTasks.contains(task));
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
         finished.set(false);
         gamepad.x = true;
         Scheduler.update();
-        assertTrue(task.isRunning());
+        assertTrue(task.isActive());
         finished.set(true);
         Scheduler.update();
-        assertFalse(task.isRunning());
+        assertFalse(task.isActive());
     }
 
     @Test
     void whileTrueRepeatedlyTest() {
         Gamepad gamepad = new Gamepad();
         AtomicInteger inits = new AtomicInteger(0);
-        AtomicInteger counter = new AtomicInteger(1);
+        AtomicInteger counter = new AtomicInteger(0);
         Task task = Task.task().init(inits::incrementAndGet).isFinished(() -> counter.incrementAndGet() % 2 == 0)
                 .repeatedly();
 

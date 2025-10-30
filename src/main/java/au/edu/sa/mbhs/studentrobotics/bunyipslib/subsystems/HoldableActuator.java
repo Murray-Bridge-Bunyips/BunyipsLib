@@ -766,7 +766,7 @@ public class HoldableActuator extends BunyipsSubsystem {
         protected void init() {
             // Stop now if the switch is already pressed
             if (targetSwitch != null && targetSwitch.isPressed()) {
-                finishNow();
+                finish();
                 return;
             }
             allowManualControl = false;
@@ -993,7 +993,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                     })
                     .isFinished((t) -> {
                         // Only consider finishing if the motor reports as busy first, with a safety margin
-                        if (motor.isBusy() || t.getDeltaTime().gte(PRE_EXIT_SAFETY_MARGIN))
+                        if (motor.isBusy() || t.getElapsedTime().gte(PRE_EXIT_SAFETY_MARGIN))
                             t.sharedRef.accept(true);
                         return t.sharedRef.getInitialised() && !motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance());
                     })
@@ -1081,7 +1081,7 @@ public class HoldableActuator extends BunyipsSubsystem {
                         upc.zeroInputLatch = false;
                     })
                     .isFinished((t) -> {
-                        if (motor.isBusy() || t.getDeltaTime().gte(PRE_EXIT_SAFETY_MARGIN))
+                        if (motor.isBusy() || t.getElapsedTime().gte(PRE_EXIT_SAFETY_MARGIN))
                             t.sharedRef.accept(true);
                         return t.sharedRef.getInitialised() && !motor.isBusy() && Mathf.isNear(targetPosition, encoder.getPosition(), motor.getTargetPositionTolerance());
                     })

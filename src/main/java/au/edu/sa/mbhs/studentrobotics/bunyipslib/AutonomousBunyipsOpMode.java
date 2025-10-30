@@ -179,14 +179,13 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                     this.currentTask, taskCount, currentTask, getApproximateTimeLeft());
 
             try {
-                // Poll task for finish condition, subsystems may call poll() themselves
-                if ((currentTask.getDependency().isEmpty() && currentTask.poll()) || currentTask.isFinished()) {
+                currentTask.execute();
+                if (currentTask.isFinished()) {
                     tasks.removeFirst();
-                    double runTime = currentTask.getDeltaTime().in(Seconds);
+                    double runTime = currentTask.getElapsedTime().in(Seconds);
                     Dbg.logd("[AutonomousBunyipsOpMode] task %/% (%) finished%", this.currentTask, taskCount, currentTask, runTime != 0 ? " -> " + runTime + "s" : "");
                     this.currentTask++;
                 }
-                currentTask.execute();
             } catch (Exception e) {
                 Exceptions.handle(e, telemetry::log);
             }
@@ -562,7 +561,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         // Determine the time left for all tasks
         Task curr = tasks.peekFirst();
         if (curr == null) return "";
-        Measure<Time> timeout = curr.getDeltaTime();
+        Measure<Time> timeout = curr.getElapsedTime();
         // Offset by the current task's time left to interpolate between tasks
         timeLeft -= timeout.in(Seconds);
         // If we get negative time, our guess was very wrong so we'll return a blank string

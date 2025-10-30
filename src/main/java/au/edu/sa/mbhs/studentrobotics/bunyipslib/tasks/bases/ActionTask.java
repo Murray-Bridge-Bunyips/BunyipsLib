@@ -24,6 +24,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.SequentialTaskGrou
  * Tasks built with RoadRunner drives, despite being represented with Actions are internally composed of {@link Task} instances,
  * so {@link SequentialAction} and {@link ParallelAction} actions will also try to be unwrapped, with their full name available at init.
  * Actions that are Tasks will try to be run as closely as possible to their original {@link Task} implementation.
+ * <p>
+ * Do note that this task is a task wrapper, and will discard already assigned timeout, name, priority, and subsystem information
+ * to match the parent action. Changes to these properties must be done to the child task, which will be reflected upwards.
+ * Updating this wrapper will result in resets.
  *
  * @author Lucas Bubner, 2024
  * @since 6.0.0
@@ -40,28 +44,23 @@ public class ActionTask extends Task {
     public ActionTask(@NonNull Action action) {
         parentAction = action;
         // Recursively unwrap the action if it can be converted into a TaskGroup
-        if (parentAction instanceof ParallelAction par) {
+        if (parentAction instanceof ParallelAction par)
             parentAction = new ParallelTaskGroup(par.getInitialActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
-        }
-        if (parentAction instanceof SequentialAction seq) {
+        else if (parentAction instanceof SequentialAction seq)
             parentAction = new SequentialTaskGroup(seq.getInitialActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
-        }
-        if (parentAction instanceof RaceAction race) {
+        else if (parentAction instanceof RaceAction race)
             parentAction = new RaceTaskGroup(race.getActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
-        }
         named(parentAction instanceof Task ? parentAction.toString() : parentAction.getClass().getSimpleName());
-        if (parentAction instanceof Task task) {
-            timeout = task.timeout;
-            named(task.toString());
-            if (task.getDependency().isPresent())
-                on(task.getDependency().get());
-        }
+        if (parentAction instanceof Task task)
+            sync(task);
     }
 
     @Override
     protected void periodic() {
         parentAction.preview(dashboard.fieldOverlay());
         actionFinished = !parentAction.run(dashboard);
+        if (parentAction instanceof Task task)
+            sync(task);
     }
 
     @Override
@@ -72,7 +71,7 @@ public class ActionTask extends Task {
     @Override
     protected void onFinish() {
         if (parentAction instanceof Task task)
-            task.finishNow();
+            task.finish();
     }
 
     @Override

@@ -18,7 +18,13 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
  * Note some caveats of using this task is that timeout and other information related to this task is unknown until
  * this task is run once, in which this data will be updated to match the task that was built. If this task
  * is to run on a subsystem, it <b>must be declared on the inner task</b>, as DeferredTask does not have enough information
- * to know where to run, since these allocations are done at construction.
+ * to know where to run, since these allocations are done at init.
+ * <p>
+ * Do also note that any changes to timeout and name will be respected if changed from the default. Otherwise,
+ * they will be updated on init to the internal task. Changing the name of a not already initialised deferred task
+ * will suffix a tag via the named method, and no-ops otherwise as the child task will be used.
+ * Therefore, dynamically available information, including the task timeout and name <b>will only
+ * be updated on init with a deferred task.</b>
  *
  * @author Lucas Bubner, 2024
  * @since 4.0.0
@@ -53,23 +59,28 @@ public class DeferredTask extends Task {
         String name = builtTask.toString();
         Measure<Time> t = builtTask.timeout;
         Dbg.logd(getClass(), "built -> % (t=%)", name, t.magnitude() <= 0 ? "inf" : t.in(Seconds) + "s");
+        // Apply only if the overhead task has not been modified, since we need to do this at init rather than construction
         if (("Task" + SUFFIX).equals(toString()))
             super.named(name);
+        // Clean up residual info
+        super.named(toString().replace(SUFFIX, ""));
         if (timeout.equals(INFINITE_TIMEOUT))
             timeout = t;
+        builtTask.ensureInit();
     }
 
     @Override
     protected void periodic() {
         if (builtTask == null) return;
-        builtTask.isPriority = isPriority;
+        if (builtTask.isPriority) isPriority = true;
+        else if (isPriority) builtTask.isPriority = true;
         builtTask.execute();
     }
 
     @Override
     protected void onFinish() {
         if (builtTask == null) return;
-        builtTask.finishNow();
+        builtTask.finish();
     }
 
     @Override
@@ -84,11 +95,11 @@ public class DeferredTask extends Task {
     @Override
     protected boolean isTaskFinished() {
         if (builtTask == null) return false;
-        return builtTask.poll();
+        return builtTask.isFinished();
     }
 
     /**
-     * Set the name of this DeferredTask. Note that " (dfr)" will be appended to indicate this task is deferred.
+     * Set the name of this DeferredTask. Note that " (dfr.)" will be appended to indicate this task is deferred.
      * If the task is constructed, this method will no-op. Use the wrapped Task to set a name.
      */
     @NonNull

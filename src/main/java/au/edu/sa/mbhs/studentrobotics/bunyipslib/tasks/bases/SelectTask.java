@@ -8,7 +8,12 @@ import java.util.HashMap;
 import java.util.function.Supplier;
 
 /**
- * Select a task to run based on a hashmap of states and a supplier of states.
+ * Select a task to run based on a hashmap of states and a supplier of states. States are observed periodically,
+ * and when a state change is observed, the current task is finished, reset, and the new task is initialised immediately.
+ * <p>
+ * Do note that this task is a task wrapper, and will discard already assigned timeout, name, priority, and subsystem information
+ * to match the selected task. Changes to these properties must be done to the child task, which will be reflected upwards.
+ * Updating this wrapper will result in resets.
  *
  * @param <T> the type of the state
  * @author Lucas Bubner, 2024
@@ -61,36 +66,39 @@ public class SelectTask<T> extends Task {
     }
 
     @Override
+    protected void init() {
+        currentTask = tasks.get(stateSupplier.get());
+        if (currentTask != null)
+            currentTask.ensureInit();
+    }
+
+    @Override
     protected void periodic() {
         Task task = tasks.get(stateSupplier.get());
         if (task != null && task != currentTask) {
-            currentTask.finishNow();
+            currentTask.finish();
+            currentTask.reset();
             currentTask = task;
         }
         if (currentTask == null) return;
-        named(currentTask.toString());
-        timeout = currentTask.timeout;
-        currentTask.isPriority = isPriority;
+        sync(currentTask);
         currentTask.execute();
     }
 
     @Override
     protected boolean isTaskFinished() {
-        Task task = tasks.get(stateSupplier.get());
-        return task != null && task.poll();
+        return currentTask != null && currentTask.isFinished();
     }
 
     @Override
     protected void onFinish() {
-        for (Task task : tasks.values()) {
-            task.finishNow();
-        }
+        if (currentTask != null)
+            currentTask.finish();
     }
 
     @Override
     protected void onReset() {
-        for (Task task : tasks.values()) {
+        for (Task task : tasks.values())
             task.reset();
-        }
     }
 }

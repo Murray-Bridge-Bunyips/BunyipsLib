@@ -17,6 +17,9 @@ abstract class SchedulerTests {
         Method cleanup = Scheduler.class.getDeclaredMethod("cleanup");
         cleanup.setAccessible(true);
         cleanup.invoke(null);
+        Method reset = BunyipsSubsystem.class.getDeclaredMethod("reset");
+        reset.setAccessible(true);
+        reset.invoke(null);
         Dbg.INSTANCE.setINHIBIT(true);
         Dashboard.INHIBIT_PACKETS = true;
         DualTelemetry.Companion.setINHIBIT_SMART_CALLS(true);
