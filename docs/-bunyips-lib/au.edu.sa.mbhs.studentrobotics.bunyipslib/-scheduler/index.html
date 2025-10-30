@@ -46,7 +46,7 @@
                     </a>
             </div>
             <div class="library-version">
-v7.4.0-master-f9b8b9f8b            </div>
+v8.0.0-master-fd7c5f0e7            </div>
         </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":BunyipsLib:dokkaHtml/release">BunyipsLib</button>
@@ -66,58 +66,24 @@ v7.4.0-master-f9b8b9f8b            </div>
   <div class="breadcrumbs"><a href="../../../index.html">BunyipsLib</a><span class="delimiter">/</span><a href="../index.html">au.edu.sa.mbhs.studentrobotics.bunyipslib</a><span class="delimiter">/</span><span class="current">Scheduler</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Scheduler</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Scheduler</a></div><p class="paragraph">Scheduler and command plexus for use with the BunyipsLib task system in TeleOp.</p><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2024</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">1.0.0-pre</p></span><h4 class="">See also</h4><div class="table"><div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><a href="../-command-based-bunyips-op-mode/index.html"><span>Command</span><wbr></wbr><span>Based</span><wbr></wbr><span>Bunyips</span><wbr></wbr><span>Op</span><wbr></wbr><span><span>Mode</span></span></a></div></span></div><div></div></div></div></div></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">Scheduler</a></div><p class="paragraph">Command-based paradigm scheduler and task plexus for BunyipsLib in TeleOp. This is a singleton used to schedule and run tasks.</p><p class="paragraph">Designed to mirror the WPILib command scheduler. Implementations must call <a href="update.html">update</a> periodically.</p><p class="paragraph">It is recommended to use the following static imports with the Scheduler:</p><div class="sample-container"><pre><code class="block lang-java" theme="idea">import static au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.*;<br>import static au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.*;<br>import static au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls.Analog.*;<br>import static au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task.*;</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><span class="kdoc-tag"><h4 class="">Author</h4><p class="paragraph">Lucas Bubner, 2025</p></span><span class="kdoc-tag"><h4 class="">Since</h4><p class="paragraph">8.0.0</p></span></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
-      <div data-togglable="CONSTRUCTOR">
-        <h2 class="">Constructors</h2>
-        <div class="table"><a data-name="-2031058390%2FConstructors%2F-325384828" anchor-label="Scheduler" id="-2031058390%2FConstructors%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-scheduler.html"><span><span>Scheduler</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2031058390%2FConstructors%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div data-togglable="TYPE">
         <h2 class="">Types</h2>
-        <div class="table"><a data-name="-749084756%2FClasslikes%2F-325384828" anchor-label="Companion" id="-749084756%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="833899603%2FClasslikes%2F-325384828" anchor-label="GamepadTrigger" id="833899603%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-749084756%2FClasslikes%2F-325384828"></span>
+                  <div><a href="-gamepad-trigger/index.html"><span>Gamepad</span><wbr></wbr><span><span>Trigger</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="833899603%2FClasslikes%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="1076543546%2FClasslikes%2F-325384828" anchor-label="ControllerTriggerCreator" id="1076543546%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="-controller-trigger-creator/index.html"><span>Controller</span><wbr></wbr><span>Trigger</span><wbr></wbr><span><span>Creator</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1076543546%2FClasslikes%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">inner </span><span class="token keyword">class </span><a href="-controller-trigger-creator/index.html">ControllerTriggerCreator</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">user<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/Gamepad///PointingToDeclaration/">Gamepad</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Controller trigger creator.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="-gamepad-trigger/index.html">GamepadTrigger</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">user<span class="token operator">: </span><span data-unresolved-link="org.firstinspires.ftc.robotcore.internal.ui/GamepadUser///PointingToDeclaration/">GamepadUser</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>instance<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/Gamepad///PointingToDeclaration/">Gamepad</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Button or axis binding creator.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -132,7 +98,22 @@ v7.4.0-master-f9b8b9f8b            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">inner </span><span class="token keyword">class </span><a href="-scheduled-task/index.html">ScheduledTask</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">originalRunCondition<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.logic/-condition/index.html">Condition</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A task that will run when a condition is met.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="-scheduled-task/index.html">ScheduledTask</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>task<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>trigger<span class="token operator">: </span><a href="-trigger/index.html">Scheduler.Trigger</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>binding<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BiConsumer.html">BiConsumer</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">A bound <a href="-scheduled-task/task.html">task</a> that will schedule on the given <a href="-scheduled-task/binding.html">binding</a>, accepting the previous state of the trigger and current state of the trigger.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1653906496%2FClasslikes%2F-325384828" anchor-label="Trigger" id="1653906496%2FClasslikes%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-trigger/index.html"><span><span>Trigger</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1653906496%2FClasslikes%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="-trigger/index.html">Trigger</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>condition<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BooleanSupplier.html">BooleanSupplier</a></span></span><span class="token punctuation">)</span> : <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.logic/-condition/index.html">Condition</a><span class="token operator">&lt;</span><a href="-trigger/index.html">Scheduler.Trigger</a><span class="token operator">&gt; </span></div><div class="brief "><p class="paragraph">A <a href="-trigger/condition.html">condition</a> that will link to and execute some <a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -141,17 +122,32 @@ v7.4.0-master-f9b8b9f8b            </div>
       </div>
       <div data-togglable="PROPERTY">
         <h2 class="">Properties</h2>
-        <div class="table"><a data-name="978951394%2FProperties%2F-325384828" anchor-label="managedSubsystems" id="978951394%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="507478333%2FProperties%2F-325384828" anchor-label="activeTasks" id="507478333%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="managed-subsystems.html"><span>managed</span><wbr></wbr><span><span>Subsystems</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="978951394%2FProperties%2F-325384828"></span>
+                  <div><a href="active-tasks.html"><span>active</span><wbr></wbr><span><span>Tasks</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="507478333%2FProperties%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="managed-subsystems.html">managedSubsystems</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="../-bunyips-subsystem/index.html">BunyipsSubsystem</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">All subsystems attached to and managed by the Scheduler.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-field/index.html"><span class="token annotation builtin">JvmField</span></a></div></div><span class="token keyword">val </span><a href="active-tasks.html">activeTasks</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/LinkedHashSet.html">LinkedHashSet</a><span class="token operator">&lt;</span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Tasks currently being executed by the Scheduler.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1024239793%2FProperties%2F-325384828" anchor-label="subsystems" id="1024239793%2FProperties%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="subsystems.html"><span><span>subsystems</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1024239793%2FProperties%2F-325384828"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">var </span><a href="subsystems.html">subsystems</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/HashSet.html">HashSet</a><span class="token operator">&lt;</span><a href="../-bunyips-subsystem/index.html">BunyipsSubsystem</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Subsystems managed by the Scheduler.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -160,22 +156,7 @@ v7.4.0-master-f9b8b9f8b            </div>
       </div>
       <div data-togglable="FUNCTION">
         <h2 class="">Functions</h2>
-        <div class="table"><a data-name="1126734982%2FFunctions%2F-325384828" anchor-label="addSubsystems" id="1126734982%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="add-subsystems.html"><span>add</span><wbr></wbr><span><span>Subsystems</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1126734982%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="add-subsystems.html"><span class="token function">addSubsystems</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">vararg </span>dispatch<span class="token operator">: </span><a href="../-bunyips-subsystem/index.html">BunyipsSubsystem</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Add subsystems to the scheduler. This will ensure the <code class="lang-kotlin">update()</code> method of the subsystems is called, and that commands can be scheduled on these subsystems. This is <strong>REQUIRED</strong> to be called if using a base implementation of Scheduler. If you are using a <a href="../-command-based-bunyips-op-mode/index.html">CommandBasedBunyipsOpMode</a>, see the <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/index.html">use</a> method or rely on the automatic features during construction that will add subsystems at construction with no need to call this method.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-1423504771%2FFunctions%2F-325384828" anchor-label="disable" id="-1423504771%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+        <div class="table"><a data-name="-1423504771%2FFunctions%2F-325384828" anchor-label="disable" id="-1423504771%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
@@ -185,22 +166,7 @@ v7.4.0-master-f9b8b9f8b            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="disable.html"><span class="token function">disable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Disable all subsystems attached to the Scheduler.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="-877273363%2FFunctions%2F-325384828" anchor-label="driver" id="-877273363%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="driver.html"><span><span>driver</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-877273363%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="driver.html"><span class="token function">driver</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-controller-trigger-creator/index.html">Scheduler.ControllerTriggerCreator</a></div><div class="brief "><p class="paragraph">Create a new controller trigger creator for the driver (gamepad 1).</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="disable.html"><span class="token function">disable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Disables ability to call <a href="update.html">update</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -215,67 +181,52 @@ v7.4.0-master-f9b8b9f8b            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="enable.html"><span class="token function">enable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Enable all subsystems attached to the Scheduler, unless they failed from null assertion.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="enable.html"><span class="token function">enable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Resumes ability to call <a href="update.html">update</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-2089776888%2FFunctions%2F-325384828" anchor-label="getAllocatedTasks" id="-2089776888%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-1942892009%2FFunctions%2F-325384828" anchor-label="finishAll" id="-1942892009%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="get-allocated-tasks.html"><span>get</span><wbr></wbr><span>Allocated</span><wbr></wbr><span><span>Tasks</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2089776888%2FFunctions%2F-325384828"></span>
+                  <div><a href="finish-all.html"><span>finish</span><wbr></wbr><span><span>All</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1942892009%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-allocated-tasks.html"><span class="token function">getAllocatedTasks</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="-scheduled-task/index.html">Scheduler.ScheduledTask</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Get all allocated tasks.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="finish-all.html"><span class="token function">finishAll</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Calls <code class="lang-kotlin">finish</code> on and clears all current <a href="active-tasks.html">activeTasks</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="2104910077%2FFunctions%2F-325384828" anchor-label="gp1" id="2104910077%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="174279973%2FFunctions%2F-325384828" anchor-label="gamepad1" id="174279973%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="gp1.html"><span><span>gp1</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2104910077%2FFunctions%2F-325384828"></span>
+                  <div><a href="gamepad1.html"><span><span>gamepad1</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="174279973%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="gp1.html"><span class="token function">gp1</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-controller-trigger-creator/index.html">Scheduler.ControllerTriggerCreator</a></div><div class="brief "><p class="paragraph">Create a new controller trigger creator for gamepad 1 (driver).</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="gamepad1.html"><span class="token function">gamepad1</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-gamepad-trigger/index.html">Scheduler.GamepadTrigger</a></div><div class="brief "><p class="paragraph">Creates a button or axis trigger binder to create a <a href="-trigger/index.html">Trigger</a> for <code class="lang-kotlin">gamepad1</code>.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="2135929884%2FFunctions%2F-325384828" anchor-label="gp2" id="2135929884%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="205299780%2FFunctions%2F-325384828" anchor-label="gamepad2" id="205299780%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="gp2.html"><span><span>gp2</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2135929884%2FFunctions%2F-325384828"></span>
+                  <div><a href="gamepad2.html"><span><span>gamepad2</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="205299780%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="gp2.html"><span class="token function">gp2</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-controller-trigger-creator/index.html">Scheduler.ControllerTriggerCreator</a></div><div class="brief "><p class="paragraph">Create a new controller trigger creator for gamepad 2 (operator).</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="341795111%2FFunctions%2F-325384828" anchor-label="immediately" id="341795111%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="immediately.html"><span><span>immediately</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="341795111%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="immediately.html"><span class="token function">immediately</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-scheduled-task/index.html">Scheduler.ScheduledTask</a></div><div class="brief "><p class="paragraph">Run a task immediately with no start condition. This is the same as calling <code class="lang-kotlin">.when(() -&gt; true)</code>.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="gamepad2.html"><span class="token function">gamepad2</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-gamepad-trigger/index.html">Scheduler.GamepadTrigger</a></div><div class="brief "><p class="paragraph">Creates a button or axis trigger binder to create a <a href="-trigger/index.html">Trigger</a> for <code class="lang-kotlin">gamepad2</code>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -290,67 +241,52 @@ v7.4.0-master-f9b8b9f8b            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="mute.html"><span class="token function">mute</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Mute all Scheduler instances telemetry for the rest of the OpMode.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="mute.html"><span class="token function">mute</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Mutes Scheduler telemetry.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1066605122%2FFunctions%2F-325384828" anchor-label="on" id="-1066605122%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="928149656%2FFunctions%2F-325384828" anchor-label="on" id="928149656%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="on.html"><span><span>on</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1066605122%2FFunctions%2F-325384828"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="928149656%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="on.html"><span class="token function">on</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">user<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/Gamepad///PointingToDeclaration/">Gamepad</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-controller-trigger-creator/index.html">Scheduler.ControllerTriggerCreator</a></div><div class="brief "><p class="paragraph">Create a new controller trigger creator.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="on.html"><span class="token function">on</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">condition<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BooleanSupplier.html">BooleanSupplier</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-scheduled-task/index.html">Scheduler.ScheduledTask</a></div><div class="brief "><p class="paragraph">Run a task when a condition is met. This condition will be evaluated continuously.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="on.html"><span class="token function">on</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">condition<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BooleanSupplier.html">BooleanSupplier</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-trigger/index.html">Scheduler.Trigger</a></div><div class="brief "><p class="paragraph">Creates a <a href="-trigger/index.html">Trigger</a> for the boolean <a href="on.html">condition</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="-1208853519%2FFunctions%2F-325384828" anchor-label="operator" id="-1208853519%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="1338424122%2FFunctions%2F-325384828" anchor-label="schedule" id="1338424122%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="operator.html"><span><span>operator</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1208853519%2FFunctions%2F-325384828"></span>
+                  <div><a href="schedule.html"><span><span>schedule</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1338424122%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="operator.html"><span class="token function">operator</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-controller-trigger-creator/index.html">Scheduler.ControllerTriggerCreator</a></div><div class="brief "><p class="paragraph">Create a new controller trigger creator for the operator (gamepad 2).</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="schedule.html"><span class="token function">schedule</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">task<span class="token operator">: </span><a href="../../au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases/-task/index.html">Task</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Independently schedules a task to execute.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1708119098%2FFunctions%2F-325384828" anchor-label="run" id="1708119098%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="run.html"><span><span>run</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1708119098%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="run.html"><span class="token function">run</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Run the scheduler. This will run all subsystems and tasks allocated to the scheduler. This should be called in the <code class="lang-kotlin">activeLoop()</code> method of the <a href="../-bunyips-op-mode/index.html">BunyipsOpMode</a>, and is automatically called in <a href="../-command-based-bunyips-op-mode/index.html">CommandBasedBunyipsOpMode</a>.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="450859826%2FFunctions%2F-325384828" anchor-label="unbind" id="450859826%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="918261597%2FFunctions%2F-325384828" anchor-label="unbind" id="918261597%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="unbind.html"><span><span>unbind</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="450859826%2FFunctions%2F-325384828"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="918261597%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="unbind.html"><span class="token function">unbind</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">task<span class="token operator">: </span><a href="-scheduled-task/index.html">Scheduler.ScheduledTask</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Unbind a scheduled task from the scheduler.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="unbind.html"><span class="token function">unbind</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">index<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Unbind a task from the scheduler, based on the index of the task in the scheduler's allocated tasks.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="unbind.html"><span class="token function">unbind</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">id<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Unbinds a scheduled task by the <a href="unbind.html">id</a>.</p></div></div></div>
                 </div>
               </div>
             </div>
@@ -365,52 +301,37 @@ v7.4.0-master-f9b8b9f8b            </div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="unmute.html"><span class="token function">unmute</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Unmute all Scheduler instances telemetry for the rest of the OpMode.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="unmute.html"><span class="token function">unmute</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Unmutes Scheduler telemetry.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="1992625032%2FFunctions%2F-325384828" anchor-label="when" id="1992625032%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-506231444%2FFunctions%2F-325384828" anchor-label="update" id="-506231444%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="when.html"><span><span>when</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1992625032%2FFunctions%2F-325384828"></span>
+                  <div><a href="update.html"><span><span>update</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-506231444%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="when.html"><span class="token function">when</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">user<span class="token operator">: </span><span data-unresolved-link="com.qualcomm.robotcore.hardware/Gamepad///PointingToDeclaration/">Gamepad</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-controller-trigger-creator/index.html">Scheduler.ControllerTriggerCreator</a></div><div class="brief "><p class="paragraph">Create a new controller trigger creator.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="when.html"><span class="token function">when</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">condition<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BooleanSupplier.html">BooleanSupplier</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-scheduled-task/index.html">Scheduler.ScheduledTask</a></div><div class="brief "><p class="paragraph">Run a task when a condition is met. This condition will be evaluated continuously.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="update.html"><span class="token function">update</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates subsystems, runs bindings, and schedules and executes tasks.</p></div></div></div>
                 </div>
               </div>
             </div>
           </div>
-<a data-name="176170522%2FFunctions%2F-325384828" anchor-label="whenFalling" id="176170522%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
+<a data-name="-997461340%2FFunctions%2F-325384828" anchor-label="use" id="-997461340%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
           <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="when-falling.html"><span>when</span><wbr></wbr><span><span>Falling</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="176170522%2FFunctions%2F-325384828"></span>
+                  <div><a href="use.html"><span><span>use</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-997461340%2FFunctions%2F-325384828"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="when-falling.html"><span class="token function">whenFalling</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">condition<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BooleanSupplier.html">BooleanSupplier</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-scheduled-task/index.html">Scheduler.ScheduledTask</a></div><div class="brief "><p class="paragraph">Run a task when a condition is met. This condition will be evaluated according to a falling-edge detection.</p></div></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-<a data-name="703212727%2FFunctions%2F-325384828" anchor-label="whenRising" id="703212727%2FFunctions%2F-325384828" data-filterable-set=":BunyipsLib:dokkaHtml/release"></a>
-          <div class="table-row" data-filterable-current=":BunyipsLib:dokkaHtml/release" data-filterable-set=":BunyipsLib:dokkaHtml/release">
-            <div class="main-subrow keyValue ">
-              <div class=""><span class="inline-flex">
-                  <div><a href="when-rising.html"><span>when</span><wbr></wbr><span><span>Rising</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="703212727%2FFunctions%2F-325384828"></span>
-                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                  </span></span></div>
-              <div>
-                <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="when-rising.html"><span class="token function">whenRising</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">condition<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/function/BooleanSupplier.html">BooleanSupplier</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-scheduled-task/index.html">Scheduler.ScheduledTask</a></div><div class="brief "><p class="paragraph">Run a task when a condition is met. This condition will be evaluated according to a rising-edge detection.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":BunyipsLib:dokkaHtml/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-static/index.html"><span class="token annotation builtin">JvmStatic</span></a></div></div><span class="token keyword">fun </span><a href="use.html"><span class="token function">use</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">vararg </span>subsystems<span class="token operator">: </span><a href="../-bunyips-subsystem/index.html">BunyipsSubsystem</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Use a specific subset of <a href="use.html">subsystems</a> for the Scheduler.</p></div></div></div>
                 </div>
               </div>
             </div>
