@@ -14,6 +14,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguratio
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.LEFT
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.RIGHT
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry.toUserString
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
 import com.acmerobotics.roadrunner.Pose2d
 import kotlin.math.abs
@@ -125,6 +126,11 @@ object StartingConfiguration {
             ccwRotation,
             flags
         )
+
+        /**
+         * Saves this starting configuration to `Storage.memory().lastKnownStartingConfiguration`.
+         */
+        fun save() = apply { Storage.memory().lastKnownStartingConfiguration = this }
 
         /**
          * Return an informative string about this starting configuration.

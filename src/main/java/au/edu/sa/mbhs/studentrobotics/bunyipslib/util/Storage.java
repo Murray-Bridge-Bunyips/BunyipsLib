@@ -91,6 +91,8 @@ public final class Storage {
          * <p>
          * This object is automatically filled by {@link UserSelection} immediately when a selection is made, which
          * can fire a maximum of once per selection.
+         * <p>
+         * This object can also be assigned by the {@code .save()} convenience method on the {@link StartingConfiguration.Position}.
          *
          * @see StartingConfiguration
          * @since 7.1.0
