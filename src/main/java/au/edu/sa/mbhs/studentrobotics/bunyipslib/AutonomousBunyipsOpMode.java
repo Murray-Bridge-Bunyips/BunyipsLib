@@ -20,9 +20,11 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.ActionTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.DeferredTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Lambda;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.SequentialTaskGroup;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Ref;
@@ -244,11 +246,27 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
             telemetry.log("<font color='gray'>auto:</font> <font color='yellow'>caution!</font> a task was added manually before the onReady callback");
         }
         synchronized (tasks) {
-            tasks.add(newTask);
+            insert(newTask);
         }
         taskCount++;
         telemetry.log("<font color='gray'>auto:</font> %<i>(t=%)</i> -> added %/%", newTask, getTaskTimeout(newTask), taskCount, taskCount);
         return newTask;
+    }
+
+    // prereq: inside a synchronized block
+    private void insert(Task task) {
+        // Before we add the task we also want to unwrap a top-level SequentialTaskGroup which may be created through RR
+        // This freshens up the sequential task numbering nature when using markers which are deconstructed
+        // by the TaskBuilder, instead of scheduling a large 1/1 sequential task. Technically, this is just cosmetic.
+        if (task instanceof SequentialTaskGroup seq) {
+            // We only want to go one layer in, don't call recursively
+            tasks.addAll(seq.tasks);
+        } else if (task instanceof ActionTask ac && ac.parentAction instanceof Task innerTask) {
+            // Try again with the wrapped task, common for RoadRunner builders
+            insert(innerTask);
+        } else {
+            tasks.add(task);
+        }
     }
 
     /**
@@ -351,7 +369,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                 tmp.add(tasks.removeLast());
             }
             // Insert the new task
-            tasks.add(newTask);
+            insert(newTask);
             // Refill the queue
             while (!tmp.isEmpty()) {
                 tasks.add(tmp.removeLast());

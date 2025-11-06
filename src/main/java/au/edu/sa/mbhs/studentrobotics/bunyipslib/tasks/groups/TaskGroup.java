@@ -27,7 +27,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg;
  * @since 1.0.0-pre
  */
 public abstract class TaskGroup extends Task {
-    protected final ArrayList<Task> tasks = new ArrayList<>();
+    /**
+     * All tasks in the task group. Beware of possible concurrent modification during task group execution.
+     */
+    public final ArrayList<Task> tasks = new ArrayList<>();
     private final HashSet<Task> finishedTasks = new HashSet<>();
 
     protected TaskGroup() {
@@ -52,14 +55,6 @@ public abstract class TaskGroup extends Task {
         // Names are only updated on construction and will not reflect changes to the composed tasks
         // Timeout definitions are treated similarly depending on the implementation of the TaskGroup
         named(taskNames.toString());
-    }
-
-    /**
-     * @return all copy of all tasks in this group
-     */
-    @NonNull
-    public List<Task> getGroupedTasks() {
-        return new ArrayList<>(tasks);
     }
 
     protected final void executeTask(@NonNull Task task) {

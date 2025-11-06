@@ -33,7 +33,10 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.SequentialTaskGrou
  * @since 6.0.0
  */
 public class ActionTask extends Task {
-    private Action parentAction;
+    /**
+     * The underlying {@link Action} wrapped by this task. May exist as a {@link Task} instance.
+     */
+    public final Action parentAction;
     private boolean actionFinished = false;
 
     /**
@@ -42,14 +45,15 @@ public class ActionTask extends Task {
      * @param action The action to wrap
      */
     public ActionTask(@NonNull Action action) {
-        parentAction = action;
         // Recursively unwrap the action if it can be converted into a TaskGroup
-        if (parentAction instanceof ParallelAction par)
+        if (action instanceof ParallelAction par)
             parentAction = new ParallelTaskGroup(par.getInitialActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
-        else if (parentAction instanceof SequentialAction seq)
+        else if (action instanceof SequentialAction seq)
             parentAction = new SequentialTaskGroup(seq.getInitialActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
-        else if (parentAction instanceof RaceAction race)
+        else if (action instanceof RaceAction race)
             parentAction = new RaceTaskGroup(race.getActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
+        else
+            parentAction = action;
         named(parentAction instanceof Task ? parentAction.toString() : parentAction.getClass().getSimpleName());
         if (parentAction instanceof Task task)
             sync(task);
