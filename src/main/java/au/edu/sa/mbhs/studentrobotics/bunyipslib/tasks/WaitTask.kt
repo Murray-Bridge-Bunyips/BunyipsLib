@@ -15,7 +15,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
  */
-class WaitTask(private val time: Measure<Time>, private val showTelemetry: Boolean = false) : Task() {
+class WaitTask(time: Measure<Time>, private val showTelemetry: Boolean = false) : Task() {
     constructor(time: Measure<Time>) : this(time, false)
 
     // Special utility constructors for this specific application
@@ -37,5 +37,5 @@ class WaitTask(private val time: Measure<Time>, private val showTelemetry: Boole
     }
 
     // Ensure the "user condition" is the reason the task ends, so we don't call onInterrupt from timeout
-    override fun isTaskFinished() = elapsedTime >= time - (1 of Nanoseconds)
+    override fun isTaskFinished() = elapsedTime >= timeout - (1 of Nanoseconds)
 }

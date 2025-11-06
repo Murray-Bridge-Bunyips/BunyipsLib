@@ -5,6 +5,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Unit.Companion.of
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanoseconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
@@ -21,7 +23,7 @@ class MessageTask(time: Measure<Time>, private val message: String) : Task() {
 
     init {
         timeout = time
-        named("Message")
+        named("${time to Seconds round 2}s (msg)")
     }
 
     private fun buildString(): String {
@@ -36,9 +38,8 @@ class MessageTask(time: Measure<Time>, private val message: String) : Task() {
         item?.setValue(buildString())
     }
 
-    override fun isTaskFinished(): Boolean {
-        return false
-    }
+    // Ensure the "user condition" is the reason the task ends, so we don't call onInterrupt from timeout
+    override fun isTaskFinished() = elapsedTime >= timeout - (1 of Nanoseconds)
 
     override fun onFinish() {
         if (item != null)
