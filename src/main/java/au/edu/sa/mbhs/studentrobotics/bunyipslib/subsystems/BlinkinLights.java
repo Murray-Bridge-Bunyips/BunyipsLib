@@ -258,5 +258,21 @@ public class BlinkinLights extends BunyipsSubsystem {
                     .on(BlinkinLights.this, true)
                     .named(forThisSubsystem(pattern.name()));
         }
+
+        /**
+         * Set the current pattern for use during this task's execution.
+         * <p>
+         * Equivalent to {@code setPatternFor(INFINITE_TIMEOUT, pattern)}.
+         *
+         * @param pattern  the pattern to set
+         * @return a task to set the pattern for a duration
+         */
+        @NonNull
+        public Task setPattern(@NonNull RevBlinkinLedDriver.BlinkinPattern pattern) {
+            return Task.task().periodic(() -> currentPattern = pattern)
+                    .onFinish(() -> currentPattern = defaultPattern)
+                    .on(BlinkinLights.this, true)
+                    .named(forThisSubsystem(pattern.name()));
+        }
     }
 }
