@@ -118,7 +118,7 @@ data class ColourBlob(
                     BlobCriteria.BY_ARC_LENGTH -> b.arcLength
                     BlobCriteria.BY_CIRCULARITY -> b.circularity
                 }
-                if (value > maxValue || value < minValue)
+                if (value !in minValue..maxValue)
                     toRemove.add(b)
             }
             blobs.removeAll(toRemove)

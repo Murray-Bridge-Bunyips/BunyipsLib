@@ -59,7 +59,7 @@ object Exceptions {
         e.printStackTrace(PrintWriter(sw))
         var stack = sw.toString()
         if (stack.length > MAX_DS_STACKTRACE_CHARS) {
-            stack = stack.substring(0, MAX_DS_STACKTRACE_CHARS - 4)
+            stack = stack.take(MAX_DS_STACKTRACE_CHARS - 4)
             stack += " ..."
         }
         val ec = e.cause
@@ -67,7 +67,7 @@ object Exceptions {
         if (ec != null) {
             var ecc = ec.toString()
             if (ecc.length > MAX_DS_STACKTRACE_CHARS) {
-                ecc = ecc.substring(0, MAX_DS_STACKTRACE_CHARS - 4)
+                ecc = ecc.take(MAX_DS_STACKTRACE_CHARS - 4)
                 ecc += " ..."
             }
             cause = " caused by $ecc"

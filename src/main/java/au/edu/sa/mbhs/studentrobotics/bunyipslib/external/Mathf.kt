@@ -742,7 +742,7 @@ object Mathf {
         }
         val t1 = solutions[0]
         val t2 = if (solutions.size == 2) solutions[1] else t1
-        if ((t1 < 0 || t1 > 1) && (t2 < 0 || t2 > 1)) {
+        if ((t1 !in 0.0..1.0) && (t2 !in 0.0..1.0)) {
             throw NoInterceptException()
         }
         return Pair(Vector2d(p1.x + t1 * dx, p1.y + t1 * dy), Vector2d(p1.x + t2 * dx, p1.y + t2 * dy))
@@ -802,11 +802,11 @@ object Mathf {
         val cx = p3.x - p1.x
         val cy = p3.y - p1.y
         val t = (cx * dy - cy * dx) / bDotDPerp
-        if (t < 0 || t > 1) {
+        if (t !in 0.0..1.0) {
             throw NoInterceptException()
         }
         val u = (cx * by - cy * bx) / bDotDPerp
-        if (u < 0 || u > 1) {
+        if (u !in 0.0..1.0) {
             throw NoInterceptException()
         }
 

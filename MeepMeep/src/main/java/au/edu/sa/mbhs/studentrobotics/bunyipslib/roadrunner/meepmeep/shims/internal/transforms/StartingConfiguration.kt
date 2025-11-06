@@ -149,7 +149,7 @@ object StartingConfiguration {
             return Text.format(
                 "On <font color='%'>%</font>: % from % wall%%%",
                 if (isRed) "red" else "#3863ff",
-                Text.upper(lowCaseAlliance.substring(0, 1))
+                Text.upper(lowCaseAlliance.take(1))
                         + lowCaseAlliance.substring(1),
                 if (horizontalTranslation.unit() == FieldTiles) {
                     val tileValue = ((horizontalTranslation to FieldTiles) + 0.5) round 1
@@ -277,7 +277,7 @@ object StartingConfiguration {
          * This translation is positioned in the vertical center of the field tile, starting from the side of the origin.
          */
         fun tile(tileFromOrigin: Double): PrebuiltPosition {
-            if (tileFromOrigin < 0.5 || tileFromOrigin > 6.5)
+            if (tileFromOrigin !in 0.5..6.5)
                 throw IllegalArgumentException("tile index out of the bound [0.5, 6.5]")
             translate(FieldTiles.one() / 2.0 + FieldTiles.one() * (tileFromOrigin - 1.0))
             return PrebuiltPosition()

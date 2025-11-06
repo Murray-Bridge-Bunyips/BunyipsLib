@@ -33,6 +33,7 @@ class DynamicTask() : Task() {
     val sharedRef = LateInitCell<Any>()
 
     // Required to open the field to dynamic tasks
+    @Suppress("LateinitVarOverridesLateinitVar")
     public override lateinit var dashboard: TelemetryPacket
 
     init {

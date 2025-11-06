@@ -264,8 +264,8 @@ public class BlinkinLights extends BunyipsSubsystem {
          * <p>
          * Equivalent to {@code setPatternFor(INFINITE_TIMEOUT, pattern)}.
          *
-         * @param pattern  the pattern to set
-         * @return a task to set the pattern for a duration
+         * @param pattern the pattern to set
+         * @return a task to set the pattern during the continuous execution of this task
          */
         @NonNull
         public Task setPattern(@NonNull RevBlinkinLedDriver.BlinkinPattern pattern) {
