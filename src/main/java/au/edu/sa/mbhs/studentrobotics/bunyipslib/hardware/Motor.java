@@ -194,6 +194,16 @@ public class Motor extends SimpleRotator implements DcMotorEx {
         nominalVoltageSensor = nominalVoltageSensorMapping.iterator().next();
     }
 
+    /**
+     * Sets a voltage sensor to use for nominal power calculation.
+     * See {@link #setNominalVoltage(Measure)} to set a nominal voltage directly, defaults to 12V.
+     *
+     * @param nominalVoltageSensor the sensor to use for nominal voltage calculation, e.g. {@code hardwareMap.voltageSensor.iterator().next()}
+     */
+    public void setNominalVoltageSensor(@NonNull VoltageSensor nominalVoltageSensor) {
+        this.nominalVoltageSensor = nominalVoltageSensor;
+    }
+
     // hello i am Giulio
 
     /**
@@ -201,6 +211,7 @@ public class Motor extends SimpleRotator implements DcMotorEx {
      * The equation used is {@code applied = power * (nominalVoltage / sensorVoltage)}.
      * <p>
      * A voltage sensor <b>must</b> be set for this to work via {@link #setNominalVoltageSensor(HardwareMap.DeviceMapping)}
+     * or {@link #setNominalVoltageSensor(VoltageSensor)}.
      * This value will be ignored if no sensor is set.
      *
      * @param nominalVoltage the nominal voltage parameter to use, defaults to 12V

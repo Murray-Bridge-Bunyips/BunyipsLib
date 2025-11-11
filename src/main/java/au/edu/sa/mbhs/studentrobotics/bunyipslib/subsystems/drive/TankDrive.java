@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
@@ -101,7 +102,7 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param tankGains            the tank gains parameters
      * @param leftMotors           all motors on the left side of the robot (e.g. {@code Arrays.asList(leftFront, leftBack)})
      * @param rightMotors          all motors on the right side of the robot (e.g. {@code Arrays.asList(rightFront, rightBack)})
-     * @param imu                  the IMU to use, see {@link IMUEx} for lazy initialisation
+     * @param imu                  the IMU to use, see {@link IMUEx} for lazy or no hub IMU ({@code IMUEx.none()}) initialisation
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      * @param startPose            the starting pose of the robot
      */
@@ -149,11 +150,25 @@ public class TankDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param tankGains            the tank gains parameters
      * @param leftMotors           all motors on the left side of the robot (e.g. {@code Arrays.asList(leftFront, leftBack)})
      * @param rightMotors          all motors on the right side of the robot (e.g. {@code Arrays.asList(rightFront, rightBack)})
-     * @param imu                  the IMU to use, see {@link IMUEx} for lazy initialisation
+     * @param imu                  the IMU to use, see {@link IMUEx} for lazy or null initialisation
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      */
     public TankDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull TankGains tankGains, @NonNull List<DcMotor> leftMotors, @NonNull List<DcMotor> rightMotors, @NonNull IMU imu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
         this(driveModel, motionProfile, tankGains, leftMotors, rightMotors, imu, voltageSensorMapping, Storage.memory().lastKnownPosition);
+    }
+
+    /**
+     * Create a new TankDrive that will start at the last known pose and use the first found voltage sensor in the Hardware Map.
+     *
+     * @param driveModel    the drive model parameters
+     * @param motionProfile the motion profile parameters
+     * @param tankGains     the tank gains parameters
+     * @param leftMotors    all motors on the left side of the robot (e.g. {@code Arrays.asList(leftFront, leftBack)})
+     * @param rightMotors   all motors on the right side of the robot (e.g. {@code Arrays.asList(rightFront, rightBack)})
+     * @param imu           the IMU to use, see {@link IMUEx} for lazy or null initialisation
+     */
+    public TankDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull TankGains tankGains, @NonNull List<DcMotor> leftMotors, @NonNull List<DcMotor> rightMotors, @NonNull IMU imu) {
+        this(driveModel, motionProfile, tankGains, leftMotors, rightMotors, imu, BunyipsLib.getOpMode().hardwareMap.voltageSensor, Storage.memory().lastKnownPosition);
     }
 
     /**

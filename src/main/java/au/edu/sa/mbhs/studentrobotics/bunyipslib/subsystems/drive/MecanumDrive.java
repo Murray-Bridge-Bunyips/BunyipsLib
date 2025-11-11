@@ -129,7 +129,7 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param leftBack             the back left motor
      * @param rightBack            the back right motor
      * @param rightFront           the front right motor
-     * @param imu                  the IMU to use, see {@link IMUEx} for lazy initialisation
+     * @param imu                  the IMU to use, see {@link IMUEx} for lazy or no hub IMU ({@code IMUEx.none()}) initialisation
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      * @param startPose            the starting pose of the robot
      */
@@ -184,11 +184,27 @@ public class MecanumDrive extends BunyipsSubsystem implements RoadRunnerDrive {
      * @param leftBack             the back left motor
      * @param rightBack            the back right motor
      * @param rightFront           the front right motor
-     * @param imu                  the IMU to use, see {@link IMUEx} for lazy initialisation
+     * @param imu                  the IMU to use, see {@link IMUEx} for lazy or no hub IMU ({@code IMUEx.none()}) initialisation
      * @param voltageSensorMapping the voltage sensor mapping for the robot as returned by {@code hardwareMap.voltageSensor}
      */
     public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @Nullable DcMotor leftFront, @Nullable DcMotor leftBack, @Nullable DcMotor rightBack, @Nullable DcMotor rightFront, @Nullable IMU imu, @NonNull HardwareMap.DeviceMapping<VoltageSensor> voltageSensorMapping) {
         this(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, imu, voltageSensorMapping, Storage.memory().lastKnownPosition);
+    }
+
+    /**
+     * Create a new MecanumDrive that will start at the last known pose and use the first found voltage sensor in the Hardware Map.
+     *
+     * @param driveModel    the drive model parameters
+     * @param motionProfile the motion profile parameters
+     * @param mecanumGains  the mecanum gains parameters
+     * @param leftFront     the front left motor
+     * @param leftBack      the back left motor
+     * @param rightBack     the back right motor
+     * @param rightFront    the front right motor
+     * @param imu           the IMU to use, see {@link IMUEx} for lazy or no hub IMU ({@code IMUEx.none()}) initialisation
+     */
+    public MecanumDrive(@NonNull DriveModel driveModel, @NonNull MotionProfile motionProfile, @NonNull MecanumGains mecanumGains, @Nullable DcMotor leftFront, @Nullable DcMotor leftBack, @Nullable DcMotor rightBack, @Nullable DcMotor rightFront, @Nullable IMU imu) {
+        this(driveModel, motionProfile, mecanumGains, leftFront, leftBack, rightBack, rightFront, imu, BunyipsLib.getOpMode().hardwareMap.voltageSensor, Storage.memory().lastKnownPosition);
     }
 
     @Hook(on = Hook.Target.POST_STOP)
