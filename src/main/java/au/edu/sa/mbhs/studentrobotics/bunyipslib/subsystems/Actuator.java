@@ -66,7 +66,7 @@ public class Actuator extends BunyipsSubsystem {
     protected void periodic() {
         logger.power = power;
         actuator.setPower(power);
-        DualTelemetry.smartAdd(toString(), "% at %\\% % power", power == 0 ? "<font color='green'>IDLING</font>" : "<font color='#FF5F1F'><b>RUNNING</b></font>",
+        DualTelemetry.smartAdd(toString(), "% at %\\%% power", power == 0 ? "<font color='green'>IDLING</font>" : "<font color='#FF5F1F'><b>RUNNING</b></font>",
                 Math.round(Math.min(100, Math.abs(power * 100))), power >= 0 ? "↑" : "↓");
     }
 
