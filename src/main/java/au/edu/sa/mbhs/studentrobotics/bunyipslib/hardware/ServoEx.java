@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.qualcomm.hardware.lynx.LynxServoController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -46,6 +47,7 @@ public class ServoEx extends ServoImpl implements PwmControl {
     private double lastPosition = -1;
     private long refreshRateNanos;
     private long lastUpdate;
+    private boolean triedInit;
 
     private Measure<Time> endToEndTime = Milliseconds.of(500);
 
@@ -193,10 +195,6 @@ public class ServoEx extends ServoImpl implements PwmControl {
             targetPosition = setpoint.position;
         }
 
-        // Ensure the servo is energised, as calling set position on init may not do anything due to internal cache
-        // This method is valid to call repeatedly as the PWM state is cached and no-ops on repeat calls
-        setPwmEnable();
-
         // Apply refresh rate and cache restrictions
         long now = System.nanoTime();
         if (refreshRateNanos > 0 && Math.abs(lastUpdate - now) < refreshRateNanos) {
@@ -212,6 +210,19 @@ public class ServoEx extends ServoImpl implements PwmControl {
 
         lastUpdate = now;
         lastPosition = targetPosition;
+
+        if (!triedInit && getController() instanceof LynxServoController lynx) {
+            // Paranoia, servos sometimes act strangely and don't reset or update first state properly
+            // Calling set position on init may not do anything due to internal cache
+            // We ensure we give clear direct initial instructions to the servo to energise properly
+            lynx.forgetLastKnown();
+            // Scales properly if we use the super method rather than the controller itself
+            super.setPosition(targetPosition);
+            lynx.setServoPwmEnable(getPortNumber());
+            triedInit = true;
+            return;
+        }
+
         super.setPosition(targetPosition);
     }
 

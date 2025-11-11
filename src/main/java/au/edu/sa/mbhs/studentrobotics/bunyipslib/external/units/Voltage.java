@@ -4,9 +4,14 @@
 
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Volts;
 import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Watts;
 
 import androidx.annotation.NonNull;
+
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib;
 
 /**
  * Unit of electric voltage dimension.
@@ -26,6 +31,23 @@ public class Voltage extends Unit<Voltage> {
 
     Voltage(Voltage baseUnit, UnaryFunction toBaseConverter, UnaryFunction fromBaseConverter, String name, String symbol) {
         super(baseUnit, toBaseConverter, fromBaseConverter, name, symbol);
+    }
+
+    /**
+     * Polls all voltage sensors on the robot and returns the lowest reported voltage.
+     *
+     * @return current voltage of the robot as reported by the sensors
+     */
+    @NonNull
+    public static Measure<Voltage> getCurrentRobotVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+        for (VoltageSensor sensor : BunyipsLib.getOpMode().hardwareMap.voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0) {
+                result = Math.min(result, voltage);
+            }
+        }
+        return Volts.of(result);
     }
 
     /**
