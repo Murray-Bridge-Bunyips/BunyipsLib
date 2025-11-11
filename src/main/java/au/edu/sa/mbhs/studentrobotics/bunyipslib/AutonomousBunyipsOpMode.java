@@ -676,15 +676,13 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
 
     /**
      * Runs upon the pressing of the INIT button on the Driver Station.
+     * <p>
      * This is where your hardware should be initialised (if applicable), and to assign OpModes via {@link #setOpModes}.
      * You may also add specific tasks to the queue here, but it is recommended to use {@link #setInitTask}
      * or {@link #onReady(RefCell)} instead.
-     * <p>
-     * Override this method to use it.
      */
-    protected void onInitialise() {
-        // no-op (>= v7.0.0)
-    }
+    // Used to be optional to implement from BunyipsLib v7.0.0-v8.0.1
+    protected abstract void onInitialise();
 
     /**
      * Call to define your user selection "sub-OpModes". If you list any, then the user will be prompted to select

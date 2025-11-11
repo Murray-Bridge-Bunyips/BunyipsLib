@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.function.DoubleSupplier;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;
@@ -65,6 +66,8 @@ public class Actuator extends BunyipsSubsystem {
     protected void periodic() {
         logger.power = power;
         actuator.setPower(power);
+        DualTelemetry.smartAdd(toString(), "% at %\\% % power", power == 0 ? "<font color='green'>IDLING</font>" : "<font color='#FF5F1F'><b>RUNNING</b></font>",
+                Math.round(Math.min(100, Math.abs(power * 100))), power >= 0 ? "↑" : "↓");
     }
 
     /**

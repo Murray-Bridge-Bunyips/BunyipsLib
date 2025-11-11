@@ -197,12 +197,9 @@ abstract class BunyipsOpMode : BOMInternal() {
      * Runs upon the pressing of the `INIT` button on the Driver Station.
      *
      * This is where you should initialise your hardware (if applicable) and other components.
-     *
-     * Override this method to use it.
      */
-    protected open fun onInit() {
-        // no-op (>= v7.0.0)
-    }
+    // Used to be optional to implement from BunyipsLib v7.0.0-v8.0.1
+    protected abstract fun onInit()
 
     /**
      * Run code in a loop AFTER [onInit] has completed, until start is pressed on the Driver Station
