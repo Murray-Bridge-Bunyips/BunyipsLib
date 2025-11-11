@@ -524,8 +524,8 @@ public final class HardwareTester extends LinearOpMode {
                     TelemetryMenu.DynamicItem id = new TelemetryMenu.DynamicItem("Device ID", pinpoint::getDeviceID);
                     TelemetryMenu.DynamicItem status = new TelemetryMenu.DynamicItem("Device Status", pinpoint::getDeviceStatus);
                     TelemetryMenu.DynamicItem version = new TelemetryMenu.DynamicItem("Device Version", pinpoint::getDeviceVersion);
-                    TelemetryMenu.DynamicItem encoderX = new TelemetryMenu.DynamicItem("Encoder X", pinpoint::getEncoderX);
-                    TelemetryMenu.DynamicItem encoderY = new TelemetryMenu.DynamicItem("Encoder Y", pinpoint::getEncoderY);
+                    TelemetryMenu.DynamicItem encoderX = new TelemetryMenu.DynamicItem("Encoder X (+forward)", pinpoint::getEncoderX);
+                    TelemetryMenu.DynamicItem encoderY = new TelemetryMenu.DynamicItem("Encoder Y (+left)", pinpoint::getEncoderY);
                     TelemetryMenu.InteractiveToggle xDir = new TelemetryMenu.InteractiveToggle("X Direction", false,
                             a -> {
                                 x.accept(a ? GoBildaPinpointDriver.EncoderDirection.REVERSED : GoBildaPinpointDriver.EncoderDirection.FORWARD);
