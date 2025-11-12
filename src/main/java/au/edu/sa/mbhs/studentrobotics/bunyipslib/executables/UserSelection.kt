@@ -201,10 +201,10 @@ class UserSelection<T : Any> @SafeVarargs @JvmOverloads constructor(
             Threads.start("user selection", this@UserSelection)
         }
         isFinished {
-            !Threads.isRunning(this@UserSelection)
+            !Threads.isRunning("user selection")
         }
         onFinish {
-            Threads.stop(this@UserSelection)
+            Threads.stop("user selection")
         }
     }
 
