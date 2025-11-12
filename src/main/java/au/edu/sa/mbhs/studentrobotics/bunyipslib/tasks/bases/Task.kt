@@ -684,6 +684,12 @@ abstract class Task : Runnable, Action {
         fun loop(function: Runnable) = task { named("Loop (dyn.)"); periodic(function) }
 
         /**
+         * Alias for [loop]. May need to be called to avoid calling the OpMode `loop()` method.
+         */
+        @JvmStatic
+        fun looping(function: Runnable) = loop(function)
+
+        /**
          * Utility for creating a [DynamicTask] that will wait for some [condition] and finish when the condition is true.
          */
         @JvmStatic
