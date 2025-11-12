@@ -22,7 +22,7 @@ object Ref {
      * Create a [RefCell] that holds null.
      */
     @JvmStatic
-    fun empty() = RefCell(null)
+    fun <T> empty() = RefCell<T?>(null)
 
     /**
      * Convert this supplier to a [LazyCell].
