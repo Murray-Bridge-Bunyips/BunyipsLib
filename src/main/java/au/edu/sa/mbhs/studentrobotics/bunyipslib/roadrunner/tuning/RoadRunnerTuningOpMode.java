@@ -330,6 +330,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
         DriveViewFactory dvf;
         if (drive instanceof MecanumDrive md) {
             dvf = (h) -> {
+                encoderGroups.forEach(EncoderGroup::bulkRead);
                 md.setPose(Geometry.zeroPose());
 
                 // We don't want to expose the motors on the subsystem directly, we'll just use reflection here.
@@ -411,6 +412,7 @@ public abstract class RoadRunnerTuningOpMode extends LinearOpMode {
             };
         } else if (drive instanceof TankDrive td) {
             dvf = (h) -> {
+                encoderGroups.forEach(EncoderGroup::bulkRead);
                 td.setPose(Geometry.zeroPose());
 
                 Class<?> tdClass = td.getClass();
