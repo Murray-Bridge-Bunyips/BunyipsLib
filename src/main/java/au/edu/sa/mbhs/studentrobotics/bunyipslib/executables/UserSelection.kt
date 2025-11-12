@@ -5,6 +5,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task.Companion.task
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingPositions
@@ -83,14 +85,14 @@ import java.util.function.Consumer
  * @author Lucas Bubner, 2023
  * @since 1.0.0-pre
  */
-class UserSelection<T : Any> @SafeVarargs constructor(
+class UserSelection<T : Any> @SafeVarargs @JvmOverloads constructor(
     /**
      * Runs once the user has made a selection or the thread is interrupted. The result will be the selection made by the user.
-     * Can be null if the user did not make a selection.
+     * Can consume null if the user did not make a selection.
      */
-    private val callback: Consumer<T?>,
+    private val callback: Consumer<T?> = Consumer { },
     private vararg val selections: T
-) : Callable<T> {
+) : Callable<T?> {
     private var disableChaining = false
     private val timer = ElapsedTime()
     private val attentionBorders = arrayOf(
@@ -186,6 +188,25 @@ class UserSelection<T : Any> @SafeVarargs constructor(
      */
     fun assignButton(layer: Int, layerItem: Int, button: Controls) =
         apply { assignedButtons[layer to layerItem] = button }
+
+    /**
+     * Returns a [Task] instance that will start this user selection on a thread managed by [Threads], where this task
+     * will end once the selection is completed.
+     *
+     * Ending this task prematurely will also end the user selection.
+     */
+    fun asAsyncTask(): Task = task {
+        named("User Selection")
+        init {
+            Threads.start("user selection", this@UserSelection)
+        }
+        isFinished {
+            !Threads.isRunning(this@UserSelection)
+        }
+        onFinish {
+            Threads.stop(this@UserSelection)
+        }
+    }
 
     /**
      * Maps a set of operation modes to a set of buttons, then blocks until the user inputs an option via `gamepad1`.
