@@ -37,8 +37,10 @@ import java.util.function.Consumer
  * `Threads.isRunning(selector)` in your `onInitLoop()` to ensure BOM knows it has to wait for the
  * user to make a selection. Alternatively, you can set an init-task that simply waits for the thread to
  * die or similar (e.g. `Task.waitFor(() -> !Threads.isRunning(...))`). You can also alternatively use
- * the init branch of this task to initialise the user selection. `onReady` of [AutonomousBunyipsOpMode] handles this.
- * If you do not implement a waiting action, the OpMode will assume it is ready to run regardless.
+ * the init branch of this task to initialise the user selection. `onReady` of [AutonomousBunyipsOpMode] handles
+ * this automatically. The utility [asAsyncTask] method can also provide this functionality for you
+ * to expose this selector as a [Task] for init. If you do not implement a waiting action,
+ * the OpMode will assume it is ready to run regardless.
  *
  * The result of this thread will be stored in the [Future] getter, which you can access yourself,
  * or you can attach a callback to the `callback` property to be run once the thread is complete.
