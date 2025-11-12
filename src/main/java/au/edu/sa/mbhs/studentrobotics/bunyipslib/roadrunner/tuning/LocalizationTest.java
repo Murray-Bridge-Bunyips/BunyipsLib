@@ -38,7 +38,7 @@ public final class LocalizationTest extends LinearOpMode {
             ));
             drive.periodic();
             telemetry.addData("Pose2d", Geometry.toUserString(Objects.requireNonNull(drive.getPose())).replace("Pose2d", ""));
-            telemetry.addData("PoseVelocity2d", Objects.requireNonNull(drive.getVelocity()).toString().replace("PoseVelocity2d", ""));
+            telemetry.addData("PoseVelocity2d", Geometry.toUserString(Objects.requireNonNull(drive.getVelocity())).replace("PoseVelocity2d", ""));
             telemetry.update();
         }
     }

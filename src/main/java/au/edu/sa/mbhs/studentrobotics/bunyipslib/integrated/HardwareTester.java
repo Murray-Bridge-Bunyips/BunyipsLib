@@ -555,16 +555,16 @@ public final class HardwareTester extends LinearOpMode {
                     TelemetryMenu.DynamicItem poseX = new TelemetryMenu.DynamicItem("Pose X (in)", () -> {
                         // Attach the update executor to an arbitrary item which will apply for all entries
                         pinpoint.update();
-                        return pinpoint.getPosX(DistanceUnit.INCH);
+                        return Mathf.round(pinpoint.getPosX(DistanceUnit.INCH), 1);
                     });
-                    TelemetryMenu.DynamicItem poseY = new TelemetryMenu.DynamicItem("Pose Y (in)", () -> pinpoint.getPosY(DistanceUnit.INCH));
-                    TelemetryMenu.DynamicItem poseH = new TelemetryMenu.DynamicItem("Pose H (deg)", () -> pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES));
-                    TelemetryMenu.DynamicItem poseHn = new TelemetryMenu.DynamicItem("Pose H (deg,norm)", () -> pinpoint.getHeading(AngleUnit.DEGREES));
-                    TelemetryMenu.DynamicItem velX = new TelemetryMenu.DynamicItem("Velocity X (in/s)", () -> pinpoint.getVelX(DistanceUnit.INCH));
-                    TelemetryMenu.DynamicItem velY = new TelemetryMenu.DynamicItem("Velocity Y (in/s)", () -> pinpoint.getVelY(DistanceUnit.INCH));
-                    TelemetryMenu.DynamicItem velH = new TelemetryMenu.DynamicItem("Velocity H (deg/s)", () -> pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES));
+                    TelemetryMenu.DynamicItem poseY = new TelemetryMenu.DynamicItem("Pose Y (in)", () -> Mathf.round(pinpoint.getPosY(DistanceUnit.INCH), 1));
+                    TelemetryMenu.DynamicItem poseH = new TelemetryMenu.DynamicItem("Pose H (deg)", () -> Mathf.round(pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES), 1));
+                    TelemetryMenu.DynamicItem poseHn = new TelemetryMenu.DynamicItem("Pose H (deg,norm)", () -> Mathf.round(pinpoint.getHeading(AngleUnit.DEGREES), 1));
+                    TelemetryMenu.DynamicItem velX = new TelemetryMenu.DynamicItem("Velocity X (in/s)", () -> Mathf.round(pinpoint.getVelX(DistanceUnit.INCH), 1));
+                    TelemetryMenu.DynamicItem velY = new TelemetryMenu.DynamicItem("Velocity Y (in/s)", () -> Mathf.round(pinpoint.getVelY(DistanceUnit.INCH), 1));
+                    TelemetryMenu.DynamicItem velH = new TelemetryMenu.DynamicItem("Velocity H (deg/s)", () -> Mathf.round(pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.DEGREES), 1));
                     TelemetryMenu.DynamicItem yawScalar = new TelemetryMenu.DynamicItem("Yaw Scalar", pinpoint::getYawScalar);
-                    TelemetryMenu.DynamicItem loopF = new TelemetryMenu.DynamicItem("Loop Frequency", pinpoint::getFrequency);
+                    TelemetryMenu.DynamicItem loopF = new TelemetryMenu.DynamicItem("Loop Frequency", () -> Math.round(pinpoint.getFrequency()));
                     TelemetryMenu.DynamicItem loopT = new TelemetryMenu.DynamicItem("Loop Time", pinpoint::getLoopTime);
                     dev.addChildren(id, status, version, encoderX, encoderY, xDir, yDir, reset, recalibrate, poseX, poseY, poseH, poseHn, velX, velY, velH, yawScalar, loopF, loopT);
                 }
