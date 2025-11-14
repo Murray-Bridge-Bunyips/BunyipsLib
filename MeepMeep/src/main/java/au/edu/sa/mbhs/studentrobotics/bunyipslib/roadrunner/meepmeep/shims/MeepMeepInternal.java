@@ -3,6 +3,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.IdentityPoseMap;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PoseMap;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -52,6 +53,7 @@ public abstract class MeepMeepInternal {
         private final List<Supplier<DriveTrainType>> dttSuppliers = new ArrayList<>();
         private final List<Consumer<Action>> runActionConsumers = new ArrayList<>();
         private int operatingIndex;
+        private boolean implicit;
 
         void __internalSetup(Function2<Pose2d, PoseMap, TrajectoryActionBuilder> trajectoryActionBuilderSupplier, Supplier<Constraints> constraintsSupplier, Supplier<DriveTrainType> dttSupplier, Consumer<Action> runActionConsumer) {
             trajectoryActionBuilderSuppliers.add(trajectoryActionBuilderSupplier);
@@ -76,8 +78,37 @@ public abstract class MeepMeepInternal {
         }
 
         /**
+         * Declares for the next {@code makeTrajectory()} call to use an implicit pose constructor.
+         * <p>
+         * This method should be used to replicate the behaviour when using {@code makeTrajectory(poseMap)} in BunyipsLib,
+         * where the inferred start pose will be doubly-mapped to preserve the absolute positioning of the pose (particularly for
+         * Starting Configuration objects).
+         * <p>
+         * For example, a pattern like the following is when an implicit start pose is being used with a mapping:
+         * <pre><code>
+         * drive.setPose(START_POSE);
+         * drive.makeTrajectory(POSE_MAP) // START_POSE will be mapped twice to preserve absolute positioning
+         *    // ...
+         *    .addTask();
+         * </code></pre>
+         * MeepMeep is incapable of performing this implicit conversion automatically without this method.
+         * <p>
+         * This method enables the "start pose" parsing for one call to {@code makeTrajectory()}. It is expected the pose map
+         * you use is self-invertible as per the standard {@code makeTrajectory()} documentation. This method has no effect
+         * if you don't use a pose map.
+         *
+         * @return the Drive shim, with start pose double-conversion enabled for the next builder (disabled after use)
+         */
+        public Drive useImplicitStartPose() {
+            implicit = true;
+            return this;
+        }
+
+        /**
          * Shim to create a new trajectory from the supplied pose.
-         * Implicit poses are not supported in this shim.
+         * <p>
+         * Implicit poses are not supported in this shim, but if this start pose is the result of the absolute robot
+         * position (e.g. {@code setPose}), consider calling {@link #useImplicitStartPose()} first to avoid mapping the start pose.
          *
          * @param startPose the pose to start the trajectory at and where the robot will be placed
          * @param poseMap   the pose map to use for the trajectory
@@ -86,6 +117,10 @@ public abstract class MeepMeepInternal {
         public MeepMeepTaskBuilder makeTrajectory(Pose2d startPose, PoseMap poseMap) {
             if (trajectoryActionBuilderSuppliers.isEmpty()) {
                 throw new IllegalStateException("A BunyipsLibBotBuilder must be created and built before calling drive.makeTrajectory!");
+            }
+            if (implicit) {
+                startPose = poseMap.map(Pose2dDual.constant(startPose, 1)).value();
+                implicit = false;
             }
             MeepMeepTaskBuilder tb = new MeepMeepTaskBuilder(
                     trajectoryActionBuilderSuppliers.get(operatingIndex).invoke(startPose, poseMap),
@@ -99,7 +134,9 @@ public abstract class MeepMeepInternal {
 
         /**
          * Shim to create a new trajectory from the supplied pose.
-         * Implicit poses are not supported in this shim.
+         * <p>
+         * Implicit poses are not supported in this shim, but if this start pose is the result of the absolute robot
+         * position (e.g. {@code setPose}), consider calling {@link #useImplicitStartPose()} first to avoid mapping the start pose.
          *
          * @param startVec the vector to start the trajectory at and where the robot will be placed
          * @param distUnit the unit of distance of the start pose
@@ -114,7 +151,9 @@ public abstract class MeepMeepInternal {
 
         /**
          * Shim to create a new trajectory from the supplied pose. Implicitly uses the IdentityPoseMap.
-         * Implicit poses are not supported in this shim.
+         * <p>
+         * Implicit poses are not supported in this shim, but if this start pose is the result of the absolute robot
+         * position (e.g. {@code setPose}), consider calling {@link #useImplicitStartPose()} first to avoid mapping the start pose.
          *
          * @param startVec the vector to start the trajectory at and where the robot will be placed
          * @param distUnit the unit of distance of the start pose
@@ -128,7 +167,9 @@ public abstract class MeepMeepInternal {
 
         /**
          * Shim to create a new trajectory from the supplied pose. Implicitly uses the IdentityPoseMap.
-         * Implicit poses are not supported in this shim.
+         * <p>
+         * Implicit poses are not supported in this shim, but if this start pose is the result of the current robot
+         * position (e.g. {@code setPose}), consider calling {@link #useImplicitStartPose()} first to avoid mapping the start pose.
          *
          * @param startPose the pose to start the trajectory at and where the robot will be placed
          * @return a new TaskBuilder to build the trajectory action
