@@ -26,21 +26,31 @@ public final class OTOSLocalizerParamsMessage {
      */
     public boolean selfTestPassed;
     /**
-     * Reported hardware version.
+     * Reported hardware minor version.
      */
-    public SparkFunOTOS.Version hardwareVersion;
+    public int hardwareMinorVersion;
     /**
-     * Reported firmware version.
+     * Reported hardware major version.
      */
-    public SparkFunOTOS.Version firmwareVersion;
+    public int hardwareMajorVersion;
+    /**
+     * Reported firmware minor version.
+     */
+    public int firmwareMinorVersion;
+    /**
+     * Reported firmware major version.
+     */
+    public int firmwareMajorVersion;
 
     @SuppressWarnings("MissingJavadoc")
     public OTOSLocalizerParamsMessage(@NonNull OTOSLocalizer.Params params, boolean isConnected, boolean selfTestPassed, SparkFunOTOS.Version hardwareVersion, SparkFunOTOS.Version firmwareVersion) {
         this.params = params;
         this.isConnected = isConnected;
         this.selfTestPassed = selfTestPassed;
-        this.hardwareVersion = hardwareVersion;
-        this.firmwareVersion = firmwareVersion;
+        this.hardwareMinorVersion = hardwareVersion.minor;
+        this.hardwareMajorVersion = hardwareVersion.major;
+        this.firmwareMinorVersion = firmwareVersion.minor;
+        this.firmwareMajorVersion = firmwareVersion.major;
     }
 }
 
