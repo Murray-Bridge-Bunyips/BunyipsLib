@@ -2,6 +2,75 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v8.0.1 (2025-11-19)
+
+API maturations.
+
+### Breaking changes
+
+- `BunyipsOpMode` `onInit` and `AutonomousBunyipsOpMode` `onInitialise` are now abstract
+    - Previously, these methods were _optional_ overrides between BunyipsLib v7.0.0-8.0.0
+    - However, this choice to use overrides increased footguns as initialisation code is required in the operation of
+      ABOM and to use `Scheduler` binds
+    - The original removal of the mandatory abstraction was for AutoInit instances but received limited use and hence
+      has been returned
+    - Improves programmer workflow as manual implementation of the init method is not needed anymore/is expected for an
+      init->loop standard OpMode lifecycle
+- `TaskGroup` implementations have removed `getGroupedTasks` in favour of the public final `tasks` field
+    - Exposes a direct list of tasks rather than copying a new group on calling the getter
+- Remove `Voltage` utility class
+    - Removes conflict with the unit `Voltage` class
+    - Migrated the functionality of the old `Voltage` to `Voltage.getCurrentRobotVoltage()`
+
+### Non-breaking changes
+
+- `AutonomousBunyipsOpMode` now calls `reset()` on Task instances before execution
+    - This is to allow tasks to be reused as they are finished
+    - May break some niche uses that rely on the old behaviour of never resetting
+- `MecanumDrive` and `TankDrive` instances no longer need the `VoltageSensor` mapping argument
+    - It is now auto-inferred from the OpMode rather than needing to be passed in manually
+    - The legacy constructor remains for old code, but new references do not include the mapping argument
+- `AutonomousBunyipsOpMode` now attempts to unwrap `SequentialTaskGroup` instances added
+    - ABOM now individually adds the contents of a sequential group, if possible, as individual tasks in the run queue
+    - This change does not affect functionality, only visual effects with the running queue in telemetry
+- Various language level upgrades
+- `ServoEx` now attempts more intelligently to initialise servos on first call
+    - Previously, servos would spam `setPwmEnable()` which could fail and spam the logs with errors
+- `UserSelection` constructor overloads for `callback`
+    - Mandatory callback is now optional and no-ops by default
+- Use static constants for ABOM's user selection thread name
+
+### Bug fixes
+
+- Fix `ForwardPushTest` not resetting ticks when tuning a goBILDA Pinpoint Computer
+- Patch `OTOSLocalizer` from failing to initialise on init
+    - This was caused by a serialisation bug in the parameters object
+- Fix `Threads.isRunning` from being inverted when using the `Object` overload
+- Update `WaitTask` and `MessageTask` to use correct timeouts when updated
+- Update inconcise labelling of X and Y encoders in the Pinpoint Hardware Tester
+- Perform 1st decimal place rounding to Pinpoint values in Hardware Tester to allow the operator to read the outputs
+  coherently
+- Perform rounding for `LocalizationTest` pose velocity that was not implemented
+- `RefCell.empty()` now infers type properly
+
+### Additions
+
+- Add automated telemetry to the `Actuator` subsystem
+    - This was forgotten to be implemented previously akin to its `HoldableActuator` counterpart
+- Added `UserSelection` `asAsyncTask()` method to convert the runtime of the user selection as a task
+    - This task will execute as a new thread on the initialisation of the task and end otherwise
+    - Allows common TeleOp user selections to not require a lot of boilerplate for waiting OpModes and instead call
+      `setInitTask(selection.asAsyncTask())`
+- `MeepMeepRunner` now can construct implicit start pose trajectories that properly transform over the `PoseMap` through
+  `useImplicitStartPose()`
+    - Allows the next constructor call to double-map properly when using a pose mapping, ensuring that the start pose is
+      interpreted as absolute
+- Added the `BlinkinLights` `setPattern` task, which is syntactic sugar for `setPatternFor(INFINITE_TIMEOUT, ...)`
+- `ActionTask` now exposes the wrapped action through the public final `parentTask` field
+- Added the `StartingConfiguration.Position` `.save()` utility method to save the position to memory
+- `Motor` now allows a direct `VoltageSensor` to use for `setNominalVoltageSensor`
+- Add `looping` to `Task` to alias to `loop` to avoid clashes in the `OpMode` `loop` method with static imports
+
 ## v8.0.0 (2025-10-30)
 
 Logging robustness and API refurbishing.

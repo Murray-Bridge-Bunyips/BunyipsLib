@@ -9,6 +9,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Nanosecond
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.logic.Not
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases.Task.Companion.loop
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.DeadlineTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.IncrementingTaskGroup
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.ParallelTaskGroup
