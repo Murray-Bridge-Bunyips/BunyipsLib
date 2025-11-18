@@ -46,6 +46,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      * Purely visual, and does not affect the actual task (hence why this field is not exposed to FtcDashboard).
      */
     public static double INFINITE_TASK_ASSUMED_DURATION_SECONDS = 5.0;
+    /**
+     * Name of the thread used for the {@link UserSelection} task.
+     */
+    public static String ABOM_USER_SELECTION_THREAD_NAME = "abom user selection";
     private final ConcurrentLinkedDeque<Task> tasks = new ConcurrentLinkedDeque<>();
     // Pre- and post-queues cannot have their tasks removed, so we can rely on their .size() methods
     private final ConcurrentLinkedDeque<Task> postQueue = new ConcurrentLinkedDeque<>();
@@ -118,7 +122,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         }
         if (selections.length > 1) {
             // There is minimum two options so we proceed with selection
-            Threads.start("abom user selection", userSelection);
+            Threads.start(ABOM_USER_SELECTION_THREAD_NAME, userSelection);
         } else {
             // There are no selections to make, so just run the callback with whatever we have, or if the user did
             // not mention any selections we give them an empty cell
@@ -141,7 +145,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
         if (userSelection != null) {
             // UserSelection will internally check opMode.isInInit() to see if it should terminate itself,
             // but we should cancel here too to be pedantic
-            Threads.stop(userSelection);
+            Threads.stop(ABOM_USER_SELECTION_THREAD_NAME);
         }
         // Awaiting thread joining
         if (!callbackReceived)
@@ -205,7 +209,7 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
      */
     @Override
     protected final boolean onInitLoop() {
-        return userSelection == null || !Threads.isRunning(userSelection);
+        return userSelection == null || !Threads.isRunning(ABOM_USER_SELECTION_THREAD_NAME);
     }
 
     /**

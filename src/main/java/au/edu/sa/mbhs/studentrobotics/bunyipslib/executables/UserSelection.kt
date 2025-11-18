@@ -197,16 +197,17 @@ class UserSelection<T : Any> @SafeVarargs @JvmOverloads constructor(
      *
      * Ending this task prematurely will also end the user selection.
      */
-    fun asAsyncTask(): Task = task {
+    @JvmOverloads
+    fun asAsyncTask(threadName: String = "user selection"): Task = task {
         named("User Selection")
         init {
-            Threads.start("user selection", this@UserSelection)
+            Threads.start(threadName, this@UserSelection)
         }
         isFinished {
-            !Threads.isRunning("user selection")
+            !Threads.isRunning(threadName)
         }
         onFinish {
-            Threads.stop("user selection")
+            Threads.stop(threadName)
         }
     }
 

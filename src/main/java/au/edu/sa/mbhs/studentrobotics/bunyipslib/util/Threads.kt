@@ -237,7 +237,7 @@ object Threads {
     fun isRunning(task: Any?): Boolean {
         val res = AtomicReference<Result<*>?>()
         tasks.forEach { (_, v) -> if (v.first == task.hashCode()) res.set(v.second) }
-        return res.get()?.isDone ?: false
+        return res.get()?.isDone?.not() ?: false
     }
 
     /**
