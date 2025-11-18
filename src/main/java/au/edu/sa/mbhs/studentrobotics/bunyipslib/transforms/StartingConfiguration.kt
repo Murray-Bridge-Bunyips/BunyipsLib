@@ -130,7 +130,10 @@ object StartingConfiguration {
         /**
          * Saves this starting configuration to `Storage.memory().lastKnownStartingConfiguration`.
          */
-        fun save() = apply { Storage.memory().lastKnownStartingConfiguration = this }
+        fun save(): Position {
+            Storage.memory().lastKnownStartingConfiguration = this
+            return this@Position
+        }
 
         /**
          * Return an informative string about this starting configuration.
