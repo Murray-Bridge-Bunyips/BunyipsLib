@@ -187,8 +187,10 @@ public abstract class AutonomousBunyipsOpMode extends BunyipsOpMode {
                     double runTime = currentTask.getElapsedTime().in(Seconds);
                     Dbg.logd("[AutonomousBunyipsOpMode] task %/% (%) finished%", this.currentTask, taskCount, currentTask, runTime != 0 ? " -> " + runTime + "s" : "");
                     this.currentTask++;
-                    // In the event the same task is used again later
-                    currentTask.reset();
+                    // In the event the same task is used again later, we prepare the potential next task for execution
+                    Task next = tasks.peekFirst();
+                    if (next != null)
+                        next.reset();
                 }
             } catch (Exception e) {
                 Exceptions.handle(e, telemetry::log);
