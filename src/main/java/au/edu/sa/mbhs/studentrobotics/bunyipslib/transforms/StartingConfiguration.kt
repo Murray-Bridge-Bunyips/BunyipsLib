@@ -13,6 +13,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguratio
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Alliance.RED
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.LEFT
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.StartingConfiguration.Origin.RIGHT
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.SymmetricPoseMap
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.MirroredPoseMap
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Geometry.toUserString
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Storage
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Text
@@ -115,12 +117,25 @@ object StartingConfiguration {
         val isRight by lazy { origin == RIGHT }
 
         /**
-         * Invert this starting configuration over the center of the field, returning a new starting configuration
-         * that is a direct mirror on the other alliance (symmetrical mirror).
+         * Mirrors this starting configuration over the center of the field (X-axis), returning a new starting configuration
+         * that is a direct mirror on the other alliance (akin to [MirroredPoseMap]).
          */
-        fun invert() = Position(
+        fun mirror() = Position(
             alliance.invert(),
             origin.invert(),
+            backwardTranslation,
+            horizontalTranslation,
+            ccwRotation.negate(),
+            flags
+        )
+
+        /**
+         * Mirrors this starting configuration over the center of the field (X-axis) and reflects over the Y-axis,
+         * returning a new starting configuration that is a symmetrical rotation on the other alliance (akin to [SymmetricPoseMap]).
+         */
+        fun rotate() = Position(
+            alliance.invert(),
+            origin,
             backwardTranslation,
             horizontalTranslation,
             ccwRotation,

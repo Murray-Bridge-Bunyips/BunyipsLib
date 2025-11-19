@@ -6,7 +6,7 @@ import com.acmerobotics.roadrunner.PoseMap
 
 /**
  * Perform a reflection across the X-axis.
- * This reflects Red or Blue trajectories across the alliance plane, such as in the CENTERSTAGE field.
+ * This reflects Red or Blue trajectories across the alliance plane, such as in the CENTERSTAGE or DECODE fields.
  *
  * (x,y,r) -> (x,-y,-r)
  * @author Lucas Bubner, 2024

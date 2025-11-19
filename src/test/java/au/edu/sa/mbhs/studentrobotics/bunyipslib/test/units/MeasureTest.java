@@ -206,9 +206,23 @@ class MeasureTest {
     }
 
     @Test
+    void testToString() {
+        Measure<Voltage> measure = Units.Volts.of(123.456789);
+        assertEquals("123.46 V", measure.toString());
+    }
+
+    @Test
     void testToShortString() {
         Measure<Voltage> measure = Units.Volts.of(343);
-        assertEquals("343.0 V", measure.toShortString());
+        assertEquals("343.0 V", measure.toShortString(2));
+    }
+
+    @Test
+    void testToShortStringRounding() {
+        Measure<Voltage> measure = Units.Volts.of(343.25845234);
+        assertEquals("343.26 V", measure.toShortString(2));
+        Measure<Voltage> measure2 = Units.Volts.of(100.898845234);
+        assertEquals("101.0 V", measure2.toShortString(0));
     }
 
     @Test

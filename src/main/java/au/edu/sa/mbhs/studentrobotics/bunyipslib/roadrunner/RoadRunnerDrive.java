@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.IdentityPoseMap;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PoseMap;
 import com.acmerobotics.roadrunner.Vector2d;
 
@@ -139,7 +138,7 @@ public interface RoadRunnerDrive extends Moveable {
      */
     @NonNull
     default TaskBuilder makeTrajectory(@NonNull PoseMap poseMap) {
-        return new TaskBuilder(getConstants(), poseMap.map(Pose2dDual.constant(Storage.memory().lastKnownPosition, 1)).value(), poseMap);
+        return new TaskBuilder(getConstants(), Geometry.map(Storage.memory().lastKnownPosition, poseMap), poseMap);
     }
 
     /**

@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import java.util.Locale
 import kotlin.math.abs
 
@@ -405,7 +406,7 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
     // are fairly small quantity and large values are already represented in scientific notation. Short string
     // now gives the magnitude in full (old method exists in toScientificString()).
     // eg 1234 V/m (1.234e+04 V/m in scientific form)
-    fun toShortString() = String.format(Locale.getDefault(), "%s %s", magnitude(), unit().symbol())
+    fun toShortString(decimalPoints: Int = 2) = String.format(Locale.getDefault(), "%s %s", magnitude() round decimalPoints, unit().symbol())
 
     /**
      * Returns a string representation of this measurement in a longhand form. The name of the backing

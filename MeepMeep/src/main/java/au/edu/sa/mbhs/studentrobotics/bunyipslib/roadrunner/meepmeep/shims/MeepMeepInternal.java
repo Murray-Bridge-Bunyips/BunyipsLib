@@ -3,7 +3,6 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.IdentityPoseMap;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Pose2dDual;
 import com.acmerobotics.roadrunner.PoseMap;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -119,7 +118,7 @@ public abstract class MeepMeepInternal {
                 throw new IllegalStateException("A BunyipsLibBotBuilder must be created and built before calling drive.makeTrajectory!");
             }
             if (implicit) {
-                startPose = poseMap.map(Pose2dDual.constant(startPose, 1)).value();
+                startPose = Geometry.map(startPose, poseMap);
                 implicit = false;
             }
             MeepMeepTaskBuilder tb = new MeepMeepTaskBuilder(

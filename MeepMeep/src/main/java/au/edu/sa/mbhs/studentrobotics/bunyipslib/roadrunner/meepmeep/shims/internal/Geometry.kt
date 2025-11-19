@@ -14,6 +14,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.inter
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Inches
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Units.Radians
 import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.Pose2dDual
+import com.acmerobotics.roadrunner.PoseMap
 import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Rotation2d
 import com.acmerobotics.roadrunner.Twist2d
@@ -307,4 +309,10 @@ object Geometry {
             ) to Radians
         )
     }
+
+    /**
+     * Maps a [Pose2d] into another pose applied with a [PoseMap].
+     */
+    @JvmStatic
+    fun Pose2d.map(poseMap: PoseMap) = poseMap.map(Pose2dDual.constant(this, 1)).value()
 }
