@@ -99,9 +99,10 @@ tasks.dokkaHtml.configure {
 tasks.withType(DokkaTask.class).configureEach {
     String dokkaBaseConfiguration = """
     {
-      "customAssets": ["${file("docs/custom/logo-icon.svg")}"],
+      "customAssets": ["${file("docs/custom/logo-icon.svg")}", "${file("docs/custom/homepage.svg")}"],
       "separateInheritedMembers": true,
-      "footerMessage": "© 2025 Lucas Bubner, Murray Bridge High School Student Robotics Club"
+      "footerMessage": "© 2025 Lucas Bubner, Murray Bridge High School Student Robotics Club",
+      "homepageLink": "https://github.com/Murray-Bridge-Bunyips/BunyipsLib"
     }
     """
     pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase": dokkaBaseConfiguration])

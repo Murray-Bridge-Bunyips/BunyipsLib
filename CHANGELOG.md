@@ -2,6 +2,31 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v8.0.2 (2025-11-19)
+
+Geometry mapping and Hardware Tester improvements.
+
+### Breaking changes
+
+- Remove `StartingConfiguration.Position` `invert()` method in favour of `mirror()` and `rotate()` which perform
+  functionality akin to the Mirrored and Symmetric pose maps
+
+### Non-breaking changes
+
+- Improve the Hardware Tester
+    - Move default non-interactable information to the bottom to speed up power access
+    - Unwrap menu items with only 1 mapping to reduce redundant navigation
+- Update `MirroredPoseMap` docs
+- Use default two decimal place rounding for Unit `toString`, adjustable with the argument to `toShortString()`
+
+### Bug fixes
+
+- Fix missing API docs for some new methods
+
+### Additions
+
+- Add `Geometry.map` util to allow mapping `Pose2d` instances with a `PoseMap` easily
+
 ## v8.0.1 (2025-11-19)
 
 API maturations.
