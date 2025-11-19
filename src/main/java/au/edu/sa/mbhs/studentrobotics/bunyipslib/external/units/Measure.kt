@@ -406,7 +406,8 @@ interface Measure<U : Unit<U>> : Comparable<Measure<U>> {
     // are fairly small quantity and large values are already represented in scientific notation. Short string
     // now gives the magnitude in full (old method exists in toScientificString()).
     // eg 1234 V/m (1.234e+04 V/m in scientific form)
-    fun toShortString(decimalPoints: Int = 2) = String.format(Locale.getDefault(), "%s %s", magnitude() round decimalPoints, unit().symbol())
+    fun toShortString(decimalPoints: Int = 2) =
+        String.format(Locale.getDefault(), "%s %s", magnitude() round decimalPoints, unit().symbol())
 
     /**
      * Returns a string representation of this measurement in a longhand form. The name of the backing
