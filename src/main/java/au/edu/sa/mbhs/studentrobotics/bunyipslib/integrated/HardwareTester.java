@@ -110,10 +110,6 @@ public final class HardwareTester extends LinearOpMode {
             // Each device in the category may have multiple mappings, so we add them to the category
             for (HardwareDevice device : entry.getValue()) {
                 TelemetryMenu.MenuElement dev = new TelemetryMenu.MenuElement(entry.getKey() + " (" + device.getDeviceName() + ", v" + device.getVersion() + ")", false);
-                // For each device, we add hardware-specific information
-                TelemetryMenu.StaticItem deviceType = new TelemetryMenu.StaticItem("Manufacturer: " + device.getManufacturer());
-                TelemetryMenu.StaticItem connInfo = new TelemetryMenu.StaticItem("Connection Info: " + device.getConnectionInfo());
-                dev.addChildren(deviceType, connInfo);
 
                 if (device instanceof DcMotorSimple motor) {
                     FtcDashboard.getInstance().withConfigRoot((c) -> {
@@ -487,15 +483,15 @@ public final class HardwareTester extends LinearOpMode {
                             otos.resetTracking();
                         }
                     };
-                    TelemetryMenu.DynamicItem posX = new TelemetryMenu.DynamicItem("Position X (in)", () -> otos.getPosition().x);
-                    TelemetryMenu.DynamicItem posY = new TelemetryMenu.DynamicItem("Position Y (in)", () -> otos.getPosition().y);
-                    TelemetryMenu.DynamicItem posTheta = new TelemetryMenu.DynamicItem("Position H (deg)", () -> otos.getPosition().h);
-                    TelemetryMenu.DynamicItem velX = new TelemetryMenu.DynamicItem("Velocity X (in/s)", () -> otos.getVelocity().x);
-                    TelemetryMenu.DynamicItem velY = new TelemetryMenu.DynamicItem("Velocity Y (in/s)", () -> otos.getVelocity().y);
-                    TelemetryMenu.DynamicItem velTheta = new TelemetryMenu.DynamicItem("Velocity H (deg/s)", () -> otos.getVelocity().h);
-                    TelemetryMenu.DynamicItem accX = new TelemetryMenu.DynamicItem("Acceleration X (in/s/s)", () -> otos.getAcceleration().x);
-                    TelemetryMenu.DynamicItem accY = new TelemetryMenu.DynamicItem("Acceleration Y (in/s/s)", () -> otos.getAcceleration().y);
-                    TelemetryMenu.DynamicItem accTheta = new TelemetryMenu.DynamicItem("Acceleration H (deg/s/s)", () -> otos.getAcceleration().h);
+                    TelemetryMenu.DynamicItem posX = new TelemetryMenu.DynamicItem("Position X (in)", () -> Mathf.round(otos.getPosition().x, 1));
+                    TelemetryMenu.DynamicItem posY = new TelemetryMenu.DynamicItem("Position Y (in)", () -> Mathf.round(otos.getPosition().y, 1));
+                    TelemetryMenu.DynamicItem posTheta = new TelemetryMenu.DynamicItem("Position H (deg)", () -> Mathf.round(otos.getPosition().h, 1));
+                    TelemetryMenu.DynamicItem velX = new TelemetryMenu.DynamicItem("Velocity X (in/s)", () -> Mathf.round(otos.getVelocity().x, 1));
+                    TelemetryMenu.DynamicItem velY = new TelemetryMenu.DynamicItem("Velocity Y (in/s)", () -> Mathf.round(otos.getVelocity().y, 1));
+                    TelemetryMenu.DynamicItem velTheta = new TelemetryMenu.DynamicItem("Velocity H (deg/s)", () -> Mathf.round(otos.getVelocity().h, 1));
+                    TelemetryMenu.DynamicItem accX = new TelemetryMenu.DynamicItem("Acceleration X (in/s/s)", () -> Mathf.round(otos.getAcceleration().x, 1));
+                    TelemetryMenu.DynamicItem accY = new TelemetryMenu.DynamicItem("Acceleration Y (in/s/s)", () -> Mathf.round(otos.getAcceleration().y, 1));
+                    TelemetryMenu.DynamicItem accTheta = new TelemetryMenu.DynamicItem("Acceleration H (deg/s/s)", () -> Mathf.round(otos.getAcceleration().h, 1));
                     dev.addChildren(warnings, linearScalar, angularScalar, selfTest, calibrateIMU, imuCalibrationStatus, resetTracking, posX, posY, posTheta, velX, velY, velTheta, accX, accY, accTheta);
                 }
 
@@ -569,13 +565,24 @@ public final class HardwareTester extends LinearOpMode {
                     dev.addChildren(id, status, version, encoderX, encoderY, xDir, yDir, reset, recalibrate, poseX, poseY, poseH, poseHn, velX, velY, velH, yawScalar, loopF, loopT);
                 }
 
+                // Hardware specific information can go to the bottom as it isn't commonly observed
+                TelemetryMenu.StaticItem deviceType = new TelemetryMenu.StaticItem("Manufacturer: " + device.getManufacturer());
+                TelemetryMenu.StaticItem connInfo = new TelemetryMenu.StaticItem("Connection Info: " + device.getConnectionInfo());
+                dev.addChildren(deviceType, connInfo);
+
                 // Finally, we add the device to the category.
                 // We skip vision devices as they are better tested independently
                 // We also skip other devices (mostly I2C) since their testing requirement is fairly niche and has to be
                 // manually implemented, manual tests can be written if required.
                 deviceMapping.addChild(dev);
             }
-            root.addChild(deviceMapping);
+            // Before adding the mapping we check if it only has one mapping, if so we can unwrap it to speed up access
+            // The size will be 2 as it includes the 'up one menu' option as element 0
+            if (deviceMapping.children.size() == 2) {
+                root.addChild(deviceMapping.children.get(1));
+            } else {
+                root.addChild(deviceMapping);
+            }
         }
         TelemetryMenu menu = new TelemetryMenu(telemetry, root);
         telemetry.clearAll();

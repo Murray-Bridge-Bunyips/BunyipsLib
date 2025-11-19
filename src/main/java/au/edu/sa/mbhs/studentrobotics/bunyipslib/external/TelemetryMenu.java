@@ -91,7 +91,7 @@ public class TelemetryMenu {
         // Figure out who our children our at this level
         // and figure out which item is currently highlighted
         // with the selection pointer
-        ArrayList<Element> children = currentLevel.children();
+        ArrayList<Element> children = currentLevel.children;
         Element currentSelection = children.get(selectedIdx);
 
         // Left and right are inputs to the selected item (if it's an Option)
@@ -231,8 +231,11 @@ public class TelemetryMenu {
      * An element of {@link TelemetryMenu}, representing a "page" in the overall menu display.
      */
     public static class MenuElement extends Element {
+        /**
+         * Children of this menu element.
+         */
+        public final ArrayList<Element> children = new ArrayList<>();
         private final String name;
-        private final ArrayList<Element> children = new ArrayList<>();
 
         /**
          * Create a new MenuElement; may either be the root menu, or a submenu (set isRoot accordingly)
@@ -275,10 +278,6 @@ public class TelemetryMenu {
         @NonNull
         protected String getDisplayText() {
             return name;
-        }
-
-        private ArrayList<Element> children() {
-            return children;
         }
     }
 
