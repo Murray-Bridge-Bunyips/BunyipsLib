@@ -1071,7 +1071,7 @@ class DualTelemetry @JvmOverloads constructor(
     @Suppress("KDocMissingDocumentation")
     @Deprecated(
         "The telemetry log should not be accessed with this method, use log(msg) methods directly as FtcDashboard logging will not work with this method.",
-        replaceWith = ReplaceWith("log(...)"),
+        replaceWith = ReplaceWith("log(/* ... */)"),
         level = DeprecationLevel.ERROR
     )
     override fun log(): Telemetry.Log {
