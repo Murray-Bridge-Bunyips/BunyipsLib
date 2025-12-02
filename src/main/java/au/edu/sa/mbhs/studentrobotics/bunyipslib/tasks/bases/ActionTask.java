@@ -1,14 +1,20 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.bases;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.NullAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.RaceAction;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.WaitTask;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.ParallelTaskGroup;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.RaceTaskGroup;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks.groups.SequentialTaskGroup;
@@ -52,6 +58,12 @@ public class ActionTask extends Task {
             parentAction = new SequentialTaskGroup(seq.getInitialActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
         else if (action instanceof RaceAction race)
             parentAction = new RaceTaskGroup(race.getActions().stream().map(ActionTask::new).toArray(ActionTask[]::new));
+        else if (action instanceof SleepAction sleep)
+            parentAction = new WaitTask(sleep.getDt(), Seconds);
+        else if (action instanceof InstantAction ins)
+            parentAction = new Lambda(ins.getF()::run);
+        else if (action instanceof NullAction)
+            parentAction = new Lambda();
         else
             parentAction = action;
         named(parentAction instanceof Task ? parentAction.toString() : parentAction.getClass().getSimpleName());
