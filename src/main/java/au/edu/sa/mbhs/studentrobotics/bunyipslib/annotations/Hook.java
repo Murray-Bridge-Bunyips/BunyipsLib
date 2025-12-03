@@ -1,4 +1,4 @@
-package au.edu.sa.mbhs.studentrobotics.bunyipslib;
+package au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -6,7 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import dev.frozenmilk.sinister.loading.Preload;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsOpMode;
 
 /**
  * Annotation to mark a static method as a OpMode lifecycle hook, which will be executed at
@@ -27,7 +28,6 @@ import dev.frozenmilk.sinister.loading.Preload;
  * @author Lucas Bubner, 2024
  * @since 7.0.0
  */
-@Preload
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

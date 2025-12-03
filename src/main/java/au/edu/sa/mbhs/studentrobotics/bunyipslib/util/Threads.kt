@@ -1,8 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.util
 
-import android.util.Pair
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units
@@ -41,7 +40,9 @@ import kotlin.math.max
  * @since 7.0.0
  */
 object Threads {
-    private val tasks = HashMap<String, Pair<Int, Result<*>>>()
+    private data class Task(val hashCode: Int, val result: Result<*>)
+
+    private val tasks = HashMap<String, Task>()
 
     private class ResultImpl<T>(base: Future<T>, override val function: Callable<T>) : Future<T> by base, Result<T> {
         override var ignoreStopAll = false
@@ -108,7 +109,7 @@ object Threads {
      */
     @JvmStatic
     fun <T> start(name: String, task: Callable<T?>): Result<T?> {
-        require(tasks.all { it.key != name || it.value.second.isDone }) {
+        require(tasks.all { it.key != name || it.value.result.isDone }) {
             "name parameter '$name' is already being used as an active Threads task name; it must be unique"
         }
         val t = Callable {
@@ -122,7 +123,7 @@ object Threads {
             null
         }
         val scheduled = ResultImpl(ThreadPool.getDefault().submit(t), task)
-        tasks[name] = Pair(task.hashCode(), scheduled)
+        tasks[name] = Task(task.hashCode(), scheduled)
         Dbg.logd(Threads::class.java, "starting new thread task: %(%) ...", name, task.hashCode())
         return scheduled
     }
@@ -140,7 +141,7 @@ object Threads {
      */
     @JvmStatic
     fun startLoop(name: String, minLoopTime: Measure<Time>, loopTask: Runnable): Result<*> {
-        require(tasks.all { it.key != name || it.value.second.isDone }) {
+        require(tasks.all { it.key != name || it.value.result.isDone }) {
             "name parameter '$name' is already being used as an active Threads task name; it must be unique"
         }
         val magMillis = (minLoopTime to Milliseconds).toLong()
@@ -165,7 +166,7 @@ object Threads {
             null
         }
         val scheduled = ResultImpl(ThreadPool.getDefault().submit(t)) { loopTask.run(); null }
-        tasks[name] = Pair(loopTask.hashCode(), scheduled)
+        tasks[name] = Task(loopTask.hashCode(), scheduled)
         Dbg.logd(
             Threads::class.java,
             "starting new thread loop task: %(%) %...",
@@ -202,18 +203,18 @@ object Threads {
     @Hook(on = Hook.Target.POST_STOP, priority = 4)
     fun stopAll() {
         for ((key, task) in tasks) {
-            if (task.second.isDone) continue
-            if (task.second.ignoreStopAll) {
+            if (task.result.isDone) continue
+            if (task.result.ignoreStopAll) {
                 Dbg.log(
                     Threads::class.java,
                     "ignoring stop request for thread task: %(%, ignoreStopAll) ...",
                     key,
-                    task.first
+                    task.hashCode
                 )
                 continue
             }
-            Dbg.logd(Threads::class.java, "stopping thread task: %(%) ...", key, task.first)
-            task.second.cancel(true)
+            Dbg.logd(Threads::class.java, "stopping thread task: %(%) ...", key, task.hashCode)
+            task.result.cancel(true)
         }
         tasks.clear()
     }
@@ -225,7 +226,7 @@ object Threads {
      * @return true if the task is running, false otherwise
      */
     @JvmStatic
-    fun isRunning(task: String) = tasks[task]?.second?.isDone?.not() ?: false
+    fun isRunning(task: String) = tasks[task]?.result?.isDone?.not() ?: false
 
     /**
      * Check if a task is currently running.
@@ -236,7 +237,7 @@ object Threads {
     @JvmStatic
     fun isRunning(task: Any?): Boolean {
         val res = AtomicReference<Result<*>?>()
-        tasks.forEach { (_, v) -> if (v.first == task.hashCode()) res.set(v.second) }
+        tasks.forEach { (_, v) -> if (v.hashCode == task.hashCode()) res.set(v.result) }
         return res.get()?.isDone?.not() ?: false
     }
 
@@ -252,7 +253,7 @@ object Threads {
             Dbg.warn(Threads::class.java, "tried to stop a task '%' that is not being managed by Threads.", task)
             return
         }
-        res.second.cancel(true)
+        res.result.cancel(true)
     }
 
     /**
@@ -264,7 +265,7 @@ object Threads {
     @JvmStatic
     fun stop(task: Any?) {
         val res = AtomicReference<Result<*>?>()
-        tasks.forEach { (_, v) -> if (v.first == task.hashCode()) res.set(v.second) }
+        tasks.forEach { (_, v) -> if (v.hashCode == task.hashCode()) res.set(v.result) }
         val t = res.get()
         if (t == null) {
             Dbg.warn(Threads::class.java, "tried to stop a task '%' that is not being managed by Threads.", task)
@@ -286,7 +287,7 @@ object Threads {
      * @return the (unbounded) task [Result], if found
      */
     @JvmStatic
-    fun task(task: String?): Result<*>? = tasks.getOrDefault(task, Pair(null, null)).second
+    fun task(task: String?): Result<*>? = tasks[task]?.result
 
     /**
      * Gets a [Result] from the currently managed tasks by the supplied task.
@@ -303,7 +304,7 @@ object Threads {
     @JvmStatic
     fun task(task: Any?): Result<*>? {
         val res = AtomicReference<Result<*>?>()
-        tasks.forEach { (_, v) -> if (v.first == task.hashCode()) res.set(v.second) }
+        tasks.forEach { (_, v) -> if (v.hashCode == task.hashCode()) res.set(v.result) }
         return res.get()
     }
 }

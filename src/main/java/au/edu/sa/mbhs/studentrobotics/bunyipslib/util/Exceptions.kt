@@ -2,7 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib.util
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BuildConfig
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions.handle
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Exceptions.runUserMethod
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl

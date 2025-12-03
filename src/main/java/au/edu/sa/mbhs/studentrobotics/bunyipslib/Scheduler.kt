@@ -6,6 +6,7 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.gamepad2
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.on
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.schedule
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.Scheduler.update
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.isNear
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds

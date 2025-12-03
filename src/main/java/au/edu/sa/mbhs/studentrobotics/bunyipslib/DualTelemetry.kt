@@ -2,6 +2,7 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry.Companion.smartAdd
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.DualTelemetry.Companion.smartLog
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.executables.MovingAverageTimer
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf.round
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure

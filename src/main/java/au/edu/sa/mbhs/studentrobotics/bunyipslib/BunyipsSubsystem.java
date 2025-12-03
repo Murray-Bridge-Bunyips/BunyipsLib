@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.Hook;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.executables.Periodic;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Time;

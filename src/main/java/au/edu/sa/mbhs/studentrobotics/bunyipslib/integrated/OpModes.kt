@@ -1,7 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.Hook
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dbg
 import com.qualcomm.hardware.lynx.LynxModule
 import dev.frozenmilk.sinister.sdk.apphooks.SinisterOpModeRegistrar

@@ -3,6 +3,10 @@ package au.edu.sa.mbhs.studentrobotics.bunyipslib
 import android.content.Context
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib.opMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib.opModeManager
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.Hook
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.PreselectBehaviour
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.HardwareTester
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetEncoders
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetLastKnowns
@@ -28,6 +32,7 @@ import org.firstinspires.ftc.ftccommon.internal.manualcontrol.ManualControlOpMod
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
 import java.lang.reflect.Method
 import java.util.function.Consumer
+import kotlin.math.roundToLong
 
 /**
  * BunyipsLib hook manager for the SDK via the `Sinister` utilities, allowing execution of static hooks giving BunyipsLib
@@ -136,24 +141,24 @@ object BunyipsLib {
         private var handledInit = false
 
         private fun handleOpModeCycle(opMode: OpMode, cycle: Hook.Target) {
-            val hooks = mutableSetOf<Pair<Method, Hook>>()
+            val hooks = mutableSetOf<HookScanner.ScannedHook>()
             HookScanner.iterateAppHooks {
-                if (it.second.on == cycle)
+                if (it.hook.on == cycle)
                     hooks.add(it)
             }
             if (!isOpModeUserOpMode(opMode)) {
-                hooks.filter { it.second.ignoreOpModeType }
-                    .sortedByDescending { it.second.priority }
+                hooks.filter { it.hook.ignoreOpModeType }
+                    .sortedByDescending { it.hook.priority }
                     .forEach {
                         Dbg.logv(
                             javaClass, "invoking %(priority=%, bypassedOpMode='%'): %.%()",
                             cycle.name,
-                            it.second.priority,
+                            it.hook.priority,
                             opModeManager.activeOpModeName,
-                            it.first.declaringClass.simpleName,
-                            it.first.name
+                            it.method.declaringClass.simpleName,
+                            it.method.name
                         )
-                        Exceptions.runUserMethod { it.first.invoke(null) }
+                        Exceptions.runUserMethod { it.method.invoke(null) }
                     }
                 return
             }
@@ -181,17 +186,38 @@ object BunyipsLib {
                     FlightRecorder.write("/Metadata/OPMODE_FLAVOR", getOpModeFlavor(opMode))
                 }
             }
-            hooks.sortedByDescending { it.second.priority }
+            hooks.sortedByDescending { it.hook.priority }
                 .forEach {
                     Dbg.logv(
                         javaClass, "invoking %(priority=%): %.%() ...",
                         cycle.name,
-                        it.second.priority,
-                        it.first.declaringClass.simpleName,
-                        it.first.name
+                        it.hook.priority,
+                        it.method.declaringClass.simpleName,
+                        it.method.name
                     )
-                    Exceptions.runUserMethod { it.first.invoke(null) }
+                    Exceptions.runUserMethod { it.method.invoke(null) }
                 }
+            // Want to run any preselect behaviour *after* the appropriate post-stop hooks have fired (for Threads)
+            if (cycle == Hook.Target.POST_STOP) {
+                PreselectBehaviourScanner.iterateAppHooks {
+                    if (it.clazz == opMode.javaClass) {
+                        opModeManager.initOpMode(it.preselectTeleOp)
+                        if (it.preselectBehaviour.action == PreselectBehaviour.Action.START) {
+                            // Will be auto stopped by Threads if the OpMode stops early
+                            Threads.start("auto start preselect") {
+                                Thread.sleep(
+                                    Milliseconds.convertFrom(it.preselectBehaviour.startDelaySec, Seconds).roundToLong()
+                                )
+                                // Final check to ensure this is our OpMode. The protection by the thread auto-stop
+                                // should be enough to prevent automatically starting an OpMode that isn't ours
+                                if (opModeManager.activeOpModeName == it.preselectTeleOp)
+                                    opModeManager.startActiveOpMode()
+                            }
+                        }
+                        return@iterateAppHooks
+                    }
+                }
+            }
             if (cycle == Hook.Target.PRE_INIT) handledInit = true
             if (cycle == Hook.Target.POST_STOP) handledInit = false // Reset for next OpMode or double fire
         }
@@ -201,14 +227,33 @@ object BunyipsLib {
         override fun onOpModePostStop(opMode: OpMode) = handleOpModeCycle(opMode, Hook.Target.POST_STOP)
     }
 
-    private object HookScanner : AppHookScanner<Pair<Method, Hook>>() {
+    private object HookScanner : AppHookScanner<HookScanner.ScannedHook>() {
+        data class ScannedHook(val method: Method, val hook: Hook)
+
         override val targets = StandardSearch()
         override fun scan(cls: Class<*>, registrationHelper: RegistrationHelper) {
             cls.declaredMethods
                 .filter { it.isStatic() && it.isAnnotationPresent(Hook::class.java) && it.parameterCount == 0 }
                 .onEach { it.isAccessible = true }
-                .map { it to it.getAnnotation(Hook::class.java)!! }
+                .map { ScannedHook(it, it.getAnnotation(Hook::class.java)!!) }
                 .forEach { registrationHelper.register(it) }
+        }
+    }
+
+    private object PreselectBehaviourScanner : AppHookScanner<PreselectBehaviourScanner.ScannedPreselectBehaviour>() {
+        data class ScannedPreselectBehaviour(
+            val clazz: Class<*>,
+            val preselectTeleOp: String,
+            val preselectBehaviour: PreselectBehaviour
+        )
+
+        override val targets = StandardSearch()
+        override fun scan(cls: Class<*>, registrationHelper: RegistrationHelper) {
+            // We leave verifying if the OpMode itself is valid to the appropriate scanners for them, we assume it's correct
+            val auto = cls.getAnnotation(Autonomous::class.java) ?: return
+            if (auto.preselectTeleOp.isEmpty()) return
+            val presel = cls.getAnnotation(PreselectBehaviour::class.java) ?: return
+            registrationHelper.register(ScannedPreselectBehaviour(cls, auto.preselectTeleOp, presel))
         }
     }
 
