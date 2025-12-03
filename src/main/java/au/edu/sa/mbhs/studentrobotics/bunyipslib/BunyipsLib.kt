@@ -210,7 +210,11 @@ object BunyipsLib {
                             Threads.start("auto start preselect") {
                                 val elapsedTime = ElapsedTime()
                                 while (!Thread.currentThread().isInterrupted && elapsedTime.seconds() < it.preselectBehaviour.startDelaySec) {
-                                    Thread.sleep(1000)
+                                    try {
+                                        Thread.sleep(1000)
+                                    } catch (_: InterruptedException) {
+                                        return@start
+                                    }
                                     AppUtil.getInstance().showToast(
                                         UILocation.BOTH,
                                         "Auto-start of '${it.preselectTeleOp}' in ${(it.preselectBehaviour.startDelaySec - elapsedTime.seconds()).roundToInt()} seconds ..."
