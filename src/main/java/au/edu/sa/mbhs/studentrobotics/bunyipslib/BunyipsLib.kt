@@ -1,6 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib
 
 import android.content.Context
+import android.widget.Toast
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib.opMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib.opModeManager
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.Hook
@@ -177,7 +178,12 @@ object BunyipsLib {
                         FlightRecorder::class.java.getDeclaredField("writer").also { it.isAccessible = true }
                     while (flightLogWriter.get(FlightRecorder) == null && !Thread.currentThread().isInterrupted) {
                         // We don't need a particularly fast poll rate
-                        Thread.sleep(500)
+                        try {
+                            Thread.sleep(500)
+                        } catch (_: InterruptedException) {
+                            Dbg.warn(BunyipsLib::class.java, "failed to record OpMode metadata to the FlightRecorder!")
+                            return@start
+                        }
                     }
                     FlightRecorder.write("/Metadata/BUILD_TIME", BuildConfig.BUILD_TIME)
                     FlightRecorder.write("/Metadata/GIT_COMMIT", BuildConfig.GIT_COMMIT)
@@ -201,7 +207,7 @@ object BunyipsLib {
             // Want to run any preselect behaviour *after* the appropriate post-stop hooks have fired (for Threads)
             if (cycle == Hook.Target.POST_STOP) {
                 PreselectBehaviourScanner.iterateAppHooks {
-                    if (it.clazz == opMode.javaClass) {
+                    if (it.clazz == opMode.javaClass && opMode.runtime > it.preselectBehaviour.minRuntimeSec) {
                         opModeManager.initOpMode(it.preselectTeleOp)
                         AppUtil.getInstance()
                             .showToast(UILocation.BOTH, "Auto-initialised OpMode: ${it.preselectTeleOp}")
@@ -209,16 +215,34 @@ object BunyipsLib {
                             // Will be auto stopped by Threads if the OpMode stops early
                             Threads.start("auto start preselect") {
                                 val elapsedTime = ElapsedTime()
+                                // Init message offset
+                                var last = 0.25
                                 while (!Thread.currentThread().isInterrupted && elapsedTime.seconds() < it.preselectBehaviour.startDelaySec) {
                                     try {
-                                        Thread.sleep(1000)
+                                        Thread.sleep(100)
                                     } catch (_: InterruptedException) {
+                                        Dbg.warn(
+                                            PreselectBehaviour::class.java,
+                                            "aborted preselect starting of: ${it.preselectTeleOp}"
+                                        )
                                         return@start
                                     }
-                                    AppUtil.getInstance().showToast(
-                                        UILocation.BOTH,
-                                        "Auto-start of '${it.preselectTeleOp}' in ${(it.preselectBehaviour.startDelaySec - elapsedTime.seconds()).roundToInt()} seconds ..."
+                                    // Can only send toasts in LENGTH_SHORT intervals
+                                    if (elapsedTime.seconds() >= last + 2) {
+                                        AppUtil.getInstance().showToast(
+                                            UILocation.BOTH,
+                                            "Auto-start of '${it.preselectTeleOp}' in ${(it.preselectBehaviour.startDelaySec - elapsedTime.seconds()).roundToInt()} seconds ...",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                        last = elapsedTime.seconds()
+                                    }
+                                }
+                                if (Thread.currentThread().isInterrupted) {
+                                    Dbg.warn(
+                                        PreselectBehaviour::class.java,
+                                        "aborted preselect starting of: ${it.preselectTeleOp}"
                                     )
+                                    return@start
                                 }
                                 // Final check to ensure this is our OpMode. The protection by the thread auto-stop
                                 // should be enough to prevent automatically starting an OpMode that isn't ours
