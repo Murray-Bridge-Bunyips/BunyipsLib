@@ -48,7 +48,7 @@ public @interface PreselectBehaviour {
      *
      * @return the delay to wait between INIT and START in seconds
      */
-    double startDelaySec() default 8;
+    long startDelaySec() default 8;
 
     /**
      * The enhanced action to take for the preselected TeleOp.

@@ -5,8 +5,6 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib.opMode
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsLib.opModeManager
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.Hook
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations.PreselectBehaviour
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Milliseconds
-import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Seconds
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.HardwareTester
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetEncoders
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.integrated.ResetLastKnowns
@@ -21,6 +19,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl.DefaultOpMode
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerNotifier.Notifications
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.util.ElapsedTime
 import com.qualcomm.robotcore.util.RobotLog
 import com.qualcomm.robotcore.util.Version
 import dev.frozenmilk.sinister.isStatic
@@ -30,9 +29,11 @@ import dev.frozenmilk.sinister.targeting.FocusedSearch
 import dev.frozenmilk.util.cell.LateInitCell
 import org.firstinspires.ftc.ftccommon.internal.manualcontrol.ManualControlOpMode
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil
+import org.firstinspires.ftc.robotcore.internal.ui.UILocation
 import java.lang.reflect.Method
 import java.util.function.Consumer
-import kotlin.math.roundToLong
+import kotlin.math.roundToInt
 
 /**
  * BunyipsLib hook manager for the SDK via the `Sinister` utilities, allowing execution of static hooks giving BunyipsLib
@@ -202,12 +203,19 @@ object BunyipsLib {
                 PreselectBehaviourScanner.iterateAppHooks {
                     if (it.clazz == opMode.javaClass) {
                         opModeManager.initOpMode(it.preselectTeleOp)
+                        AppUtil.getInstance()
+                            .showToast(UILocation.BOTH, "Auto-initialised OpMode: ${it.preselectTeleOp}")
                         if (it.preselectBehaviour.action == PreselectBehaviour.Action.START) {
                             // Will be auto stopped by Threads if the OpMode stops early
                             Threads.start("auto start preselect") {
-                                Thread.sleep(
-                                    Milliseconds.convertFrom(it.preselectBehaviour.startDelaySec, Seconds).roundToLong()
-                                )
+                                val elapsedTime = ElapsedTime()
+                                while (!Thread.currentThread().isInterrupted && elapsedTime.seconds() < it.preselectBehaviour.startDelaySec) {
+                                    Thread.sleep(1000)
+                                    AppUtil.getInstance().showToast(
+                                        UILocation.BOTH,
+                                        "Auto-start of '${it.preselectTeleOp}' in ${(it.preselectBehaviour.startDelaySec - elapsedTime.seconds()).roundToInt()} seconds ..."
+                                    )
+                                }
                                 // Final check to ensure this is our OpMode. The protection by the thread auto-stop
                                 // should be enough to prevent automatically starting an OpMode that isn't ours
                                 if (opModeManager.activeOpModeName == it.preselectTeleOp)
