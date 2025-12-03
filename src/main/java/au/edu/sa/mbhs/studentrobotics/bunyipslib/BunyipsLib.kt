@@ -26,10 +26,13 @@ import com.qualcomm.robotcore.util.Version
 import dev.frozenmilk.sinister.isStatic
 import dev.frozenmilk.sinister.sdk.apphooks.AppHookScanner
 import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop
+import dev.frozenmilk.sinister.sdk.opmodes.TeleopAutonomousOpModeScanner
 import dev.frozenmilk.sinister.targeting.FocusedSearch
 import dev.frozenmilk.util.cell.LateInitCell
+import dev.frozenmilk.util.graph.rule.dependsOn
 import org.firstinspires.ftc.ftccommon.internal.manualcontrol.ManualControlOpMode
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
+import org.firstinspires.ftc.robotcore.internal.opmode.RegisteredOpModes
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil
 import org.firstinspires.ftc.robotcore.internal.ui.UILocation
 import java.lang.reflect.Method
@@ -283,11 +286,12 @@ object BunyipsLib {
             val preselectBehaviour: PreselectBehaviour
         )
 
+        override val loadAdjacencyRule = dependsOn(TeleopAutonomousOpModeScanner)
         override val targets = StandardSearch()
         override fun scan(cls: Class<*>, registrationHelper: RegistrationHelper) {
             // We leave verifying if the OpMode itself is valid to the appropriate scanners for them, we assume it's correct
             val auto = cls.getAnnotation(Autonomous::class.java) ?: return
-            if (auto.preselectTeleOp.isEmpty()) return
+            if (auto.preselectTeleOp.isEmpty() || RegisteredOpModes.getInstance().getOpModeMetadata(auto.preselectTeleOp) == null) return
             val presel = cls.getAnnotation(PreselectBehaviour::class.java) ?: return
             registrationHelper.register(ScannedPreselectBehaviour(cls, auto.preselectTeleOp, presel))
         }
