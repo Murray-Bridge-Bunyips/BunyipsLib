@@ -1,5 +1,25 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations////PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/index.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/Hook.Target.POST_STOP///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-hook/-target/-p-o-s-t_-s-t-o-p/index.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/Hook.Target.PRE_INIT///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-hook/-target/-p-r-e_-i-n-i-t/index.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/Hook.Target.PRE_START///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-hook/-target/-p-r-e_-s-t-a-r-t/index.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/Hook.Target///PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-hook/-target/index.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/Hook.Target/valueOf/#java.lang.String/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-hook/-target/value-of.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/Hook.Target/values/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-hook/-target/values.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/Hook///PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-hook/index.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/Hook/ignoreOpModeType/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-hook/ignore-op-mode-type.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/Hook/on/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-hook/on.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/Hook/priority/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-hook/priority.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/PreselectBehaviour.Action.INIT///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-preselect-behaviour/-action/-i-n-i-t/index.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/PreselectBehaviour.Action.START///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-preselect-behaviour/-action/-s-t-a-r-t/index.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/PreselectBehaviour.Action///PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-preselect-behaviour/-action/index.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/PreselectBehaviour.Action/valueOf/#java.lang.String/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-preselect-behaviour/-action/value-of.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/PreselectBehaviour.Action/values/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-preselect-behaviour/-action/values.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/PreselectBehaviour///PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-preselect-behaviour/index.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/PreselectBehaviour/action/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-preselect-behaviour/action.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/PreselectBehaviour/minRuntimeSec/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-preselect-behaviour/min-runtime-sec.html
+$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/PreselectBehaviour/startDelaySec/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations/-preselect-behaviour/start-delay-sec.html
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.executables////PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.executables/index.html
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.executables/DebugMode.TriggerAction.HALT///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.executables/-debug-mode/-trigger-action/-h-a-l-t/index.html
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib.executables/DebugMode.TriggerAction.HALT_AND_POWER_DOWN///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib.executables/-debug-mode/-trigger-action/-h-a-l-t_-a-n-d_-p-o-w-e-r_-d-o-w-n/index.html
@@ -3159,16 +3179,6 @@ $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/DualTelemetry/setNumDe
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/DualTelemetry/speak/#kotlin.String#kotlin.String#kotlin.String/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-dual-telemetry/speak.html
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/DualTelemetry/speak/#kotlin.String/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-dual-telemetry/speak.html
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/DualTelemetry/update/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-dual-telemetry/update.html
-$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Hook.Target.POST_STOP///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-hook/-target/-p-o-s-t_-s-t-o-p/index.html
-$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Hook.Target.PRE_INIT///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-hook/-target/-p-r-e_-i-n-i-t/index.html
-$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Hook.Target.PRE_START///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-hook/-target/-p-r-e_-s-t-a-r-t/index.html
-$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Hook.Target///PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-hook/-target/index.html
-$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Hook.Target/valueOf/#java.lang.String/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-hook/-target/value-of.html
-$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Hook.Target/values/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-hook/-target/values.html
-$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Hook///PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-hook/index.html
-$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Hook/ignoreOpModeType/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-hook/ignore-op-mode-type.html
-$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Hook/on/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-hook/on.html
-$dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Hook/priority/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-hook/priority.html
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/RobotConfig.AutoInit///PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-robot-config/-auto-init/index.html
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/RobotConfig.Companion///PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-robot-config/-companion/index.html
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/RobotConfig.InhibitAutoInit///PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-robot-config/-inhibit-auto-init/index.html
@@ -3254,6 +3264,7 @@ $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Scheduler/unmute/#/Poi
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Scheduler/update/#/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-scheduler/update.html
 $dokka.location:au.edu.sa.mbhs.studentrobotics.bunyipslib/Scheduler/use/#kotlin.Array[au.edu.sa.mbhs.studentrobotics.bunyipslib.BunyipsSubsystem]/PointingToDeclaration/-bunyips-lib/au.edu.sa.mbhs.studentrobotics.bunyipslib/-scheduler/use.html
 au.edu.sa.mbhs.studentrobotics.bunyipslib
+au.edu.sa.mbhs.studentrobotics.bunyipslib.annotations
 au.edu.sa.mbhs.studentrobotics.bunyipslib.executables
 au.edu.sa.mbhs.studentrobotics.bunyipslib.external
 au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control
