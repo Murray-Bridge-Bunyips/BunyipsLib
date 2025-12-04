@@ -291,7 +291,11 @@ object BunyipsLib {
         override fun scan(cls: Class<*>, registrationHelper: RegistrationHelper) {
             // We leave verifying if the OpMode itself is valid to the appropriate scanners for them, we assume it's correct
             val auto = cls.getAnnotation(Autonomous::class.java) ?: return
-            if (auto.preselectTeleOp.isEmpty() || RegisteredOpModes.getInstance().getOpModeMetadata(auto.preselectTeleOp) == null) return
+            if (auto.preselectTeleOp.isEmpty()
+                || RegisteredOpModes.getInstance().getOpModeMetadata(auto.preselectTeleOp) == null
+            ) {
+                return
+            }
             val presel = cls.getAnnotation(PreselectBehaviour::class.java) ?: return
             registrationHelper.register(ScannedPreselectBehaviour(cls, auto.preselectTeleOp, presel))
         }

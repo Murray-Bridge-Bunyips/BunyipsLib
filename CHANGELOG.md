@@ -2,6 +2,31 @@
 
 ###### BunyipsLib releases are made whenever a snapshot of the repository is taken following new features/patches that are confirmed to work.<br>All archived (removed) BunyipsLib code can be found [here](https://github.com/Murray-Bridge-Bunyips/BunyipsFTC/tree/devid-heath/TeamCode/Archived/common).
 
+## v8.1.0 (2025-12-04)
+
+Preselection hooks and parsing improvements.
+
+### Breaking changes
+
+- Moved the `@Hook` annotation from the root BunyipsLib package to the `annotations` package
+
+### Non-breaking changes
+
+- `ActionTask` now more intelligently parses built in `Action` types to convert them to BunyipsLib equivalents
+    - This includes the `SleepAction`, `InstantAction`, and `NullAction`
+- Some internal data structures replaced with data classes for improved readability
+
+### Bug fixes
+
+- Add missing `Ref` class for MeepMeep
+- Improve catching `InterruptedException` for `Thread.sleep` calls in embedded hooks
+
+### Additions
+
+- New `@PreselectBehaviour` annotation for Autonmous OpModes
+    - Allows TeleOp preselections to be automatically initialised and/or started at the end of the auto period
+    - Serves as an extension to the `preselectTeleOp` parameter in `@Autonomous`
+
 ## v8.0.2 (2025-11-19)
 
 Geometry mapping and Hardware Tester improvements.
