@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -109,12 +110,14 @@ public class BlockableAreaDriveTask extends FieldOrientableDriveTask {
         if (poseEstimate == null)
             throw new IllegalStateException("BlockableAreaDriveTask requires a localizer to be attached to the drive system!");
         PoseVelocity2d userInput = applyOrientation(vel.get());
+        Canvas overlay = dashboard.fieldOverlay();
         for (Pair<Vector2d, Double> area : blockableAreas) {
             Vector2d diff = poseEstimate.position.minus(area.first);
             double mag = diff.norm();
             if (mag < 1.0e-6) {
                 // Vector is too small as we hit floating point limitations, instead we pick an arbitrary outwards direction
                 diff = new Vector2d(1, 0);
+                mag = 1;
             }
             if (mag < area.second) {
                 // Use the direction vector as the basis and scale by the distance (minimum distance, max push)
@@ -122,15 +125,14 @@ public class BlockableAreaDriveTask extends FieldOrientableDriveTask {
                 PoseVelocity2d correction = poseEstimate.heading.inverse()
                         .times(new PoseVelocity2d(diff.div(mag).times(push), 0));
                 userInput = new PoseVelocity2d(userInput.linearVel.plus(correction.linearVel), userInput.angVel);
-                dashboard.fieldOverlay()
-                        .setStroke("#00c911")
+                overlay.setStroke("#00c911")
                         .strokeLine(poseEstimate.position.x, poseEstimate.position.y,
                                 poseEstimate.position.x + correction.linearVel.y, poseEstimate.position.y + correction.linearVel.y)
                         .setFill("#dd2c0066");
             } else {
-                dashboard.fieldOverlay().setFill("#ffa99466");
+                overlay.setFill("#ffa99466");
             }
-            dashboard.fieldOverlay().fillCircle(area.first.x, area.first.y, area.second);
+            overlay.fillCircle(area.first.x, area.first.y, area.second);
         }
         drive.setPower(userInput);
     }
