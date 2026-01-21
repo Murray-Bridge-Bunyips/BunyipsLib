@@ -127,7 +127,8 @@ public class BlockableAreaDriveTask extends FieldOrientableDriveTask {
                 userInput = new PoseVelocity2d(userInput.linearVel.plus(correction.linearVel), userInput.angVel);
                 overlay.setStroke("#00c911")
                         .strokeLine(poseEstimate.position.x, poseEstimate.position.y,
-                                poseEstimate.position.x + correction.linearVel.y, poseEstimate.position.y + correction.linearVel.y)
+                                poseEstimate.position.x + correction.linearVel.x * mag,
+                                poseEstimate.position.y + correction.linearVel.y * mag)
                         .setFill("#dd2c0066");
             } else {
                 overlay.setFill("#ffa99466");
