@@ -78,9 +78,17 @@ public class Controller extends Gamepad {
      */
     public volatile float lt;
     /**
+     * Shorthand for left_trigger_pressed
+     */
+    public volatile boolean ltp;
+    /**
      * Shorthand for right_trigger
      */
     public volatile float rt;
+    /**
+     * Shorthand for right_trigger_pressed
+     */
+    public volatile boolean rtp;
     /**
      * Shorthand for left_bumper
      */
@@ -269,6 +277,8 @@ public class Controller extends Gamepad {
             touchpad_finger_2_y = byteBuffer.getFloat();
         }
         updateButtonAliases();
+        left_trigger_pressed = left_trigger >= getTriggerThreshold();
+        right_trigger_pressed = right_trigger >= getTriggerThreshold();
         try {
             // Update edge detectors that we can't access conventionally
             updateGamepadStateChanges.invoke(gamepadStateChanges.get(), this);
@@ -297,7 +307,9 @@ public class Controller extends Gamepad {
         rsx = right_stick_x;
         rsy = right_stick_y;
         lt = left_trigger;
+        ltp = left_trigger_pressed;
         rt = right_trigger;
+        rtp = right_trigger_pressed;
         lb = left_bumper;
         rb = right_bumper;
         du = dpad_up;
