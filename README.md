@@ -28,9 +28,7 @@ BunyipsLib takes inspiration from FTCLib, WPILib, RoadRunner, and other librarie
 to be the one-stop shop for all of our teams' needs. It is designed to be easy to use, and to integrate
 the latest and greatest features from the FTC SDK and other libraries.
 
-> [!IMPORTANT]
-> BunyipsLib is in active and continually experimental development, expect bugs and to keep up to
-> date!
+> BunyipsLib is now stable software! Future development of this project will only consist of upkeep, maintenance or bug fixes as this library has met demand.
 
 ![BunyipsLib](https://github.com/user-attachments/assets/fd85fde3-4be2-4034-9498-e443d61c7c0e)
 
