@@ -7,7 +7,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Murray-Bridge-Bunyips/BunyipsLib)](https://github.com/Murray-Bridge-Bunyips/BunyipsLib/pulse/monthly)
 [![CodeFactor](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib/badge)](https://www.codefactor.io/repository/github/murray-bridge-bunyips/bunyipslib)<br>
 
-##### A powerful all-in-one framework library for FTC used by the Murray Bridge High School Student Robotics Club.
+##### A powerful all-in-one library for FTC, used by the Murray Bridge High School Student Robotics Club.
 
 BunyipsLib was originally a collection of common functions that our FTC teams used in competition.
 It has since evolved into a full-fledged library that is used by all of our teams. It is designed to
@@ -24,11 +24,11 @@ processing, subsystems and tasks, and an expansible ecosystem focused on multi-b
 </div>
 <br>
 
-BunyipsLib takes inspiration from FTCLib, WPILib, RoadRunner, and other libraries, and is designed
+BunyipsLib takes inspiration from FTCLib, WPILib, RoadRunner, Dairy, and other libraries, and is designed
 to be the one-stop shop for all of our teams' needs. It is designed to be easy to use, and to integrate
-the latest and greatest features from the FTC SDK and other libraries.
+the latest and greatest features from the FTC SDK and other libraries in a uniform implementation.
 
-> BunyipsLib is now stable software! Future development of this project will only consist of upkeep, maintenance or bug fixes as this library has met demand.
+> **BunyipsLib is now stable software!** Future development of this project will only consist of upkeep, maintenance or bug fixes as this library has met demand.
 
 ![BunyipsLib](https://github.com/user-attachments/assets/fd85fde3-4be2-4034-9498-e443d61c7c0e)
 
