@@ -1,5 +1,7 @@
 package au.edu.sa.mbhs.studentrobotics.bunyipslib.tasks;
 
+import static au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Units.Degrees;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -18,6 +20,8 @@ import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.Mathf;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.SystemController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PDController;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.control.pid.PIDFController;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Angle;
+import au.edu.sa.mbhs.studentrobotics.bunyipslib.external.units.Measure;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.subsystems.drive.Moveable;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.transforms.Controls;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.util.Dashboard;
@@ -49,8 +53,9 @@ public class AlignToAprilTagTask extends FieldOrientableDriveTask {
     private final AprilTag at;
     private final Supplier<PoseVelocity2d> vel;
 
+    private double targetBearingDeg = 0.0;
     private SystemController controller;
-    private Double bearing;
+    private Double bearingDeg;
 
     /**
      * Autonomous constructor.
@@ -96,6 +101,26 @@ public class AlignToAprilTagTask extends FieldOrientableDriveTask {
     }
 
     /**
+     * Sets the bearing target that the robot should align to while an AprilTag is visible. By default, this bearing
+     * target is 0 degrees and hence will try to square the robot up to the tag.
+     * <p>
+     * Adjusting this angle will attempt to rotate the robot to a specific bearing (+CCW) in relation to a tag. Note
+     * this only applies when the robot can see the AprilTag and the bearing target only reasonably works for
+     * offsets within your camera's FOV.
+     * <p>
+     * See <a href="https://ftc-docs.firstinspires.org/en/latest/_images/figure2.jpg">this image</a> for a description
+     * of what bearing is in terms of aligning to an AprilTag.
+     *
+     * @param bearing the bearing target. Defaults to 0 degrees.
+     * @return this
+     */
+    @NonNull
+    public AlignToAprilTagTask withBearingTarget(@NonNull Measure<Angle> bearing) {
+        targetBearingDeg = bearing.in(Degrees);
+        return this;
+    }
+
+    /**
      * Set the controller for the rotation axis.
      *
      * @param r the controller to use
@@ -109,7 +134,7 @@ public class AlignToAprilTagTask extends FieldOrientableDriveTask {
 
     @Override
     protected void init() {
-        bearing = null;
+        bearingDeg = null;
         if (!at.isAttached())
             throw new RuntimeException("Vision processor was initialised without being attached to the vision system");
     }
@@ -130,10 +155,10 @@ public class AlignToAprilTagTask extends FieldOrientableDriveTask {
         }
 
         assert target.get().getFtcPose().isPresent() && target.get().getMetadata().isPresent();
-        bearing = target.get().getFtcPose().get().bearing;
+        bearingDeg = target.get().getFtcPose().get().bearing;
         drive.setPower(new PoseVelocity2d(
                 vel.linearVel,
-                -controller.calculate(bearing, 0.0)
+                -controller.calculate(bearingDeg, targetBearingDeg)
         ));
 
         Pose2d poseEstimate = drive.getPose();
@@ -152,7 +177,7 @@ public class AlignToAprilTagTask extends FieldOrientableDriveTask {
 
     @Override
     protected boolean isTaskFinished() {
-        return vel == null && bearing != null && Mathf.isNear(bearing, 0, R_TOLERANCE);
+        return vel == null && bearingDeg != null && Mathf.isNear(bearingDeg, 0, R_TOLERANCE);
     }
 
     @Override
