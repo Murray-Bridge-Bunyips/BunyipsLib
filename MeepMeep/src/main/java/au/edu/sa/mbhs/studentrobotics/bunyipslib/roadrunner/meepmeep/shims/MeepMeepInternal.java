@@ -10,10 +10,15 @@ import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.Constraints;
 import com.noahbres.meepmeep.roadrunner.DriveTrainType;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import javax.imageio.ImageIO;
 
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.Geometry;
 import au.edu.sa.mbhs.studentrobotics.bunyipslib.roadrunner.meepmeep.shims.internal.units.Angle;
@@ -38,10 +43,41 @@ public abstract class MeepMeepInternal {
      * order of creation index.
      */
     public static final Drive drive = new Drive();
+
+    /**
+     * Black-coloured BioBuzz field diagram produced by Juice Robotics.
+     */
+    public static Image FIELD_BIOBUZZ_JUICE_BLACK;
+    /**
+     * Dark-coloured BioBuzz field diagram produced by Juice Robotics.
+     */
+    public static Image FIELD_BIOBUZZ_JUICE_DARK;
+    /**
+     * Light-coloured BioBuzz field diagram produced by Juice Robotics.
+     */
+    public static Image FIELD_BIOBUZZ_JUICE_LIGHT;
+    /**
+     * Paper-optimised BioBuzz field diagram produced by Juice Robotics.
+     */
+    public static Image FIELD_BIOBUZZ_JUICE_PAPER;
+
     /**
      * A reference to the current (dark mode) game field background for the current BunyipsLib release.
      */
-    public static final MeepMeep.Background CURRENT_GAME_BACKGROUND_DARK = MeepMeep.Background.FIELD_DECODE_JUICE_DARK;
+    public static Image CURRENT_GAME_BACKGROUND_DARK;
+
+    static {
+        try {
+            FIELD_BIOBUZZ_JUICE_BLACK = ImageIO.read(new File("BunyipsLib/MeepMeep/assets/field-2026-juice-black.png"));
+            FIELD_BIOBUZZ_JUICE_DARK = ImageIO.read(new File("BunyipsLib/MeepMeep/assets/field-2026-juice-dark.png"));
+            FIELD_BIOBUZZ_JUICE_LIGHT = ImageIO.read(new File("BunyipsLib/MeepMeep/assets/field-2026-juice-light.png"));
+            FIELD_BIOBUZZ_JUICE_PAPER = ImageIO.read(new File("BunyipsLib/MeepMeep/assets/field-2026-juice-paper.png"));
+
+            CURRENT_GAME_BACKGROUND_DARK = FIELD_BIOBUZZ_JUICE_DARK;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * BunyipsLib MeepMeep drive shim.
