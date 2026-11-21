@@ -23,12 +23,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import com.qualcomm.robotcore.util.RobotLog
 import com.qualcomm.robotcore.util.Version
+import dev.frozenmilk.sinister.Scanner
 import dev.frozenmilk.sinister.isStatic
 import dev.frozenmilk.sinister.sdk.apphooks.AppHookScanner
 import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop
 import dev.frozenmilk.sinister.sdk.opmodes.TeleopAutonomousOpModeScanner
 import dev.frozenmilk.sinister.targeting.FocusedSearch
+import dev.frozenmilk.sinister.targeting.SearchTarget
 import dev.frozenmilk.util.cell.LateInitCell
+import dev.frozenmilk.util.graph.rule.dependedOn
 import dev.frozenmilk.util.graph.rule.dependsOn
 import org.firstinspires.ftc.ftccommon.internal.manualcontrol.ManualControlOpMode
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta
@@ -298,6 +301,26 @@ object BunyipsLib {
             }
             val presel = cls.getAnnotation(PreselectBehaviour::class.java) ?: return
             registrationHelper.register(ScannedPreselectBehaviour(cls, auto.preselectTeleOp, presel))
+        }
+    }
+
+    // The Hardware OpMode for FTC Dashboard v0.5.0 and greater is superseded by the BunyipsLib Hardware Tester.
+    // This scanner removes the OpMode from the list and ensures it does not pollute the namespace.
+    private object HideHardwareOpMode : Scanner {
+        override val loadAdjacencyRule = dependedOn(TeleopAutonomousOpModeScanner)
+        override val unloadAdjacencyRule = dependedOn(TeleopAutonomousOpModeScanner)
+        override val targets = SearchTarget(SearchTarget.Inclusion.INCLUDE)
+
+        override fun beforeScan(loader: ClassLoader) {
+            TeleopAutonomousOpModeScanner.targets.exclude("com.acmerobotics.dashboard.hardware")
+        }
+
+        override fun scan(loader: ClassLoader, cls: Class<*>) {
+            // no-op
+        }
+
+        override fun unload(loader: ClassLoader, cls: Class<*>) {
+            // no-op
         }
     }
 
